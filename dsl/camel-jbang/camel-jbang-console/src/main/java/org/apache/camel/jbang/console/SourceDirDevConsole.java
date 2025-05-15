@@ -16,12 +16,15 @@
  */
 package org.apache.camel.jbang.console;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.LineNumberReader;
-import java.util.Arrays;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.console.ConsoleHelper;
@@ -29,7 +32,6 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -60,50 +62,54 @@ public class SourceDirDevConsole extends AbstractDevConsole {
         if (reload != null) {
             sb.append(String.format("Directory: %s%n", reload.getFolder()));
             // list files in this directory
-            File dir = new File(reload.getFolder());
-            if (dir.exists() && dir.isDirectory()) {
-                File[] files = dir.listFiles();
-                if (files != null) {
-                    sb.append("Files:\n");
-                    // sort files by name (ignore case)
-                    Arrays.sort(files, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
-                    for (File f : files) {
-                        boolean skip = f.getName().startsWith(".") || f.isHidden();
-                        if (skip) {
-                            continue;
-                        }
-                        boolean match = subPath == null || f.getName().startsWith(subPath) || f.getName().endsWith(subPath)
-                                || PatternHelper.matchPattern(f.getName(), subPath);
-                        if (match) {
-                            long size = f.length();
-                            long ts = f.lastModified();
-                            String age = ts > 0 ? TimeUtils.printSince(ts) : "n/a";
-                            sb.append(String.format("    %s (size: %d age: %s)%n", f.getName(), size, age));
-                            if ("true".equals(source)) {
-                                StringBuilder code = new StringBuilder();
-                                try {
-                                    LineNumberReader reader = new LineNumberReader(new FileReader(f));
-                                    int i = 0;
-                                    String t;
-                                    do {
-                                        t = reader.readLine();
-                                        if (t != null) {
-                                            i++;
-                                            code.append(String.format("\n    #%s %s", i, t));
-                                        }
-                                    } while (t != null);
-                                    IOHelper.close(reader);
-                                } catch (Exception e) {
-                                    // ignore
-                                }
-                                if (!code.isEmpty()) {
-                                    sb.append("    ").append("-".repeat(40));
-                                    sb.append(code);
-                                    sb.append("\n\n");
+            Path dir = Paths.get(reload.getFolder());
+            if (Files.exists(dir) && Files.isDirectory(dir)) {
+                try {
+                    List<Path> files = Files.list(dir).collect(Collectors.toList());
+                    if (!files.isEmpty()) {
+                        sb.append("Files:\n");
+                        // sort files by name (ignore case)
+                        files.sort((o1, o2) -> o1.getFileName().toString().compareToIgnoreCase(o2.getFileName().toString()));
+                        for (Path f : files) {
+                            String fileName = f.getFileName().toString();
+                            boolean skip = fileName.startsWith(".") || Files.isHidden(f);
+                            if (skip) {
+                                continue;
+                            }
+                            boolean match = subPath == null || fileName.startsWith(subPath) || fileName.endsWith(subPath)
+                                    || PatternHelper.matchPattern(fileName, subPath);
+                            if (match) {
+                                long size = Files.size(f);
+                                long ts = Files.getLastModifiedTime(f).toMillis();
+                                String age = ts > 0 ? TimeUtils.printSince(ts) : "n/a";
+                                sb.append(String.format("    %s (size: %d age: %s)%n", fileName, size, age));
+                                if ("true".equals(source)) {
+                                    StringBuilder code = new StringBuilder();
+                                    try (Reader fileReader = Files.newBufferedReader(f, StandardCharsets.UTF_8);
+                                         LineNumberReader reader = new LineNumberReader(fileReader)) {
+                                        int i = 0;
+                                        String t;
+                                        do {
+                                            t = reader.readLine();
+                                            if (t != null) {
+                                                i++;
+                                                code.append(String.format("\n    #%s %s", i, t));
+                                            }
+                                        } while (t != null);
+                                    } catch (Exception e) {
+                                        // ignore
+                                    }
+                                    if (!code.isEmpty()) {
+                                        sb.append("    ").append("-".repeat(40));
+                                        sb.append(code);
+                                        sb.append("\n\n");
+                                    }
                                 }
                             }
                         }
                     }
+                } catch (Exception e) {
+                    // ignore
                 }
             }
         }
@@ -123,39 +129,44 @@ public class SourceDirDevConsole extends AbstractDevConsole {
         if (reload != null) {
             root.put("dir", reload.getFolder());
             // list files in this directory
-            File dir = new File(reload.getFolder());
-            if (dir.exists() && dir.isDirectory()) {
-                File[] files = dir.listFiles();
-                if (files != null) {
-                    // sort files by name (ignore case)
-                    Arrays.sort(files, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
-                    JsonArray arr = new JsonArray();
-                    root.put("files", arr);
-                    for (File f : files) {
-                        boolean skip = f.getName().startsWith(".") || f.isHidden();
-                        if (skip) {
-                            continue;
-                        }
-                        boolean match = subPath == null || f.getName().startsWith(subPath) || f.getName().endsWith(subPath)
-                                || PatternHelper.matchPattern(f.getName(), subPath);
-                        if (match) {
-                            JsonObject jo = new JsonObject();
-                            jo.put("name", f.getName());
-                            jo.put("size", f.length());
-                            jo.put("lastModified", f.lastModified());
-                            if ("true".equals(source)) {
-                                try {
-                                    List<JsonObject> code = ConsoleHelper.loadSourceAsJson(new FileReader(f), null);
-                                    if (code != null) {
-                                        jo.put("code", code);
-                                    }
-                                } catch (Exception e) {
-                                    // ignore
-                                }
+            Path dir = Paths.get(reload.getFolder());
+            if (Files.exists(dir) && Files.isDirectory(dir)) {
+                try {
+                    List<Path> files = Files.list(dir).collect(Collectors.toList());
+                    if (!files.isEmpty()) {
+                        // sort files by name (ignore case)
+                        files.sort((o1, o2) -> o1.getFileName().toString().compareToIgnoreCase(o2.getFileName().toString()));
+                        JsonArray arr = new JsonArray();
+                        root.put("files", arr);
+                        for (Path f : files) {
+                            String fileName = f.getFileName().toString();
+                            boolean skip = fileName.startsWith(".") || Files.isHidden(f);
+                            if (skip) {
+                                continue;
                             }
-                            arr.add(jo);
+                            boolean match = subPath == null || fileName.startsWith(subPath) || fileName.endsWith(subPath)
+                                    || PatternHelper.matchPattern(fileName, subPath);
+                            if (match) {
+                                JsonObject jo = new JsonObject();
+                                jo.put("name", fileName);
+                                jo.put("size", Files.size(f));
+                                jo.put("lastModified", Files.getLastModifiedTime(f).toMillis());
+                                if ("true".equals(source)) {
+                                    try (Reader fileReader = Files.newBufferedReader(f, StandardCharsets.UTF_8)) {
+                                        List<JsonObject> code = ConsoleHelper.loadSourceAsJson(fileReader, null);
+                                        if (code != null) {
+                                            jo.put("code", code);
+                                        }
+                                    } catch (Exception e) {
+                                        // ignore
+                                    }
+                                }
+                                arr.add(jo);
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    // ignore
                 }
             }
         }

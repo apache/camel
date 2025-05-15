@@ -16,17 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import picocli.CommandLine;
 
@@ -35,7 +35,7 @@ import picocli.CommandLine;
  */
 public final class CommandLineHelper {
 
-    private static volatile String homeDir = System.getProperty("user.home");
+    private static volatile Path homeDir = Paths.get(System.getProperty("user.home"));
     public static final String USER_CONFIG = ".camel-jbang-user.properties";
     public static final String LOCAL_USER_CONFIG = "camel-jbang-user.properties";
     public static final String CAMEL_DIR = ".camel";
@@ -46,11 +46,11 @@ public final class CommandLineHelper {
     }
 
     public static void augmentWithUserConfiguration(CommandLine commandLine) {
-        File file = getUserConfigurationFile();
-        if (file.isFile() && file.exists()) {
+        Path file = getUserConfigurationFile();
+        if (Files.isRegularFile(file) && Files.exists(file)) {
             Properties properties = new Properties();
-            try {
-                properties.load(new FileReader(file));
+            try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+                properties.load(reader);
             } catch (IOException e) {
                 commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(file));
             }
@@ -59,10 +59,10 @@ public final class CommandLineHelper {
         }
     }
 
-    private static File getUserConfigurationFile() {
-        File file;
-        if (Files.exists(Path.of(LOCAL_USER_CONFIG))) {
-            file = new File(LOCAL_USER_CONFIG);
+    private static Path getUserConfigurationFile() {
+        Path file;
+        if (Files.exists(Paths.get(LOCAL_USER_CONFIG))) {
+            file = Paths.get(LOCAL_USER_CONFIG);
         } else {
             file = getUserPropertyFile(false);
         }
@@ -70,9 +70,9 @@ public final class CommandLineHelper {
     }
 
     public static void createPropertyFile(boolean local) throws IOException {
-        File file = getUserPropertyFile(local);
-        if (!file.exists()) {
-            file.createNewFile();
+        Path file = getUserPropertyFile(local);
+        if (!Files.exists(file)) {
+            Files.createFile(file);
         }
     }
 
@@ -81,32 +81,28 @@ public final class CommandLineHelper {
     }
 
     public static void loadProperties(Consumer<Properties> consumer, boolean local) {
-        File file = getUserPropertyFile(local);
-        if (file.isFile() && file.exists()) {
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(file);
+        Path file = getUserPropertyFile(local);
+        if (Files.isRegularFile(file) && Files.exists(file)) {
+            try (InputStream is = Files.newInputStream(file)) {
                 Properties prop = new OrderedProperties();
-                prop.load(fis);
+                prop.load(is);
                 consumer.accept(prop);
             } catch (Exception e) {
                 throw new RuntimeException("Cannot load user configuration: " + file);
-            } finally {
-                IOHelper.close(fis);
             }
         }
     }
 
     public static void storeProperties(Properties properties, Printer printer, boolean local) {
-        File file = getUserPropertyFile(local);
-        if (file.isFile() && file.exists()) {
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                properties.store(fos, null);
+        Path file = getUserPropertyFile(local);
+        if (Files.isRegularFile(file) && Files.exists(file)) {
+            try (OutputStream os = Files.newOutputStream(file)) {
+                properties.store(os, null);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         } else {
-            printer.println(file.getName() + " does not exist");
+            printer.println(file.getFileName() + " does not exist");
         }
     }
 
@@ -116,11 +112,11 @@ public final class CommandLineHelper {
      * @param  local
      * @return
      */
-    private static File getUserPropertyFile(boolean local) {
+    private static Path getUserPropertyFile(boolean local) {
         if (local) {
-            return new File(LOCAL_USER_CONFIG);
+            return Paths.get(LOCAL_USER_CONFIG);
         } else {
-            return new File(homeDir, USER_CONFIG);
+            return homeDir.resolve(USER_CONFIG);
         }
     }
 
@@ -129,7 +125,7 @@ public final class CommandLineHelper {
      *
      * @return the user home directory.
      */
-    public static String getHomeDir() {
+    public static Path getHomeDir() {
         return homeDir;
     }
 
@@ -140,7 +136,7 @@ public final class CommandLineHelper {
      * @param homeDir the home directory.
      */
     public static void useHomeDir(String homeDir) {
-        CommandLineHelper.homeDir = homeDir;
+        CommandLineHelper.homeDir = Paths.get(homeDir);
     }
 
     /**
@@ -148,8 +144,8 @@ public final class CommandLineHelper {
      *
      * @return file pointing to the camel directory.
      */
-    public static File getCamelDir() {
-        return new File(homeDir, CAMEL_DIR);
+    public static Path getCamelDir() {
+        return homeDir.resolve(CAMEL_DIR);
     }
 
     /**
@@ -157,14 +153,14 @@ public final class CommandLineHelper {
      *
      * @return file pointing to the working directory.
      */
-    public static File getWorkDir() {
-        return new File(CAMEL_JBANG_WORK_DIR);
+    public static Path getWorkDir() {
+        return Paths.get(CAMEL_JBANG_WORK_DIR);
     }
 
     private static class CamelUserConfigDefaultValueProvider extends CommandLine.PropertiesDefaultProvider {
 
-        public CamelUserConfigDefaultValueProvider(File file) {
-            super(file);
+        public CamelUserConfigDefaultValueProvider(Path file) {
+            super(file.toFile());
         }
 
         public CamelUserConfigDefaultValueProvider(Properties properties) {
