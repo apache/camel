@@ -94,6 +94,8 @@ public class DocumentationEnricher {
         } else if ("serviceRef".equals(name) && jsonFile.getName().endsWith("proxy.json")) {
             descriptionText
                     = "Reference to existing endpoint to lookup by endpoint id in the Camel registry to be used as proxied service";
+        } else if ("dataFormats".equals(name) && jsonFile.getName().endsWith("beans.json")) {
+            descriptionText = "List of data formats";
         }
 
         if (descriptionText == null || descriptionText.equals("null")) {
