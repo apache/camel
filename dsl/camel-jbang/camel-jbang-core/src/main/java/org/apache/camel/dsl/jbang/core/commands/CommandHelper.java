@@ -16,10 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.Printer;
-import org.apache.camel.util.FileUtil;
 
 public final class CommandHelper {
 
@@ -41,16 +45,26 @@ public final class CommandHelper {
     }
 
     public static void cleanExportDir(String dir, boolean keepHidden) {
-        File target = new File(dir);
-        File[] files = target.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                if (f.isDirectory() && (!keepHidden || !f.isHidden())) {
-                    FileUtil.removeDir(f);
-                } else if (f.isFile() && (!keepHidden || !f.isHidden())) {
-                    FileUtil.deleteFile(f);
+        Path targetPath = Paths.get(dir);
+        if (!Files.exists(targetPath)) {
+            return;
+        }
+
+        try (Stream<Path> paths = Files.list(targetPath)) {
+            paths.forEach(path -> {
+                try {
+                    boolean isHidden = Files.isHidden(path);
+                    if (Files.isDirectory(path) && (!keepHidden || !isHidden)) {
+                        PathUtils.deleteDirectory(path);
+                    } else if (Files.isRegularFile(path) && (!keepHidden || !isHidden)) {
+                        Files.deleteIfExists(path);
+                    }
+                } catch (IOException e) {
+                    // Ignore
                 }
-            }
+            });
+        } catch (IOException e) {
+            // Ignore
         }
     }
 

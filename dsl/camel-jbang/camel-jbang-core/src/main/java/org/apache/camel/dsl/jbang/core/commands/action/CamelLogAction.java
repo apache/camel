@@ -16,10 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
@@ -255,12 +255,12 @@ public class CamelLogAction extends ActionBaseCommand {
 
         for (Row row : rows.values()) {
             if (row.reader == null) {
-                File file = logFile(row.pid);
-                if (file.exists()) {
-                    row.reader = new LineNumberReader(new FileReader(file));
+                Path file = logFile(row.pid);
+                if (Files.exists(file)) {
+                    row.reader = new LineNumberReader(Files.newBufferedReader(file));
                     if (tail == 0) {
                         // only read new lines so forward to end of reader
-                        long size = file.length();
+                        long size = Files.size(file);
                         row.reader.skip(size);
                     }
                 }
@@ -429,17 +429,18 @@ public class CamelLogAction extends ActionBaseCommand {
         }
     }
 
-    private static File logFile(String pid) {
+    private static Path logFile(String pid) {
         String name = pid + ".log";
-        return new File(CommandLineHelper.getCamelDir(), name);
+        Path parent = CommandLineHelper.getCamelDir();
+        return parent.resolve(name);
     }
 
     private void tailStartupLogFiles(Map<Long, Row> rows) throws Exception {
         for (Row row : rows.values()) {
-            File log = logFile(row.pid);
-            if (log.exists()) {
+            Path log = logFile(row.pid);
+            if (Files.exists(log)) {
                 row.fifo = new ArrayDeque<>();
-                row.reader = new LineNumberReader(new FileReader(log));
+                row.reader = new LineNumberReader(Files.newBufferedReader(log));
                 String line;
                 do {
                     line = row.reader.readLine();
@@ -458,9 +459,9 @@ public class CamelLogAction extends ActionBaseCommand {
 
     private void tailLogFiles(Map<Long, Row> rows, int tail, Date limit) throws Exception {
         for (Row row : rows.values()) {
-            File log = logFile(row.pid);
-            if (log.exists()) {
-                row.reader = new LineNumberReader(new FileReader(log));
+            Path log = logFile(row.pid);
+            if (Files.exists(log)) {
+                row.reader = new LineNumberReader(Files.newBufferedReader(log));
                 String line;
                 if (tail <= 0) {
                     row.fifo = new ArrayDeque<>();

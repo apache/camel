@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +109,7 @@ public class TransformRoute extends CamelCommand {
 
         if (output == null) {
             // load target file and print to console
-            dump = waitForDumpFile(new File(target));
+            dump = waitForDumpFile(Path.of(target));
             if (dump != null) {
                 printer().println(dump);
             }
@@ -118,18 +118,17 @@ public class TransformRoute extends CamelCommand {
         return 0;
     }
 
-    protected String waitForDumpFile(File dumpFile) {
+    protected String waitForDumpFile(Path dumpFile) {
         StopWatch watch = new StopWatch();
         while (watch.taken() < 5000) {
             try {
                 // give time for response to be ready
                 Thread.sleep(100);
 
-                if (dumpFile.exists()) {
-                    FileInputStream fis = new FileInputStream(dumpFile);
-                    String text = IOHelper.loadText(fis);
-                    IOHelper.close(fis);
-                    return text;
+                if (Files.exists(dumpFile)) {
+                    try (InputStream is = Files.newInputStream(dumpFile)) {
+                        return IOHelper.loadText(is);
+                    }
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

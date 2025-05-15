@@ -16,14 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -67,19 +68,9 @@ public class CamelSourceAction extends ActionBaseCommand {
 
         this.pid = pids.get(0);
 
-        // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "source");
-        root.put("filter", "*");
-        File file = getActionFile(Long.toString(pid));
-        try {
-            IOHelper.writeText(root.toJson(), file);
-        } catch (Exception e) {
-            // ignore
-        }
+        Path outputFile = prepareAction(Long.toString(pid), "source", root -> {
+            root.put("filter", "*");
+        });
 
         JsonObject jo = waitForOutputFile(outputFile);
         if (jo != null) {
@@ -136,7 +127,11 @@ public class CamelSourceAction extends ActionBaseCommand {
         }
 
         // delete output file after use
-        FileUtil.deleteFile(outputFile);
+        try {
+            Files.deleteIfExists(outputFile);
+        } catch (IOException e) {
+            // ignore
+        }
 
         return 0;
     }
@@ -170,8 +165,8 @@ public class CamelSourceAction extends ActionBaseCommand {
         }
     }
 
-    protected JsonObject waitForOutputFile(File outputFile) {
-        return getJsonObject(outputFile);
+    protected JsonObject waitForOutputFile(Path outputFile) {
+        return getJsonObject((Path) outputFile);
     }
 
     public static String extractSourceName(String loc) {

@@ -17,8 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,15 +33,14 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.commons.io.FileUtils;
 
 class ExportQuarkus extends Export {
 
@@ -61,11 +61,11 @@ class ExportQuarkus extends Export {
             return 1;
         }
 
-        File profile = new File("application.properties");
+        Path profile = Path.of("application.properties");
 
         // the settings file has information what to export
-        File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
-        if (fresh || !files.isEmpty() || !settings.exists()) {
+        Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
+        if (fresh || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
             int silent = runSilently(ignoreLoadingError, lazyBean, verbose);
@@ -79,25 +79,26 @@ class ExportQuarkus extends Export {
         printer().println("Exporting as Quarkus project to: " + exportDir);
 
         // use a temporary work dir
-        File buildDir = new File(BUILD_DIR);
-        FileUtil.removeDir(buildDir);
-        buildDir.mkdirs();
+        Path buildDir = Path.of(BUILD_DIR);
+        PathUtils.deleteDirectory(buildDir);
+        Files.createDirectories(buildDir);
 
-        File srcJavaDirRoot = new File(BUILD_DIR, "src/main/java");
+        Path srcJavaDirRoot = buildDir.resolve("src/main/java");
         String srcPackageName = exportPackageName(ids[0], ids[1], packageName);
-        File srcJavaDir;
+        Path srcJavaDir;
         if (srcPackageName == null) {
             srcJavaDir = srcJavaDirRoot;
         } else {
-            srcJavaDir = new File(srcJavaDirRoot, srcPackageName.replace('.', File.separatorChar));
+            srcJavaDir = srcJavaDirRoot.resolve(srcPackageName.replace('.', File.separatorChar));
         }
-        srcJavaDir.mkdirs();
-        File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
-        srcResourcesDir.mkdirs();
-        File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
-        File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
+        Files.createDirectories(srcJavaDir);
+        Path srcResourcesDir = buildDir.resolve("src/main/resources");
+        Files.createDirectories(srcResourcesDir);
+        Path srcCamelResourcesDir = buildDir.resolve("src/main/resources/camel");
+        Path srcKameletsResourcesDir = buildDir.resolve("src/main/resources/kamelets");
         // copy source files
-        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
+        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir,
+                srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
@@ -115,14 +116,14 @@ class ExportQuarkus extends Export {
         // copy local lib JARs
         copyLocalLibDependencies(deps);
         if ("maven".equals(buildTool)) {
-            createMavenPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
+            createMavenPom(settings, buildDir.resolve("pom.xml"), deps);
             if (mavenWrapper) {
                 copyMavenWrapper();
             }
         } else if ("gradle".equals(buildTool)) {
-            createGradleProperties(new File(BUILD_DIR, "gradle.properties"));
-            createSettingsGradle(new File(BUILD_DIR, "settings.gradle"));
-            createBuildGradle(settings, new File(BUILD_DIR, "build.gradle"), deps);
+            createGradleProperties(buildDir.resolve("gradle.properties"));
+            createSettingsGradle(buildDir.resolve("settings.gradle"));
+            createBuildGradle(settings, buildDir.resolve("build.gradle"), deps);
             if (gradleWrapper) {
                 copyGradleWrapper();
             }
@@ -134,8 +135,8 @@ class ExportQuarkus extends Export {
             CommandHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
-        FileUtils.copyDirectory(new File(BUILD_DIR), new File(exportDir));
-        FileUtil.removeDir(new File(BUILD_DIR));
+        PathUtils.copyDirectory(buildDir, Path.of(exportDir));
+        PathUtils.deleteDirectory(buildDir);
 
         return 0;
     }
@@ -217,7 +218,7 @@ class ExportQuarkus extends Export {
         return s;
     }
 
-    private void createGradleProperties(File output) throws Exception {
+    private void createGradleProperties(Path output) throws Exception {
         InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-gradle-properties.tmpl");
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
@@ -226,10 +227,10 @@ class ExportQuarkus extends Export {
         context = context.replaceFirst("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
 
-        IOHelper.writeText(context, new FileOutputStream(output, false));
+        Files.writeString(output, context);
     }
 
-    private void createSettingsGradle(File output) throws Exception {
+    private void createSettingsGradle(Path output) throws Exception {
         String[] ids = gav.split(":");
 
         InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-settings-gradle.tmpl");
@@ -240,10 +241,10 @@ class ExportQuarkus extends Export {
         context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
         context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
 
-        IOHelper.writeText(context, new FileOutputStream(output, false));
+        Files.writeString(output, context);
     }
 
-    private void createBuildGradle(File settings, File gradleBuild, Set<String> deps) throws Exception {
+    private void createBuildGradle(Path settings, Path gradleBuild, Set<String> deps) throws Exception {
         String[] ids = gav.split(":");
 
         InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream("templates/quarkus-build-gradle.tmpl");
@@ -251,7 +252,7 @@ class ExportQuarkus extends Export {
         IOHelper.close(is);
 
         Properties prop = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(prop, settings);
+        RuntimeUtil.loadProperties(prop, settings.toFile());
         // quarkus controls the camel version
         String repos = getMavenRepositories(settings, prop, quarkusVersion);
 
@@ -331,7 +332,7 @@ class ExportQuarkus extends Export {
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
-        IOHelper.writeText(context, new FileOutputStream(gradleBuild, false));
+        Files.writeString(gradleBuild, context);
     }
 
     private void replaceQuarkusDependencies(List<MavenGav> gavs) {
@@ -381,25 +382,25 @@ class ExportQuarkus extends Export {
 
     @Override
     protected void copyDockerFiles(String buildDir) throws Exception {
-        File docker = new File(buildDir, "src/main/docker");
-        docker.mkdirs();
+        Path docker = Path.of(buildDir).resolve("src/main/docker");
+        Files.createDirectories(docker);
         // copy files
         InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
         // Deprecated, use Dockerfile instead
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.jvm")));
+        PathUtils.copyFromStream(is, docker.resolve("Dockerfile.jvm"), true);
         is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile")));
+        PathUtils.copyFromStream(is, docker.resolve("Dockerfile"), true);
         // Deprecated, to be removed in the future
         is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.legacy-jar");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.legacy-jar")));
+        PathUtils.copyFromStream(is, docker.resolve("Dockerfile.legacy-jar"), true);
         is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.native")));
+        PathUtils.copyFromStream(is, docker.resolve("Dockerfile.native"), true);
         // Deprecated, to be removed in the future
         is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native-micro");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.native-micro")));
+        PathUtils.copyFromStream(is, docker.resolve("Dockerfile.native-micro"), true);
     }
 
-    private void createMavenPom(File settings, File pom, Set<String> deps) throws Exception {
+    private void createMavenPom(Path settings, Path pom, Set<String> deps) throws Exception {
         String[] ids = gav.split(":");
 
         InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/" + pomTemplateName);
@@ -494,11 +495,11 @@ class ExportQuarkus extends Export {
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
-        IOHelper.writeText(context, new FileOutputStream(pom, false));
+        Files.writeString(pom, context);
     }
 
     @Override
-    protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
+    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
         Set<String> answer = super.resolveDependencies(settings, profile);
 
         // remove out of the box dependencies

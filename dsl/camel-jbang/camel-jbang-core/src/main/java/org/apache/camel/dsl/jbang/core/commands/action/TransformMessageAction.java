@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,9 +25,8 @@ import java.util.List;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -146,15 +145,15 @@ public class TransformMessageAction extends ActionWatchCommand {
         if (source != null && source.startsWith("file:")) {
             String s = source.substring(5);
             s = StringHelper.beforeLast(s, ":", s); // remove line number
-            File f = new File(s);
-            if (!f.exists()) {
+            Path f = Path.of(s);
+            if (!Files.exists(f)) {
                 printer().printErr("Source file does not exist: " + f);
                 return -1;
             }
         }
         if (template != null && template.startsWith("file:")) {
-            File f = new File(template.substring(5));
-            if (!f.exists()) {
+            Path f = Path.of(template.substring(5));
+            if (!Files.exists(f)) {
                 printer().printErr("Template file does not exist: " + f);
                 return -1;
             }
@@ -177,12 +176,13 @@ public class TransformMessageAction extends ActionWatchCommand {
         } finally {
             if (pid > 0) {
                 // cleanup output file
-                File outputFile = getOutputFile(Long.toString(pid));
-                FileUtil.deleteFile(outputFile);
+                Path outputFile = getOutputFile(Long.toString(pid));
+                PathUtils.deleteFile(outputFile);
                 // stop running camel as we are done
-                File pidFile = new File(CommandLineHelper.getCamelDir(), Long.toString(pid));
-                if (pidFile.exists()) {
-                    FileUtil.deleteFile(pidFile);
+                Path parent = CommandLineHelper.getCamelDir();
+                Path pidFile = parent.resolve(Long.toString(pid));
+                if (Files.exists(pidFile)) {
+                    PathUtils.deleteFile(pidFile);
                 }
             }
         }
@@ -193,8 +193,8 @@ public class TransformMessageAction extends ActionWatchCommand {
     @Override
     protected Integer doWatchCall() throws Exception {
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "transform");
@@ -242,9 +242,9 @@ public class TransformMessageAction extends ActionWatchCommand {
             }
             root.put("options", arr);
         }
-        File f = getActionFile(Long.toString(pid));
+        Path f = getActionFile(Long.toString(pid));
         try {
-            IOHelper.writeText(root.toJson(), f);
+            PathUtils.writeTextSafely(root.toJson(), f);
         } catch (Exception e) {
             // ignore
         }
@@ -257,12 +257,12 @@ public class TransformMessageAction extends ActionWatchCommand {
             JsonObject cause = jo.getMap("exception");
             if (message != null || cause != null) {
                 if (output != null) {
-                    File target = new File(output);
+                    Path target = Path.of(output);
                     String json = jo.toJson();
                     if (pretty) {
                         json = Jsoner.prettyPrint(json, 2);
                     }
-                    IOHelper.writeText(json, target);
+                    Files.writeString(target, json);
                 }
                 if (!showExchangeProperties && message != null) {
                     message.remove("exchangeProperties");
@@ -291,7 +291,7 @@ public class TransformMessageAction extends ActionWatchCommand {
         }
 
         // delete output file after use
-        FileUtil.deleteFile(outputFile);
+        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -344,17 +344,15 @@ public class TransformMessageAction extends ActionWatchCommand {
         }
     }
 
-    protected JsonObject waitForOutputFile(File outputFile) {
+    protected JsonObject waitForOutputFile(Path outputFile) {
         StopWatch watch = new StopWatch();
         while (watch.taken() < timeout) {
             try {
                 // give time for response to be ready
                 Thread.sleep(20);
 
-                if (outputFile.exists()) {
-                    FileInputStream fis = new FileInputStream(outputFile);
-                    String text = IOHelper.loadText(fis);
-                    IOHelper.close(fis);
+                if (Files.exists(outputFile)) {
+                    String text = Files.readString(outputFile);
                     return (JsonObject) Jsoner.deserialize(text);
                 }
             } catch (InterruptedException e) {

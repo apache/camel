@@ -16,7 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +31,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -75,11 +75,11 @@ public class LoggerAction extends ActionBaseCommand {
         for (long pid : pids) {
             JsonObject root = new JsonObject();
             root.put("action", "logger");
-            File f = getActionFile(Long.toString(pid));
+            Path f = getActionFile(Long.toString(pid));
             root.put("command", "set-logging-level");
             root.put("logger-name", logger);
             root.put("logging-level", loggingLevel);
-            IOHelper.writeText(root.toJson(), f);
+            Files.writeString(f, root.toJson());
         }
 
         return 0;

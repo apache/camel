@@ -16,14 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -67,14 +67,14 @@ public class CamelSourceTop extends ActionWatchCommand {
         this.pid = pids.get(0);
 
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "top-processors");
-        File f = getActionFile(Long.toString(pid));
+        Path f = getActionFile(Long.toString(pid));
         try {
-            IOHelper.writeText(root.toJson(), f);
+            Files.writeString(f, root.toJson());
         } catch (Exception e) {
             // ignore
         }
@@ -147,7 +147,7 @@ public class CamelSourceTop extends ActionWatchCommand {
         }
 
         // delete output file after use
-        FileUtil.deleteFile(outputFile);
+        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -167,7 +167,7 @@ public class CamelSourceTop extends ActionWatchCommand {
         }
     }
 
-    protected JsonObject waitForOutputFile(File outputFile) {
+    protected JsonObject waitForOutputFile(Path outputFile) {
         return getJsonObject(outputFile);
     }
 

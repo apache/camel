@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -153,17 +152,17 @@ public class InfraRun extends InfraBaseCommand {
         printer().println(jsonProperties);
 
         String name = getLogFileName(testService, RuntimeUtil.getPid());
-        File logFile = createFile(name);
+        Path logFile = createFile(name);
 
         String jsonName = getJsonFileName(testService, RuntimeUtil.getPid());
-        File jsonFile = createFile(jsonName);
-        Files.write(jsonFile.toPath(), jsonProperties.getBytes());
+        Path jsonFile = createFile(jsonName);
+        Files.write(jsonFile, jsonProperties.getBytes());
 
         if (Arrays.stream(actualService.getClass().getInterfaces()).filter(
                 c -> c.getName().contains("ContainerService")).count()
             > 0) {
             Object containerLogConsumer = cl.loadClass("org.apache.camel.test.infra.common.CamelLogConsumer")
-                    .getConstructor(Path.class, boolean.class).newInstance(logFile.toPath(), logToStdout);
+                    .getConstructor(Path.class, boolean.class).newInstance(logFile, logToStdout);
 
             actualService.getClass()
                     .getMethod("followLog", cl.loadClass("org.testcontainers.containers.output.BaseConsumer"))
@@ -182,10 +181,9 @@ public class InfraRun extends InfraBaseCommand {
         sc.close();
     }
 
-    private static File createFile(String name) throws IOException {
-        File logFile = new File(CommandLineHelper.getCamelDir(), name);
-        logFile.createNewFile();
-        logFile.deleteOnExit();
+    private static Path createFile(String name) throws IOException {
+        Path logFile = CommandLineHelper.getCamelDir().resolve(name);
+        Files.createFile(logFile);
         return logFile;
     }
 

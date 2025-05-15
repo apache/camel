@@ -16,7 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,9 +28,8 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
@@ -136,8 +135,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
         this.pid = pids.get(0);
 
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "browse");
@@ -151,15 +150,15 @@ public class CamelBrowseAction extends ActionBaseCommand {
             root.put("bodyMaxChars", bodyMaxChars);
         }
 
-        File f = getActionFile(Long.toString(pid));
+        Path f = getActionFile(Long.toString(pid));
         try {
-            IOHelper.writeText(root.toJson(), f);
+            PathUtils.writeTextSafely(root.toJson(), f);
         } catch (Exception e) {
             // ignore
         }
 
         List<Row> rows = new ArrayList<>();
-        JsonObject jo = getJsonObject(outputFile);
+        JsonObject jo = getJsonObject((Path) outputFile);
         if (jo != null) {
             root = loadStatus(this.pid);
             if (root != null) {
@@ -207,7 +206,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         }
 
         // delete output file after use
-        FileUtil.deleteFile(outputFile);
+        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
