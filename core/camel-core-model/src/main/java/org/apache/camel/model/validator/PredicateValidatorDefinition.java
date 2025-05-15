@@ -19,22 +19,18 @@ package org.apache.camel.model.validator;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElementRef;
-import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.ExpressionNodeHelper;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Validator;
 
 /**
- * Represents a predicate {@link Validator} which leverages expression or predicates to perform content validation. A
- * {@link org.apache.camel.processor.validator.ProcessorValidator} will be created internally with a
- * {@link org.apache.camel.processor.validation.PredicateValidatingProcessor} which validates the message according to
- * specified expression/predicates. {@see ValidatorDefinition} {@see Validator}
+ * To use a predicate to perform validation on the route level.
  */
 @Metadata(label = "validation")
-@XmlType(name = "predicateValidator")
+@XmlRootElement(name = "predicateValidator")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PredicateValidatorDefinition extends ValidatorDefinition {
 

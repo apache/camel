@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<beans xmlns="http://camel.apache.org/schema/spring" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://camel.apache.org/schema/xml-io" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://camel.apache.org/schema/spring file:/data/sources/github.com/apache/camel-upstream/components/camel-spring-xml/target/classes/camel-spring.xsd">
 
 	<bean name="b1" type="org.apache.camel.xml.in.ModelParserTest.MyBean" factoryMethod="createMyBean">

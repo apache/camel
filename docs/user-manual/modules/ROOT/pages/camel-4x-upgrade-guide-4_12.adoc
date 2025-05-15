@@ -119,6 +119,16 @@ For example
 Then Camel will now use `/cheese` as the base-path for the Rest DSL API endpoints
 from the `petstore-v3.json` openapi specification file.
 
+When using code-first with Rest DSL and are specifying security constraints, then `bearer` in YAML and XML DSL has been renamed to `bearerToken`
+to be aligned with Java DSL.
+
+==== XML-IO DSL
+
+The `camel-xml-io` now has its own XSD Schema using the namespace: `http://camel.apache.org/schema/xml-io`.
+This means that when using `camel-xml-io` to dump route models, then they now use `http://camel.apache.org/schema/xml-io` instead of `http://camel.apache.org/schema/spring`.
+
+It is also recommended to migrate your XML-IO XML files to use the new namespace instead of the legacy Spring XSD.
+
 === camel-as2
 
 Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and

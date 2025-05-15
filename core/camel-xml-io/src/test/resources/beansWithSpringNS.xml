@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<beans xmlns="http://camel.apache.org/schema/spring" xmlns:s="http://www.springframework.org/schema/beans">
+<beans xmlns="http://camel.apache.org/schema/xml-io" xmlns:s="http://www.springframework.org/schema/beans">
 
 	<s:bean id="s1" class="java.lang.String">
 		<s:description>Real Spring Bean</s:description>

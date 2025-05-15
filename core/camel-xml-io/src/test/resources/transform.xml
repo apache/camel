@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<routes id="camel" xmlns="http://camel.apache.org/schema/spring">
+<routes id="camel" xmlns="http://camel.apache.org/schema/xml-io">
   <route>
     <from uri="direct:start"/>
     <transform>

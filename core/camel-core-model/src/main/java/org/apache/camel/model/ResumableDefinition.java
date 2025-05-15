@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.resume.ResumeStrategyConfiguration;
 import org.apache.camel.resume.ResumeStrategyConfigurationBuilder;
@@ -169,7 +170,22 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
      */
     public ResumableDefinition intermittent(boolean intermittent) {
         setIntermittent(Boolean.toString(intermittent));
+        return this;
+    }
 
+    /**
+     * The logging level to use in case of failures.
+     */
+    public ResumableDefinition loggingLevel(String loggingLevel) {
+        setLoggingLevel(loggingLevel);
+        return this;
+    }
+
+    /**
+     * The logging level to use in case of failures.
+     */
+    public ResumableDefinition loggingLevel(LoggingLevel loggingLevel) {
+        setLoggingLevel(loggingLevel.name());
         return this;
     }
 }

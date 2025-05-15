@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<routeTemplates id="camel" xmlns="http://camel.apache.org/schema/spring">
+<routeTemplates id="camel" xmlns="http://camel.apache.org/schema/xml-io">
     <routeTemplate id="myTemplate">
         <templateParameter name="foo"/>
         <templateParameter name="bar"/>
