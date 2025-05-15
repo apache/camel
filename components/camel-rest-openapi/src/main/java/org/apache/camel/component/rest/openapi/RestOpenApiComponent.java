@@ -84,7 +84,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
                             + " port in the URI syntax (i.e. `https://api.example.com:8080`). Can be overridden in endpoint"
                             + " configuration.",
-              defaultValue = DEFAULT_SPECIFICATION_URI, label = "common")
+              label = "common")
     private String specificationUri;
     @Metadata(description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in OpenApi specification.",
               label = "common")
