@@ -25,7 +25,7 @@ import org.apache.camel.xml.io.XmlPullParserException;
 /**
  * XML {@link ModelParser} that supports loading:
  * <ul>
- * <li>Standard Camel XML DSL</li>
+ * <li>Standard Camel XML DSL (xml-io)</li>
  * <li>Classic Spring XML <beans> with embedded <camelContext> (limited parsing, to discover <routes> inside
  * <camelContext>)</li>
  * <li>Legacy OSGi <blueprint> with embedded <camelContext> (limited parsing, to discover <routes> inside
@@ -34,7 +34,7 @@ import org.apache.camel.xml.io.XmlPullParserException;
  */
 public class XmlModelParser extends ModelParser {
 
-    private static final String SPRING_NS = "http://camel.apache.org/schema/xml-io";
+    private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
 
     public XmlModelParser(Resource input, String namespace) throws IOException, XmlPullParserException {
