@@ -31,7 +31,7 @@ public final class VersionHelper {
         try {
             // find actual version in JBANG_HOME
             String homeDir = System.getenv("JBANG_HOME");
-            String path = "/";
+            String path = "";
             if (homeDir == null || homeDir.isBlank()) {
                 // fallback to .jbang cache that has a list of latest version
                 path = ".jbang/cache/";

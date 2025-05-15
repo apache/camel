@@ -143,7 +143,7 @@ class ExportSpringBoot extends Export {
             CommandHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
-        org.apache.commons.io.file.PathUtils.copyDirectory(buildDir, Paths.get(exportDir));
+        PathUtils.copyDirectory(buildDir, Paths.get(exportDir));
         PathUtils.deleteDirectory(buildDir);
 
         return 0;
