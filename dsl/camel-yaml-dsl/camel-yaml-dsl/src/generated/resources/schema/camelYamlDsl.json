@@ -16217,30 +16217,46 @@
         "required" : [ "maxOverlap", "maxTokens" ]
       },
       "org.apache.camel.model.transformer.CustomTransformerDefinition" : {
+        "title" : "Custom Transformer",
+        "description" : "To use a custom transformer on a route level.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "className" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Class Name",
+            "description" : "Set a class name of the Transformer"
           },
           "fromType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "ref" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Ref",
+            "description" : "Set a bean reference of the Transformer"
           },
           "scheme" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Scheme",
+            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
           }
         }
       },
       "org.apache.camel.model.transformer.DataFormatTransformerDefinition" : {
+        "title" : "Data Format Transformer",
+        "description" : "Represents a org.apache.camel.processor.transformer.DataFormatTransformer which leverages org.apache.camel.spi.DataFormat to perform transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be specified.",
         "type" : "object",
         "additionalProperties" : false,
         "anyOf" : [ {
@@ -16682,16 +16698,24 @@
         } ],
         "properties" : {
           "fromType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "scheme" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Scheme",
+            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
           },
           "asn1" : { },
           "avro" : { },
@@ -16739,50 +16763,78 @@
         }
       },
       "org.apache.camel.model.transformer.EndpointTransformerDefinition" : {
+        "title" : "Endpoint Transformer",
+        "description" : "To use a Camel endpoint to perform transformation on the route level.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "fromType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "ref" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Ref",
+            "description" : "Set the reference of the Endpoint."
           },
           "scheme" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Scheme",
+            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
           },
           "uri" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Uri",
+            "description" : "Set the URI of the Endpoint."
           }
         }
       },
       "org.apache.camel.model.transformer.LoadTransformerDefinition" : {
+        "title" : "Load Transformer",
+        "description" : "To load custom transformers from classpath scanning to be used for route level transformations.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "defaults" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "title" : "Defaults",
+            "description" : "Enable loading of default transformers."
           },
           "fromType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "packageScan" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Package Scan",
+            "description" : "Set the classpath location to scan for annotated transformers."
           },
           "scheme" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Scheme",
+            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
           }
         }
       },
@@ -16807,36 +16859,54 @@
         }
       },
       "org.apache.camel.model.validator.CustomValidatorDefinition" : {
+        "title" : "Custom Validator",
+        "description" : "To use a custom validator on the route level.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "className" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Class Name",
+            "description" : "Set a class name of the Validator"
           },
           "ref" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Ref",
+            "description" : "Set a bean reference of the Validator"
           },
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Type",
+            "description" : "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'."
           }
         }
       },
       "org.apache.camel.model.validator.EndpointValidatorDefinition" : {
+        "title" : "Endpoint Validator",
+        "description" : "To use a Camel endpoint to perform validation on the route level.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "ref" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Ref",
+            "description" : "Set the reference of the Endpoint."
           },
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Type",
+            "description" : "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'."
           },
           "uri" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Uri",
+            "description" : "Set the URI of the Endpoint."
           }
         }
       },
       "org.apache.camel.model.validator.PredicateValidatorDefinition" : {
+        "title" : "Predicate Validator",
+        "description" : "To use a predicate to perform validation on the route level.",
         "type" : "object",
         "additionalProperties" : false,
         "anyOf" : [ {
@@ -16845,6 +16915,7 @@
             "required" : [ "expression" ],
             "properties" : {
               "expression" : {
+                "title" : "Expression",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
@@ -16858,7 +16929,9 @@
         } ],
         "properties" : {
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Type",
+            "description" : "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'."
           },
           "expression" : { }
         }

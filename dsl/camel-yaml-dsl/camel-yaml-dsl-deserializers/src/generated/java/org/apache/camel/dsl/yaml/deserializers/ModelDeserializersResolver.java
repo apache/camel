@@ -107,9 +107,15 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "custom-service-filter": return new ModelDeserializers.CustomServiceCallServiceFilterConfigurationDeserializer();
             case "customServiceFilter": return new ModelDeserializers.CustomServiceCallServiceFilterConfigurationDeserializer();
             case "org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration": return new ModelDeserializers.CustomServiceCallServiceFilterConfigurationDeserializer();
+            case "custom-transformer": return new ModelDeserializers.CustomTransformerDefinitionDeserializer();
+            case "customTransformer": return new ModelDeserializers.CustomTransformerDefinitionDeserializer();
             case "org.apache.camel.model.transformer.CustomTransformerDefinition": return new ModelDeserializers.CustomTransformerDefinitionDeserializer();
+            case "custom-validator": return new ModelDeserializers.CustomValidatorDefinitionDeserializer();
+            case "customValidator": return new ModelDeserializers.CustomValidatorDefinitionDeserializer();
             case "org.apache.camel.model.validator.CustomValidatorDefinition": return new ModelDeserializers.CustomValidatorDefinitionDeserializer();
             case "org.apache.camel.model.DataFormatDefinition": return new ModelDeserializers.DataFormatDefinitionDeserializer();
+            case "data-format-transformer": return new ModelDeserializers.DataFormatTransformerDefinitionDeserializer();
+            case "dataFormatTransformer": return new ModelDeserializers.DataFormatTransformerDefinitionDeserializer();
             case "org.apache.camel.model.transformer.DataFormatTransformerDefinition": return new ModelDeserializers.DataFormatTransformerDefinitionDeserializer();
             case "data-formats": return new ModelDeserializers.DataFormatsDefinitionDeserializer();
             case "dataFormats": return new ModelDeserializers.DataFormatsDefinitionDeserializer();
@@ -137,7 +143,11 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "dynamic-router": return new ModelDeserializers.DynamicRouterDefinitionDeserializer();
             case "dynamicRouter": return new ModelDeserializers.DynamicRouterDefinitionDeserializer();
             case "org.apache.camel.model.DynamicRouterDefinition": return new ModelDeserializers.DynamicRouterDefinitionDeserializer();
+            case "endpoint-transformer": return new ModelDeserializers.EndpointTransformerDefinitionDeserializer();
+            case "endpointTransformer": return new ModelDeserializers.EndpointTransformerDefinitionDeserializer();
             case "org.apache.camel.model.transformer.EndpointTransformerDefinition": return new ModelDeserializers.EndpointTransformerDefinitionDeserializer();
+            case "endpoint-validator": return new ModelDeserializers.EndpointValidatorDefinitionDeserializer();
+            case "endpointValidator": return new ModelDeserializers.EndpointValidatorDefinitionDeserializer();
             case "org.apache.camel.model.validator.EndpointValidatorDefinition": return new ModelDeserializers.EndpointValidatorDefinitionDeserializer();
             case "enrich": return new ModelDeserializers.EnrichDefinitionDeserializer();
             case "org.apache.camel.model.EnrichDefinition": return new ModelDeserializers.EnrichDefinitionDeserializer();
@@ -259,6 +269,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "load-balance": return new ModelDeserializers.LoadBalanceDefinitionDeserializer();
             case "loadBalance": return new ModelDeserializers.LoadBalanceDefinitionDeserializer();
             case "org.apache.camel.model.LoadBalanceDefinition": return new ModelDeserializers.LoadBalanceDefinitionDeserializer();
+            case "load-transformer": return new ModelDeserializers.LoadTransformerDefinitionDeserializer();
+            case "loadTransformer": return new ModelDeserializers.LoadTransformerDefinitionDeserializer();
             case "org.apache.camel.model.transformer.LoadTransformerDefinition": return new ModelDeserializers.LoadTransformerDefinitionDeserializer();
             case "log": return new ModelDeserializers.LogDefinitionDeserializer();
             case "org.apache.camel.model.LogDefinition": return new ModelDeserializers.LogDefinitionDeserializer();
@@ -340,6 +352,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.PollEnrichDefinition": return new ModelDeserializers.PollEnrichDefinitionDeserializer();
             case "post": return new ModelDeserializers.PostDefinitionDeserializer();
             case "org.apache.camel.model.rest.PostDefinition": return new ModelDeserializers.PostDefinitionDeserializer();
+            case "predicate-validator": return new ModelDeserializers.PredicateValidatorDefinitionDeserializer();
+            case "predicateValidator": return new ModelDeserializers.PredicateValidatorDefinitionDeserializer();
             case "org.apache.camel.model.validator.PredicateValidatorDefinition": return new ModelDeserializers.PredicateValidatorDefinitionDeserializer();
             case "process": return new ModelDeserializers.ProcessDefinitionDeserializer();
             case "org.apache.camel.model.ProcessDefinition": return new ModelDeserializers.ProcessDefinitionDeserializer();

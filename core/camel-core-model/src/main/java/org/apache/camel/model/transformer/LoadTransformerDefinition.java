@@ -19,16 +19,15 @@ package org.apache.camel.model.transformer;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Loads one to many {@link org.apache.camel.spi.Transformer} via {@link org.apache.camel.spi.TransformerLoader}.
- * Supports classpath scan to load transformer implementations configured for instance via annotation configuration.
+ * To load custom transformers from classpath scanning to be used for route level transformations.
  */
 @Metadata(label = "transformation")
-@XmlType(name = "loadTransformer")
+@XmlRootElement(name = "loadTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadTransformerDefinition extends TransformerDefinition {
 

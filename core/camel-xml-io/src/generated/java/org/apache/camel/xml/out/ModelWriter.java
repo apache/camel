@@ -784,8 +784,29 @@ public class ModelWriter extends BaseWriter {
     public void writeLangChain4jWordTokenizerDefinition(LangChain4jWordTokenizerDefinition def) throws IOException {
         doWriteLangChain4jWordTokenizerDefinition("langChain4jWordTokenizer", def);
     }
+    public void writeCustomTransformerDefinition(CustomTransformerDefinition def) throws IOException {
+        doWriteCustomTransformerDefinition("customTransformer", def);
+    }
+    public void writeDataFormatTransformerDefinition(DataFormatTransformerDefinition def) throws IOException {
+        doWriteDataFormatTransformerDefinition("dataFormatTransformer", def);
+    }
+    public void writeEndpointTransformerDefinition(EndpointTransformerDefinition def) throws IOException {
+        doWriteEndpointTransformerDefinition("endpointTransformer", def);
+    }
+    public void writeLoadTransformerDefinition(LoadTransformerDefinition def) throws IOException {
+        doWriteLoadTransformerDefinition("loadTransformer", def);
+    }
     public void writeTransformersDefinition(TransformersDefinition def) throws IOException {
         doWriteTransformersDefinition("transformers", def);
+    }
+    public void writeCustomValidatorDefinition(CustomValidatorDefinition def) throws IOException {
+        doWriteCustomValidatorDefinition("customValidator", def);
+    }
+    public void writeEndpointValidatorDefinition(EndpointValidatorDefinition def) throws IOException {
+        doWriteEndpointValidatorDefinition("endpointValidator", def);
+    }
+    public void writePredicateValidatorDefinition(PredicateValidatorDefinition def) throws IOException {
+        doWritePredicateValidatorDefinition("predicateValidator", def);
     }
     public void writeValidatorsDefinition(ValidatorsDefinition def) throws IOException {
         doWriteValidatorsDefinition("validators", def);

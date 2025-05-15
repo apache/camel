@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "customValidator",
+    "title": "Custom Validator",
+    "description": "To use a custom validator on the route level.",
+    "deprecated": false,
+    "label": "validation",
+    "javaType": "org.apache.camel.model.validator.CustomValidatorDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "ref": { "index": 0, "kind": "attribute", "displayName": "Ref", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Set a bean reference of the Validator" },
+    "className": { "index": 1, "kind": "attribute", "displayName": "Class Name", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Set a class name of the Validator" },
+    "type": { "index": 2, "kind": "attribute", "displayName": "Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'." }
+  }
+}

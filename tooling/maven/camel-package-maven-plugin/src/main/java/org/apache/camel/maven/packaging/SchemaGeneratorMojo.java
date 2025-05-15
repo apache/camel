@@ -263,8 +263,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         EipModel eipModel = findEipModelProperties(classElement, name);
         findEipModelExchangeProperties(classElement, name, eipModel);
 
-        // get endpoint information which is divided into paths and options
-        // (though there should really only be one path)
         Set<EipOptionModel> eipOptions = new TreeSet<>(new EipOptionComparator(eipModel));
         findClassProperties(eipOptions, classElement, classElement, "", name);
 
