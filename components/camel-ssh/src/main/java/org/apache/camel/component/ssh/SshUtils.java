@@ -130,9 +130,6 @@ public class SshUtils {
         }
         Set<BuiltinDHFactories> builtin = BuiltinDHFactories.VALUES;
         NavigableSet<DHFactory> dhFactories = BuiltinDHFactories.getRegisteredExtensions();
-        Set<DHFactory> allDHFactories = new HashSet<>();
-        allDHFactories.addAll(builtin);
-        allDHFactories.addAll(dhFactories);
         List<KeyExchangeFactory> avail = NamedFactory.setUpTransformedFactories(false, builtin, ClientBuilder.DH2KEX);
         factoryManager.setKeyExchangeFactories(filter(avail, names.split(",")));
     }
