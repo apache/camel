@@ -331,8 +331,23 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
             // "not empty"+quote
             if (s.endsWith(quote)) {
-                cutEnd = true;
-                canClose = true;
+                boolean escaped = false;
+                if (quote.equals("\"")) {
+                    for (int i = s.length() - 2; i > 0; i--) {
+                        char ch = s.charAt(i);
+                        if (ch == '"' && canStart) {
+                            escaped = !escaped;
+                        } else if (ch == '\\') {
+                            continue;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                if (!escaped) {
+                    cutEnd = true;
+                    canClose = true;
+                }
             }
 
             // optimize to only substring once
