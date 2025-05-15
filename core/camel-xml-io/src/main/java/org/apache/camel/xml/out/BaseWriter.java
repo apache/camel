@@ -33,7 +33,7 @@ import org.apache.camel.xml.io.XMLWriter;
 
 public class BaseWriter {
 
-    public static final String DEFAULT_NAMESPACE = "http://camel.apache.org/schema/spring";
+    public static final String DEFAULT_NAMESPACE = "http://camel.apache.org/schema/xml-io";
 
     protected final XMLWriter writer;
     protected final Deque<String> namespacesStack = new LinkedList<>();

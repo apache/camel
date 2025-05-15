@@ -263,8 +263,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         EipModel eipModel = findEipModelProperties(classElement, name);
         findEipModelExchangeProperties(classElement, name, eipModel);
 
-        // get endpoint information which is divided into paths and options
-        // (though there should really only be one path)
         Set<EipOptionModel> eipOptions = new TreeSet<>(new EipOptionComparator(eipModel));
         findClassProperties(eipOptions, classElement, classElement, "", name);
 
@@ -1141,8 +1139,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     deprecationNote, false, null, oneOfTypes, false, false);
             eipOptions.add(ep);
         }
-
-        System.out.println("Field: " + fieldName + " on " + originalClassType);
 
         if ("params".equals(fieldName) || "responseMsgs".equals(fieldName) || "security".equals(fieldName)) {
             String name;

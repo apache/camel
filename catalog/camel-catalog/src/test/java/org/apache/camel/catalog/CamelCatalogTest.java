@@ -202,7 +202,10 @@ public class CamelCatalogTest {
     @Test
     public void testXmlSchema() {
         String schema = catalog.springSchemaAsXml();
-        assertNotNull(schema);
+        assertNotNull(schema, "Spring XML Schema");
+
+        schema = catalog.xmlIoSchemaAsXml();
+        assertNotNull(schema, "XML-IO XML Schema");
     }
 
     @Test

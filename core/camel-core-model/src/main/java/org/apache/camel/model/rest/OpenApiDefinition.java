@@ -38,7 +38,7 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
 
     @XmlAttribute(required = true)
     private String specification;
-    @Metadata
+    @XmlAttribute
     private String apiContextPath;
     @XmlAttribute
     private String routeId;
@@ -78,6 +78,10 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
         return apiContextPath;
     }
 
+    /**
+     * Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to
+     * obtain the specification from the running Camel application.
+     */
     public void setApiContextPath(String apiContextPath) {
         this.apiContextPath = apiContextPath;
     }
@@ -144,8 +148,8 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
      * Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to
      * obtain the specification from the running Camel application.
      */
-    public OpenApiDefinition apiContextPath(String apiDoc) {
-        this.apiContextPath = apiDoc;
+    public OpenApiDefinition apiContextPath(String apiContextPath) {
+        this.apiContextPath = apiContextPath;
         return this;
     }
 

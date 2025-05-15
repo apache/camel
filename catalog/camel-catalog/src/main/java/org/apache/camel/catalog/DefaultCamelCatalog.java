@@ -463,6 +463,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public String xmlIoSchemaAsXml() {
+        return cache(SCHEMAS_XML + "/camel-xml-io.xsd", this::loadResource);
+    }
+
+    @Override
     public String mainJsonSchema() {
         return cache(MAIN_DIR + "/camel-main-configuration-metadata.json", this::loadResource);
     }

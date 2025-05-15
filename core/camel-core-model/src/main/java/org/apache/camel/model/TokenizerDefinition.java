@@ -24,9 +24,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition;
-import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -40,7 +40,7 @@ public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition>
 
     @XmlElements({
             @XmlElement(name = "langChain4jCharacterTokenizer", type = LangChain4jCharacterTokenizerDefinition.class),
-            @XmlElement(name = "langChain4jLineTokenizer", type = LangChain4jTokenizerDefinition.class),
+            @XmlElement(name = "langChain4jLineTokenizer", type = LangChain4jLineTokenizerDefinition.class),
             @XmlElement(name = "langChain4jParagraphTokenizer", type = LangChain4jParagraphTokenizerDefinition.class),
             @XmlElement(name = "langChain4jSentenceTokenizer", type = LangChain4jSentenceTokenizerDefinition.class),
             @XmlElement(name = "langChain4jWordTokenizer", type = LangChain4jWordTokenizerDefinition.class),

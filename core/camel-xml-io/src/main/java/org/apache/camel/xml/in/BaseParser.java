@@ -53,7 +53,8 @@ import org.apache.camel.xml.io.XmlPullParserLocationException;
 
 public class BaseParser {
 
-    public static final String DEFAULT_NAMESPACE = "http://camel.apache.org/schema/spring";
+    public static final String DEFAULT_NAMESPACE = "http://camel.apache.org/schema/xml-io";
+    public static final String SPRING_NAMESPACE = "http://camel.apache.org/schema/spring";
 
     protected final MXParser parser;
     protected String namespace;
@@ -388,7 +389,8 @@ public class BaseParser {
             throw new XmlPullParserException("Expected starting tag");
         }
 
-        if (!Objects.equals(name, parser.getName()) || !matchNamespace(namespace, parser.getNamespace(), null, false)) {
+        if (!Objects.equals(name, parser.getName())
+                || !matchNamespace(namespace, parser.getNamespace(), secondaryNamespaces, false)) {
             return false;
         }
 
@@ -402,7 +404,7 @@ public class BaseParser {
 
         String pn = parser.getName();
         boolean match = Objects.equals(name, pn) || Objects.equals(name2, pn);
-        if (!match || !matchNamespace(namespace, parser.getNamespace(), null, false)) {
+        if (!match || !matchNamespace(namespace, parser.getNamespace(), secondaryNamespaces, false)) {
             return ""; // empty tag
         }
 
@@ -416,7 +418,7 @@ public class BaseParser {
 
         String pn = parser.getName();
         boolean match = Objects.equals(name, pn) || Objects.equals(name2, pn) || Objects.equals(name3, pn);
-        if (!match || !matchNamespace(namespace, parser.getNamespace(), null, false)) {
+        if (!match || !matchNamespace(namespace, parser.getNamespace(), secondaryNamespaces, false)) {
             return ""; // empty tag
         }
 
@@ -536,6 +538,13 @@ public class BaseParser {
         if (DEFAULT_NAMESPACE.equals(namespace) && ns.isEmpty()) {
             return true;
         }
+        // xml-io should be backwards compatible with spring namespace
+        if (DEFAULT_NAMESPACE.equals(ns) && namespace.equals(SPRING_NAMESPACE)) {
+            return true;
+        }
+        if (SPRING_NAMESPACE.equals(ns) && namespace.equals(DEFAULT_NAMESPACE)) {
+            return true;
+        }
         if (secondaryNamespaces != null) {
             for (String second : secondaryNamespaces) {
                 if (Objects.equals(ns, second)) {
@@ -543,6 +552,7 @@ public class BaseParser {
                 }
             }
         }
+
         return false;
     }
 

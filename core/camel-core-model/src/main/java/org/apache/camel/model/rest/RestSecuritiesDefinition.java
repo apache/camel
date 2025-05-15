@@ -42,7 +42,7 @@ public class RestSecuritiesDefinition {
     @XmlElements({
             @XmlElement(name = "apiKey", type = ApiKeyDefinition.class),
             @XmlElement(name = "basicAuth", type = BasicAuthDefinition.class),
-            @XmlElement(name = "bearer", type = BearerTokenDefinition.class),
+            @XmlElement(name = "bearerToken", type = BearerTokenDefinition.class),
             @XmlElement(name = "oauth2", type = OAuth2Definition.class),
             @XmlElement(name = "openIdConnect", type = OpenIdConnectDefinition.class),
             @XmlElement(name = "mutualTLS", type = MutualTLSDefinition.class) })

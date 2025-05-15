@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<templatedRoutes xmlns="http://camel.apache.org/schema/spring">
+<templatedRoutes xmlns="http://camel.apache.org/schema/xml-io">
     <templatedRoute routeTemplateRef="myTemplate" routeId="my-route">
         <parameter name="foo" value="fooVal"/>
         <parameter name="bar" value="barVal"/>
