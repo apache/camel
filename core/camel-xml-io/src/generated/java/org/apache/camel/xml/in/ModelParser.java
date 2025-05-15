@@ -1278,7 +1278,7 @@ public class ModelParser extends BaseParser {
     protected TokenizerDefinition doParseTokenizerDefinition() throws IOException, XmlPullParserException {
         return doParse(new TokenizerDefinition(), processorDefinitionAttributeHandler(), (def, key) -> switch (key) {
                 case "langChain4jCharacterTokenizer": def.setTokenizerImplementation(doParseLangChain4jCharacterTokenizerDefinition()); yield true;
-                case "langChain4jLineTokenizer": def.setTokenizerImplementation(doParseLangChain4jTokenizerDefinition()); yield true;
+                case "langChain4jLineTokenizer": def.setTokenizerImplementation(doParseLangChain4jLineTokenizerDefinition()); yield true;
                 case "langChain4jParagraphTokenizer": def.setTokenizerImplementation(doParseLangChain4jParagraphTokenizerDefinition()); yield true;
                 case "langChain4jSentenceTokenizer": def.setTokenizerImplementation(doParseLangChain4jSentenceTokenizerDefinition()); yield true;
                 case "langChain4jWordTokenizer": def.setTokenizerImplementation(doParseLangChain4jWordTokenizerDefinition()); yield true;

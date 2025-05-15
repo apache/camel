@@ -7483,7 +7483,7 @@
             "required" : [ "langChain4jLineTokenizer" ],
             "properties" : {
               "langChain4jLineTokenizer" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition"
+                "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition"
               }
             }
           }, {

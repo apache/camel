@@ -1896,7 +1896,7 @@ public class ModelWriter extends BaseWriter {
         doWriteElement(null, def.getTokenizerImplementation(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "LangChain4jCharacterTokenizerDefinition" -> doWriteLangChain4jCharacterTokenizerDefinition("langChain4jCharacterTokenizer", (LangChain4jCharacterTokenizerDefinition) v);
-                case "LangChain4jTokenizerDefinition" -> doWriteLangChain4jTokenizerDefinition("langChain4jLineTokenizer", (LangChain4jTokenizerDefinition) v);
+                case "LangChain4jLineTokenizerDefinition" -> doWriteLangChain4jLineTokenizerDefinition("langChain4jLineTokenizer", (LangChain4jLineTokenizerDefinition) v);
                 case "LangChain4jParagraphTokenizerDefinition" -> doWriteLangChain4jParagraphTokenizerDefinition("langChain4jParagraphTokenizer", (LangChain4jParagraphTokenizerDefinition) v);
                 case "LangChain4jSentenceTokenizerDefinition" -> doWriteLangChain4jSentenceTokenizerDefinition("langChain4jSentenceTokenizer", (LangChain4jSentenceTokenizerDefinition) v);
                 case "LangChain4jWordTokenizerDefinition" -> doWriteLangChain4jWordTokenizerDefinition("langChain4jWordTokenizer", (LangChain4jWordTokenizerDefinition) v);

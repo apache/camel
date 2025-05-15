@@ -14395,7 +14395,7 @@ Whether to auto startup components when toD is starting up. Default value: true
         <xs:sequence>
           <xs:choice minOccurs="0">
             <xs:element ref="tns:langChain4jCharacterTokenizer"/>
-            <xs:element name="langChain4jLineTokenizer" type="tns:langChain4jTokenizerImplementation"/>
+            <xs:element ref="tns:langChain4jLineTokenizer"/>
             <xs:element ref="tns:langChain4jParagraphTokenizer"/>
             <xs:element ref="tns:langChain4jSentenceTokenizer"/>
             <xs:element ref="tns:langChain4jWordTokenizer"/>
@@ -14448,6 +14448,13 @@ Sets the maximum number of tokens that can overlap in each segment.
   <xs:complexType name="tokenizerImplementation">
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="langChain4JLineTokenizerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:langChain4jTokenizerImplementation">
         <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
@@ -17679,13 +17686,6 @@ Sets the component name that this definition will apply to.
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:rest"/>
         </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="langChain4JLineTokenizerDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:langChain4jTokenizerImplementation">
-        <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
