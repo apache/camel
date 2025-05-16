@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 import javax.net.ssl.SSLContext;
@@ -36,11 +37,17 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
+import org.apache.hc.core5.reactor.ssl.TlsDetails;
+import org.apache.hc.core5.util.Timeout;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
@@ -472,18 +479,32 @@ class OpensearchProducer extends DefaultAsyncProducer {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
-                .setConnectTimeout(configuration.getConnectionTimeout()).setSocketTimeout(configuration.getSocketTimeout()));
+                .setConnectTimeout(Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout()))));
         if (ObjectHelper.isNotEmpty(configuration.getUser()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
-            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword()));
+            final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(new AuthScope(configuration.getHostAddressesList().get(0)),
+                    new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword().toCharArray()));
+
             builder.setHttpClientConfigCallback(httpClientBuilder -> {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
                 if (ObjectHelper.isNotEmpty(configuration.getCertificatePath())) {
-                    httpClientBuilder.setSSLContext(createSslContextFromCa());
-                }
-                if (ObjectHelper.isNotEmpty(configuration.getHostnameVerifier())) {
-                    httpClientBuilder.setSSLHostnameVerifier(configuration.getHostnameVerifier());
+                    final TlsStrategy tlsStrategy = ClientTlsStrategyBuilder.create()
+                            .setSslContext(createSslContextFromCa())
+                            .setHostnameVerifier(configuration.getHostnameVerifier())
+                            .setTlsDetailsFactory(
+                                    sslEngine -> new TlsDetails(sslEngine.getSession(), sslEngine.getApplicationProtocol()))
+                            .build();
+
+                    final PoolingAsyncClientConnectionManager connectionManager
+                            = PoolingAsyncClientConnectionManagerBuilder.create()
+                                    .setTlsStrategy(tlsStrategy)
+                                    .setDefaultConnectionConfig(ConnectionConfig.custom()
+                                            .setConnectTimeout(
+                                                    Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout())))
+                                            .setSocketTimeout(Timeout.of(Duration.ofMillis(configuration.getSocketTimeout())))
+                                            .build())
+                                    .build();
+                    httpClientBuilder.setConnectionManager(connectionManager);
                 }
                 return httpClientBuilder;
             });

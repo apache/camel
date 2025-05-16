@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.opensearch.OpensearchConstants;
 import org.apache.camel.component.opensearch.OpensearchOperation;
-import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.Request;
 import org.opensearch.client.opensearch.core.GetRequest;
@@ -66,7 +66,7 @@ class OpensearchClusterIndexIT extends OpensearchTestSupport {
         assertTrue(client.get(new GetRequest.Builder().index("facebook").id("4").build(), ObjectNode.class).found(),
                 "Index id 4 must exists");
 
-        final BasicResponseHandler responseHandler = new BasicResponseHandler();
+        final BasicHttpClientResponseHandler responseHandler = new BasicHttpClientResponseHandler();
         Request request = new Request("GET", "/_cluster/health?pretty");
         String body = responseHandler.handleEntity(restClient.performRequest(request).getEntity());
         assertStringContains(body, "\"number_of_data_nodes\" : 1");
