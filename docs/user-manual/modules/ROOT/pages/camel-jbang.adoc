@@ -1614,6 +1614,18 @@ camel get
  42240  cheese  4.9.0  JBang v0.118.0  dev       1/1   Running       0  1m8s    2/2   1.01     65       1   0/0       0/0     0     -1     1s/1s/-
 ----
 
+===== Total in Camel 4.12 onwards
+
+And yet again it was changed in *Camel 4.12* to be a single number by default.
+You can use `--remote` to break down the numbers into remote/total pair.
+
+[source,bash]
+----
+camel get
+  PID   NAME    CAMEL  PLATFORM        PROFILE  READY  STATUS   RELOAD  AGE   ROUTE  MSG/S  TOTAL  FAIL  INFLIGHT  LAST  DELTA  SINCE-LAST
+ 42240  cheese  4.12.0  JBang v0.126.0  dev      1/1   Running       0  1m8s    2/2   1.01     65     0         0     0     -1     1s/1s/-
+----
+
 ==== Route status
 
 You can also see the status of every route, from all the local Camel integrations with `camel get route`:

@@ -52,9 +52,9 @@ public class CamelRouteTop extends CamelRouteStatus {
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                 new Column().header("LOAD").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
                         .with(this::getLoad),
-                new Column().header("TOTAL").with(r -> r.total),
-                new Column().header("FAIL").with(r -> r.failed),
-                new Column().header("INFLIGHT").with(r -> r.inflight),
+                new Column().header("TOTAL").with(this::getTotal),
+                new Column().header("FAIL").with(this::getFailed),
+                new Column().header("INFLIGHT").with(this::getInflight),
                 new Column().header("MEAN").with(r -> r.mean),
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),

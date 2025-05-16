@@ -60,6 +60,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                         description = "Sort by pid or name", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--remote" },
+                        description = "Break down counters into remote/total pairs")
+    boolean remote;
+
     @CommandLine.Option(names = { "--source" },
                         description = "Prefer to display source filename/code instead of IDs")
     boolean source;
@@ -112,8 +116,20 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                             Map<String, ?> stats = o.getMap("statistics");
                             if (stats != null) {
                                 row.total = stats.get("exchangesTotal").toString();
+                                Object num = stats.get("remoteExchangesTotal");
+                                if (num != null) {
+                                    row.totalRemote = num.toString();
+                                }
                                 row.inflight = stats.get("exchangesInflight").toString();
+                                num = stats.get("remoteExchangesInflight");
+                                if (num != null) {
+                                    row.inflightRemote = num.toString();
+                                }
                                 row.failed = stats.get("exchangesFailed").toString();
+                                num = stats.get("remoteExchangesFailed");
+                                if (num != null) {
+                                    row.failedRemote = num.toString();
+                                }
                                 row.mean = stats.get("meanProcessingTime").toString();
                                 if ("-1".equals(row.mean)) {
                                     row.mean = null;
@@ -247,9 +263,9 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT).minWidth(25)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getProcessor),
-                new Column().header("TOTAL").with(r -> r.total),
-                new Column().header("FAIL").with(r -> r.failed),
-                new Column().header("INFLIGHT").with(r -> r.inflight),
+                new Column().header("TOTAL").with(this::getTotal),
+                new Column().header("FAIL").with(this::getFailed),
+                new Column().header("INFLIGHT").with(this::getInflight),
                 new Column().header("MEAN").with(r -> r.mean),
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),
@@ -293,6 +309,27 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
             }
         }
         return r.delta;
+    }
+
+    protected String getTotal(Row r) {
+        if (remote && r.totalRemote != null) {
+            return r.totalRemote + "/" + r.total;
+        }
+        return r.total;
+    }
+
+    protected String getFailed(Row r) {
+        if (remote && r.failedRemote != null) {
+            return r.failedRemote + "/" + r.failed;
+        }
+        return r.failed;
+    }
+
+    protected String getInflight(Row r) {
+        if (remote && r.inflightRemote != null) {
+            return r.inflightRemote + "/" + r.inflight;
+        }
+        return r.inflight;
     }
 
     protected String getName(Row r) {
@@ -362,8 +399,11 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         String source;
         String state;
         String total;
+        String totalRemote;
         String failed;
+        String failedRemote;
         String inflight;
+        String inflightRemote;
         String mean;
         String max;
         String min;
