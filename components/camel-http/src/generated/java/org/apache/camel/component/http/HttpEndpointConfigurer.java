@@ -23,6 +23,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HttpEndpoint target = (HttpEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authbearertoken":
+        case "authBearerToken": target.setAuthBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "authdomain":
         case "authDomain": target.setAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "authhost":
@@ -152,6 +154,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authbearertoken":
+        case "authBearerToken": return java.lang.String.class;
         case "authdomain":
         case "authDomain": return java.lang.String.class;
         case "authhost":
@@ -282,6 +286,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HttpEndpoint target = (HttpEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authbearertoken":
+        case "authBearerToken": return target.getAuthBearerToken();
         case "authdomain":
         case "authDomain": return target.getAuthDomain();
         case "authhost":

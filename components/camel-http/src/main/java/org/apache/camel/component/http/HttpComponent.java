@@ -288,14 +288,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new BasicAuthenticationHttpClientConfigurer(
-                            authUsername, authPassword, authDomain, authHost, credentialsProvider));
+                            authUsername, authPassword, authDomain, authHost, null, credentialsProvider));
         } else if (this.httpConfiguration != null) {
-            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
+            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())
+                    || "bearer".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
                 return CompositeHttpConfigurer.combineConfigurers(configurer,
                         new BasicAuthenticationHttpClientConfigurer(
                                 this.httpConfiguration.getAuthUsername(),
                                 this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(),
-                                this.httpConfiguration.getAuthHost(), credentialsProvider));
+                                this.httpConfiguration.getAuthHost(), this.httpConfiguration.getAuthBearerToken(),
+                                credentialsProvider));
             }
         }
 

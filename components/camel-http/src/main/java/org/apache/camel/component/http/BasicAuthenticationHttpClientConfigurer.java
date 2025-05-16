@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.hc.client5.http.auth.BearerToken;
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.NTCredentials;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
@@ -26,14 +27,16 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
     private final char[] password;
     private final String domain;
     private final String host;
+    private final String bearerToken;
     private final HttpCredentialsHelper credentialsHelper;
 
-    public BasicAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host,
+    public BasicAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host, String bearerToken,
                                                    HttpCredentialsHelper credentialsHelper) {
         this.username = user;
         this.password = pwd == null ? new char[0] : pwd.toCharArray();
         this.domain = domain;
         this.host = host;
+        this.bearerToken = bearerToken;
         this.credentialsHelper = credentialsHelper;
     }
 
@@ -42,6 +45,8 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
         Credentials defaultcreds;
         if (domain != null) {
             defaultcreds = new NTCredentials(username, password, host, domain);
+        } else if (bearerToken != null) {
+            defaultcreds = new BearerToken(bearerToken);
         } else {
             defaultcreds = new UsernamePasswordCredentials(username, password);
         }
