@@ -333,15 +333,19 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             if (s.endsWith(quote)) {
                 boolean escaped = false;
                 if (quote.equals("\"")) {
-                    for (int i = s.length() - 2; i > 0; i--) {
+                    int i;
+                    for (i = s.length() - 2; i > 0; i--) {
                         char ch = s.charAt(i);
-                        if (ch == '"' && canStart) {
+                        if (ch == '"' && (canStart || inProgress)) {
                             escaped = !escaped;
                         } else if (ch == '\\') {
                             continue;
                         } else {
                             break;
                         }
+                    }
+                    if (i == 0 && s.charAt(i) == '"' && inProgress) {
+                        escaped = !escaped;
                     }
                 }
                 if (!escaped) {
