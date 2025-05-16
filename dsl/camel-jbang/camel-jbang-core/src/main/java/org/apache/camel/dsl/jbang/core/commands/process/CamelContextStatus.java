@@ -49,6 +49,10 @@ public class CamelContextStatus extends ProcessWatchCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--remote" },
+                        description = "Break down counters into remote/total pairs")
+    boolean remote;
+
     public CamelContextStatus(CamelJBangMain main) {
         super(main);
     }
@@ -178,7 +182,6 @@ public class CamelContextStatus extends ProcessWatchCommand {
                     new Column().header("ROUTE").with(this::getRoutes),
                     new Column().header("MSG/S").with(this::getThroughput),
                     new Column().header("TOTAL").with(this::getTotal),
-                    new Column().header("REMOTE").with(this::getTotalRemote),
                     new Column().header("FAIL").with(this::getFailed),
                     new Column().header("INFLIGHT").with(this::getInflight),
                     new Column().header("LAST").with(r -> r.last),
@@ -247,25 +250,21 @@ public class CamelContextStatus extends ProcessWatchCommand {
     }
 
     private String getTotal(Row r) {
+        if (remote && r.totalRemote != null) {
+            return r.totalRemote + "/" + r.total;
+        }
         return r.total;
     }
 
-    private String getTotalRemote(Row r) {
-        if (r.totalRemote != null) {
-            return r.totalRemote;
-        }
-        return "";
-    }
-
     private String getFailed(Row r) {
-        if (r.failedRemote != null) {
+        if (remote && r.failedRemote != null) {
             return r.failedRemote + "/" + r.failed;
         }
         return r.failed;
     }
 
     private String getInflight(Row r) {
-        if (r.inflightRemote != null) {
+        if (remote && r.inflightRemote != null) {
             return r.inflightRemote + "/" + r.inflight;
         }
         return r.inflight;
