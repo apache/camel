@@ -144,14 +144,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
               description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
     private HttpMethods httpMethod;
 
-    @UriParam(label = "producer,security",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM. (NTLM is deprecated)")
+    @UriParam(label = "producer,security", enums = "Basic,Bearer,Digest,NTLM",
+              description = "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, Digest or NTLM. (NTLM is deprecated)")
     private String authMethod;
-    @UriParam(label = "producer,security", enums = "Basic,Digest,NTLM",
-              description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM. (NTLM is deprecated)")
+    @UriParam(label = "producer,security", enums = "Basic,Bearer,Digest,NTLM",
+              description = "Which authentication method to prioritize to use, either as Basic, Bearer, Digest or NTLM. (NTLM is deprecated)")
     private String authMethodPriority;
     @UriParam(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
+    @UriParam(label = "producer,security", secret = true, description = "Authentication bearer token")
+    private String authBearerToken;
     @UriParam(label = "producer,security", secret = true, description = "Authentication password")
     private String authPassword;
     @UriParam(label = "producer,security", secret = true, description = "OAuth2 client id")
@@ -683,6 +685,17 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
      */
     public void setAuthPassword(String authPassword) {
         this.authPassword = authPassword;
+    }
+
+    public String getAuthBearerToken() {
+        return authBearerToken;
+    }
+
+    /**
+     * Authentication bearer token
+     */
+    public void setAuthBearerToken(String authBearerToken) {
+        this.authBearerToken = authBearerToken;
     }
 
     public String getAuthDomain() {

@@ -568,6 +568,20 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Authentication bearer token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authBearerToken the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder authBearerToken(String authBearerToken) {
+            doSetProperty("authBearerToken", authBearerToken);
+            return this;
+        }
+        /**
          * Authentication domain to use with NTML.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -631,7 +645,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Authentication methods allowed to use as a comma separated list of
-         * values Basic, Digest or NTLM. (NTLM is deprecated).
+         * values Basic, Bearer, Digest or NTLM. (NTLM is deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -646,7 +660,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Which authentication method to prioritize to use, either as Basic,
-         * Digest or NTLM. (NTLM is deprecated).
+         * Bearer, Digest or NTLM. (NTLM is deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

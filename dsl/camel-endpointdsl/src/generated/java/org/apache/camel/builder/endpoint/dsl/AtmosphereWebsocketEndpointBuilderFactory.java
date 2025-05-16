@@ -1123,6 +1123,20 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
+        /**
+         * Authentication bearer token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authBearerToken the value to set
+         * @return the dsl builder
+         */
+        default AtmosphereWebsocketEndpointProducerBuilder authBearerToken(String authBearerToken) {
+            doSetProperty("authBearerToken", authBearerToken);
+            return this;
+        }
     }
 
     /**
