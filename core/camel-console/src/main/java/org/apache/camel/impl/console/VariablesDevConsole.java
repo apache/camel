@@ -25,6 +25,7 @@ import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "variables", description = "Displays variables")
 public class VariablesDevConsole extends AbstractDevConsole {
@@ -73,13 +74,27 @@ public class VariablesDevConsole extends AbstractDevConsole {
         for (Map.Entry<String, Object> entry : repo.getVariables().entrySet()) {
             String k = entry.getKey();
             Object v = entry.getValue();
-            String t = v != null ? v.getClass().getName() : null;
+            String type = v != null ? v.getClass().getName() : null;
+            Object value = null;
+            if (type != null) {
+                value = Jsoner.trySerialize(v);
+                if (value == null) {
+                    // cannot serialize so escape
+                    value = Jsoner.escape(v.toString());
+                } else {
+                    // okay so use the value as-s
+                    value = v;
+                }
+            }
+
             JsonObject e = new JsonObject();
             e.put("key", k);
-            if (t != null) {
-                e.put("type", t);
+            if (type != null) {
+                e.put("type", type);
             }
-            e.put("value", v);
+            if (value != null) {
+                e.put("value", value);
+            }
             arr.add(e);
         }
         return arr;
