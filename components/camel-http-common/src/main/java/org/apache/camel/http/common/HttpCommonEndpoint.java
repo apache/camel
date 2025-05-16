@@ -145,10 +145,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     private HttpMethods httpMethod;
 
     @UriParam(label = "producer,security",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.")
+              description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM. (NTLM is deprecated)")
     private String authMethod;
     @UriParam(label = "producer,security", enums = "Basic,Digest,NTLM",
-              description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM.")
+              description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM. (NTLM is deprecated)")
     private String authMethodPriority;
     @UriParam(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
@@ -175,8 +175,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
                             +
                             "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
     private long oauth2CachedTokensExpirationMarginSeconds = 5L;
+    @Deprecated
     @UriParam(label = "producer,security", description = "Authentication domain to use with NTML")
     private String authDomain;
+    @Deprecated
     @UriParam(label = "producer,security", description = "Authentication host to use with NTML")
     private String authHost;
     @UriParam(label = "producer,proxy", description = "Proxy hostname to use")
@@ -195,8 +197,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     private String proxyAuthHost;
     @UriParam(label = "producer,proxy", description = "Proxy authentication port")
     private int proxyAuthPort;
+    @Deprecated
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTML")
     private String proxyAuthDomain;
+    @Deprecated
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
     private String proxyAuthNtHost;
 
