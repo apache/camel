@@ -43,7 +43,7 @@
         <apiKey key="{{apiKey.key}}" name="{{apiKey.header.name}}" inHeader="{{apiKey.inHeader}}" description="{{apiKey.description}}"
         inQuery="{{apiKey.inQuery}}" inCookie="{{apiKey.inCookie}}"/>
         <basicAuth key="{{basicAuth.key}}" description="{{basicAuth.description}}"/>
-        <bearer key="{{bearer.key}}" format="{{bearer.format}}" description="{{bearer.description}}"/>
+        <bearerToken key="{{bearer.key}}" format="{{bearer.format}}" description="{{bearer.description}}"/>
         <mutualTLS key="{{mtls.key}}" description="{{mtls.description}}"/>
         <openIdConnect key="{{oidc.key}}" url="{{oidc.url}}" description="{{oidc.description}}"/>
       </securityDefinitions>

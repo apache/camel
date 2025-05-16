@@ -122,6 +122,30 @@ from the `petstore-v3.json` openapi specification file.
 When using code-first with Rest DSL and are specifying security constraints, then `bearer` in YAML and XML DSL has been renamed to `bearerToken`
 to be aligned with Java DSL.
 
+For example:
+
+[source,xml]
+----
+    <rest path="/user" description="User rest service" consumes="application/json" produces="application/json">
+      <securityDefinitions>
+        <bearer key="myBearerKey" description="Bearer token for security"/>
+      </securityDefinitions>
+      ...
+    </rest>
+----
+
+Should be changed as follows:
+
+[source,xml]
+----
+    <rest path="/user" description="User rest service" consumes="application/json" produces="application/json">
+      <securityDefinitions>
+        <bearerToken key="myBearerKey" description="Bearer token for security"/>
+      </securityDefinitions>
+      ...
+    </rest>
+----
+
 ==== XML-IO DSL
 
 The `camel-xml-io` now has its own XSD Schema using the namespace: `http://camel.apache.org/schema/xml-io`.
