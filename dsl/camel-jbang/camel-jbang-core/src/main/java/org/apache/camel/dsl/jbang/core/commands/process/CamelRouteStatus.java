@@ -48,10 +48,6 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--remote" },
-                        description = "Break down counters into remote/total pairs")
-    boolean remote;
-
     @CommandLine.Option(names = { "--source" },
                         description = "Prefer to display source filename/code instead of IDs")
     boolean source;
@@ -88,7 +84,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        AtomicBoolean remoteVisible = new AtomicBoolean(remote);
+        AtomicBoolean remoteVisible = new AtomicBoolean();
         List<Long> pids = findPids(name);
         ProcessHandle.allProcesses()
                 .filter(ph -> pids.contains(ph.pid()))
@@ -114,7 +110,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             Boolean bool = o.getBoolean("remote");
                             if (bool != null) {
                                 // older camel versions does not include this information
-                                remoteVisible.set(remote);
+                                remoteVisible.set(true);
                                 row.remote = bool;
                             }
                             row.source = o.getString("source");
@@ -151,20 +147,8 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                                     row.coverage = coverage.toString();
                                 }
                                 row.total = stats.get("exchangesTotal").toString();
-                                Object num = stats.get("remoteExchangesTotal");
-                                if (num != null) {
-                                    row.totalRemote = num.toString();
-                                }
                                 row.inflight = stats.get("exchangesInflight").toString();
-                                num = stats.get("remoteExchangesInflight");
-                                if (num != null) {
-                                    row.inflightRemote = num.toString();
-                                }
                                 row.failed = stats.get("exchangesFailed").toString();
-                                num = stats.get("remoteExchangesFailed");
-                                if (num != null) {
-                                    row.failedRemote = num.toString();
-                                }
                                 row.mean = stats.get("meanProcessingTime").toString();
                                 if ("-1".equals(row.mean)) {
                                     row.mean = null;
@@ -409,23 +393,14 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     }
 
     protected String getTotal(Row r) {
-        if (remote && r.totalRemote != null) {
-            return r.totalRemote + "/" + r.total;
-        }
         return r.total;
     }
 
     protected String getFailed(Row r) {
-        if (remote && r.failedRemote != null) {
-            return r.failedRemote + "/" + r.failed;
-        }
         return r.failed;
     }
 
     protected String getInflight(Row r) {
-        if (remote && r.inflightRemote != null) {
-            return r.inflightRemote + "/" + r.inflight;
-        }
         return r.inflight;
     }
 
@@ -443,11 +418,8 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         String coverage;
         String throughput;
         String total;
-        String totalRemote;
         String failed;
-        String failedRemote;
         String inflight;
-        String inflightRemote;
         String mean;
         String max;
         String min;
