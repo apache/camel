@@ -76,6 +76,11 @@ public class PulsarProducer extends DefaultAsyncProducer {
                 messageBuilder.deliverAt(deliverAt);
             }
 
+            Long deliverAfter = exchange.getIn().getHeader(PulsarMessageHeaders.DELIVER_AFTER, Long.class);
+            if (deliverAfter != null) {
+                messageBuilder.deliverAfter(deliverAfter, TimeUnit.MILLISECONDS);
+            }
+
             messageBuilder.sendAsync()
                     .thenAccept(r -> exchange.getIn().setBody(r))
                     .whenComplete(
