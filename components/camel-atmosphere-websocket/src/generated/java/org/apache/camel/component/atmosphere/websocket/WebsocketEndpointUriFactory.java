@@ -23,10 +23,9 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(28);
         props.add("async");
         props.add("attachmentMultipartBinding");
-        props.add("authBearerToken");
         props.add("bridgeEndpoint");
         props.add("bridgeErrorHandler");
         props.add("chunked");
@@ -54,9 +53,7 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
         props.add("transferException");
         props.add("useStreaming");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("authBearerToken");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 

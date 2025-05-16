@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriEndpoint;
 @UriEndpoint(firstVersion = "1.2.0", scheme = "jetty", extendsScheme = "http", title = "Jetty", syntax = "jetty:httpUri",
              category = { Category.HTTP }, consumerOnly = true, lenientProperties = true,
              headersClass = JettyHttpConstants.class)
-@Metadata(excludeProperties = "authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
+@Metadata(excludeProperties = "authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost,authBearerToken,"
                               + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain",
           annotations = {
                   "protocol=http"
