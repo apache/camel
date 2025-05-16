@@ -56,8 +56,10 @@ public class HttpConfiguration implements Serializable {
                             "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
     private long oauth2CachedTokensExpirationMarginSeconds = 5L;
     @Metadata(label = "producer,security", description = "Authentication domain to use with NTML")
+    @Deprecated
     private String authDomain;
     @Metadata(label = "producer,security", description = "Authentication host to use with NTML")
+    @Deprecated
     private String authHost;
     @Metadata(label = "producer,proxy", description = "Proxy hostname to use")
     private String proxyHost;
@@ -76,6 +78,7 @@ public class HttpConfiguration implements Serializable {
     @Metadata(label = "producer,proxy", description = "Proxy authentication port")
     private int proxyAuthPort;
     @Metadata(label = "producer,proxy", description = "Proxy authentication domain to use with NTML")
+    @Deprecated
     private String proxyAuthDomain;
 
     public String getAuthMethod() {

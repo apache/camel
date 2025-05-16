@@ -137,7 +137,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     // proxy
     @Metadata(label = "producer,proxy", enums = "http,https", description = "Proxy authentication protocol scheme")
     protected String proxyAuthScheme;
-    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM",
+              description = "Proxy authentication method to use (NTLM is deprecated)")
     protected String proxyAuthMethod;
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
     protected String proxyAuthUsername;

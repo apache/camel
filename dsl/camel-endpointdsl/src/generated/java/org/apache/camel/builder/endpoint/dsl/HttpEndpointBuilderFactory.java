@@ -354,6 +354,7 @@ public interface HttpEndpointBuilderFactory {
          * @param proxyAuthDomain the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
             doSetProperty("proxyAuthDomain", proxyAuthDomain);
             return this;
@@ -396,6 +397,7 @@ public interface HttpEndpointBuilderFactory {
          * @param proxyAuthNtHost the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder proxyAuthNtHost(String proxyAuthNtHost) {
             doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
             return this;
@@ -522,6 +524,7 @@ public interface HttpEndpointBuilderFactory {
          * @param authDomain the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder authDomain(String authDomain) {
             doSetProperty("authDomain", authDomain);
             return this;
@@ -568,13 +571,14 @@ public interface HttpEndpointBuilderFactory {
          * @param authHost the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder authHost(String authHost) {
             doSetProperty("authHost", authHost);
             return this;
         }
         /**
          * Authentication methods allowed to use as a comma separated list of
-         * values Basic, Digest or NTLM.
+         * values Basic, Digest or NTLM. (NTLM is deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -589,7 +593,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Which authentication method to prioritize to use, either as Basic,
-         * Digest or NTLM.
+         * Digest or NTLM. (NTLM is deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
