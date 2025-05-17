@@ -29,8 +29,8 @@
 
     <artifactId>camel-dsl-modeline</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: DSL :: Modeline (deprecated)</name>
-    <description>Camel DSL Camel K modeline</description>
+    <name>Camel :: DSL :: Modeline</name>
+    <description>Camel DSL modeline</description>
 
     <properties>
         <firstVersion>3.16.0</firstVersion>
