@@ -102,7 +102,7 @@ public class Jt400Configuration {
     /**
      * Constant used to specify that the default system CCSID be used (a negative CCSID is otherwise invalid).
      */
-    private static final int DEFAULT_SYSTEM_CCSID = -1;
+    public static final int DEFAULT_SYSTEM_CCSID = -1;
 
     private final AS400ConnectionPool connectionPool;
 
@@ -155,6 +155,9 @@ public class Jt400Configuration {
 
     @UriParam(label = "consumer", defaultValue = "30000")
     private int readTimeout = 30000;
+
+    @UriParam(label = "consumer")
+    private int dataQueueCcsid = DEFAULT_SYSTEM_CCSID;
 
     @UriParam(label = "producer")
     private String procedureName;
@@ -359,6 +362,17 @@ public class Jt400Configuration {
      */
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+    }
+
+    public int getDataQueueCcsid() {
+        return dataQueueCcsid;
+    }
+
+    /**
+     * Sets the CCSID to use for the receiving data messages from the IBM i system.
+     */
+    public void setDataQueueCcsid(int dataQueueCcsid) {
+        this.dataQueueCcsid = (dataQueueCcsid < 0) ? DEFAULT_SYSTEM_CCSID : dataQueueCcsid;
     }
 
     public String getProcedureName() {

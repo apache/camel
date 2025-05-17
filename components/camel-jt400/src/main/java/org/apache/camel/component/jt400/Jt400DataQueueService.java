@@ -28,6 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.jt400.Jt400Configuration.DEFAULT_SYSTEM_CCSID;
+
 /**
  * Pseudo-abstract class that encapsulates Service logic common to {@link Jt400DataQueueConsumer} and
  * {@link Jt400DataQueueProducer}.
@@ -67,6 +69,13 @@ class Jt400DataQueueService implements Service {
                 queue = new KeyedDataQueue(system, endpoint.getObjectPath());
             } else {
                 queue = new DataQueue(system, endpoint.getObjectPath());
+            }
+        }
+        if (endpoint.getConfiguration().getDataQueueCcsid() != DEFAULT_SYSTEM_CCSID) {
+            try {
+                queue.setCcsid(endpoint.getConfiguration().getDataQueueCcsid());
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         if (!queue.getSystem().isConnected(AS400.DATAQUEUE)) {

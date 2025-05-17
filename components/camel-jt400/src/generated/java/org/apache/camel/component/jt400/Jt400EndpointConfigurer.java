@@ -32,6 +32,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "ccsid": target.getConfiguration().setCcsid(property(camelContext, int.class, value)); return true;
+        case "dataqueueccsid":
+        case "dataQueueCcsid": target.getConfiguration().setDataQueueCcsid(property(camelContext, int.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -98,6 +100,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "ccsid": return int.class;
+        case "dataqueueccsid":
+        case "dataQueueCcsid": return int.class;
         case "delay": return long.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -165,6 +169,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "ccsid": return target.getConfiguration().getCcsid();
+        case "dataqueueccsid":
+        case "dataQueueCcsid": return target.getConfiguration().getDataQueueCcsid();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
