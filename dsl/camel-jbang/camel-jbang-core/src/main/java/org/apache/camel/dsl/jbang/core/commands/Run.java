@@ -2005,7 +2005,6 @@ public class Run extends CamelCommand {
         final Set<String> downloaded = new HashSet<>();
         final Set<String> repos = new HashSet<>();
         final Set<String> kamelets = new HashSet<>();
-        final Set<String> modelines = new HashSet<>();
 
         @Override
         public void onDownloadDependency(String groupId, String artifactId, String version) {
@@ -2038,15 +2037,6 @@ public class Run extends CamelCommand {
             if (!kamelets.contains(name)) {
                 writeSettings("kamelet", name);
                 kamelets.add(name);
-            }
-        }
-
-        @Override
-        public void onLoadingModeline(String key, String value) {
-            String line = key + "=" + value;
-            if (!modelines.contains(line)) {
-                writeSettings("modeline", line);
-                modelines.add(line);
             }
         }
     }

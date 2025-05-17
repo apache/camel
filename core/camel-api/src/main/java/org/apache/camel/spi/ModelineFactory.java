@@ -17,9 +17,8 @@
 package org.apache.camel.spi;
 
 /**
- * Factory for parsing camel-k modeline when running Camel standalone with DSLs.
+ * Factory for parsing modeline when running Camel JBang standalone with DSLs.
  */
-@Deprecated(since = "4.10")
 public interface ModelineFactory {
 
     /**
@@ -28,7 +27,7 @@ public interface ModelineFactory {
     String FACTORY = "dsl-modeline-factory";
 
     /**
-     * Parses the resources to discover camel-k modeline snippets which is parsed and processed.
+     * Parses the resources to discover camel-jbang modeline snippets which is parsed and processed.
      *
      * @param  resource  the resource with Camel routes such as a yaml, xml or java source file.
      * @throws Exception is thrown if error parsing

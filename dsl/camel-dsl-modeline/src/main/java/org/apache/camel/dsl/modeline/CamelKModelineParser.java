@@ -31,16 +31,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Deprecated(since = "4.10")
-public class DefaultModelineParser implements ModelineParser {
+public class CamelKModelineParser implements ModelineParser {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultModelineParser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelKModelineParser.class);
 
     public static final String MODELINE_START = "camel-k:";
-    public static final String JBANG_DEPS_START = "//DEPS";
 
     private final Map<String, Trait> traits = new HashMap<>();
 
-    public DefaultModelineParser() {
+    public CamelKModelineParser() {
         // add known traits
         Trait trait = new DependencyTrait();
         this.traits.put(trait.getName(), trait);
@@ -102,41 +101,6 @@ public class DefaultModelineParser implements ModelineParser {
             }
         }
 
-        if (line.startsWith(JBANG_DEPS_START)) {
-            line = line.substring(JBANG_DEPS_START.length()).trim();
-            line = line.trim();
-            Trait dep = traits.get("dependency");
-            String[] parts = StringQuoteHelper.splitSafeQuote(line, ' ', false);
-            for (String part : parts) {
-                part = part.trim();
-                if (part.endsWith("@pom")) {
-                    // skip @pom
-                    continue;
-                }
-                // in case DEPS uses jbang ${ } style that refer to JVM system properties
-                if (part.contains("${") && part.contains("}")) {
-                    String target = StringHelper.between(part, "${", "}");
-                    String value = StringHelper.before(target, ":", target);
-                    if (target.contains(":")) {
-                        String def = StringHelper.after(target, ":");
-                        value = System.getProperty(value, def);
-                    } else {
-                        String found = System.getProperty(value);
-                        if (found == null) {
-                            throw new IllegalArgumentException(
-                                    "Cannot find JVM system property: " + value + " for dependency: " + part);
-                        }
-                        value = found;
-                    }
-                    part = part.replace("${" + target + "}", value);
-                }
-                CamelContextCustomizer customizer = dep.parseTrait(resource, part);
-                if (customizer != null) {
-                    answer.add(customizer);
-                }
-            }
-        }
-
         return answer;
     }
 
@@ -152,7 +116,7 @@ public class DefaultModelineParser implements ModelineParser {
             return false;
         }
         line = removeLeadingComments(line);
-        return line.startsWith(MODELINE_START) || line.startsWith(JBANG_DEPS_START);
+        return line.startsWith(MODELINE_START);
     }
 
     private static String removeLeadingComments(String line) {
@@ -161,7 +125,7 @@ public class DefaultModelineParser implements ModelineParser {
         }
 
         line = line.trim();
-        while (!line.startsWith(JBANG_DEPS_START) && line.startsWith("/") || line.startsWith("#")) {
+        while (line.startsWith("/") || line.startsWith("#")) {
             line = line.substring(1);
         }
 

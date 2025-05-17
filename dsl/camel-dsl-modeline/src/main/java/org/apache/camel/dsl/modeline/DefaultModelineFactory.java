@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.modeline;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -31,12 +32,13 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
-@Deprecated(since = "4.10")
 @JdkService(ModelineFactory.FACTORY)
 public class DefaultModelineFactory extends ServiceSupport
         implements ModelineFactory, CamelContextAware, NonManagedService, StaticService {
 
     private CamelContext camelContext;
+    private final ModelineParser camelk = new CamelKModelineParser();
+    private final ModelineParser jbang = new JBangModelineParser();
     private ModelineParser parser;
 
     @Override
@@ -51,7 +53,16 @@ public class DefaultModelineFactory extends ServiceSupport
 
     @Override
     public void parseModeline(Resource resource) throws Exception {
-        List<CamelContextCustomizer> customizers = parser.parse(resource);
+        List<CamelContextCustomizer> customizers = new ArrayList<>();
+        customizers.addAll(camelk.parse(resource));
+        customizers.addAll(jbang.parse(resource));
+        // custom parser which may return null
+        if (parser != null) {
+            var list = parser.parse(resource);
+            if (list != null) {
+                customizers.addAll(list);
+            }
+        }
         customizers.forEach(this::onConfigureModeline);
     }
 
@@ -66,23 +77,17 @@ public class DefaultModelineFactory extends ServiceSupport
 
     @Override
     protected void doInit() throws Exception {
+        // is there any custom modeline parser
         parser = CamelContextHelper.findSingleByType(camelContext, ModelineParser.class);
-        if (parser == null) {
-            parser = createModelineParser();
-        }
 
-        // the property is both a trait and a source but we must use the same instance
+        // the property is both a trait and a source, but we must use the same instance
         // so we need to get the existing instance from the properties component to
         // add to the parser as its trait
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         PropertiesSource ps = pc.getPropertiesSource("property");
-        if (ps instanceof Trait) {
-            parser.addTrait((Trait) ps);
+        if (ps instanceof Trait trait) {
+            camelk.addTrait(trait);
         }
-    }
-
-    protected ModelineParser createModelineParser() {
-        return new DefaultModelineParser();
     }
 
     @Override

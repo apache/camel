@@ -28,7 +28,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ModelineParserTest extends CamelTestSupport {
+@Deprecated
+public class CamelKModelineParserTest extends CamelTestSupport {
 
     private final List<String> deps = new ArrayList<>();
 
@@ -82,20 +83,6 @@ public class ModelineParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void testModelineSingleJBangDependency() throws Exception {
-        context.start();
-
-        Assertions.assertEquals(0, deps.size());
-
-        String line = "//DEPS org.my:application:1.0";
-        ModelineFactory factory = resolveModelineFactory(context);
-        factory.parseModeline(ResourceHelper.fromString(null, line));
-
-        Assertions.assertEquals(1, deps.size());
-        Assertions.assertEquals("org.my:application:1.0", deps.get(0));
-    }
-
-    @Test
     public void testModelineMultiDependency() throws Exception {
         context.start();
         deps.clear();
@@ -109,22 +96,6 @@ public class ModelineParserTest extends CamelTestSupport {
         Assertions.assertEquals(2, deps.size());
         Assertions.assertEquals("mvn:org.my:application:1.0", deps.get(0));
         Assertions.assertEquals("mvn:com.foo:myapp:2.1", deps.get(1));
-    }
-
-    @Test
-    public void testModelineMultiJBangDependency() throws Exception {
-        context.start();
-        deps.clear();
-
-        Assertions.assertEquals(0, deps.size());
-
-        String line = "//DEPS org.my:application:1.0 com.foo:myapp:2.1";
-        ModelineFactory factory = resolveModelineFactory(context);
-        factory.parseModeline(ResourceHelper.fromString(null, line));
-
-        Assertions.assertEquals(2, deps.size());
-        Assertions.assertEquals("org.my:application:1.0", deps.get(0));
-        Assertions.assertEquals("com.foo:myapp:2.1", deps.get(1));
     }
 
     @Test

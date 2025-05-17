@@ -466,14 +466,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    public void onLoadingModeline(String key, String value) {
-        // trigger listener
-        for (DownloadListener listener : downloadListeners) {
-            listener.onLoadingModeline(key, value);
-        }
-    }
-
-    @Override
     public DownloadRecord getDownloadState(String groupId, String artifactId, String version) {
         return downloadRecords.get(groupId + ":" + artifactId + ":" + version);
     }
