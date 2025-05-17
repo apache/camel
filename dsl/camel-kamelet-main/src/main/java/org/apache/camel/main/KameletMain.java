@@ -60,7 +60,6 @@ import org.apache.camel.main.download.DependencyDownloaderTransformerResolver;
 import org.apache.camel.main.download.DependencyDownloaderUriFactoryResolver;
 import org.apache.camel.main.download.DownloadEndpointStrategy;
 import org.apache.camel.main.download.DownloadListener;
-import org.apache.camel.main.download.DownloadModelineParser;
 import org.apache.camel.main.download.ExportPropertiesParser;
 import org.apache.camel.main.download.ExportTypeConverter;
 import org.apache.camel.main.download.JavaKnownImportsDownloader;
@@ -669,9 +668,6 @@ public class KameletMain extends MainCommandLineSupport {
             } else {
                 answer.addService(new DependencyDownloaderKamelet(answer));
             }
-            answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
-                    new DownloadModelineParser(answer));
-
             answer.addService(new DependencyDownloaderPropertiesComponent(answer, knownDeps, silent));
 
             // reloader

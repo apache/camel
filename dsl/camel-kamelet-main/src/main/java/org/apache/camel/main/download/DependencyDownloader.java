@@ -185,14 +185,6 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
     void onLoadingKamelet(String name);
 
     /**
-     * When a modeline is being loaded
-     *
-     * @param key   modeline key
-     * @param value modeline value
-     */
-    void onLoadingModeline(String key, String value);
-
-    /**
      * Gets download record for a given artifact
      *
      * @return download record (if any) or <tt>null</tt> if artifact was not downloaded, but could have been resolved

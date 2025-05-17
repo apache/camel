@@ -24,7 +24,6 @@ import org.apache.camel.spi.Resource;
 /**
  * Modeline parser
  */
-@Deprecated(since = "4.10")
 public interface ModelineParser {
 
     /**
@@ -32,6 +31,7 @@ public interface ModelineParser {
      *
      * @param trait the trait
      */
+    @Deprecated
     void addTrait(Trait trait);
 
     /**
@@ -43,7 +43,7 @@ public interface ModelineParser {
     boolean isModeline(String line);
 
     /**
-     * Parses the resource to detect modelines and process them via {@link Trait}s
+     * Parses the resource to detect modelines
      *
      * @param  resource  the source code resource
      * @return           list of {@link CamelContextCustomizer} customizers that processes the modelines
@@ -59,5 +59,6 @@ public interface ModelineParser {
      * @param  value    the mode line value
      * @return          the trait that handles the detected modeline
      */
+    @Deprecated
     Trait parseModeline(Resource resource, String key, String value);
 }
