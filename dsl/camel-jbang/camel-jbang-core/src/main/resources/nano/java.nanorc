@@ -1,0 +1,38 @@
+## ---------------------------------------------------------------------------
+## Licensed to the Apache Software Foundation (ASF) under one or more
+## contributor license agreements.  See the NOTICE file distributed with
+## this work for additional information regarding copyright ownership.
+## The ASF licenses this file to You under the Apache License, Version 2.0
+## (the "License"); you may not use this file except in compliance with
+## the License.  You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+## ---------------------------------------------------------------------------
+
+syntax "Java" "\.java$"
+magic "Java "
+comment "//"
+
+color green "\<(boolean|byte|char|double|float|int|long|new|short|this|transient|void)\>"
+color red "\<(break|case|catch|continue|default|do|else|finally|for|if|return|switch|throw|try|while)\>"
+color cyan "\<(abstract|class|extends|final|implements|import|instanceof|interface|native|package|private|protected|public|static|strictfp|super|synchronized|throws|volatile)\>"
+color red ""[^"]*""
+color yellow "\<(true|false|null)\>"
+icolor yellow "\b(([1-9][0-9]+)|0+)\.[0-9]+\b" "\b[1-9][0-9]*\b" "\b0[0-7]*\b" "\b0x[1-9a-f][0-9a-f]*\b"
+color blue "//.*"
+color blue start="^\s*/\*" end="\*/"
+color brightblue start="/\*\*" end="\*/"
+color brightwhite,yellow "\<(FIXME|TODO|XXX)\>"
+
+# Highlighting for javadoc stuff
+color magenta "@param [a-zA-Z_][a-z0-9A-Z_]+"
+color magenta "@return"
+color magenta "@author.*"
+
+color ,green "[[:space:]]+$"
