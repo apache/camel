@@ -39,7 +39,7 @@ public class JBangModelineParser implements ModelineParser {
             try (LineNumberReader reader = new LineNumberReader(resource.getReader())) {
                 String line = reader.readLine();
                 while (line != null) {
-                    List<CamelContextCustomizer> list = parse(resource, line);
+                    List<CamelContextCustomizer> list = parse(line);
                     answer.addAll(list);
                     line = reader.readLine();
                 }
@@ -59,7 +59,7 @@ public class JBangModelineParser implements ModelineParser {
         return line.startsWith(JBANG_DEPS_START);
     }
 
-    protected List<CamelContextCustomizer> parse(Resource resource, String line) {
+    protected List<CamelContextCustomizer> parse(String line) {
         if (!isModeline(line)) {
             return Collections.emptyList();
         }
