@@ -27,14 +27,6 @@ import org.apache.camel.spi.Resource;
 public interface ModelineParser {
 
     /**
-     * Adds the {@link Trait} to the parser
-     *
-     * @param trait the trait
-     */
-    @Deprecated
-    void addTrait(Trait trait);
-
-    /**
      * Is the given source code line a modeline?
      *
      * @param  line the source code line
@@ -51,14 +43,4 @@ public interface ModelineParser {
      */
     List<CamelContextCustomizer> parse(Resource resource) throws Exception;
 
-    /**
-     * A modeline was detected while parsing
-     *
-     * @param  resource the resource
-     * @param  key      the mode line key
-     * @param  value    the mode line value
-     * @return          the trait that handles the detected modeline
-     */
-    @Deprecated
-    Trait parseModeline(Resource resource, String key, String value);
 }

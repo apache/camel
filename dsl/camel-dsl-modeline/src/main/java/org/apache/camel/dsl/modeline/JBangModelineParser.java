@@ -32,16 +32,6 @@ public class JBangModelineParser implements ModelineParser {
     public static final String JBANG_DEPS_START = "//DEPS";
 
     @Override
-    public void addTrait(Trait trait) {
-        throw new UnsupportedOperationException("Cannot add traits");
-    }
-
-    @Override
-    public Trait parseModeline(Resource resource, String key, String value) {
-        return null;
-    }
-
-    @Override
     public List<CamelContextCustomizer> parse(Resource resource) throws Exception {
         List<CamelContextCustomizer> answer = new ArrayList<>();
 
