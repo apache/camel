@@ -158,6 +158,10 @@ It is also recommended to migrate your XML-IO XML files to use the new namespace
 Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and
 asynchronous MDN requests.
 
+=== camel-dsl-modeline
+
+Removed deprecated `camel-k:` specific modelines.
+
 === camel-jackson / camel-jacksonxml
 
 The default unmarshalType has been changed from `HashMap` to `LinkedHashMap` that keeps ordering of the elements

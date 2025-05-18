@@ -13,17 +13,5 @@
 
 == Camel JBang
 
-There is support for https://www.jbang.dev/documentation/guide/latest/dependencies.html[JBang dependencies] using the `//DEPS` comments style.
-
-== Camel K
-
-*Deprecated*
-
-Support for Camel K style modeline when running Camel standalone such as with Camel JBang.
-
-The following traits is supported:
-
-- dependency
-- env
-- name
-- property
+There is support for https://www.jbang.dev/documentation/guide/latest/dependencies.html[JBang dependencies] using the `//DEPS` comments style,
+when using Camel JBang.
