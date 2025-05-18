@@ -1344,17 +1344,13 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setSourceLocationEnabled(Boolean sourceLocationEnabled);
 
     /**
-     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
-     * experience by being able to configure various settings using modeline directly in your route source code.
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
      */
-    @Deprecated(since = "4.10")
     Boolean isModeline();
 
     /**
-     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
-     * experience by being able to configure various settings using modeline directly in your route source code.
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
      */
-    @Deprecated(since = "4.10")
     void setModeline(Boolean modeline);
 
     /**

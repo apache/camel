@@ -308,7 +308,7 @@ public class Run extends CamelCommand {
     boolean observe;
 
     @Option(names = { "--modeline" }, defaultValue = "true",
-            description = "Deprecated, to be removed: Enables Camel-K style modeline")
+            description = "Whether to support JBang style //DEPS to specify additional dependencies")
     boolean modeline = true;
 
     @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
@@ -614,6 +614,8 @@ public class Run extends CamelCommand {
         }
         if (modeline) {
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
+            // configure eager
+            main.configure().withModeline(true);
         }
         if (ignoreLoadingError) {
             writeSetting(main, profileProperties, "camel.jbang.ignoreLoadingError", "true");
