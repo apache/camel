@@ -17,6 +17,7 @@
 package org.apache.camel.component.pqc;
 
 import java.security.*;
+import java.security.cert.Certificate;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -42,6 +43,7 @@ public class PQCProducer extends DefaultProducer {
 
     private Signature signer;
     private KeyGenerator keyGenerator;
+    private KeyPair keyPair;
 
     public PQCProducer(Endpoint endpoint) {
         super(endpoint);
@@ -111,13 +113,26 @@ public class PQCProducer extends DefaultProducer {
                                 .getAlgorithm());
             }
         }
+
+        if (ObjectHelper.isNotEmpty(getConfiguration().getKeyStore())
+                && ObjectHelper.isNotEmpty(getConfiguration().getKeyPairAlias())
+                && ObjectHelper.isNotEmpty(getConfiguration().getKeyStorePassword())) {
+            KeyStore keyStore = getConfiguration().getKeyStore();
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(getConfiguration().getKeyPairAlias(),
+                    getConfiguration().getKeyStorePassword().toCharArray());
+            Certificate cert = keyStore.getCertificate(getConfiguration().getKeyPairAlias());
+            PublicKey publicKey = cert.getPublicKey();
+            keyPair = new KeyPair(publicKey, privateKey);
+        } else {
+            keyPair = getConfiguration().getKeyPair();
+        }
     }
 
     private void signature(Exchange exchange)
             throws InvalidPayloadException, InvalidKeyException, SignatureException {
         String payload = exchange.getMessage().getMandatoryBody(String.class);
 
-        signer.initSign(getEndpoint().getConfiguration().getKeyPair().getPrivate());
+        signer.initSign(keyPair.getPrivate());
         signer.update(payload.getBytes());
 
         byte[] signature = signer.sign();
@@ -128,7 +143,7 @@ public class PQCProducer extends DefaultProducer {
             throws InvalidPayloadException, InvalidKeyException, SignatureException {
         String payload = exchange.getMessage().getMandatoryBody(String.class);
 
-        signer.initVerify(getEndpoint().getConfiguration().getKeyPair().getPublic());
+        signer.initVerify(keyPair.getPublic());
         signer.update(payload.getBytes());
         if (signer.verify(exchange.getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class))) {
             exchange.getMessage().setHeader(PQCConstants.VERIFY, true);
@@ -142,7 +157,7 @@ public class PQCProducer extends DefaultProducer {
         // initialise for creating an encapsulation and shared secret.
         keyGenerator.init(
                 new KEMGenerateSpec(
-                        getEndpoint().getConfiguration().getKeyPair().getPublic(),
+                        keyPair.getPublic(),
                         getEndpoint().getConfiguration().getSymmetricKeyAlgorithm(),
                         getEndpoint().getConfiguration().getSymmetricKeyLength()),
                 new SecureRandom());
@@ -165,7 +180,7 @@ public class PQCProducer extends DefaultProducer {
 
         keyGenerator.init(
                 new KEMExtractSpec(
-                        getEndpoint().getConfiguration().getKeyPair().getPrivate(), payload.getEncapsulation(),
+                        keyPair.getPrivate(), payload.getEncapsulation(),
                         PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
                         getEndpoint().getConfiguration().getSymmetricKeyLength()),
                 new SecureRandom());

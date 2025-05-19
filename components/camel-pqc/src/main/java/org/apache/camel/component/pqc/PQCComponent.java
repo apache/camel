@@ -58,7 +58,8 @@ public class PQCComponent extends HealthCheckComponent {
         PQCEndpoint endpoint = new PQCEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        if (ObjectHelper.isEmpty(configuration.getSigner()) && ObjectHelper.isEmpty(configuration.getKeyPair())) {
+        if (ObjectHelper.isEmpty(configuration.getSigner()) && ObjectHelper.isEmpty(configuration.getKeyPair())
+                && ObjectHelper.isEmpty(configuration.getKeyStore()) && ObjectHelper.isEmpty(configuration.getKeyPairAlias())) {
             if (ObjectHelper.isNotEmpty(configuration.getSignatureAlgorithm())) {
                 switch (configuration.getSignatureAlgorithm()) {
                     case "MLDSA":
@@ -95,7 +96,8 @@ public class PQCComponent extends HealthCheckComponent {
             }
         }
 
-        if (ObjectHelper.isEmpty(configuration.getKeyGenerator()) && ObjectHelper.isEmpty(configuration.getKeyPair())) {
+        if (ObjectHelper.isEmpty(configuration.getKeyGenerator()) && ObjectHelper.isEmpty(configuration.getKeyPair())
+                && ObjectHelper.isEmpty(configuration.getKeyStore()) && ObjectHelper.isEmpty(configuration.getKeyPairAlias())) {
             if (ObjectHelper.isNotEmpty(configuration.getKeyEncapsulationAlgorithm())) {
                 switch (configuration.getKeyEncapsulationAlgorithm()) {
                     case "MLKEM":

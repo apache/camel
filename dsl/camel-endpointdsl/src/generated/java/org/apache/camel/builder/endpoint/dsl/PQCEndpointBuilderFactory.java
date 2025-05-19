@@ -208,6 +208,63 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
+         * A KeyPair alias to use in combination with KeyStore parameter.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyPairAlias the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder keyPairAlias(String keyPairAlias) {
+            doSetProperty("keyPairAlias", keyPairAlias);
+            return this;
+        }
+        /**
+         * A KeyStore where we could get Cryptographic material.
+         * 
+         * The option is a: <code>java.security.KeyStore</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyStore the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder keyStore(java.security.KeyStore keyStore) {
+            doSetProperty("keyStore", keyStore);
+            return this;
+        }
+        /**
+         * A KeyStore where we could get Cryptographic material.
+         * 
+         * The option will be converted to a <code>java.security.KeyStore</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyStore the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder keyStore(String keyStore) {
+            doSetProperty("keyStore", keyStore);
+            return this;
+        }
+        /**
+         * The KeyStore password to use in combination with KeyStore Parameter.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyStorePassword the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder keyStorePassword(String keyStorePassword) {
+            doSetProperty("keyStorePassword", keyStorePassword);
+            return this;
+        }
+        /**
          * In case there is no signer, we specify an algorithm to build the
          * KeyPair or the Signer.
          * 
