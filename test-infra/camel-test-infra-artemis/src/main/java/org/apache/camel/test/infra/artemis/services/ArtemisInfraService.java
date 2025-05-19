@@ -30,6 +30,10 @@ public interface ArtemisInfraService extends InfrastructureService {
 
     int brokerPort();
 
+    default String remoteURI() {
+        throw new IllegalArgumentException("Remote URI is not supported");
+    }
+
     default void registerProperties() {
         // For compatibility with the previous format used by camel-sjms tests
         System.setProperty(ArtemisProperties.SERVICE_ADDRESS, serviceAddress());
