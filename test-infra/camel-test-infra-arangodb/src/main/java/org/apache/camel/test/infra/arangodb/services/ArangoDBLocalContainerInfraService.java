@@ -55,6 +55,16 @@ public class ArangoDBLocalContainerInfraService implements ArangoDBInfraService,
     }
 
     @Override
+    public int port() {
+        return container.getServicePort();
+    }
+
+    @Override
+    public String host() {
+        return container.getHost();
+    }
+
+    @Override
     public String getHost() {
         return container.getHost();
     }

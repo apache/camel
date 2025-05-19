@@ -35,6 +35,16 @@ public final class ArangoDBServiceFactory {
         public String getHost() {
             return getService().getHost();
         }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
     }
 
     private ArangoDBServiceFactory() {
