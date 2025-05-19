@@ -39,6 +39,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("CategoryId0", java.lang.String.class);
         map.put("CategoryId1", java.lang.Long.class);
         map.put("Category_id", java.lang.Long.class);
+        map.put("Clazz", java.lang.Class.class);
         map.put("Comment", org.zendesk.client.v2.model.Comment.class);
         map.put("CommentId", java.lang.Long.class);
         map.put("Content", byte[].class);
@@ -183,6 +184,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "categoryid1":
         case "categoryId1": target.setCategoryId1(property(camelContext, java.lang.Long.class, value)); return true;
         case "category_id": target.setCategory_id(property(camelContext, java.lang.Long.class, value)); return true;
+        case "clazz": target.setClazz(property(camelContext, java.lang.Class.class, value)); return true;
         case "comment": target.setComment(property(camelContext, org.zendesk.client.v2.model.Comment.class, value)); return true;
         case "commentid":
         case "commentId": target.setCommentId(property(camelContext, java.lang.Long.class, value)); return true;
@@ -394,6 +396,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "categoryid1":
         case "categoryId1": return java.lang.Long.class;
         case "category_id": return java.lang.Long.class;
+        case "clazz": return java.lang.Class.class;
         case "comment": return org.zendesk.client.v2.model.Comment.class;
         case "commentid":
         case "commentId": return java.lang.Long.class;
@@ -601,6 +604,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "categoryid1":
         case "categoryId1": return target.getCategoryId1();
         case "category_id": return target.getCategory_id();
+        case "clazz": return target.getClazz();
         case "comment": return target.getComment();
         case "commentid":
         case "commentId": return target.getCommentId();
@@ -782,6 +786,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "attachments": return org.zendesk.client.v2.model.Attachment.class;
+        case "clazz": return org.zendesk.client.v2.model.views.ViewRow.class;
         case "labels": return java.lang.String.class;
         case "organizationlist":
         case "organizationList": return org.zendesk.client.v2.model.Organization.class;
