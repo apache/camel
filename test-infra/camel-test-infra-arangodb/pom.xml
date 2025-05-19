@@ -41,6 +41,11 @@
             <version>${project.version}</version>
             <type>test-jar</type>
         </dependency>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>arangodb-java-driver</artifactId>
+            <version>${arangodb-java-version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>

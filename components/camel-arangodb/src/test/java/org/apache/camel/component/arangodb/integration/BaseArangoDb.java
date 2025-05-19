@@ -64,7 +64,7 @@ public abstract class BaseArangoDb implements ConfigurableRoute, CamelTestSuppor
 
     @ContextFixture
     public void createCamelContext(CamelContext ctx) {
-        arangoDb = new ArangoDB.Builder().host(service.getHost(), service.getPort()).build();
+        arangoDb = new ArangoDB.Builder().host(service.host(), service.port()).build();
 
         // drop any existing database to start clean
         if (arangoDb.getDatabases().contains(DATABASE_NAME)) {
