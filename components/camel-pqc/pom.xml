@@ -57,5 +57,11 @@
             <artifactId>camel-crypto</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>${bouncycastle-version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
