@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Supplier;
 
+import org.jline.builtins.ClasspathResourceUtil;
 import org.jline.builtins.ConfigurationPath;
 import org.jline.console.SystemRegistry;
 import org.jline.console.impl.Builtins;
@@ -57,7 +58,8 @@ public class Shell extends CamelCommand {
     public Integer doCall() throws Exception {
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         // set up JLine built-in commands
-        Builtins builtins = new Builtins(workDir, new ConfigurationPath(workDir.get(), workDir.get()), null) {
+        Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass()).getParent();
+        Builtins builtins = new Builtins(workDir, new ConfigurationPath(appConfig, workDir.get()), null) {
             @Override
             public String name() {
                 return "built-in";
