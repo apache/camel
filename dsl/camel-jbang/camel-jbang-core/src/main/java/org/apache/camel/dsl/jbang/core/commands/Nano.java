@@ -21,7 +21,9 @@ import java.nio.file.Paths;
 import java.util.Stack;
 import java.util.function.Supplier;
 
+import org.jline.builtins.ClasspathResourceUtil;
 import org.jline.builtins.Commands;
+import org.jline.builtins.ConfigurationPath;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import picocli.CommandLine;
@@ -44,7 +46,9 @@ public class Nano extends CamelCommand {
     public Integer doCall() throws Exception {
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         try (Terminal terminal = TerminalBuilder.builder().build()) {
-            Commands.nano(terminal, System.out, System.err, workDir.get(), new String[] { file }, null);
+            Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass()).getParent();
+            ConfigurationPath configPath = new ConfigurationPath(appConfig, null);
+            Commands.nano(terminal, System.out, System.err, workDir.get(), new String[] { file }, configPath);
         }
         return 0;
     }

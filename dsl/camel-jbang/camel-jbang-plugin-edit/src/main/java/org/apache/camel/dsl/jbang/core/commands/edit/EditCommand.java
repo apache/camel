@@ -23,6 +23,8 @@ import java.util.function.Supplier;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.jline.builtins.ClasspathResourceUtil;
+import org.jline.builtins.ConfigurationPath;
 import org.jline.builtins.Nano;
 import org.jline.builtins.Options;
 import org.jline.terminal.Terminal;
@@ -51,8 +53,10 @@ public class EditCommand extends CamelCommand {
                 throw new Options.HelpException(opt.usage());
             } else {
                 Path currentDir = workDir.get();
+                Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass()).getParent();
+                ConfigurationPath configPath = new ConfigurationPath(appConfig, null);
                 CamelNanoLspEditor edit
-                        = new CamelNanoLspEditor(terminal, currentDir, opt, null);
+                        = new CamelNanoLspEditor(terminal, currentDir, opt, configPath);
                 edit.open(opt.args());
                 edit.run();
             }

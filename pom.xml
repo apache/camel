@@ -376,12 +376,14 @@
                             <javamail.providers>CAMEL_PROPERTIES_STYLE</javamail.providers>
                             <jaxb.index>CAMEL_PROPERTIES_STYLE</jaxb.index>
                             <jj>DOUBLESLASH_STYLE</jj>
+                            <jnanorc>CAMEL_PROPERTIES_STYLE</jnanorc>
                             <jsh>SLASHSTAR_STYLE</jsh>
                             <kts>SLASHSTAR_STYLE</kts>
                             <ldif>LDIF_STYLE</ldif>
                             <libsonnet>SLASHSTAR_STYLE</libsonnet>
                             <motd>SCRIPT_STYLE</motd>
                             <mvel>MVEL_STYLE</mvel>
+                            <nanorc>CAMEL_PROPERTIES_STYLE</nanorc>
                             <properties>CAMEL_PROPERTIES_STYLE</properties>
                             <proto>SLASHSTAR_STYLE</proto>
                             <qf.cfg>CAMEL_PROPERTIES_STYLE</qf.cfg>
