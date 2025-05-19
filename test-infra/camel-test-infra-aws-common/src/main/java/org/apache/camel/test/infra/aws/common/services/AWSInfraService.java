@@ -24,4 +24,14 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 public interface AWSInfraService extends InfrastructureService {
 
     Properties getConnectionProperties();
+
+    String amazonAWSHost();
+
+    String region();
+
+    String protocol();
+
+    String accessKey();
+
+    String secretKey();
 }
