@@ -41,6 +41,31 @@ public class AWSRemoteInfraService implements AWSInfraService {
     }
 
     @Override
+    public String amazonAWSHost() {
+        throw new IllegalArgumentException("Not implemented for remote scenario");
+    }
+
+    @Override
+    public String region() {
+        throw new IllegalArgumentException("Not implemented for remote scenario");
+    }
+
+    @Override
+    public String protocol() {
+        throw new IllegalArgumentException("Not implemented for remote scenario");
+    }
+
+    @Override
+    public String accessKey() {
+        throw new IllegalArgumentException("Not implemented for remote scenario");
+    }
+
+    @Override
+    public String secretKey() {
+        throw new IllegalArgumentException("Not implemented for remote scenario");
+    }
+
+    @Override
     public void registerProperties() {
 
     }

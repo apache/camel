@@ -62,16 +62,39 @@ public abstract class AWSLocalContainerInfraService implements AWSInfraService, 
     }
 
     @Override
+    public String amazonAWSHost() {
+        return container.getAmazonHost();
+    }
+
+    @Override
+    public String region() {
+        return Region.US_EAST_1.toString();
+    }
+
+    @Override
+    public String protocol() {
+        return "http";
+    }
+
+    @Override
+    public String accessKey() {
+        return container.getCredentialsProvider().resolveCredentials().accessKeyId();
+    }
+
+    @Override
+    public String secretKey() {
+        return container.getCredentialsProvider().resolveCredentials().secretAccessKey();
+    }
+
+    @Override
     public Properties getConnectionProperties() {
         Properties properties = new Properties();
 
-        AwsCredentials credentials = container.getCredentialsProvider().resolveCredentials();
-
-        properties.put(AWSConfigs.ACCESS_KEY, credentials.accessKeyId());
-        properties.put(AWSConfigs.SECRET_KEY, credentials.secretAccessKey());
-        properties.put(AWSConfigs.REGION, Region.US_EAST_1.toString());
-        properties.put(AWSConfigs.AMAZON_AWS_HOST, container.getAmazonHost());
-        properties.put(AWSConfigs.PROTOCOL, "http");
+        properties.put(AWSConfigs.ACCESS_KEY, accessKey());
+        properties.put(AWSConfigs.SECRET_KEY, secretKey());
+        properties.put(AWSConfigs.REGION, region());
+        properties.put(AWSConfigs.AMAZON_AWS_HOST, amazonAWSHost());
+        properties.put(AWSConfigs.PROTOCOL, protocol());
 
         return properties;
     }

@@ -40,6 +40,31 @@ public final class AWSServiceFactory {
         public Properties getConnectionProperties() {
             return getService().getConnectionProperties();
         }
+
+        @Override
+        public String amazonAWSHost() {
+            return getService().amazonAWSHost();
+        }
+
+        @Override
+        public String region() {
+            return getService().region();
+        }
+
+        @Override
+        public String protocol() {
+            return getService().protocol();
+        }
+
+        @Override
+        public String accessKey() {
+            return getService().accessKey();
+        }
+
+        @Override
+        public String secretKey() {
+            return getService().secretKey();
+        }
     }
 
     public static <T extends AWSService> SimpleTestServiceBuilder<T> builder() {
