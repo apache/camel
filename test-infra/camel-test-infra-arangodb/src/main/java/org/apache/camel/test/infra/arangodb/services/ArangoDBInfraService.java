@@ -16,15 +16,38 @@
  */
 package org.apache.camel.test.infra.arangodb.services;
 
+import com.arangodb.ArangoDB;
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 public interface ArangoDBInfraService extends InfrastructureService {
 
+    // User port
+    @Deprecated
     int getPort();
 
+    int port();
+
+    String host();
+
+    // User host
+    @Deprecated
     String getHost();
 
     default String getServiceAddress() {
         return String.format("%s:%d", getHost(), getPort());
+    }
+
+    default String database() {
+        String database = "myDatabase";
+        ArangoDB arangoDB = new ArangoDB.Builder().host(host(), port()).build();
+
+        arangoDB.createDatabase(database);
+        arangoDB.db(database).createCollection(documentCollection());
+
+        return database;
+    }
+
+    default String documentCollection() {
+        return "myCollection";
     }
 }
