@@ -136,7 +136,7 @@ public class StreamProducer extends DefaultAsyncProducer {
         // okay now fallback to mandatory converterable to string
         String s = exchange.getIn().getMandatoryBody(String.class);
         Charset charset = endpoint.getCharset();
-        Writer writer = new OutputStreamWriter(outputStream, charset);
+        Writer writer = charset != null ? new OutputStreamWriter(outputStream, charset) : new OutputStreamWriter(outputStream);
         BufferedWriter bw = IOHelper.buffered(writer);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
