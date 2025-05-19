@@ -177,4 +177,9 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
     public int getPort() {
         return port;
     }
+
+    @Override
+    public int port() {
+        return port;
+    }
 }
