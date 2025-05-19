@@ -296,15 +296,6 @@
   "artifactId" : "camel-test-infra-couchdb",
   "version" : "4.12.0-SNAPSHOT"
 }, {
-  "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
-  "description" : "Apache Artemis is an open source message broker",
-  "implementation" : "org.apache.camel.test.infra.artemis.services.ArtemisVMInfraService",
-  "alias" : [ "artemis" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-artemis",
-  "version" : "4.12.0-SNAPSHOT"
-}, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
   "description" : "MQTT Platform HiveMQ",
   "implementation" : "org.apache.camel.test.infra.hivemq.services.LocalHiveMQInfraService",
@@ -350,15 +341,6 @@
   "artifactId" : "camel-test-infra-openldap",
   "version" : "4.12.0-SNAPSHOT"
 }, {
-  "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
-  "description" : "Apache Artemis is an open source message broker",
-  "implementation" : "org.apache.camel.test.infra.artemis.services.ArtemisPersistentVMInfraService",
-  "alias" : [ "artemis" ],
-  "aliasImplementation" : [ "persistent" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-artemis",
-  "version" : "4.12.0-SNAPSHOT"
-}, {
   "service" : "org.apache.camel.test.infra.xmpp.services.XmppInfraService",
   "description" : "Test XMPP Server",
   "implementation" : "org.apache.camel.test.infra.xmpp.services.XmppLocalContainerInfraService",
@@ -366,15 +348,6 @@
   "aliasImplementation" : [ ],
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-xmpp",
-  "version" : "4.12.0-SNAPSHOT"
-}, {
-  "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
-  "description" : "Apache Artemis is an open source message broker",
-  "implementation" : "org.apache.camel.test.infra.artemis.services.ArtemisMQTTInfraService",
-  "alias" : [ "artemis" ],
-  "aliasImplementation" : [ "mqtt" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-artemis",
   "version" : "4.12.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.pulsar.services.PulsarInfraService",
