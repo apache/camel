@@ -178,6 +178,52 @@ public interface PqcComponentBuilderFactory {
         }
     
         /**
+         * A KeyPair alias to use in combination with KeyStore parameter.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyPairAlias the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyPairAlias(java.lang.String keyPairAlias) {
+            doSetProperty("keyPairAlias", keyPairAlias);
+            return this;
+        }
+    
+        /**
+         * A KeyStore where we could get Cryptographic material.
+         * 
+         * The option is a: &lt;code&gt;java.security.KeyStore&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyStore the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyStore(java.security.KeyStore keyStore) {
+            doSetProperty("keyStore", keyStore);
+            return this;
+        }
+    
+        /**
+         * The KeyStore password to use in combination with KeyStore Parameter.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyStorePassword the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyStorePassword(java.lang.String keyStorePassword) {
+            doSetProperty("keyStorePassword", keyStorePassword);
+            return this;
+        }
+    
+        /**
          * In case there is no signer, we specify an algorithm to build the
          * KeyPair or the Signer.
          * 
@@ -325,6 +371,9 @@ public interface PqcComponentBuilderFactory {
             case "keyEncapsulationAlgorithm": getOrCreateConfiguration((PQCComponent) component).setKeyEncapsulationAlgorithm((java.lang.String) value); return true;
             case "keyGenerator": getOrCreateConfiguration((PQCComponent) component).setKeyGenerator((javax.crypto.KeyGenerator) value); return true;
             case "keyPair": getOrCreateConfiguration((PQCComponent) component).setKeyPair((java.security.KeyPair) value); return true;
+            case "keyPairAlias": getOrCreateConfiguration((PQCComponent) component).setKeyPairAlias((java.lang.String) value); return true;
+            case "keyStore": getOrCreateConfiguration((PQCComponent) component).setKeyStore((java.security.KeyStore) value); return true;
+            case "keyStorePassword": getOrCreateConfiguration((PQCComponent) component).setKeyStorePassword((java.lang.String) value); return true;
             case "signatureAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;
             case "signer": getOrCreateConfiguration((PQCComponent) component).setSigner((java.security.Signature) value); return true;
             case "storeExtractedSecretKeyAsHeader": getOrCreateConfiguration((PQCComponent) component).setStoreExtractedSecretKeyAsHeader((boolean) value); return true;
