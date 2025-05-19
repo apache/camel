@@ -84,7 +84,7 @@ public final class PluginHelper {
                 final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
 
                 // only load the plugin if the command-line is calling this plugin
-                if (target != null && !target.equals(command)) {
+                if (target != null && !"shell".equals(target) && !target.equals(command)) {
                     continue;
                 }
 
