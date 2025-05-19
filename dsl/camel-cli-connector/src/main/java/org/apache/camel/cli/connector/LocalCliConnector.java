@@ -506,6 +506,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("send");
         if (dc != null) {
+
+            // wait for camel to be ready
+            StopWatch watch = new StopWatch();
+            while (!camelContext.isStarted() && watch.taken() < 5000) {
+                Thread.sleep(100);
+            }
+
             JsonObject json;
             String endpoint = root.getString("endpoint");
             String body = root.getString("body");
@@ -692,10 +699,17 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
     }
 
-    private void doActionReceiveTask(JsonObject root) throws IOException {
+    private void doActionReceiveTask(JsonObject root) throws Exception {
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("receive");
         if (dc != null) {
+
+            // wait for camel to be ready
+            StopWatch watch = new StopWatch();
+            while (!camelContext.isStarted() && watch.taken() < 5000) {
+                Thread.sleep(100);
+            }
+
             JsonObject json;
             String endpoint = root.getString("endpoint");
             if (endpoint != null) {

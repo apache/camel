@@ -328,7 +328,7 @@ public class TransformMessageAction extends ActionWatchCommand {
     }
 
     private String getStatus(JsonObject r) {
-        boolean failed = "failed".equals(r.getString("status"));
+        boolean failed = "failed".equals(r.getString("status")) || "error".equals(r.getString("status"));
         String status;
         if (failed) {
             status = "Failed (exception)";

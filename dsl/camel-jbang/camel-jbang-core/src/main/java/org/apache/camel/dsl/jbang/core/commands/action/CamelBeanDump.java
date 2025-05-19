@@ -218,7 +218,7 @@ public class CamelBeanDump extends ActionBaseCommand {
     }
 
     protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject((Path) outputFile);
+        return getJsonObject(outputFile);
     }
 
     private static class Row {
