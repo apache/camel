@@ -247,14 +247,14 @@ public class Run extends CamelCommand {
     List<String> loggingCategory = new ArrayList<>();
 
     @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
-    int maxMessages;
+    public int maxMessages;
 
     @Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
     int maxSeconds;
 
     @Option(names = { "--max-idle-seconds" }, defaultValue = "0",
             description = "For how long time in seconds Camel can be idle before stopping")
-    int maxIdleSeconds;
+    public int maxIdleSeconds;
 
     @Option(names = { "--reload", "--dev" },
             description = "Enables dev mode (live reload when source files are updated and saved)")

@@ -167,6 +167,11 @@ Removed deprecated `camel-k:` specific modelines.
 The default unmarshalType has been changed from `HashMap` to `LinkedHashMap` that keeps ordering of the elements
 so they have similar order as the input document.
 
+=== camel-jbang
+
+The `camel cmd send` command now sends the message without the need for any existing running Camel integration.
+To use any existing integration then specify the integration name or PID.
+
 === camel-micrometer
 
 The `tags` parameter has been _fixed_ to be multivalued and tooling friendly. So
@@ -215,7 +220,7 @@ TIP: The `path` can still be specified in the URI as backwards compatible.
 
 === Component Verifier Extensions and Metadata Extension
 
-All of the component verifier extensions and metadata extensions have been removed from components.
+All the component verifier extensions and metadata extensions have been removed from components.
 
 There is one single exception for ServiceNow Metadata Extension since it is used in a MOJO.
 

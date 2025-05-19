@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -40,11 +41,12 @@ abstract class ActionBaseCommand extends CamelCommand {
     protected static JsonObject getJsonObject(Path outputFile) {
         StopWatch watch = new StopWatch();
         while (watch.taken() < 5000) {
+            File f = outputFile.toFile();
             try {
                 // give time for response to be ready
                 Thread.sleep(100);
 
-                if (Files.exists(outputFile)) {
+                if (Files.exists(outputFile) && f.length() > 0) {
                     String text = Files.readString(outputFile);
                     return (JsonObject) Jsoner.deserialize(text);
                 }

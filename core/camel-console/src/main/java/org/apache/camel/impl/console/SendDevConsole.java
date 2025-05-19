@@ -206,7 +206,7 @@ public class SendDevConsole extends AbstractDevConsole {
         } catch (Exception e) {
             cause = e;
         }
-        if (endpoint != null && target == null) {
+        if (cause == null && endpoint != null && target == null) {
             cause = new NoSuchEndpointException(endpoint);
         }
         if (out != null && out.getException() != null) {
