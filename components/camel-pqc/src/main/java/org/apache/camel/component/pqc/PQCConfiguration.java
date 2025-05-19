@@ -17,6 +17,7 @@
 package org.apache.camel.component.pqc;
 
 import java.security.KeyPair;
+import java.security.KeyStore;
 import java.security.Signature;
 
 import javax.crypto.KeyGenerator;
@@ -60,6 +61,15 @@ public class PQCConfiguration implements Cloneable {
     @UriParam
     @Metadata(label = "advanced", defaultValue = "false")
     private boolean storeExtractedSecretKeyAsHeader = false;
+    @UriParam
+    @Metadata(label = "advanced", autowired = true)
+    private KeyStore keyStore;
+    @UriParam
+    @Metadata(label = "advanced")
+    private String keyPairAlias;
+    @UriParam
+    @Metadata(label = "advanced", secret = true)
+    private String keyStorePassword;
 
     public PQCOperations getOperation() {
         return operation;
@@ -159,6 +169,39 @@ public class PQCConfiguration implements Cloneable {
      */
     public void setStoreExtractedSecretKeyAsHeader(boolean storeExtractedSecretKeyAsHeader) {
         this.storeExtractedSecretKeyAsHeader = storeExtractedSecretKeyAsHeader;
+    }
+
+    public KeyStore getKeyStore() {
+        return keyStore;
+    }
+
+    /**
+     * A KeyStore where we could get Cryptographic material
+     */
+    public void setKeyStore(KeyStore keyStore) {
+        this.keyStore = keyStore;
+    }
+
+    public String getKeyStorePassword() {
+        return keyStorePassword;
+    }
+
+    /**
+     * The KeyStore password to use in combination with KeyStore Parameter
+     */
+    public void setKeyStorePassword(String keyStorePassword) {
+        this.keyStorePassword = keyStorePassword;
+    }
+
+    public String getKeyPairAlias() {
+        return keyPairAlias;
+    }
+
+    /**
+     * A KeyPair alias to use in combination with KeyStore parameter
+     */
+    public void setKeyPairAlias(String keyPairAlias) {
+        this.keyPairAlias = keyPairAlias;
     }
 
     // *************************************************

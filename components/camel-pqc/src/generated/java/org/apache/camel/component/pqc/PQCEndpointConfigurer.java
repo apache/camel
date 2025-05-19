@@ -29,6 +29,12 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "keyGenerator": target.getConfiguration().setKeyGenerator(property(camelContext, javax.crypto.KeyGenerator.class, value)); return true;
         case "keypair":
         case "keyPair": target.getConfiguration().setKeyPair(property(camelContext, java.security.KeyPair.class, value)); return true;
+        case "keypairalias":
+        case "keyPairAlias": target.getConfiguration().setKeyPairAlias(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystore":
+        case "keyStore": target.getConfiguration().setKeyStore(property(camelContext, java.security.KeyStore.class, value)); return true;
+        case "keystorepassword":
+        case "keyStorePassword": target.getConfiguration().setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.pqc.PQCOperations.class, value)); return true;
@@ -47,7 +53,7 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"keyGenerator", "keyPair", "signer"};
+        return new String[]{"keyGenerator", "keyPair", "keyStore", "signer"};
     }
 
     @Override
@@ -59,6 +65,12 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "keyGenerator": return javax.crypto.KeyGenerator.class;
         case "keypair":
         case "keyPair": return java.security.KeyPair.class;
+        case "keypairalias":
+        case "keyPairAlias": return java.lang.String.class;
+        case "keystore":
+        case "keyStore": return java.security.KeyStore.class;
+        case "keystorepassword":
+        case "keyStorePassword": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.pqc.PQCOperations.class;
@@ -85,6 +97,12 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "keyGenerator": return target.getConfiguration().getKeyGenerator();
         case "keypair":
         case "keyPair": return target.getConfiguration().getKeyPair();
+        case "keypairalias":
+        case "keyPairAlias": return target.getConfiguration().getKeyPairAlias();
+        case "keystore":
+        case "keyStore": return target.getConfiguration().getKeyStore();
+        case "keystorepassword":
+        case "keyStorePassword": return target.getConfiguration().getKeyStorePassword();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();
