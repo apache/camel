@@ -863,6 +863,21 @@ public interface HttpEndpointBuilderFactory {
             doSetProperty("oauth2TokenEndpoint", oauth2TokenEndpoint);
             return this;
         }
+
+        /**
+         * OAuth2 Resource Indicator. 
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         *
+         * @param oauth2ResourceIndicator the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2ResourceIndicator(String oauth2ResourceIndicator) {
+            doSetProperty("oauth2ResourceIndicator", oauth2ResourceIndicator);
+            return this;
+        }
         /**
          * To configure security using SSLContextParameters. Important: Only one
          * instance of org.apache.camel.util.jsse.SSLContextParameters is
