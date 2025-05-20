@@ -142,19 +142,17 @@ public interface Langchain4jToolsComponentBuilderFactory {
         }
     
         /**
-         * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
          * 
          * The option is a:
-         * &lt;code&gt;dev.langchain4j.model.chat.ChatLanguageModel&lt;/code&gt;
-         * type.
+         * &lt;code&gt;dev.langchain4j.model.chat.ChatModel&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param chatModel the value to set
          * @return the dsl builder
          */
-        default Langchain4jToolsComponentBuilder chatModel(dev.langchain4j.model.chat.ChatLanguageModel chatModel) {
+        default Langchain4jToolsComponentBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
             doSetProperty("chatModel", chatModel);
             return this;
         }
@@ -183,7 +181,7 @@ public interface Langchain4jToolsComponentBuilderFactory {
             case "bridgeErrorHandler": ((LangChain4jToolsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((LangChain4jToolsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((LangChain4jToolsComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "chatModel": getOrCreateConfiguration((LangChain4jToolsComponent) component).setChatModel((dev.langchain4j.model.chat.ChatLanguageModel) value); return true;
+            case "chatModel": getOrCreateConfiguration((LangChain4jToolsComponent) component).setChatModel((dev.langchain4j.model.chat.ChatModel) value); return true;
             default: return false;
             }
         }

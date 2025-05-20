@@ -38,6 +38,8 @@
         <label>ai</label>
         <title>LangChain4j Tools</title>
         <supportLevel>Experimental</supportLevel>
+        <langchain4j-version>1.0.1</langchain4j-version>
+        <langchain4j-ollama-version>1.0.1-beta6</langchain4j-ollama-version>
     </properties>
 
     <dependencies>
@@ -49,6 +51,11 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j</artifactId>
+            <version>${langchain4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
             <version>${langchain4j-version}</version>
         </dependency>
         <dependency>
@@ -77,7 +84,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-ollama</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-ollama-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -104,6 +111,7 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
 </project>

@@ -26,7 +26,7 @@ public class LangChain4jChatEndpointConfigurer extends PropertyConfigurerSupport
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chatmodel":
-        case "chatModel": target.getConfiguration().setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
+        case "chatModel": target.getConfiguration().setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatModel.class, value)); return true;
         case "chatoperation":
         case "chatOperation": target.getConfiguration().setChatOperation(property(camelContext, org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class, value)); return true;
         case "exceptionhandler":
@@ -50,7 +50,7 @@ public class LangChain4jChatEndpointConfigurer extends PropertyConfigurerSupport
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "chatmodel":
-        case "chatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
+        case "chatModel": return dev.langchain4j.model.chat.ChatModel.class;
         case "chatoperation":
         case "chatOperation": return org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class;
         case "exceptionhandler":

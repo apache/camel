@@ -33,6 +33,11 @@
     <name>Camel :: AI :: LangChain4j :: Chat</name>
     <description>LangChain4j Chat component</description>
 
+    <properties>
+        <langchain4j-version>1.0.1</langchain4j-version>
+        <langchain4j-hugging-face-ollama-version>1.0.1-beta6</langchain4j-hugging-face-ollama-version>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -40,9 +45,12 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-langchain4j-core</artifactId>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
+            <version>${langchain4j-version}</version>
         </dependency>
+
+        <!-- these 2 model beans - we may want to check if they can be deleted in some future -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
@@ -51,8 +59,9 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-hugging-face</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-hugging-face-ollama-version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -68,7 +77,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-ollama</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-hugging-face-ollama-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
