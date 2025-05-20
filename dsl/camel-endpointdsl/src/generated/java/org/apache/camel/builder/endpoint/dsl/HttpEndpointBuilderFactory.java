@@ -836,6 +836,20 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth2 Token endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2ResourceIndicator the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2ResourceIndicator(String oauth2ResourceIndicator) {
+            doSetProperty("oauth2ResourceIndicator", oauth2ResourceIndicator);
+            return this;
+        }
+        /**
          * OAuth2 scope.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -850,7 +864,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * OAuth2 Token endpoint.
+         * OAuth2 Resource Indicator.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -861,21 +875,6 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder oauth2TokenEndpoint(String oauth2TokenEndpoint) {
             doSetProperty("oauth2TokenEndpoint", oauth2TokenEndpoint);
-            return this;
-        }
-
-        /**
-         * OAuth2 Resource Indicator. 
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         *
-         * @param oauth2ResourceIndicator the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder oauth2ResourceIndicator(String oauth2ResourceIndicator) {
-            doSetProperty("oauth2ResourceIndicator", oauth2ResourceIndicator);
             return this;
         }
         /**
