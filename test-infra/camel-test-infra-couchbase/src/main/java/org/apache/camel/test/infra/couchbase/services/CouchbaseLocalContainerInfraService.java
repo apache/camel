@@ -17,6 +17,14 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
+import java.util.Collections;
+
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.manager.bucket.BucketSettings;
+import com.couchbase.client.java.manager.bucket.BucketType;
+import com.couchbase.client.java.manager.view.DesignDocument;
+import com.couchbase.client.java.manager.view.View;
+import com.couchbase.client.java.view.DesignDocumentNamespace;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
@@ -86,22 +94,75 @@ public class CouchbaseLocalContainerInfraService implements CouchbaseInfraServic
 
     @Override
     public String getUsername() {
-        return container.getUsername();
+        return username();
     }
 
     @Override
     public String getPassword() {
-        return container.getPassword();
+        return password();
     }
 
     @Override
     public String getHostname() {
-        return container.getHost();
+        return hostname();
     }
 
     @Override
     public int getPort() {
+        return port();
+    }
+
+    @Override
+    public String protocol() {
+        return "http";
+    }
+
+    @Override
+    public String hostname() {
+        return container.getHost();
+    }
+
+    @Override
+    public int port() {
         return container.getBootstrapHttpDirectPort();
+    }
+
+    @Override
+    public String username() {
+        return container.getUsername();
+    }
+
+    @Override
+    public String password() {
+        return container.getPassword();
+    }
+
+    @Override
+    public String bucket() {
+        String bucketName = "myBucket";
+
+        Cluster cluster = Cluster.connect(getConnectionString(), username(), password());
+        cluster.buckets().createBucket(
+                BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE));
+
+        DesignDocument designDoc = new DesignDocument(
+                designDocumentName(),
+                Collections.singletonMap(
+                        viewName(),
+                        new View("function (doc, meta) {  emit(meta.id, doc);}")));
+        cluster.bucket(bucketName).viewIndexes().upsertDesignDocument(designDoc, DesignDocumentNamespace.PRODUCTION);
+
+        return bucketName;
+    }
+
+    @Override
+    public String viewName() {
+        return "myView";
+    }
+
+    @Override
+    public String designDocumentName() {
+        return "myDesignDocument";
     }
 
     @Override
