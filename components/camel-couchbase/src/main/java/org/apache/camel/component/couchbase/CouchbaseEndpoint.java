@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
+import com.couchbase.client.java.codec.DefaultJsonSerializer;
 import com.couchbase.client.java.env.ClusterEnvironment;
 import org.apache.camel.CamelException;
 import org.apache.camel.Category;
@@ -548,6 +549,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
         }
 
         ClusterEnvironment.Builder cfb = ClusterEnvironment.builder();
+        cfb.jsonSerializer(DefaultJsonSerializer.create());
         if (queryTimeout != DEFAULT_QUERY_TIMEOUT) {
             cfb.timeoutConfig()
                     .connectTimeout(Duration.ofMillis(connectTimeout))
