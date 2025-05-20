@@ -115,6 +115,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "The integration name. Use this when the name should not get derived otherwise.")
     protected String name;
 
+    @CommandLine.Option(names = { "--port" },
+                        description = "Embeds a local HTTP server on this port", defaultValue = "8080")
+    int port;
+
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
@@ -335,6 +339,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         // need to declare the profile to use for run
         run.dependencies = dependencies;
         run.files = files;
+        run.name = name;
+        run.port = port;
         run.excludes = excludes;
         run.openapi = openapi;
         run.download = download;
