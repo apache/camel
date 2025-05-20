@@ -139,6 +139,8 @@
         <invoker.skip>${skipTests}</invoker.skip>
 
         <enforcer.phase>none</enforcer.phase><!-- We do not enforce with -Dquickly, the property is overridden in the full profile -->
+
+        <os.detected.classifier>${nisse.os.classifier}</os.detected.classifier>
     </properties>
 
     <!-- Comment out the snapshot repositories as we don't need them now -->

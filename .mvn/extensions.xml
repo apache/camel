@@ -6,9 +6,9 @@
         <version>4.17.9</version>
     </extension>
     <extension>
-        <groupId>com.tisonkun.os</groupId>
-        <artifactId>os-detector-maven-plugin</artifactId>
-        <version>0.6.0</version>
+        <groupId>eu.maveniverse.maven.nisse</groupId>
+        <artifactId>extension</artifactId>
+        <version>0.4.4</version>
     </extension>
 <!-- Temporarily disabled due to INFRA-26647 -->
 <!--    <extension>-->
