@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import dev.langchain4j.rag.content.Content;
+import dev.langchain4j.rag.content.DefaultContent;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
@@ -43,7 +44,7 @@ public class LangChain4jRagAggregatorStrategy implements AggregationStrategy {
 
         // create a list of contents from the retrieved Strings
         List<Content> newContents = newAugmentedData.get().stream()
-                .map(Content::new)
+                .map(DefaultContent::new)
                 .collect(Collectors.toList());
 
         // Get or create the augmented data list from the old exchange
