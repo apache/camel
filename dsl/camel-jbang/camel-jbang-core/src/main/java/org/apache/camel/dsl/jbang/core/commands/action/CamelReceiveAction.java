@@ -96,8 +96,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Action to start, stop, clear, list status, or dump messages")
     String action;
 
-    @CommandLine.Option(names = { "--endpoint" },
-                        description = "Endpoint to browse messages (can be uri or pattern to refer to existing endpoint)")
+    @CommandLine.Option(names = { "--endpoint", "--uri" },
+                        description = "Endpoint to receive messages from (can be uri or pattern to refer to existing endpoint)")
     String endpoint;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
