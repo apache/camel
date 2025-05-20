@@ -30,6 +30,21 @@ public class RemoteCassandraInfraService implements CassandraInfraService {
 
     @Override
     public int getCQL3Port() {
+        return port();
+    }
+
+    @Override
+    public String getCassandraHost() {
+        return hosts();
+    }
+
+    @Override
+    public String hosts() {
+        return System.getProperty(CassandraProperties.CASSANDRA_HOST);
+    }
+
+    @Override
+    public int port() {
         String strPort = System.getProperty(CassandraProperties.CASSANDRA_CQL3_PORT);
 
         if (strPort != null) {
@@ -37,11 +52,6 @@ public class RemoteCassandraInfraService implements CassandraInfraService {
         }
 
         return DEFAULT_CQL_PORT;
-    }
-
-    @Override
-    public String getCassandraHost() {
-        return System.getProperty(CassandraProperties.CASSANDRA_HOST);
     }
 
     @Override
