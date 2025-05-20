@@ -57,7 +57,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
     String name = "*";
 
     @CommandLine.Option(names = { "--endpoint" },
-                        description = "Endpoint to browse messages (can be uri, pattern, or refer to a route id)")
+                        description = "Endpoint to browse messages from (can be uri, pattern, or refer to a route id)")
     String endpoint;
 
     @CommandLine.Option(names = { "--short-uri" },
