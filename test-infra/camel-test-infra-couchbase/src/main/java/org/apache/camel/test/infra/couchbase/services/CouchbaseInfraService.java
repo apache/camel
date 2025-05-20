@@ -23,11 +23,35 @@ public interface CouchbaseInfraService extends InfrastructureService {
 
     String getConnectionString();
 
+    // Use username
+    @Deprecated
     String getUsername();
 
+    // Use password
+    @Deprecated
     String getPassword();
 
+    // Use hostname
+    @Deprecated
     String getHostname();
 
+    // Use port
+    @Deprecated
     int getPort();
+
+    String protocol();
+
+    String hostname();
+
+    int port();
+
+    String username();
+
+    String password();
+
+    String bucket();
+
+    String viewName();
+
+    String designDocumentName();
 }
