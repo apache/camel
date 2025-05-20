@@ -28,7 +28,7 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "cameltoolparameter":
         case "camelToolParameter": target.setCamelToolParameter(property(camelContext, org.apache.camel.component.langchain4j.tools.spec.CamelSimpleToolParameter.class, value)); return true;
         case "chatmodel":
-        case "chatModel": target.getConfiguration().setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
+        case "chatModel": target.getConfiguration().setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatModel.class, value)); return true;
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -55,7 +55,7 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "cameltoolparameter":
         case "camelToolParameter": return org.apache.camel.component.langchain4j.tools.spec.CamelSimpleToolParameter.class;
         case "chatmodel":
-        case "chatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
+        case "chatModel": return dev.langchain4j.model.chat.ChatModel.class;
         case "description": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;

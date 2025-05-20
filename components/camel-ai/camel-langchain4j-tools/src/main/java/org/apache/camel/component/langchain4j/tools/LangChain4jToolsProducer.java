@@ -28,7 +28,9 @@ import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ChatRequest;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.output.FinishReason;
 import dev.langchain4j.model.output.Response;
 import org.apache.camel.Exchange;
@@ -45,7 +47,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
 
     private final LangChain4jToolsEndpoint endpoint;
 
-    private ChatLanguageModel chatLanguageModel;
+    private ChatModel chatModel;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -70,8 +72,8 @@ public class LangChain4jToolsProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.chatLanguageModel = this.endpoint.getConfiguration().getChatModel();
-        ObjectHelper.notNull(chatLanguageModel, "chatLanguageModel");
+        this.chatModel = this.endpoint.getConfiguration().getChatModel();
+        ObjectHelper.notNull(chatModel, "chatModel");
     }
 
     private void populateResponse(String response, Exchange exchange) {
@@ -178,7 +180,24 @@ public class LangChain4jToolsProducer extends DefaultProducer {
      * @return              the response provided by the model
      */
     private Response<AiMessage> chatWithLLM(List<ChatMessage> chatMessages, ToolPair toolPair, Exchange exchange) {
-        Response<AiMessage> response = this.chatLanguageModel.generate(chatMessages, toolPair.toolSpecifications());
+
+        ChatRequest.Builder requestBuilder = ChatRequest.builder()
+                .messages(chatMessages);
+
+        // Add tools if available
+        if (toolPair != null && toolPair.toolSpecifications() != null) {
+            requestBuilder.toolSpecifications(toolPair.toolSpecifications());
+        }
+
+        // build request
+        ChatRequest chatRequest = requestBuilder.build();
+
+        // generate response
+        ChatResponse chatResponse = this.chatModel.chat(chatRequest);
+
+        // Convert ChatResponse to Response<AiMessage> for compatibility
+        AiMessage aiMessage = chatResponse.aiMessage();
+        Response<AiMessage> response = Response.from(aiMessage);
 
         if (!response.content().hasToolExecutionRequests()) {
             exchange.getMessage().setHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER, Boolean.TRUE);

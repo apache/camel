@@ -35,7 +35,7 @@ public class LangChain4jToolsComponentConfigurer extends PropertyConfigurerSuppo
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chatmodel":
-        case "chatModel": getOrCreateConfiguration(target).setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
+        case "chatModel": getOrCreateConfiguration(target).setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatModel.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.tools.LangChain4jToolsConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -56,7 +56,7 @@ public class LangChain4jToolsComponentConfigurer extends PropertyConfigurerSuppo
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "chatmodel":
-        case "chatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
+        case "chatModel": return dev.langchain4j.model.chat.ChatModel.class;
         case "configuration": return org.apache.camel.component.langchain4j.tools.LangChain4jToolsConfiguration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;

@@ -24,7 +24,7 @@ public class LangChain4jToolsConfigurationConfigurer extends org.apache.camel.su
         org.apache.camel.component.langchain4j.tools.LangChain4jToolsConfiguration target = (org.apache.camel.component.langchain4j.tools.LangChain4jToolsConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "chatmodel":
-        case "chatModel": target.setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
+        case "chatModel": target.setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatModel.class, value)); return true;
         default: return false;
         }
     }
@@ -33,7 +33,7 @@ public class LangChain4jToolsConfigurationConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "chatmodel":
-        case "chatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
+        case "chatModel": return dev.langchain4j.model.chat.ChatModel.class;
         default: return null;
         }
     }

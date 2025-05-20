@@ -272,27 +272,25 @@ public interface LangChain4jToolsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
          * 
-         * The option is a:
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * The option is a: <code>dev.langchain4j.model.chat.ChatModel</code>
+         * type.
          * 
          * Group: advanced
          * 
          * @param chatModel the value to set
          * @return the dsl builder
          */
-        default AdvancedLangChain4jToolsEndpointConsumerBuilder chatModel(dev.langchain4j.model.chat.ChatLanguageModel chatModel) {
+        default AdvancedLangChain4jToolsEndpointConsumerBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
             doSetProperty("chatModel", chatModel);
             return this;
         }
         /**
-         * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
          * 
          * The option will be converted to a
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
          * 
          * Group: advanced
          * 
@@ -387,27 +385,25 @@ public interface LangChain4jToolsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
          * 
-         * The option is a:
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * The option is a: <code>dev.langchain4j.model.chat.ChatModel</code>
+         * type.
          * 
          * Group: advanced
          * 
          * @param chatModel the value to set
          * @return the dsl builder
          */
-        default AdvancedLangChain4jToolsEndpointProducerBuilder chatModel(dev.langchain4j.model.chat.ChatLanguageModel chatModel) {
+        default AdvancedLangChain4jToolsEndpointProducerBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
             doSetProperty("chatModel", chatModel);
             return this;
         }
         /**
-         * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
          * 
          * The option will be converted to a
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
          * 
          * Group: advanced
          * 
@@ -460,27 +456,25 @@ public interface LangChain4jToolsEndpointBuilderFactory {
         }
 
         /**
-         * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
          * 
-         * The option is a:
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * The option is a: <code>dev.langchain4j.model.chat.ChatModel</code>
+         * type.
          * 
          * Group: advanced
          * 
          * @param chatModel the value to set
          * @return the dsl builder
          */
-        default AdvancedLangChain4jToolsEndpointBuilder chatModel(dev.langchain4j.model.chat.ChatLanguageModel chatModel) {
+        default AdvancedLangChain4jToolsEndpointBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
             doSetProperty("chatModel", chatModel);
             return this;
         }
         /**
-         * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
          * 
          * The option will be converted to a
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
          * 
          * Group: advanced
          * 

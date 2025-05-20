@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.chat;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -33,7 +33,7 @@ public class LangChain4jChatConfiguration implements Cloneable {
 
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
-    private ChatLanguageModel chatModel;
+    private ChatModel chatModel;
 
     public LangChain4jChatConfiguration() {
     }
@@ -53,15 +53,15 @@ public class LangChain4jChatConfiguration implements Cloneable {
     }
 
     /**
-     * Chat Language Model of type dev.langchain4j.model.chat.ChatLanguageModel
+     * Chat Model of type dev.langchain4j.model.chat.ChatModel
      *
      * @return
      */
-    public ChatLanguageModel getChatModel() {
+    public ChatModel getChatModel() {
         return chatModel;
     }
 
-    public void setChatModel(ChatLanguageModel chatModel) {
+    public void setChatModel(ChatModel chatModel) {
         this.chatModel = chatModel;
     }
 
