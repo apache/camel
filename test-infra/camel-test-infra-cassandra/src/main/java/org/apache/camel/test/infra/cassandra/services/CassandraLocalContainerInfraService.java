@@ -56,12 +56,22 @@ public class CassandraLocalContainerInfraService implements CassandraInfraServic
 
     @Override
     public int getCQL3Port() {
-        return container.getMappedPort(CassandraContainer.CQL_PORT);
+        return port();
     }
 
     @Override
     public String getCassandraHost() {
+        return hosts();
+    }
+
+    @Override
+    public String hosts() {
         return container.getHost();
+    }
+
+    @Override
+    public int port() {
+        return container.getMappedPort(CassandraContainer.CQL_PORT);
     }
 
     @Override
