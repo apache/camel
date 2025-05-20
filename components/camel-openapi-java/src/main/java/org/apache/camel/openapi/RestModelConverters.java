@@ -52,13 +52,6 @@ public class RestModelConverters {
         MODEL30_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver()));
     }
 
-    private static final ModelConverters MODEL20_CONVERTERS;
-
-    static {
-        MODEL20_CONVERTERS = ModelConverters.getInstance();
-        MODEL20_CONVERTERS.addConverter(new ClassNameExtensionModelResolver());
-    }
-
     private final boolean openapi31;
 
     public RestModelConverters(boolean openapi31) {
