@@ -61,6 +61,8 @@ public final class RunHelper {
 
         Path pomPath = Paths.get("pom.xml");
         if (Files.exists(pomPath) && Files.isRegularFile(pomPath)) {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+
             // find additional dependencies form pom.xml
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
             try (Reader reader = Files.newBufferedReader(pomPath)) {
@@ -89,7 +91,7 @@ public final class RunHelper {
                         // camel dependencies
                         String a = d.getArtifactId();
 
-                        if (!isInCamelCatalog(a)) {
+                        if (!isInCamelCatalog(catalog, a)) {
                             // not a known camel artifact
                             continue;
                         }
@@ -170,7 +172,10 @@ public final class RunHelper {
     }
 
     public static boolean isInCamelCatalog(String artifactId) {
-        CamelCatalog catalog = new DefaultCamelCatalog();
+        return isInCamelCatalog(new DefaultCamelCatalog(), artifactId);
+    }
+
+    public static boolean isInCamelCatalog(CamelCatalog catalog, String artifactId) {
         for (String n : catalog.findComponentNames()) {
             String a = catalog.componentModel(n).getArtifactId();
             if (artifactId.equals(a)) {

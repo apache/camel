@@ -55,7 +55,7 @@ class DependencyListTest extends CamelCommandBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldDependencyList(RuntimeType rt) throws Exception {
-        Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
+        DependencyList command = createCommand(rt, new String[] { "classpath:route.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--camel-version=4.11.0",
                 "--quarkus-version=3.22.2", "--spring-boot-version=3.4.5");
         int exit = command.doCall();
@@ -75,9 +75,8 @@ class DependencyListTest extends CamelCommandBaseTest {
         }
     }
 
-    private Export createCommand(RuntimeType rt, String[] files, String... args) {
+    private DependencyList createCommand(RuntimeType rt, String[] files, String... args) {
         DependencyList command = new DependencyList(new CamelJBangMain().withPrinter(printer));
-        ;
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()));
         if (args != null) {

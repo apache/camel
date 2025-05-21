@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -193,20 +194,25 @@ public final class CatalogLoader {
 
             if (camelQuarkusVersion != null) {
                 // download camel-quarkus-catalog we use to know if we have an extension or not
-                downloader.downloadDependency("org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion);
+                List<MavenArtifact> artifacts = downloader.downloadArtifacts("org.apache.camel.quarkus",
+                        "camel-quarkus-catalog", camelQuarkusVersion, true);
+                if (artifacts != null) {
+                    // this will add to classpath
+                    downloader.downloadDependency("org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion);
 
-                Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(QUARKUS_CATALOG_PROVIDER);
-                if (clazz != null) {
-                    Class<CamelCatalog> clazz2 = (Class<CamelCatalog>) cl.loadClass(DEFAULT_CAMEL_CATALOG);
-                    if (clazz2 != null) {
-                        answer = ObjectHelper.newInstance(clazz2);
+                    Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(QUARKUS_CATALOG_PROVIDER);
+                    if (clazz != null) {
+                        Class<CamelCatalog> clazz2 = (Class<CamelCatalog>) cl.loadClass(DEFAULT_CAMEL_CATALOG);
+                        if (clazz2 != null) {
+                            answer = ObjectHelper.newInstance(clazz2);
+                        }
+                        RuntimeProvider provider = ObjectHelper.newInstance(clazz);
+                        if (provider != null) {
+                            answer.setRuntimeProvider(provider);
+                        }
+                        // use classloader that loaded quarkus provider to ensure we can load its resources
+                        answer.getVersionManager().setClassLoader(cl);
                     }
-                    RuntimeProvider provider = ObjectHelper.newInstance(clazz);
-                    if (provider != null) {
-                        answer.setRuntimeProvider(provider);
-                    }
-                    // use classloader that loaded quarkus provider to ensure we can load its resources
-                    answer.getVersionManager().setClassLoader(cl);
                 }
             }
             answer.enableCache();
@@ -215,6 +221,30 @@ public final class CatalogLoader {
         }
 
         return answer;
+    }
+
+    public static String resolveCamelVersionFromQuarkus(String repos, String camelQuarkusVersion) throws Exception {
+        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setRepositories(repos);
+        downloader.setClassLoader(cl);
+        try {
+            downloader.start();
+
+            List<MavenArtifact> artifacts = downloader.downloadArtifacts("org.apache.camel.quarkus", "camel-quarkus-catalog",
+                    camelQuarkusVersion, true);
+            for (MavenArtifact ma : artifacts) {
+                String g = ma.getGav().getGroupId();
+                String a = ma.getGav().getArtifactId();
+                if ("org.apache.camel".equals(g) && "camel-catalog".equals(a)) {
+                    return ma.getGav().getVersion();
+                }
+            }
+        } finally {
+            downloader.stop();
+        }
+
+        return null;
     }
 
     private static final class DownloadCatalogVersionManager implements VersionManager {
