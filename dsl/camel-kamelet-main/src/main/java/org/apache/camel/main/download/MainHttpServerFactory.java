@@ -31,7 +31,7 @@ public class MainHttpServerFactory {
         if (server == null) {
             // need to capture that we use a http-server
             HttpServerConfigurationProperties config = new HttpServerConfigurationProperties(null);
-            CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.jbang.platform-http.port",
+            CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.server.port",
                     String.valueOf(config.getPort()));
             if (!silent) {
                 try {

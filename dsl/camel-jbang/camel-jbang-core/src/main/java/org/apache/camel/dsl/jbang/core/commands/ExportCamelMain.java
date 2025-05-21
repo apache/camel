@@ -130,6 +130,11 @@ class ExportCamelMain extends Export {
                             prop.put("camel.server.health-check-enabled", "true");
                         }
                     }
+                    port = httpManagementPort(settings);
+                    if (port != -1) {
+                        prop.put("camel.management.enabled", "true");
+                        prop.put("camel.management.port", port);
+                    }
                     return prop;
                 });
         // create main class

@@ -128,6 +128,10 @@ class ExportSpringBoot extends Export {
             if (port != -1 && port != 8080) {
                 prop.put("server.port", port);
             }
+            port = httpManagementPort(settings);
+            if (port != -1) {
+                prop.put("management.server.port", port);
+            }
             return prop;
         });
         if ("maven".equals(buildTool)) {

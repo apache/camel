@@ -110,8 +110,12 @@ class ExportQuarkus extends Export {
             if (port == -1) {
                 port = 8080;
             }
-            if (port != -1 && port != 8080) {
+            if (port != 8080) {
                 prop.put("quarkus.http.port", port);
+            }
+            port = httpManagementPort(settings);
+            if (port != -1) {
+                prop.put("quarkus.management.port", port);
             }
             return prop;
         });
