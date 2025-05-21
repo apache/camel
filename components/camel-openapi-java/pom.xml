@@ -107,14 +107,6 @@
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
         </dependency>
 
-        <!-- servlet api -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>${jakarta-servlet-api-version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
