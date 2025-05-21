@@ -1030,6 +1030,8 @@ public class Run extends CamelCommand {
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.name = this.name;
+        eq.verbose = this.verbose;
+        eq.port = this.port;
         eq.gav = this.gav;
         if (eq.gav == null) {
             if (eq.name == null) {
@@ -1111,6 +1113,8 @@ public class Run extends CamelCommand {
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.name = this.name;
+        eq.verbose = this.verbose;
+        eq.port = this.port;
         eq.gav = this.gav;
         eq.repositories = this.repositories;
         if (eq.gav == null) {

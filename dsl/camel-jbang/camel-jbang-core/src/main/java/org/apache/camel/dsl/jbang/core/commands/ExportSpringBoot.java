@@ -120,6 +120,14 @@ class ExportSpringBoot extends Export {
             if (!http) {
                 prop.put("camel.springboot.main-run-controller", "true");
             }
+            // are we using http then enable embedded HTTP server (if not explicit configured already)
+            int port = httpServerPort(settings);
+            if (port == -1 && http) {
+                port = 8080;
+            }
+            if (port != -1 && port != 8080) {
+                prop.put("server.port", port);
+            }
             return prop;
         });
         if ("maven".equals(buildTool)) {
