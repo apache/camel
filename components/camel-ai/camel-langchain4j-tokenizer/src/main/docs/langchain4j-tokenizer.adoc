@@ -48,7 +48,7 @@ Java::
 from("direct:start")
     .tokenize(tokenizer()
             .byParagraph()
-                .maxTokens(1024)
+                .maxSegmentSize(1024)
                 .maxOverlap(10)
                 .using(LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI)
                 .end())
@@ -117,3 +117,24 @@ Qwen::
 </dependency>
 -------------------------------------------------------
 ====
+
+
+Starting with Camel 4.12, the code defaults to using segment sizes for determining the maximum number of data to tokenize. To
+actually tokenize by tokens, you must inform the underlying model used instead. For instance:
+
+[tabs]
+====
+Java::
++
+[source,java]
+-------------------------------------------------------
+from("direct:start")
+    .tokenize(tokenizer()
+            .byParagraph()
+                .maxTokens(1024, "gpt-4o-mini")
+                .maxOverlap(10)
+                .using(LangChain4jTokenizerDefinition.TokenizerType.OPEN_AI)
+                .end())
+    .split().body()
+    .to("mock:result");
+-------------------------------------------------------
