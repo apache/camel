@@ -164,15 +164,15 @@ And in YAML DSL:
 
 [source,yaml]
 ----
-- templated-route:
-    route-template-ref: "myTemplate"
+- templatedRoute:
+    routeTemplateRef: "myTemplate"
     parameters:
       - name: "name"
         value: "one"
       - name: "greeting"
         value: "Hello"
-- templated-route:
-    route-template-ref: "myTemplate"
+- templatedRoute:
+    routeTemplateRef: "myTemplate"
     parameters:
       - name: "name"
         value: "two"
@@ -242,8 +242,8 @@ And in YAML DSL:
 
 [source,yaml]
 ----
-- templated-route:
-    route-template-ref: "myTemplate"
+- templatedRoute:
+    routeTemplateRef: "myTemplate"
     route-id: "myCoolRoute"
     parameters:
       - name: "name"
@@ -363,8 +363,8 @@ And in YAML DSL:
 
 [source,yaml]
 ----
-- templated-route:
-    route-template-ref: "orderTemplate"
+- templatedRoute:
+    routeTemplateRef: "orderTemplate"
     route-id: "webOrder"
     prefix-id: "web"
     parameters:
@@ -490,9 +490,9 @@ And in YAML DSL:
 
 [source,yaml]
 ----
-- templated-route:
-    route-template-ref: "s3template"
-    route-id: "mys3route"
+- templatedRoute:
+    routeTemplateRef: "s3template"
+    routeId: "mys3route"
     parameters:
       - name: "region"
         value: "US-EAST-1"
