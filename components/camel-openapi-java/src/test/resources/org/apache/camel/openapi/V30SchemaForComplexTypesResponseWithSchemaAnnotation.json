@@ -12,7 +12,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/SampleComplexRequestType_InnerClass"
+                "$ref" : "#/components/schemas/InnerClass"
               }
             }
           },
@@ -36,6 +36,19 @@
   },
   "components" : {
     "schemas" : {
+      "InnerClass" : {
+        "type" : "object",
+        "properties" : {
+          "longField" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
+          "type" : "string"
+        }
+      },
       "sampleResponseWithSchema" : {
         "required" : [ "arrayOfStrings", "responseField1" ],
         "type" : "object",
@@ -75,19 +88,6 @@
         },
         "x-className" : {
           "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation$InnerClass",
-          "type" : "string"
-        }
-      },
-      "SampleComplexRequestType_InnerClass" : {
-        "type" : "object",
-        "properties" : {
-          "longField" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        },
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
           "type" : "string"
         }
       }

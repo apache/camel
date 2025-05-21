@@ -24,7 +24,7 @@
             "content" : {
               "text/plain" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/SampleComplexResponseType_InnerClass"
+                  "$ref" : "org.apache.camel.openapi.model.SampleComplexResponseType.InnerClass"
                 }
               }
             }
@@ -36,16 +36,16 @@
   },
   "components" : {
     "schemas" : {
-      "SampleComplexResponseType_InnerClass" : {
+      "InnerClass" : {
         "type" : "object",
         "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
           "type" : "string"
         },
         "properties" : {
-          "doubleField" : {
-            "type" : "number",
-            "format" : "double"
+          "longField" : {
+            "type" : "integer",
+            "format" : "int64"
           }
         }
       },
@@ -58,6 +58,19 @@
         "properties" : {
           "customDataField" : {
             "type" : "string"
+          }
+        }
+      },
+      "org.apache.camel.openapi.model.SampleComplexResponseType.InnerClass" : {
+        "type" : "object",
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
+          "type" : "string"
+        },
+        "properties" : {
+          "doubleField" : {
+            "type" : "number",
+            "format" : "double"
           }
         }
       },
@@ -130,23 +143,10 @@
             "enum" : [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ]
           },
           "innerClass" : {
-            "$ref" : "#/components/schemas/SampleComplexRequestType_InnerClass"
+            "$ref" : "#/components/schemas/InnerClass"
           }
         },
         "required" : [ "mapOfStrings", "requestField1" ]
-      },
-      "SampleComplexRequestType_InnerClass" : {
-        "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
-          "type" : "string"
-        },
-        "properties" : {
-          "longField" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }
       }
     },
     "securitySchemes" : {

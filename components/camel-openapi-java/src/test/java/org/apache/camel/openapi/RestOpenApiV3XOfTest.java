@@ -96,8 +96,9 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         };
     }
 
+    // TODO: Does not work with 3.1 https://github.com/swagger-api/swagger-core/issues/4904
     @ParameterizedTest
-    @ValueSource(strings = { "3.0", "3.1" })
+    @ValueSource(strings = { "3.0" })
     public void testReaderReadOneOf(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
@@ -135,8 +136,9 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         context.stop();
     }
 
+    // TODO: Does not work with 3.1 https://github.com/swagger-api/swagger-core/issues/4904
     @ParameterizedTest
-    @ValueSource(strings = { "3.0", "3.1" })
+    @ValueSource(strings = { "3.0" })
     public void testReaderReadAllOf(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
@@ -166,8 +168,9 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         context.stop();
     }
 
+    // TODO: Does not work with 3.1 https://github.com/swagger-api/swagger-core/issues/4904
     @ParameterizedTest
-    @ValueSource(strings = { "3.0", "3.1" })
+    @ValueSource(strings = { "3.0" })
     public void testReaderReadAnyOf(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
