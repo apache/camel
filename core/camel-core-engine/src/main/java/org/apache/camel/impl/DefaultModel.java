@@ -243,6 +243,8 @@ public class DefaultModel implements Model {
                                 }
                                 r.getOutputs().removeAll(toBeRemovedOut);
                                 r.getOutputs().addAll(toBeInlined.getOutputs());
+                                // inlined outputs should have re-assigned parent to this route
+                                r.getOutputs().forEach(o -> o.setParent(r));
                                 // and copy over various configurations
                                 if (toBeInlined.getRouteId() != null) {
                                     r.setId(toBeInlined.getRouteId());
