@@ -105,6 +105,14 @@ class ExportQuarkus extends Export {
             if (!hasModeline(settings)) {
                 prop.remove("camel.main.modeline");
             }
+            // are we using http then enable embedded HTTP server (if not explicit configured already)
+            int port = httpServerPort(settings);
+            if (port == -1) {
+                port = 8080;
+            }
+            if (port != -1 && port != 8080) {
+                prop.put("quarkus.http.port", port);
+            }
             return prop;
         });
         // copy docker files
