@@ -235,3 +235,11 @@ The `camel-servetl-starter` has a minor code change for the Spring Boot 3.5 upgr
 The `camel-jetty-starter` has been deprecated in favor of `camel-platform-http-starter` to use the HTTP server from Spring Boot.
 
 The `camel-undertow-starter` has been deprecated in favor of `camel-platform-http-starter` to use the HTTP server from Spring Boot.
+
+
+== camel-langchain4j-tokenizer
+
+The code was upgraded to LangChain4j version 1.0.0, which brings a few breaking changes:
+
+- By default, tokenization now uses segment sizes
+- To tokenize by tokens, the model used in the system must be provided

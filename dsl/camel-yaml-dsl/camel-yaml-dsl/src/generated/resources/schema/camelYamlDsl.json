@@ -16067,6 +16067,11 @@
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
           },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
+          },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
@@ -16096,6 +16101,11 @@
             "type" : "number",
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
           },
           "tokenizerType" : {
             "type" : "string",
@@ -16127,6 +16137,11 @@
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
           },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
+          },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
@@ -16157,6 +16172,11 @@
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
           },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
+          },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
@@ -16178,6 +16198,9 @@
           },
           "maxTokens" : {
             "type" : "number"
+          },
+          "modelName" : {
+            "type" : "string"
           },
           "tokenizerType" : {
             "type" : "string",
@@ -16206,6 +16229,11 @@
             "type" : "number",
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
           },
           "tokenizerType" : {
             "type" : "string",

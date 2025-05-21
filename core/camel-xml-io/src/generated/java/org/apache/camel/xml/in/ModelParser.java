@@ -2745,6 +2745,7 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> switch (key) {
             case "maxOverlap": def.setMaxOverlap(val); yield true;
             case "maxTokens": def.setMaxTokens(val); yield true;
+            case "modelName": def.setModelName(val); yield true;
             case "tokenizerType": def.setTokenizerType(val); yield true;
             default: yield identifiedTypeAttributeHandler().accept(def, key, val);
         };
