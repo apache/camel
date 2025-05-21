@@ -51,6 +51,7 @@ public class TraitCatalog {
         register(new LabelTrait());
         register(new AnnotationTrait());
         register(new CamelTrait());
+        register(new JolokiaTrait());
     }
 
     public List<Trait> allTraits() {

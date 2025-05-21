@@ -1222,6 +1222,110 @@ spec:
 <6> Service Resource reference
 
 
+=== Jolokia trait options
+
+The Jolokia trait enhances the Kubernetes manifest enabling JMX access to Camel application. This requires jolokia being configured in the Camel Application.
+
+The Jolokia trait provides the following configuration options:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| jolokia.enabled
+| bool
+| Can be used to enable or disable a trait. All traits share this common property. (default `false`).
+
+| jolokia.container-port
+| int
+| To configure a different jolokia port exposed by the container (default `8778`).
+
+| jolokia.container-port-name
+| string
+| To configure a different port name for the port exposed by the container (default `jolokia`).
+
+| jolokia.expose
+| bool
+| Can be used to enable/disable exposure of jolokia via kubernetes Service. (default `false`).
+
+| jolokia.service-port
+| int
+| To configure a different jolokia port exposed by the service (default `8778`). It is applied only when the expose parameter is true.
+
+| jolokia.service-port-name
+| string
+| To configure a different port name for the port exposed by the service (default `jolokia`). It is applied only when the expose parameter is true.
+
+
+|===
+
+The syntax to specify jolokia trait options is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait jolokia.[key]=[value]
+----
+
+You may specify these options with the export command to customize the Container and Service Resource specification for Jolokia.
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait jolokia.enabled=true --trait jolokia.container-port=8779 --trait jolokia.container-port-name=jolokia-port --trait jolokia.expose=true --trait jolokia.service-port=8779 --trait jolokia.service-port-name=port-jolokia
+----
+
+This results in the following specifications in the Deployment and Service resources.
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  ...
+  name: sample
+spec:
+  selector:
+  ...
+  template:
+  ...
+    spec:
+      containers:
+      - name: sample
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 8779 #<1>
+          name: jolokia-port #<2>
+          protocol: TCP
+...
+----
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+...
+  name: sample
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  - name: jolokia-port #<3>
+    port: 8779 #<4>
+    protocol: TCP
+    targetPort: jolokia-port #<2>
+...
+----
+
+<1> Custom Jolokia container port
+<2> Custom Jolokia container port name
+<3> Custom Jolokia service port name
+<4> Custom Jolokia service port
+
+
 === OpenApi specifications
 
 You can mount OpenAPI specifications to the application container with this trait.

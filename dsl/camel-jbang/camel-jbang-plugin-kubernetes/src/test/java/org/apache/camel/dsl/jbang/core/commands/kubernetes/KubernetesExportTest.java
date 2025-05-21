@@ -628,4 +628,49 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("quay.io/camel/demo-app:1.0", props.get("jkube.image.name"));
         Assertions.assertEquals("quay.io/camel/demo-app:1.0", props.get("jkube.container-image.name"));
     }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddJolokiaSpec(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait", "jolokia.enabled=true",
+                "--trait", "jolokia.expose=true",
+                "--trait", "jolokia.service-port=8779",
+                "--trait", "jolokia.service-port-name=jolokia-port",
+                "--runtime=" + rt.runtime());
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        Deployment deployment = getDeployment(rt);
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertEquals("route-service", deployment.getMetadata().getName());
+        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Assertions.assertNull(container.getImage());
+        Assertions.assertEquals(2, container.getPorts().size());
+        Assertions.assertEquals("jolokia", container.getPorts().get(1).getName());
+        Assertions.assertEquals(8778, container.getPorts().get(1).getContainerPort());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+
+        Service service = getService(rt);
+        List<ServicePort> ports = service.getSpec().getPorts();
+        Assertions.assertEquals("route-service", service.getMetadata().getName());
+        Assertions.assertEquals(2, ports.size());
+        Assertions.assertEquals("http", ports.get(0).getName());
+        Assertions.assertEquals(80, ports.get(0).getPort());
+        Assertions.assertEquals("http", ports.get(0).getTargetPort().getStrVal());
+        Assertions.assertEquals("jolokia-port", ports.get(1).getName());
+        Assertions.assertEquals(8779, ports.get(1).getPort());
+        Assertions.assertEquals("jolokia", ports.get(1).getTargetPort().getStrVal());
+    }
 }
