@@ -330,24 +330,29 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     @Override
     public MavenArtifact downloadArtifact(String groupId, String artifactId, String version) {
+        List<MavenArtifact> artifacts = downloadArtifacts(groupId, artifactId, version, false);
+        if (artifacts != null && artifacts.size() == 1) {
+            return artifacts.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public List<MavenArtifact> downloadArtifacts(String groupId, String artifactId, String version, boolean transitively) {
         String gav = groupId + ":" + artifactId + ":" + version;
         List<String> deps = List.of(gav);
 
         // include Apache snapshot to make it easy to use upcoming releases
         boolean useApacheSnapshots = "org.apache.camel".equals(groupId) && version.contains("SNAPSHOT");
 
-        List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, null, false, useApacheSnapshots);
+        List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, null, transitively, useApacheSnapshots);
         if (verbose) {
             LOG.info("Dependencies: {} -> [{}]", gav, artifacts);
         } else {
             LOG.debug("Dependencies: {} -> [{}]", gav, artifacts);
         }
 
-        if (artifacts.size() == 1) {
-            return artifacts.get(0);
-        }
-
-        return null;
+        return artifacts;
     }
 
     @Override
