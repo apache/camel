@@ -36,10 +36,22 @@ public interface Tokenizer {
      */
     interface Configuration {
         /**
-         * Sets the maximum number of tokens to be produced by the tokenizer.
+         * Sets the maximum size of the segment to be tokenized and produced by the tokenizer. It can be defined either
+         * based on the number of tokens, in which case, the model name must be provided via setModelName, or the
+         * maximum number of characters.
+         *
+         * @param maxSegmentSize the new maximum size of the segment
+         * @see                  #setModelName(String)
+         */
+        void setMaxSegmentSize(int maxSegmentSize);
+
+        /**
+         * Sets the maximum number of tokens to be produced by the tokenizer. Use setMaxSegmentSize instead.
          *
          * @param maxTokens the new maximum number of tokens
+         * @see             #setMaxSegmentSize(int)
          */
+        @Deprecated(since = "4.12.0", forRemoval = true)
         void setMaxTokens(int maxTokens);
 
         /**
@@ -57,6 +69,15 @@ public interface Tokenizer {
          * @param type the tokenization type
          */
         void setType(String type);
+
+        /**
+         * Sets the underlying model used by the application. This can be useful when it is necessary to know in advance
+         * the cost of processing a specified text by the given model. By providing this, it effectively switches to
+         * computing the segment sizes in terms of tokens.
+         *
+         * @param type the tokenization type
+         */
+        void setModelName(String type);
     }
 
     /**

@@ -8953,6 +8953,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "modelName", type = "string", description = "Sets the model name", displayName = "Model Name"),
                     @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
             }
     )
@@ -8986,6 +8987,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setMaxTokens(val);
                     break;
                 }
+                case "modelName": {
+                    String val = asText(node);
+                    target.setModelName(val);
+                    break;
+                }
                 case "tokenizerType": {
                     String val = asText(node);
                     target.setTokenizerType(val);
@@ -9013,6 +9019,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "modelName", type = "string", description = "Sets the model name", displayName = "Model Name"),
                     @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
             }
     )
@@ -9046,6 +9053,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setMaxTokens(val);
                     break;
                 }
+                case "modelName": {
+                    String val = asText(node);
+                    target.setModelName(val);
+                    break;
+                }
                 case "tokenizerType": {
                     String val = asText(node);
                     target.setTokenizerType(val);
@@ -9073,6 +9085,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "modelName", type = "string", description = "Sets the model name", displayName = "Model Name"),
                     @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
             }
     )
@@ -9106,6 +9119,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setMaxTokens(val);
                     break;
                 }
+                case "modelName": {
+                    String val = asText(node);
+                    target.setModelName(val);
+                    break;
+                }
                 case "tokenizerType": {
                     String val = asText(node);
                     target.setTokenizerType(val);
@@ -9133,6 +9151,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "modelName", type = "string", description = "Sets the model name", displayName = "Model Name"),
                     @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
             }
     )
@@ -9166,6 +9185,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setMaxTokens(val);
                     break;
                 }
+                case "modelName": {
+                    String val = asText(node);
+                    target.setModelName(val);
+                    break;
+                }
                 case "tokenizerType": {
                     String val = asText(node);
                     target.setTokenizerType(val);
@@ -9186,6 +9210,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "maxOverlap", type = "number", required = true),
                     @YamlProperty(name = "maxTokens", type = "number", required = true),
+                    @YamlProperty(name = "modelName", type = "string"),
                     @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN")
             }
     )
@@ -9219,6 +9244,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setMaxTokens(val);
                     break;
                 }
+                case "modelName": {
+                    String val = asText(node);
+                    target.setModelName(val);
+                    break;
+                }
                 case "tokenizerType": {
                     String val = asText(node);
                     target.setTokenizerType(val);
@@ -9246,6 +9276,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "modelName", type = "string", description = "Sets the model name", displayName = "Model Name"),
                     @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
             }
     )
@@ -9277,6 +9308,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "maxTokens": {
                     String val = asText(node);
                     target.setMaxTokens(val);
+                    break;
+                }
+                case "modelName": {
+                    String val = asText(node);
+                    target.setModelName(val);
                     break;
                 }
                 case "tokenizerType": {

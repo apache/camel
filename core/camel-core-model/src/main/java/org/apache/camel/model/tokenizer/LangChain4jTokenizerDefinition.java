@@ -49,6 +49,10 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
     @Metadata(javaType = "java.lang.Integer", required = true)
     private String maxOverlap;
 
+    @XmlAttribute(required = true)
+    @Metadata(javaType = "java.lang.String", required = false)
+    private String modelName;
+
     public LangChain4jTokenizerDefinition() {
     }
 
@@ -57,6 +61,7 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
         this.maxTokens = source.maxTokens;
         this.maxOverlap = source.maxOverlap;
         this.tokenizerType = source.tokenizerType;
+        this.modelName = source.modelName;
     }
 
     /**
@@ -101,6 +106,24 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
         this.tokenizerType = tokenizerType;
     }
 
+    /**
+     * Gets the model name
+     *
+     * @return
+     */
+    public String getModelName() {
+        return modelName;
+    }
+
+    /**
+     * Sets the model name
+     *
+     * @param modelName
+     */
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
     @Override
     public LangChain4jTokenizerDefinition copyDefinition() {
         throw new UnsupportedOperationException("Must be implemented in the concrete classes");
@@ -121,14 +144,45 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
     public static abstract class Builder implements TokenizerBuilder<LangChain4jTokenizerDefinition> {
         private int maxTokens;
         private int maxOverlap;
+        private String modelName;
         private TokenizerType tokenizerType;
         private Tokenizer.Configuration configuration;
 
         /**
+         * Sets the maximum size of the segment to be tokenized. It can represent either the size of the segment or, if
+         * a model name is provided, the maximum number of tokens.
+         */
+        public Builder maxSegmentSize(int maxSegmentSize) {
+            this.maxTokens = maxSegmentSize;
+
+            return this;
+        }
+
+        /**
+         * Sets the maximum number of tokens in each segment. Use either maxSegmentSize or maxTokens(int, String).
+         *
+         * @see #maxSegmentSize
+         * @see #maxTokens(int, String)
+         */
+        @Deprecated
+        public Builder maxTokens(int maxTokens) {
+            return maxSegmentSize(maxTokens);
+        }
+
+        /**
          * Sets the maximum number of tokens in each segment
          */
-        public Builder maxTokens(int maxTokens) {
-            this.maxTokens = maxTokens;
+        public Builder maxTokens(int maxTokens, String modelName) {
+            return maxSegmentSize(maxTokens).modelName(modelName);
+        }
+
+        /**
+         * Sets the underlying model used by the application. By providing this, it effectively switches to computing *
+         * the segment sizes in terms of tokens. This can also be useful when it is necessary to know in advance the
+         * cose of processing a specified text by the given model.
+         */
+        public Builder modelName(String modelName) {
+            this.modelName = modelName;
             return this;
         }
 
@@ -161,6 +215,7 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
                 tokenizer.setMaxTokens(Integer.toString(maxTokens));
                 tokenizer.setMaxOverlap(Integer.toString(maxOverlap));
                 tokenizer.setTokenizerType(tokenizerType.name());
+                tokenizer.setModelName(modelName);
             }
 
             tokenizer.setTokenizerName(name());
