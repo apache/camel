@@ -291,6 +291,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port", defaultValue = "8080")
     int port;
 
+    @Option(names = { "--management-port" }, description = "To use a dedicated port for HTTP management")
+    int managementPort = -1;
+
     @Option(names = { "--console" }, defaultValue = "false",
             description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
     boolean console;
@@ -698,9 +701,12 @@ public class Run extends CamelCommand {
                 () -> maxSeconds > 0 ? String.valueOf(maxSeconds) : null);
         writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
                 () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
-        writeSetting(main, profileProperties, "camel.jbang.platform-http.port",
+        writeSetting(main, profileProperties, "camel.server.port",
                 () -> port > 0 && port != 8080 ? String.valueOf(port) : null);
-        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null); // TODO: "true" instead of "jfr" ?
+        if (managementPort != -1) {
+            writeSetting(main, profileProperties, "camel.management.port", () -> String.valueOf(managementPort));
+        }
+        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         writeSetting(main, profileProperties, "camel.jbang.kameletsVersion", kameletsVersion);
@@ -1032,6 +1038,7 @@ public class Run extends CamelCommand {
         eq.name = this.name;
         eq.verbose = this.verbose;
         eq.port = this.port;
+        eq.managementPort = this.managementPort;
         eq.gav = this.gav;
         if (eq.gav == null) {
             if (eq.name == null) {
@@ -1115,6 +1122,7 @@ public class Run extends CamelCommand {
         eq.name = this.name;
         eq.verbose = this.verbose;
         eq.port = this.port;
+        eq.managementPort = this.managementPort;
         eq.gav = this.gav;
         eq.repositories = this.repositories;
         if (eq.gav == null) {
