@@ -398,7 +398,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication domain to use with NTML.
+         * Proxy authentication domain to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -441,7 +441,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication domain (workstation name) to use with NTML.
+         * Proxy authentication domain (workstation name) to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -582,7 +582,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Authentication domain to use with NTML.
+         * Authentication domain to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -629,7 +629,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Authentication host to use with NTML.
+         * Authentication host to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -645,7 +645,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Authentication methods allowed to use as a comma separated list of
-         * values Basic, Bearer, Digest or NTLM. (NTLM is deprecated).
+         * values Basic, Bearer, or NTLM. (NTLM is deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -660,7 +660,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Which authentication method to prioritize to use, either as Basic,
-         * Bearer, Digest or NTLM. (NTLM is deprecated).
+         * Bearer, or NTLM. (NTLM is deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

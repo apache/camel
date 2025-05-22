@@ -25,10 +25,10 @@ public class HttpConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Metadata(label = "producer,security",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM. (NTLM is deprecated)")
+              description = "Authentication methods allowed to use as a comma separated list of values Basic, or NTLM. (NTLM is deprecated)")
     private String authMethod;
-    @Metadata(label = "producer,security", enums = "Basic,Bearer,Digest,NTLM",
-              description = "Which authentication method to prioritize to use, either as Basic, Bearer, Digest or NTLM. (NTLM is deprecated)")
+    @Metadata(label = "producer,security", enums = "Basic,Bearer,NTLM",
+              description = "Which authentication method to prioritize to use, either as Basic, Bearer, or NTLM. (NTLM is deprecated)")
     private String authMethodPriority;
     @Metadata(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
@@ -71,7 +71,7 @@ public class HttpConfiguration implements Serializable {
     private int proxyPort;
     @Metadata(label = "producer,proxy", enums = "http,https", description = "Authentication scheme to use")
     private String proxyAuthScheme;
-    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    @Metadata(label = "producer,proxy", enums = "Basic,Bearer,NTLM", description = "Proxy authentication method to use")
     private String proxyAuthMethod;
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
     private String proxyAuthUsername;
@@ -90,7 +90,7 @@ public class HttpConfiguration implements Serializable {
     }
 
     /**
-     * Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.
+     * Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM (deprecated).
      */
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;
@@ -101,7 +101,7 @@ public class HttpConfiguration implements Serializable {
     }
 
     /**
-     * Which authentication method to prioritize to use, either as Basic, Digest or NTLM.
+     * Which authentication method to prioritize to use, either as Basic, Bearer or NTLM (deprecated).
      */
     public void setAuthMethodPriority(String authMethodPriority) {
         this.authMethodPriority = authMethodPriority;
@@ -145,7 +145,7 @@ public class HttpConfiguration implements Serializable {
     }
 
     /**
-     * Authentication domain to use with NTML
+     * Authentication domain to use with NTLM
      */
     public void setAuthDomain(String authDomain) {
         this.authDomain = authDomain;
@@ -156,7 +156,7 @@ public class HttpConfiguration implements Serializable {
     }
 
     /**
-     * Authentication host to use with NTML
+     * Authentication host to use with NTLM
      */
     public void setAuthHost(String authHost) {
         this.authHost = authHost;
@@ -211,7 +211,7 @@ public class HttpConfiguration implements Serializable {
     }
 
     /**
-     * Proxy authentication domain to use with NTML
+     * Proxy authentication domain to use with NTLM
      */
     public void setProxyAuthDomain(String proxyAuthDomain) {
         this.proxyAuthDomain = proxyAuthDomain;
