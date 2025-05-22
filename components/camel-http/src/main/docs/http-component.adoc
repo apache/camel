@@ -336,7 +336,7 @@ int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 
 === Defining specific properties of Apache HTTP client via Camel parameters
 
-There are different parameters you coul set in a route, via parameter, that will influence the behavior of the Apache HTTP Client.
+There are different parameters you could set in a route, that will influence the behavior of the Apache HTTP Client.
 
 Most of the option are available here: https://hc.apache.org/httpcomponents-client-5.4.x/current/httpclient5/apidocs/org/apache/hc/client5/http/config/RequestConfig.Builder.html[Apache HttpClient Request Config Builder].
 
