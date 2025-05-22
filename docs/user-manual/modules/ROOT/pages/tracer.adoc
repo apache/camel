@@ -27,7 +27,7 @@ And in Spring Boot
 
 [source,text]
 ----
-camel.springboot.tracing = true
+camel.trace.enabled = true
 ----
 
 === Setting Tracing in Standby mode
