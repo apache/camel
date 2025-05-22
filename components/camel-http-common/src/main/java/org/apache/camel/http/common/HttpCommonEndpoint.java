@@ -142,11 +142,11 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
               description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
     private HttpMethods httpMethod;
 
-    @UriParam(label = "producer,security", enums = "Basic,Bearer,Digest,NTLM",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, Digest or NTLM. (NTLM is deprecated)")
+    @UriParam(label = "producer,security", enums = "Basic,Bearer,NTLM",
+              description = "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM. (NTLM is deprecated)")
     private String authMethod;
-    @UriParam(label = "producer,security", enums = "Basic,Bearer,Digest,NTLM",
-              description = "Which authentication method to prioritize to use, either as Basic, Bearer, Digest or NTLM. (NTLM is deprecated)")
+    @UriParam(label = "producer,security", enums = "Basic,Bearer,NTLM",
+              description = "Which authentication method to prioritize to use, either as Basic, Bearer, or NTLM. (NTLM is deprecated)")
     private String authMethodPriority;
     @UriParam(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
@@ -177,10 +177,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
                             "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
     private long oauth2CachedTokensExpirationMarginSeconds = 5L;
     @Deprecated
-    @UriParam(label = "producer,security", description = "Authentication domain to use with NTML")
+    @UriParam(label = "producer,security", description = "Authentication domain to use with NTLM")
     private String authDomain;
     @Deprecated
-    @UriParam(label = "producer,security", description = "Authentication host to use with NTML")
+    @UriParam(label = "producer,security", description = "Authentication host to use with NTLM")
     private String authHost;
     @UriParam(label = "producer,proxy", description = "Proxy hostname to use")
     private String proxyHost;
@@ -188,7 +188,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     private int proxyPort;
     @UriParam(label = "producer,proxy", enums = "http,https", description = "Proxy authentication scheme to use")
     private String proxyAuthScheme;
-    @UriParam(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    @UriParam(label = "producer,proxy", enums = "Basic,Bearer,NTLM", description = "Proxy authentication method to use")
     private String proxyAuthMethod;
     @UriParam(label = "producer,proxy", secret = true, description = "Proxy authentication username")
     private String proxyAuthUsername;
@@ -199,10 +199,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @UriParam(label = "producer,proxy", description = "Proxy authentication port")
     private int proxyAuthPort;
     @Deprecated
-    @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTML")
+    @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTLM")
     private String proxyAuthDomain;
     @Deprecated
-    @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
+    @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTLM")
     private String proxyAuthNtHost;
 
     protected HttpCommonEndpoint() {
@@ -648,7 +648,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.
+     * Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM (deprecated).
      */
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;
@@ -659,7 +659,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Which authentication method to prioritize to use, either as Basic, Digest or NTLM.
+     * Which authentication method to prioritize to use, either as Basic, Bearer or NTLM (deprecated).
      */
     public void setAuthMethodPriority(String authMethodPriority) {
         this.authMethodPriority = authMethodPriority;
@@ -703,7 +703,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Authentication domain to use with NTML
+     * Authentication domain to use with NTLM
      */
     public void setAuthDomain(String authDomain) {
         this.authDomain = authDomain;
@@ -714,7 +714,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Authentication host to use with NTML
+     * Authentication host to use with NTLM
      */
     public void setAuthHost(String authHost) {
         this.authHost = authHost;
@@ -769,7 +769,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Proxy authentication domain to use with NTML
+     * Proxy authentication domain to use with NTLM
      */
     public void setProxyAuthDomain(String proxyAuthDomain) {
         this.proxyAuthDomain = proxyAuthDomain;
@@ -780,7 +780,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Proxy authentication host to use with NTML
+     * Proxy authentication host to use with NTLM
      */
     public void setProxyAuthHost(String proxyAuthHost) {
         this.proxyAuthHost = proxyAuthHost;
@@ -824,7 +824,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Proxy authentication domain (workstation name) to use with NTML
+     * Proxy authentication domain (workstation name) to use with NTLM
      */
     public void setProxyAuthNtHost(String proxyAuthNtHost) {
         this.proxyAuthNtHost = proxyAuthNtHost;
