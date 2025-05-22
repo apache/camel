@@ -19,6 +19,7 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 
 import org.apache.hc.client5.http.auth.AuthCache;
+import org.apache.hc.client5.http.auth.AuthScheme;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.CredentialsProvider;
@@ -26,6 +27,8 @@ import org.apache.hc.client5.http.classic.ExecChain;
 import org.apache.hc.client5.http.classic.ExecChainHandler;
 import org.apache.hc.client5.http.impl.auth.BasicAuthCache;
 import org.apache.hc.client5.http.impl.auth.BasicScheme;
+import org.apache.hc.client5.http.impl.auth.BearerScheme;
+import org.apache.hc.client5.http.impl.auth.NTLMScheme;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -56,13 +59,22 @@ public class PreemptiveAuthExecChainHandler implements ExecChainHandler {
             Credentials credentials = credentialsProvider.getCredentials(new AuthScope(httpHost), context);
             if (credentials == null) {
                 credentials = HttpCredentialsHelper.getCredentials(endpoint.getAuthMethod(), endpoint.getAuthUsername(),
-                        endpoint.getAuthPassword(), endpoint.getAuthHost(), endpoint.getAuthHost());
+                        endpoint.getAuthPassword(), endpoint.getAuthHost(), endpoint.getAuthHost(),
+                        endpoint.getAuthBearerToken());
             }
             if (credentials == null) {
                 throw new HttpException("No credentials for preemptive authentication");
             }
-            BasicScheme authScheme = new BasicScheme();
-            authScheme.initPreemptive(credentials);
+            AuthScheme authScheme;
+            if ("NTLM".equalsIgnoreCase(endpoint.getAuthMethod())) {
+                authScheme = new NTLMScheme();
+            } else if ("BEARER".equalsIgnoreCase(endpoint.getAuthMethod())) {
+                authScheme = new BearerScheme();
+            } else {
+                BasicScheme bs = new BasicScheme();
+                bs.initPreemptive(credentials);
+                authScheme = bs;
+            }
             authCache = new BasicAuthCache();
             authCache.put(httpHost, authScheme);
             context.setAuthCache(authCache);
