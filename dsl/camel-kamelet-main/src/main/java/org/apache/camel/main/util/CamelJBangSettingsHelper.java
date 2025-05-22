@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.camel.util.IOHelper;
 
 /**
- * When running we need to store
+ * When running we need to store some information
  */
 public final class CamelJBangSettingsHelper {
 
