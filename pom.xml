@@ -546,6 +546,7 @@
                             <exclude>.github/**/*</exclude>
                             <exclude>**/.camel-jbang-run/**/*</exclude>
                             <exclude>**/.camel-jbang/**/*</exclude>
+                            <exclude>**/commands/edit/edit-help.txt</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>
