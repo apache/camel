@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
@@ -55,6 +56,36 @@ public class MavenDependencyResolverTest {
             for (MavenArtifact ma : answer) {
                 LOG.info("Artifact (non-transitive): {}", ma);
             }
+        }
+    }
+
+    @Test
+    public void testGeneratePluginUsesCorrectTransitiveDependencies() throws Exception {
+        List<String> deps = List.of("org.apache.camel:camel-jbang-plugin-generate:4.8.0");
+        Predicate<MavenArtifact> artifactFilter = mavenArtifact -> "jackson-datatype-guava"
+                .equals(mavenArtifact.getGav().getArtifactId());
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+            downloader.build();
+            List<MavenArtifact> answer = downloader.resolveDependenciesViaAether(deps, null,
+                    true, false);
+            Assertions.assertNotNull(answer);
+            Assertions.assertTrue(answer.stream().anyMatch(artifactFilter),
+                    "check jackson-datatype-guava is present in transitive dependencies");
+            //jackson version from Camel 4.8.0 parent should be 2.17.2
+            String expectedVersion = "2.17.2";
+            Assertions.assertNotEquals(expectedVersion, answer.stream().filter(artifactFilter)
+                    .findFirst().get().getGav().getVersion(),
+                    "check jackson-datatype-guava version without parent");
+
+            //resolve the dependencies with parent
+            answer = downloader.resolveDependenciesViaAether("org.apache.camel:camel-jbang-parent:4.8.0",
+                    deps, null, true, false);
+            Assertions.assertNotNull(answer);
+            Assertions.assertTrue(answer.stream().anyMatch(artifactFilter),
+                    "check jackson-datatype-guava is present in transitive dependencies");
+            Assertions.assertEquals(expectedVersion, answer.stream().filter(artifactFilter)
+                    .findFirst().get().getGav().getVersion(),
+                    "check jackson-datatype-guava version with parent");
         }
     }
 

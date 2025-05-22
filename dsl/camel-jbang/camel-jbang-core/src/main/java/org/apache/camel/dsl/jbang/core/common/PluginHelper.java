@@ -140,7 +140,8 @@ public final class PluginHelper {
         downloader.setClassLoader(ddlcl);
         downloader.start();
         // downloads and adds to the classpath
-        downloader.downloadDependency(group, "camel-jbang-plugin-" + command, version);
+        downloader.downloadDependencyWithParent("org.apache.camel:camel-jbang-parent:" + version, group,
+                "camel-jbang-plugin-" + command, version);
         Optional<Plugin> instance = Optional.empty();
         InputStream in = null;
         String path = FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/camel-jbang-plugin-" + command;
