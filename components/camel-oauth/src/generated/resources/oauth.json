@@ -5,6 +5,7 @@
     "title": "Oauth",
     "description": "Camel OAuth (Preview)",
     "deprecated": false,
+    "firstVersion": "4.12.0",
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-oauth",
