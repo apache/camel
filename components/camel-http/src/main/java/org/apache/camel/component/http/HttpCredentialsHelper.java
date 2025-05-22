@@ -50,9 +50,10 @@ public final class HttpCredentialsHelper {
         return "Basic " + new String(encodedAuth);
     }
 
-    public static Credentials getCredentials(String method, String username, String password, String host, String domain) {
+    public static Credentials getCredentials(
+            String method, String username, String password, String host, String domain) {
         if (username != null && password != null) {
-            if (domain != null && host != null) {
+            if ("NTLM".equalsIgnoreCase(method)) {
                 return new NTCredentials(username, password.toCharArray(), host, domain);
             } else {
                 return new UsernamePasswordCredentials(username, password.toCharArray());
