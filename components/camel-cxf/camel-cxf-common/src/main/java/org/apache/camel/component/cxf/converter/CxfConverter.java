@@ -100,7 +100,15 @@ public final class CxfConverter {
 
     @Converter
     public static String toString(MessageContentsList value, Exchange exchange) {
-        return convertTo(String.class, exchange, value, exchange.getContext().getTypeConverterRegistry());
+        if (value != null && value.isEmpty()) {
+            return null;
+        }
+
+        Object answer = convertTo(String.class, exchange, value, exchange.getContext().getTypeConverterRegistry());
+        if (answer != null && answer != MISS_VALUE) {
+            return answer.toString();
+        }
+        return null;
     }
 
     /**
