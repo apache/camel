@@ -31,10 +31,20 @@ public interface MavenDownloader extends Service {
      * {@code groupId:artifactId[:packaging[:classifier]]:version}) is used to download artifacts from configured Maven
      * repositories.
      *
+     * @param rootGav            root Maven artifact
      * @param dependencyGAVs     a list of Maven coordinates
      * @param extraRepositories  nullable list of additional repositories to use (except the discovered ones)
      * @param transitively       whether to download/resolve dependencies transitively
      * @param useApacheSnapshots whether to include Apache Snapshots repository in the list of used repositories
+     */
+    List<MavenArtifact> resolveArtifacts(
+            String rootGav,
+            List<String> dependencyGAVs, Set<String> extraRepositories,
+            boolean transitively, boolean useApacheSnapshots)
+            throws MavenResolutionException;
+
+    /**
+     * Overload for {@link MavenDownloader#resolveArtifacts(String, List, Set, boolean, boolean)}
      */
     List<MavenArtifact> resolveArtifacts(
             List<String> dependencyGAVs, Set<String> extraRepositories,
