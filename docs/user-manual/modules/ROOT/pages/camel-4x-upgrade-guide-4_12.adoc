@@ -228,6 +228,10 @@ More details could be found in CAMEL-22013.
 
 == camel-spring-boot
 
+Upgraded to Spring Boot 3.5.0.
+
+The `camel-servetl-starter` has a minor code change for the Spring Boot 3.5 upgrade.
+
 The `camel-jetty-starter` has been deprecated in favor of `camel-platform-http-starter` to use the HTTP server from Spring Boot.
 
 The `camel-undertow-starter` has been deprecated in favor of `camel-platform-http-starter` to use the HTTP server from Spring Boot.
