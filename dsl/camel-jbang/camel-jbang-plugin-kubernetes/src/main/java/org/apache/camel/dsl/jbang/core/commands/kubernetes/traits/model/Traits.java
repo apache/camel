@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "camel", "container", "environment", "ingress", "knative", "knative-service", "mount", "openapi", "pod", "route",
-        "service", "service-binding" })
+        "service", "service-binding", "jolokia" })
 public class Traits {
 
     @JsonProperty("addons")
@@ -86,10 +86,16 @@ public class Traits {
     @JsonPropertyDescription("The configuration of Service trait")
     @JsonSetter(nulls = Nulls.SKIP)
     private Service service;
+
     @JsonProperty("service-binding")
     @JsonPropertyDescription("The configuration of Service Binding trait")
     @JsonSetter(nulls = Nulls.SKIP)
     private ServiceBinding serviceBinding;
+
+    @JsonProperty("jolokia")
+    @JsonPropertyDescription("The configuration of Jolokia trait")
+    @JsonSetter(nulls = Nulls.SKIP)
+    private Jolokia jolokia;
 
     public Map<String, Addons> getAddons() {
         return this.addons;
@@ -169,6 +175,14 @@ public class Traits {
 
     public void setRoute(Route route) {
         this.route = route;
+    }
+
+    public Jolokia getJolokia() {
+        return jolokia;
+    }
+
+    public void setJolokia(Jolokia jolokia) {
+        this.jolokia = jolokia;
     }
 
     public Service getService() {
