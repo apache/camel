@@ -210,27 +210,27 @@ public interface LangChain4jChatEndpointBuilderFactory {
             return this;
         }
         /**
-         * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * Chat Model of type
+         * dev.langchain4j.model.chat.ChatModel.
          * 
          * The option is a:
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
          * 
          * Group: advanced
          * 
          * @param chatModel the value to set
          * @return the dsl builder
          */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder chatModel(dev.langchain4j.model.chat.ChatLanguageModel chatModel) {
+        default AdvancedLangChain4jChatEndpointConsumerBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
             doSetProperty("chatModel", chatModel);
             return this;
         }
         /**
          * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * dev.langchain4j.model.chat.ChatModel.
          * 
          * The option will be converted to a
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
          * 
          * Group: advanced
          * 
@@ -349,26 +349,26 @@ public interface LangChain4jChatEndpointBuilderFactory {
         }
         /**
          * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * dev.langchain4j.model.chat.ChatModel.
          * 
          * The option is a:
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
          * 
          * Group: advanced
          * 
          * @param chatModel the value to set
          * @return the dsl builder
          */
-        default AdvancedLangChain4jChatEndpointProducerBuilder chatModel(dev.langchain4j.model.chat.ChatLanguageModel chatModel) {
+        default AdvancedLangChain4jChatEndpointProducerBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
             doSetProperty("chatModel", chatModel);
             return this;
         }
         /**
          * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * dev.langchain4j.model.chat.ChatModel.
          * 
          * The option will be converted to a
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
          * 
          * Group: advanced
          * 
@@ -445,26 +445,26 @@ public interface LangChain4jChatEndpointBuilderFactory {
 
         /**
          * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * dev.langchain4j.model.chat.ChatModel.
          * 
          * The option is a:
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
          * 
          * Group: advanced
          * 
          * @param chatModel the value to set
          * @return the dsl builder
          */
-        default AdvancedLangChain4jChatEndpointBuilder chatModel(dev.langchain4j.model.chat.ChatLanguageModel chatModel) {
+        default AdvancedLangChain4jChatEndpointBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
             doSetProperty("chatModel", chatModel);
             return this;
         }
         /**
          * Chat Language Model of type
-         * dev.langchain4j.model.chat.ChatLanguageModel.
+         * dev.langchain4j.model.chat.ChatModel.
          * 
          * The option will be converted to a
-         * <code>dev.langchain4j.model.chat.ChatLanguageModel</code> type.
+         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
          * 
          * Group: advanced
          * 

@@ -27,6 +27,7 @@ import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.rag.content.Content;
+import dev.langchain4j.rag.content.DefaultContent;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,7 +51,7 @@ public class LangChain4jChatIT extends OllamaTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        this.context.getRegistry().bind("chatModel", chatLanguageModel);
+        this.context.getRegistry().bind("chatModel", chatModel);
         LangChain4jRagAggregatorStrategy aggregatorStrategy = new LangChain4jRagAggregatorStrategy();
 
         return new RouteBuilder() {
@@ -237,7 +238,7 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        Content augmentedContent = new Content(AUGMENTEG_DATA_FOR_RAG);
+        Content augmentedContent = new DefaultContent(AUGMENTEG_DATA_FOR_RAG);
 
         List<Content> contents = List.of(augmentedContent);
 
@@ -279,7 +280,7 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         variables.put("field", "pole vault");
         variables.put("competition", "Paris 2024");
 
-        Content augmentedContent = new Content(AUGMENTEG_DATA_FOR_RAG);
+        Content augmentedContent = new DefaultContent(AUGMENTEG_DATA_FOR_RAG);
 
         List<Content> contents = List.of(augmentedContent);
 
@@ -324,7 +325,7 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         messages.add(new AiMessage("Hello Karen, how can I help you?"));
         messages.add(new UserMessage(QUESTION_FOR_RAG));
 
-        Content augmentedContent = new Content(AUGMENTEG_DATA_FOR_RAG);
+        Content augmentedContent = new DefaultContent(AUGMENTEG_DATA_FOR_RAG);
         List<Content> contents = List.of(augmentedContent);
 
         String response

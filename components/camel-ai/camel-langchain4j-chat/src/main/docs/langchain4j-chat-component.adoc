@@ -81,11 +81,11 @@ Add the dependency for LangChain4j OpenAI support:
 </dependency>
 ----
 
-Initialize the OpenAI Chat Language Model, and add it to the Camel Registry:
+Initialize the OpenAI Chat Model, and add it to the Camel Registry:
 
 [source, java]
 ----
-ChatLanguageModel model = OpenAiChatModel.builder()
+ChatModel model = OpenAiChatModel.builder()
                 .apiKey(openApiKey)
                 .modelName(GPT_3_5_TURBO)
                 .temperature(0.3)
