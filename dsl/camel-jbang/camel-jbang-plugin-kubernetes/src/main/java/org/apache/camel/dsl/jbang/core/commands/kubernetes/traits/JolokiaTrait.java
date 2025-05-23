@@ -77,17 +77,19 @@ public class JolokiaTrait extends BaseTrait {
                         .endSpec()
                         .endTemplate()
                         .endSpec());
-        context.doWithServices(
-                s -> s.editSpec()
-                        .addNewPort()
-                        .withName(Optional.ofNullable(jolokiaTrait.getServicePortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME))
-                        .withPort(Optional.ofNullable(jolokiaTrait.getServicePort()).map(Long::intValue)
-                                .orElse(DEFAULT_JOLOKIA_PORT))
-                        .withTargetPort(new IntOrString(
-                                Optional.ofNullable(jolokiaTrait.getContainerPortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME)))
-                        .endPort()
-                        .endSpec());
+        if (Boolean.TRUE.equals(jolokiaTrait.getExpose())) {
+            context.doWithServices(
+                    s -> s.editSpec()
+                            .addNewPort()
+                            .withName(Optional.ofNullable(jolokiaTrait.getServicePortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME))
+                            .withPort(Optional.ofNullable(jolokiaTrait.getServicePort()).map(Long::intValue)
+                                    .orElse(DEFAULT_JOLOKIA_PORT))
+                            .withTargetPort(new IntOrString(
+                                    Optional.ofNullable(jolokiaTrait.getContainerPortName()).orElse(DEFAULT_JOLOKIA_PORT_NAME)))
+                            .endPort()
+                            .endSpec());
 
+        }
     }
 
 }
