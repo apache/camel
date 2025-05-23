@@ -21,12 +21,15 @@ import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.NTCredentials;
 import org.apache.hc.client5.http.auth.StandardAuthScheme;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.auth.BasicSchemeFactory;
 import org.apache.hc.client5.http.impl.auth.BearerSchemeFactory;
 import org.apache.hc.client5.http.impl.auth.DigestSchemeFactory;
 import org.apache.hc.client5.http.impl.auth.NTLMSchemeFactory;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.config.RegistryBuilder;
+
+import java.util.List;
 
 public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfigurer {
     private final String username;
@@ -56,7 +59,15 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
                     .register(StandardAuthScheme.BEARER, BearerSchemeFactory.INSTANCE)
                     .register(StandardAuthScheme.NTLM, NTLMSchemeFactory.INSTANCE)
                     .build();
-            clientBuilder.setDefaultAuthSchemeRegistry(copy);
+
+            // Set NTLM as preferred scheme
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setTargetPreferredAuthSchemes(List.of(StandardAuthScheme.NTLM))
+                    .build();
+
+            clientBuilder
+                    .setDefaultAuthSchemeRegistry(copy)
+                    .setDefaultRequestConfig(requestConfig);
         } else {
             defaultcreds = new UsernamePasswordCredentials(username, password);
         }
