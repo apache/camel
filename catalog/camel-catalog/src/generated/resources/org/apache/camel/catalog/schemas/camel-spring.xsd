@@ -14507,6 +14507,15 @@ Sets the maximum number of tokens that can overlap in each segment.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="modelName" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the model name.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

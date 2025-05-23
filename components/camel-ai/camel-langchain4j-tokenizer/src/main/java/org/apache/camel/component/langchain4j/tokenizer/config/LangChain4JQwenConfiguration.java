@@ -19,7 +19,6 @@ package org.apache.camel.component.langchain4j.tokenizer.config;
 
 public class LangChain4JQwenConfiguration extends LangChain4JConfiguration {
     private String apiKey;
-    private String modelName;
 
     public String getApiKey() {
         return apiKey;
@@ -27,13 +26,5 @@ public class LangChain4JQwenConfiguration extends LangChain4JConfiguration {
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
-    }
-
-    public String getModelName() {
-        return modelName;
-    }
-
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
     }
 }
