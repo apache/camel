@@ -32,7 +32,8 @@ import org.apache.hc.client5.http.impl.auth.NTLMSchemeFactory;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 
-public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfigurer {
+public class DefaultAuthenticationHttpClientConfigurer implements HttpClientConfigurer {
+
     private final String username;
     private final char[] password;
     private final String domain;
@@ -40,8 +41,8 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
     private final String bearerToken;
     private final HttpCredentialsHelper credentialsHelper;
 
-    public BasicAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host, String bearerToken,
-                                                   HttpCredentialsHelper credentialsHelper) {
+    public DefaultAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host, String bearerToken,
+                                                     HttpCredentialsHelper credentialsHelper) {
         this.username = user;
         this.password = pwd == null ? new char[0] : pwd.toCharArray();
         this.domain = domain;
