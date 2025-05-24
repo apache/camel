@@ -27,9 +27,6 @@ public class HttpConfiguration implements Serializable {
     @Metadata(label = "producer,security",
               description = "Authentication methods allowed to use as a comma separated list of values Basic, or NTLM. (NTLM is deprecated)")
     private String authMethod;
-    @Metadata(label = "producer,security", enums = "Basic,Bearer,NTLM",
-              description = "Which authentication method to prioritize to use, either as Basic, Bearer, or NTLM. (NTLM is deprecated)")
-    private String authMethodPriority;
     @Metadata(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
     @Metadata(label = "producer,security", secret = true, description = "Authentication password")
@@ -94,17 +91,6 @@ public class HttpConfiguration implements Serializable {
      */
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;
-    }
-
-    public String getAuthMethodPriority() {
-        return authMethodPriority;
-    }
-
-    /**
-     * Which authentication method to prioritize to use, either as Basic, Bearer or NTLM (deprecated).
-     */
-    public void setAuthMethodPriority(String authMethodPriority) {
-        this.authMethodPriority = authMethodPriority;
     }
 
     public String getAuthUsername() {

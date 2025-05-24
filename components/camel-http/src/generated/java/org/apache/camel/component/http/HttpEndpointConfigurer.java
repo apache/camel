@@ -31,8 +31,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authHost": target.setAuthHost(property(camelContext, java.lang.String.class, value)); return true;
         case "authmethod":
         case "authMethod": target.setAuthMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "authmethodpriority":
-        case "authMethodPriority": target.setAuthMethodPriority(property(camelContext, java.lang.String.class, value)); return true;
         case "authpassword":
         case "authPassword": target.setAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "authusername":
@@ -164,8 +162,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authHost": return java.lang.String.class;
         case "authmethod":
         case "authMethod": return java.lang.String.class;
-        case "authmethodpriority":
-        case "authMethodPriority": return java.lang.String.class;
         case "authpassword":
         case "authPassword": return java.lang.String.class;
         case "authusername":
@@ -298,8 +294,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authHost": return target.getAuthHost();
         case "authmethod":
         case "authMethod": return target.getAuthMethod();
-        case "authmethodpriority":
-        case "authMethodPriority": return target.getAuthMethodPriority();
         case "authpassword":
         case "authPassword": return target.getAuthPassword();
         case "authusername":
