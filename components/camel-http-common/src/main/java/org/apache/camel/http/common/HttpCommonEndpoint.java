@@ -145,9 +145,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @UriParam(label = "producer,security", enums = "Basic,Bearer,NTLM",
               description = "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM. (NTLM is deprecated)")
     private String authMethod;
-    @UriParam(label = "producer,security", enums = "Basic,Bearer,NTLM",
-              description = "Which authentication method to prioritize to use, either as Basic, Bearer, or NTLM. (NTLM is deprecated)")
-    private String authMethodPriority;
     @UriParam(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
     @UriParam(label = "producer,security", secret = true, description = "Authentication bearer token")
@@ -652,17 +649,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
      */
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;
-    }
-
-    public String getAuthMethodPriority() {
-        return authMethodPriority;
-    }
-
-    /**
-     * Which authentication method to prioritize to use, either as Basic, Bearer or NTLM (deprecated).
-     */
-    public void setAuthMethodPriority(String authMethodPriority) {
-        this.authMethodPriority = authMethodPriority;
     }
 
     public String getAuthUsername() {

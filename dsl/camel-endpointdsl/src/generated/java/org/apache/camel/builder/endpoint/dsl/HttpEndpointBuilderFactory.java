@@ -659,21 +659,6 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Which authentication method to prioritize to use, either as Basic,
-         * Bearer, or NTLM. (NTLM is deprecated).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param authMethodPriority the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder authMethodPriority(String authMethodPriority) {
-            doSetProperty("authMethodPriority", authMethodPriority);
-            return this;
-        }
-        /**
          * Authentication password.
          * 
          * The option is a: <code>java.lang.String</code> type.

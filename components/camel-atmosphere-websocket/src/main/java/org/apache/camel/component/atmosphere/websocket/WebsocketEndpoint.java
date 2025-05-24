@@ -37,7 +37,7 @@ import org.apache.camel.util.StringHelper;
              title = "Atmosphere Websocket", syntax = "atmosphere-websocket:servicePath", category = {
                      Category.HTTP, Category.NETWORKING },
              headersClass = WebsocketConstants.class)
-@Metadata(excludeProperties = "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost,authBearerToken,"
+@Metadata(excludeProperties = "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authUsername,authPassword,authDomain,authHost,authBearerToken,"
                               + "copyHeaders,httpMethod,ignoreResponseBody,preserveHostHeader,throwExceptionOnFailure,okStatusCodeRange,"
                               + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
                               + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort,"
