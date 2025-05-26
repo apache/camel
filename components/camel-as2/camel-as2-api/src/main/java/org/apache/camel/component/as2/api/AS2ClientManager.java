@@ -35,6 +35,7 @@ import org.apache.camel.component.as2.api.util.EncryptingUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpResponse;
@@ -45,6 +46,9 @@ import org.bouncycastle.cms.CMSCompressedDataGenerator;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.operator.OutputCompressor;
 import org.bouncycastle.operator.OutputEncryptor;
+import org.slf4j.helpers.MessageFormatter;
+
+import static org.apache.camel.component.as2.api.entity.ApplicationEntity.CONTENT_DISPOSITION_PATTERN;
 
 /**
  * Sends EDI Messages over HTTP
@@ -296,6 +300,10 @@ public class AS2ClientManager {
         switch (as2MessageStructure) {
             case PLAIN: {
                 plain(applicationEntity, request);
+                if (StringUtils.isNotBlank(attachedFileName)) {
+                    request.setHeader(AS2Header.CONTENT_DISPOSITION,
+                            MessageFormatter.format(CONTENT_DISPOSITION_PATTERN, attachedFileName).getMessage());
+                }
                 break;
             }
             case SIGNED: {
