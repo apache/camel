@@ -30,5 +30,10 @@ public interface NatsConstants {
     String NATS_SUBJECT = "CamelNatsSubject";
     @Metadata(description = "The Queue name of a consumed message (may be null).", javaType = "String")
     String NATS_QUEUE_NAME = "CamelNatsQueueName";
+    @Metadata(label = "consumer", description = "Status message code", javaType = "int")
+    String NATS_STATUS_CODE = "CamelNatsStatusCode";
+    @Metadata(label = "consumer", description = "Status message error message", javaType = "String")
+    String NATS_STATUS_ERROR = "CamelNatsStatusError";
+
     String NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME = "CamelNatsRequestTimeoutExecutor";
 }
