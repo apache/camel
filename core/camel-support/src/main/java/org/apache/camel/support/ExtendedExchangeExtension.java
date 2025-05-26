@@ -26,9 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeExtension;
+import org.apache.camel.Message;
 import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.trait.message.MessageTrait;
+import org.apache.camel.trait.message.RedeliveryTraitPayload;
 
 public class ExtendedExchangeExtension implements ExchangeExtension {
     private final AbstractExchange exchange;
@@ -48,6 +51,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     private UnitOfWork unitOfWork;
     private List<Synchronization> onCompletions;
+    private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -307,6 +311,14 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     @Override
     public void setFailureHandled(boolean failureHandled) {
         this.failureHandled = failureHandled;
+    }
+
+    @Override
+    public boolean isExternalRedelivered(Message message) {
+        if (externalRedelivered == RedeliveryTraitPayload.UNDEFINED_REDELIVERY) {
+            externalRedelivered = (RedeliveryTraitPayload) message.getPayloadForTrait(MessageTrait.REDELIVERY);
+        }
+        return externalRedelivered == RedeliveryTraitPayload.IS_REDELIVERY;
     }
 
     UnitOfWork getUnitOfWork() {
