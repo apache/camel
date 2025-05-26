@@ -93,28 +93,4 @@ class ConvertHeaderTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "Error: kebab-case: convert-header-to"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - convert-body-to:
-                          name: foo  
-                          type: "java.lang.String"
-                          charset: "UTF8"
-                      - to: "mock:result"
-            '''
-
-        withMock('mock:result') {
-            expectedHeaderReceived("foo", 'test')
-        }
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            Assertions.assertTrue(e.message.contains("additional properties"))
-        }
-    }
 }

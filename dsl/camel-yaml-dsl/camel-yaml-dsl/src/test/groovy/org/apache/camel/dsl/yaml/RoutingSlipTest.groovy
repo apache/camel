@@ -42,19 +42,19 @@ class RoutingSlipTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - routing-slip:
+                          - routingSlip:
                               simple: "${body}"
-                              uri-delimiter: "|"
+                              uriDelimiter: "|"
                           - to: "mock:result"
                     '''),
                 asResource('expression-block', '''
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - routing-slip:
+                          - routingSlip:
                               expression:
                                 simple: "${body}"
-                              uri-delimiter: "|"
+                              uriDelimiter: "|"
                           - to: "mock:result"
                     ''')
             ]

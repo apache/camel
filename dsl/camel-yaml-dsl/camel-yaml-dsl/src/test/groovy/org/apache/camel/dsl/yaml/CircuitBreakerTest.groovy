@@ -27,7 +27,7 @@ class CircuitBreakerTest extends YamlTestSupport {
 
     def "circuitBreaker"() {
         when:
-            loadRoutes '''
+        loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:
@@ -41,28 +41,28 @@ class CircuitBreakerTest extends YamlTestSupport {
                            fallbackViaNetwork: true
             '''
         then:
-            with(context.routeDefinitions[0], RouteDefinition) {
-                input.endpointUri == 'direct:start'
+        with(context.routeDefinitions[0], RouteDefinition) {
+            input.endpointUri == 'direct:start'
 
-                with(outputs[0], CircuitBreakerDefinition) {
-                    configuration == 'my-config'
+            with(outputs[0], CircuitBreakerDefinition) {
+                configuration == 'my-config'
 
-                    resilience4jConfiguration != null
-                    resilience4jConfiguration.failureRateThreshold == '10'
+                resilience4jConfiguration != null
+                resilience4jConfiguration.failureRateThreshold == '10'
 
-                    onFallback != null
-                    onFallback.fallbackViaNetwork == "true"
+                onFallback != null
+                onFallback.fallbackViaNetwork == "true"
 
-                    with (outputs[0], LogDefinition) {
-                        message == "test"
-                    }
+                with(outputs[0], LogDefinition) {
+                    message == "test"
                 }
             }
+        }
     }
 
     def "circuitBreaker with onFallback steps"() {
         when:
-            loadRoutes '''
+        loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:
@@ -75,137 +75,18 @@ class CircuitBreakerTest extends YamlTestSupport {
                                - to: "log:fb" 
             '''
         then:
-            with(context.routeDefinitions[0], RouteDefinition) {
-                input.endpointUri == 'direct:start'
+        with(context.routeDefinitions[0], RouteDefinition) {
+            input.endpointUri == 'direct:start'
 
-                with(outputs[0], CircuitBreakerDefinition) {
-                    with (outputs[0], ToDefinition) {
-                        endpointUri == "log:cb"
-                    }
-                    with (onFallback.outputs[0], ToDefinition) {
-                        endpointUri == "log:fb"
-                    }
+            with(outputs[0], CircuitBreakerDefinition) {
+                with(outputs[0], ToDefinition) {
+                    endpointUri == "log:cb"
+                }
+                with(onFallback.outputs[0], ToDefinition) {
+                    endpointUri == "log:fb"
                 }
             }
-    }
-
-    def "Error: kebab-case: circuit-breaker"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - circuit-breaker:   
-                         steps:
-                           - log: "test"                           
-                         configuration: "my-config"
-                         resilience4jConfiguration:
-                           failureRateThreshold: 10
-                         onFallback:
-                           fallbackViaNetwork: true
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("additional properties")
         }
     }
 
-    def "Error: kebab-case: resilience4j-configuration"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - circuitBreaker:   
-                         steps:
-                           - log: "test"                           
-                         configuration: "my-config"
-                         resilience4j-configuration:
-                           failureRateThreshold: 10
-                         onFallback:
-                           fallbackViaNetwork: true
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("additional properties")
-        }
-    }
-
-    def "Error: kebab-case: failure-rate-threshold"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - circuitBreaker:   
-                         steps:
-                           - log: "test"                           
-                         configuration: "my-config"
-                         resilience4jConfiguration:
-                           failure-rate-threshold: 10
-                         onFallback:
-                           fallbackViaNetwork: true
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("additional properties")
-        }
-    }
-
-    def "Error: kebab-case: on-fallback"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - circuitBreaker:   
-                         steps:
-                           - log: "test"                           
-                         configuration: "my-config"
-                         resilience4jConfiguration:
-                           failureRateThreshold: 10
-                         on-fallback:
-                           fallbackViaNetwork: true
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("additional properties")
-        }
-    }
-
-    def "Error: kebab-case: fallback-via-network"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - circuitBreaker:   
-                         steps:
-                           - log: "test"                           
-                         configuration: "my-config"
-                         resilience4jConfiguration:
-                           failureRateThreshold: 10
-                         onFallback:
-                           fallback-via-network: true
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (IllegalArgumentException e) {
-            assert e.getMessage().contains("additional properties")
-        }
-    }
 }

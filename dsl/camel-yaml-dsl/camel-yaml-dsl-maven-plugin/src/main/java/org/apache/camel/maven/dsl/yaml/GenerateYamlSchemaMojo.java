@@ -68,8 +68,6 @@ import org.jboss.jandex.DotName;
 public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     @Parameter(required = true)
     private File outputFile;
-    @Parameter(defaultValue = "false")
-    private boolean kebabCase;
     @Parameter(defaultValue = "true")
     private boolean additionalProperties = true;
 
@@ -151,13 +149,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
 
         // filter out unwanted cases when in camelCase mode
-        if (!kebabCase) {
-            for (JsonNode definition : definitions) {
-                kebabToCamelCase(definition);
-            }
-            kebabToCamelCase(step);
-            kebabToCamelCase(root.withObject("/items"));
+        for (JsonNode definition : definitions) {
+            kebabToCamelCase(definition);
         }
+        kebabToCamelCase(step);
+        kebabToCamelCase(root.withObject("/items"));
 
         if (!inheritedDefinitions.isEmpty()) {
             postProcessInheritance(inheritedDefinitions, inlineDefinitions);
@@ -327,8 +323,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     additionalProperties);
 
             if (propertyRequired) {
-                String name = kebabCase ? propertyName : StringHelper.dashToCamelCase(propertyName);
-                definition.withArray("required").add(name);
+                definition.withArray("required").add(propertyName);
             }
         }
     }
@@ -346,7 +341,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             if (required != null) {
                 for (int i = 0; i < required.size(); i++) {
                     String name = required.get(i).asText();
-                    required.set(i, StringHelper.dashToCamelCase(name));
+                    required.set(i, name);
                 }
             }
         }
@@ -488,17 +483,6 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     if (propertyType.startsWith("object:")) {
                         final DotName dn = DotName.createSimple(propertyType.substring(7));
                         if (isBanned(view.getClassByName(dn))) {
-                            return;
-                        }
-                    }
-
-                    if (!kebabCase) {
-                        final String camelCased = StringHelper.dashToCamelCase(propertyName);
-                        if (annotations.stream().anyMatch(existing -> {
-                            String existingName = annotationValue(existing, "name").map(AnnotationValue::asString).orElse("");
-                            String existingCamelCased = StringHelper.dashToCamelCase(existingName);
-                            return existingCamelCased.equals(camelCased);
-                        })) {
                             return;
                         }
                     }

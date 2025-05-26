@@ -59,36 +59,4 @@ class OnExceptionTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "Error: kebab-case: on-exception"() {
-        when:
-        var route = """
-                - beans:
-                  - name: myFailingProcessor
-                    type: ${MyFailingProcessor.name}
-                - on-exception:
-                    handled:
-                      constant: "true"
-                    exception:
-                      - ${MyException.name}
-                    steps:
-                      - transform:
-                          constant: "Sorry"
-                      - to: "mock:on-exception"  
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - process: 
-                          ref: "myFailingProcessor"            
-            """
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            with(e) {
-                message.contains("additional properties")
-            }
-        }
-
-    }
 }

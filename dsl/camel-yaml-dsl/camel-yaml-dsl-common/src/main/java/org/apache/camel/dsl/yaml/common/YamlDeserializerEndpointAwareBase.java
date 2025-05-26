@@ -16,11 +16,9 @@
  */
 package org.apache.camel.dsl.yaml.common;
 
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
@@ -46,7 +44,7 @@ public abstract class YamlDeserializerEndpointAwareBase<T> extends YamlDeseriali
 
         for (NodeTuple tuple : node.getValue()) {
             final ScalarNode key = (ScalarNode) tuple.getKeyNode();
-            final String propertyName = StringHelper.camelCaseToDash(key.getValue()).toLowerCase(Locale.US);
+            final String propertyName = key.getValue();
             final Node val = tuple.getValueNode();
 
             setDeserializationContext(val, dc);

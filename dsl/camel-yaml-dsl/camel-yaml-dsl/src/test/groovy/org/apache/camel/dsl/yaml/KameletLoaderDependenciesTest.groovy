@@ -57,7 +57,7 @@ class KameletLoaderDependenciesTest extends YamlTestSupport {
                     from:
                       uri: "kamelet:source"
                       steps:
-                        - set-body:
+                        - setBody:
                             constant: "{{payload}}"
           ''')
         then:

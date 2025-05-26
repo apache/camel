@@ -46,7 +46,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 @YamlIn
 @YamlType(
           inline = false,
-          nodes = { "error-handler", "errorHandler" },
+          nodes = { "errorHandler" },
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -102,7 +102,6 @@ public class ErrorHandlerDeserializer implements ConstructNode {
 
             setDeserializationContext(val, dc);
 
-            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
             switch (key) {
                 case "deadLetterChannel":
                     factory = asType(val, DeadLetterChannelDefinition.class);
