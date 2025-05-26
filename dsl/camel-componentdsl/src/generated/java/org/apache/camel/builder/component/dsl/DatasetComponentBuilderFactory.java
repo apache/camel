@@ -146,9 +146,8 @@ public interface DatasetComponentBuilderFactory {
         }
     
         /**
-         * Sets a custom ExchangeFormatter to convert the Exchange to a String
-         * suitable for logging. If not specified, we default to
-         * DefaultExchangeFormatter.
+         * To use a custom ExchangeFormatter to format the Exchange into a
+         * String suitable for logging.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt; type.

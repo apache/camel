@@ -27,7 +27,8 @@ public class SedaEnrichSimpleExpressionTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).enrich(seda("${exchangeProperty.whereTo}").offerTimeout(1000)).to("mock:result");
+                from(direct("start")).enrich(seda("${exchangeProperty.whereTo}").advanced().offerTimeout(1000))
+                        .to("mock:result");
 
                 from("seda:cheese")
                         .transform().constant("Hello World");

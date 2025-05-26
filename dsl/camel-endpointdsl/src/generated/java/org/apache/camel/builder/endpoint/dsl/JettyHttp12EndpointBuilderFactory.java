@@ -934,7 +934,8 @@ public interface JettyHttp12EndpointBuilderFactory {
         }
         /**
          * Configuration of the filter init parameters. These parameters will be
-         * applied to the filter list before starting the jetty server.
+         * applied to the filter list before starting the jetty server. This is
+         * a multi-value option with prefix: filter.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
@@ -954,7 +955,8 @@ public interface JettyHttp12EndpointBuilderFactory {
         }
         /**
          * Configuration of the filter init parameters. These parameters will be
-         * applied to the filter list before starting the jetty server.
+         * applied to the filter list before starting the jetty server. This is
+         * a multi-value option with prefix: filter.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.

@@ -859,7 +859,8 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -879,7 +880,8 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1124,7 +1126,8 @@ public interface JpaEndpointBuilderFactory {
          * their corresponding effective values you want to select for. When
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
+         * body, header and etc. . This is a multi-value option with prefix:
+         * parameters.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1149,7 +1152,8 @@ public interface JpaEndpointBuilderFactory {
          * their corresponding effective values you want to select for. When
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
+         * body, header and etc. . This is a multi-value option with prefix:
+         * parameters.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1203,7 +1207,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1222,7 +1227,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1814,7 +1820,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1833,7 +1840,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2106,7 +2114,8 @@ public interface JpaEndpointBuilderFactory {
         }
 
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2125,7 +2134,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

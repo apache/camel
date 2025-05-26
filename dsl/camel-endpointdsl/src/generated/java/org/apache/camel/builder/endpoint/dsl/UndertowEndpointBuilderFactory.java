@@ -790,7 +790,8 @@ public interface UndertowEndpointBuilderFactory {
          * Sets additional channel options. The options that can be used are
          * defined in org.xnio.Options. To configure from endpoint uri, then
          * prefix each option with option., such as
-         * option.close-abort=true&amp;option.send-buffer=8192.
+         * option.close-abort=true&amp;option.send-buffer=8192. This is a
+         * multi-value option with prefix: option.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -812,7 +813,8 @@ public interface UndertowEndpointBuilderFactory {
          * Sets additional channel options. The options that can be used are
          * defined in org.xnio.Options. To configure from endpoint uri, then
          * prefix each option with option., such as
-         * option.close-abort=true&amp;option.send-buffer=8192.
+         * option.close-abort=true&amp;option.send-buffer=8192. This is a
+         * multi-value option with prefix: option.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

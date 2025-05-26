@@ -370,7 +370,8 @@ public interface ServiceNowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Defines both request and response models.
+         * Defines both request and response models. This is a multi-value
+         * option with prefix: model.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
@@ -389,7 +390,8 @@ public interface ServiceNowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Defines both request and response models.
+         * Defines both request and response models. This is a multi-value
+         * option with prefix: model.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
@@ -476,7 +478,8 @@ public interface ServiceNowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Defines the request model.
+         * Defines the request model. This is a multi-value option with prefix:
+         * request-model.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
@@ -495,7 +498,8 @@ public interface ServiceNowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Defines the request model.
+         * Defines the request model. This is a multi-value option with prefix:
+         * request-model.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
@@ -528,7 +532,8 @@ public interface ServiceNowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Defines the response model.
+         * Defines the response model. This is a multi-value option with prefix:
+         * response-model.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
@@ -547,7 +552,8 @@ public interface ServiceNowEndpointBuilderFactory {
             return this;
         }
         /**
-         * Defines the response model.
+         * Defines the response model. This is a multi-value option with prefix:
+         * response-model.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.

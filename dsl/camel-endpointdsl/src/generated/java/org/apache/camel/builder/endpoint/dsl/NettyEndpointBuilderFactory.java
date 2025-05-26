@@ -45,7 +45,7 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Whether or not to disconnect(close) from Netty Channel right after
-         * use. Can be used for both consumer and producer.
+         * use.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -61,7 +61,7 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Whether or not to disconnect(close) from Netty Channel right after
-         * use. Can be used for both consumer and producer.
+         * use.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -143,8 +143,8 @@ public interface NettyEndpointBuilderFactory {
          * the channel is not returned to the connection pool until the Exchange
          * is done; or disconnected if the disconnect option is set to true. The
          * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * the key CamelNettyChannel which allows you to obtain the channel
+         * during routing and use it as well.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -166,8 +166,8 @@ public interface NettyEndpointBuilderFactory {
          * the channel is not returned to the connection pool until the Exchange
          * is done; or disconnected if the disconnect option is set to true. The
          * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * the key CamelNettyChannel which allows you to obtain the channel
+         * during routing and use it as well.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -182,7 +182,8 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting to set endpoint as one-way or request-response.
+         * Setting to set endpoint as one-way (false) or request-response
+         * (true).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -197,7 +198,8 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting to set endpoint as one-way or request-response.
+         * Setting to set endpoint as one-way (false) or request-response
+         * (true).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -239,36 +241,6 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder tcpNoDelay(String tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
-            return this;
-        }
-        /**
-         * Setting to choose Multicast over UDP.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param broadcast the value to set
-         * @return the dsl builder
-         */
-        default NettyEndpointConsumerBuilder broadcast(boolean broadcast) {
-            doSetProperty("broadcast", broadcast);
-            return this;
-        }
-        /**
-         * Setting to choose Multicast over UDP.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param broadcast the value to set
-         * @return the dsl builder
-         */
-        default NettyEndpointConsumerBuilder broadcast(String broadcast) {
-            doSetProperty("broadcast", broadcast);
             return this;
         }
         /**
@@ -639,6 +611,7 @@ public interface NettyEndpointBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointConsumerBuilder keyStoreFile(java.io.File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
@@ -653,6 +626,7 @@ public interface NettyEndpointBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointConsumerBuilder keyStoreFile(String keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
@@ -676,6 +650,9 @@ public interface NettyEndpointBuilderFactory {
          * Client side certificate keystore to be used for encryption. Is loaded
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -887,6 +864,7 @@ public interface NettyEndpointBuilderFactory {
          * @param trustStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointConsumerBuilder trustStoreFile(java.io.File trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
@@ -901,6 +879,7 @@ public interface NettyEndpointBuilderFactory {
          * @param trustStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointConsumerBuilder trustStoreFile(String trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
@@ -1086,6 +1065,36 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Setting to choose Multicast over UDP.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param broadcast the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder broadcast(boolean broadcast) {
+            doSetProperty("broadcast", broadcast);
+            return this;
+        }
+        /**
+         * Setting to choose Multicast over UDP.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param broadcast the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder broadcast(String broadcast) {
+            doSetProperty("broadcast", broadcast);
             return this;
         }
         /**
@@ -1434,7 +1443,7 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a explicit ChannelGroup.
+         * To use an explicit ChannelGroup.
          * 
          * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
          * type.
@@ -1449,7 +1458,7 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a explicit ChannelGroup.
+         * To use an explicit ChannelGroup.
          * 
          * The option will be converted to a
          * <code>io.netty.channel.group.ChannelGroup</code> type.
@@ -1503,9 +1512,9 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Allows to configure additional netty options using option. as prefix.
-         * For example option.child.keepAlive=false to set the netty option
-         * child.keepAlive=false. See the Netty documentation for possible
-         * options that can be used.
+         * For example option.child.keepAlive=false. See the Netty documentation
+         * for possible options that can be used. This is a multi-value option
+         * with prefix: option.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1525,9 +1534,9 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Allows to configure additional netty options using option. as prefix.
-         * For example option.child.keepAlive=false to set the netty option
-         * child.keepAlive=false. See the Netty documentation for possible
-         * options that can be used.
+         * For example option.child.keepAlive=false. See the Netty documentation
+         * for possible options that can be used. This is a multi-value option
+         * with prefix: option.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1868,7 +1877,7 @@ public interface NettyEndpointBuilderFactory {
 
         /**
          * Whether or not to disconnect(close) from Netty Channel right after
-         * use. Can be used for both consumer and producer.
+         * use.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1884,7 +1893,7 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Whether or not to disconnect(close) from Netty Channel right after
-         * use. Can be used for both consumer and producer.
+         * use.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1966,8 +1975,8 @@ public interface NettyEndpointBuilderFactory {
          * the channel is not returned to the connection pool until the Exchange
          * is done; or disconnected if the disconnect option is set to true. The
          * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * the key CamelNettyChannel which allows you to obtain the channel
+         * during routing and use it as well.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1989,8 +1998,8 @@ public interface NettyEndpointBuilderFactory {
          * the channel is not returned to the connection pool until the Exchange
          * is done; or disconnected if the disconnect option is set to true. The
          * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * the key CamelNettyChannel which allows you to obtain the channel
+         * during routing and use it as well.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2005,7 +2014,8 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting to set endpoint as one-way or request-response.
+         * Setting to set endpoint as one-way (false) or request-response
+         * (true).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2020,7 +2030,8 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting to set endpoint as one-way or request-response.
+         * Setting to set endpoint as one-way (false) or request-response
+         * (true).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2402,6 +2413,7 @@ public interface NettyEndpointBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointProducerBuilder keyStoreFile(java.io.File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
@@ -2416,6 +2428,7 @@ public interface NettyEndpointBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointProducerBuilder keyStoreFile(String keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
@@ -2439,6 +2452,9 @@ public interface NettyEndpointBuilderFactory {
          * Client side certificate keystore to be used for encryption. Is loaded
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2618,6 +2634,7 @@ public interface NettyEndpointBuilderFactory {
          * @param trustStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointProducerBuilder trustStoreFile(java.io.File trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
@@ -2632,6 +2649,7 @@ public interface NettyEndpointBuilderFactory {
          * @param trustStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointProducerBuilder trustStoreFile(String trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
@@ -3190,7 +3208,7 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a explicit ChannelGroup.
+         * To use an explicit ChannelGroup.
          * 
          * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
          * type.
@@ -3205,7 +3223,7 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a explicit ChannelGroup.
+         * To use an explicit ChannelGroup.
          * 
          * The option will be converted to a
          * <code>io.netty.channel.group.ChannelGroup</code> type.
@@ -3259,9 +3277,9 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Allows to configure additional netty options using option. as prefix.
-         * For example option.child.keepAlive=false to set the netty option
-         * child.keepAlive=false. See the Netty documentation for possible
-         * options that can be used.
+         * For example option.child.keepAlive=false. See the Netty documentation
+         * for possible options that can be used. This is a multi-value option
+         * with prefix: option.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -3281,9 +3299,9 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Allows to configure additional netty options using option. as prefix.
-         * For example option.child.keepAlive=false to set the netty option
-         * child.keepAlive=false. See the Netty documentation for possible
-         * options that can be used.
+         * For example option.child.keepAlive=false. See the Netty documentation
+         * for possible options that can be used. This is a multi-value option
+         * with prefix: option.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -3625,7 +3643,7 @@ public interface NettyEndpointBuilderFactory {
 
         /**
          * Whether or not to disconnect(close) from Netty Channel right after
-         * use. Can be used for both consumer and producer.
+         * use.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3641,7 +3659,7 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Whether or not to disconnect(close) from Netty Channel right after
-         * use. Can be used for both consumer and producer.
+         * use.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3723,8 +3741,8 @@ public interface NettyEndpointBuilderFactory {
          * the channel is not returned to the connection pool until the Exchange
          * is done; or disconnected if the disconnect option is set to true. The
          * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * the key CamelNettyChannel which allows you to obtain the channel
+         * during routing and use it as well.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3746,8 +3764,8 @@ public interface NettyEndpointBuilderFactory {
          * the channel is not returned to the connection pool until the Exchange
          * is done; or disconnected if the disconnect option is set to true. The
          * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * the key CamelNettyChannel which allows you to obtain the channel
+         * during routing and use it as well.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3762,7 +3780,8 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting to set endpoint as one-way or request-response.
+         * Setting to set endpoint as one-way (false) or request-response
+         * (true).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3777,7 +3796,8 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting to set endpoint as one-way or request-response.
+         * Setting to set endpoint as one-way (false) or request-response
+         * (true).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4093,6 +4113,7 @@ public interface NettyEndpointBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointBuilder keyStoreFile(java.io.File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
@@ -4107,6 +4128,7 @@ public interface NettyEndpointBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointBuilder keyStoreFile(String keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
@@ -4130,6 +4152,9 @@ public interface NettyEndpointBuilderFactory {
          * Client side certificate keystore to be used for encryption. Is loaded
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4309,6 +4334,7 @@ public interface NettyEndpointBuilderFactory {
          * @param trustStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointBuilder trustStoreFile(java.io.File trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
@@ -4323,6 +4349,7 @@ public interface NettyEndpointBuilderFactory {
          * @param trustStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyEndpointBuilder trustStoreFile(String trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
@@ -4396,7 +4423,7 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a explicit ChannelGroup.
+         * To use an explicit ChannelGroup.
          * 
          * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
          * type.
@@ -4411,7 +4438,7 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a explicit ChannelGroup.
+         * To use an explicit ChannelGroup.
          * 
          * The option will be converted to a
          * <code>io.netty.channel.group.ChannelGroup</code> type.
@@ -4465,9 +4492,9 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Allows to configure additional netty options using option. as prefix.
-         * For example option.child.keepAlive=false to set the netty option
-         * child.keepAlive=false. See the Netty documentation for possible
-         * options that can be used.
+         * For example option.child.keepAlive=false. See the Netty documentation
+         * for possible options that can be used. This is a multi-value option
+         * with prefix: option.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4487,9 +4514,9 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * Allows to configure additional netty options using option. as prefix.
-         * For example option.child.keepAlive=false to set the netty option
-         * child.keepAlive=false. See the Netty documentation for possible
-         * options that can be used.
+         * For example option.child.keepAlive=false. See the Netty documentation
+         * for possible options that can be used. This is a multi-value option
+         * with prefix: option.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4843,12 +4870,12 @@ public interface NettyEndpointBuilderFactory {
          * Syntax: <code>netty:protocol://host:port</code>
          * 
          * Path parameter: protocol (required)
-         * The protocol to use which can be tcp or udp.
+         * The protocol to use which can be tcp or udp
          * There are 2 enums and the value can be one of: tcp, udp
          * 
          * Path parameter: host (required)
          * The hostname. For the consumer the hostname is localhost or 0.0.0.0.
-         * For the producer the hostname is the remote host to connect to
+         * For the producer the hostname is the remote host to connect to.
          * 
          * Path parameter: port (required)
          * The host port number
@@ -4870,12 +4897,12 @@ public interface NettyEndpointBuilderFactory {
          * Syntax: <code>netty:protocol://host:port</code>
          * 
          * Path parameter: protocol (required)
-         * The protocol to use which can be tcp or udp.
+         * The protocol to use which can be tcp or udp
          * There are 2 enums and the value can be one of: tcp, udp
          * 
          * Path parameter: host (required)
          * The hostname. For the consumer the hostname is localhost or 0.0.0.0.
-         * For the producer the hostname is the remote host to connect to
+         * For the producer the hostname is the remote host to connect to.
          * 
          * Path parameter: port (required)
          * The host port number
@@ -5032,6 +5059,18 @@ public interface NettyEndpointBuilderFactory {
          */
         public String nettyRequestTimeout() {
             return "CamelNettyRequestTimeout";
+        }
+        /**
+         * The Netty Channel object.
+         * 
+         * The option is a: {@code io.netty.channel.Channel} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettyChannel}.
+         */
+        public String nettyChannel() {
+            return "CamelNettyChannel";
         }
     }
     static NettyEndpointBuilder endpointBuilder(String componentName, String path) {

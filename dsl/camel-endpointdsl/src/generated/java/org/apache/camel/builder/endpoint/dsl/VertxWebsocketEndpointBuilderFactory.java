@@ -255,7 +255,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Headers to send in the HTTP handshake request. When the endpoint is a
          * consumer, it only works when it consumes a remote host as a client
-         * (i.e. consumeAsClient is true).
+         * (i.e. consumeAsClient is true). This is a multi-value option with
+         * prefix: handshake.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -276,7 +277,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Headers to send in the HTTP handshake request. When the endpoint is a
          * consumer, it only works when it consumes a remote host as a client
-         * (i.e. consumeAsClient is true).
+         * (i.e. consumeAsClient is true). This is a multi-value option with
+         * prefix: handshake.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -635,7 +637,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Headers to send in the HTTP handshake request. When the endpoint is a
          * consumer, it only works when it consumes a remote host as a client
-         * (i.e. consumeAsClient is true).
+         * (i.e. consumeAsClient is true). This is a multi-value option with
+         * prefix: handshake.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -656,7 +659,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Headers to send in the HTTP handshake request. When the endpoint is a
          * consumer, it only works when it consumes a remote host as a client
-         * (i.e. consumeAsClient is true).
+         * (i.e. consumeAsClient is true). This is a multi-value option with
+         * prefix: handshake.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -856,7 +860,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Headers to send in the HTTP handshake request. When the endpoint is a
          * consumer, it only works when it consumes a remote host as a client
-         * (i.e. consumeAsClient is true).
+         * (i.e. consumeAsClient is true). This is a multi-value option with
+         * prefix: handshake.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -877,7 +882,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Headers to send in the HTTP handshake request. When the endpoint is a
          * consumer, it only works when it consumes a remote host as a client
-         * (i.e. consumeAsClient is true).
+         * (i.e. consumeAsClient is true). This is a multi-value option with
+         * prefix: handshake.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

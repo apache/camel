@@ -118,67 +118,6 @@ public interface SedaComponentBuilderFactory {
     
         
         /**
-         * Whether a thread that sends messages to a full SEDA queue will block
-         * until the queue's capacity is no longer exhausted. By default, an
-         * exception will be thrown stating that the queue is full. By enabling
-         * this option, the calling thread will instead block and wait until the
-         * message can be accepted.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param defaultBlockWhenFull the value to set
-         * @return the dsl builder
-         */
-        default SedaComponentBuilder defaultBlockWhenFull(boolean defaultBlockWhenFull) {
-            doSetProperty("defaultBlockWhenFull", defaultBlockWhenFull);
-            return this;
-        }
-    
-        
-        /**
-         * Whether a thread that sends messages to a full SEDA queue will be
-         * discarded. By default, an exception will be thrown stating that the
-         * queue is full. By enabling this option, the calling thread will give
-         * up sending and continue, meaning that the message was not sent to the
-         * SEDA queue.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param defaultDiscardWhenFull the value to set
-         * @return the dsl builder
-         */
-        default SedaComponentBuilder defaultDiscardWhenFull(boolean defaultDiscardWhenFull) {
-            doSetProperty("defaultDiscardWhenFull", defaultDiscardWhenFull);
-            return this;
-        }
-    
-        /**
-         * Whether a thread that sends messages to a full SEDA queue will block
-         * until the queue's capacity is no longer exhausted. By default, an
-         * exception will be thrown stating that the queue is full. By enabling
-         * this option, where a configured timeout can be added to the block
-         * case. Using the .offer(timeout) method of the underlining java queue.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param defaultOfferTimeout the value to set
-         * @return the dsl builder
-         */
-        default SedaComponentBuilder defaultOfferTimeout(long defaultOfferTimeout) {
-            doSetProperty("defaultOfferTimeout", defaultOfferTimeout);
-            return this;
-        }
-    
-        
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -199,6 +138,67 @@ public interface SedaComponentBuilderFactory {
          */
         default SedaComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    
+        
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will block
+         * until the queue's capacity is no longer exhausted. By default, an
+         * exception will be thrown stating that the queue is full. By enabling
+         * this option, the calling thread will instead block and wait until the
+         * message can be accepted.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param defaultBlockWhenFull the value to set
+         * @return the dsl builder
+         */
+        default SedaComponentBuilder defaultBlockWhenFull(boolean defaultBlockWhenFull) {
+            doSetProperty("defaultBlockWhenFull", defaultBlockWhenFull);
+            return this;
+        }
+    
+        
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param defaultDiscardWhenFull the value to set
+         * @return the dsl builder
+         */
+        default SedaComponentBuilder defaultDiscardWhenFull(boolean defaultDiscardWhenFull) {
+            doSetProperty("defaultDiscardWhenFull", defaultDiscardWhenFull);
+            return this;
+        }
+    
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will block
+         * until the queue's capacity is no longer exhausted. By default, an
+         * exception will be thrown stating that the queue is full. By enabling
+         * this option, where a configured timeout can be added to the block
+         * case. Using the offer(timeout) method of the underlining java queue.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param defaultOfferTimeout the value to set
+         * @return the dsl builder
+         */
+        default SedaComponentBuilder defaultOfferTimeout(long defaultOfferTimeout) {
+            doSetProperty("defaultOfferTimeout", defaultOfferTimeout);
             return this;
         }
     
@@ -275,10 +275,10 @@ public interface SedaComponentBuilderFactory {
             case "bridgeErrorHandler": ((SedaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": ((SedaComponent) component).setConcurrentConsumers((int) value); return true;
             case "defaultPollTimeout": ((SedaComponent) component).setDefaultPollTimeout((int) value); return true;
+            case "lazyStartProducer": ((SedaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "defaultBlockWhenFull": ((SedaComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
             case "defaultDiscardWhenFull": ((SedaComponent) component).setDefaultDiscardWhenFull((boolean) value); return true;
             case "defaultOfferTimeout": ((SedaComponent) component).setDefaultOfferTimeout((long) value); return true;
-            case "lazyStartProducer": ((SedaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SedaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "defaultQueueFactory": ((SedaComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory) value); return true;
             case "queueSize": ((SedaComponent) component).setQueueSize((int) value); return true;

@@ -45,7 +45,7 @@ public interface StubEndpointBuilderFactory {
         }
         /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
-         * it can hold). Will by default use the defaultSize set on the SEDA
+         * it can hold). Will by default use the queueSize set on the SEDA
          * component.
          * 
          * The option is a: <code>int</code> type.
@@ -62,7 +62,7 @@ public interface StubEndpointBuilderFactory {
         }
         /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
-         * it can hold). Will by default use the defaultSize set on the SEDA
+         * it can hold). Will by default use the queueSize set on the SEDA
          * component.
          * 
          * The option will be converted to a <code>int</code> type.
@@ -455,7 +455,7 @@ public interface StubEndpointBuilderFactory {
 
         /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
-         * it can hold). Will by default use the defaultSize set on the SEDA
+         * it can hold). Will by default use the queueSize set on the SEDA
          * component.
          * 
          * The option is a: <code>int</code> type.
@@ -472,7 +472,7 @@ public interface StubEndpointBuilderFactory {
         }
         /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
-         * it can hold). Will by default use the defaultSize set on the SEDA
+         * it can hold). Will by default use the queueSize set on the SEDA
          * component.
          * 
          * The option will be converted to a <code>int</code> type.
@@ -488,189 +488,9 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether a thread that sends messages to a full SEDA queue will block
-         * until the queue's capacity is no longer exhausted. By default, an
-         * exception will be thrown stating that the queue is full. By enabling
-         * this option, the calling thread will instead block and wait until the
-         * message can be accepted.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param blockWhenFull the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
-            doSetProperty("blockWhenFull", blockWhenFull);
-            return this;
-        }
-        /**
-         * Whether a thread that sends messages to a full SEDA queue will block
-         * until the queue's capacity is no longer exhausted. By default, an
-         * exception will be thrown stating that the queue is full. By enabling
-         * this option, the calling thread will instead block and wait until the
-         * message can be accepted.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param blockWhenFull the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
-            doSetProperty("blockWhenFull", blockWhenFull);
-            return this;
-        }
-        /**
-         * Whether the producer should discard the message (do not add the
-         * message to the queue), when sending to a queue with no active
-         * consumers. Only one of the options discardIfNoConsumers and
-         * failIfNoConsumers can be enabled at the same time.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param discardIfNoConsumers the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder discardIfNoConsumers(boolean discardIfNoConsumers) {
-            doSetProperty("discardIfNoConsumers", discardIfNoConsumers);
-            return this;
-        }
-        /**
-         * Whether the producer should discard the message (do not add the
-         * message to the queue), when sending to a queue with no active
-         * consumers. Only one of the options discardIfNoConsumers and
-         * failIfNoConsumers can be enabled at the same time.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param discardIfNoConsumers the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder discardIfNoConsumers(String discardIfNoConsumers) {
-            doSetProperty("discardIfNoConsumers", discardIfNoConsumers);
-            return this;
-        }
-        /**
-         * Whether a thread that sends messages to a full SEDA queue will be
-         * discarded. By default, an exception will be thrown stating that the
-         * queue is full. By enabling this option, the calling thread will give
-         * up sending and continue, meaning that the message was not sent to the
-         * SEDA queue.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param discardWhenFull the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder discardWhenFull(boolean discardWhenFull) {
-            doSetProperty("discardWhenFull", discardWhenFull);
-            return this;
-        }
-        /**
-         * Whether a thread that sends messages to a full SEDA queue will be
-         * discarded. By default, an exception will be thrown stating that the
-         * queue is full. By enabling this option, the calling thread will give
-         * up sending and continue, meaning that the message was not sent to the
-         * SEDA queue.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param discardWhenFull the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder discardWhenFull(String discardWhenFull) {
-            doSetProperty("discardWhenFull", discardWhenFull);
-            return this;
-        }
-        /**
-         * Whether the producer should fail by throwing an exception, when
-         * sending to a queue with no active consumers. Only one of the options
-         * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
-         * time.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param failIfNoConsumers the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder failIfNoConsumers(boolean failIfNoConsumers) {
-            doSetProperty("failIfNoConsumers", failIfNoConsumers);
-            return this;
-        }
-        /**
-         * Whether the producer should fail by throwing an exception, when
-         * sending to a queue with no active consumers. Only one of the options
-         * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
-         * time.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param failIfNoConsumers the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder failIfNoConsumers(String failIfNoConsumers) {
-            doSetProperty("failIfNoConsumers", failIfNoConsumers);
-            return this;
-        }
-        /**
-         * Offer timeout (in milliseconds) can be added to the block case when
-         * queue is full. You can disable timeout by using 0 or a negative
+         * Timeout before a SEDA producer will stop waiting for an asynchronous
+         * task to complete. You can disable timeout by using 0 or a negative
          * value.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param offerTimeout the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder offerTimeout(long offerTimeout) {
-            doSetProperty("offerTimeout", offerTimeout);
-            return this;
-        }
-        /**
-         * Offer timeout (in milliseconds) can be added to the block case when
-         * queue is full. You can disable timeout by using 0 or a negative
-         * value.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param offerTimeout the value to set
-         * @return the dsl builder
-         */
-        default StubEndpointProducerBuilder offerTimeout(String offerTimeout) {
-            doSetProperty("offerTimeout", offerTimeout);
-            return this;
-        }
-        /**
-         * Timeout (in milliseconds) before a SEDA producer will stop waiting
-         * for an asynchronous task to complete. You can disable timeout by
-         * using 0 or a negative value.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -685,9 +505,9 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout (in milliseconds) before a SEDA producer will stop waiting
-         * for an asynchronous task to complete. You can disable timeout by
-         * using 0 or a negative value.
+         * Timeout before a SEDA producer will stop waiting for an asynchronous
+         * task to complete. You can disable timeout by using 0 or a negative
+         * value.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -754,6 +574,154 @@ public interface StubEndpointBuilderFactory {
         }
 
         /**
+         * Whether a thread that sends messages to a full SEDA queue will block
+         * until the queue's capacity is no longer exhausted. By default, an
+         * exception will be thrown stating that the queue is full. By enabling
+         * this option, the calling thread will instead block and wait until the
+         * message can be accepted.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param blockWhenFull the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
+            doSetProperty("blockWhenFull", blockWhenFull);
+            return this;
+        }
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will block
+         * until the queue's capacity is no longer exhausted. By default, an
+         * exception will be thrown stating that the queue is full. By enabling
+         * this option, the calling thread will instead block and wait until the
+         * message can be accepted.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param blockWhenFull the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
+            doSetProperty("blockWhenFull", blockWhenFull);
+            return this;
+        }
+        /**
+         * Whether the producer should discard the message (do not add the
+         * message to the queue), when sending to a queue with no active
+         * consumers. Only one of the options discardIfNoConsumers and
+         * failIfNoConsumers can be enabled at the same time.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param discardIfNoConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder discardIfNoConsumers(boolean discardIfNoConsumers) {
+            doSetProperty("discardIfNoConsumers", discardIfNoConsumers);
+            return this;
+        }
+        /**
+         * Whether the producer should discard the message (do not add the
+         * message to the queue), when sending to a queue with no active
+         * consumers. Only one of the options discardIfNoConsumers and
+         * failIfNoConsumers can be enabled at the same time.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param discardIfNoConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder discardIfNoConsumers(String discardIfNoConsumers) {
+            doSetProperty("discardIfNoConsumers", discardIfNoConsumers);
+            return this;
+        }
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param discardWhenFull the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder discardWhenFull(boolean discardWhenFull) {
+            doSetProperty("discardWhenFull", discardWhenFull);
+            return this;
+        }
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param discardWhenFull the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder discardWhenFull(String discardWhenFull) {
+            doSetProperty("discardWhenFull", discardWhenFull);
+            return this;
+        }
+        /**
+         * Whether the producer should fail by throwing an exception, when
+         * sending to a queue with no active consumers. Only one of the options
+         * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
+         * time.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder failIfNoConsumers(boolean failIfNoConsumers) {
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
+            return this;
+        }
+        /**
+         * Whether the producer should fail by throwing an exception, when
+         * sending to a queue with no active consumers. Only one of the options
+         * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
+         * time.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder failIfNoConsumers(String failIfNoConsumers) {
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -797,6 +765,36 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Offer timeout can be added to the block case when queue is full. You
+         * can disable timeout by using 0 or a negative value.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param offerTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder offerTimeout(long offerTimeout) {
+            doSetProperty("offerTimeout", offerTimeout);
+            return this;
+        }
+        /**
+         * Offer timeout can be added to the block case when queue is full. You
+         * can disable timeout by using 0 or a negative value.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param offerTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointProducerBuilder offerTimeout(String offerTimeout) {
+            doSetProperty("offerTimeout", offerTimeout);
             return this;
         }
         /**
@@ -876,7 +874,7 @@ public interface StubEndpointBuilderFactory {
 
         /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
-         * it can hold). Will by default use the defaultSize set on the SEDA
+         * it can hold). Will by default use the queueSize set on the SEDA
          * component.
          * 
          * The option is a: <code>int</code> type.
@@ -893,7 +891,7 @@ public interface StubEndpointBuilderFactory {
         }
         /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
-         * it can hold). Will by default use the defaultSize set on the SEDA
+         * it can hold). Will by default use the queueSize set on the SEDA
          * component.
          * 
          * The option will be converted to a <code>int</code> type.

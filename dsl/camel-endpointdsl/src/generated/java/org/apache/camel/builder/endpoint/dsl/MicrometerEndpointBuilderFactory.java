@@ -102,7 +102,7 @@ public interface MicrometerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tags of metrics.
+         * Tags of metrics. This is a multi-value option with prefix: tags.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
@@ -121,7 +121,7 @@ public interface MicrometerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tags of metrics.
+         * Tags of metrics. This is a multi-value option with prefix: tags.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.

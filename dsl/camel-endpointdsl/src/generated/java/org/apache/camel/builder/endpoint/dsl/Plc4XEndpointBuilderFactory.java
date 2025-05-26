@@ -104,7 +104,8 @@ public interface Plc4XEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tags as key/values from the Map to use in query.
+         * Tags as key/values from the Map to use in query. This is a
+         * multi-value option with prefix: tag.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
@@ -123,7 +124,8 @@ public interface Plc4XEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tags as key/values from the Map to use in query.
+         * Tags as key/values from the Map to use in query. This is a
+         * multi-value option with prefix: tag.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.

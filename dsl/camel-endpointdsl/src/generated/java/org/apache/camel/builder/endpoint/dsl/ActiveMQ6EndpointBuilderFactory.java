@@ -1054,7 +1054,8 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * options to a JMS consumer without having to extend the JMS API. The
          * options are encoded using URL query syntax in the destination name
          * that the consumer is created on. See more details at
-         * https://activemq.apache.org/destination-options.
+         * https://activemq.apache.org/destination-options. This is a
+         * multi-value option with prefix: destination.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
@@ -1077,7 +1078,8 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * options to a JMS consumer without having to extend the JMS API. The
          * options are encoded using URL query syntax in the destination name
          * that the consumer is created on. See more details at
-         * https://activemq.apache.org/destination-options.
+         * https://activemq.apache.org/destination-options. This is a
+         * multi-value option with prefix: destination.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.

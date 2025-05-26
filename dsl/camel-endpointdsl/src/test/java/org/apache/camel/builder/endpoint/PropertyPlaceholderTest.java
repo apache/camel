@@ -35,7 +35,7 @@ public class PropertyPlaceholderTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).to(mock("result").retainFirst(property("?maxKeep")).failFast(false));
+                from(direct("start")).to(mock("result").advanced().retainFirst(property("?maxKeep")).failFast(false));
             }
         });
         context.start();
@@ -60,7 +60,8 @@ public class PropertyPlaceholderTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).to(mock("result").retainFirst(property("?maxKeep")).failFast(property("fast")));
+                from(direct("start"))
+                        .to(mock("result").advanced().retainFirst(property("?maxKeep")).failFast(property("fast")));
             }
         });
         context.start();
@@ -80,7 +81,7 @@ public class PropertyPlaceholderTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).to(mock("res{{?whereTo}}ult").failFast(false));
+                from(direct("start")).to(mock("res{{?whereTo}}ult").advanced().failFast(false));
             }
         });
         context.start();
@@ -104,7 +105,7 @@ public class PropertyPlaceholderTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).to(mock(property("?whereTo")).failFast(false));
+                from(direct("start")).to(mock(property("?whereTo")).advanced().failFast(false));
             }
         });
         context.start();
