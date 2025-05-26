@@ -44,9 +44,7 @@ public class NatsProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(NatsProducer.class);
 
     private final ExecutorServiceManager executorServiceManager;
-
     private ScheduledExecutorService scheduler;
-
     private Connection connection;
 
     public NatsProducer(NatsEndpoint endpoint) {

@@ -353,7 +353,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * Define the header filtering strategy
+     * To use a custom header filter strategy.
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;

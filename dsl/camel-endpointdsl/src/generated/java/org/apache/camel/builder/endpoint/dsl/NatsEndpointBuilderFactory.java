@@ -784,7 +784,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -799,7 +799,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -1481,7 +1481,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -1496,7 +1496,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -2092,7 +2092,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -2107,7 +2107,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -2280,6 +2280,30 @@ public interface NatsEndpointBuilderFactory {
          */
         public String natsQueueName() {
             return "CamelNatsQueueName";
+        }
+        /**
+         * Status message code.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code NatsStatusCode}.
+         */
+        public String natsStatusCode() {
+            return "CamelNatsStatusCode";
+        }
+        /**
+         * Status message error message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code NatsStatusError}.
+         */
+        public String natsStatusError() {
+            return "CamelNatsStatusError";
         }
     }
     static NatsEndpointBuilder endpointBuilder(String componentName, String path) {

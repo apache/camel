@@ -167,6 +167,10 @@ public class NatsConsumer extends DefaultConsumer {
                     exchange.getIn().setHeader(NatsConstants.NATS_SUBJECT, msg.getSubject());
                     exchange.getIn().setHeader(NatsConstants.NATS_QUEUE_NAME, msg.getSubscription().getQueueName());
                     exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
+                    if (msg.isStatusMessage() && msg.getStatus() != null) {
+                        exchange.getIn().setHeader(NatsConstants.NATS_STATUS_CODE, msg.getStatus().getCode());
+                        exchange.getIn().setHeader(NatsConstants.NATS_STATUS_ERROR, msg.getStatus().getMessage());
+                    }
                     if (msg.getHeaders() != null) {
                         final HeaderFilterStrategy strategy = NatsConsumer.this.getEndpoint()
                                 .getConfiguration()
