@@ -1579,7 +1579,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure the HttpClient using the key/values from the Map.
+         * To configure the HttpClient using the key/values from the Map. This
+         * is a multi-value option with prefix: httpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1598,7 +1599,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure the HttpClient using the key/values from the Map.
+         * To configure the HttpClient using the key/values from the Map. This
+         * is a multi-value option with prefix: httpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1617,7 +1619,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To configure the connection and the socket using the key/values from
-         * the Map.
+         * the Map. This is a multi-value option with prefix: httpConnection.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1637,7 +1639,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To configure the connection and the socket using the key/values from
-         * the Map.
+         * the Map. This is a multi-value option with prefix: httpConnection.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

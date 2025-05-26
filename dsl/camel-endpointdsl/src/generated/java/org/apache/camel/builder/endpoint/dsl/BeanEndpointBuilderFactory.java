@@ -174,7 +174,8 @@ public interface BeanEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used for configuring additional properties on the bean.
+         * Used for configuring additional properties on the bean. This is a
+         * multi-value option with prefix: bean.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -193,7 +194,8 @@ public interface BeanEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used for configuring additional properties on the bean.
+         * Used for configuring additional properties on the bean. This is a
+         * multi-value option with prefix: bean.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

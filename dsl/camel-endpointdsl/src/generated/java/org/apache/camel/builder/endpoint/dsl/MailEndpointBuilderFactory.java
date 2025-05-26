@@ -544,7 +544,8 @@ public interface MailEndpointBuilderFactory {
         /**
          * Refers to a jakarta.mail.search.SearchTerm which allows to filter
          * mails based on search criteria such as subject, body, from, sent
-         * after a certain date etc.
+         * after a certain date etc. This is a multi-value option with prefix:
+         * searchTerm.
          * 
          * The option is a: <code>jakarta.mail.search.SearchTerm</code> type.
          * The option is multivalued, and you can use the searchTerm(String,
@@ -564,7 +565,8 @@ public interface MailEndpointBuilderFactory {
         /**
          * Refers to a jakarta.mail.search.SearchTerm which allows to filter
          * mails based on search criteria such as subject, body, from, sent
-         * after a certain date etc.
+         * after a certain date etc. This is a multi-value option with prefix:
+         * searchTerm.
          * 
          * The option is a: <code>jakarta.mail.search.SearchTerm</code> type.
          * The option is multivalued, and you can use the searchTerm(String,
@@ -905,7 +907,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -925,7 +928,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1532,7 +1536,7 @@ public interface MailEndpointBuilderFactory {
          * Sets additional java mail properties, that will append/override any
          * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
-         * the others as is.
+         * the others as is. This is a multi-value option with prefix: mail.
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
@@ -1553,7 +1557,7 @@ public interface MailEndpointBuilderFactory {
          * Sets additional java mail properties, that will append/override any
          * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
-         * the others as is.
+         * the others as is. This is a multi-value option with prefix: mail.
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
@@ -2249,7 +2253,7 @@ public interface MailEndpointBuilderFactory {
          * Sets additional java mail properties, that will append/override any
          * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
-         * the others as is.
+         * the others as is. This is a multi-value option with prefix: mail.
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
@@ -2270,7 +2274,7 @@ public interface MailEndpointBuilderFactory {
          * Sets additional java mail properties, that will append/override any
          * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
-         * the others as is.
+         * the others as is. This is a multi-value option with prefix: mail.
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
@@ -2802,7 +2806,7 @@ public interface MailEndpointBuilderFactory {
          * Sets additional java mail properties, that will append/override any
          * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
-         * the others as is.
+         * the others as is. This is a multi-value option with prefix: mail.
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the
@@ -2823,7 +2827,7 @@ public interface MailEndpointBuilderFactory {
          * Sets additional java mail properties, that will append/override any
          * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
-         * the others as is.
+         * the others as is. This is a multi-value option with prefix: mail.
          * 
          * The option is a: <code>java.util.Properties</code> type.
          * The option is multivalued, and you can use the

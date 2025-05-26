@@ -31,7 +31,7 @@ public class SedaToDSimpleExpressionTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).toD(seda("${exchangeProperty.whereTo}").blockWhenFull(true));
+                from(direct("start")).toD(seda("${exchangeProperty.whereTo}").advanced().blockWhenFull(true));
 
                 from("seda:cheese").to("mock:result");
             }

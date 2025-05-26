@@ -554,7 +554,7 @@ public interface Pop3ComponentBuilderFactory {
          * Sets additional java mail properties, that will append/override any
          * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
-         * the others as is.
+         * the others as is. This is a multi-value option with prefix: mail.
          * 
          * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 

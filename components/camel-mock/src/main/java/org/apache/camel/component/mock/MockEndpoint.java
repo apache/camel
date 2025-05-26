@@ -123,27 +123,69 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     @UriPath(description = "Name of mock endpoint")
     @Metadata(required = true)
     private String name;
-    @UriParam(label = "producer", defaultValue = "-1")
+    @UriParam(label = "producer", defaultValue = "-1",
+              description = " Specifies the expected number of message exchanges that should be received by this mock."
+                            + " Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when"
+                            + " the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are"
+                            + " still no messages arrived; for that use the assertPeriod option."
+                            + " If you want to assert that exactly nth message arrives to this mock, then see also the"
+                            + " assertPeriod option for further details.")
     private int expectedCount;
-    @UriParam(label = "producer", javaType = "java.time.Duration")
+    @UriParam(label = "producer,advanced", javaType = "java.time.Duration",
+              description = "Allows a sleep to be specified to wait to check that this mock really is empty when expectedMessageCount(int) is called with zero value")
     private long sleepForEmptyTest;
-    @UriParam(label = "producer", javaType = "java.time.Duration")
+    @UriParam(label = "producer,advanced", javaType = "java.time.Duration",
+              description = "Sets the maximum amount of time the assertIsSatisfied() will wait on a latch until it is satisfied")
     private long resultWaitTime;
-    @UriParam(label = "producer", javaType = "java.time.Duration")
+    @UriParam(label = "producer,advanced", javaType = "java.time.Duration",
+              description = "Sets the minimum expected amount of time the assertIsSatisfied() will wait on a latch until it is satisfied")
     private long resultMinimumWaitTime;
-    @UriParam(label = "producer", javaType = "java.time.Duration")
+    @UriParam(label = "producer", javaType = "java.time.Duration",
+              description = "Sets a grace period after which the mock will re-assert to ensure the preliminary assertion is still valid."
+                            + " This is used, for example, to assert that exactly a number of messages arrive. For example, if the"
+                            + " expected count was set to 5, then the assertion is satisfied when five or more messages arrive. To ensure that"
+                            + " exactly 5 messages arrive, then you would need to wait a little period to ensure no further message arrives. This"
+                            + " is what you can use this method for. By default, this period is disabled.")
     private long assertPeriod;
-    @UriParam(label = "producer", defaultValue = "-1")
+    @UriParam(label = "producer,advanced", defaultValue = "-1",
+              description = "Specifies to only retain the first nth number of received Exchanges."
+                            + " This is used when testing with big data, to reduce memory consumption by not storing copies of every"
+                            + " Exchange this mock endpoint receives."
+                            + " Important: When using this limitation, then the getReceivedCounter() will still return the actual"
+                            + " number of received message. For example if we have received 5000 messages and have configured"
+                            + " to only retain the first 10 Exchanges, then the getReceivedCounter() will still return"
+                            + " 5000 but there is only the first 10 Exchanges in the getExchanges() and getReceivedExchanges() methods."
+                            + " When using this method, then some of the other expectation methods is not supported, for example the"
+                            + " expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received."
+                            + " You can configure both retainFirst and retainLast options, to limit both the first and last received.")
     private int retainFirst;
-    @UriParam(label = "producer", defaultValue = "-1")
+    @UriParam(label = "producer,advanced", defaultValue = "-1",
+              description = "Specifies to only retain the last nth number of received Exchanges."
+                            + " This is used when testing with big data, to reduce memory consumption by not storing copies of every"
+                            + " Exchange this mock endpoint receives."
+                            + " Important: When using this limitation, then the getReceivedCounter() will still return the actual"
+                            + " number of received message. For example if we have received 5000 messages and have configured"
+                            + " to only retain the last 20 Exchanges, then the getReceivedCounter() will still return"
+                            + " 5000 but there is only the last 20 Exchanges in the getExchanges() and getReceivedExchanges() methods."
+                            + " When using this method, then some of the other expectation methods is not supported, for example the"
+                            + " expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received."
+                            + " You can configure both retainFirst and retainLast options, to limit both the first and last received.")
     private int retainLast;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced",
+              description = "A number that is used to turn on throughput logging based on groups of the size.")
     private int reportGroup;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced",
+              description = "To turn on logging when the mock receives an incoming message."
+                            + " This will log only one time at INFO level for the incoming message. For more detailed logging, then set the"
+                            + " logger to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class.")
     private boolean log;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced", defaultValue = "true",
+              description = "Sets whether assertIsSatisfied() should fail fast at the first detected failed expectation while it may"
+                            + " otherwise wait for all expected messages to arrive before performing expectations verifications."
+                            + " Is by default true. Set to false to use behavior as in Camel 2.x.")
     private boolean failFast = true;
-    @UriParam(label = "producer,advanced", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true",
+              description = "Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint.")
     private boolean copyOnExchange = true;
     @UriParam(label = "advanced", defaultValue = "100",
               description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")

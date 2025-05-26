@@ -84,7 +84,8 @@ public interface WordpressComponentBuilderFactory {
         }
     
         /**
-         * The criteria to use with complex searches.
+         * The criteria to use with complex searches. This is a multi-value
+         * option with prefix: criteria.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.

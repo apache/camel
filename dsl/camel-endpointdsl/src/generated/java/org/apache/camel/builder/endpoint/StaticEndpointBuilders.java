@@ -10809,12 +10809,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>netty:protocol://host:port</code>
      * 
      * Path parameter: protocol (required)
-     * The protocol to use which can be tcp or udp.
+     * The protocol to use which can be tcp or udp
      * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
-     * the producer the hostname is the remote host to connect to
+     * the producer the hostname is the remote host to connect to.
      * 
      * Path parameter: port (required)
      * The host port number
@@ -10836,12 +10836,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>netty:protocol://host:port</code>
      * 
      * Path parameter: protocol (required)
-     * The protocol to use which can be tcp or udp.
+     * The protocol to use which can be tcp or udp
      * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
-     * the producer the hostname is the remote host to connect to
+     * the producer the hostname is the remote host to connect to.
      * 
      * Path parameter: port (required)
      * The host port number

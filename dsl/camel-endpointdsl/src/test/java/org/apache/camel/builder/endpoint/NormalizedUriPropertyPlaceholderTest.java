@@ -48,7 +48,7 @@ public class NormalizedUriPropertyPlaceholderTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("{{foo}}")).to(mock("{{bar}}").failFast("{{fast}}"));
+                from(direct("{{foo}}")).to(mock("{{bar}}").advanced().failFast("{{fast}}"));
             }
         };
     }

@@ -601,7 +601,8 @@ public interface Ddb2StreamEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -621,7 +622,8 @@ public interface Ddb2StreamEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

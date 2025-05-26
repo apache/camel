@@ -771,7 +771,8 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true. This is a multi-value option
+         * with prefix: properties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -792,7 +793,8 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true. This is a multi-value option
+         * with prefix: properties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1722,7 +1724,8 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true. This is a multi-value option
+         * with prefix: properties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1743,7 +1746,8 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true. This is a multi-value option
+         * with prefix: properties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2448,7 +2452,8 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true. This is a multi-value option
+         * with prefix: properties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2469,7 +2474,8 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
-         * properties.faultStackTraceEnabled=true.
+         * properties.faultStackTraceEnabled=true. This is a multi-value option
+         * with prefix: properties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
