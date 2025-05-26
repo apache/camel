@@ -300,7 +300,7 @@ public class AS2ClientManager {
         switch (as2MessageStructure) {
             case PLAIN: {
                 plain(applicationEntity, request);
-                if (StringUtils.isNotBlank(attachedFileName)) {
+                if (attachedFileName != null && !attachedFileName.isEmpty()) {
                     request.setHeader(AS2Header.CONTENT_DISPOSITION,
                             MessageFormatter.format(CONTENT_DISPOSITION_PATTERN, attachedFileName).getMessage());
                 }
