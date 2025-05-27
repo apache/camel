@@ -163,7 +163,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void receivePlainEDIStreamMessageWithAttachedFileNameTest() throws Exception {
-        receivePlainEDIMessageWithAttachedFileName(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)), null);
+        receivePlainEDIMessageWithAttachedFileName(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)),
+                null);
     }
 
     private void receivePlainEDIMessageWithAttachedFileName(Object msg, String encoding) throws Exception {
