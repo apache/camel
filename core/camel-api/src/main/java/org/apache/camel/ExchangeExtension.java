@@ -274,4 +274,16 @@ public interface ExchangeExtension {
      */
     Exchange createCopyWithProperties(CamelContext context);
 
+    /**
+     * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).
+     * <p/>
+     * <b>Important: </b> It is not always possible to determine if the message is a redelivery or not, and therefore
+     * <tt>false</tt> is returned. Such an example would be a JDBC message. However JMS brokers provides details if a
+     * message is redelivered.
+     *
+     * @param  message the camel message
+     * @return         <tt>true</tt> if redelivered, <tt>false</tt> if not or not able to determine
+     */
+    boolean isExternalRedelivered(Message message);
+
 }
