@@ -30,7 +30,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 /**
- * Post Quantum Computing Signature and Verification component.
+ * Post Quantum Cryptography Signature and Verification component.
  */
 @UriEndpoint(firstVersion = "4.12.0", scheme = "pqc", title = "PQC Algorithms",
              syntax = "pqc:label", producerOnly = true, category = { Category.SECURITY },
