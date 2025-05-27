@@ -48,18 +48,19 @@ import org.apache.camel.util.ObjectHelper;
  * @see DefaultExchange
  */
 abstract class AbstractExchange implements Exchange {
-    protected final EnumMap<ExchangePropertyKey, Object> internalProperties;
 
-    protected final CamelContext context;
+    private final CamelContext context;
+    private final ExtendedExchangeExtension privateExtension;
+
+    protected final EnumMap<ExchangePropertyKey, Object> internalProperties;
     protected Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
+    protected Map<String, SafeCopyProperty> safeCopyProperties;
+    protected ExchangeVariableRepository variableRepository;
     protected Message in;
     protected Message out;
     protected Exception exception;
     protected String exchangeId;
     protected ExchangePattern pattern;
-    protected Map<String, SafeCopyProperty> safeCopyProperties;
-    protected ExchangeVariableRepository variableRepository;
-    private final ExtendedExchangeExtension privateExtension;
 
     protected AbstractExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
                                Map<String, Object> properties) {
