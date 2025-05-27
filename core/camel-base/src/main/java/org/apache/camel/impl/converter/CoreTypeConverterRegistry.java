@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -563,6 +564,18 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
     public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
         return doLookup(toType, fromType);
+    }
+
+    @Override
+    public Map<Class<?>, TypeConverter> lookup(Class<?> toType) {
+        Map<Class<?>, TypeConverter> answer = new HashMap<>();
+        for (var e : converters.entrySet()) {
+            Class<?> target = e.getKey().getTo();
+            if (target == toType) {
+                answer.put(e.getKey().getFrom(), e.getValue());
+            }
+        }
+        return answer;
     }
 
     @Deprecated(since = "4.0.0")
