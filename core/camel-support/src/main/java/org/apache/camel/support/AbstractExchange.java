@@ -57,9 +57,6 @@ abstract class AbstractExchange implements Exchange {
     protected Exception exception;
     protected String exchangeId;
     protected ExchangePattern pattern;
-    protected boolean routeStop;
-    protected boolean rollbackOnly;
-    protected boolean rollbackOnlyLast;
     protected Map<String, SafeCopyProperty> safeCopyProperties;
     protected ExchangeVariableRepository variableRepository;
     private final ExtendedExchangeExtension privateExtension;
@@ -110,14 +107,14 @@ abstract class AbstractExchange implements Exchange {
         }
 
         setException(parent.exception);
-        setRouteStop(parent.routeStop);
-        setRollbackOnly(parent.rollbackOnly);
-        setRollbackOnlyLast(parent.rollbackOnlyLast);
 
         privateExtension.setNotifyEvent(parent.getExchangeExtension().isNotifyEvent());
         privateExtension.setRedeliveryExhausted(parent.getExchangeExtension().isRedeliveryExhausted());
         privateExtension.setErrorHandlerHandled(parent.getExchangeExtension().getErrorHandlerHandled());
         privateExtension.setStreamCacheDisabled(parent.getExchangeExtension().isStreamCacheDisabled());
+        privateExtension.setRollbackOnly(parent.getExchangeExtension().isRollbackOnly());
+        privateExtension.setRollbackOnlyLast(parent.getExchangeExtension().isRollbackOnlyLast());
+        privateExtension.setRouteStop(parent.getExchangeExtension().isRouteStop());
 
         if (parent.hasVariables()) {
             if (this.variableRepository == null) {
@@ -639,12 +636,12 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public boolean isRouteStop() {
-        return routeStop;
+        return privateExtension.isRouteStop();
     }
 
     @Override
     public void setRouteStop(boolean routeStop) {
-        this.routeStop = routeStop;
+        privateExtension.setRouteStop(routeStop);
     }
 
     @Override
@@ -654,22 +651,22 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public boolean isRollbackOnly() {
-        return rollbackOnly;
+        return privateExtension.isRollbackOnly();
     }
 
     @Override
     public void setRollbackOnly(boolean rollbackOnly) {
-        this.rollbackOnly = rollbackOnly;
+        privateExtension.setRollbackOnly(rollbackOnly);
     }
 
     @Override
     public boolean isRollbackOnlyLast() {
-        return rollbackOnlyLast;
+        return privateExtension.isRollbackOnlyLast();
     }
 
     @Override
     public void setRollbackOnlyLast(boolean rollbackOnlyLast) {
-        this.rollbackOnlyLast = rollbackOnlyLast;
+        privateExtension.setRollbackOnlyLast(rollbackOnlyLast);
     }
 
     @Override
