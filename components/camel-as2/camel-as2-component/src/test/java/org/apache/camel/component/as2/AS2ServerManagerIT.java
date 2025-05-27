@@ -172,7 +172,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
         clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
                 AS2MediaType.APPLICATION_EDIFACT, null, encoding, null, null, null,
-                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, ATTACHED_FILE_NAME, null,
                 null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
