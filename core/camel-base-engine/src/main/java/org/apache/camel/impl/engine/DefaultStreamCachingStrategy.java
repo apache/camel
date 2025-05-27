@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -48,13 +47,17 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultStreamCachingStrategy extends ServiceSupport implements CamelContextAware, StreamCachingStrategy {
 
+    // stream cache type converters
+    private record CoreConverter(Class<?> from, TypeConverter converter) {
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamCachingStrategy.class);
 
     private CamelContext camelContext;
     private boolean enabled;
     private String allowClassNames;
     private String denyClassNames;
-    private Map<Class<?>, TypeConverter> coreConverters;
+    private final Collection<CoreConverter> coreConverters = new ArrayList<>();
     private Collection<Class<?>> allowClasses;
     private Collection<Class<?>> denyClasses;
     private boolean spoolEnabled;
@@ -314,12 +317,9 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     }
 
     private TypeConverter lookupTypeConverter(Class<?> type) {
-        if (coreConverters != null) {
-            for (var tc : coreConverters.entrySet()) {
-                Class<?> clazz = tc.getKey();
-                if (clazz.isAssignableFrom(type)) {
-                    return tc.getValue();
-                }
+        for (var tc : coreConverters) {
+            if (tc.from().isAssignableFrom(type)) {
+                return tc.converter();
             }
         }
         return null;
@@ -373,7 +373,8 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         }
 
         // find core type converters that can convert to StreamCache
-        this.coreConverters = getCamelContext().getTypeConverterRegistry().lookup(StreamCache.class);
+        var set = getCamelContext().getTypeConverterRegistry().lookup(StreamCache.class).entrySet();
+        set.forEach(e -> coreConverters.add(new CoreConverter(e.getKey(), e.getValue())));
 
         if (allowClassNames != null) {
             if (allowClasses == null) {
