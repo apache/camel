@@ -48,6 +48,9 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean notifyEvent;
     private boolean interruptable = true;
     private boolean interrupted;
+    private boolean routeStop;
+    private boolean rollbackOnly;
+    private boolean rollbackOnlyLast;
     private AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     private UnitOfWork unitOfWork;
     private List<Synchronization> onCompletions;
@@ -271,6 +274,36 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     }
 
     @Override
+    public boolean isRollbackOnly() {
+        return rollbackOnly;
+    }
+
+    @Override
+    public void setRollbackOnly(boolean rollbackOnly) {
+        this.rollbackOnly = rollbackOnly;
+    }
+
+    @Override
+    public boolean isRollbackOnlyLast() {
+        return rollbackOnlyLast;
+    }
+
+    @Override
+    public void setRollbackOnlyLast(boolean rollbackOnlyLast) {
+        this.rollbackOnlyLast = rollbackOnlyLast;
+    }
+
+    @Override
+    public boolean isRouteStop() {
+        return routeStop;
+    }
+
+    @Override
+    public void setRouteStop(boolean routeStop) {
+        this.routeStop = routeStop;
+    }
+
+    @Override
     public <T> T getInOrNull(Class<T> type) {
         return this.exchange.getInOrNull(type);
     }
@@ -336,6 +369,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
             this.exchange.variableRepository.clear();
         }
 
+        this.externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
         setHistoryNodeId(null);
         setHistoryNodeLabel(null);
         setTransacted(false);
@@ -345,6 +379,9 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         setRedeliveryExhausted(false);
         setErrorHandlerHandled(null);
         setStreamCacheDisabled(false);
+        setRollbackOnly(false);
+        setRollbackOnlyLast(false);
+        setRouteStop(false);
     }
 
     @Override
