@@ -39,41 +39,4 @@ class ThrowExceptionTest extends YamlTestSupport {
             }
     }
 
-    def "Error: kebab-case: throw-exception"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - throw-exception:
-                          exceptionType: "java.lang.IllegalArgumentException"
-                          message: "test"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (Exception e) {
-            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
-        }
-    }
-
-    def "Error: kebab-case: exception-type"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - throwException:
-                          exception-type: "java.lang.IllegalArgumentException"
-                          message: "test"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (Exception e) {
-            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
-        }
-    }
 }

@@ -547,10 +547,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "api-key",
-                    "apiKey"
-            },
+            nodes = "apiKey",
             types = org.apache.camel.model.rest.ApiKeyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Api Key",
@@ -903,10 +900,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "basic-auth",
-                    "basicAuth"
-            },
+            nodes = "basicAuth",
             types = org.apache.camel.model.rest.BasicAuthDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Basic Auth",
@@ -951,10 +945,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "batch-config",
-                    "batchConfig"
-            },
+            nodes = "batchConfig",
             types = org.apache.camel.model.config.BatchResequencerConfig.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Batch Config",
@@ -1172,10 +1163,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "bean-factory",
-                    "beanFactory"
-            },
+            nodes = "beanFactory",
             types = org.apache.camel.model.BeanFactoryDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Bean Factory",
@@ -1447,10 +1435,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "bearer-token",
-                    "bearerToken"
-            },
+            nodes = "bearerToken",
             types = org.apache.camel.model.rest.BearerTokenDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Bearer Token",
@@ -1570,10 +1555,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "blacklist-service-filter",
-                    "blacklistServiceFilter"
-            },
+            nodes = "blacklistServiceFilter",
             types = org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Blacklist Service Filter",
@@ -1794,10 +1776,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "caching-service-discovery",
-                    "cachingServiceDiscovery"
-            },
+            nodes = "cachingServiceDiscovery",
             types = org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Caching Service Discovery",
@@ -1888,10 +1867,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "do-catch",
-                    "doCatch"
-            },
+            nodes = "doCatch",
             types = org.apache.camel.model.CatchDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Do Catch",
@@ -2028,10 +2004,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "circuit-breaker",
-                    "circuitBreaker"
-            },
+            nodes = "circuitBreaker",
             types = org.apache.camel.model.CircuitBreakerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Circuit Breaker",
@@ -2117,10 +2090,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "claim-check",
-                    "claimCheck"
-            },
+            nodes = "claimCheck",
             types = org.apache.camel.model.ClaimCheckDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Claim Check",
@@ -2201,10 +2171,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "combined-service-discovery",
-                    "combinedServiceDiscovery"
-            },
+            nodes = "combinedServiceDiscovery",
             types = org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Combined Service Discovery",
@@ -2308,10 +2275,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "combined-service-filter",
-                    "combinedServiceFilter"
-            },
+            nodes = "combinedServiceFilter",
             types = org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Combined Service Filter",
@@ -2509,10 +2473,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "consul-service-discovery",
-                    "consulServiceDiscovery"
-            },
+            nodes = "consulServiceDiscovery",
             types = org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Consul Service Discovery",
@@ -2610,10 +2571,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "context-scan",
-                    "contextScan"
-            },
+            nodes = "contextScan",
             types = org.apache.camel.model.ContextScanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Context Scan",
@@ -2664,10 +2622,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "convert-body-to",
-                    "convertBodyTo"
-            },
+            nodes = "convertBodyTo",
             inline = true,
             types = org.apache.camel.model.ConvertBodyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -2742,10 +2697,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "convert-header-to",
-                    "convertHeaderTo"
-            },
+            nodes = "convertHeaderTo",
             types = org.apache.camel.model.ConvertHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Convert Header To",
@@ -2826,10 +2778,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "convert-variable-to",
-                    "convertVariableTo"
-            },
+            nodes = "convertVariableTo",
             types = org.apache.camel.model.ConvertVariableDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Convert Variable To",
@@ -3273,10 +3222,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "custom-load-balancer",
-                    "customLoadBalancer"
-            },
+            nodes = "customLoadBalancer",
             inline = true,
             types = org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -3327,10 +3273,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "custom-service-filter",
-                    "customServiceFilter"
-            },
+            nodes = "customServiceFilter",
             types = org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Custom Service Filter",
@@ -3380,10 +3323,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "custom-transformer",
-                    "customTransformer"
-            },
+            nodes = "customTransformer",
             types = org.apache.camel.model.transformer.CustomTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Custom Transformer",
@@ -3452,10 +3392,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "custom-validator",
-                    "customValidator"
-            },
+            nodes = "customValidator",
             types = org.apache.camel.model.validator.CustomValidatorDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Custom Validator",
@@ -3539,10 +3476,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "data-format-transformer",
-                    "dataFormatTransformer"
-            },
+            nodes = "dataFormatTransformer",
             types = org.apache.camel.model.transformer.DataFormatTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Data Format Transformer",
@@ -3862,10 +3796,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "data-formats",
-                    "dataFormats"
-            },
+            nodes = "dataFormats",
             types = org.apache.camel.model.dataformat.DataFormatsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Data formats",
@@ -4466,10 +4397,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "dead-letter-channel",
-                    "deadLetterChannel"
-            },
+            nodes = "deadLetterChannel",
             types = org.apache.camel.model.errorhandler.DeadLetterChannelDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Dead Letter Channel",
@@ -4592,10 +4520,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "default-error-handler",
-                    "defaultErrorHandler"
-            },
+            nodes = "defaultErrorHandler",
             types = org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Default Error Handler",
@@ -4706,10 +4631,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "default-load-balancer",
-                    "defaultLoadBalancer"
-            },
+            nodes = "defaultLoadBalancer",
             types = org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Default Load Balancer",
@@ -4913,7 +4835,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCors": {
+                case "enableCORS": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -5060,10 +4982,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "dns-service-discovery",
-                    "dnsServiceDiscovery"
-            },
+            nodes = "dnsServiceDiscovery",
             types = org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Dns Service Discovery",
@@ -5119,10 +5038,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "dynamic-router",
-                    "dynamicRouter"
-            },
+            nodes = "dynamicRouter",
             types = org.apache.camel.model.DynamicRouterDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Dynamic Router",
@@ -5207,10 +5123,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "endpoint-transformer",
-                    "endpointTransformer"
-            },
+            nodes = "endpointTransformer",
             types = org.apache.camel.model.transformer.EndpointTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Endpoint Transformer",
@@ -5279,10 +5192,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "endpoint-validator",
-                    "endpointValidator"
-            },
+            nodes = "endpointValidator",
             types = org.apache.camel.model.validator.EndpointValidatorDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Endpoint Validator",
@@ -5466,10 +5376,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "error-handler",
-                    "errorHandler"
-            },
+            nodes = "errorHandler",
             types = org.apache.camel.model.ErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Error Handler",
@@ -5549,10 +5456,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "exchange-property",
-                    "exchangeProperty"
-            },
+            nodes = "exchangeProperty",
             inline = true,
             types = org.apache.camel.model.language.ExchangePropertyExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -5618,10 +5522,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "failover-load-balancer",
-                    "failoverLoadBalancer"
-            },
+            nodes = "failoverLoadBalancer",
             types = org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Failover Load Balancer",
@@ -5690,10 +5591,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "fault-tolerance-configuration",
-                    "faultToleranceConfiguration"
-            },
+            nodes = "faultToleranceConfiguration",
             types = org.apache.camel.model.FaultToleranceConfigurationDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Fault Tolerance Configuration",
@@ -5804,10 +5702,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "fhir-json",
-                    "fhirJson"
-            },
+            nodes = "fhirJson",
             types = org.apache.camel.model.dataformat.FhirJsonDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "FHIR JSon",
@@ -5954,10 +5849,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "fhir-xml",
-                    "fhirXml"
-            },
+            nodes = "fhirXml",
             types = org.apache.camel.model.dataformat.FhirXmlDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "FHIR XML",
@@ -6182,10 +6074,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "do-finally",
-                    "doFinally"
-            },
+            nodes = "doFinally",
             types = org.apache.camel.model.FinallyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Do Finally",
@@ -6466,7 +6355,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCors": {
+                case "enableCORS": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -6550,10 +6439,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "global-option",
-                    "globalOption"
-            },
+            nodes = "globalOption",
             types = org.apache.camel.model.GlobalOptionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Global Option",
@@ -6598,10 +6484,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "global-options",
-                    "globalOptions"
-            },
+            nodes = "globalOptions",
             types = org.apache.camel.model.GlobalOptionsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Global Options",
@@ -6773,10 +6656,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "gzip-deflater",
-                    "gzipDeflater"
-            },
+            nodes = "gzipDeflater",
             types = org.apache.camel.model.dataformat.GzipDeflaterDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "GZip Deflater",
@@ -6933,7 +6813,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCors": {
+                case "enableCORS": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -7083,10 +6963,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "healthy-service-filter",
-                    "healthyServiceFilter"
-            },
+            nodes = "healthyServiceFilter",
             types = org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Healthy Service Filter",
@@ -7253,10 +7130,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "idempotent-consumer",
-                    "idempotentConsumer"
-            },
+            nodes = "idempotentConsumer",
             types = org.apache.camel.model.IdempotentConsumerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Idempotent Consumer",
@@ -7358,10 +7232,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "input-type",
-                    "inputType"
-            },
+            nodes = "inputType",
             types = org.apache.camel.model.InputTypeDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Input Type",
@@ -7482,10 +7353,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlIn
     @YamlType(
-            nodes = {
-                    "intercept-from",
-                    "interceptFrom"
-            },
+            nodes = "interceptFrom",
             inline = true,
             types = org.apache.camel.model.InterceptFromDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -7560,10 +7428,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlIn
     @YamlType(
-            nodes = {
-                    "intercept-send-to-endpoint",
-                    "interceptSendToEndpoint"
-            },
+            nodes = "interceptSendToEndpoint",
             inline = true,
             types = org.apache.camel.model.InterceptSendToEndpointDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -7649,10 +7514,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "jackson-xml",
-                    "jacksonXml"
-            },
+            nodes = "jacksonXml",
             types = org.apache.camel.model.dataformat.JacksonXMLDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Jackson XML",
@@ -8264,10 +8126,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "json-api",
-                    "jsonApi"
-            },
+            nodes = "jsonApi",
             types = org.apache.camel.model.dataformat.JsonApiDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "JSonApi",
@@ -8608,10 +8467,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "jta-transaction-error-handler",
-                    "jtaTransactionErrorHandler"
-            },
+            nodes = "jtaTransactionErrorHandler",
             types = org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Jta Transaction Error Handler",
@@ -8734,10 +8590,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "kubernetes-service-discovery",
-                    "kubernetesServiceDiscovery"
-            },
+            nodes = "kubernetesServiceDiscovery",
             types = org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Kubernetes Service Discovery",
@@ -8940,10 +8793,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "lang-chain4j-character-tokenizer",
-                    "langChain4jCharacterTokenizer"
-            },
+            nodes = "langChain4jCharacterTokenizer",
             types = org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with character splitter",
@@ -9000,10 +8850,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "lang-chain4j-line-tokenizer",
-                    "langChain4jLineTokenizer"
-            },
+            nodes = "langChain4jLineTokenizer",
             types = org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with line splitter",
@@ -9060,10 +8907,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "lang-chain4j-paragraph-tokenizer",
-                    "langChain4jParagraphTokenizer"
-            },
+            nodes = "langChain4jParagraphTokenizer",
             types = org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with paragraph splitter",
@@ -9120,10 +8964,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "lang-chain4j-sentence-tokenizer",
-                    "langChain4jSentenceTokenizer"
-            },
+            nodes = "langChain4jSentenceTokenizer",
             types = org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with sentence splitter",
@@ -9233,10 +9074,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "lang-chain4j-word-tokenizer",
-                    "langChain4jWordTokenizer"
-            },
+            nodes = "langChain4jWordTokenizer",
             types = org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with word splitter",
@@ -9359,10 +9197,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "load-balance",
-                    "loadBalance"
-            },
+            nodes = "loadBalance",
             types = org.apache.camel.model.LoadBalanceDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Load Balance",
@@ -9465,10 +9300,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "load-transformer",
-                    "loadTransformer"
-            },
+            nodes = "loadTransformer",
             types = org.apache.camel.model.transformer.LoadTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Load Transformer",
@@ -10154,10 +9986,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "mime-multipart",
-                    "mimeMultipart"
-            },
+            nodes = "mimeMultipart",
             types = org.apache.camel.model.dataformat.MimeMultipartDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "MIME Multipart",
@@ -10354,10 +10183,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "mutual-tls",
-                    "mutualTLS"
-            },
+            nodes = "mutualTLS",
             types = org.apache.camel.model.rest.MutualTLSDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Mutual TLS",
@@ -10474,10 +10300,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "no-error-handler",
-                    "noErrorHandler"
-            },
+            nodes = "noErrorHandler",
             types = org.apache.camel.model.errorhandler.NoErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "No Error Handler",
@@ -10662,10 +10485,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlIn
     @YamlType(
-            nodes = {
-                    "on-completion",
-                    "onCompletion"
-            },
+            nodes = "onCompletion",
             types = org.apache.camel.model.OnCompletionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "On Completion",
@@ -10764,10 +10584,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlIn
     @YamlType(
-            nodes = {
-                    "on-exception",
-                    "onException"
-            },
+            nodes = "onException",
             types = org.apache.camel.model.OnExceptionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "On Exception",
@@ -10889,10 +10706,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "on-fallback",
-                    "onFallback"
-            },
+            nodes = "onFallback",
             types = org.apache.camel.model.OnFallbackDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "On Fallback",
@@ -10948,10 +10762,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "on-when",
-                    "onWhen"
-            },
+            nodes = "onWhen",
             types = org.apache.camel.model.OnWhenDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "On When",
@@ -11012,10 +10823,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "open-api",
-                    "openApi"
-            },
+            nodes = "openApi",
             types = org.apache.camel.model.rest.OpenApiDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Open Api",
@@ -11096,10 +10904,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "open-id-connect",
-                    "openIdConnect"
-            },
+            nodes = "openIdConnect",
             types = org.apache.camel.model.rest.OpenIdConnectDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Open Id Connect",
@@ -11150,10 +10955,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "optimistic-lock-retry-policy",
-                    "optimisticLockRetryPolicy"
-            },
+            nodes = "optimisticLockRetryPolicy",
             types = org.apache.camel.model.OptimisticLockRetryPolicyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Optimistic Lock Retry Policy",
@@ -11324,10 +11126,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "output-type",
-                    "outputType"
-            },
+            nodes = "outputType",
             types = org.apache.camel.model.OutputTypeDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Output Type",
@@ -11507,10 +11306,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "package-scan",
-                    "packageScan"
-            },
+            nodes = "packageScan",
             types = org.apache.camel.model.PackageScanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Package Scan",
@@ -11658,10 +11454,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "parquet-avro",
-                    "parquetAvro"
-            },
+            nodes = "parquetAvro",
             inline = true,
             types = org.apache.camel.model.dataformat.ParquetAvroDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -11724,10 +11517,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "pass-through-service-filter",
-                    "passThroughServiceFilter"
-            },
+            nodes = "passThroughServiceFilter",
             types = org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Pass Through Service Filter",
@@ -11846,7 +11636,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCors": {
+                case "enableCORS": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -12193,10 +11983,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "poll-enrich",
-                    "pollEnrich"
-            },
+            nodes = "pollEnrich",
             types = org.apache.camel.model.PollEnrichDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Poll Enrich",
@@ -12398,7 +12185,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCors": {
+                case "enableCORS": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -12482,10 +12269,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "predicate-validator",
-                    "predicateValidator"
-            },
+            nodes = "predicateValidator",
             types = org.apache.camel.model.validator.PredicateValidatorDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Predicate Validator",
@@ -12632,10 +12416,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "property-expression",
-                    "propertyExpression"
-            },
+            nodes = "propertyExpression",
             types = org.apache.camel.model.PropertyExpressionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Property Expression",
@@ -12935,7 +12716,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCors": {
+                case "enableCORS": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -13091,10 +12872,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "random-load-balancer",
-                    "randomLoadBalancer"
-            },
+            nodes = "randomLoadBalancer",
             types = org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Random Load Balancer",
@@ -13131,10 +12909,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "recipient-list",
-                    "recipientList"
-            },
+            nodes = "recipientList",
             types = org.apache.camel.model.RecipientListDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Recipient List",
@@ -13291,10 +13066,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "redelivery-policy",
-                    "redeliveryPolicy"
-            },
+            nodes = "redeliveryPolicy",
             types = org.apache.camel.model.RedeliveryPolicyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Redelivery Policy",
@@ -13477,10 +13249,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "ref-error-handler",
-                    "refErrorHandler"
-            },
+            nodes = "refErrorHandler",
             inline = true,
             types = org.apache.camel.model.errorhandler.RefErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -13603,10 +13372,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "remove-header",
-                    "removeHeader"
-            },
+            nodes = "removeHeader",
             inline = true,
             types = org.apache.camel.model.RemoveHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -13669,10 +13435,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "remove-headers",
-                    "removeHeaders"
-            },
+            nodes = "removeHeaders",
             inline = true,
             types = org.apache.camel.model.RemoveHeadersDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -13741,10 +13504,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "remove-properties",
-                    "removeProperties"
-            },
+            nodes = "removeProperties",
             inline = true,
             types = org.apache.camel.model.RemovePropertiesDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -13813,10 +13573,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "remove-property",
-                    "removeProperty"
-            },
+            nodes = "removeProperty",
             inline = true,
             types = org.apache.camel.model.RemovePropertyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -13879,10 +13636,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "remove-variable",
-                    "removeVariable"
-            },
+            nodes = "removeVariable",
             inline = true,
             types = org.apache.camel.model.RemoveVariableDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -14034,10 +13788,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "resilience4j-configuration",
-                    "resilience4jConfiguration"
-            },
+            nodes = "resilience4jConfiguration",
             types = org.apache.camel.model.Resilience4jConfigurationDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Resilience4j Configuration",
@@ -14208,10 +13959,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "response-header",
-                    "responseHeader"
-            },
+            nodes = "responseHeader",
             types = org.apache.camel.model.rest.ResponseHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Response Header",
@@ -14291,10 +14039,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "response-message",
-                    "responseMessage"
-            },
+            nodes = "responseMessage",
             types = org.apache.camel.model.rest.ResponseMessageDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Response Message",
@@ -14357,10 +14102,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "rest-binding",
-                    "restBinding"
-            },
+            nodes = "restBinding",
             types = org.apache.camel.model.rest.RestBindingDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Binding",
@@ -14416,7 +14158,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setConsumes(val);
                     break;
                 }
-                case "enableCors": {
+                case "enableCORS": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -14466,10 +14208,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlIn
     @YamlType(
-            nodes = {
-                    "rest-configuration",
-                    "restConfiguration"
-            },
+            nodes = "restConfiguration",
             types = org.apache.camel.model.rest.RestConfigurationDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Configuration",
@@ -14596,7 +14335,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatProperties(val);
                     break;
                 }
-                case "enableCors": {
+                case "enableCORS": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -14674,10 +14413,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "rest-context-ref",
-                    "restContextRef"
-            },
+            nodes = "restContextRef",
             inline = true,
             types = org.apache.camel.model.RestContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -14792,7 +14528,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
-                case "enableCors": {
+                case "enableCORS": {
                     String val = asText(node);
                     target.setEnableCORS(val);
                     break;
@@ -14916,10 +14652,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "rest-property",
-                    "restProperty"
-            },
+            nodes = "restProperty",
             types = org.apache.camel.model.rest.RestPropertyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Property",
@@ -14964,10 +14697,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "security-definitions",
-                    "securityDefinitions"
-            },
+            nodes = "securityDefinitions",
             types = org.apache.camel.model.rest.RestSecuritiesDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Rest Security Definitions",
@@ -15266,10 +14996,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "round-robin-load-balancer",
-                    "roundRobinLoadBalancer"
-            },
+            nodes = "roundRobinLoadBalancer",
             types = org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Round Robin Load Balancer",
@@ -15306,10 +15033,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "route-builder",
-                    "routeBuilder"
-            },
+            nodes = "routeBuilder",
             inline = true,
             types = org.apache.camel.model.RouteBuilderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -15360,10 +15084,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "route-configuration-context-ref",
-                    "routeConfigurationContextRef"
-            },
+            nodes = "routeConfigurationContextRef",
             inline = true,
             types = org.apache.camel.model.RouteConfigurationContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -15406,10 +15127,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "route-context-ref",
-                    "routeContextRef"
-            },
+            nodes = "routeContextRef",
             inline = true,
             types = org.apache.camel.model.RouteContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -15514,10 +15232,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "template-parameter",
-                    "templateParameter"
-            },
+            nodes = "templateParameter",
             types = org.apache.camel.model.RouteTemplateParameterDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Template Parameter",
@@ -15574,10 +15289,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "routing-slip",
-                    "routingSlip"
-            },
+            nodes = "routingSlip",
             inline = true,
             types = org.apache.camel.model.RoutingSlipDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -16050,10 +15762,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "service-call-configuration",
-                    "serviceCallConfiguration"
-            },
+            nodes = "serviceCallConfiguration",
             types = org.apache.camel.model.cloud.ServiceCallConfigurationDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Service Call Configuration",
@@ -16234,10 +15943,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "service-call",
-                    "serviceCall"
-            },
+            nodes = "serviceCall",
             inline = true,
             types = org.apache.camel.model.cloud.ServiceCallDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -16448,10 +16154,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "service-expression",
-                    "serviceExpression"
-            },
+            nodes = "serviceExpression",
             types = org.apache.camel.model.cloud.ServiceCallExpressionConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Service Expression",
@@ -16513,10 +16216,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "service-chooser-configuration",
-                    "serviceChooserConfiguration"
-            },
+            nodes = "serviceChooserConfiguration",
             types = org.apache.camel.model.cloud.ServiceCallServiceChooserConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Service Chooser Configuration",
@@ -16560,10 +16260,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "service-discovery-configuration",
-                    "serviceDiscoveryConfiguration"
-            },
+            nodes = "serviceDiscoveryConfiguration",
             types = org.apache.camel.model.cloud.ServiceCallServiceDiscoveryConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Service Discovery Configuration",
@@ -16607,10 +16304,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "service-filter-configuration",
-                    "serviceFilterConfiguration"
-            },
+            nodes = "serviceFilterConfiguration",
             types = org.apache.camel.model.cloud.ServiceCallServiceFilterConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Service Filter Configuration",
@@ -16654,10 +16348,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "load-balancer-configuration",
-                    "loadBalancerConfiguration"
-            },
+            nodes = "loadBalancerConfiguration",
             types = org.apache.camel.model.cloud.ServiceCallServiceLoadBalancerConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Load Balancer Configuration",
@@ -16701,10 +16392,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "set-body",
-                    "setBody"
-            },
+            nodes = "setBody",
             types = org.apache.camel.model.SetBodyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Body",
@@ -16771,10 +16459,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "set-exchange-pattern",
-                    "setExchangePattern"
-            },
+            nodes = "setExchangePattern",
             inline = true,
             types = org.apache.camel.model.SetExchangePatternDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -16837,10 +16522,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "set-header",
-                    "setHeader"
-            },
+            nodes = "setHeader",
             types = org.apache.camel.model.SetHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Header",
@@ -16913,10 +16595,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "set-headers",
-                    "setHeaders"
-            },
+            nodes = "setHeaders",
             types = org.apache.camel.model.SetHeadersDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Headers",
@@ -16973,10 +16652,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "set-property",
-                    "setProperty"
-            },
+            nodes = "setProperty",
             types = org.apache.camel.model.SetPropertyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Property",
@@ -17049,10 +16725,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "set-variable",
-                    "setVariable"
-            },
+            nodes = "setVariable",
             types = org.apache.camel.model.SetVariableDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Variable",
@@ -17125,10 +16798,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "set-variables",
-                    "setVariables"
-            },
+            nodes = "setVariables",
             types = org.apache.camel.model.SetVariablesDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Set Variables",
@@ -17678,10 +17348,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "spring-transaction-error-handler",
-                    "springTransactionErrorHandler"
-            },
+            nodes = "springTransactionErrorHandler",
             types = org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Spring Transaction Error Handler",
@@ -17804,10 +17471,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "static-service-discovery",
-                    "staticServiceDiscovery"
-            },
+            nodes = "staticServiceDiscovery",
             types = org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Static Service Discovery",
@@ -17913,10 +17577,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "sticky-load-balancer",
-                    "stickyLoadBalancer"
-            },
+            nodes = "stickyLoadBalancer",
             types = org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Sticky Load Balancer",
@@ -18012,10 +17673,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "stream-config",
-                    "streamConfig"
-            },
+            nodes = "streamConfig",
             types = org.apache.camel.model.config.StreamResequencerConfig.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Stream Config",
@@ -18084,10 +17742,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "swift-mt",
-                    "swiftMt"
-            },
+            nodes = "swiftMt",
             inline = true,
             types = org.apache.camel.model.dataformat.SwiftMtDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -18138,10 +17793,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "swift-mx",
-                    "swiftMx"
-            },
+            nodes = "swiftMx",
             types = org.apache.camel.model.dataformat.SwiftMxDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "SWIFT MX",
@@ -18241,10 +17893,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "tar-file",
-                    "tarFile"
-            },
+            nodes = "tarFile",
             types = org.apache.camel.model.dataformat.TarFileDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Tar File",
@@ -18307,10 +17956,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "templated-route-parameter",
-                    "templatedRouteParameter"
-            },
+            nodes = "templatedRouteParameter",
             types = org.apache.camel.model.TemplatedRouteParameterDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Templated Route Parameter",
@@ -18355,10 +18001,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "thread-pool-profile",
-                    "threadPoolProfile"
-            },
+            nodes = "threadPoolProfile",
             types = org.apache.camel.model.ThreadPoolProfileDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Thread Pool Profile",
@@ -18734,10 +18377,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "throw-exception",
-                    "throwException"
-            },
+            nodes = "throwException",
             types = org.apache.camel.model.ThrowExceptionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Throw Exception",
@@ -18806,10 +18446,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "tidy-markup",
-                    "tidyMarkup"
-            },
+            nodes = "tidyMarkup",
             types = org.apache.camel.model.dataformat.TidyMarkupDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "TidyMarkup",
@@ -18948,10 +18585,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "to-d",
-                    "toD"
-            },
+            nodes = "toD",
             inline = true,
             types = org.apache.camel.model.ToDynamicDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -19308,10 +18942,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "topic-load-balancer",
-                    "topicLoadBalancer"
-            },
+            nodes = "topicLoadBalancer",
             types = org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Topic Load Balancer",
@@ -19571,10 +19202,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "do-try",
-                    "doTry"
-            },
+            nodes = "doTry",
             types = org.apache.camel.model.TryDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Do Try",
@@ -19642,10 +19270,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "univocity-csv",
-                    "univocityCsv"
-            },
+            nodes = "univocityCsv",
             types = org.apache.camel.model.dataformat.UniVocityCsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "uniVocity CSV",
@@ -19792,10 +19417,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "univocity-fixed",
-                    "univocityFixed"
-            },
+            nodes = "univocityFixed",
             types = org.apache.camel.model.dataformat.UniVocityFixedDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "uniVocity Fixed Length",
@@ -19936,10 +19558,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "univocity-header",
-                    "univocityHeader"
-            },
+            nodes = "univocityHeader",
             types = org.apache.camel.model.dataformat.UniVocityHeader.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "uniVocity Header",
@@ -19984,10 +19603,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "univocity-tsv",
-                    "univocityTsv"
-            },
+            nodes = "univocityTsv",
             types = org.apache.camel.model.dataformat.UniVocityTsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "uniVocity TSV",
@@ -20785,10 +20401,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "weighted-load-balancer",
-                    "weightedLoadBalancer"
-            },
+            nodes = "weightedLoadBalancer",
             types = org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Weighted Load Balancer",
@@ -20917,10 +20530,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "wire-tap",
-                    "wireTap"
-            },
+            nodes = "wireTap",
             types = org.apache.camel.model.WireTapDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Wire Tap",
@@ -21050,10 +20660,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "xml-security",
-                    "xmlSecurity"
-            },
+            nodes = "xmlSecurity",
             types = org.apache.camel.model.dataformat.XMLSecurityDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "XML Security",
@@ -21592,10 +21199,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "type-filter",
-                    "typeFilter"
-            },
+            nodes = "typeFilter",
             types = org.apache.camel.model.dataformat.YAMLTypeFilterDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "YAML Type Filter",
@@ -21639,10 +21243,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "zip-deflater",
-                    "zipDeflater"
-            },
+            nodes = "zipDeflater",
             types = org.apache.camel.model.dataformat.ZipDeflaterDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Zip Deflater",
@@ -21687,10 +21288,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "zip-file",
-                    "zipFile"
-            },
+            nodes = "zipFile",
             types = org.apache.camel.model.dataformat.ZipFileDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Zip File",
@@ -21753,10 +21351,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            nodes = {
-                    "zookeeper-service-discovery",
-                    "zookeeperServiceDiscovery"
-            },
+            nodes = "zookeeperServiceDiscovery",
             types = org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Zookeeper Service Discovery",

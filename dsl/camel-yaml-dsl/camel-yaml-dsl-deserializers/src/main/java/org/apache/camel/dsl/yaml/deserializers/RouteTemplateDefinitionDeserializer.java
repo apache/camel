@@ -31,7 +31,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
 
 @YamlIn
 @YamlType(
-          nodes = { "route-template", "routeTemplate" },
+          nodes = { "routeTemplate" },
           types = org.apache.camel.model.RouteTemplateDefinition.class,
           order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
           properties = {

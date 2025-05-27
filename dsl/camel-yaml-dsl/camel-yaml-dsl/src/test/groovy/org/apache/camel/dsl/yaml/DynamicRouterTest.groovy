@@ -24,7 +24,7 @@ import org.apache.camel.support.PluginHelper
 
 class DynamicRouterTest extends YamlTestSupport {
 
-    def "dynamic-router definition (#resource.location)"(Resource resource) {
+    def "dynamicRouter definition (#resource.location)"(Resource resource) {
         when:
             PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
@@ -40,14 +40,6 @@ class DynamicRouterTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - dynamic-router:  
-                              simple: "${body}"
-                          - to: "mock:result"
-                    '''),
-                asResource('expression-camelCase', '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
                           - dynamicRouter:  
                               simple: "${body}"
                           - to: "mock:result"
@@ -56,7 +48,7 @@ class DynamicRouterTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - dynamic-router: 
+                          - dynamicRouter: 
                               expression: 
                                 simple: "${body}"
                           - to: "mock:result"

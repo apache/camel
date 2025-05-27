@@ -427,26 +427,4 @@ class RoutesTest extends YamlTestSupport {
         Assertions.assertEquals(2, context.getRoute("bar").filter("bbb*").size())
     }
 
-    def "Error: kebab-case: stream-cache"() {
-        when:
-        var route = '''
-                - route:
-                    id: demo-route
-                    stream-cache: true
-                    auto-startup: false
-                    startup-order: 123
-                    route-policy: "myPolicy"
-                    from:
-                      uri: "direct:info"
-                      steps:
-                        - log: "message"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (Exception e) {
-            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
-        }
-    }
 }

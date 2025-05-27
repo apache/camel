@@ -16,14 +16,11 @@
  */
 package org.apache.camel.dsl.yaml.common;
 
-import java.util.Locale;
-
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedNodeTypeException;
 import org.apache.camel.spi.ResourceAware;
-import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -119,7 +116,7 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
 
         for (NodeTuple tuple : node.getValue()) {
             final ScalarNode key = (ScalarNode) tuple.getKeyNode();
-            final String propertyName = StringHelper.camelCaseToDash(key.getValue()).toLowerCase(Locale.US);
+            final String propertyName = key.getValue();
             final Node val = tuple.getValueNode();
 
             setDeserializationContext(val, dc);

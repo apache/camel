@@ -24,7 +24,7 @@ import org.apache.camel.support.PluginHelper
 
 class SetBodyTest extends YamlTestSupport {
 
-    def "set-body definition (#resource.location)"(Resource resource) {
+    def "setBody definition (#resource.location)"(Resource resource) {
         when:
             PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
@@ -40,7 +40,7 @@ class SetBodyTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - set-body:
+                          - setBody:
                               simple: "${body}"
                           - to: "mock:result"
                     '''),
@@ -48,7 +48,7 @@ class SetBodyTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - set-body:
+                          - setBody:
                               expression:
                                 simple: "${body}"
                           - to: "mock:result"

@@ -29,15 +29,15 @@ import org.snakeyaml.engine.v2.nodes.Node;
 
 @YamlIn
 @YamlType(
-          nodes = { "templated-route", "templatedRoute" },
+          nodes = { "templatedRoute" },
           types = TemplatedRouteDefinition.class,
           order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
           properties = {
-                  @YamlProperty(name = "route-id",
+                  @YamlProperty(name = "routeId",
                                 type = "string"),
-                  @YamlProperty(name = "prefix-id",
+                  @YamlProperty(name = "prefixId",
                                 type = "string"),
-                  @YamlProperty(name = "route-template-ref",
+                  @YamlProperty(name = "routeTemplateRef",
                                 type = "string",
                                 required = true),
                   @YamlProperty(name = "parameters",

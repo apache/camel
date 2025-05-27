@@ -69,7 +69,6 @@ public class KameletDeserializer extends YamlDeserializerBase<KameletDefinition>
 
             setDeserializationContext(val, dc);
 
-            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
             switch (key) {
                 case "steps":
                     setSteps(target, val);

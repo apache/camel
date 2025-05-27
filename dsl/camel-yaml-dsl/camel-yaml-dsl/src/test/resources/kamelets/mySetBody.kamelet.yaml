@@ -29,5 +29,5 @@ spec:
     from:
       uri: "kamelet:source"
       steps:
-        - set-body:
+        - setBody:
             constant: "{{payload}}"

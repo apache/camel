@@ -49,29 +49,4 @@ class OnCompletionTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "Error: kebab-case: on-completion"() {
-        when:
-        var route = """
-                - on-completion:
-                    steps:
-                      - transform:
-                          constant: "Processed"
-                      - to: "mock:on-success"  
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - to: "mock:end"
-            """
-
-        withMock('mock:on-success') {
-            expectedBodiesReceived 'Processed'
-        }
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            assert e.message.contains("additional properties")
-        }
-    }
 }
