@@ -63,6 +63,23 @@
             <artifactId>camel-jbang-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <!-- Pre-installed plugins -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-plugin-edit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-plugin-generate</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-plugin-kubernetes</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel.kamelets</groupId>
             <artifactId>camel-kamelets</artifactId>
@@ -252,6 +269,9 @@
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/services/org/apache/camel/language.properties</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/services/org/apache/camel/camel-jbang-plugin</resource>
                                 </transformer>
                             </transformers>
                             <filters>
