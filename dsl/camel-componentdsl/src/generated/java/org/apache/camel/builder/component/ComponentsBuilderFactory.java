@@ -3593,7 +3593,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * PQC Algorithms (camel-pqc)
-     * Post Quantum Computing Signature and Verification component.
+     * Post Quantum Cryptography Signature and Verification component.
      * 
      * Category: security
      * Since: 4.12
