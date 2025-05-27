@@ -196,6 +196,38 @@ public interface ExchangeExtension {
     void setNotifyEvent(boolean notifyEvent);
 
     /**
+     * Returns true if this exchange is marked for rollback
+     */
+    boolean isRollbackOnly();
+
+    /**
+     * Sets whether to mark this exchange for rollback
+     */
+    void setRollbackOnly(boolean rollbackOnly);
+
+    /**
+     * Returns true if this exchange is marked for rollback (only last transaction section)
+     */
+    boolean isRollbackOnlyLast();
+
+    /**
+     * Sets whether to mark this exchange for rollback (only last transaction section)
+     */
+    void setRollbackOnlyLast(boolean rollbackOnlyLast);
+
+    /**
+     * Returns true if this exchange is marked to stop and not continue routing.
+     */
+    boolean isRouteStop();
+
+    /**
+     * Sets whether this exchange is marked to stop and not continue routing.
+     *
+     * @param routeStop <tt>true</tt> to stop routing
+     */
+    void setRouteStop(boolean routeStop);
+
+    /**
      * To copy the internal properties from this exchange to the target exchange
      * <p/>
      * This method is only intended for Camel internally.
