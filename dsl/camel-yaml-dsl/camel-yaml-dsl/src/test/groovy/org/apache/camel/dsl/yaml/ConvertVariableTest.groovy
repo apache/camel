@@ -94,28 +94,4 @@ class ConvertVariableTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "Error: kebab-case: convert-variable-to"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - convert-variable-to:
-                          name: foo  
-                          type: "java.lang.String"
-                          charset: "UTF8"
-                      - to: "mock:result"
-            '''
-
-        withMock('mock:result') {
-            expectedVariableReceived("foo", 'Hello World')
-        }
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            Assertions.assertTrue(e.message.contains("additional properties"))
-        }
-    }
 }

@@ -9,3 +9,8 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 === camel-http
 
 Renamed class `org.apache.camel.component.http.BasicAuthenticationHttpClientConfigurer` to `org.apache.camel.component.http.DefaultAuthenticationHttpClientConfigurer`.
+
+=== camel-yaml-dsl
+
+The deprecated kebab-case has been removed.
+For example `set-body` and `set-header` should be `setBody` / `setHeader` etc.

@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.camel.util.StringHelper;
 
 public class Schema {
     @JsonProperty
@@ -43,22 +42,22 @@ public class Schema {
     }
 
     public JsonNode property(String name) {
-        return properties.at("/" + StringHelper.dashToCamelCase(name));
+        return properties.at("/" + name);
     }
 
     public JsonNode description(String name) {
-        return properties.at("/" + StringHelper.dashToCamelCase(name) + "/description");
+        return properties.at("/" + name + "/description");
     }
 
     public JsonNode displayName(String name) {
-        return properties.at("/" + StringHelper.dashToCamelCase(name) + "/displayName");
+        return properties.at("/" + name + "/displayName");
     }
 
     public JsonNode defaultValue(String name) {
-        return properties.at("/" + StringHelper.dashToCamelCase(name) + "/defaultValue");
+        return properties.at("/" + name + "/defaultValue");
     }
 
     public JsonNode isSecret(String name) {
-        return properties.at("/" + StringHelper.dashToCamelCase(name) + "/secret");
+        return properties.at("/" + name + "/secret");
     }
 }

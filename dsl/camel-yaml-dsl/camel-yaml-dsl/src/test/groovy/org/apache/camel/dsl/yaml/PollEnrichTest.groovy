@@ -24,7 +24,7 @@ import org.apache.camel.support.PluginHelper
 
 class PollEnrichTest extends YamlTestSupport {
 
-    def "poll-enrich definition (#resource.location)"(Resource resource) {
+    def "pollEnrich definition (#resource.location)"(Resource resource) {
         when:
             PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
@@ -42,19 +42,19 @@ class PollEnrichTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - poll-enrich:  
+                          - pollEnrich:  
                               simple: "${body}"
-                              aggregation-strategy: "myStrategy"
+                              aggregationStrategy: "myStrategy"
                           - to: "mock:result"
                     '''),
                 asResource('expression-block', '''
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - poll-enrich: 
+                          - pollEnrich: 
                               expression: 
                                 simple: "${body}"
-                              aggregation-strategy: "myStrategy"
+                              aggregationStrategy: "myStrategy"
                           - to: "mock:result"
                     ''')
            ]

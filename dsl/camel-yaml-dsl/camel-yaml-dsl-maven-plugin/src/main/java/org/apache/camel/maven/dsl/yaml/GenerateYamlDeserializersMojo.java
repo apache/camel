@@ -27,7 +27,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -412,13 +411,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 .map(AnnotationValue::asString)
                 .filter(value -> !"##default".equals(value))
                 .ifPresent(value -> {
-                    // generate the kebab case variant for backward compatibility
-                    // https://issues.apache.org/jira/browse/CAMEL-17097
-                    if (!Objects.equals(value, StringHelper.camelCaseToDash(value))) {
-                        yamlTypeAnnotation.addMember("nodes", "$S", StringHelper.camelCaseToDash(value));
-                        TypeSpecHolder.put(attributes, "node", StringHelper.camelCaseToDash(value));
-                    }
-
                     yamlTypeAnnotation.addMember("nodes", "$S", value);
                     modelName.set(value);
                     TypeSpecHolder.put(attributes, "node", value);
@@ -932,12 +924,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         //
         // Others
         //
-        if ("enableCORS".equals(fieldName)) {
-            // special hack for this name
-            cb.beginControlFlow("case $S:", "enableCors");
-        } else {
-            cb.beginControlFlow("case $S:", fieldName);
-        }
+        cb.beginControlFlow("case $S:", fieldName);
 
         ClassInfo c = view.getClassByName(field.type().name());
         if (hasAnnotation(field, XML_JAVA_TYPE_ADAPTER_CLASS)) {

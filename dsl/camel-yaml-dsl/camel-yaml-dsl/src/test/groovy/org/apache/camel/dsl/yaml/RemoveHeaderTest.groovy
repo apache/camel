@@ -71,25 +71,4 @@ class RemoveHeaderTest extends YamlTestSupport {
             }
     }
 
-    def "Error: kebab-case: remove-headers definition"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - remove-headers:
-                          pattern: toRemove
-                          excludePattern: toExclude
-                      - to: "mock:result"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            with(e) {
-                message.contains("additional properties")
-            }
-        }
-    }
 }
