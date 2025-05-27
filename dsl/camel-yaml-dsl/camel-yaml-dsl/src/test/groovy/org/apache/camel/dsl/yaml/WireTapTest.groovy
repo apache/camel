@@ -54,23 +54,4 @@ class WireTapTest extends YamlTestSupport {
             }
     }
 
-    def "Error: kebab-case"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - wire-tap:
-                         uri: direct
-                         parameters:
-                           name: wt2  
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (Exception e) {
-            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
-        }
-    }
 }

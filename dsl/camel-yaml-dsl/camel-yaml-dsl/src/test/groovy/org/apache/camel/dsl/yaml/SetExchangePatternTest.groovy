@@ -25,32 +25,16 @@ class SetExchangePatternTest extends YamlTestSupport {
 
     def "setExchangePattern definition"() {
         when:
-            loadRoutes '''
+        loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:    
                       - setExchangePattern: "InOut"
             '''
         then:
-            with(context.routeDefinitions[0].outputs[0], SetExchangePatternDefinition) {
-                pattern == ExchangePattern.InOut.name()
-            }
-    }
-
-    def "Error: kebab-case: set-exchange-pattern definition"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - set-exchange-pattern: "InOut"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (Exception e) {
-            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
+        with(context.routeDefinitions[0].outputs[0], SetExchangePatternDefinition) {
+            pattern == ExchangePattern.InOut.name()
         }
     }
+
 }

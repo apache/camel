@@ -30,6 +30,7 @@ import org.apache.camel.clock.Clock;
  * The default and only implementation of {@link Exchange}.
  */
 public final class DefaultExchange extends AbstractExchange {
+
     private final Clock timeInfo;
 
     DefaultExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,

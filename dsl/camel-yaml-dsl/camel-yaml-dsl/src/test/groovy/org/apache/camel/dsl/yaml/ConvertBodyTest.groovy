@@ -55,27 +55,4 @@ class ConvertBodyTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "Error: kebab-case: convert-body-to"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - convert-body-to:  
-                          type: "java.lang.String"
-                          charset: "UTF8"
-                      - to: "mock:result"
-            '''
-
-        withMock('mock:result') {
-            expectedBodiesReceived 'test'
-        }
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            Assertions.assertTrue(e.message.contains("additional properties"))
-        }
-    }
 }

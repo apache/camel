@@ -43,23 +43,4 @@ class ClaimCheckTest extends YamlTestSupport {
             }
     }
 
-    def "Error: kebab-case: claim-check definition"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - claim-check:  
-                          operation: "Push"
-                          key: "foo"
-                          filter: "header:(foo|bar)"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            assert e.message.contains("additional properties")
-        }
-    }
 }

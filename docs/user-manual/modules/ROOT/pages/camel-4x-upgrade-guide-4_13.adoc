@@ -6,6 +6,16 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.12 to 4.13
 
+=== camel-core
+
+Added a 2nd `lookup` method to `org.apache.camel.spi.TypeConverterRegistry` and changed the `addConverter` to no longer have
+an empty default noop implementation in the interface.
+
 === camel-http
 
 Renamed class `org.apache.camel.component.http.BasicAuthenticationHttpClientConfigurer` to `org.apache.camel.component.http.DefaultAuthenticationHttpClientConfigurer`.
+
+=== camel-yaml-dsl
+
+The deprecated kebab-case has been removed.
+For example `set-body` and `set-header` should be `setBody` / `setHeader` etc.

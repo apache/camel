@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
 import java.util.function.LongConsumer;
 import java.util.function.LongSupplier;
 
@@ -126,6 +127,14 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
     /**
+     * Lookup the type converters that can convert to a given type
+     *
+     * @param  toType the type to convert to
+     * @return        the type converters that can convert from
+     */
+    Map<Class<?>, TypeConverter> lookup(Class<?> toType);
+
+    /**
      * Sets the injector to be used for creating new instances during type conversions.
      *
      * @param injector the injector
@@ -189,8 +198,6 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      * @param typeConvertible A type convertible pair
      * @param typeConverter   The type converter to associate with the type convertible pair
      */
-    default void addConverter(TypeConvertible<?, ?> typeConvertible, TypeConverter typeConverter) {
-
-    }
+    void addConverter(TypeConvertible<?, ?> typeConvertible, TypeConverter typeConverter);
 
 }

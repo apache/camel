@@ -68,6 +68,6 @@ spec:
               sasl-mechanism: PLAIN
               sasl-jaas-config: "org.apache.kafka.common.security.plain.PlainLoginModule required username={{kafka-service-account-id}} password={{kafka-service-account-secret}};"
         # Log an error message to notify about the failure
-        - set-body:
+        - setBody:
             constant: "{{log-message}} - worry not, the event is stored in the DLC"
         - to: "log:error-sink"
