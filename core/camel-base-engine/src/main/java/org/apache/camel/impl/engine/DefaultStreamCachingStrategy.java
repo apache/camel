@@ -34,6 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.support.TempDirHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -289,13 +290,16 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             if (type.isPrimitive() || type.isEnum()) {
                 return null;
             }
+            if (body instanceof WrappedFile<?> wf) {
+                body = wf.getBody();
+            }
 
             boolean allowed = allowClasses == null && denyClasses == null;
             if (!allowed) {
                 allowed = checkAllowDenyList(type);
             }
             if (allowed) {
-                TypeConverter tc = lookupTypeConverter(type);
+                TypeConverter tc = lookupTypeConverter(body);
                 if (tc != null) {
                     if (exchange != null) {
                         cache = tc.convertTo(StreamCache.class, exchange, body);
@@ -316,9 +320,9 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         return cache;
     }
 
-    private TypeConverter lookupTypeConverter(Class<?> type) {
+    private TypeConverter lookupTypeConverter(Object body) {
         for (var tc : coreConverters) {
-            if (tc.from().isAssignableFrom(type)) {
+            if (tc.from().isInstance(body)) {
                 return tc.converter();
             }
         }
