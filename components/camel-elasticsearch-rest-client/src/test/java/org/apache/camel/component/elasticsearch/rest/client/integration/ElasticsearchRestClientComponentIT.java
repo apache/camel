@@ -81,6 +81,10 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
 
     @Test
     void testProducer() throws ExecutionException, InterruptedException {
+
+        // Workaround to avoid the Credential Provider to not be ready and to receive a 401
+        Thread.sleep(5000);
+
         // create index
         CompletableFuture<Boolean> ack = template.asyncRequestBody("direct:create-index", null, Boolean.class);
         assertTrue(ack.get());
