@@ -240,7 +240,7 @@
         <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
         <jackson-jq-version>1.2.0</jackson-jq-version>
-        <jackson2-version>2.18.2</jackson2-version>
+        <jackson2-version>2.18.4</jackson2-version>
         <jackrabbit-version>2.22.0</jackrabbit-version>
         <jasminb-jsonapi-version>0.14</jasminb-jsonapi-version>
         <jandex-version>3.2.4</jandex-version>
@@ -278,7 +278,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>5.2.0</jedis-client-version>
         <jetcd-version>0.8.4</jetcd-version>
-        <jetty-version>12.0.19</jetty-version>
+        <jetty-version>12.0.20</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -360,8 +360,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.30</metrics-version>
-        <micrometer-version>1.14.6</micrometer-version>
-        <micrometer-tracing-version>1.4.5</micrometer-tracing-version>
+        <micrometer-version>1.14.7</micrometer-version>
+        <micrometer-tracing-version>1.4.6</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.1.1</microprofile-fault-tolerance-version>
         <milvus-client-version>2.5.4</milvus-client-version>
@@ -470,7 +470,7 @@
         <spring-version>6.2.7</spring-version>
         <spring-rabbitmq-version>3.2.5</spring-rabbitmq-version>
         <spring-security-version>6.4.6</spring-security-version>
-        <spring-ws-version>4.0.13</spring-ws-version>
+        <spring-ws-version>4.0.14</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
