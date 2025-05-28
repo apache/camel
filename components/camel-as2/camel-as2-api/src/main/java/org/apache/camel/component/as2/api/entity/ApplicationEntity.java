@@ -34,7 +34,7 @@ import org.slf4j.helpers.MessageFormatter;
 
 public abstract class ApplicationEntity extends MimeEntity {
 
-    protected static final String CONTENT_DISPOSITION_PATTERN = "attachment; filename={}";
+    public static final String CONTENT_DISPOSITION_PATTERN = "attachment; filename={}";
 
     protected final byte[] ediContent;
 
