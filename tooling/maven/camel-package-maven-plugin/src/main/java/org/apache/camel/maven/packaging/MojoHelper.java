@@ -89,11 +89,12 @@ public final class MojoHelper {
                         dir.resolve("camel-microprofile-health"));
             case "camel-spring-parent":
                 return Arrays.asList(dir.resolve("camel-spring"),
-                        dir.resolve("camel-spring-batch"), dir.resolve("camel-spring-jdbc"),
-                        dir.resolve("camel-spring-ldap"), dir.resolve("camel-spring-main"),
-                        dir.resolve("camel-spring-rabbitmq"), dir.resolve("camel-spring-redis"),
-                        dir.resolve("camel-spring-security"), dir.resolve("camel-spring-ws"),
-                        dir.resolve("camel-spring-xml"), dir.resolve("camel-undertow-spring-security"));
+                        dir.resolve("camel-spring-batch"), dir.resolve("camel-spring-cloud-config"),
+                        dir.resolve("camel-spring-jdbc"), dir.resolve("camel-spring-ldap"),
+                        dir.resolve("camel-spring-main"), dir.resolve("camel-spring-rabbitmq"),
+                        dir.resolve("camel-spring-redis"), dir.resolve("camel-spring-security"),
+                        dir.resolve("camel-spring-ws"), dir.resolve("camel-spring-xml"),
+                        dir.resolve("camel-undertow-spring-security"));
             case "camel-test":
                 return Arrays.asList(dir.resolve("camel-test-junit5"),
                         dir.resolve("camel-test-spring-junit5"),
