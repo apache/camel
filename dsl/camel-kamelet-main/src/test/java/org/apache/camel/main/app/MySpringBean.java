@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.main.app;
 
-import org.junit.jupiter.api.DisplayName;
+import org.apache.camel.CamelContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
-@DisplayName("theNameHere")
-public class MyPojo {
+@Component("theNameHere")
+public class MySpringBean {
 
-    private String name;
+    @Autowired(required = true)
+    private CamelContext camelContext;
 
-    public String getName() {
-        return name;
+    @Bean({ "a1", "a2" })
+    public String cheese() {
+        return "cheese";
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 }

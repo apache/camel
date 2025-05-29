@@ -38,6 +38,7 @@ import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.AnnotationHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -280,7 +281,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             for (Method method : methods) {
                 // this may be prone to ClassLoader or packaging problems when the same class is defined
                 // in two different jars (as is the case sometimes with specs).
-                if (ObjectHelper.hasAnnotation(method, Converter.class, true)) {
+                if (AnnotationHelper.hasAnnotation(method, Converter.class, true)) {
                     boolean allowNull = false;
                     if (method.getAnnotation(Converter.class) != null) {
                         allowNull = method.getAnnotation(Converter.class).allowNull();
@@ -301,7 +302,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         } catch (NoClassDefFoundError e) {
             boolean ignore = false;
             // does the class allow to ignore the type converter when having load errors
-            if (ObjectHelper.hasAnnotation(type, Converter.class, true)) {
+            if (AnnotationHelper.hasAnnotation(type, Converter.class, true)) {
                 if (type.getAnnotation(Converter.class) != null) {
                     ignore = type.getAnnotation(Converter.class).ignoreOnLoadError();
                 }
