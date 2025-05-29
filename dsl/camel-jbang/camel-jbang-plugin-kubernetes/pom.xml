@@ -52,6 +52,56 @@
             <groupId>io.fabric8</groupId>
             <artifactId>kubernetes-client</artifactId>
             <version>${kubernetes-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-apiextensions</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-coordination</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-discovery</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-events</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-flowcontrol</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-metrics</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-policy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-scheduling</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-storageclass</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-node</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-gatewayapi</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>kubernetes-model-resource</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
@@ -64,11 +114,119 @@
             <groupId>io.fabric8</groupId>
             <artifactId>openshift-model</artifactId>
             <version>${kubernetes-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-autoscaling</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-operator</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-operatorhub</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-machine</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-whereabouts</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-monitoring</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-openshift-model-storageversionmigrator</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-tuned</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-console</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-machineconfiguration</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-miscellaneous</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-hive</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-installer</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>openshift-client</artifactId>
             <version>${kubernetes-client-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-autoscaling</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-operator</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-operatorhub</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-machine</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-whereabouts</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-monitoring</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-openshift-model-storageversionmigrator</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-tuned</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-console</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-machineconfiguration</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-miscellaneous</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-hive</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>openshift-model-installer</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Knative model -->
