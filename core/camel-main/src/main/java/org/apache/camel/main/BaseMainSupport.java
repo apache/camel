@@ -456,9 +456,8 @@ public abstract class BaseMainSupport extends BaseService {
 
         Optional<String> cloudLocations = pc.resolveProperty(MainConstants.CLOUD_PROPERTIES_LOCATION);
         if (cloudLocations.isPresent()) {
-            LOG.info("Cloud properties location: {}", cloudLocations);
             final Properties kp = tryLoadCloudProperties(op, cloudLocations.get());
-            if (kp != null) {
+            if (!kp.isEmpty()) {
                 pc.setOverrideProperties(kp);
             }
         }
@@ -481,8 +480,7 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     private static Properties tryLoadCloudProperties(
-            Properties overridProperties, String cloudPropertiesLocations)
-            throws IOException {
+            Properties overridProperties, String cloudPropertiesLocations) {
         final OrderedLocationProperties cp = new OrderedLocationProperties();
         try {
             String[] locations = cloudPropertiesLocations.split(",");
