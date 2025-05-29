@@ -23,10 +23,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
-import dev.langchain4j.model.output.Response;
 import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.rag.content.injector.ContentInjector;
 import dev.langchain4j.rag.content.injector.DefaultContentInjector;
@@ -42,7 +41,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
 
     private final LangChain4jChatEndpoint endpoint;
 
-    private ChatLanguageModel chatLanguageModel;
+    private ChatModel chatModel;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -100,8 +99,8 @@ public class LangChain4jChatProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.chatLanguageModel = this.endpoint.getConfiguration().getChatModel();
-        ObjectHelper.notNull(chatLanguageModel, "chatLanguageModel");
+        this.chatModel = this.endpoint.getConfiguration().getChatModel();
+        ObjectHelper.notNull(chatModel, "chatModel");
     }
 
     private void populateResponse(String response, Exchange exchange) {
@@ -117,7 +116,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
     private String sendChatMessage(ChatMessage chatMessage, Exchange exchange) {
         var augmentedChatMessage = addAugmentedData(chatMessage, exchange);
 
-        Response<AiMessage> response = this.chatLanguageModel.generate(augmentedChatMessage);
+        AiMessage response = this.chatModel.chat(augmentedChatMessage).aiMessage();
         return extractAiResponse(response);
     }
 
@@ -150,7 +149,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
     private String sendListChatMessage(List<ChatMessage> chatMessages, Exchange exchange) {
         LangChain4jChatEndpoint langChain4jChatEndpoint = (LangChain4jChatEndpoint) getEndpoint();
 
-        Response<AiMessage> response;
+        AiMessage response;
 
         // Check if the last message is a UserMessage and if there's a need to augment the message for RAG
         int size = chatMessages.size();
@@ -163,13 +162,12 @@ public class LangChain4jChatProducer extends DefaultProducer {
 
         }
 
-        response = this.chatLanguageModel.generate(chatMessages);
+        response = this.chatModel.chat(chatMessages).aiMessage();
         return extractAiResponse(response);
     }
 
-    private String extractAiResponse(Response<AiMessage> response) {
-        AiMessage message = response.content();
-        return message == null ? null : message.text();
+    private String extractAiResponse(AiMessage response) {
+        return response == null ? null : response.text();
     }
 
     public String sendWithPromptTemplate(String promptTemplate, Map<String, Object> variables, Exchange exchange) {
