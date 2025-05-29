@@ -25,7 +25,8 @@ RUNDIR=$(cd ${0%/*} && echo $PWD)
 COMPLIST=( "camel-spring-xml:spring-xml"
   "camel-cxf-spring-rest:cxf/jaxrs"
   "camel-cxf-spring-soap:cxf/jaxws"
-  "camel-spring-security:spring-security" )
+  "camel-spring-security:spring-security"
+  "camel-xml-io:xml-io" )
 SITE_DIR="${DOWNLOAD}/websites/production/camel"
 WEBSITE_URL="https://svn.apache.org/repos/infra/websites/production/camel/content"
 GIT_WEBSITE_URL="https://gitbox.apache.org/repos/asf/camel-website.git"
