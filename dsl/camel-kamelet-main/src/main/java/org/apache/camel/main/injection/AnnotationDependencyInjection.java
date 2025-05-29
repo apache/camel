@@ -50,6 +50,20 @@ import org.apache.camel.util.StringHelper;
  */
 public final class AnnotationDependencyInjection {
 
+    private static final String SPRING_AUTOWIRED = "org.springframework.beans.factory.annotation.Autowired";
+    private static final String SPRING_BEAN = "org.springframework.context.annotation.Bean";
+    private static final String SPRING_COMPONENT = "org.springframework.stereotype.Component";
+    private static final String SPRING_QUALIFIER = "org.springframework.beans.factory.annotation.Qualifier";
+    private static final String SPRING_SERVICE = "org.springframework.stereotype.Service";
+    private static final String SPRING_VALUE = "org.springframework.beans.factory.annotation.Value";
+
+    private static final String QUARKUS_APPLICATION_SCOPED = "jakarta.enterprise.context.ApplicationScoped";
+    private static final String QUARKUS_CONFIG_PROPERTY = "org.eclipse.microprofile.config.inject.ConfigProperty";
+    private static final String QUARKUS_INJECT = "jakarta.inject.Inject";
+    private static final String QUARKUS_NAMED = "jakarta.inject.Named";
+    private static final String QUARKUS_PRODUCES = "jakarta.enterprise.inject.Produces";
+    private static final String QUARKUS_SINGLETON = "jakarta.inject.Singleton";
+
     private final boolean lazyBean;
 
     public AnnotationDependencyInjection(CamelContext context, boolean lazyBean) {
@@ -193,8 +207,8 @@ public final class AnnotationDependencyInjection {
                 return;
             }
             // @Component and @Service are the same
-            String comp = AnnotationHelper.getAnnotationValue(clazz, "org.springframework.stereotype.Component");
-            String service = AnnotationHelper.getAnnotationValue(clazz, "org.springframework.stereotype.Service");
+            String comp = AnnotationHelper.getAnnotationValue(clazz, SPRING_COMPONENT);
+            String service = AnnotationHelper.getAnnotationValue(clazz, SPRING_SERVICE);
             if (comp != null || service != null) {
                 if (ObjectHelper.isNotEmpty(comp)) {
                     name = comp;
@@ -223,11 +237,11 @@ public final class AnnotationDependencyInjection {
 
         @Override
         public void onFieldInject(Field field, Object bean, String beanName) {
-            boolean autowired = AnnotationHelper.hasAnnotation(field, "org.springframework.beans.factory.annotation.Autowired");
+            boolean autowired = AnnotationHelper.hasAnnotation(field, SPRING_AUTOWIRED);
             if (autowired) {
                 String name = null;
                 String named
-                        = AnnotationHelper.getAnnotationValue(field, "org.springframework.beans.factory.annotation.Qualifier");
+                        = AnnotationHelper.getAnnotationValue(field, SPRING_QUALIFIER);
                 if (ObjectHelper.isNotEmpty(named)) {
                     name = named;
                 }
@@ -237,14 +251,14 @@ public final class AnnotationDependencyInjection {
                             helper.getInjectionBeanValue(field.getType(), name));
                 } catch (NoSuchBeanException e) {
                     Object required = AnnotationHelper.getAnnotationValue(field,
-                            "org.springframework.beans.factory.annotation.Autowired", "required");
+                            SPRING_AUTOWIRED, "required");
                     if (Boolean.TRUE == required) {
                         throw e;
                     }
                     // not required so ignore
                 }
             }
-            String value = AnnotationHelper.getAnnotationValue(field, "org.springframework.beans.factory.annotation.Value");
+            String value = AnnotationHelper.getAnnotationValue(field, SPRING_VALUE);
             if (value != null) {
                 ReflectionHelper.setField(field, bean,
                         helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), value, null, null));
@@ -253,7 +267,7 @@ public final class AnnotationDependencyInjection {
 
         @Override
         public void onMethodInject(Method method, Object bean, String beanName) {
-            boolean bi = AnnotationHelper.hasAnnotation(method, "org.springframework.context.annotation.Bean");
+            boolean bi = AnnotationHelper.hasAnnotation(method, SPRING_BEAN);
             if (bi) {
                 Object instance;
                 if (lazyBean) {
@@ -265,10 +279,10 @@ public final class AnnotationDependencyInjection {
                 if (instance != null) {
                     String name = method.getName();
                     String[] names = (String[]) AnnotationHelper.getAnnotationValue(method,
-                            "org.springframework.context.annotation.Bean", "name");
+                            SPRING_BEAN, "name");
                     if (names == null) {
                         names = (String[]) AnnotationHelper.getAnnotationValue(method,
-                                "org.springframework.context.annotation.Bean", "value");
+                                SPRING_BEAN, "value");
                     }
                     if (names != null && names.length > 0) {
                         name = names[0];
@@ -288,10 +302,10 @@ public final class AnnotationDependencyInjection {
                 return;
             }
             // @ApplicationScoped and @Singleton are considered the same
-            boolean as = AnnotationHelper.hasAnnotation(clazz, "jakarta.enterprise.context.ApplicationScoped");
-            boolean ss = AnnotationHelper.hasAnnotation(clazz, "jakarta.inject.Singleton");
+            boolean as = AnnotationHelper.hasAnnotation(clazz, QUARKUS_APPLICATION_SCOPED);
+            boolean ss = AnnotationHelper.hasAnnotation(clazz, QUARKUS_SINGLETON);
             if (as || ss) {
-                String named = AnnotationHelper.getAnnotationValue(clazz, "jakarta.inject.Named");
+                String named = AnnotationHelper.getAnnotationValue(clazz, QUARKUS_NAMED);
                 if (named != null) {
                     name = named;
                 }
@@ -317,10 +331,10 @@ public final class AnnotationDependencyInjection {
 
         @Override
         public void onFieldInject(Field field, Object bean, String beanName) {
-            boolean inject = AnnotationHelper.hasAnnotation(field, "jakarta.inject.Inject");
+            boolean inject = AnnotationHelper.hasAnnotation(field, QUARKUS_INJECT);
             if (inject) {
                 String name = null;
-                String named = AnnotationHelper.getAnnotationValue(field, "jakarta.inject.Named");
+                String named = AnnotationHelper.getAnnotationValue(field, QUARKUS_NAMED);
                 if (named != null) {
                     name = named;
                 }
@@ -328,11 +342,11 @@ public final class AnnotationDependencyInjection {
                 ReflectionHelper.setField(field, bean,
                         helper.getInjectionBeanValue(field.getType(), name));
             }
-            if (AnnotationHelper.hasAnnotation(field, "org.eclipse.microprofile.config.inject.ConfigProperty")) {
+            if (AnnotationHelper.hasAnnotation(field, QUARKUS_CONFIG_PROPERTY)) {
                 String name = (String) AnnotationHelper.getAnnotationValue(field,
-                        "org.eclipse.microprofile.config.inject.ConfigProperty", "name");
+                        QUARKUS_CONFIG_PROPERTY, "name");
                 String df = (String) AnnotationHelper.getAnnotationValue(field,
-                        "org.eclipse.microprofile.config.inject.ConfigProperty", "defaultValue");
+                        QUARKUS_CONFIG_PROPERTY, "defaultValue");
                 if ("org.eclipse.microprofile.config.configproperty.unconfigureddvalue".equals(df)) {
                     df = null;
                 }
@@ -343,9 +357,9 @@ public final class AnnotationDependencyInjection {
 
         @Override
         public void onMethodInject(Method method, Object bean, String beanName) {
-            boolean produces = AnnotationHelper.hasAnnotation(method, "jakarta.enterprise.inject.Produces");
-            boolean inject = AnnotationHelper.hasAnnotation(method, "jakarta.inject.Inject");
-            boolean bi = AnnotationHelper.hasAnnotation(method, "jakarta.inject.Named");
+            boolean produces = AnnotationHelper.hasAnnotation(method, QUARKUS_PRODUCES);
+            boolean inject = AnnotationHelper.hasAnnotation(method, QUARKUS_INJECT);
+            boolean bi = AnnotationHelper.hasAnnotation(method, QUARKUS_NAMED);
             if (produces || inject || bi) {
                 String an = produces ? "Produces" : "Inject";
                 Object instance;
@@ -357,7 +371,7 @@ public final class AnnotationDependencyInjection {
                 }
                 if (instance != null) {
                     String name = method.getName();
-                    String named = AnnotationHelper.getAnnotationValue(method, "jakarta.inject.Named");
+                    String named = AnnotationHelper.getAnnotationValue(method, QUARKUS_NAMED);
                     if (ObjectHelper.isNotEmpty(named)) {
                         name = named;
                     }
