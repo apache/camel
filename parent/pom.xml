@@ -101,7 +101,7 @@
         <cloudant-version>0.10.3</cloudant-version>
         <cometd-java-client-version>8.0.8</cometd-java-client-version>
         <cometd-java-server-version>8.0.8</cometd-java-server-version>
-        <commons-beanutils-version>1.9.4</commons-beanutils-version>
+        <commons-beanutils-version>1.11.0</commons-beanutils-version>
         <commons-codec-version>1.18.0</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
         <commons-collections4-version>4.5.0</commons-collections4-version>
