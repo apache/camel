@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dapr",
-    "version": "4.12.0-SNAPSHOT",
+    "version": "4.13.0-SNAPSHOT",
     "scheme": "dapr",
     "extendsScheme": "",
     "syntax": "dapr:operation",
