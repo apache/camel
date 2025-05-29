@@ -27,11 +27,6 @@ import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Singleton;
-
-import javax.inject.Named;
-
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -40,14 +35,13 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.AnnotationHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 public class BasePackageScanDownloadListener implements ArtifactDownloadListener, CamelContextAware {
 
@@ -154,7 +148,9 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
     protected void basePackageScanQuarkus(String... basePackage) throws Exception {
         // we only want to scan via isolated classloader
         PackageScanClassResolver pscr = PluginHelper.getPackageScanClassResolver(camelContext);
-        Set<Class<?>> found = pscr.findAnnotated(Set.of(ApplicationScoped.class, Singleton.class), basePackage);
+        Set<Class<?>> found
+                = pscr.findByFilter(c -> AnnotationHelper.hasAnnotation(c, "jakarta.enterprise.context.ApplicationScoped")
+                        || AnnotationHelper.hasAnnotation(c, "jakarta.inject.Singleton"), basePackage);
         for (Class<?> clazz : found) {
             // avoid duplicate if we scan other JARs that can same class from previous downloads
             String fqn = clazz.getName();
@@ -168,9 +164,9 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
 
             // @Named can dictate the name of the bean
             String name = null;
-            Named named = clazz.getAnnotation(Named.class);
-            if (named != null) {
-                name = named.value();
+            var ann = AnnotationHelper.getAnnotationValue(clazz, "javax.inject.Named");
+            if (ann != null) {
+                name = ann;
             }
             if (name == null || name.isBlank()) {
                 name = clazz.getSimpleName();
@@ -186,7 +182,9 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
     protected void basePackageScanSpring(String... basePackage) throws Exception {
         // we only want to scan via isolated classloader
         PackageScanClassResolver pscr = PluginHelper.getPackageScanClassResolver(camelContext);
-        Set<Class<?>> found = pscr.findAnnotated(Set.of(Component.class, Service.class), basePackage);
+        Set<Class<?>> found
+                = pscr.findByFilter(c -> AnnotationHelper.hasAnnotation(c, "org.springframework.stereotype.Component")
+                        || AnnotationHelper.hasAnnotation(c, "org.springframework.stereotype.Service"), basePackage);
         for (Class<?> clazz : found) {
             // avoid duplicate if we scan other JARs that can same class from previous downloads
             String fqn = clazz.getName();
@@ -199,13 +197,13 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
             LOG.debug("Discovered Spring @Component/@Service class: {}", clazz);
 
             String name = null;
-            var ann = clazz.getAnnotation(Component.class);
+            var ann = AnnotationHelper.getAnnotationValue(clazz, "org.springframework.stereotype.Component");
             if (ann != null) {
-                name = ann.value();
+                name = ann;
             } else {
-                var ann2 = clazz.getAnnotation(Service.class);
+                var ann2 = AnnotationHelper.getAnnotationValue(clazz, "org.springframework.stereotype.Service");
                 if (ann2 != null) {
-                    name = ann2.value();
+                    name = ann2;
                 }
             }
             if (name == null || name.isBlank()) {

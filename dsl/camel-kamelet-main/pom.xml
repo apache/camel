@@ -161,22 +161,17 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-tooling-maven</artifactId>
         </dependency>
-        <!-- optional spring annotation support -->
+        <!-- legacy Spring beans XML support -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring-version}</version>
-        </dependency>
-        <!-- optional quarkus annotation support -->
-        <dependency>
-            <groupId>jakarta.enterprise</groupId>
-            <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>${jakarta-enterprise-cdi-api-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.microprofile.config</groupId>
-            <artifactId>microprofile-config-api</artifactId>
-            <version>${microprofile-config-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.micrometer</groupId>
+                    <artifactId>micrometer-observation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- test -->
