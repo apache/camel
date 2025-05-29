@@ -22,12 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
@@ -46,16 +40,10 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.AnnotationHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 /**
  * To enable camel/spring/quarkus based annotations for dependency injection when loading DSLs.
@@ -205,13 +193,13 @@ public final class AnnotationDependencyInjection {
                 return;
             }
             // @Component and @Service are the same
-            Component comp = clazz.getAnnotation(Component.class);
-            Service service = clazz.getAnnotation(Service.class);
+            String comp = AnnotationHelper.getAnnotationValue(clazz, "org.springframework.stereotype.Component");
+            String service = AnnotationHelper.getAnnotationValue(clazz, "org.springframework.stereotype.Service");
             if (comp != null || service != null) {
-                if (comp != null && ObjectHelper.isNotEmpty(comp.value())) {
-                    name = comp.value();
-                } else if (service != null && ObjectHelper.isNotEmpty(service.value())) {
-                    name = service.value();
+                if (ObjectHelper.isNotEmpty(comp)) {
+                    name = comp;
+                } else if (ObjectHelper.isNotEmpty(service)) {
+                    name = service;
                 }
                 if (name == null || name.isBlank()) {
                     name = clazz.getSimpleName();
@@ -235,35 +223,38 @@ public final class AnnotationDependencyInjection {
 
         @Override
         public void onFieldInject(Field field, Object bean, String beanName) {
-            Autowired autowired = field.getAnnotation(Autowired.class);
-            if (autowired != null) {
+            boolean autowired = AnnotationHelper.hasAnnotation(field, "org.springframework.beans.factory.annotation.Autowired");
+            if (autowired) {
                 String name = null;
-                Qualifier qualifier = field.getAnnotation(Qualifier.class);
-                if (qualifier != null) {
-                    name = qualifier.value();
+                String named
+                        = AnnotationHelper.getAnnotationValue(field, "org.springframework.beans.factory.annotation.Qualifier");
+                if (ObjectHelper.isNotEmpty(named)) {
+                    name = named;
                 }
 
                 try {
                     ReflectionHelper.setField(field, bean,
                             helper.getInjectionBeanValue(field.getType(), name));
                 } catch (NoSuchBeanException e) {
-                    if (autowired.required()) {
+                    Object required = AnnotationHelper.getAnnotationValue(field,
+                            "org.springframework.beans.factory.annotation.Autowired", "required");
+                    if (Boolean.TRUE == required) {
                         throw e;
                     }
                     // not required so ignore
                 }
             }
-            Value value = field.getAnnotation(Value.class);
+            String value = AnnotationHelper.getAnnotationValue(field, "org.springframework.beans.factory.annotation.Value");
             if (value != null) {
                 ReflectionHelper.setField(field, bean,
-                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), value.value(), null, null));
+                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), value, null, null));
             }
         }
 
         @Override
         public void onMethodInject(Method method, Object bean, String beanName) {
-            Bean bi = method.getAnnotation(Bean.class);
-            if (bi != null) {
+            boolean bi = AnnotationHelper.hasAnnotation(method, "org.springframework.context.annotation.Bean");
+            if (bi) {
                 Object instance;
                 if (lazyBean) {
                     instance = (Supplier<Object>) () -> helper.getInjectionBeanMethodValue(context, method, bean, beanName,
@@ -273,8 +264,14 @@ public final class AnnotationDependencyInjection {
                 }
                 if (instance != null) {
                     String name = method.getName();
-                    if (bi.name().length > 0) {
-                        name = bi.name()[0];
+                    String[] names = (String[]) AnnotationHelper.getAnnotationValue(method,
+                            "org.springframework.context.annotation.Bean", "name");
+                    if (names == null) {
+                        names = (String[]) AnnotationHelper.getAnnotationValue(method,
+                                "org.springframework.context.annotation.Bean", "value");
+                    }
+                    if (names != null && names.length > 0) {
+                        name = names[0];
                     }
                     bindBean(context, name, instance, method.getReturnType(), false);
                 }
@@ -291,12 +288,12 @@ public final class AnnotationDependencyInjection {
                 return;
             }
             // @ApplicationScoped and @Singleton are considered the same
-            ApplicationScoped as = clazz.getAnnotation(ApplicationScoped.class);
-            Singleton ss = clazz.getAnnotation(Singleton.class);
-            if (as != null || ss != null) {
-                Named named = clazz.getAnnotation(Named.class);
+            boolean as = AnnotationHelper.hasAnnotation(clazz, "jakarta.enterprise.context.ApplicationScoped");
+            boolean ss = AnnotationHelper.hasAnnotation(clazz, "jakarta.inject.Singleton");
+            if (as || ss) {
+                String named = AnnotationHelper.getAnnotationValue(clazz, "jakarta.inject.Named");
                 if (named != null) {
-                    name = named.value();
+                    name = named;
                 }
                 if (name == null || name.isBlank()) {
                     name = clazz.getSimpleName();
@@ -320,35 +317,37 @@ public final class AnnotationDependencyInjection {
 
         @Override
         public void onFieldInject(Field field, Object bean, String beanName) {
-            Inject inject = field.getAnnotation(Inject.class);
-            if (inject != null) {
+            boolean inject = AnnotationHelper.hasAnnotation(field, "jakarta.inject.Inject");
+            if (inject) {
                 String name = null;
-                Named named = field.getAnnotation(Named.class);
+                String named = AnnotationHelper.getAnnotationValue(field, "jakarta.inject.Named");
                 if (named != null) {
-                    name = named.value();
+                    name = named;
                 }
 
                 ReflectionHelper.setField(field, bean,
                         helper.getInjectionBeanValue(field.getType(), name));
             }
-            ConfigProperty cp = field.getAnnotation(ConfigProperty.class);
-            if (cp != null) {
-                String df = cp.defaultValue();
-                if (ConfigProperty.UNCONFIGURED_VALUE.equals(df)) {
+            if (AnnotationHelper.hasAnnotation(field, "org.eclipse.microprofile.config.inject.ConfigProperty")) {
+                String name = (String) AnnotationHelper.getAnnotationValue(field,
+                        "org.eclipse.microprofile.config.inject.ConfigProperty", "name");
+                String df = (String) AnnotationHelper.getAnnotationValue(field,
+                        "org.eclipse.microprofile.config.inject.ConfigProperty", "defaultValue");
+                if ("org.eclipse.microprofile.config.configproperty.unconfigureddvalue".equals(df)) {
                     df = null;
                 }
                 ReflectionHelper.setField(field, bean,
-                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), cp.name(), df, null));
+                        helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), name, df, null));
             }
         }
 
         @Override
         public void onMethodInject(Method method, Object bean, String beanName) {
-            Produces produces = method.getAnnotation(Produces.class);
-            Inject inject = method.getAnnotation(Inject.class);
-            Named bi = method.getAnnotation(Named.class);
-            if (produces != null || inject != null || bi != null) {
-                String an = produces != null ? "Produces" : "Inject";
+            boolean produces = AnnotationHelper.hasAnnotation(method, "jakarta.enterprise.inject.Produces");
+            boolean inject = AnnotationHelper.hasAnnotation(method, "jakarta.inject.Inject");
+            boolean bi = AnnotationHelper.hasAnnotation(method, "jakarta.inject.Named");
+            if (produces || inject || bi) {
+                String an = produces ? "Produces" : "Inject";
                 Object instance;
                 if (lazyBean) {
                     instance = (Supplier<Object>) () -> helper.getInjectionBeanMethodValue(context, method, bean, beanName,
@@ -358,8 +357,9 @@ public final class AnnotationDependencyInjection {
                 }
                 if (instance != null) {
                     String name = method.getName();
-                    if (bi != null && !bi.value().isBlank()) {
-                        name = bi.value();
+                    String named = AnnotationHelper.getAnnotationValue(method, "jakarta.inject.Named");
+                    if (ObjectHelper.isNotEmpty(named)) {
+                        name = named;
                     }
                     bindBean(context, name, instance, method.getReturnType(), false);
                 }

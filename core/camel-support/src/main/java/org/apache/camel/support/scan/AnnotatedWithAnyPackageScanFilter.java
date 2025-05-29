@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 import org.apache.camel.spi.PackageScanFilter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.AnnotationHelper;
 
 /**
  * Package scan filter for testing if a given class is annotated with any of the annotations.
@@ -45,7 +45,7 @@ public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
             return false;
         }
         for (Class<? extends Annotation> annotation : annotations) {
-            if (ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations)) {
+            if (AnnotationHelper.hasAnnotation(type, annotation, checkMetaAnnotations)) {
                 return true;
             }
         }

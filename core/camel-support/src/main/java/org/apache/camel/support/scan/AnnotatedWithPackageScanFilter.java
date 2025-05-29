@@ -19,7 +19,7 @@ package org.apache.camel.support.scan;
 import java.lang.annotation.Annotation;
 
 import org.apache.camel.spi.PackageScanFilter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.AnnotationHelper;
 
 /**
  * Package scan filter for testing if a given class is annotated with a certain annotation.
@@ -40,7 +40,7 @@ public class AnnotatedWithPackageScanFilter implements PackageScanFilter {
 
     @Override
     public boolean matches(Class<?> type) {
-        return type != null && ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations);
+        return type != null && AnnotationHelper.hasAnnotation(type, annotation, checkMetaAnnotations);
     }
 
     public Class<? extends Annotation> getAnnotation() {

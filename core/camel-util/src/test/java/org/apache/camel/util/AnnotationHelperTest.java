@@ -16,18 +16,26 @@
  */
 package org.apache.camel.util;
 
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@DisplayName("theNameHere")
-public class MyPojo {
+public class AnnotationHelperTest {
 
-    private String name;
+    @Test
+    public void testGetAnnotationByFQN() {
+        // no annotation
+        String value = AnnotationHelper.getAnnotationValue(AnnotationHelperTest.class, "org.junit.jupiter.api.DisplayName");
+        Assertions.assertNull(value);
 
-    public String getName() {
-        return name;
+        // annotation with value
+        value = AnnotationHelper.getAnnotationValue(MyPojo.class, "org.junit.jupiter.api.DisplayName");
+        Assertions.assertEquals("theNameHere", value);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Test
+    public void testHasAnnotationByFQN() {
+        Assertions.assertFalse(AnnotationHelper.hasAnnotation(AnnotationHelperTest.class, "org.junit.jupiter.api.DisplayName"));
+        Assertions.assertTrue(AnnotationHelper.hasAnnotation(MyPojo.class, "org.junit.jupiter.api.DisplayName"));
     }
+
 }

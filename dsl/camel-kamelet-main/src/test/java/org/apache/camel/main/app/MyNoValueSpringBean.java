@@ -14,20 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.main.app;
 
-import org.junit.jupiter.api.DisplayName;
+import org.springframework.stereotype.Component;
 
-@DisplayName("theNameHere")
-public class MyPojo {
+@Component
+public class MyNoValueSpringBean {
 
-    private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
