@@ -2606,7 +2606,8 @@ public abstract class AbstractCamelContext extends BaseService
                 if (!counters.containsKey(source)) {
                     for (String targetName : cnames) {
                         Class<?> target = getComponent(targetName).getClass();
-                        if (source == target) {
+                        boolean skip = "StubComponent".equals(target.getSimpleName());
+                        if (!skip && source == target) {
                             Set<String> names = counters.computeIfAbsent(source, k -> new TreeSet<>());
                             names.add(targetName);
                         }
