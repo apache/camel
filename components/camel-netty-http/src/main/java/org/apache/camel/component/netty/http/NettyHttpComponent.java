@@ -31,6 +31,7 @@ import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.http.handlers.HttpServerMultiplexChannelHandler;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -82,7 +83,7 @@ public class NettyHttpComponent extends NettyComponent
         // use the http configuration and filter strategy
         super(NettyHttpEndpoint.class);
         setConfiguration(new NettyHttpConfiguration());
-        setHeaderFilterStrategy(new NettyHttpHeaderFilterStrategy());
+        setHeaderFilterStrategy(new HttpHeaderFilterStrategy());
         // use the binding that supports Rest DSL
         setNettyHttpBinding(new RestNettyHttpBinding(getHeaderFilterStrategy()));
     }

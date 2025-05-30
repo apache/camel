@@ -49,6 +49,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty.NettyConverter;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
@@ -71,7 +72,7 @@ import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
 public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNettyHttpBinding.class);
-    private HeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
 
     public DefaultNettyHttpBinding() {
     }
