@@ -71,6 +71,10 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         List<ManagedRouteMBean> routes
                 = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoutes();
+        assertEquals(3, routes.size());
+
+        routes = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                .getManagedRoutesByGroup("cheese");
         assertEquals(2, routes.size());
     }
 
@@ -106,10 +110,10 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals(Boolean.FALSE, logMask);
 
         Integer total = (Integer) mbeanServer.getAttribute(on, "TotalRoutes");
-        assertEquals(2, total.intValue());
+        assertEquals(3, total.intValue());
 
         Integer started = (Integer) mbeanServer.getAttribute(on, "StartedRoutes");
-        assertEquals(2, started.intValue());
+        assertEquals(3, started.intValue());
 
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -268,11 +272,13 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
+                from("direct:start").group("cheese")
                         .delay(10)
                         .to("mock:result");
 
-                from("direct:foo")
+                from("direct:bar").to("mock:bar");
+
+                from("direct:foo").group("cheese")
                         .delay(10)
                         .transform(constant("Bye World")).id("myTransform");
             }

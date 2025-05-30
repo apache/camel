@@ -964,6 +964,27 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public List<Route> getRoutes(Predicate<Route> filter) {
+        routesLock.lock();
+        try {
+            List<Route> answer = new ArrayList<>();
+            for (Route route : getRoutes()) {
+                if (filter.test(route)) {
+                    answer.add(route);
+                }
+            }
+            return answer;
+        } finally {
+            routesLock.unlock();
+        }
+    }
+
+    @Override
+    public List<Route> getRoutesByGroup(String groupId) {
+        return getRoutes(f -> groupId.equals(f.getGroup()));
+    }
+
+    @Override
     public int getRoutesSize() {
         return routes.size();
     }

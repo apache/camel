@@ -124,6 +124,12 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
 
     @Override
     public List<ManagedRouteMBean> getManagedRoutes() {
+        // null group will return all
+        return getManagedRoutesByGroup(null);
+    }
+
+    @Override
+    public List<ManagedRouteMBean> getManagedRoutesByGroup(String groupId) {
         // jmx must be enabled
         if (getManagementStrategy().getManagementAgent() == null) {
             return null;
@@ -131,12 +137,15 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
 
         List<ManagedRouteMBean> answer = new ArrayList<>();
         for (Route route : camelContext.getRoutes()) {
-            try {
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
-                ManagedRouteMBean mr = getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
-                answer.add(mr);
-            } catch (MalformedObjectNameException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            if (groupId == null || groupId.equals(route.getGroup())) {
+                try {
+                    ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
+                    ManagedRouteMBean mr
+                            = getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+                    answer.add(mr);
+                } catch (MalformedObjectNameException e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
             }
         }
         return answer;
