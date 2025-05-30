@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 import static org.apache.camel.support.http.HttpUtil.filterCheck;
@@ -24,7 +25,7 @@ import static org.apache.camel.support.http.HttpUtil.filterCheck;
 /**
  * Default Netty {@link HeaderFilterStrategy} used when binding with {@link NettyHttpBinding}.
  */
-public class NettyHttpRestHeaderFilterStrategy extends NettyHttpHeaderFilterStrategy {
+public class NettyHttpRestHeaderFilterStrategy extends HttpHeaderFilterStrategy {
 
     private final String templateUri;
     private final String queryParameters;
