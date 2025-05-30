@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.camel.clock.EventClock;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -506,6 +507,22 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return the current routes
      */
     List<Route> getRoutes();
+
+    /**
+     * To get all the routes that matches the filter.
+     *
+     * @param  filter to filter to include only accepted routes
+     * @return        the routes that matched the filter
+     */
+    List<Route> getRoutes(Predicate<Route> filter);
+
+    /**
+     * Gets the routes for the given group
+     *
+     * @param  groupId the id of the group
+     * @return         the routes or an empty list if no routes exists for the given group id
+     */
+    List<Route> getRoutesByGroup(String groupId);
 
     /**
      * Returns the total number of routes in this CamelContext
