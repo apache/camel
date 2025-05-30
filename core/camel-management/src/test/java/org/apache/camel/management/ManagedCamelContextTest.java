@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.RefDataFormatTest;
@@ -66,6 +68,10 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals("my-camel-context", client.getCamelId());
         assertEquals("My special Camel description", client.getCamelDescription());
         assertEquals("Started", client.getState());
+
+        List<ManagedRouteMBean> routes
+                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoutes();
+        assertEquals(2, routes.size());
     }
 
     @Test

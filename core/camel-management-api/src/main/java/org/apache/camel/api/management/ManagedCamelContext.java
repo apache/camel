@@ -22,6 +22,8 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 
+import java.util.List;
+
 public interface ManagedCamelContext {
 
     /**
@@ -78,6 +80,13 @@ public interface ManagedCamelContext {
      * @throws IllegalArgumentException if the type is not compliant
      */
     <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type);
+
+    /**
+     * Gets all the managed routes
+     *
+     * @return the routes or an empty list if no routes exists
+     */
+    List<ManagedRouteMBean> getManagedRoutes();
 
     /**
      * Gets the managed consumer client api from any of the routes which with the given route id
