@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.rest.openapi.validator.client;
 
+import java.io.IOException;
+
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
-import java.io.IOException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
@@ -75,8 +76,8 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         exchange.getMessage().setBody("");
 
         RestClientRequestValidator.ValidationError error
-            = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-            "application/json", "application/json", true, null, null, null, null));
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
 
         Assertions.assertNotNull(error);
         Assertions.assertTrue(error.body().contains("Query parameter 'status' is required"));
@@ -84,7 +85,7 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         exchange.getMessage().setHeader(Exchange.HTTP_QUERY, "status=available");
 
         error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-            "application/json", "application/json", true, null, null, null, null));
+                "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
     }
 
@@ -98,8 +99,8 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         exchange.getMessage().setBody("");
 
         RestClientRequestValidator.ValidationError error
-            = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-            "application/json", "application/json", true, null, null, null, null));
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
 
         Assertions.assertNotNull(error);
         Assertions.assertTrue(error.body().contains("Header parameter 'tags' is required"));
@@ -107,7 +108,7 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         exchange.getMessage().setHeader("tags", "dog");
 
         error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-            "application/json", "application/json", true, null, null, null, null));
+                "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
     }
 
@@ -123,8 +124,8 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
         exchange.getMessage().setBody("{ some body here }");
 
         RestClientRequestValidator.ValidationError error
-            = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
-            "application/json", "application/json", true, null, null, null, null));
+                = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                        "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
     }
 }
