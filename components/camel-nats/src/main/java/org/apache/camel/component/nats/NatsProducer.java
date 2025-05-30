@@ -19,10 +19,19 @@ package org.apache.camel.component.nats;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.TimeUnit;
 
-import io.nats.client.*;
+
+import io.nats.client.Connection;
 import io.nats.client.Connection.Status;
+import io.nats.client.JetStream;
+import io.nats.client.JetStreamApiException;
+import io.nats.client.JetStreamManagement;
+import io.nats.client.Message;
 import io.nats.client.api.PublishAck;
 import io.nats.client.api.StreamConfiguration;
 import io.nats.client.impl.Headers;
@@ -109,7 +118,7 @@ public class NatsProducer extends DefaultAsyncProducer {
             LOG.debug("Publishing to subject: {}", config.getTopic());
 
             if (config.isJetstreamEnabled() && this.connection.getServerInfo().isJetStreamAvailable()) {
-                LOG.info("JetStream is available");
+                LOG.debug("JetStream is available");
 
                 JetStreamManagement jsm;
                 JetStream js;

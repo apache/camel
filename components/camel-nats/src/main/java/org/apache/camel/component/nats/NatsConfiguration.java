@@ -94,8 +94,8 @@ public class NatsConfiguration {
     private boolean jetstreamEnabled = true;
     @UriParam(label = "advanced", defaultValue = "default-stream")
     private String jetstreamName = "default-stream";
-    @UriParam(label = "advanced", defaultValue = "true")
-    private boolean jetstreamAsync = true;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean jetstreamAsync = false;
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
@@ -470,8 +470,6 @@ public class NatsConfiguration {
 
     /**
      * Sets whether to enable JetStream support for this endpoint.
-     *
-     * @param jetstreamEnabled {@code true} to enable JetStream, {@code false} otherwise.
      */
     public void setJetstreamEnabled(boolean jetstreamEnabled) {
         this.jetstreamEnabled = jetstreamEnabled;
@@ -487,8 +485,6 @@ public class NatsConfiguration {
 
     /**
      * Sets the name of the JetStream stream to use.
-     *
-     * @param jetstreamName The name of the JetStream stream.
      */
     public void setJetstreamName(String jetstreamName) {
         this.jetstreamName = jetstreamName;
@@ -504,9 +500,6 @@ public class NatsConfiguration {
 
     /**
      * Sets whether to operate JetStream requests asynchronously.
-     *
-     * @param jetstreamAsync {@code true} to enable asynchronous JetStream operations,
-     * {@code false} for synchronous operations.
      */
     public void setJetstreamAsync(boolean jetstreamAsync) {
         this.jetstreamAsync = jetstreamAsync;
