@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest.openapi.validator.client;
 
+import java.util.Map.Entry;
+
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.report.JsonValidationReportFormat;
@@ -53,6 +55,28 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         }
         if (body != null) {
             builder.withBody(body);
+        }
+        // Use all non-Camel headers
+        for (Entry<String, Object> header : exchange.getMessage().getHeaders().entrySet()) {
+            boolean isCamelHeader = header.getKey().startsWith("Camel")
+                    || header.getKey().startsWith("camel")
+                    || header.getKey().startsWith("org.apache.camel.");
+            if (!isCamelHeader) {
+                builder.withHeader(header.getKey(), header.getValue().toString());
+            }
+        }
+        // Use query parameters, if present
+        String query = exchange.getMessage().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (query != null) {
+            String[] params = query.split("&");
+            for (String param : params) {
+                String[] keyValue = param.split("=");
+                if (keyValue.length == 2) {
+                    builder.withQueryParam(keyValue[0], keyValue[1]);
+                } else if (keyValue.length == 1) {
+                    builder.withQueryParam(keyValue[0], "");
+                }
+            }
         }
 
         OpenApiInteractionValidator validator = OpenApiInteractionValidator.createFor(openAPI).build();
