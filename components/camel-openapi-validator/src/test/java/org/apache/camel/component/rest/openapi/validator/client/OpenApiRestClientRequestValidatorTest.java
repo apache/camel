@@ -19,30 +19,37 @@ package org.apache.camel.component.rest.openapi.validator.client;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
+import java.io.IOException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
 
-    @Test
-    public void testValidator() throws Exception {
+    static OpenAPI openAPI;
+    static OpenApiRestClientRequestValidator validator;
+
+    @BeforeAll
+    static void setup() throws IOException {
         String data = IOHelper.loadText(OpenApiRestClientRequestValidatorTest.class.getResourceAsStream("/petstore-v3.json"));
         OpenAPIV3Parser parser = new OpenAPIV3Parser();
         SwaggerParseResult out = parser.readContents(data);
-        OpenAPI openAPI = out.getOpenAPI();
+        openAPI = out.getOpenAPI();
+        validator = new OpenApiRestClientRequestValidator();
+    }
 
+    @Test
+    public void testValidateBody() {
         exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
         exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
         exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "PUT");
         exchange.getMessage().setHeader(Exchange.HTTP_PATH, "pet");
         exchange.getMessage().setHeader("Accept", "application/json");
         exchange.getMessage().setBody("");
-
-        OpenApiRestClientRequestValidator validator = new OpenApiRestClientRequestValidator();
 
         RestClientRequestValidator.ValidationError error
                 = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
@@ -55,6 +62,23 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
 
         error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
                 "application/json", "application/json", true, null, null, null, null));
+        Assertions.assertNull(error);
+    }
+
+    @Test
+    public void testEmptyPathHeader() {
+        exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
+        exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
+        exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "PUT");
+        exchange.getMessage().setHeader(Exchange.HTTP_URI, "/api/v3/pet");
+        exchange.getMessage().setHeader("CamelPlatformHttpContextPath", "/api/v3");
+        exchange.getMessage().setHeader(Exchange.HTTP_PATH, "");
+        exchange.getMessage().setHeader("Accept", "application/json");
+        exchange.getMessage().setBody("{ some body here }");
+
+        RestClientRequestValidator.ValidationError error
+            = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+            "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
     }
 }

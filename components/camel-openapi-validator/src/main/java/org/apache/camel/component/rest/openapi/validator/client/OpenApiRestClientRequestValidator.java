@@ -27,6 +27,7 @@ import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.commons.lang3.StringUtils;
 
 @JdkService(RestClientRequestValidator.FACTORY)
 public class OpenApiRestClientRequestValidator implements RestClientRequestValidator {
@@ -40,6 +41,14 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
 
         String method = exchange.getMessage().getHeader(Exchange.HTTP_METHOD, String.class);
         String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
+        // Workaround for camel-platform-http which does not properly set HTTP_PATH header
+        if (StringUtils.isEmpty(path)) {
+            String uri = exchange.getMessage().getHeader(Exchange.HTTP_URI, String.class);
+            String contextPath = exchange.getMessage().getHeader("CamelPlatformHttpContextPath", String.class);
+            if (StringUtils.isNotEmpty(contextPath) && uri.startsWith(contextPath)) {
+                path = uri.substring(contextPath.length());
+            }
+        }
         String accept = exchange.getMessage().getHeader("Accept", String.class);
         String contentType = ExchangeHelper.getContentType(exchange);
         String body = MessageHelper.extractBodyAsString(exchange.getIn());
