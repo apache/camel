@@ -90,12 +90,12 @@ public class NatsConfiguration {
     private boolean traceConnection;
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    @UriParam(label = "advanced", defaultValue = "true")
-    private boolean jetstreamEnabled = true;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean jetstreamEnabled = false;
     @UriParam(label = "advanced", defaultValue = "default-stream")
     private String jetstreamName = "default-stream";
-    @UriParam(label = "advanced", defaultValue = "false")
-    private boolean jetstreamAsync = false;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean jetstreamAsync = true;
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
