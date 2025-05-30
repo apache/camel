@@ -19,8 +19,15 @@ package org.apache.camel.component.nats;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 
-import io.nats.client.*;
+import io.nats.client.Connection;
 import io.nats.client.Connection.Status;
+import io.nats.client.Dispatcher;
+import io.nats.client.JetStreamApiException;
+import io.nats.client.JetStreamManagement;
+import io.nats.client.JetStreamSubscription;
+import io.nats.client.Message;
+import io.nats.client.MessageHandler;
+import io.nats.client.PushSubscribeOptions;
 import io.nats.client.api.ConsumerConfiguration;
 import io.nats.client.api.StreamConfiguration;
 import org.apache.camel.Exchange;
