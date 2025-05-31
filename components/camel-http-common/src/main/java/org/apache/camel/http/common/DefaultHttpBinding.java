@@ -304,7 +304,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
-    private String getRawPath(HttpServletRequest request) {
+    protected String getRawPath(HttpServletRequest request) {
         String uri = request.getRequestURI();
         /**
          * In async case, it seems that request.getContextPath() can return null
