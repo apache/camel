@@ -20,17 +20,27 @@ package org.apache.camel.component.langchain4j.tokenizer.config;
 import org.apache.camel.spi.Tokenizer;
 
 public class LangChain4JConfiguration implements Tokenizer.Configuration {
-    private int maxTokens;
+    private int maxSegmentSize;
     private int maxOverlap;
     private String type;
+    private String modelName;
+
+    public int getMaxSegmentSize() {
+        return maxSegmentSize;
+    }
+
+    @Override
+    public void setMaxSegmentSize(int maxSegmentSize) {
+        this.maxSegmentSize = maxSegmentSize;
+    }
 
     public int getMaxTokens() {
-        return maxTokens;
+        return getMaxSegmentSize();
     }
 
     @Override
     public void setMaxTokens(int maxTokens) {
-        this.maxTokens = maxTokens;
+        setMaxSegmentSize(maxTokens);
     }
 
     public int getMaxOverlap() {
@@ -49,5 +59,14 @@ public class LangChain4JConfiguration implements Tokenizer.Configuration {
     @Override
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    @Override
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
     }
 }

@@ -38,6 +38,9 @@
         <label>ai</label>
         <title>LangChain4j Tokenizer</title>
         <supportLevel>Experimental</supportLevel>
+        <langchain4j-version>1.0.0</langchain4j-version>
+        <langchain4j-azure-openai-version>1.0.0-beta5</langchain4j-azure-openai-version>
+        <langchain4j-community-dashscope-version>1.0.0-beta5</langchain4j-community-dashscope-version>
     </properties>
 
     <dependencies>
@@ -62,14 +65,14 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-azure-open-ai</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-azure-openai-version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-dashscope</artifactId>
-            <version>${langchain4j-version}</version>
+            <artifactId>langchain4j-community-dashscope</artifactId>
+            <version>${langchain4j-community-dashscope-version}</version>
             <scope>provided</scope>
             <exclusions>
                 <!-- messes up with the log -->
