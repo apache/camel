@@ -54,6 +54,25 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         if (body != null) {
             builder.withBody(body);
         }
+        // Use all non-Camel headers
+        for (String header : exchange.getMessage().getHeaders().keySet()) {
+            if (!startsWithIgnoreCase(header, "Camel")) {
+                builder.withHeader(header, exchange.getMessage().getHeader(header, String.class));
+            }
+        }
+        // Use query parameters, if present
+        String query = exchange.getMessage().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (query != null) {
+            String[] params = query.split("&");
+            for (String param : params) {
+                String[] keyValue = param.split("=");
+                if (keyValue.length == 2) {
+                    builder.withQueryParam(keyValue[0], keyValue[1]);
+                } else if (keyValue.length == 1) {
+                    builder.withQueryParam(keyValue[0], "");
+                }
+            }
+        }
 
         OpenApiInteractionValidator validator = OpenApiInteractionValidator.createFor(openAPI).build();
         ValidationReport report = validator.validateRequest(builder.build());
@@ -69,4 +88,7 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         return null;
     }
 
+    boolean startsWithIgnoreCase(String s, String prefix) {
+        return s.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
 }
