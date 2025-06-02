@@ -61,11 +61,10 @@ public class RunCommandOnMqttITCase extends JBangTestSupport {
     @Test
     public void testStub() throws IOException {
         copyResourceInDataFolder(TestResources.STUB_ROUTE);
-        final String ipAddr = getIpAddr(service.getContainer());
         final String pid = executeBackground(String.format("run %s/%s --stub=jms",
                 mountPoint(), TestResources.STUB_ROUTE.getName()));
-        checkCommandOutputs("cmd send --body=\"Hello camel from stubbed jms\"" + pid, "Sent (success)");
-        checkCommandOutputs("cmd stub --browse", "Hello camel from stubbed jms");
+        checkCommandOutputs("cmd send --body='Hello camel from stubbed jms' " + pid, "Sent (success)");
+        checkCommandOutputs("cmd stub --browse", "Hello camel from stubbed jms", ASSERTION_WAIT_SECONDS);
     }
 
     private String getIpAddr(final GenericContainer container) {

@@ -169,6 +169,12 @@ public abstract class JBangTestSupport {
                 .contains(contains);
     }
 
+    protected void checkCommandOutputs(String command, String contains, int waitForSeconds) {
+        Assertions.assertThatNoException().isThrownBy(() -> Awaitility.await()
+                .atMost(waitForSeconds, TimeUnit.SECONDS)
+                .untilAsserted(() -> checkCommandOutputs(command, contains)));
+    }
+
     protected void checkCommandOutputs(String command, String contains) {
         Assertions.assertThat(execute(command))
                 .as("command camel " + command + " should output " + contains)
@@ -179,6 +185,12 @@ public abstract class JBangTestSupport {
         Assertions.assertThat(execute(command))
                 .as("command camel " + command + " should output pattern " + contains)
                 .containsPattern(contains);
+    }
+
+    protected void checkCommandOutputsPattern(String command, String contains, int waitForSeconds) {
+        Assertions.assertThatNoException().isThrownBy(() -> Awaitility.await()
+                .atMost(waitForSeconds, TimeUnit.SECONDS)
+                .untilAsserted(() -> checkCommandOutputsPattern(command, contains)));
     }
 
     protected void checkCommandDoesNotOutput(String command, String contains) {
