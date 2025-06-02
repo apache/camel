@@ -19,3 +19,8 @@ Renamed class `org.apache.camel.component.http.BasicAuthenticationHttpClientConf
 
 The deprecated kebab-case has been removed.
 For example `set-body` and `set-header` should be `setBody` / `setHeader` etc.
+
+== Camel Spring Boot
+
+Remove the deprecated `camel.springboot.xxx` configuration syntax. Use `camel.main.xxx` syntax
+which is standard across all runtimes.
