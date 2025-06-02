@@ -31,7 +31,7 @@ __metadata:
     map-stream: ^0.0.7
     prettier-eslint-cli: ^8.0.1
     through2: ^4.0.2
-    vinyl: ^3.0.0
+    vinyl: ^3.0.1
   languageName: unknown
   linkType: soft
 
@@ -6945,16 +6945,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vinyl@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "vinyl@npm:3.0.0"
+"vinyl@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "vinyl@npm:3.0.1"
   dependencies:
     clone: ^2.1.2
-    clone-stats: ^1.0.0
     remove-trailing-separator: ^1.1.0
     replace-ext: ^2.0.0
     teex: ^1.0.1
-  checksum: 29c563d6a027d49ec216bc8259b494bd048d1f9df39103aea6877e02af1d0a6956b11ad977206b5a807b331ef5431bed9f6b8890de5e55188389d31cf7af7fbe
+  checksum: d3ced776ea78b0479d54788abcf9db3275384a0e5053d1dff57f520a0a3bc8a008daa45eaa0015dd6ea88a165ddc488bb583bad11f8a17d51bcaa6bf47d5d0ea
   languageName: node
   linkType: hard
 

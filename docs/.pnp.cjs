@@ -48,7 +48,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["map-stream", "npm:0.0.7"],\
             ["prettier-eslint-cli", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:8.0.1"],\
             ["through2", "npm:4.0.2"],\
-            ["vinyl", "npm:3.0.0"]\
+            ["vinyl", "npm:3.0.1"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -82,7 +82,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["map-stream", "npm:0.0.7"],\
             ["prettier-eslint-cli", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:8.0.1"],\
             ["through2", "npm:4.0.2"],\
-            ["vinyl", "npm:3.0.0"]\
+            ["vinyl", "npm:3.0.1"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -7910,12 +7910,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:3.0.0", {\
-          "packageLocation": "./.yarn/cache/vinyl-npm-3.0.0-161745591d-29c563d6a0.zip/node_modules/vinyl/",\
+        ["npm:3.0.1", {\
+          "packageLocation": "./.yarn/cache/vinyl-npm-3.0.1-0adc6594da-d3ced776ea.zip/node_modules/vinyl/",\
           "packageDependencies": [\
-            ["vinyl", "npm:3.0.0"],\
+            ["vinyl", "npm:3.0.1"],\
             ["clone", "npm:2.1.2"],\
-            ["clone-stats", "npm:1.0.0"],\
             ["remove-trailing-separator", "npm:1.1.0"],\
             ["replace-ext", "npm:2.0.0"],\
             ["teex", "npm:1.0.1"]\
