@@ -46,6 +46,8 @@ public final class RuntimeUtil {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
             System.setProperty("pid", Long.toString(pid));
+            // make it possible to manage log4j via JMX and camel-cli
+            System.setProperty("log4j2.disable.jmx", "false");
 
             if (loggingConfigPath != null) {
                 // ust custom logging configuration as-is
