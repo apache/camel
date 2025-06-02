@@ -41,7 +41,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-node", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:11.1.0"],\
             ["eslint-plugin-promise", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:6.6.0"],\
             ["gulp", "npm:4.0.2"],\
-            ["gulp-cli", "npm:3.0.0"],\
+            ["gulp-cli", "npm:3.1.0"],\
             ["gulp-inject", "npm:5.0.5"],\
             ["gulp-rename", "npm:2.0.0"],\
             ["gulp-sort", "npm:2.0.0"],\
@@ -75,7 +75,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-node", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:11.1.0"],\
             ["eslint-plugin-promise", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:6.6.0"],\
             ["gulp", "npm:4.0.2"],\
-            ["gulp-cli", "npm:3.0.0"],\
+            ["gulp-cli", "npm:3.1.0"],\
             ["gulp-inject", "npm:5.0.5"],\
             ["gulp-rename", "npm:2.0.0"],\
             ["gulp-sort", "npm:2.0.0"],\
@@ -3971,16 +3971,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:3.0.0", {\
-          "packageLocation": "./.yarn/cache/gulp-cli-npm-3.0.0-bfcefd033e-90bef372b0.zip/node_modules/gulp-cli/",\
+        ["npm:3.1.0", {\
+          "packageLocation": "./.yarn/cache/gulp-cli-npm-3.1.0-f18706aba3-6cb26653ac.zip/node_modules/gulp-cli/",\
           "packageDependencies": [\
-            ["gulp-cli", "npm:3.0.0"],\
+            ["gulp-cli", "npm:3.1.0"],\
             ["@gulpjs/messages", "npm:1.1.0"],\
             ["chalk", "npm:4.1.2"],\
             ["copy-props", "npm:4.0.0"],\
             ["gulplog", "npm:2.2.0"],\
             ["interpret", "npm:3.1.1"],\
-            ["liftoff", "npm:5.0.0"],\
+            ["liftoff", "npm:5.0.1"],\
             ["mute-stdout", "npm:2.0.0"],\
             ["replace-homedir", "npm:2.0.0"],\
             ["semver-greatest-satisfied-range", "npm:2.0.0"],\
@@ -5095,10 +5095,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:5.0.0", {\
-          "packageLocation": "./.yarn/cache/liftoff-npm-5.0.0-035c7e1199-ae6a1f3b73.zip/node_modules/liftoff/",\
+        ["npm:5.0.1", {\
+          "packageLocation": "./.yarn/cache/liftoff-npm-5.0.1-631cc964d6-3adb6167fb.zip/node_modules/liftoff/",\
           "packageDependencies": [\
-            ["liftoff", "npm:5.0.0"],\
+            ["liftoff", "npm:5.0.1"],\
             ["extend", "npm:3.0.2"],\
             ["findup-sync", "npm:5.0.0"],\
             ["fined", "npm:2.0.0"],\
