@@ -32,7 +32,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         checkLogContains("Hello world!");
         execute("cmd stop-route --id=route1");
         checkCommandOutputsPattern("get route",
-                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started");
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
+                ASSERTION_WAIT_SECONDS);
     }
 
     @Test
@@ -44,7 +45,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         checkLogContains("Hello world!");
         execute("cmd stop-route " + PID);
         checkCommandOutputsPattern("get route",
-                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Started");
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
+                ASSERTION_WAIT_SECONDS);
     }
 
     @Test
@@ -55,7 +57,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         checkLogContains("Hello world!");
         execute("cmd stop-route");
         checkCommandOutputsPattern("get route",
-                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped");
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
+                ASSERTION_WAIT_SECONDS);
     }
 
     @Test
@@ -67,7 +70,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         execute("cmd stop-route");
         execute("cmd start-route --id=route1");
         checkCommandOutputsPattern("get route",
-                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped");
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
+                ASSERTION_WAIT_SECONDS);
     }
 
     @Test
@@ -80,7 +84,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         execute("cmd stop-route");
         execute("cmd start-route " + PID);
         checkCommandOutputsPattern("get route",
-                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped");
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
+                ASSERTION_WAIT_SECONDS);
     }
 
     @Test
@@ -92,7 +97,8 @@ public class CmdStartStopITCase extends JBangTestSupport {
         execute("cmd stop-route");
         execute("cmd start-route");
         checkCommandOutputsPattern("get route",
-                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started");
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
+                ASSERTION_WAIT_SECONDS);
     }
 
     @Test
