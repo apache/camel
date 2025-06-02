@@ -1041,6 +1041,19 @@ public interface ComponentsBuilderFactory {
         return CxfrsComponentBuilderFactory.cxfrs();
     }
     /**
+     * Dapr (camel-dapr)
+     * Dapr component which interfaces with Dapr Building Blocks.
+     * 
+     * Category: cloud,saas
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-dapr
+     * 
+     * @return the dsl builder
+     */
+    static DaprComponentBuilderFactory.DaprComponentBuilder dapr() {
+        return DaprComponentBuilderFactory.dapr();
+    }
+    /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
      * 
@@ -2557,7 +2570,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Kafka (camel-kafka)
-     * Sent and receive messages to/from an Apache Kafka broker.
+     * Send and receive messages to/from an Apache Kafka broker.
      * 
      * Category: messaging
      * Since: 2.13
@@ -3579,6 +3592,19 @@ public interface ComponentsBuilderFactory {
         return Pop3sComponentBuilderFactory.pop3s();
     }
     /**
+     * PQC Algorithms (camel-pqc)
+     * Post Quantum Cryptography Signature and Verification component.
+     * 
+     * Category: security
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-pqc
+     * 
+     * @return the dsl builder
+     */
+    static PqcComponentBuilderFactory.PqcComponentBuilder pqc() {
+        return PqcComponentBuilderFactory.pqc();
+    }
+    /**
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
      * connected devices.
@@ -4561,6 +4587,19 @@ public interface ComponentsBuilderFactory {
      */
     static WeatherComponentBuilderFactory.WeatherComponentBuilder weather() {
         return WeatherComponentBuilderFactory.weather();
+    }
+    /**
+     * weaviate (camel-weaviate)
+     * Perform operations on the Weaviate Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-weaviate
+     * 
+     * @return the dsl builder
+     */
+    static WeaviateComponentBuilderFactory.WeaviateComponentBuilder weaviate() {
+        return WeaviateComponentBuilderFactory.weaviate();
     }
     /**
      * Web3j Ethereum Blockchain (camel-web3j)

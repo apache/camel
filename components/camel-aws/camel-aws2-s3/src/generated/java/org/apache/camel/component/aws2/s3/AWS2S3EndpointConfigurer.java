@@ -124,6 +124,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "proxyprotocol":
         case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "removeprefixonmove":
+        case "removePrefixOnMove": target.getConfiguration().setRemovePrefixOnMove(property(camelContext, boolean.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "restartingpolicy":
@@ -282,6 +284,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "proxyprotocol":
         case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
         case "region": return java.lang.String.class;
+        case "removeprefixonmove":
+        case "removePrefixOnMove": return boolean.class;
         case "repeatcount":
         case "repeatCount": return long.class;
         case "restartingpolicy":
@@ -436,6 +440,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "proxyprotocol":
         case "proxyProtocol": return target.getConfiguration().getProxyProtocol();
         case "region": return target.getConfiguration().getRegion();
+        case "removeprefixonmove":
+        case "removePrefixOnMove": return target.getConfiguration().isRemovePrefixOnMove();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "restartingpolicy":

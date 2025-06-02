@@ -74,17 +74,17 @@ public class OpenApiITCase extends JBangTestSupport {
         checkLogContains("HTTP endpoints summary");
 
         //verify mock
-        HttpResponse<String> response = executeHttpRequest("/api/v3/pet/123", true);
+        HttpResponse<String> response = executeHttpRequest("/myapi/pet/123", true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
         Assertions.assertThat(response.body()).contains("donald the dock");
 
         //verify sample response
-        response = executeHttpRequest("/api/v3/pet/" + new Random().nextInt(124, 500), true);
+        response = executeHttpRequest("/myapi/pet/" + new Random().nextInt(124, 500), true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
         Assertions.assertThat(response.body()).contains("jack the cat");
 
         //verify api-doc
-        response = executeHttpRequest("/api-doc", true);
+        response = executeHttpRequest("/myapi/api-doc", true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
         final ObjectMapper objectMapper = new ObjectMapper();
         Map expectedDoc = objectMapper.readValue(new URL(

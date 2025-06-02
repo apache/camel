@@ -26,7 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.client.RestClient;
 
 /**
@@ -64,7 +64,6 @@ public class OpensearchComponent extends DefaultComponent {
 
     public OpensearchComponent(CamelContext context) {
         super(context);
-        registerExtension(new OpensearchComponentVerifierExtension());
     }
 
     @Override
@@ -104,7 +103,7 @@ public class OpensearchComponent extends DefaultComponent {
                 throw new IllegalArgumentException();
             }
             int port = split.length > 1 ? Integer.parseInt(split[1]) : OpensearchConstants.DEFAULT_PORT;
-            addressesTrAd.add(new HttpHost(hostname, port, config.isEnableSSL() ? "HTTPS" : "HTTP"));
+            addressesTrAd.add(new HttpHost(config.isEnableSSL() ? "HTTPS" : "HTTP", hostname, port));
         }
         return addressesTrAd;
     }

@@ -38,8 +38,6 @@ public class KMS2Component extends DefaultComponent {
 
     public KMS2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new KMS2ComponentVerifierExtension());
     }
 
     @Override

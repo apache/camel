@@ -184,6 +184,11 @@ public class FtpEmbeddedInfraService extends AbstractService implements FtpInfra
         return rootDir;
     }
 
+    @Override
+    public int port() {
+        return port;
+    }
+
     public void resume() {
         ftpServer.resume();
         port = getListenerPort();

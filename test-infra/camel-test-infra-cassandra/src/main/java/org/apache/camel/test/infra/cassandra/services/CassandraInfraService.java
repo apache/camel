@@ -31,4 +31,8 @@ public interface CassandraInfraService extends InfrastructureService {
     }
 
     String getCassandraHost();
+
+    String hosts();
+
+    int port();
 }

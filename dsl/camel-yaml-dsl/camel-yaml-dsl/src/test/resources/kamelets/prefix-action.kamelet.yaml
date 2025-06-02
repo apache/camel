@@ -41,5 +41,5 @@ spec:
     from:
       uri: "kamelet:source"
       steps:
-        - set-body:
+        - setBody:
             simple: "{{prefix}} ${body}"

@@ -155,20 +155,6 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
-         * The base directory within the share.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param path the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder path(String path) {
-            doSetProperty("path", path);
-            return this;
-        }
-        /**
          * If true, the file will be deleted after it is processed successfully.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1719,7 +1705,8 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1739,7 +1726,8 @@ public interface SmbEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2627,20 +2615,6 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
-         * The base directory within the share.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param path the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointProducerBuilder path(String path) {
-            doSetProperty("path", path);
-            return this;
-        }
-        /**
          * If provided, then Camel will write a checksum file when the original
          * file has been written. The checksum file will contain the checksum
          * created with the provided algorithm for the original file. The
@@ -3417,20 +3391,6 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
-         * The base directory within the share.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param path the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointBuilder path(String path) {
-            doSetProperty("path", path);
-            return this;
-        }
-        /**
          * The user domain.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -3640,7 +3600,7 @@ public interface SmbEndpointBuilderFactory {
          * Since: 4.3
          * Maven coordinates: org.apache.camel:camel-smb
          * 
-         * Syntax: <code>smb:hostname:port/shareName</code>
+         * Syntax: <code>smb:hostname:port/shareName/path</code>
          * 
          * Path parameter: hostname (required)
          * The share hostname or IP address
@@ -3652,7 +3612,10 @@ public interface SmbEndpointBuilderFactory {
          * Path parameter: shareName (required)
          * The name of the share directory
          * 
-         * @param path hostname:port/shareName
+         * Path parameter: path
+         * The base directory within the share
+         * 
+         * @param path hostname:port/shareName/path
          * @return the dsl builder
          */
         default SmbEndpointBuilder smb(String path) {
@@ -3666,7 +3629,7 @@ public interface SmbEndpointBuilderFactory {
          * Since: 4.3
          * Maven coordinates: org.apache.camel:camel-smb
          * 
-         * Syntax: <code>smb:hostname:port/shareName</code>
+         * Syntax: <code>smb:hostname:port/shareName/path</code>
          * 
          * Path parameter: hostname (required)
          * The share hostname or IP address
@@ -3678,9 +3641,12 @@ public interface SmbEndpointBuilderFactory {
          * Path parameter: shareName (required)
          * The name of the share directory
          * 
+         * Path parameter: path
+         * The base directory within the share
+         * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path hostname:port/shareName
+         * @param path hostname:port/shareName/path
          * @return the dsl builder
          */
         default SmbEndpointBuilder smb(String componentName, String path) {
@@ -3908,6 +3874,18 @@ public interface SmbEndpointBuilderFactory {
         @Deprecated
         public String smbFileExists() {
             return "CamelSmbFileExists";
+        }
+        /**
+         * UNC path to the retrieved file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmbUncPath}.
+         */
+        public String smbUncPath() {
+            return "CamelSmbUncPath";
         }
     }
     static SmbEndpointBuilder endpointBuilder(String componentName, String path) {

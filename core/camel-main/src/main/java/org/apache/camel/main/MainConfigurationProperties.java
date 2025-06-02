@@ -69,6 +69,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private RestConfigurationProperties restConfigurationProperties;
     private VaultConfigurationProperties vaultConfigurationProperties;
     private HttpServerConfigurationProperties httpServerConfigurationProperties;
+    private HttpManagementServerConfigurationProperties httpManagementServerConfigurationProperties;
     private SSLConfigurationProperties sslConfigurationProperties;
     private DebuggerConfigurationProperties debuggerConfigurationProperties;
     private TracerConfigurationProperties tracerConfigurationProperties;
@@ -123,6 +124,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (httpServerConfigurationProperties != null) {
             httpServerConfigurationProperties.close();
             httpServerConfigurationProperties = null;
+        }
+        if (httpManagementServerConfigurationProperties != null) {
+            httpManagementServerConfigurationProperties.close();
+            httpManagementServerConfigurationProperties = null;
         }
         if (sslConfigurationProperties != null) {
             sslConfigurationProperties.close();
@@ -260,10 +265,27 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * To configure embedded HTTP management server (for standalone applications; not Spring Boot or Quarkus)
+     */
+    public HttpManagementServerConfigurationProperties httpManagementServer() {
+        if (httpManagementServerConfigurationProperties == null) {
+            httpManagementServerConfigurationProperties = new HttpManagementServerConfigurationProperties(this);
+        }
+        return httpManagementServerConfigurationProperties;
+    }
+
+    /**
      * Whether there has been any embedded HTTP server configuration specified
      */
     public boolean hasHttpServerConfiguration() {
         return httpServerConfigurationProperties != null;
+    }
+
+    /**
+     * Whether there has been any embedded HTTP management server configuration specified
+     */
+    public boolean hasHttpManagementServerConfiguration() {
+        return httpManagementServerConfigurationProperties != null;
     }
 
     /**

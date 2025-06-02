@@ -10,7 +10,7 @@
 
     <properties>
         <project.build.outputTimestamp>{{ .ProjectBuildOutputTimestamp }}</project.build.outputTimestamp>
-        <compiler-plugin.version>3.13.0</compiler-plugin.version>
+        <compiler-plugin.version>3.14.0</compiler-plugin.version>
         <failsafe.useModulePath>false</failsafe.useModulePath>
         <maven.compiler.release>{{ .JavaVersion }}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,7 +20,7 @@
         <quarkus.platform.version>{{ .QuarkusVersion }}</quarkus.platform.version>
 {{ .BuildProperties }}
         <skipITs>true</skipITs>
-        <surefire-plugin.version>3.5.2</surefire-plugin.version>
+        <surefire-plugin.version>3.5.3</surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -165,7 +165,7 @@
                                       <artifactItem>
                                         <groupId>org.jolokia</groupId>
                                         <artifactId>jolokia-agent-jvm</artifactId>
-                                        <version>2.1.2</version>
+                                        <version>2.2.9</version>
                                         <type>jar</type>
                                         <classifier>javaagent</classifier>
                                       </artifactItem>

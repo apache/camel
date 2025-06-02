@@ -52,13 +52,6 @@ public class RestModelConverters {
         MODEL30_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver()));
     }
 
-    private static final ModelConverters MODEL20_CONVERTERS;
-
-    static {
-        MODEL20_CONVERTERS = ModelConverters.getInstance();
-        MODEL20_CONVERTERS.addConverter(new ClassNameExtensionModelResolver());
-    }
-
     private final boolean openapi31;
 
     public RestModelConverters(boolean openapi31) {
@@ -122,22 +115,25 @@ public class RestModelConverters {
         @Override
         public Schema resolve(AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
             Schema<?> result = delegate.resolve(annotatedType, context, next);
-
-            if (result != null && Objects.equals("object", result.getType())) {
-                JavaType type;
-                if (annotatedType.getType() instanceof JavaType) {
-                    type = (JavaType) annotatedType.getType();
-                } else {
-                    type = _mapper.constructType(annotatedType.getType());
+            if (result != null) {
+                String rt = result.getType();
+                if (rt == null && result.getTypes() != null) {
+                    rt = result.getTypes().size() == 1 ? result.getTypes().iterator().next() : null;
                 }
+                if (Objects.equals("object", rt)) {
+                    JavaType type;
+                    if (annotatedType.getType() instanceof JavaType) {
+                        type = (JavaType) annotatedType.getType();
+                    } else {
+                        type = _mapper.constructType(annotatedType.getType());
+                    }
 
-                if (!type.isContainerType()) {
-                    Map<String, String> value = new java.util.HashMap<>();
-                    value.put("type", "string");
-                    value.put("format", type.getRawClass().getName());
-                    result.addExtension("x-className", value);
-                    // OpenAPI 3: would it be better to set the classname directly as "format" ?
-                    // result.setFormat(type.getRawClass().getName());
+                    if (!type.isContainerType()) {
+                        Map<String, String> value = new java.util.HashMap<>();
+                        value.put("type", "string");
+                        value.put("format", type.getRawClass().getName());
+                        result.addExtension("x-className", value);
+                    }
                 }
             }
             return result;

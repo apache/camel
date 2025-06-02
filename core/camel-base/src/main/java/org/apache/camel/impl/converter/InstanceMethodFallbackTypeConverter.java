@@ -61,9 +61,13 @@ public class InstanceMethodFallbackTypeConverter extends TypeConverterSupport {
         if (instance == null) {
             throw new RuntimeCamelException("Could not instantiate an instance of: " + type.getCanonicalName());
         }
-        return useExchange
+        Object answer = useExchange
                 ? (T) ObjectHelper.invokeMethod(method, instance, type, exchange, value, registry) : (T) ObjectHelper
                         .invokeMethod(method, instance, type, value, registry);
+        if (answer == null && allowNull) {
+            answer = Void.class;
+        }
+        return (T) answer;
     }
 
 }

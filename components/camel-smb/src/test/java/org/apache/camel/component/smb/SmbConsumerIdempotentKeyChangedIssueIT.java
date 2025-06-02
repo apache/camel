@@ -33,7 +33,7 @@ public class SmbConsumerIdempotentKeyChangedIssueIT extends SmbServerTestSupport
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/idempotentkey&readLock=changed&idempotent=true"
+                "smb:%s/%s/idempotentkey?username=%s&password=%s&readLock=changed&idempotent=true"
                              + "&idempotentKey=${file:onlyname}-${file:size}",
                 service.address(), service.shareName(), service.userName(), service.password());
     }

@@ -239,6 +239,59 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder to
+         * build the form.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder multipartUpload(boolean multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder to
+         * build the form.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder multipartUpload(String multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * The name of the multipart/form-data when multipartUpload is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: data
+         * Group: producer
+         * 
+         * @param multipartUploadName the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder multipartUploadName(String multipartUploadName) {
+            doSetProperty("multipartUploadName", multipartUploadName);
+            return this;
+        }
+        /**
          * Whether to skip mapping all the Camel headers as HTTP request
          * headers. If there are no data from Camel headers needed to be
          * included in the HTTP request then this can avoid parsing overhead
@@ -345,7 +398,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication domain to use with NTML.
+         * Proxy authentication domain to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -354,6 +407,7 @@ public interface HttpEndpointBuilderFactory {
          * @param proxyAuthDomain the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
             doSetProperty("proxyAuthDomain", proxyAuthDomain);
             return this;
@@ -387,7 +441,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication domain (workstation name) to use with NTML.
+         * Proxy authentication domain (workstation name) to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -396,6 +450,7 @@ public interface HttpEndpointBuilderFactory {
          * @param proxyAuthNtHost the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder proxyAuthNtHost(String proxyAuthNtHost) {
             doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
             return this;
@@ -513,7 +568,21 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Authentication domain to use with NTML.
+         * Authentication bearer token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authBearerToken the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder authBearerToken(String authBearerToken) {
+            doSetProperty("authBearerToken", authBearerToken);
+            return this;
+        }
+        /**
+         * Authentication domain to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -522,6 +591,7 @@ public interface HttpEndpointBuilderFactory {
          * @param authDomain the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder authDomain(String authDomain) {
             doSetProperty("authDomain", authDomain);
             return this;
@@ -559,7 +629,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Authentication host to use with NTML.
+         * Authentication host to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -568,13 +638,14 @@ public interface HttpEndpointBuilderFactory {
          * @param authHost the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder authHost(String authHost) {
             doSetProperty("authHost", authHost);
             return this;
         }
         /**
          * Authentication methods allowed to use as a comma separated list of
-         * values Basic, Digest or NTLM.
+         * values Basic, Bearer, or NTLM. (NTLM is deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -585,21 +656,6 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder authMethod(String authMethod) {
             doSetProperty("authMethod", authMethod);
-            return this;
-        }
-        /**
-         * Which authentication method to prioritize to use, either as Basic,
-         * Digest or NTLM.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param authMethodPriority the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder authMethodPriority(String authMethodPriority) {
-            doSetProperty("authMethodPriority", authMethodPriority);
             return this;
         }
         /**
@@ -765,6 +821,20 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth2 Token endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2ResourceIndicator the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2ResourceIndicator(String oauth2ResourceIndicator) {
+            doSetProperty("oauth2ResourceIndicator", oauth2ResourceIndicator);
+            return this;
+        }
+        /**
          * OAuth2 scope.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -779,7 +849,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * OAuth2 Token endpoint.
+         * OAuth2 Resource Indicator.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1509,7 +1579,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure the HttpClient using the key/values from the Map.
+         * To configure the HttpClient using the key/values from the Map. This
+         * is a multi-value option with prefix: httpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1528,7 +1599,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure the HttpClient using the key/values from the Map.
+         * To configure the HttpClient using the key/values from the Map. This
+         * is a multi-value option with prefix: httpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1547,7 +1619,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To configure the connection and the socket using the key/values from
-         * the Map.
+         * the Map. This is a multi-value option with prefix: httpConnection.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1567,7 +1639,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To configure the connection and the socket using the key/values from
-         * the Map.
+         * the Map. This is a multi-value option with prefix: httpConnection.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

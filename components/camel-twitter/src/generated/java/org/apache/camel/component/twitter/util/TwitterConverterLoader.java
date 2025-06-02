@@ -45,15 +45,45 @@ public final class TwitterConverterLoader implements TypeConverterLoader, CamelC
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.lang.String.class, twitter4j.v1.DirectMessage.class, false,
-            (type, exchange, value) -> org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.DirectMessage) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.DirectMessage) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, twitter4j.v1.Status.class, false,
-            (type, exchange, value) -> org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.Status) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.Status) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, twitter4j.v1.Trend.class, false,
-            (type, exchange, value) -> org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.Trend) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.Trend) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, twitter4j.v1.Trends.class, false,
-            (type, exchange, value) -> org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.Trends) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.Trends) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, twitter4j.v1.UserList.class, false,
-            (type, exchange, value) -> org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.UserList) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.twitter.util.TwitterConverter.toString((twitter4j.v1.UserList) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

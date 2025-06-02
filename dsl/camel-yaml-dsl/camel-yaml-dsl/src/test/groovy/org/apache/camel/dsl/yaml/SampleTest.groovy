@@ -37,21 +37,4 @@ class SampleTest extends YamlTestSupport {
             }
     }
 
-    def "Error: kebab-case: message-frequency"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - sample:  
-                          message-frequency: 5
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (Exception e) {
-            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
-        }
-    }
 }

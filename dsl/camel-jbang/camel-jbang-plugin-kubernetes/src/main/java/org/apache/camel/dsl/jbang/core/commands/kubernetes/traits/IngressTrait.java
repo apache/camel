@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
+import java.util.List;
 import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.networking.v1.HTTPIngressPath;
@@ -36,9 +37,9 @@ public class IngressTrait extends BaseTrait {
 
     public static final int IngressTrait = 2400;
 
-    public static final String INGRESS_CLASS_NAME = "nginx";
     public static final String DEFAULT_INGRESS_HOST = "";
     public static final String DEFAULT_INGRESS_PATH = "/";
+    public static final String DEFAULT_INGRESS_CLASS_NAME = "nginx";
     public static final Ingress.PathType DEFAULT_INGRESS_PATH_TYPE = Ingress.PathType.PREFIX;
 
     public IngressTrait() {
@@ -86,8 +87,9 @@ public class IngressTrait extends BaseTrait {
                 .endBackend()
                 .build();
 
+        var ingressHost = Optional.ofNullable(ingressTrait.getHost()).orElse(DEFAULT_INGRESS_HOST);
         IngressRule rule = new IngressRuleBuilder()
-                .withHost(Optional.ofNullable(ingressTrait.getHost()).orElse(DEFAULT_INGRESS_HOST))
+                .withHost(ingressHost)
                 .withNewHttp()
                 .withPaths(path)
                 .endHttp()
@@ -95,11 +97,14 @@ public class IngressTrait extends BaseTrait {
 
         ingressBuilder
                 .withNewSpec()
-                .withIngressClassName(INGRESS_CLASS_NAME)
+                .withIngressClassName(Optional.ofNullable(ingressTrait.getIngressClass()).orElse(DEFAULT_INGRESS_CLASS_NAME))
                 .withRules(rule)
                 .endSpec();
 
-        if (ingressTrait.getTlsHosts() != null && ingressTrait.getTlsSecretName() != null) {
+        if (ingressTrait.getTlsSecretName() != null) {
+            if (ingressTrait.getTlsHosts() == null && !ingressHost.isEmpty()) {
+                ingressTrait.setTlsHosts(List.of(ingressHost));
+            }
             IngressTLS tls = new IngressTLSBuilder()
                     .withHosts(ingressTrait.getTlsHosts())
                     .withSecretName(ingressTrait.getTlsSecretName())

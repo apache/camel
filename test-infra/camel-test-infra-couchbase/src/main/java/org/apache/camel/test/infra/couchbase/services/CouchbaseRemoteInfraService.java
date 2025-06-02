@@ -49,6 +49,48 @@ public class CouchbaseRemoteInfraService implements CouchbaseInfraService {
     }
 
     @Override
+    public String protocol() {
+        return System.getProperty(CouchbaseProperties.COUCHBASE_PROTOCOL, "http");
+    }
+
+    @Override
+    public String hostname() {
+        return System.getProperty(CouchbaseProperties.COUCHBASE_HOSTNAME);
+    }
+
+    @Override
+    public int port() {
+        String portValue = System.getProperty(CouchbaseProperties.COUCHBASE_PORT, "8091");
+
+        return Integer.parseInt(portValue);
+    }
+
+    @Override
+    public String username() {
+        return System.getProperty(CouchbaseProperties.COUCHBASE_USERNAME, "Administrator");
+    }
+
+    @Override
+    public String password() {
+        return System.getProperty(CouchbaseProperties.COUCHBASE_PASSWORD);
+    }
+
+    @Override
+    public String bucket() {
+        throw new IllegalArgumentException("CouchbaseRemoteInfraService does not support bucket creation");
+    }
+
+    @Override
+    public String viewName() {
+        throw new IllegalArgumentException("CouchbaseRemoteInfraService does not support view creation");
+    }
+
+    @Override
+    public String designDocumentName() {
+        throw new IllegalArgumentException("CouchbaseRemoteInfraService does not support design document creation");
+    }
+
+    @Override
     public void registerProperties() {
         // NO-OP
     }

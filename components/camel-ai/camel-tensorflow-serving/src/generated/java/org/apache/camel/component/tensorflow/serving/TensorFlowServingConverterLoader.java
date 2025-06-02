@@ -45,23 +45,77 @@ public final class TensorFlowServingConverterLoader implements TypeConverterLoad
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, tensorflow.serving.Classification.ClassificationRequest.class, tensorflow.serving.Classification.ClassificationRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toClassificationRequest((tensorflow.serving.Classification.ClassificationRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toClassificationRequest((tensorflow.serving.Classification.ClassificationRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, tensorflow.serving.Classification.ClassificationRequest.class, tensorflow.serving.InputOuterClass.Input.class, false,
-            (type, exchange, value) -> org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toClassificationRequest((tensorflow.serving.InputOuterClass.Input) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toClassificationRequest((tensorflow.serving.InputOuterClass.Input) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, tensorflow.serving.Classification.ClassificationRequest.class, tensorflow.serving.InputOuterClass.Input.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toClassificationRequest((tensorflow.serving.InputOuterClass.Input.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toClassificationRequest((tensorflow.serving.InputOuterClass.Input.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, tensorflow.serving.GetModelMetadata.GetModelMetadataRequest.class, tensorflow.serving.GetModelMetadata.GetModelMetadataRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toGetModelMetadataRequest((tensorflow.serving.GetModelMetadata.GetModelMetadataRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toGetModelMetadataRequest((tensorflow.serving.GetModelMetadata.GetModelMetadataRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, tensorflow.serving.GetModelStatus.GetModelStatusRequest.class, tensorflow.serving.GetModelStatus.GetModelStatusRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toGetModelStatusRequest((tensorflow.serving.GetModelStatus.GetModelStatusRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toGetModelStatusRequest((tensorflow.serving.GetModelStatus.GetModelStatusRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, tensorflow.serving.Predict.PredictRequest.class, tensorflow.serving.Predict.PredictRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toPredictRequest((tensorflow.serving.Predict.PredictRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toPredictRequest((tensorflow.serving.Predict.PredictRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, tensorflow.serving.RegressionOuterClass.RegressionRequest.class, tensorflow.serving.InputOuterClass.Input.class, false,
-            (type, exchange, value) -> org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toRegressionRequest((tensorflow.serving.InputOuterClass.Input) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toRegressionRequest((tensorflow.serving.InputOuterClass.Input) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, tensorflow.serving.RegressionOuterClass.RegressionRequest.class, tensorflow.serving.InputOuterClass.Input.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toRegressionRequest((tensorflow.serving.InputOuterClass.Input.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toRegressionRequest((tensorflow.serving.InputOuterClass.Input.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, tensorflow.serving.RegressionOuterClass.RegressionRequest.class, tensorflow.serving.RegressionOuterClass.RegressionRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toRegressionRequest((tensorflow.serving.RegressionOuterClass.RegressionRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.tensorflow.serving.TensorFlowServingConverter.toRegressionRequest((tensorflow.serving.RegressionOuterClass.RegressionRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

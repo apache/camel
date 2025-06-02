@@ -99,6 +99,9 @@ import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
+import org.apache.camel.support.scan.DefaultPackageScanResourceResolver;
+import org.apache.camel.support.scan.WebSpherePackageScanClassResolver;
 import org.apache.camel.support.startup.DefaultStartupConditionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -632,10 +635,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
             tracer = new DefaultTracer();
             tracer.setEnabled(isTracing());
             tracer.setStandby(isTracingStandby());
-            // enable both rest/templates if templates is enabled (we only want 1 public option)
-            boolean restOrTemplates = isTracingTemplates();
-            tracer.setTraceTemplates(restOrTemplates);
-            tracer.setTraceRests(restOrTemplates);
+            tracer.setTraceTemplates(isTracingTemplates());
+            tracer.setTraceRests(isTracingRests());
             getCamelContextExtension().addContextPlugin(Tracer.class, tracer);
         }
         return tracer;

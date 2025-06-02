@@ -44,8 +44,14 @@ public final class CosmosDbTypeConverterLoader implements TypeConverterLoader, C
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, com.azure.cosmos.models.PartitionKey.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.azure.cosmosdb.CosmosDbTypeConverter.toPartitionKey((java.lang.String) value));
+        addTypeConverter(registry, com.azure.cosmos.models.PartitionKey.class, java.lang.String.class, true,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.azure.cosmosdb.CosmosDbTypeConverter.toPartitionKey((java.lang.String) value);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

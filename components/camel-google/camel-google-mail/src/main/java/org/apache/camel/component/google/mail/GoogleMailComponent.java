@@ -38,12 +38,10 @@ public class GoogleMailComponent
 
     public GoogleMailComponent() {
         super(GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
-        registerExtension(new GoogleMailComponentVerifierExtension());
     }
 
     public GoogleMailComponent(CamelContext context) {
         super(context, GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
-        registerExtension(new GoogleMailComponentVerifierExtension());
     }
 
     @Override

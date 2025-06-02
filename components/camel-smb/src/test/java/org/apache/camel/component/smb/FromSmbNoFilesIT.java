@@ -29,7 +29,7 @@ public class FromSmbNoFilesIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/empty&delete=true",
+                "smb:%s/%s/empty?username=%s&password=%s&delete=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

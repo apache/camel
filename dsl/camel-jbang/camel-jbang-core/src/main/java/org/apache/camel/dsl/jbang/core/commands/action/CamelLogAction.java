@@ -16,10 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
@@ -57,6 +57,7 @@ public class CamelLogAction extends ActionBaseCommand {
     private static final int NAME_MIN_WIDTH = 10;
 
     private static final String TIMESTAMP_MAIN = "yyyy-MM-dd HH:mm:ss.SSS";
+    private static final String TIMESTAMP_SB = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
     private CommandHelper.ReadConsoleTask waitUserTask;
 
@@ -254,12 +255,12 @@ public class CamelLogAction extends ActionBaseCommand {
 
         for (Row row : rows.values()) {
             if (row.reader == null) {
-                File file = logFile(row.pid);
-                if (file.exists()) {
-                    row.reader = new LineNumberReader(new FileReader(file));
+                Path file = logFile(row.pid);
+                if (Files.exists(file)) {
+                    row.reader = new LineNumberReader(Files.newBufferedReader(file));
                     if (tail == 0) {
                         // only read new lines so forward to end of reader
-                        long size = file.length();
+                        long size = Files.size(file);
                         row.reader.skip(size);
                     }
                 }
@@ -428,17 +429,18 @@ public class CamelLogAction extends ActionBaseCommand {
         }
     }
 
-    private static File logFile(String pid) {
+    private static Path logFile(String pid) {
         String name = pid + ".log";
-        return new File(CommandLineHelper.getCamelDir(), name);
+        Path parent = CommandLineHelper.getCamelDir();
+        return parent.resolve(name);
     }
 
     private void tailStartupLogFiles(Map<Long, Row> rows) throws Exception {
         for (Row row : rows.values()) {
-            File log = logFile(row.pid);
-            if (log.exists()) {
+            Path log = logFile(row.pid);
+            if (Files.exists(log)) {
                 row.fifo = new ArrayDeque<>();
-                row.reader = new LineNumberReader(new FileReader(log));
+                row.reader = new LineNumberReader(Files.newBufferedReader(log));
                 String line;
                 do {
                     line = row.reader.readLine();
@@ -457,9 +459,9 @@ public class CamelLogAction extends ActionBaseCommand {
 
     private void tailLogFiles(Map<Long, Row> rows, int tail, Date limit) throws Exception {
         for (Row row : rows.values()) {
-            File log = logFile(row.pid);
-            if (log.exists()) {
-                row.reader = new LineNumberReader(new FileReader(log));
+            Path log = logFile(row.pid);
+            if (Files.exists(log)) {
+                row.reader = new LineNumberReader(Files.newBufferedReader(log));
                 String line;
                 if (tail <= 0) {
                     row.fifo = new ArrayDeque<>();
@@ -489,15 +491,24 @@ public class CamelLogAction extends ActionBaseCommand {
         // if using spring boot then adjust the timestamp to uniform camel-main style
         String ts = StringHelper.before(line, "  ");
         if (ts != null && ts.contains("T")) {
-            ts = ts.replace('T', ' ');
-            int dot = ts.indexOf('.');
-            if (dot != -1) {
-                int pos1 = dot + 3; // skip these 6 chars
-                int pos2 = dot + 9;
-                ts = ts.substring(0, pos1) + ts.substring(pos2);
+            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_SB);
+            try {
+                // the log can be in color or not so we need to unescape always
+                sdf.parse(unescapeAnsi(ts));
+                int dot = ts.indexOf('.');
+                if (dot != -1) {
+                    int pos1 = dot + 3; // skip millis and timezone
+                    int pos2 = dot + 9;
+                    if (pos2 < ts.length()) {
+                        ts = ts.substring(0, pos1) + ts.substring(pos2);
+                        String after = StringHelper.after(line, "  ");
+                        ts = ts.replace('T', ' ');
+                        return ts + "  " + after;
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
             }
-            String after = StringHelper.after(line, "  ");
-            return ts + "  " + after;
         }
         return line;
     }

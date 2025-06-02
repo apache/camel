@@ -34,7 +34,7 @@ public class SmbProducerFileWithCharsetIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/charset&charset=iso-8859-1",
+                "smb:%s/%s/charset?username=%s&password=%s&charset=iso-8859-1",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import java.util.Properties;
@@ -85,7 +84,7 @@ public final class PluginHelper {
                 final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
 
                 // only load the plugin if the command-line is calling this plugin
-                if (target != null && !target.equals(command)) {
+                if (target != null && !"shell".equals(target) && !target.equals(command)) {
                     continue;
                 }
 
@@ -141,7 +140,8 @@ public final class PluginHelper {
         downloader.setClassLoader(ddlcl);
         downloader.start();
         // downloads and adds to the classpath
-        downloader.downloadDependency(group, "camel-jbang-plugin-" + command, version);
+        downloader.downloadDependencyWithParent("org.apache.camel:camel-jbang-parent:" + version, group,
+                "camel-jbang-plugin-" + command, version);
         Optional<Plugin> instance = Optional.empty();
         InputStream in = null;
         String path = FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/camel-jbang-plugin-" + command;
@@ -174,12 +174,10 @@ public final class PluginHelper {
 
     private static JsonObject getPluginConfig() {
         try {
-            File f = new File(CommandLineHelper.getHomeDir(), PLUGIN_CONFIG);
-            if (f.exists()) {
-                try (FileInputStream fis = new FileInputStream(f)) {
-                    String text = IOHelper.loadText(fis);
-                    return (JsonObject) Jsoner.deserialize(text);
-                }
+            Path f = CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
+            if (Files.exists(f)) {
+                String text = Files.readString(f);
+                return (JsonObject) Jsoner.deserialize(text);
             }
         } catch (Exception e) {
             // ignore
@@ -189,10 +187,10 @@ public final class PluginHelper {
     }
 
     public static JsonObject createPluginConfig() {
-        File f = new File(CommandLineHelper.getHomeDir(), PLUGIN_CONFIG);
+        Path f = CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
         JsonObject config = Jsoner.deserialize("{ \"plugins\": {} }", new JsonObject());
         try {
-            Files.writeString(f.toPath(), config.toJson(),
+            Files.writeString(f, config.toJson(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE,
                     StandardOpenOption.TRUNCATE_EXISTING);
@@ -204,9 +202,9 @@ public final class PluginHelper {
     }
 
     public static void savePluginConfig(JsonObject plugins) {
-        File f = new File(CommandLineHelper.getHomeDir(), PLUGIN_CONFIG);
+        Path f = CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
         try {
-            Files.writeString(f.toPath(), plugins.toJson(),
+            Files.writeString(f, plugins.toJson(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE,
                     StandardOpenOption.TRUNCATE_EXISTING);

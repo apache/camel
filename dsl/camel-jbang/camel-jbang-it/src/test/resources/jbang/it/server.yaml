@@ -18,5 +18,5 @@
 - from:
     uri: "platform-http:/hello"
     steps:
-      - set-body:
+      - setBody:
           constant: "Hello World"

@@ -25,7 +25,7 @@ import org.apache.camel.xml.io.XmlPullParserException;
 /**
  * XML {@link ModelParser} that supports loading:
  * <ul>
- * <li>Standard Camel XML DSL</li>
+ * <li>Standard Camel XML DSL (xml-io)</li>
  * <li>Classic Spring XML <beans> with embedded <camelContext> (limited parsing, to discover <routes> inside
  * <camelContext>)</li>
  * <li>Legacy OSGi <blueprint> with embedded <camelContext> (limited parsing, to discover <routes> inside

@@ -52,11 +52,4 @@ public interface DownloadListener {
         // noop
     }
 
-    /**
-     * When a modeline is detected
-     */
-    default void onLoadingModeline(String key, String value) {
-        // noop
-    }
-
 }

@@ -34,7 +34,8 @@ public interface VertxHttpBinding {
     /**
      * Populates request headers on the {@link HttpRequest} using the supplied {@link HeaderFilterStrategy}
      */
-    void populateRequestHeaders(Exchange exchange, HttpRequest<Buffer> request, HeaderFilterStrategy strategy);
+    void populateRequestHeaders(
+            VertxHttpEndpoint endpoint, Exchange exchange, HttpRequest<Buffer> request, HeaderFilterStrategy strategy);
 
     /**
      * Handles the {@link HttpResponse} returned from the HTTP endpoint invocation

@@ -44,24 +44,4 @@ class LogTest extends YamlTestSupport {
             }
     }
 
-    def "Error: kebab-case: logging-level"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - log:
-                         logging-level: "ERROR"
-                         message: "test"
-                         logName: "yaml"
-                      - to: "direct:_result"   
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            assert e.message.contains("additional properties")
-        }
-    }
 }

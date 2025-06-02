@@ -23,7 +23,7 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(17);
         props.add("allowTemplateFromHeader");
         props.add("contentCache");
         props.add("deleteOutputFile");
@@ -34,6 +34,7 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("output");
         props.add("resourceUri");
         props.add("resultHandlerFactory");
+        props.add("source");
         props.add("transformerCacheSize");
         props.add("transformerFactory");
         props.add("transformerFactoryClass");

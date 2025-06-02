@@ -49,6 +49,7 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.KeyValueHolder;
+import org.apache.camel.xml.out.BaseWriter;
 import org.apache.camel.xml.out.ModelWriter;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
@@ -87,7 +88,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         };
 
         StringWriter buffer = new StringWriter();
-        ModelWriter writer = new ModelWriter(buffer, "http://camel.apache.org/schema/spring") {
+        ModelWriter writer = new ModelWriter(buffer, BaseWriter.DEFAULT_NAMESPACE) {
             @Override
             protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def)
                     throws IOException {
@@ -459,7 +460,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             def.setDataFormats(new ArrayList<>(dataFormats.values()));
 
             StringWriter tmp = new StringWriter();
-            ModelWriter writer = new ModelWriter(tmp, null);
+            ModelWriter writer = new ModelWriter(tmp, BaseWriter.DEFAULT_NAMESPACE);
             writer.writeDataFormatsDefinition(def);
 
             // output with 4 space indent

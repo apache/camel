@@ -167,10 +167,14 @@ public final class GenericFileConverter {
             // load the file using input stream
             InputStream is = genericFileToInputStream(file, exchange);
             if (is != null) {
-                // need to double convert to convert correctly
-                byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, is);
-                if (data != null) {
-                    return exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, data);
+                try {
+                    // need to double convert to convert correctly
+                    byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, is);
+                    if (data != null) {
+                        return exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, data);
+                    }
+                } finally {
+                    IOHelper.close(is);
                 }
             }
         }

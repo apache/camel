@@ -56,10 +56,13 @@ import org.bouncycastle.util.io.Streams;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
+import static org.apache.camel.component.as2.api.entity.ApplicationEntity.CONTENT_DISPOSITION_PATTERN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -69,6 +72,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AS2ServerManagerIT.class);
+
+    private static final String ATTACHED_FILE_NAME = "file_123.txt";
 
     @Test
     public void receivePlainEDIMessageTest() throws Exception {
@@ -129,6 +134,85 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
         assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT),
                 "Unexpected content type for message");
+
+        assertTrue(request instanceof ClassicHttpRequest, "Request does not contain entity");
+        HttpEntity entity = ((ClassicHttpRequest) request).getEntity();
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationEDIFACTEntity, "Unexpected request entity type");
+        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) entity;
+        assertTrue(ediEntity.getContentType().startsWith(AS2MediaType.APPLICATION_EDIFACT),
+                "Unexpected content type for entity");
+        assertTrue(ediEntity.isMainBody(), "Entity not set as main body of request");
+        assertNull(request.getFirstHeader(AS2Header.CONTENT_DISPOSITION));
+
+        ApplicationEntity appEntity = (ApplicationEntity) entity;
+        if (encoding == null) {
+            assertTrue(appEntity.getEdiMessage() instanceof String);
+            String rcvdMessage = ((String) appEntity.getEdiMessage()).replaceAll("\r", "");
+            assertEquals(EDI_MESSAGE, rcvdMessage, "EDI message does not match");
+        } else if ("base64".equals(encoding)) {
+            assertTrue(appEntity.getEdiMessage() instanceof InputStream);
+            InputStream is = (InputStream) appEntity.getEdiMessage();
+            String rcvdMessage = new String(is.readAllBytes(), StandardCharsets.US_ASCII).replaceAll("\r", "");
+            assertEquals(EDI_MESSAGE, rcvdMessage, "EDI message does not match");
+        }
+        String rcvdMessageFromBody = message.getBody(String.class);
+        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessageFromBody.replaceAll("[\n\r]", ""),
+                "EDI message does not match");
+    }
+
+    @Test
+    public void receivePlainEDIStreamMessageWithAttachedFileNameTest() throws Exception {
+        receivePlainEDIMessageWithAttachedFileName(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)),
+                null);
+    }
+
+    private void receivePlainEDIMessageWithAttachedFileName(Object msg, String encoding) throws Exception {
+        final AS2ClientConnection clientConnection = getAs2ClientConnection();
+        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
+
+        clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
+                AS2MediaType.APPLICATION_EDIFACT, null, encoding, null, null, null,
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, ATTACHED_FILE_NAME, null,
+                null, null, null);
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+        mockEndpoint.assertIsSatisfied();
+
+        final List<Exchange> exchanges = mockEndpoint.getExchanges();
+        assertNotNull(exchanges, "listen result");
+        assertFalse(exchanges.isEmpty(), "listen result");
+        LOG.debug("poll result: {}", exchanges);
+
+        Exchange exchange = exchanges.get(0);
+        Message message = exchange.getIn();
+        assertNotNull(message, "exchange message");
+
+        HttpCoreContext coreContext = exchange.getProperty(AS2Constants.AS2_INTERCHANGE, HttpCoreContext.class);
+        assertNotNull(coreContext, "context");
+        HttpRequest request = coreContext.getRequest();
+        assertNotNull(request, "request");
+        assertEquals(METHOD, request.getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getUri().getPath(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getVersion(), "Unexpected HTTP version value");
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
+                "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+                "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT),
+                "Unexpected content type for message");
+        assertEquals(MessageFormatter.format(CONTENT_DISPOSITION_PATTERN, ATTACHED_FILE_NAME).getMessage(),
+                request.getFirstHeader(AS2Header.CONTENT_DISPOSITION).getValue(), "Unexpected user agent value");
 
         assertTrue(request instanceof ClassicHttpRequest, "Request does not contain entity");
         HttpEntity entity = ((ClassicHttpRequest) request).getEntity();

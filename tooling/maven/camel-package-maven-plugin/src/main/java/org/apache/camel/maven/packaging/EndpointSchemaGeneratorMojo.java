@@ -654,7 +654,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         String doc = getDocumentationWithNotes(option);
         if (Strings.isNullOrEmpty(doc) && parentOptions != null) {
             doc = parentOptions.stream().filter(opt -> Objects.equals(opt.getName(), option.getName()))
-                    .map(BaseOptionModel::getDescription).findFirst().orElse(null);
+                    .map(this::getDocumentationWithNotes).findFirst().orElse(null);
         }
         // as its json we need to sanitize the docs
         doc = JavadocHelper.sanitizeDescription(doc, false);
@@ -680,18 +680,28 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     public String getDocumentationWithNotes(BaseOptionModel option) {
         String description = option.getDescription();
+        if (description == null) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder(description.length() * 64);
         sb.append(description);
 
+        if (option.isMultiValue() && option.getPrefix() != null) {
+            if (!sb.isEmpty() && sb.charAt(sb.length() - 1) != '.') {
+                sb.append('.');
+            }
+            sb.append(" This is a multi-value option with prefix: ").append(option.getPrefix());
+        }
+
         if (!Strings.isNullOrEmpty(option.getDefaultValueNote())) {
-            if (sb.charAt(sb.length() - 1) != '.') {
+            if (!sb.isEmpty() && sb.charAt(sb.length() - 1) != '.') {
                 sb.append('.');
             }
             sb.append(" Default value notice: ").append(option.getDefaultValueNote());
         }
 
         if (!Strings.isNullOrEmpty(option.getDeprecationNote())) {
-            if (sb.charAt(sb.length() - 1) != '.') {
+            if (!sb.isEmpty() && sb.charAt(sb.length() - 1) != '.') {
                 sb.append('.');
             }
             sb.append(" Deprecation note: ").append(option.getDeprecationNote());

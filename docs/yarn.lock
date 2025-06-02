@@ -17,21 +17,21 @@ __metadata:
   resolution: "@apache-camel/docs@workspace:."
   dependencies:
     del: ^8.0.0
-    eslint: ^9.24.0
+    eslint: ^9.28.0
     eslint-config-standard: ^17.1.0
     eslint-plugin-import: ^2.31.0
-    eslint-plugin-n: ^17.17.0
+    eslint-plugin-n: ^17.18.0
     eslint-plugin-node: ^11.1.0
     eslint-plugin-promise: ^6.6.0
     gulp: ~4.0
-    gulp-cli: ~3.0
+    gulp-cli: ~3.1
     gulp-inject: ^5.0.5
     gulp-rename: ^2.0.0
     gulp-sort: ^2.0.0
     map-stream: ^0.0.7
     prettier-eslint-cli: ^8.0.1
     through2: ^4.0.2
-    vinyl: ^3.0.0
+    vinyl: ^3.0.1
   languageName: unknown
   linkType: soft
 
@@ -100,19 +100,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/config-helpers@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@eslint/config-helpers@npm:0.2.0"
-  checksum: 36e857165f1d4661ce1dd31e739135e49b3fc0cf1dcbd64e07e53475441640ab0b7abefa3e9718a598c570ee05a91b2f91cd74c008fa30fc3db8b05d07645fb2
+"@eslint/config-helpers@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@eslint/config-helpers@npm:0.2.1"
+  checksum: b463805bc319608436a8b19c94fd533d8196b326c03361db54c0f3ec59d7bd6337c9764bc945ef15df94f50443973241dc265f661b07aceed4938f7d1cf2e822
   languageName: node
   linkType: hard
 
-"@eslint/core@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@eslint/core@npm:0.12.0"
+"@eslint/core@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "@eslint/core@npm:0.14.0"
   dependencies:
     "@types/json-schema": ^7.0.15
-  checksum: 3979af324102a3af2742060360563ba6b9525b8e1e524ad3d3e31e65af27db554b61d1cdfeaa42e15fb7d9ce9097c44225fd9e4f8193576accc1772457b88c12
+  checksum: d68b8282b6f38c5145234f812f18f491d12d716240875591bd54bf5ac32858d979bdf6d38e521997a6e01f2c4223a3e66049714151da7278d0a95ff15b5d46c8
   languageName: node
   linkType: hard
 
@@ -181,10 +181,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.24.0":
-  version: 9.24.0
-  resolution: "@eslint/js@npm:9.24.0"
-  checksum: 423c09a9a52ae596cd77f38f97491261447e04d31a6d681b49cec7ff25dadb64f9b30e48ee5fcfb0a238a3dc3f6ee7c678fdd6ec2415bf687a73ddebaa8adff4
+"@eslint/js@npm:9.28.0":
+  version: 9.28.0
+  resolution: "@eslint/js@npm:9.28.0"
+  checksum: f54c11d192b95ab30141e9434ed33c3f9f49877f42fd14294edb59f904aa2d5dfa63fe6e9d8c9c8ccde378d88058b255f66f774ec1f1ede5f7ce0d18992f4105
   languageName: node
   linkType: hard
 
@@ -195,13 +195,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/plugin-kit@npm:^0.2.7":
-  version: 0.2.7
-  resolution: "@eslint/plugin-kit@npm:0.2.7"
+"@eslint/plugin-kit@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "@eslint/plugin-kit@npm:0.3.1"
   dependencies:
-    "@eslint/core": ^0.12.0
+    "@eslint/core": ^0.14.0
     levn: ^0.4.1
-  checksum: e5d9be6ae54c7abd4605025e5831ac16dd0636ac5d41fbfcd8898a5d29711a2fb1fc8c784aa68a1469e66c8d41965da70d7a7516f9c2bca1c84342dd344bbb8e
+  checksum: 8de2438456d9a741c909dd22a60454793c0147e1a13833717e4109c46f5a6b090780e8d9e940a3b3b9bf3643d01a0e726cc74f28ccd7caac95053bb39c2e6c04
   languageName: node
   linkType: hard
 
@@ -2185,9 +2185,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:^17.17.0":
-  version: 17.17.0
-  resolution: "eslint-plugin-n@npm:17.17.0"
+"eslint-plugin-n@npm:^17.18.0":
+  version: 17.18.0
+  resolution: "eslint-plugin-n@npm:17.18.0"
   dependencies:
     "@eslint-community/eslint-utils": ^4.5.0
     enhanced-resolve: ^5.17.1
@@ -2199,7 +2199,7 @@ __metadata:
     semver: ^7.6.3
   peerDependencies:
     eslint: ">=8.23.0"
-  checksum: ddea284e206ae2de6661419e232936d74d2fa896d43413877c31f5eae03f1908bfe0f16c8ed3d1136f1498783886b3b39847b87900e57503d337adf5ceec98b1
+  checksum: ab08af06a5d76e678beb18f281e63b5ee7f1c4660b7e90c6b75c1ab1b5a341228c3ffe86983940289c9a3b6fb2dfe0e406c5401fd8e9591b365b876c109861cb
   languageName: node
   linkType: hard
 
@@ -2392,18 +2392,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.24.0":
-  version: 9.24.0
-  resolution: "eslint@npm:9.24.0"
+"eslint@npm:^9.28.0":
+  version: 9.28.0
+  resolution: "eslint@npm:9.28.0"
   dependencies:
     "@eslint-community/eslint-utils": ^4.2.0
     "@eslint-community/regexpp": ^4.12.1
     "@eslint/config-array": ^0.20.0
-    "@eslint/config-helpers": ^0.2.0
-    "@eslint/core": ^0.12.0
+    "@eslint/config-helpers": ^0.2.1
+    "@eslint/core": ^0.14.0
     "@eslint/eslintrc": ^3.3.1
-    "@eslint/js": 9.24.0
-    "@eslint/plugin-kit": ^0.2.7
+    "@eslint/js": 9.28.0
+    "@eslint/plugin-kit": ^0.3.1
     "@humanfs/node": ^0.16.6
     "@humanwhocodes/module-importer": ^1.0.1
     "@humanwhocodes/retry": ^0.4.2
@@ -2438,7 +2438,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: fb4cdca007fe8b66d6c1ae8e682ce504afc116ab9a0ba264a69ff7cd40833ad02d9b86394685563175d202c31dbb57b31de46687cfa10ed890c7ae560f560871
+  checksum: 0691c7135050b46db69c583b8c0e8eade5826036c5a60597dbda134bcdb2eaa1a8516b59083d528eb93c04b45daa41fb5845974b889c3588ca2e5889f0c8c2b6
   languageName: node
   linkType: hard
 
@@ -3361,16 +3361,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gulp-cli@npm:~3.0":
-  version: 3.0.0
-  resolution: "gulp-cli@npm:3.0.0"
+"gulp-cli@npm:~3.1":
+  version: 3.1.0
+  resolution: "gulp-cli@npm:3.1.0"
   dependencies:
     "@gulpjs/messages": ^1.1.0
     chalk: ^4.1.2
     copy-props: ^4.0.0
     gulplog: ^2.2.0
     interpret: ^3.1.1
-    liftoff: ^5.0.0
+    liftoff: ^5.0.1
     mute-stdout: ^2.0.0
     replace-homedir: ^2.0.0
     semver-greatest-satisfied-range: ^2.0.0
@@ -3379,7 +3379,7 @@ __metadata:
     yargs: ^16.2.0
   bin:
     gulp: bin/gulp.js
-  checksum: 90bef372b0831261c7b583ac9ad63b04ee52d7bb0a89f75dc9cf4378921842ddecc874f77d7dbc2ea30b04ce8083efaa0c6eea774ced0d44d1818facc2523db0
+  checksum: 6cb26653ac8e57d7e69dc1155aabbd5cfd67749c8e392eac6eba58c7774b2bc90f3c350f71faabf820854d126f42e5672401869ef3a97924c01561db4483d45f
   languageName: node
   linkType: hard
 
@@ -4394,9 +4394,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"liftoff@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "liftoff@npm:5.0.0"
+"liftoff@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "liftoff@npm:5.0.1"
   dependencies:
     extend: ^3.0.2
     findup-sync: ^5.0.0
@@ -4405,7 +4405,7 @@ __metadata:
     is-plain-object: ^5.0.0
     rechoir: ^0.8.0
     resolve: ^1.20.0
-  checksum: ae6a1f3b734fbf0b8b5b7ca189e00fe04fa9966e436313c7e20e3444cec5ae9e4f472666aa02ac23557e412610f111d9d56ef78854cae1580d297d5e365738a8
+  checksum: 3adb6167fb04d1b2add302dd6589af61774c52b87cadd3b158a6e91fef576d7bf673fd3da4fa88ee81776b2a6fe09caf25c34ccc0fb07023194e2196bf570234
   languageName: node
   linkType: hard
 
@@ -6945,16 +6945,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vinyl@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "vinyl@npm:3.0.0"
+"vinyl@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "vinyl@npm:3.0.1"
   dependencies:
     clone: ^2.1.2
-    clone-stats: ^1.0.0
     remove-trailing-separator: ^1.1.0
     replace-ext: ^2.0.0
     teex: ^1.0.1
-  checksum: 29c563d6a027d49ec216bc8259b494bd048d1f9df39103aea6877e02af1d0a6956b11ad977206b5a807b331ef5431bed9f6b8890de5e55188389d31cf7af7fbe
+  checksum: d3ced776ea78b0479d54788abcf9db3275384a0e5053d1dff57f520a0a3bc8a008daa45eaa0015dd6ea88a165ddc488bb583bad11f8a17d51bcaa6bf47d5d0ea
   languageName: node
   linkType: hard
 

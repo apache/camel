@@ -68,7 +68,6 @@ public class ElasticsearchComponent extends DefaultComponent {
 
     public ElasticsearchComponent(CamelContext context) {
         super(context);
-        registerExtension(new ElasticsearchComponentVerifierExtension());
     }
 
     @Override

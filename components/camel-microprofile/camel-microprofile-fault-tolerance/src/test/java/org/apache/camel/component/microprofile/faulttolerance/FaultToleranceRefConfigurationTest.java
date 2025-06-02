@@ -74,7 +74,8 @@ public class FaultToleranceRefConfigurationTest extends CamelTestSupport {
 
         // get the object name for the delayer
         ObjectName on
-                = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myFaultTolerance\"");
+                = ObjectName.getInstance(
+                        "org.apache.camel:context=" + name + ",type=processors,name=\"myFaultToleranceRefConfigTest\"");
 
         // should be on start
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
@@ -99,7 +100,7 @@ public class FaultToleranceRefConfigurationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start").routeId("start")
-                        .circuitBreaker().id("myFaultTolerance").configuration("myConfig").faultToleranceConfiguration()
+                        .circuitBreaker().id("myFaultToleranceRefConfigTest").configuration("myConfig").faultToleranceConfiguration()
                         .delay(2000).timeoutEnabled(true).timeoutDuration(5000).end()
                         .to("direct:foo").to("log:foo")
                         .onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");

@@ -23,7 +23,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(149);
+        Set<String> props = new HashSet<>(150);
         props.add("active");
         props.add("article");
         props.add("articleAttachments");
@@ -45,6 +45,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("categoryId0");
         props.add("categoryId1");
         props.add("category_id");
+        props.add("clazz");
         props.add("comment");
         props.add("commentId");
         props.add("content");

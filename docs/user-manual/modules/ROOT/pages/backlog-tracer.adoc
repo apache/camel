@@ -104,7 +104,7 @@ is that the file content has to be read from the file.
 
 == Enabling
 
-You can turn off backlog tracing on `CamelContext`
+You can turn on backlog tracing on `CamelContext`
 
 [source,java]
 ----
@@ -124,14 +124,14 @@ And in Camel Main you can enable this  in the `application.properties` file:
 
 [source,properties]
 ----
-camel.main.backlog-tracing = true
+camel.trace.enabled = true
 ----
 
 And in Spring Boot you can enable this in the `application.properties` file:
 
 [source,properties]
 ----
-camel.springboot.backlog-tracing = true
+camel.trace.enabled = true
 ----
 
 === Tracing payloads of InputStream types

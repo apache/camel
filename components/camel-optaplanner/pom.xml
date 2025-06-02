@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.12.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-optaplanner</artifactId>
@@ -33,8 +33,6 @@
 
     <properties>
         <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
-        <!-- Needs to be investigated: crashes on CI on ppc64le -->
-        <skipTests.ppc64le>true</skipTests.ppc64le>
     </properties>
 
     <dependencies>

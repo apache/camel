@@ -45,22 +45,70 @@ public final class CxfPayloadConverterLoader implements TypeConverterLoader, Cam
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, javax.xml.transform.Source.class, org.apache.camel.component.cxf.common.CxfPayload.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfPayloadConverter.cxfPayLoadToSource((org.apache.camel.component.cxf.common.CxfPayload) value, exchange));
+        addTypeConverter(registry, javax.xml.transform.Source.class, org.apache.camel.component.cxf.common.CxfPayload.class, true,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.converter.CxfPayloadConverter.cxfPayLoadToSource((org.apache.camel.component.cxf.common.CxfPayload) value, exchange);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.StreamCache.class, org.apache.camel.component.cxf.common.CxfPayload.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfPayloadConverter.cxfPayLoadToStreamCache((org.apache.camel.component.cxf.common.CxfPayload) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.converter.CxfPayloadConverter.cxfPayLoadToStreamCache((org.apache.camel.component.cxf.common.CxfPayload) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.cxf.common.CxfPayload.class, javax.xml.transform.Source.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfPayloadConverter.sourceToCxfPayload((javax.xml.transform.Source) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.converter.CxfPayloadConverter.sourceToCxfPayload((javax.xml.transform.Source) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.cxf.common.CxfPayload.class, org.w3c.dom.Document.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfPayloadConverter.documentToCxfPayload((org.w3c.dom.Document) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.converter.CxfPayloadConverter.documentToCxfPayload((org.w3c.dom.Document) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.cxf.common.CxfPayload.class, org.w3c.dom.Element.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfPayloadConverter.elementToCxfPayload((org.w3c.dom.Element) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.converter.CxfPayloadConverter.elementToCxfPayload((org.w3c.dom.Element) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.cxf.common.CxfPayload.class, org.w3c.dom.NodeList.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfPayloadConverter.nodeListToCxfPayload((org.w3c.dom.NodeList) value, exchange));
-        addTypeConverter(registry, org.w3c.dom.Node.class, org.apache.camel.component.cxf.common.CxfPayload.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfPayloadConverter.cxfPayLoadToNode((org.apache.camel.component.cxf.common.CxfPayload) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.converter.CxfPayloadConverter.nodeListToCxfPayload((org.w3c.dom.NodeList) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
+        addTypeConverter(registry, org.w3c.dom.Node.class, org.apache.camel.component.cxf.common.CxfPayload.class, true,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.converter.CxfPayloadConverter.cxfPayLoadToNode((org.apache.camel.component.cxf.common.CxfPayload) value, exchange);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.NodeList.class, org.apache.camel.component.cxf.common.CxfPayload.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfPayloadConverter.cxfPayloadToNodeList((org.apache.camel.component.cxf.common.CxfPayload) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.converter.CxfPayloadConverter.cxfPayloadToNodeList((org.apache.camel.component.cxf.common.CxfPayload) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

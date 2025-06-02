@@ -30,7 +30,7 @@ public class SmbRecursiveMinDepthIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/uploadmin&recursive=true&mindepth=3&initialDelay=3000",
+                "smb:%s/%s/uploadmin?username=%s&password=%s&recursive=true&mindepth=3&initialDelay=3000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

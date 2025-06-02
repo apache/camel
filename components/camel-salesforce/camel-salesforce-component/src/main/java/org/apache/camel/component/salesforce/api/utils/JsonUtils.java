@@ -60,7 +60,7 @@ import org.apache.camel.component.salesforce.api.dto.PickListValue;
 import org.apache.camel.component.salesforce.api.dto.SObject;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 
 import static java.util.stream.Collectors.joining;
 

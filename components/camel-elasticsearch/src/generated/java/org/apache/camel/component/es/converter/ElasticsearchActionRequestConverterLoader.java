@@ -45,21 +45,69 @@ public final class ElasticsearchActionRequestConverterLoader implements TypeConv
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, co.elastic.clients.elasticsearch.core.BulkRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toBulkRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toBulkRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, co.elastic.clients.elasticsearch.core.DeleteRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toDeleteRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toDeleteRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, co.elastic.clients.elasticsearch.core.GetRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toGetRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toGetRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, co.elastic.clients.elasticsearch.core.IndexRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toIndexRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toIndexRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, co.elastic.clients.elasticsearch.core.MgetRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toMgetRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toMgetRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, co.elastic.clients.elasticsearch.core.SearchRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toSearchRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toSearchRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, co.elastic.clients.elasticsearch.core.UpdateRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toUpdateRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toUpdateRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, co.elastic.clients.elasticsearch.indices.DeleteIndexRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toDeleteIndexRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toDeleteIndexRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

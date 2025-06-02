@@ -178,9 +178,8 @@ public class RoutesConfigurer {
                         LOG.warn("Unable to resolve class: {}", routeClass);
                         continue;
                     }
-
-                    // lets use Camel's injector so the class has some support for dependency injection
-                    RoutesBuilder builder = camelContext.getInjector().newInstance(routeClazz);
+                    // do not post process as we do this later
+                    RoutesBuilder builder = camelContext.getInjector().newInstance(routeClazz, false);
                     routes.add(builder);
                 } catch (Exception e) {
                     if (isIgnoreLoadingError()) {
@@ -218,7 +217,8 @@ public class RoutesConfigurer {
                         continue;
                     }
                     try {
-                        Object builder = camelContext.getInjector().newInstance(routeClazz);
+                        // do not post process as we do this later
+                        Object builder = camelContext.getInjector().newInstance(routeClazz, false);
                         if (builder instanceof RoutesBuilder routesBuilder) {
                             routes.add(routesBuilder);
                         } else {

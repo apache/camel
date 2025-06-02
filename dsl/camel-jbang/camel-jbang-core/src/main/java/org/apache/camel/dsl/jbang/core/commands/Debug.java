@@ -18,12 +18,12 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.BufferedReader;
 import java.io.Console;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
@@ -88,19 +89,19 @@ public class Debug extends Run {
     boolean source;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in traced messages")
+                        description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
     @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
-                        description = "Show exchange variables in traced messages")
+                        description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers in traced messages")
+                        description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
     @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body in traced messages")
+                        description = "Show message body in debug messages")
     boolean showBody = true;
 
     @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
@@ -318,8 +319,8 @@ public class Debug extends Run {
 
     private void sendDebugCommand(long pid, String command, String breakpoint) {
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "debug");
@@ -329,9 +330,10 @@ public class Debug extends Run {
         if (breakpoint != null) {
             root.put("breakpoint", breakpoint);
         }
-        File f = getActionFile(Long.toString(pid));
+        Path f = getActionFile(Long.toString(pid));
         try {
-            IOHelper.writeText(root.toJson(), f);
+            String text = root.toJson();
+            Files.writeString(f, text);
         } catch (Exception e) {
             // ignore
         }
@@ -401,6 +403,9 @@ public class Debug extends Run {
                         // we should exchangeId/pattern elsewhere
                         row.message.remove("exchangeId");
                         row.message.remove("exchangePattern");
+                        if (!showExchangeVariables) {
+                            row.message.remove("exchangeVariables");
+                        }
                         if (!showExchangeProperties) {
                             row.message.remove("exchangeProperties");
                         }
@@ -476,8 +481,8 @@ public class Debug extends Run {
                             if (b != null) {
                                 b = CamelCommandHelper.valueAsStringPretty(b, false);
                                 try {
-                                    File f = new File(output);
-                                    IOHelper.writeText(b, f);
+                                    Path f = Path.of(output);
+                                    Files.writeString(f, b);
                                 } catch (IOException e) {
                                     // ignore
                                 }
@@ -732,10 +737,10 @@ public class Debug extends Run {
 
     private void handleHangup() {
         if (spawnPid > 0) {
-            File pidFile = new File(CommandLineHelper.getCamelDir(), Long.toString(spawnPid));
-            if (pidFile.exists()) {
+            Path pidPath = CommandLineHelper.getCamelDir().resolve(Long.toString(spawnPid));
+            if (Files.exists(pidPath)) {
                 printer().println("Shutting down Camel integration (PID: " + spawnPid + ")");
-                FileUtil.deleteFile(pidFile);
+                PathUtils.deleteFile(pidPath);
             }
         }
     }
@@ -748,11 +753,9 @@ public class Debug extends Run {
 
     JsonObject loadDebug(long pid) {
         try {
-            File f = getDebugFile(Long.toString(pid));
-            if (f != null && f.exists()) {
-                FileInputStream fis = new FileInputStream(f);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
+            Path p = getDebugFile(Long.toString(pid));
+            if (p != null && Files.exists(p)) {
+                String text = Files.readString(p);
                 return (JsonObject) Jsoner.deserialize(text);
             }
         } catch (Exception e) {

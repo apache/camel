@@ -233,15 +233,15 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
 
         LOG.trace("Closing {} channels", allChannels.size());
-        allChannels.close().awaitUninterruptibly();
+        allChannels.close().awaitUninterruptibly(configuration.getShutdownTimeout());
 
         // and then shutdown the thread pools
         if (bossGroup != null) {
-            bossGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully().awaitUninterruptibly(configuration.getShutdownTimeout());
             bossGroup = null;
         }
         if (workerGroup != null) {
-            workerGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully().awaitUninterruptibly(configuration.getShutdownTimeout());
             workerGroup = null;
         }
     }

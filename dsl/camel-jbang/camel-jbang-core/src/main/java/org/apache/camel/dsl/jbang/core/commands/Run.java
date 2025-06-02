@@ -21,10 +21,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -33,6 +30,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -116,7 +115,7 @@ public class Run extends CamelCommand {
     boolean transformMessageRun;
     boolean debugRun;
 
-    private File logFile;
+    private Path logFile;
     public long spawnPid;
 
     private Printer quietPrinter;
@@ -213,6 +212,10 @@ public class Run extends CamelCommand {
             description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
+    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    boolean packageScanJars;
+
     @Option(names = { "--jvm-debug" }, parameterConsumer = DebugConsumer.class, paramLabel = "<true|false|port>",
             description = "To enable JVM remote debugging on port 4004 by default. The supported values are true to " +
                           "enable the remote debugging, false to disable the remote debugging or a number to use a custom port")
@@ -288,6 +291,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port", defaultValue = "8080")
     int port;
 
+    @Option(names = { "--management-port" }, description = "To use a dedicated port for HTTP management")
+    int managementPort = -1;
+
     @Option(names = { "--console" }, defaultValue = "false",
             description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
     boolean console;
@@ -305,7 +311,7 @@ public class Run extends CamelCommand {
     boolean observe;
 
     @Option(names = { "--modeline" }, defaultValue = "true",
-            description = "Deprecated, to be removed: Enables Camel-K style modeline")
+            description = "Whether to support JBang style //DEPS to specify additional dependencies")
     boolean modeline = true;
 
     @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
@@ -375,11 +381,12 @@ public class Run extends CamelCommand {
         return run();
     }
 
-    public Integer runTransformMessage(String camelVersion) throws Exception {
+    public Integer runTransformMessage(String camelVersion, String repositories) throws Exception {
         // just boot silently an empty camel in the background and exit
         this.transformMessageRun = true;
         this.background = true;
         this.camelVersion = camelVersion;
+        this.repositories = repositories;
         this.empty = true;
         this.ignoreLoadingError = true;
         this.name = "transform";
@@ -417,9 +424,13 @@ public class Run extends CamelCommand {
         }
     }
 
-    private Properties loadProfileProperties(File source) throws Exception {
+    private Properties loadProfileProperties(Path source) throws Exception {
         Properties prop = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(prop, source);
+        if (Files.exists(source)) {
+            try (InputStream is = Files.newInputStream(source)) {
+                prop.load(is);
+            }
+        }
 
         // special for routes include pattern that we need to "fix" after reading from properties
         // to make this work in run command
@@ -450,14 +461,18 @@ public class Run extends CamelCommand {
         // special if user type: camel run .
         if (sourceDir == null && (files != null && files.size() == 1 && ".".equals(files.get(0)))) {
             files.clear();
-            File[] fs = new File(".").listFiles();
-            if (fs != null) {
-                for (File f : fs) {
-                    // skip hidden files
-                    if (f.isFile() && !f.isHidden()) {
-                        files.add(f.getName());
-                    }
-                }
+            try {
+                Files.list(Paths.get("."))
+                        .filter(p -> {
+                            try {
+                                return Files.isRegularFile(p) && !Files.isHidden(p);
+                            } catch (IOException e) {
+                                return false;
+                            }
+                        })
+                        .forEach(p -> files.add(p.getFileName().toString()));
+            } catch (IOException e) {
+                // Ignore
             }
         }
 
@@ -469,10 +484,14 @@ public class Run extends CamelCommand {
             }
         }
 
-        File work = CommandLineHelper.getWorkDir();
+        Path work = CommandLineHelper.getWorkDir();
         removeDir(work);
-        if (!work.exists() && !work.mkdirs()) {
-            printer().println("WARN: Failed to create working directory: " + work.getAbsolutePath());
+        if (!Files.exists(work)) {
+            try {
+                Files.createDirectories(work);
+            } catch (IOException e) {
+                printer().println("WARN: Failed to create working directory: " + work.toAbsolutePath());
+            }
         }
 
         Properties profileProperties = !empty ? loadProfileProperties() : null;
@@ -486,16 +505,16 @@ public class Run extends CamelCommand {
             // code may refer to an existing file
             String name = "CodeRoute";
             boolean file = false;
-            File f = new File(code);
-            if (f.isFile() && f.exists()) {
+            Path codePath = Paths.get(code);
+            if (Files.isRegularFile(codePath) && Files.exists(codePath)) {
                 // must be a java file
-                boolean java = f.getName().endsWith(".java");
+                boolean java = codePath.getFileName().toString().endsWith(".java");
                 if (!java) {
                     printer().printErr("Only java source files is accepted when using --code parameter");
                     return 1;
                 }
-                code = Files.readString(f.toPath());
-                name = FileUtil.onlyName(f.getName());
+                code = Files.readString(codePath);
+                name = FileUtil.onlyName(codePath.getFileName().toString());
                 file = true;
             }
             // store code in temporary file
@@ -510,11 +529,12 @@ public class Run extends CamelCommand {
         if (!empty && autoDetectFiles) {
             if (sourceDir != null) {
                 // silent-run then auto-detect all initial files for source-dir
-                String[] allFiles = new File(sourceDir).list();
-                if (allFiles != null) {
-                    for (String f : allFiles) {
-                        files.add(sourceDir + File.separator + f);
-                    }
+                try {
+                    Path sourceDirPath = Paths.get(sourceDir);
+                    Files.list(sourceDirPath)
+                            .forEach(p -> files.add(sourceDirPath.resolve(p.getFileName()).toString()));
+                } catch (IOException e) {
+                    // Ignore
                 }
             } else {
                 String routes
@@ -533,9 +553,12 @@ public class Run extends CamelCommand {
                         return 1;
                     } else {
                         // silent-run then auto-detect all files
-                        String[] allFiles = new File(".").list();
-                        if (allFiles != null) {
-                            files.addAll(Arrays.asList(allFiles));
+                        try {
+                            Files.list(Paths.get("."))
+                                    .map(p -> p.getFileName().toString())
+                                    .forEach(files::add);
+                        } catch (IOException e) {
+                            // Ignore
                         }
                     }
                 }
@@ -552,6 +575,7 @@ public class Run extends CamelCommand {
             main.setRepositories(String.join(",", repositories));
         }
         main.setDownload(download);
+        main.setPackageScanJars(packageScanJars);
         main.setFresh(fresh);
         main.setMavenSettings(mavenSettings);
         main.setMavenSettingsSecurity(mavenSettingsSecurity);
@@ -593,6 +617,8 @@ public class Run extends CamelCommand {
         }
         if (modeline) {
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
+            // configure eager
+            main.configure().withModeline(true);
         }
         if (ignoreLoadingError) {
             writeSetting(main, profileProperties, "camel.jbang.ignoreLoadingError", "true");
@@ -604,7 +630,7 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.jbang.prompt", "true");
         }
         writeSetting(main, profileProperties, "camel.jbang.compileWorkDir",
-                CommandLineHelper.CAMEL_JBANG_WORK_DIR + File.separator + "compile");
+                Paths.get(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "compile").toString());
 
         if (gav != null) {
             writeSetting(main, profileProperties, "camel.jbang.gav", gav);
@@ -675,9 +701,12 @@ public class Run extends CamelCommand {
                 () -> maxSeconds > 0 ? String.valueOf(maxSeconds) : null);
         writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
                 () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
-        writeSetting(main, profileProperties, "camel.jbang.platform-http.port",
+        writeSetting(main, profileProperties, "camel.server.port",
                 () -> port > 0 && port != 8080 ? String.valueOf(port) : null);
-        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null); // TODO: "true" instead of "jfr" ?
+        if (managementPort != -1) {
+            writeSetting(main, profileProperties, "camel.management.port", () -> String.valueOf(managementPort));
+        }
+        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         writeSetting(main, profileProperties, "camel.jbang.kameletsVersion", kameletsVersion);
@@ -711,13 +740,13 @@ public class Run extends CamelCommand {
         if (profile != null) {
             // need to include profile application properties if exists
             String name = "application-" + profile + ".properties";
-            if (new File(name).exists() && !files.contains(name)) {
+            if (Files.exists(Paths.get(name)) && !files.contains(name)) {
                 files.add(name);
             }
         }
 
         for (String file : files) {
-            if (file.startsWith("clipboard") && !(new File(file).exists())) {
+            if (file.startsWith("clipboard") && !(Files.exists(Paths.get(file)))) {
                 file = loadFromClipboard(file);
             } else if (skipFile(file)) {
                 continue;
@@ -766,8 +795,8 @@ public class Run extends CamelCommand {
             }
             if (file.startsWith("file:")) {
                 // check if file exist
-                File inputFile = new File(file.substring(5));
-                if (!inputFile.exists() && !inputFile.isFile()) {
+                Path inputPath = Paths.get(file.substring(5));
+                if (!Files.exists(inputPath) || !Files.isRegularFile(inputPath)) {
                     printer().printErr("File does not exist: " + file);
                     return 1;
                 }
@@ -811,8 +840,8 @@ public class Run extends CamelCommand {
 
         if (sourceDir != null) {
             // must be an existing directory
-            File dir = new File(sourceDir);
-            if (!dir.exists() && !dir.isDirectory()) {
+            Path dirPath = Paths.get(sourceDir);
+            if (!Files.exists(dirPath) || !Files.isDirectory(dirPath)) {
                 printer().printErr("Directory does not exist: " + sourceDir);
                 return 1;
             }
@@ -885,7 +914,7 @@ public class Run extends CamelCommand {
             for (String file : names) {
                 if (!file.startsWith("file:")) {
                     if (!file.startsWith("/")) {
-                        file = FileSystems.getDefault().getPath("").toAbsolutePath() + File.separator + file;
+                        file = Paths.get(FileSystems.getDefault().getPath("").toAbsolutePath().toString(), file).toString();
                     }
                     file = "file://" + file;
                 }
@@ -977,10 +1006,18 @@ public class Run extends CamelCommand {
         }
 
         // create temp run dir
-        File runDir = new File(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
+        Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
-            runDir.deleteOnExit();
+            // Mark for deletion on exit
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    removeDir(runDirPath);
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }));
         }
+        Files.createDirectories(runDirPath);
 
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
@@ -993,12 +1030,15 @@ public class Run extends CamelCommand {
         eq.quarkusArtifactId = this.quarkusArtifactId;
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
-        eq.exportDir = runDir.toString();
+        eq.exportDir = runDirPath.toString();
         eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.name = this.name;
+        eq.verbose = this.verbose;
+        eq.port = this.port;
+        eq.managementPort = this.managementPort;
         eq.gav = this.gav;
         if (eq.gav == null) {
             if (eq.name == null) {
@@ -1010,6 +1050,7 @@ public class Run extends CamelCommand {
         eq.addDependencies("camel:cli-connector");
         eq.fresh = this.fresh;
         eq.download = this.download;
+        eq.packageScanJars = this.packageScanJars;
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
@@ -1031,7 +1072,8 @@ public class Run extends CamelCommand {
             mvnw = "/mvnw.cmd";
         }
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.getCanonicalPath() + File.separatorChar + "pom.xml", "package",
+        pb.command(runDirPath.toString() + mvnw, "--quiet", "--file",
+                runDirPath.toRealPath().resolve("pom.xml").toString(), "package",
                 "quarkus:" + (dev ? "dev" : "run"));
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
@@ -1048,10 +1090,18 @@ public class Run extends CamelCommand {
         }
 
         // create temp run dir
-        File runDir = new File(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
+        Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
-            runDir.deleteOnExit();
+            // Mark for deletion on exit
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    removeDir(runDirPath);
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }));
         }
+        Files.createDirectories(runDirPath);
 
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
@@ -1064,12 +1114,15 @@ public class Run extends CamelCommand {
         eq.camelVersion = this.camelVersion;
         eq.camelSpringBootVersion = this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
-        eq.exportDir = runDir.toString();
+        eq.exportDir = runDirPath.toString();
         eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.name = this.name;
+        eq.verbose = this.verbose;
+        eq.port = this.port;
+        eq.managementPort = this.managementPort;
         eq.gav = this.gav;
         eq.repositories = this.repositories;
         if (eq.gav == null) {
@@ -1086,6 +1139,7 @@ public class Run extends CamelCommand {
         }
         eq.fresh = this.fresh;
         eq.download = this.download;
+        eq.packageScanJars = this.packageScanJars;
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
@@ -1102,8 +1156,11 @@ public class Run extends CamelCommand {
         }
 
         // prepare spring-boot for logging to file
-        InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml");
-        eq.safeCopy(is, new File(eq.exportDir + "/src/main/resources/logback.xml"));
+        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
+            Path logbackPath = Paths.get(eq.exportDir, "src/main/resources/logback.xml");
+            Files.createDirectories(logbackPath.getParent());
+            Files.copy(is, logbackPath, StandardCopyOption.REPLACE_EXISTING);
+        }
 
         // run spring-boot via maven
         ProcessBuilder pb = new ProcessBuilder();
@@ -1111,7 +1168,8 @@ public class Run extends CamelCommand {
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
         }
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.getCanonicalPath() + File.separatorChar + "pom.xml",
+        pb.command(runDirPath.toString() + mvnw, "--quiet", "--file",
+                runDirPath.toRealPath().resolve("pom.xml").toString(),
                 "spring-boot:run");
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
@@ -1172,23 +1230,23 @@ public class Run extends CamelCommand {
         }
 
         // application.properties
-        File profilePropertiesFile;
+        Path profilePropertiesPath;
         if (sourceDir != null) {
-            profilePropertiesFile = new File(sourceDir, "application.properties");
+            profilePropertiesPath = Paths.get(sourceDir).resolve("application.properties");
         } else {
-            profilePropertiesFile = new File("application.properties");
+            profilePropertiesPath = Paths.get("application.properties");
         }
         // based application-profile.properties
-        answer = doLoadAndInitProfileProperties(profilePropertiesFile);
+        answer = doLoadAndInitProfileProperties(profilePropertiesPath);
 
         if (profile != null) {
             if (sourceDir != null) {
-                profilePropertiesFile = new File(sourceDir, "application-" + profile + ".properties");
+                profilePropertiesPath = Paths.get(sourceDir).resolve("application-" + profile + ".properties");
             } else {
-                profilePropertiesFile = new File("application-" + profile + ".properties");
+                profilePropertiesPath = Paths.get("application-" + profile + ".properties");
             }
             // application-profile.properties should override standard application.properties
-            Properties override = doLoadAndInitProfileProperties(profilePropertiesFile);
+            Properties override = doLoadAndInitProfileProperties(profilePropertiesPath);
             if (override != null) {
                 if (answer == null) {
                     answer = override;
@@ -1204,10 +1262,10 @@ public class Run extends CamelCommand {
         return answer;
     }
 
-    private Properties doLoadAndInitProfileProperties(File profilePropertiesFile) throws Exception {
+    private Properties doLoadAndInitProfileProperties(Path profilePropertiesPath) throws Exception {
         Properties answer = null;
-        if (profilePropertiesFile.exists()) {
-            answer = loadProfileProperties(profilePropertiesFile);
+        if (Files.exists(profilePropertiesPath)) {
+            answer = this.loadProfileProperties((Path) profilePropertiesPath);
             // logging level/color may be configured in the properties file
             loggingLevel = answer.getProperty("loggingLevel", loggingLevel);
             loggingColor
@@ -1223,6 +1281,8 @@ public class Run extends CamelCommand {
                     mavenApacheSnapshotEnabled ? "true" : "false"));
             openapi = answer.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
+            packageScanJars
+                    = "true".equals(answer.getProperty("camel.jbang.packageScanJars", packageScanJars ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
             backgroundWait = "true".equals(answer.getProperty("camel.jbang.backgroundWait", backgroundWait ? "true" : "false"));
             jvmDebugPort = parseJvmDebugPort(answer.getProperty("camel.jbang.jvmDebug", Integer.toString(jvmDebugPort)));
@@ -1351,13 +1411,18 @@ public class Run extends CamelCommand {
     }
 
     protected int runBackgroundProcess(ProcessBuilder pb, String kind) throws Exception {
-        File log = null;
+        Path logPath = null;
         if (backgroundWait) {
             // store background output in a log file to capture any error on startup
-            log = getRunBackgroundLogFile("" + new Random().nextLong());
-            log.deleteOnExit();
+            logPath = getRunBackgroundLogFile("" + new Random().nextLong());
+            try {
+                Files.createFile(logPath);
+                logPath.toFile().deleteOnExit();
+            } catch (IOException e) {
+                // Ignore
+            }
             pb.redirectErrorStream(true);
-            pb.redirectOutput(log);
+            pb.redirectOutput(logPath.toFile());
         }
 
         Process p = pb.start();
@@ -1369,7 +1434,7 @@ public class Run extends CamelCommand {
         }
 
         int ec = 0;
-        if (log != null) {
+        if (logPath != null) {
             StopWatch watch = new StopWatch();
             int state = 0; // state 5 is running
             while (p.isAlive() && watch.taken() < 20000 && state < 5) {
@@ -1394,15 +1459,19 @@ public class Run extends CamelCommand {
                 if (ec != 0) {
                     printer().println(kind + ": " + name + " startup failure");
                     printer().println("");
-                    String text = IOHelper.loadText(new FileInputStream(log));
+                    String text = Files.readString(logPath);
                     printer().print(text);
                 }
             } else {
                 printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
             }
         }
-        if (log != null) {
-            log.delete();
+        if (logPath != null) {
+            try {
+                Files.deleteIfExists(logPath);
+            } catch (IOException e) {
+                // Ignore
+            }
         }
 
         return ec;
@@ -1502,7 +1571,7 @@ public class Run extends CamelCommand {
 
         // cleanup and delete log file
         if (logFile != null) {
-            FileUtil.deleteFile(logFile);
+            Files.deleteIfExists(logFile);
         }
 
         return main.getExitCode();
@@ -1675,10 +1744,16 @@ public class Run extends CamelCommand {
             if (!scriptRun) {
                 // remember log file
                 String name = RuntimeUtil.getPid() + ".log";
-                final File logDir = CommandLineHelper.getCamelDir();
-                logDir.mkdirs(); //make sure the parent dir exists
-                logFile = new File(logDir, name);
-                logFile.deleteOnExit();
+                final Path logDir = CommandLineHelper.getCamelDir();
+                Files.createDirectories(logDir); //make sure the parent dir exists
+                logFile = logDir.resolve(name);
+                try {
+                    // Create an empty file that will be deleted on exit
+                    Files.createFile(logFile);
+                    logFile.toFile().deleteOnExit();
+                } catch (IOException e) {
+                    // Ignore
+                }
             }
         } else {
             if (exportRun) {
@@ -1692,22 +1767,21 @@ public class Run extends CamelCommand {
     }
 
     private void generateOpenApi() throws Exception {
-        File file = Paths.get(openapi).toFile();
-        if (!file.exists() && !file.isFile()) {
-            throw new FileNotFoundException("Cannot find file: " + file);
+        Path filePath = Paths.get(openapi);
+        if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
+            throw new FileNotFoundException("Cannot find file: " + filePath);
         }
 
-        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/rest-dsl.yaml.tmpl");
-        String content = IOHelper.loadText(is);
-        IOHelper.close(is);
+        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/rest-dsl.yaml.tmpl")) {
+            String content = IOHelper.loadText(is);
+            String onlyName = filePath.toString();
+            content = content.replaceFirst("\\{\\{ \\.Spec }}", onlyName);
 
-        String onlyName = file.getPath();
-        content = content.replaceFirst("\\{\\{ \\.Spec }}", onlyName);
+            Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
 
-        Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
-
-        // we need to include the spec on the classpath
-        files.add(openapi);
+            // we need to include the spec on the classpath
+            files.add(openapi);
+        }
     }
 
     private boolean knownFile(String file) throws Exception {
@@ -1797,8 +1871,8 @@ public class Run extends CamelCommand {
         }
 
         // skip dirs
-        File f = new File(name);
-        if (f.exists() && f.isDirectory()) {
+        Path path = Paths.get(name);
+        if (Files.exists(path) && Files.isDirectory(path)) {
             return true;
         }
 
@@ -1840,7 +1914,6 @@ public class Run extends CamelCommand {
     }
 
     private void writeSettings(String key, String value) {
-        FileOutputStream fos = null;
         try {
             // use java.util.Properties to ensure the value is escaped correctly
             Properties prop = new Properties();
@@ -1848,49 +1921,70 @@ public class Run extends CamelCommand {
             StringWriter sw = new StringWriter();
             prop.store(sw, null);
 
-            File runSettings = new File(CommandLineHelper.getWorkDir(), RUN_SETTINGS_FILE);
-            fos = new FileOutputStream(runSettings, true);
+            Path runSettingsPath = CommandLineHelper.getWorkDir().resolve(RUN_SETTINGS_FILE);
 
+            StringBuilder content = new StringBuilder();
             String[] lines = sw.toString().split(System.lineSeparator());
             for (String line : lines) {
                 // properties store timestamp as comment which we want to skip
                 if (!line.startsWith("#")) {
-                    fos.write(line.getBytes(StandardCharsets.UTF_8));
-                    fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
+                    content.append(line).append(System.lineSeparator());
                 }
+            }
+
+            // Append to the file if it exists, otherwise create it
+            if (Files.exists(runSettingsPath)) {
+                Files.write(runSettingsPath, content.toString().getBytes(StandardCharsets.UTF_8),
+                        StandardOpenOption.APPEND);
+            } else {
+                Files.write(runSettingsPath, content.toString().getBytes(StandardCharsets.UTF_8));
             }
         } catch (Exception e) {
             // ignore
-        } finally {
-            IOHelper.close(fos);
         }
     }
 
-    private static void removeDir(File d) {
-        String[] list = d.list();
-        if (list == null) {
-            list = new String[0];
-        }
-        for (String s : list) {
-            File f = new File(d, s);
-            if (f.isDirectory()) {
-                removeDir(f);
-            } else {
-                delete(f);
+    private static void removeDir(Path directory) {
+        try {
+            if (Files.exists(directory)) {
+                Files.walk(directory)
+                        .sorted(java.util.Comparator.reverseOrder())
+                        .forEach(path -> {
+                            try {
+                                Files.deleteIfExists(path);
+                            } catch (IOException e) {
+                                // Fallback to deleteOnExit if we can't delete immediately
+                                try {
+                                    path.toFile().deleteOnExit();
+                                } catch (Exception ex) {
+                                    // Ignore
+                                }
+                            }
+                        });
             }
+        } catch (IOException e) {
+            // Ignore
         }
-        delete(d);
     }
 
-    private static void delete(File f) {
-        if (!f.delete()) {
+    private static void delete(Path path) {
+        try {
+            if (!Files.deleteIfExists(path)) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                if (!Files.deleteIfExists(path)) {
+                    path.toFile().deleteOnExit();
+                }
+            }
+        } catch (IOException e) {
+            // Fallback to deleteOnExit
             try {
-                Thread.sleep(10);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-            if (!f.delete()) {
-                f.deleteOnExit();
+                path.toFile().deleteOnExit();
+            } catch (Exception ex) {
+                // Ignore
             }
         }
     }
@@ -1925,7 +2019,6 @@ public class Run extends CamelCommand {
         final Set<String> downloaded = new HashSet<>();
         final Set<String> repos = new HashSet<>();
         final Set<String> kamelets = new HashSet<>();
-        final Set<String> modelines = new HashSet<>();
 
         @Override
         public void onDownloadDependency(String groupId, String artifactId, String version) {
@@ -1958,15 +2051,6 @@ public class Run extends CamelCommand {
             if (!kamelets.contains(name)) {
                 writeSettings("kamelet", name);
                 kamelets.add(name);
-            }
-        }
-
-        @Override
-        public void onLoadingModeline(String key, String value) {
-            String line = key + "=" + value;
-            if (!modelines.contains(line)) {
-                writeSettings("modeline", line);
-                modelines.add(line);
             }
         }
     }
@@ -2012,12 +2096,12 @@ public class Run extends CamelCommand {
 
     private JsonObject loadStatus(long pid) {
         try {
-            File f = getStatusFile(Long.toString(pid));
-            if (f != null) {
-                FileInputStream fis = new FileInputStream(f);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
-                return (JsonObject) Jsoner.deserialize(text);
+            Path p = getStatusFile(Long.toString(pid));
+            if (Files.exists(p)) {
+                try (InputStream is = Files.newInputStream(p)) {
+                    String text = IOHelper.loadText(is);
+                    return (JsonObject) Jsoner.deserialize(text);
+                }
             }
         } catch (Exception e) {
             // ignore

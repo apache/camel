@@ -45,13 +45,37 @@ public final class ExecResultConverterLoader implements TypeConverterLoader, Cam
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, byte[].class, org.apache.camel.component.exec.ExecResult.class, false,
-            (type, exchange, value) -> org.apache.camel.component.exec.ExecResultConverter.convertToByteArray((org.apache.camel.component.exec.ExecResult) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.exec.ExecResultConverter.convertToByteArray((org.apache.camel.component.exec.ExecResult) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.InputStream.class, org.apache.camel.component.exec.ExecResult.class, false,
-            (type, exchange, value) -> org.apache.camel.component.exec.ExecResultConverter.convertToInputStream((org.apache.camel.component.exec.ExecResult) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.exec.ExecResultConverter.convertToInputStream((org.apache.camel.component.exec.ExecResult) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, org.apache.camel.component.exec.ExecResult.class, false,
-            (type, exchange, value) -> org.apache.camel.component.exec.ExecResultConverter.convertToString((org.apache.camel.component.exec.ExecResult) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.exec.ExecResultConverter.convertToString((org.apache.camel.component.exec.ExecResult) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.Document.class, org.apache.camel.component.exec.ExecResult.class, false,
-            (type, exchange, value) -> org.apache.camel.component.exec.ExecResultConverter.convertToDocument((org.apache.camel.component.exec.ExecResult) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.exec.ExecResultConverter.convertToDocument((org.apache.camel.component.exec.ExecResult) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

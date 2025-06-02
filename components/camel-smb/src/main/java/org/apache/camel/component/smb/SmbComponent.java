@@ -25,9 +25,13 @@ import org.apache.camel.component.file.GenericFileComponent;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("smb")
 public class SmbComponent extends GenericFileComponent<FileIdBothDirectoryInformation> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SmbComponent.class);
 
     public static final String SMB_FILE_INPUT_STREAM = "CamelSmbFileInputStream";
 
@@ -49,8 +53,22 @@ public class SmbComponent extends GenericFileComponent<FileIdBothDirectoryInform
         // must pass on baseUri to the configuration (see above)
         SmbConfiguration config = new SmbConfiguration(new URI(baseUri));
 
-        SmbEndpoint answer = new SmbEndpoint(uri, this, config);
-        return answer;
+        // backwards compatible when path was query parameter
+        String path = getAndRemoveParameter(parameters, "path", String.class);
+        if (path != null) {
+            config.setPath(path);
+            LOG.warn(
+                    "The path option should be specified in the context-path. Instead of using ?path=/mypath then specify this in the context-path in uri: "
+                     + uri);
+        }
+
+        if (config.getShareName() == null) {
+            throw new IllegalArgumentException("ShareName must be configured");
+        }
+
+        SmbEndpoint endpoint = new SmbEndpoint(uri, this, config);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     @Override

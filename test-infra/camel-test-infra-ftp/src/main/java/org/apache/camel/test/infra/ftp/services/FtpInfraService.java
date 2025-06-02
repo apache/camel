@@ -24,7 +24,27 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
  * Test infra service for Ftp
  */
 public interface FtpInfraService extends InfrastructureService {
+    @Deprecated
+    // Use port
     int getPort();
 
     Path getFtpRootDir();
+
+    int port();
+
+    default String hostname() {
+        return "localhost";
+    }
+
+    default String username() {
+        return "admin";
+    }
+
+    default String password() {
+        return "admin";
+    }
+
+    default String directoryName() {
+        return "myTestDirectory";
+    }
 }

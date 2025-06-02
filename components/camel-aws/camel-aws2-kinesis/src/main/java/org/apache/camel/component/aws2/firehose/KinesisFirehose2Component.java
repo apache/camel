@@ -36,8 +36,6 @@ public class KinesisFirehose2Component extends DefaultComponent {
 
     public KinesisFirehose2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new KinesisFirehose2ComponentVerifierExtension());
     }
 
     @Override

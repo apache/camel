@@ -24,8 +24,8 @@ import java.util.Date;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -107,10 +107,10 @@ public class ConvertBodyTest extends ContextTestSupport {
     public void testConvertToIntegerNotMandatory() throws Exception {
         // mandatory should fail
         try {
-            template.sendBody("direct:start", Double.NaN);
+            template.sendBody("direct:start", "xxx");
             fail();
         } catch (Exception e) {
-            assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
+            assertIsInstanceOf(TypeConversionException.class, e.getCause().getCause());
         }
 
         // optional should cause null body

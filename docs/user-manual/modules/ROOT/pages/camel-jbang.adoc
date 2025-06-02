@@ -1340,15 +1340,15 @@ Suppose you have a Camel route that consumes messages from an external MQTT brok
 
 In the example above the MQTT broker is running on hostname `mybroker` port 1883.
 
-The idea with the `camel cmd send` command is to _tap into_ an existing running Camel integration,
+The idea with the `camel cmd send` command is to _tap into_ an existing running Camel integration (by name or PID),
 and reuse an existing endpoint (if possible). In this example, we want to use the existing configuration
 to avoid having to configure this again.
 
-By executing the following from a shell
+By executing the following from a shell, we send the message to the existing running Camel integration named mqtt:
 
 [source,bash]
 ----
-$ camel cmd send --body=file:payload.json mqtt
+$ camel cmd send mqtt --body=file:payload.json mqtt
 ----
 
 We can send a message where the payload is loaded from a file (`_payload.json_`). You can also specify the payload in the CLI
@@ -1372,14 +1372,14 @@ For example, to pick the first route by _route id_:
 
 [source,bash]
 ----
-$ camel cmd send --body=file:payload.json --endpoint=route1 mqtt
+$ camel cmd send mqtt --body=file:payload.json --endpoint=route1
 ----
 
 Or to pick the first route that uses mqtt component:
 
 [source,bash]
 ----
-$ camel cmd send --body=file:payload.json --endpoint=mqtt mqtt
+$ camel cmd send mqtt --body=file:payload.json --endpoint=mqtt
 ----
 
 We are fortunate in this situation as the endpoint can be used as both a _consumer_ and _producer_ in Camel,
@@ -1387,7 +1387,31 @@ and therefore we are able to send the message to the MQTT broker via `tcp://mybr
 
 TIP: See more options with `camel cmd send --help`.
 
-The source for this example is provided on GitHub at https://github.com/apache/camel-kamelets-examples/tree/main/jbang/mqtt)[camel-jbang MQTT example].
+The source for this example is provided on GitHub at https://github.com/apache/camel-jbang-examples/tree/main/mqtt[https://github.com/apache/camel-kamelets-examples/tree/main/jbang/mqtt])[camel-jbang MQTT example].
+
+==== Sending messages without any running Camel
+
+*Available since Camel 4.12*
+
+In Camel 4.12 you can use `camel cmd send` without any existing running Camel integration, which then
+will automatic startup a internal Camel and use that for sending the message. This allows to send a message
+using all the Camel components or Kamelets. However, this requires that all the necessary configuration can
+be provided from the CLI (which can be cumbersome for some components).
+
+This is done by **NOT** specifying any integration name or PID in the command such as:
+
+[source,bash]
+----
+$ camel cmd send --body=file:payload.json --uri='paho-mqtt5:temperature?brokerUrl=tcp://mybroker:1883'
+----
+
+As you can see this is more cumbersome as we need to provide all the configurations, which can be more complex
+for components like Kafka or AWS. So for these you may want to use a kamelet instead:
+
+[source,bash]
+----
+$ camel cmd send --body=file:payload.json --uri='kamelet:mqtt-sink?brokerUrl=tcp://mybroker:1883&topic=temperature'
+----
 
 ==== Poll messages via Camel
 
@@ -1612,6 +1636,18 @@ to not confuse, and we added a new `REMOTE` column to show total for remote syst
 camel get
   PID   NAME    CAMEL  PLATFORM        PROFILE  READY  STATUS   RELOAD  AGE   ROUTE  MSG/S  TOTAL  REMOTE  FAIL  INFLIGHT  LAST  DELTA  SINCE-LAST
  42240  cheese  4.9.0  JBang v0.118.0  dev       1/1   Running       0  1m8s    2/2   1.01     65       1   0/0       0/0     0     -1     1s/1s/-
+----
+
+===== Total in Camel 4.12 onwards
+
+And yet again it was changed in *Camel 4.12* to be a single number by default.
+You can use `--remote` to break down the numbers into remote/total pair.
+
+[source,bash]
+----
+camel get
+  PID   NAME    CAMEL  PLATFORM        PROFILE  READY  STATUS   RELOAD  AGE   ROUTE  MSG/S  TOTAL  FAIL  INFLIGHT  LAST  DELTA  SINCE-LAST
+ 42240  cheese  4.12.0  JBang v0.126.0  dev      1/1   Running       0  1m8s    2/2   1.01     65     0         0     0     -1     1s/1s/-
 ----
 
 ==== Route status
@@ -3852,6 +3888,12 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |`camel.jbang.mavenApacheSnapshotEnabled`
 |Whether downloading JARs from ASF Maven Snapshot repository is enabled
+
+|`camel.jbang.download`
+Whether to allow automatic downloading JAR dependencies (over the internet)
+
+|`camel.jbang.packageScanJars`
+Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang
 
 |`camel.jbang.exportDir`
 |Directory where the project will be exported

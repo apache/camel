@@ -57,4 +57,7 @@ public interface PulsarMessageHeaders {
     @Metadata(label = "consumer", description = "The message redelivery count, redelivery count maintain in pulsar broker.",
               javaType = "int")
     String PULSAR_REDELIVERY_COUNT = "CamelPulsarRedeliveryCount";
+    @Metadata(label = "producer", description = "Deliver the message after a given delayed time (millis).",
+              javaType = "Long")
+    String DELIVER_AFTER = "CamelPulsarProducerMessageDeliverAfter";
 }

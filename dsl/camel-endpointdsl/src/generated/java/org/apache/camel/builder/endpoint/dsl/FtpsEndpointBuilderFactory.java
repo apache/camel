@@ -1913,7 +1913,8 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1933,7 +1934,8 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2137,7 +2139,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the key store parameters.
+         * Set the key store parameters. This is a multi-value option with
+         * prefix: ftpClient.keyStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2156,7 +2159,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the key store parameters.
+         * Set the key store parameters. This is a multi-value option with
+         * prefix: ftpClient.keyStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2174,7 +2178,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the trust store parameters.
+         * Set the trust store parameters. This is a multi-value option with
+         * prefix: ftpClient.trustStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2193,7 +2198,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the trust store parameters.
+         * Set the trust store parameters. This is a multi-value option with
+         * prefix: ftpClient.trustStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -3140,7 +3146,8 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -3160,7 +3167,8 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -3179,7 +3187,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -3199,7 +3207,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4030,7 +4038,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the key store parameters.
+         * Set the key store parameters. This is a multi-value option with
+         * prefix: ftpClient.keyStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4049,7 +4058,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the key store parameters.
+         * Set the key store parameters. This is a multi-value option with
+         * prefix: ftpClient.keyStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4067,7 +4077,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the trust store parameters.
+         * Set the trust store parameters. This is a multi-value option with
+         * prefix: ftpClient.trustStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4086,7 +4097,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the trust store parameters.
+         * Set the trust store parameters. This is a multi-value option with
+         * prefix: ftpClient.trustStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4784,7 +4796,8 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4804,7 +4817,8 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4823,7 +4837,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4843,7 +4857,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5458,7 +5472,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the key store parameters.
+         * Set the key store parameters. This is a multi-value option with
+         * prefix: ftpClient.keyStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5477,7 +5492,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the key store parameters.
+         * Set the key store parameters. This is a multi-value option with
+         * prefix: ftpClient.keyStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5495,7 +5511,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the trust store parameters.
+         * Set the trust store parameters. This is a multi-value option with
+         * prefix: ftpClient.trustStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5514,7 +5531,8 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the trust store parameters.
+         * Set the trust store parameters. This is a multi-value option with
+         * prefix: ftpClient.trustStore.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5911,7 +5929,8 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5931,7 +5950,8 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5950,7 +5970,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5970,7 +5990,7 @@ public interface FtpsEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

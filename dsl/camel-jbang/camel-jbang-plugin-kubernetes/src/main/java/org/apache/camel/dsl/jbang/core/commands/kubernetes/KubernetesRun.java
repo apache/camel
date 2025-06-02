@@ -17,10 +17,12 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
-import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -193,6 +195,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    boolean download = true;
+
+    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    boolean packageScanJars;
+
     @CommandLine.Option(names = { "--maven-settings" },
                         description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
                                       + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
@@ -307,18 +317,21 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 return exit;
             }
 
-            File manifest;
+            Path manifestPath;
             switch (output) {
                 case "yaml" -> {
                     if (ksvcEnabled) {
                         // trick the clusterType to be able to read from the jkube source directory
-                        manifest = KubernetesHelper.resolveKubernetesManifest("service", workingDir + "/src/main/jkube");
+                        manifestPath = KubernetesHelper.resolveKubernetesManifestPath("service",
+                                Paths.get(workingDir, "src/main/jkube"));
                     } else {
-                        manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes");
+                        manifestPath = KubernetesHelper.resolveKubernetesManifestPath(clusterType,
+                                Paths.get(workingDir, "target/kubernetes"));
                     }
                 }
                 case "json" ->
-                    manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes",
+                    manifestPath = KubernetesHelper.resolveKubernetesManifestPath(clusterType,
+                            Paths.get(workingDir, "target/kubernetes"),
                             "json");
                 default -> {
                     printer().printErr("Unsupported output format '%s' (supported: yaml, json)".formatted(output));
@@ -326,8 +339,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 }
             }
 
-            try (FileInputStream fis = new FileInputStream(manifest)) {
-                super.printer().println(IOHelper.loadText(fis));
+            try (InputStream is = Files.newInputStream(manifestPath)) {
+                super.printer().println(IOHelper.loadText(is));
             }
 
             return 0;
@@ -397,7 +410,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 true,
                 false,
                 true,
-                true,
+                download,
+                packageScanJars,
                 (quiet || output != null),
                 true,
                 "info",

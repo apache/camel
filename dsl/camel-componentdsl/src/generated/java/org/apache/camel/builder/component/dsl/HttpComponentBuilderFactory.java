@@ -609,7 +609,7 @@ public interface HttpComponentBuilderFactory {
         }
     
         /**
-         * Proxy authentication method to use.
+         * Proxy authentication method to use (NTLM is deprecated).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

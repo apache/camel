@@ -52,42 +52,6 @@ public interface StubComponentBuilderFactory {
     
         
         /**
-         * If shadow is enabled then the stub component will register a shadow
-         * endpoint with the actual uri that refers to the stub endpoint,
-         * meaning you can lookup the endpoint via both stub:kafka:cheese and
-         * kafka:cheese.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param shadow the value to set
-         * @return the dsl builder
-         */
-        default StubComponentBuilder shadow(boolean shadow) {
-            doSetProperty("shadow", shadow);
-            return this;
-        }
-    
-        /**
-         * If shadow is enabled then this pattern can be used to filter which
-         * components to match. Multiple patterns can be separated by comma.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param shadowPattern the value to set
-         * @return the dsl builder
-         */
-        default StubComponentBuilder shadowPattern(java.lang.String shadowPattern) {
-            doSetProperty("shadowPattern", shadowPattern);
-            return this;
-        }
-    
-        
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -153,67 +117,6 @@ public interface StubComponentBuilderFactory {
     
         
         /**
-         * Whether a thread that sends messages to a full SEDA queue will block
-         * until the queue's capacity is no longer exhausted. By default, an
-         * exception will be thrown stating that the queue is full. By enabling
-         * this option, the calling thread will instead block and wait until the
-         * message can be accepted.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param defaultBlockWhenFull the value to set
-         * @return the dsl builder
-         */
-        default StubComponentBuilder defaultBlockWhenFull(boolean defaultBlockWhenFull) {
-            doSetProperty("defaultBlockWhenFull", defaultBlockWhenFull);
-            return this;
-        }
-    
-        
-        /**
-         * Whether a thread that sends messages to a full SEDA queue will be
-         * discarded. By default, an exception will be thrown stating that the
-         * queue is full. By enabling this option, the calling thread will give
-         * up sending and continue, meaning that the message was not sent to the
-         * SEDA queue.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param defaultDiscardWhenFull the value to set
-         * @return the dsl builder
-         */
-        default StubComponentBuilder defaultDiscardWhenFull(boolean defaultDiscardWhenFull) {
-            doSetProperty("defaultDiscardWhenFull", defaultDiscardWhenFull);
-            return this;
-        }
-    
-        /**
-         * Whether a thread that sends messages to a full SEDA queue will block
-         * until the queue's capacity is no longer exhausted. By default, an
-         * exception will be thrown stating that the queue is full. By enabling
-         * this option, where a configured timeout can be added to the block
-         * case. Using the .offer(timeout) method of the underlining java queue.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param defaultOfferTimeout the value to set
-         * @return the dsl builder
-         */
-        default StubComponentBuilder defaultOfferTimeout(long defaultOfferTimeout) {
-            doSetProperty("defaultOfferTimeout", defaultOfferTimeout);
-            return this;
-        }
-    
-        
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -234,6 +137,67 @@ public interface StubComponentBuilderFactory {
          */
         default StubComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    
+        
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will block
+         * until the queue's capacity is no longer exhausted. By default, an
+         * exception will be thrown stating that the queue is full. By enabling
+         * this option, the calling thread will instead block and wait until the
+         * message can be accepted.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param defaultBlockWhenFull the value to set
+         * @return the dsl builder
+         */
+        default StubComponentBuilder defaultBlockWhenFull(boolean defaultBlockWhenFull) {
+            doSetProperty("defaultBlockWhenFull", defaultBlockWhenFull);
+            return this;
+        }
+    
+        
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param defaultDiscardWhenFull the value to set
+         * @return the dsl builder
+         */
+        default StubComponentBuilder defaultDiscardWhenFull(boolean defaultDiscardWhenFull) {
+            doSetProperty("defaultDiscardWhenFull", defaultDiscardWhenFull);
+            return this;
+        }
+    
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will block
+         * until the queue's capacity is no longer exhausted. By default, an
+         * exception will be thrown stating that the queue is full. By enabling
+         * this option, where a configured timeout can be added to the block
+         * case. Using the offer(timeout) method of the underlining java queue.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param defaultOfferTimeout the value to set
+         * @return the dsl builder
+         */
+        default StubComponentBuilder defaultOfferTimeout(long defaultOfferTimeout) {
+            doSetProperty("defaultOfferTimeout", defaultOfferTimeout);
             return this;
         }
     
@@ -292,6 +256,42 @@ public interface StubComponentBuilderFactory {
             doSetProperty("queueSize", queueSize);
             return this;
         }
+    
+        
+        /**
+         * If shadow is enabled then the stub component will register a shadow
+         * endpoint with the actual uri that refers to the stub endpoint,
+         * meaning you can lookup the endpoint via both stub:kafka:cheese and
+         * kafka:cheese.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param shadow the value to set
+         * @return the dsl builder
+         */
+        default StubComponentBuilder shadow(boolean shadow) {
+            doSetProperty("shadow", shadow);
+            return this;
+        }
+    
+        /**
+         * If shadow is enabled then this pattern can be used to filter which
+         * components to match. Multiple patterns can be separated by comma.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param shadowPattern the value to set
+         * @return the dsl builder
+         */
+        default StubComponentBuilder shadowPattern(java.lang.String shadowPattern) {
+            doSetProperty("shadowPattern", shadowPattern);
+            return this;
+        }
     }
 
     class StubComponentBuilderImpl
@@ -307,18 +307,18 @@ public interface StubComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "shadow": ((StubComponent) component).setShadow((boolean) value); return true;
-            case "shadowPattern": ((StubComponent) component).setShadowPattern((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((StubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": ((StubComponent) component).setConcurrentConsumers((int) value); return true;
             case "defaultPollTimeout": ((StubComponent) component).setDefaultPollTimeout((int) value); return true;
+            case "lazyStartProducer": ((StubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "defaultBlockWhenFull": ((StubComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
             case "defaultDiscardWhenFull": ((StubComponent) component).setDefaultDiscardWhenFull((boolean) value); return true;
             case "defaultOfferTimeout": ((StubComponent) component).setDefaultOfferTimeout((long) value); return true;
-            case "lazyStartProducer": ((StubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((StubComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "defaultQueueFactory": ((StubComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory) value); return true;
             case "queueSize": ((StubComponent) component).setQueueSize((int) value); return true;
+            case "shadow": ((StubComponent) component).setShadow((boolean) value); return true;
+            case "shadowPattern": ((StubComponent) component).setShadowPattern((java.lang.String) value); return true;
             default: return false;
             }
         }

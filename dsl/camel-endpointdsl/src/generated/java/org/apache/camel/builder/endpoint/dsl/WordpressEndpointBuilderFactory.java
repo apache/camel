@@ -59,7 +59,8 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
         /**
-         * The criteria to use with complex searches.
+         * The criteria to use with complex searches. This is a multi-value
+         * option with prefix: criteria.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -78,7 +79,8 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
         /**
-         * The criteria to use with complex searches.
+         * The criteria to use with complex searches. This is a multi-value
+         * option with prefix: criteria.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -386,7 +388,8 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
         /**
-         * The criteria to use with complex searches.
+         * The criteria to use with complex searches. This is a multi-value
+         * option with prefix: criteria.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -405,7 +408,8 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
         /**
-         * The criteria to use with complex searches.
+         * The criteria to use with complex searches. This is a multi-value
+         * option with prefix: criteria.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -642,7 +646,8 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
         /**
-         * The criteria to use with complex searches.
+         * The criteria to use with complex searches. This is a multi-value
+         * option with prefix: criteria.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -661,7 +666,8 @@ public interface WordpressEndpointBuilderFactory {
             return this;
         }
         /**
-         * The criteria to use with complex searches.
+         * The criteria to use with complex searches. This is a multi-value
+         * option with prefix: criteria.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

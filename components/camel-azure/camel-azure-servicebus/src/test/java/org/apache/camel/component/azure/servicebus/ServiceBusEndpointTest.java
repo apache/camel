@@ -23,8 +23,10 @@ import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.credential.TokenRequestContext;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.messaging.servicebus.ServiceBusSenderClient;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
@@ -168,6 +170,7 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
         assertEquals(fullyQualifiedNamespace, endpoint.getConfiguration().getFullyQualifiedNamespace());
         assertEquals(credential, endpoint.getConfiguration().getTokenCredential());
+        assertEquals(CredentialType.AZURE_IDENTITY, endpoint.getConfiguration().getCredentialType());
     }
 
     @Test
@@ -191,5 +194,16 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
         assertEquals(fullyQualifiedNamespace, endpoint.getConfiguration().getFullyQualifiedNamespace());
         assertNull(endpoint.getConfiguration().getTokenCredential());
+    }
+
+    @Test
+    void testCreateBaseServiceBusClientWithNoCredentialType() throws Exception {
+        ServiceBusConfiguration configuration = new ServiceBusConfiguration();
+        configuration.setConnectionString("Endpoint=sb://camel.apache.org/;SharedAccessKeyName=test;SharedAccessKey=test");
+        configuration.setTopicOrQueueName("myQueue");
+        ServiceBusClientFactory factory = new ServiceBusClientFactory();
+        ServiceBusSenderClient senderClient = factory.createServiceBusSenderClient(configuration);
+        assertNotNull(senderClient);
+        senderClient.close();
     }
 }

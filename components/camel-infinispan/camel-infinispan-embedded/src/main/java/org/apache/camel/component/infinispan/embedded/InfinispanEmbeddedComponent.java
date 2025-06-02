@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.infinispan.InfinispanComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.service.ServiceHelper;
 
 @Component(InfinispanEmbeddedComponent.SCHEME)
 public class InfinispanEmbeddedComponent extends InfinispanComponent {
@@ -30,6 +31,8 @@ public class InfinispanEmbeddedComponent extends InfinispanComponent {
 
     @Metadata(description = "Component configuration")
     private InfinispanEmbeddedConfiguration configuration = new InfinispanEmbeddedConfiguration();
+
+    private InfinispanEmbeddedManager manager;
 
     public InfinispanEmbeddedComponent() {
     }
@@ -45,6 +48,29 @@ public class InfinispanEmbeddedComponent extends InfinispanComponent {
         InfinispanEmbeddedEndpoint endpoint = new InfinispanEmbeddedEndpoint(uri, remaining, this, conf);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        manager = new InfinispanEmbeddedManager(configuration);
+        ServiceHelper.initService(manager);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(manager);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(manager);
+    }
+
+    public InfinispanEmbeddedManager getManager() {
+        return manager;
     }
 
     public void setConfiguration(InfinispanEmbeddedConfiguration configuration) {

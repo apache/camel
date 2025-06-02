@@ -80,7 +80,7 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         Long failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
         assertEquals(0, failed.intValue());
         Long miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
-        assertEquals(2, miss.intValue());  // stream caching misses
+        assertEquals(0, miss.intValue());
 
         // reset
         mbeanServer.invoke(name, "resetTypeConversionCounters", null, null);
@@ -96,7 +96,7 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
         assertEquals(1, failed.intValue());
         miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
-        assertEquals(1, miss.intValue());  // stream caching misses
+        assertEquals(0, miss.intValue());
 
         // reset
         mbeanServer.invoke(name, "resetTypeConversionCounters", null, null);

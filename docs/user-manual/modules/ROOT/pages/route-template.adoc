@@ -12,6 +12,10 @@ From a route template, you can create one or more routes.
 
 Route templates are to be defined in the DSL (just like routes) as shown in the following:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 public class MyRouteTemplates extends RouteBuilder {
@@ -34,8 +38,8 @@ public class MyRouteTemplates extends RouteBuilder {
 }
 ----
 
-And in Spring XML DSL
-
+Spring XML DSL::
++
 [source,xml]
 ----
 <camelContext>
@@ -52,8 +56,8 @@ And in Spring XML DSL
 </camelContext>
 ----
 
-And in XML DSL
-
+XML DSL::
++
 [source,xml]
 ----
 <routeTemplates xmlns="http://camel.apache.org/schema/spring">
@@ -69,6 +73,7 @@ And in XML DSL
     </routeTemplate>
 </routeTemplates>
 ----
+====
 
 In the examples above, there was one route template, but you can define as many as you want.
 Each template must have a unique id. The template parameters are used for defining the parameters
@@ -98,6 +103,10 @@ To create routes from route templates, then you should use `org.apache.camel.bui
 
 In the following code snippet, you can see how this is done with the builder:
 
+[tabs]
+====
+Java builder::
++
 [source,java]
 ----
 // create two routes from the template
@@ -113,8 +122,8 @@ TemplatedRouteBuilder.builder(context, "myTemplate")
     .add();
 ----
 
-And in Java DSL:
-
+Java DSL::
++
 [source,java]
 ----
 templatedRoute("myTemplate")
@@ -126,8 +135,8 @@ templatedRoute("myTemplate")
         .parameter("myPeriod", "5s");
 ----
 
-And in Spring XML DSL:
-
+Spring XML DSL::
++
 [source,xml]
 ----
 <camelContext>
@@ -143,8 +152,8 @@ And in Spring XML DSL:
 </camelContext>
 ----
 
-And in XML DSL:
-
+XML DSL::
++
 [source,xml]
 ----
 <templatedRoutes xmlns="http://camel.apache.org/schema/spring">
@@ -160,19 +169,19 @@ And in XML DSL:
 </templatedRoutes>
 ----
 
-And in YAML DSL:
-
+YAML DSL::
++
 [source,yaml]
 ----
-- templated-route:
-    route-template-ref: "myTemplate"
+- templatedRoute:
+    routeTemplateRef: "myTemplate"
     parameters:
       - name: "name"
         value: "one"
       - name: "greeting"
         value: "Hello"
-- templated-route:
-    route-template-ref: "myTemplate"
+- templatedRoute:
+    routeTemplateRef: "myTemplate"
     parameters:
       - name: "name"
         value: "two"
@@ -181,6 +190,7 @@ And in YAML DSL:
       - name: "myPeriod"
         value: "5s"
 ----
+====
 
 The returned value from `add` is the route id of the new route that was added.
 However `null` is returned if the route is not yet created and added, which can happen if `CamelContext` is
@@ -191,6 +201,10 @@ assign route ids such as `route1`, `route2` to these routes.
 
 If you want to specify a route id, then use `routeId` as follows, where the id is set to myCoolRoute:
 
+[tabs]
+====
+Java builder::
++
 [source,java]
 ----
 TemplatedRouteBuilder.builder(context, "myTemplate")
@@ -201,8 +215,8 @@ TemplatedRouteBuilder.builder(context, "myTemplate")
     .add();
 ----
 
-And in Java DSL:
-
+Java DSL::
++
 [source,java]
 ----
 templatedRoute("myTemplate")
@@ -212,8 +226,8 @@ templatedRoute("myTemplate")
         .parameter("myPeriod", "5s");
 ----
 
-And in Spring XML DSL:
-
+Spring XML DSL::
++
 [source,xml]
 ----
 <camelContext>
@@ -225,8 +239,8 @@ And in Spring XML DSL:
 </camelContext>
 ----
 
-And in XML DSL:
-
+XML DSL::
++
 [source,xml]
 ----
 <templatedRoutes xmlns="http://camel.apache.org/schema/spring">
@@ -238,12 +252,12 @@ And in XML DSL:
 </templatedRoutes>
 ----
 
-And in YAML DSL:
-
+YAML DSL::
++
 [source,yaml]
 ----
-- templated-route:
-    route-template-ref: "myTemplate"
+- templatedRoute:
+    routeTemplateRef: "myTemplate"
     route-id: "myCoolRoute"
     parameters:
       - name: "name"
@@ -253,6 +267,7 @@ And in YAML DSL:
       - name: "myPeriod"
         value: "5s"
 ----
+====
 
 === Using template parameters with Java DSL simple builder
 
@@ -363,8 +378,8 @@ And in YAML DSL:
 
 [source,yaml]
 ----
-- templated-route:
-    route-template-ref: "orderTemplate"
+- templatedRoute:
+    routeTemplateRef: "orderTemplate"
     route-id: "webOrder"
     prefix-id: "web"
     parameters:
@@ -490,9 +505,9 @@ And in YAML DSL:
 
 [source,yaml]
 ----
-- templated-route:
-    route-template-ref: "s3template"
-    route-id: "mys3route"
+- templatedRoute:
+    routeTemplateRef: "s3template"
+    routeId: "mys3route"
     parameters:
       - name: "region"
         value: "US-EAST-1"
@@ -782,6 +797,10 @@ then you can create the local bean using Java lambda style as previously documen
 
 The `type` must be set to define what FQN class the created bean.
 
+[tabs]
+====
+XML::
++
 [source,xml]
 ----
 <camelContext>
@@ -799,8 +818,8 @@ The `type` must be set to define what FQN class the created bean.
 </camelContext>
 ----
 
-And in Java DSL you can do:
-
+Java::
++
 [source,java]
 ----
 routeTemplate("s3template")
@@ -811,6 +830,7 @@ routeTemplate("s3template")
      // must refer to the bean with {{myClient}}
     .to("aws2-s3:{{bucket}}?amazonS3Client=#{{myClient}}")
 ----
+====
 
 == Configuring route templates when creating route
 

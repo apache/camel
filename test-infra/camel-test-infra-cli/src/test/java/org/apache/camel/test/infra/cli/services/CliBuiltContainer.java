@@ -74,8 +74,10 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
                 "localhost/camel-cli:" + params.getCamelRef() + "-" + params.getCamelJBangVersion()
                                       + (params.getKeepContainerRunning() ? "-R" : ""),
                 false)
-                .withFileFromClasspath("Dockerfile",
-                        "org/apache/camel/test/infra/cli/services/Dockerfile")
+                .withFileFromPath("Dockerfile", StringUtils.isNotBlank(params.getDockerFile())
+                        ? Path.of(params.getDockerFile())
+                        : Path.of(MountableFile.forClasspathResource("org/apache/camel/test/infra/cli/services/Dockerfile")
+                                .getResolvedPath()))
                 .withFileFromClasspath("entrypoint.sh",
                         "org/apache/camel/test/infra/cli/services/entrypoint.sh")
                 .withFileFromClasspath("99-ssh-jbang.conf",
@@ -130,6 +132,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
         private Map<String, String> extraHosts;
         private List<String> trustedCertPaths;
         private String localMavenRepo;
+        private String dockerFile;
 
         public String getCamelRepo() {
             return camelRepo;
@@ -209,6 +212,15 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
 
         public CliBuiltContainerParams setLocalMavenRepo(String localMavenRepo) {
             this.localMavenRepo = localMavenRepo;
+            return this;
+        }
+
+        public String getDockerFile() {
+            return dockerFile;
+        }
+
+        public CliBuiltContainerParams setDockerFile(String dockerFile) {
+            this.dockerFile = dockerFile;
             return this;
         }
     }

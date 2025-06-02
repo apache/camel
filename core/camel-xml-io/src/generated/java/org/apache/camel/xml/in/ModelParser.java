@@ -397,18 +397,17 @@ public class ModelParser extends BaseParser {
     protected <T extends FaultToleranceConfigurationCommon> AttributeHandler<T> faultToleranceConfigurationCommonAttributeHandler() {
         return (def, key, val) -> switch (key) {
             case "bulkheadEnabled": def.setBulkheadEnabled(val); yield true;
-            case "bulkheadExecutorService": def.setBulkheadExecutorService(val); yield true;
             case "bulkheadMaxConcurrentCalls": def.setBulkheadMaxConcurrentCalls(val); yield true;
             case "bulkheadWaitingTaskQueue": def.setBulkheadWaitingTaskQueue(val); yield true;
-            case "circuitBreaker": def.setCircuitBreaker(val); yield true;
             case "delay": def.setDelay(val); yield true;
             case "failureRatio": def.setFailureRatio(val); yield true;
             case "requestVolumeThreshold": def.setRequestVolumeThreshold(val); yield true;
             case "successThreshold": def.setSuccessThreshold(val); yield true;
+            case "threadOffloadExecutorService": def.setThreadOffloadExecutorService(val); yield true;
             case "timeoutDuration": def.setTimeoutDuration(val); yield true;
             case "timeoutEnabled": def.setTimeoutEnabled(val); yield true;
             case "timeoutPoolSize": def.setTimeoutPoolSize(val); yield true;
-            case "timeoutScheduledExecutorService": def.setTimeoutScheduledExecutorService(val); yield true;
+            case "typedGuard": def.setTypedGuard(val); yield true;
             default: yield identifiedTypeAttributeHandler().accept(def, key, val);
         };
     }
@@ -1279,7 +1278,7 @@ public class ModelParser extends BaseParser {
     protected TokenizerDefinition doParseTokenizerDefinition() throws IOException, XmlPullParserException {
         return doParse(new TokenizerDefinition(), processorDefinitionAttributeHandler(), (def, key) -> switch (key) {
                 case "langChain4jCharacterTokenizer": def.setTokenizerImplementation(doParseLangChain4jCharacterTokenizerDefinition()); yield true;
-                case "langChain4jLineTokenizer": def.setTokenizerImplementation(doParseLangChain4jTokenizerDefinition()); yield true;
+                case "langChain4jLineTokenizer": def.setTokenizerImplementation(doParseLangChain4jLineTokenizerDefinition()); yield true;
                 case "langChain4jParagraphTokenizer": def.setTokenizerImplementation(doParseLangChain4jParagraphTokenizerDefinition()); yield true;
                 case "langChain4jSentenceTokenizer": def.setTokenizerImplementation(doParseLangChain4jSentenceTokenizerDefinition()); yield true;
                 case "langChain4jWordTokenizer": def.setTokenizerImplementation(doParseLangChain4jWordTokenizerDefinition()); yield true;
@@ -2662,16 +2661,14 @@ public class ModelParser extends BaseParser {
     }
     protected OpenApiDefinition doParseOpenApiDefinition() throws IOException, XmlPullParserException {
         return doParse(new OpenApiDefinition(), (def, key, val) -> switch (key) {
+                case "apiContextPath": def.setApiContextPath(val); yield true;
                 case "disabled": def.setDisabled(val); yield true;
                 case "missingOperation": def.setMissingOperation(val); yield true;
                 case "mockIncludePattern": def.setMockIncludePattern(val); yield true;
                 case "routeId": def.setRouteId(val); yield true;
                 case "specification": def.setSpecification(val); yield true;
                 default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "apiContextPath": def.setApiContextPath(doParseText()); yield true;
-                default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
-            }, noValueHandler());
+            }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected OpenIdConnectDefinition doParseOpenIdConnectDefinition() throws IOException, XmlPullParserException {
         return doParse(new OpenIdConnectDefinition(), (def, key, val) -> switch (key) {
@@ -2707,7 +2704,7 @@ public class ModelParser extends BaseParser {
         return doParse(new RestSecuritiesDefinition(), noAttributeHandler(), (def, key) -> switch (key) {
                 case "apiKey": doAdd(doParseApiKeyDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
                 case "basicAuth": doAdd(doParseBasicAuthDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
-                case "bearer": doAdd(doParseBearerTokenDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
+                case "bearerToken": doAdd(doParseBearerTokenDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
                 case "oauth2": doAdd(doParseOAuth2Definition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
                 case "openIdConnect": doAdd(doParseOpenIdConnectDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
                 case "mutualTLS": doAdd(doParseMutualTLSDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;

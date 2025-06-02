@@ -103,9 +103,6 @@ The Camel JBang Kubernetes export command provides several options to customize 
 |=======================================================================
 |Option |Description
 
-|--trait-profile
-|The trait profile to use for the deployment.
-
 |--service-account
 |The service account used to run the application.
 
@@ -1135,8 +1132,6 @@ spec:
 
 The Route trait enhances the Kubernetes manifest with a Route resource to expose the application to the outside world. This requires the presence in the Kubernetes manifest of a Service Resource.
 
-NOTE: You need to enable the OpenShift profile trait with `--trait-profile=openshift` option.
-
 The Route trait provides the following configuration options:
 
 [cols="2m,1m,5a"]
@@ -1193,7 +1188,7 @@ You may specify these options with the export command to customize the Route Res
 
 [source,bash]
 ----
-camel kubernetes export Sample.java --trait-profile=openshift -t route.enabled=true --trait route.host=example.com -t route.tls-termination=edge -t route.tls-certificate=file:/tmp/tls.crt -t route.tls-key=file:/tmp/tls.key
+camel kubernetes export Sample.java --cluster-type=openshift -t route.enabled=true --trait route.host=example.com -t route.tls-termination=edge -t route.tls-certificate=file:/tmp/tls.crt -t route.tls-key=file:/tmp/tls.key
 ----
 
 
@@ -1225,6 +1220,110 @@ spec:
 <4> Custom route TLS certificate key content
 <5> Custom route TLS termination
 <6> Service Resource reference
+
+
+=== Jolokia trait options
+
+The Jolokia trait enhances the Kubernetes manifest enabling JMX access to Camel application. This requires jolokia being configured in the Camel Application.
+
+The Jolokia trait provides the following configuration options:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| jolokia.enabled
+| bool
+| Can be used to enable or disable a trait. All traits share this common property. (default `false`).
+
+| jolokia.container-port
+| int
+| To configure a different jolokia port exposed by the container (default `8778`).
+
+| jolokia.container-port-name
+| string
+| To configure a different port name for the port exposed by the container (default `jolokia`).
+
+| jolokia.expose
+| bool
+| Can be used to enable/disable exposure of jolokia via kubernetes Service. (default `false`).
+
+| jolokia.service-port
+| int
+| To configure a different jolokia port exposed by the service (default `8778`). It is applied only when the expose parameter is true.
+
+| jolokia.service-port-name
+| string
+| To configure a different port name for the port exposed by the service (default `jolokia`). It is applied only when the expose parameter is true.
+
+
+|===
+
+The syntax to specify jolokia trait options is as follows:
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait jolokia.[key]=[value]
+----
+
+You may specify these options with the export command to customize the Container and Service Resource specification for Jolokia.
+
+[source,bash]
+----
+camel kubernetes export Sample.java --trait jolokia.enabled=true --trait jolokia.container-port=8779 --trait jolokia.container-port-name=jolokia-port --trait jolokia.expose=true --trait jolokia.service-port=8779 --trait jolokia.service-port-name=port-jolokia
+----
+
+This results in the following specifications in the Deployment and Service resources.
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  ...
+  name: sample
+spec:
+  selector:
+  ...
+  template:
+  ...
+    spec:
+      containers:
+      - name: sample
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 8779 #<1>
+          name: jolokia-port #<2>
+          protocol: TCP
+...
+----
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Service
+metadata:
+...
+  name: sample
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  - name: jolokia-port #<3>
+    port: 8779 #<4>
+    protocol: TCP
+    targetPort: jolokia-port #<2>
+...
+----
+
+<1> Custom Jolokia container port
+<2> Custom Jolokia container port name
+<3> Custom Jolokia service port name
+<4> Custom Jolokia service port
 
 
 === OpenApi specifications

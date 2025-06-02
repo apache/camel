@@ -52,22 +52,4 @@ class RemoveVariableTest extends YamlTestSupport {
             ]
     }
 
-    def "Error: kebab-case: remove-variable definition"() {
-        when:
-        var route = '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - remove-variable:
-                              name: test
-                          - to: "mock:result"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            e.message.contains("additional properties")
-        }
-    }
 }

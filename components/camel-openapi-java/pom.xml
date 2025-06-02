@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.12.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-openapi-java</artifactId>
@@ -105,14 +105,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
-        </dependency>
-
-        <!-- servlet api -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>${jakarta-servlet-api-version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- testing -->

@@ -181,6 +181,36 @@ public interface Jt400EndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the CCSID to use for the receiving data messages from the IBM i
+         * system.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param dataQueueCcsid the value to set
+         * @return the dsl builder
+         */
+        default Jt400EndpointConsumerBuilder dataQueueCcsid(int dataQueueCcsid) {
+            doSetProperty("dataQueueCcsid", dataQueueCcsid);
+            return this;
+        }
+        /**
+         * Sets the CCSID to use for the receiving data messages from the IBM i
+         * system.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param dataQueueCcsid the value to set
+         * @return the dsl builder
+         */
+        default Jt400EndpointConsumerBuilder dataQueueCcsid(String dataQueueCcsid) {
+            doSetProperty("dataQueueCcsid", dataQueueCcsid);
+            return this;
+        }
+        /**
          * Action to be taken on messages when read from a message queue.
          * Messages can be marked as old (OLD), removed from the queue (REMOVE),
          * or neither (SAME).
@@ -677,7 +707,8 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -697,7 +728,8 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

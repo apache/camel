@@ -123,7 +123,8 @@ public interface JdbcEndpointBuilderFactory {
         }
         /**
          * Optional parameters to the java.sql.Statement. For example to set
-         * maxRows, fetchSize etc.
+         * maxRows, fetchSize etc. This is a multi-value option with prefix:
+         * statement.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -143,7 +144,8 @@ public interface JdbcEndpointBuilderFactory {
         }
         /**
          * Optional parameters to the java.sql.Statement. For example to set
-         * maxRows, fetchSize etc.
+         * maxRows, fetchSize etc. This is a multi-value option with prefix:
+         * statement.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

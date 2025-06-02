@@ -26,8 +26,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.azure.storage.queue.CredentialType.SHARED_ACCOUNT_KEY;
-
 @UriParams
 public class QueueConfiguration implements Cloneable {
 
@@ -36,6 +34,7 @@ public class QueueConfiguration implements Cloneable {
     @UriPath
     private String queueName;
     @UriParam(label = "security")
+    @Metadata(autowired = true)
     private StorageSharedKeyCredential credentials;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -61,7 +60,7 @@ public class QueueConfiguration implements Cloneable {
     private String popReceipt;
     @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY",
               defaultValue = "SHARED_ACCOUNT_KEY")
-    private CredentialType credentialType = SHARED_ACCOUNT_KEY;
+    private CredentialType credentialType;
 
     /**
      * Azure account name to be used for authentication with azure queue services

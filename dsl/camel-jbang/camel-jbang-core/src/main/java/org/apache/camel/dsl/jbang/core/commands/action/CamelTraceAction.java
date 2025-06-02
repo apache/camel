@@ -16,10 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -207,9 +207,9 @@ public class CamelTraceAction extends ActionBaseCommand {
         List<Long> pids = findPids(name);
         for (long pid : pids) {
             if ("clear".equals(action)) {
-                File f = getTraceFile("" + pid);
-                if (f.exists()) {
-                    IOHelper.writeText("{}", f);
+                Path f = getTraceFile("" + pid);
+                if (Files.exists(f)) {
+                    Files.writeString(f, "{}");
                 }
             } else {
                 JsonObject root = new JsonObject();
@@ -219,8 +219,8 @@ public class CamelTraceAction extends ActionBaseCommand {
                 } else if ("stop".equals(action)) {
                     root.put("enabled", "false");
                 }
-                File f = getActionFile(Long.toString(pid));
-                IOHelper.writeText(root.toJson(), f);
+                Path f = getActionFile(Long.toString(pid));
+                Files.writeString(f, root.toJson());
             }
         }
 
@@ -420,10 +420,10 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private void positionTraceLatest(Map<Long, Pid> pids) throws Exception {
         for (Pid pid : pids.values()) {
-            File file = getTraceFile(pid.pid);
+            Path file = getTraceFile(pid.pid);
             long position = -1;
-            if (file.exists()) {
-                pid.reader = new LineNumberReader(new FileReader(file));
+            if (Files.exists(file)) {
+                pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                 String line;
                 long counter = 0;
                 do {
@@ -443,7 +443,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             if (position != -1) {
                 IOHelper.close(pid.reader);
                 // re-create reader and forward to position
-                pid.reader = new LineNumberReader(new FileReader(file));
+                pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                 while (--position > 0) {
                     pid.reader.readLine();
                 }
@@ -453,9 +453,9 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private void tailTraceFiles(Map<Long, Pid> pids, int tail) throws Exception {
         for (Pid pid : pids.values()) {
-            File file = getTraceFile(pid.pid);
-            if (file.exists()) {
-                pid.reader = new LineNumberReader(new FileReader(file));
+            Path file = getTraceFile(pid.pid);
+            if (Files.exists(file)) {
+                pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                 String line;
                 if (tail <= 0) {
                     pid.fifo = new ArrayDeque<>();
@@ -524,12 +524,12 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         for (Pid pid : pids.values()) {
             if (pid.reader == null) {
-                File file = getTraceFile(pid.pid);
-                if (file.exists()) {
-                    pid.reader = new LineNumberReader(new FileReader(file));
+                Path file = getTraceFile(pid.pid);
+                if (Files.exists(file)) {
+                    pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                     if (tail == 0) {
                         // only read new lines so forward to end of reader
-                        long size = file.length();
+                        long size = Files.size(file);
                         pid.reader.skip(size);
                     }
                 }
@@ -608,6 +608,9 @@ public class CamelTraceAction extends ActionBaseCommand {
                     // we should exchangeId/pattern elsewhere
                     row.message.remove("exchangeId");
                     row.message.remove("exchangePattern");
+                    if (!showExchangeVariables) {
+                        row.message.remove("exchangeVariables");
+                    }
                     if (!showExchangeProperties) {
                         row.message.remove("exchangeProperties");
                     }

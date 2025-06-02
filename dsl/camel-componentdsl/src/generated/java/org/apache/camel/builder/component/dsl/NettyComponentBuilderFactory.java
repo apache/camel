@@ -70,7 +70,7 @@ public interface NettyComponentBuilderFactory {
         
         /**
          * Whether or not to disconnect(close) from Netty Channel right after
-         * use. Can be used for both consumer and producer.
+         * use.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -128,8 +128,8 @@ public interface NettyComponentBuilderFactory {
          * the channel is not returned to the connection pool until the Exchange
          * is done; or disconnected if the disconnect option is set to true. The
          * reused Channel is stored on the Exchange as an exchange property with
-         * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
-         * channel during routing and use it as well.
+         * the key CamelNettyChannel which allows you to obtain the channel
+         * during routing and use it as well.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -146,7 +146,8 @@ public interface NettyComponentBuilderFactory {
     
         
         /**
-         * Setting to set endpoint as one-way or request-response.
+         * Setting to set endpoint as one-way (false) or request-response
+         * (true).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -203,23 +204,6 @@ public interface NettyComponentBuilderFactory {
          */
         default NettyComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-    
-        
-        /**
-         * Setting to choose Multicast over UDP.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param broadcast the value to set
-         * @return the dsl builder
-         */
-        default NettyComponentBuilder broadcast(boolean broadcast) {
-            doSetProperty("broadcast", broadcast);
             return this;
         }
     
@@ -334,6 +318,23 @@ public interface NettyComponentBuilderFactory {
     
         
         /**
+         * Setting to choose Multicast over UDP.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param broadcast the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder broadcast(boolean broadcast) {
+            doSetProperty("broadcast", broadcast);
+            return this;
+        }
+    
+        
+        /**
          * If sync is enabled then this option dictates NettyConsumer if it
          * should disconnect where there is no reply to send back.
          * 
@@ -351,7 +352,7 @@ public interface NettyComponentBuilderFactory {
         }
     
         /**
-         * To use the given EventExecutorGroup.
+         * To use the given custom EventExecutorGroup.
          * 
          * The option is a:
          * &lt;code&gt;io.netty.util.concurrent.EventExecutorGroup&lt;/code&gt;
@@ -862,7 +863,7 @@ public interface NettyComponentBuilderFactory {
         }
     
         /**
-         * To use a explicit ChannelGroup.
+         * To use an explicit ChannelGroup.
          * 
          * The option is a:
          * &lt;code&gt;io.netty.channel.group.ChannelGroup&lt;/code&gt; type.
@@ -900,9 +901,9 @@ public interface NettyComponentBuilderFactory {
     
         /**
          * Allows to configure additional netty options using option. as prefix.
-         * For example option.child.keepAlive=false to set the netty option
-         * child.keepAlive=false. See the Netty documentation for possible
-         * options that can be used.
+         * For example option.child.keepAlive=false. See the Netty documentation
+         * for possible options that can be used. This is a multi-value option
+         * with prefix: option.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -966,6 +967,23 @@ public interface NettyComponentBuilderFactory {
          */
         default NettyComponentBuilder sendBufferSize(int sendBufferSize) {
             doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+    
+        
+        /**
+         * Shutdown await timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder shutdownTimeout(int shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
             return this;
         }
     
@@ -1253,6 +1271,7 @@ public interface NettyComponentBuilderFactory {
          * @param keyStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyComponentBuilder keyStoreFile(java.io.File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
             return this;
@@ -1278,6 +1297,9 @@ public interface NettyComponentBuilderFactory {
          * Client side certificate keystore to be used for encryption. Is loaded
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1421,6 +1443,7 @@ public interface NettyComponentBuilderFactory {
          * @param trustStoreFile the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default NettyComponentBuilder trustStoreFile(java.io.File trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
             return this;
@@ -1491,13 +1514,13 @@ public interface NettyComponentBuilderFactory {
             case "sync": getOrCreateConfiguration((NettyComponent) component).setSync((boolean) value); return true;
             case "tcpNoDelay": getOrCreateConfiguration((NettyComponent) component).setTcpNoDelay((boolean) value); return true;
             case "bridgeErrorHandler": ((NettyComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "broadcast": getOrCreateConfiguration((NettyComponent) component).setBroadcast((boolean) value); return true;
             case "clientMode": getOrCreateConfiguration((NettyComponent) component).setClientMode((boolean) value); return true;
             case "reconnect": getOrCreateConfiguration((NettyComponent) component).setReconnect((boolean) value); return true;
             case "reconnectInterval": getOrCreateConfiguration((NettyComponent) component).setReconnectInterval((int) value); return true;
             case "backlog": getOrCreateConfiguration((NettyComponent) component).setBacklog((int) value); return true;
             case "bossCount": getOrCreateConfiguration((NettyComponent) component).setBossCount((int) value); return true;
             case "bossGroup": getOrCreateConfiguration((NettyComponent) component).setBossGroup((io.netty.channel.EventLoopGroup) value); return true;
+            case "broadcast": getOrCreateConfiguration((NettyComponent) component).setBroadcast((boolean) value); return true;
             case "disconnectOnNoReply": getOrCreateConfiguration((NettyComponent) component).setDisconnectOnNoReply((boolean) value); return true;
             case "executorService": ((NettyComponent) component).setExecutorService((io.netty.util.concurrent.EventExecutorGroup) value); return true;
             case "maximumPoolSize": ((NettyComponent) component).setMaximumPoolSize((int) value); return true;
@@ -1531,6 +1554,7 @@ public interface NettyComponentBuilderFactory {
             case "receiveBufferSize": getOrCreateConfiguration((NettyComponent) component).setReceiveBufferSize((int) value); return true;
             case "receiveBufferSizePredictor": getOrCreateConfiguration((NettyComponent) component).setReceiveBufferSizePredictor((int) value); return true;
             case "sendBufferSize": getOrCreateConfiguration((NettyComponent) component).setSendBufferSize((int) value); return true;
+            case "shutdownTimeout": getOrCreateConfiguration((NettyComponent) component).setShutdownTimeout((int) value); return true;
             case "transferExchange": getOrCreateConfiguration((NettyComponent) component).setTransferExchange((boolean) value); return true;
             case "udpByteArrayCodec": getOrCreateConfiguration((NettyComponent) component).setUdpByteArrayCodec((boolean) value); return true;
             case "unixDomainSocketPath": getOrCreateConfiguration((NettyComponent) component).setUnixDomainSocketPath((java.lang.String) value); return true;

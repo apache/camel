@@ -16,9 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +44,7 @@ public class DependencyUpdate extends DependencyList {
 
     @CommandLine.Parameters(description = "Maven pom.xml or Java source files (JBang Style with //DEPS) to have dependencies updated",
                             arity = "1")
-    public File file;
+    public Path file;
 
     @CommandLine.Option(names = { "--clean" },
                         description = "Regenerate list of dependencies (do not keep existing dependencies). Not supported for pom.xml")
@@ -60,12 +60,12 @@ public class DependencyUpdate extends DependencyList {
     @Override
     public Integer doCall() throws Exception {
         // source file must exist
-        if (!file.exists()) {
+        if (!Files.exists(file)) {
             printer().printErr("Source file does not exist: " + file);
             return -1;
         }
 
-        boolean maven = "pom.xml".equals(file.getName());
+        boolean maven = "pom.xml".equals(file.getFileName().toString());
 
         if (clean && !maven) {
             // remove DEPS in source file first
@@ -78,7 +78,7 @@ public class DependencyUpdate extends DependencyList {
     @Override
     protected void outputGav(MavenGav gav, int index, int total) {
         try {
-            boolean maven = "pom.xml".equals(file.getName());
+            boolean maven = "pom.xml".equals(file.getFileName().toString());
             if (maven) {
                 outputGavMaven(gav, index, total);
             } else {
@@ -118,7 +118,7 @@ public class DependencyUpdate extends DependencyList {
 
     private void updateJBangSource() {
         try {
-            List<String> lines = Files.readAllLines(file.toPath());
+            List<String> lines = Files.readAllLines(file);
             List<String> answer = new ArrayList<>();
 
             // find position of where the old DEPS was
@@ -150,7 +150,7 @@ public class DependencyUpdate extends DependencyList {
             }
 
             String text = String.join(System.lineSeparator(), answer);
-            IOHelper.writeText(text, file);
+            Files.writeString(file, text);
         } catch (Exception e) {
             printer().printErr("Error updating source file: " + file + " due to: " + e.getMessage());
         }
@@ -162,10 +162,10 @@ public class DependencyUpdate extends DependencyList {
         Node camelClone = null;
         int targetLineNumber = -1;
 
-        File pom = new File(file.getName());
-        if (pom.exists()) {
+        Path pom = Paths.get(file.getFileName().toString());
+        if (Files.exists(pom)) {
             // use line number parser as we want to find where to add new Camel JARs after the existing Camel JARs
-            Document dom = XmlLineNumberParser.parseXml(new FileInputStream(pom));
+            Document dom = XmlLineNumberParser.parseXml(Files.newInputStream(pom));
             String camelVersion = null;
             NodeList nl = dom.getElementsByTagName("dependency");
             for (int i = 0; i < nl.getLength(); i++) {
@@ -174,7 +174,7 @@ public class DependencyUpdate extends DependencyList {
                 // must be child at <project/dependencyManagement> or <project/dependencies>
                 String p = node.getParentNode().getNodeName();
                 String p2 = node.getParentNode().getParentNode().getNodeName();
-                boolean accept = "project".equals(p2) && (p.equals("dependencyManagement") || p.equals("dependencies"));
+                boolean accept = ("dependencyManagement".equals(p2) || "project".equals(p2)) && (p.equals("dependencies"));
                 if (!accept) {
                     continue;
                 }
@@ -253,11 +253,11 @@ public class DependencyUpdate extends DependencyList {
 
             if (changes > 0) {
                 // respect indent from existing GAVs
-                String line = IOHelper.loadTextLine(new FileInputStream(file), targetLineNumber);
+                String line = IOHelper.loadTextLine(Files.newInputStream(file), targetLineNumber);
                 line = StringHelper.before(line, "<");
                 int indent = StringHelper.countChar(line, ' ');
                 String pad = Strings.repeat(" ", indent);
-                line = IOHelper.loadTextLine(new FileInputStream(file), targetLineNumber - 1);
+                line = IOHelper.loadTextLine(Files.newInputStream(file), targetLineNumber - 1);
                 line = StringHelper.before(line, "<");
                 int indent2 = StringHelper.countChar(line, ' ');
                 String pad2 = Strings.repeat(" ", indent2);
@@ -275,7 +275,7 @@ public class DependencyUpdate extends DependencyList {
                 }
 
                 StringJoiner out = new StringJoiner("\n");
-                String[] lines = IOHelper.loadText(new FileInputStream(file)).split("\n");
+                String[] lines = IOHelper.loadText(Files.newInputStream(file)).split("\n");
                 for (int i = 0; i < lines.length; i++) {
                     String txt = lines[i];
                     out.add(txt);
@@ -288,7 +288,7 @@ public class DependencyUpdate extends DependencyList {
                 } else {
                     outPrinter().println("Updating pom.xml with 1 dependency added");
                 }
-                IOHelper.writeText(out.toString(), file);
+                Files.writeString(file, out.toString());
             } else {
                 outPrinter().println("No updates to pom.xml");
             }

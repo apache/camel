@@ -103,6 +103,11 @@ public class ArtemisAMQPInfraService extends AbstractArtemisEmbeddedService {
     }
 
     @Override
+    public String remoteURI() {
+        return "amqp://0.0.0.0:" + amqpPort;
+    }
+
+    @Override
     public int brokerPort() {
         return amqpPort;
     }

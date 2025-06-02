@@ -45,6 +45,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -95,6 +96,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
     @UriParam(label = "advanced")
     private XsltMessageLogger xsltMessageLogger;
+    @UriParam
+    private String source;
 
     public XsltEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -461,6 +464,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         xslt.setUriResolver(uriResolver);
         xslt.setEntityResolver(entityResolver);
         xslt.setDeleteOutputFile(deleteOutputFile);
+        xslt.setSource(ExpressionBuilder.singleInputExpression(getSource()));
 
         configureOutput(xslt, output.name());
 
@@ -497,6 +501,19 @@ public class XsltEndpoint extends ProcessorEndpoint {
         } else {
             throw new IllegalArgumentException("Unknown output type: " + output);
         }
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of
+     * source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the
+     * message body.
+     */
+    public void setSource(String source) {
+        this.source = source;
     }
 
     @Override

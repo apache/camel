@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -50,8 +49,6 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
         super(camelContext);
 
         this.configuration = new ServiceNowConfiguration();
-
-        registerExtension(ServiceNowComponentVerifierExtension::new);
         registerExtension(ServiceNowMetaDataExtension::new);
     }
 
@@ -92,11 +89,6 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
-    }
-
-    public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
-                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 
     // ****************************************

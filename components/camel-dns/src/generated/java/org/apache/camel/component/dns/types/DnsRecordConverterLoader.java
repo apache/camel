@@ -44,8 +44,14 @@ public final class DnsRecordConverterLoader implements TypeConverterLoader, Came
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, org.xbill.DNS.Record.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.dns.types.DnsRecordConverter.toRecord((java.lang.String) value));
+        addTypeConverter(registry, org.xbill.DNS.Record.class, java.lang.String.class, true,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.dns.types.DnsRecordConverter.toRecord((java.lang.String) value);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

@@ -71,22 +71,4 @@ class RemovePropertyTest extends YamlTestSupport {
             }
     }
 
-    def "Error: kebab-case: remove-property definition"() {
-        when:
-        var route = '''
-                    - from:
-                        uri: "direct:start"
-                        steps:    
-                          - remove-property:
-                              name: test
-                          - to: "mock:result"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            e.message.contains("additional properties")
-        }
-    }
 }

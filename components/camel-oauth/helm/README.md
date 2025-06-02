@@ -32,10 +32,10 @@ openssl req -x509 -newkey rsa:4096 -keyout ./helm/etc/cluster.key -out ./helm/et
 cat ./helm/etc/cluster.crt | openssl x509 -noout -text
 
 # Import TLS Certificate to Java Keystore (i.e. trust the certificate)
-sudo keytool -import -alias keycloak -file ./helm/etc/cluster.crt -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
+sudo keytool -import -alias camel-oauth -file ./helm/etc/cluster.crt -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
 
 # Remove TLS Certificate from Java Keystore
-sudo keytool -delete -alias keycloak -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
+sudo keytool -delete -alias camel-oauth -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
 
 # Trust this cert on macOS
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ./helm/etc/cluster.crt
@@ -201,7 +201,7 @@ oc new-project camel
 ## Installing Keycloak
 
 ```
-export OPENSHIFT_HOSTNAME=apps.rosa.nxus7-dbdhd-pp7.vxfp.p3.openshiftapps.com
+export OPENSHIFT_HOSTNAME=apps.rosa.scvka-fwa2e-54s.9pbs.p3.openshiftapps.com
 helm upgrade --install keycloak --namespace examples --set openshift.hostName=${OPENSHIFT_HOSTNAME} ./helm -f ./helm/values-keycloak-openshift.yaml \
     && kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=keycloak --timeout=20s \
     && kubectl logs --tail 400 -f -l app.kubernetes.io/name=keycloak
@@ -213,4 +213,18 @@ Verify access to the OIDC configuration
 
 ```
 curl -s https://keycloak.${OPENSHIFT_HOSTNAME}/realms/camel/.well-known/openid-configuration | jq .
+```
+
+### Modify Keycloak OIDC Config for OpenShift
+
+```sh
+kcadm config credentials --server https://keycloak.${OPENSHIFT_HOSTNAME} --realm master --user admin --password admin
+
+# Show client config
+kcadm get clients -r camel | jq '.[] | select(.clientId=="camel-client")'
+
+# Update redirect URIs
+CLIENT_ID=$(kcadm get clients -r camel --fields id,clientId | jq -r '.[] | select(.clientId=="camel-client").id') \
+  && kcadm update clients/$CLIENT_ID -r camel -s 'redirectUris=["https://webapp.'${OPENSHIFT_HOSTNAME}'/auth"]' \
+  && kcadm update clients/$CLIENT_ID -r camel -s 'attributes."post.logout.redirect.uris"="https://webapp.'${OPENSHIFT_HOSTNAME}'/"'
 ```

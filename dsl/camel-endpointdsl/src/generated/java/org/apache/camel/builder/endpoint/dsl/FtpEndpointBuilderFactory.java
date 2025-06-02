@@ -1913,7 +1913,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1933,7 +1934,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2904,7 +2906,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2924,7 +2927,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2943,7 +2947,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2963,7 +2967,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4312,7 +4316,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4332,7 +4337,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4351,7 +4357,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4371,7 +4377,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5203,7 +5209,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5223,7 +5230,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5242,7 +5250,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5262,7 +5270,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

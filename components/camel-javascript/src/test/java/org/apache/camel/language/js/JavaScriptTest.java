@@ -18,7 +18,9 @@ package org.apache.camel.language.js;
 
 import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "os.arch", matches = "(?i)(s390x|ppc64le)")
 public class JavaScriptTest extends LanguageTestSupport {
 
     @Test

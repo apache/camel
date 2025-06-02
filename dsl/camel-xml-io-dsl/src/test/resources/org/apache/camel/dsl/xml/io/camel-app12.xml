@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<camel xmlns="http://camel.apache.org/schema/spring">
+<camel xmlns="http://camel.apache.org/schema/xml-io">
     <restConfiguration contextPath="api" apiContextPath="api-doc"
                        apiComponent="dummy-rest" component="dummy-rest" bindingMode="auto">
         <apiProperty key="api.title" value="test"/>

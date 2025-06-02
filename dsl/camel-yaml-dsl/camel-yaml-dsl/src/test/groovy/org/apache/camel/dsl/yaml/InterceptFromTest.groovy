@@ -51,27 +51,4 @@ class InterceptFromTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "Error: kebab-case: intercept-from"() {
-        when:
-        var route = """
-                - intercept-from:
-                    steps:
-                      - to: "mock:intercepted"  
-                - from:
-                    uri: "direct:start"
-                    steps:
-                      - to: "mock:foo"
-                      - setBody:
-                          constant: "Hello Bar"
-                      - to: "mock:bar"
-                      - to: "mock:result"
-            """
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            assert e.message.contains("additional properties")
-        }
-    }
 }

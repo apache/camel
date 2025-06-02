@@ -40,8 +40,9 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         comp.setLowerCase(true);
         assertTrue(comp.isLowerCase());
 
-        comp.setCaseInsensitive(true);
         assertTrue(comp.isCaseInsensitive());
+        comp.setCaseInsensitive(false);
+        assertFalse(comp.isCaseInsensitive());
 
         comp.setFilterOnMatch(false);
         assertFalse(comp.isFilterOnMatch());
@@ -72,6 +73,40 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
 
         assertFalse(comp.applyFilterToExternalHeaders("bar", 123, exchange));
         assertTrue(comp.applyFilterToExternalHeaders("foo", "cheese", exchange));
+    }
+
+    @Test
+    public void testInFilterCaseSensitive() {
+        DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
+        comp.setCaseInsensitive(false);
+
+        Set<String> set = new HashSet<>();
+        set.add("foo");
+        comp.setInFilter(set);
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("bar", 123);
+        exchange.getIn().setHeader("FOO", "cheese");
+
+        assertFalse(comp.applyFilterToExternalHeaders("bar", 123, exchange));
+        assertFalse(comp.applyFilterToExternalHeaders("FOO", "cheese", exchange));
+    }
+
+    @Test
+    public void testInFilterCaseInsensitive() {
+        DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
+        comp.setCaseInsensitive(true);
+
+        Set<String> set = new HashSet<>();
+        set.add("foo");
+        comp.setInFilter(set);
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("bar", 123);
+        exchange.getIn().setHeader("FOO", "cheese");
+
+        assertFalse(comp.applyFilterToExternalHeaders("bar", 123, exchange));
+        assertTrue(comp.applyFilterToExternalHeaders("FOO", "cheese", exchange));
     }
 
     @Test
@@ -147,14 +182,14 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         exchange.getIn().setHeader("foo", "cheese");
         exchange.getIn().setHeader("CamelName", "Apache Camel");
         exchange.getIn().setHeader("camelVersion", "3.7");
-        exchange.getIn().setHeader("org.apache.camel.id", "foo");
+        exchange.getIn().setHeader("camelID", "foo");
 
         assertFalse(comp.applyFilterToCamelHeaders("bar", 123, exchange));
         assertFalse(comp.applyFilterToCamelHeaders("foo", "cheese", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("CamelName", "Apache Camel", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("camelVersion", "3.7", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("camelNextVersion", "3.8", exchange));
-        assertTrue(comp.applyFilterToCamelHeaders("org.apache.camel.component.seda.queueSize", "123", exchange));
+        assertTrue(comp.applyFilterToCamelHeaders("CamelSedaQeueSize", "123", exchange));
     }
 
     @Test
@@ -167,12 +202,12 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         exchange.getIn().setHeader("bar", 123);
         exchange.getIn().setHeader("foo", "cheese");
         exchange.getIn().setHeader("CamelVersion", "3.7");
-        exchange.getIn().setHeader("org.apache.camel.component.jetty.session", "true");
+        exchange.getIn().setHeader("camelJettySession", "true");
 
         assertFalse(comp.applyFilterToExternalHeaders("bar", 123, exchange));
         assertFalse(comp.applyFilterToExternalHeaders("foo", "cheese", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("CamelVersion", "3.7", exchange));
-        assertTrue(comp.applyFilterToExternalHeaders("org.apache.camel.component.jetty.session", "true", exchange));
+        assertTrue(comp.applyFilterToExternalHeaders("camelJETTYSession", "true", exchange));
     }
 
     @Test
@@ -186,7 +221,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         exchange.getIn().setHeader("bar", 123);
         exchange.getIn().setHeader("foo", "cheese");
         exchange.getIn().setHeader("caMElVersion", "3.7");
-        exchange.getIn().setHeader("org.apache.CAMEL.component.jetty.session", "true");
+        exchange.getIn().setHeader("CAMELJETTYSession", "true");
 
         assertTrue(comp.applyFilterToExternalHeaders("caMElVersion", 123, exchange));
         assertTrue(comp.applyFilterToExternalHeaders("cAmelResponseCode", 503, exchange));
@@ -194,7 +229,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertFalse(comp.applyFilterToExternalHeaders("bar", 123, exchange));
         assertFalse(comp.applyFilterToExternalHeaders("foo", "cheese", exchange));
         assertTrue(comp.applyFilterToExternalHeaders("CamelVersion", "3.7", exchange));
-        assertTrue(comp.applyFilterToExternalHeaders("org.apache.camel.component.jetty.session", "true", exchange));
+        assertTrue(comp.applyFilterToExternalHeaders("CamelJettySession", "true", exchange));
     }
 
 }

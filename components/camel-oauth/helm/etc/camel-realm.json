@@ -168,10 +168,11 @@
       "consentRequired" : false,
       "fullScopeAllowed" : false,
       "redirectUris": [
-        "http://127.0.0.1:8080/auth"
+        "https://example.local/auth",
+        "https://example.k3s/auth"
       ],
       "attributes": {
-        "post.logout.redirect.uris": "http://127.0.0.1:8080/"
+        "post.logout.redirect.uris": "https://example.local/##https://example.k3s/"
       }
     },
     {

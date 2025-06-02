@@ -44,7 +44,6 @@ public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
             public void configure() {
                 // this user REST service is json only
                 rest("/day").tag("dude").description("Day service").consumes("application/json").produces("application/json")
-
                         .get("/week").description("Day of week").param().name("day").type(RestParamType.query)
                         .description("Day of week").defaultValue("friday").dataType("string")
                         .allowableValues("monday", "tuesday", "wednesday", "thursday", "friday").endParam().responseMessage()

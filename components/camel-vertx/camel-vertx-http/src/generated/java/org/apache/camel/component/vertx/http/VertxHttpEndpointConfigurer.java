@@ -29,6 +29,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthUsername": target.getConfiguration().setBasicAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.getConfiguration().setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": target.getConfiguration().setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "cookiestore":
@@ -39,6 +41,10 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "httpMethod": target.getConfiguration().setHttpMethod(property(camelContext, io.vertx.core.http.HttpMethod.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "multipartupload":
+        case "multipartUpload": target.getConfiguration().setMultipartUpload(property(camelContext, boolean.class, value)); return true;
+        case "multipartuploadname":
+        case "multipartUploadName": target.getConfiguration().setMultipartUploadName(property(camelContext, java.lang.String.class, value)); return true;
         case "okstatuscoderange":
         case "okStatusCodeRange": target.getConfiguration().setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -81,6 +87,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthUsername": return java.lang.String.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return boolean.class;
         case "connecttimeout":
         case "connectTimeout": return int.class;
         case "cookiestore":
@@ -91,6 +99,10 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "httpMethod": return io.vertx.core.http.HttpMethod.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "multipartupload":
+        case "multipartUpload": return boolean.class;
+        case "multipartuploadname":
+        case "multipartUploadName": return java.lang.String.class;
         case "okstatuscoderange":
         case "okStatusCodeRange": return java.lang.String.class;
         case "proxyhost":
@@ -134,6 +146,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthUsername": return target.getConfiguration().getBasicAuthUsername();
         case "bearertoken":
         case "bearerToken": return target.getConfiguration().getBearerToken();
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return target.getConfiguration().isBridgeEndpoint();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "cookiestore":
@@ -144,6 +158,10 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "httpMethod": return target.getConfiguration().getHttpMethod();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "multipartupload":
+        case "multipartUpload": return target.getConfiguration().isMultipartUpload();
+        case "multipartuploadname":
+        case "multipartUploadName": return target.getConfiguration().getMultipartUploadName();
         case "okstatuscoderange":
         case "okStatusCodeRange": return target.getConfiguration().getOkStatusCodeRange();
         case "proxyhost":

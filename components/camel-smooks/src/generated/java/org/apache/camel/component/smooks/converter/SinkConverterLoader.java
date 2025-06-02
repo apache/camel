@@ -46,17 +46,53 @@ public final class SinkConverterLoader implements TypeConverterLoader, CamelCont
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.lang.Double.class, org.smooks.io.sink.JavaSink.ResultMap.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toDouble((org.smooks.io.sink.JavaSink.ResultMap) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.smooks.converter.SinkConverter.toDouble((org.smooks.io.sink.JavaSink.ResultMap) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.Integer.class, org.smooks.io.sink.JavaSink.ResultMap.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toInteger((org.smooks.io.sink.JavaSink.ResultMap) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.smooks.converter.SinkConverter.toInteger((org.smooks.io.sink.JavaSink.ResultMap) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, org.smooks.io.sink.StringSink.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toString((org.smooks.io.sink.StringSink) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.smooks.converter.SinkConverter.toString((org.smooks.io.sink.StringSink) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.util.List.class, org.smooks.io.sink.JavaSink.ResultMap.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toList((org.smooks.io.sink.JavaSink.ResultMap) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.smooks.converter.SinkConverter.toList((org.smooks.io.sink.JavaSink.ResultMap) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.smooks.io.source.StringSource.class, org.smooks.io.sink.StringSink.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toStringSource((org.smooks.io.sink.StringSink) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.smooks.converter.SinkConverter.toStringSource((org.smooks.io.sink.StringSink) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.Node.class, org.smooks.io.sink.DOMSink.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toDocument((org.smooks.io.sink.DOMSink) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.smooks.converter.SinkConverter.toDocument((org.smooks.io.sink.DOMSink) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

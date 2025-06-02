@@ -21,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -172,6 +174,7 @@ public class KubernetesExport extends Export {
         gradleWrapper = configurer.gradleWrapper;
         fresh = configurer.fresh;
         download = configurer.download;
+        packageScanJars = configurer.packageScanJars;
         quiet = configurer.quiet;
         logging = configurer.logging;
         loggingLevel = configurer.loggingLevel;
@@ -261,7 +264,7 @@ public class KubernetesExport extends Export {
         var applicationProfileProperties = new String[0];
         if (this.profile != null) {
             // override from profile specific configuration
-            applicationProfileProperties = extractPropertiesTraits(new File("application-" + profile + ".properties"));
+            applicationProfileProperties = extractPropertiesTraits(Paths.get("application-" + profile + ".properties"));
         }
 
         Traits traitsSpec = getTraitSpec(applicationProfileProperties, applicationProperties);
@@ -333,8 +336,8 @@ public class KubernetesExport extends Export {
             addDependencies("org.apache.camel:camel-health", "org.apache.camel:camel-platform-http-main");
         }
 
-        File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
-        var jkubeVersion = jkubeMavenPluginVersion(settings, mapBuildProperties());
+        Path settingsPath = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
+        var jkubeVersion = jkubeMavenPluginVersion(settingsPath, mapBuildProperties());
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
         setContainerHealthPaths();
@@ -357,17 +360,17 @@ public class KubernetesExport extends Export {
             var ymlFragment = KubernetesHelper.dumpYaml(map);
             var kind = map.get("kind").toString().toLowerCase();
             safeCopy(new ByteArrayInputStream(ymlFragment.getBytes(StandardCharsets.UTF_8)),
-                    new File(exportDir + "/src/main/jkube/%s.yml".formatted(kind)));
+                    Paths.get(exportDir, "src/main/jkube", kind + ".yml"));
 
         }
 
         context.doWithConfigurationResources((fileName, content) -> {
             try {
-                File target = new File(exportDir + SRC_MAIN_RESOURCES + fileName);
-                if (target.exists()) {
-                    Files.writeString(target.toPath(), "%n%s".formatted(content), StandardOpenOption.APPEND);
+                Path targetPath = Paths.get(exportDir, "src/main/resources", fileName);
+                if (Files.exists(targetPath)) {
+                    Files.writeString(targetPath, "%n%s".formatted(content), StandardOpenOption.APPEND);
                 } else {
-                    safeCopy(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), target);
+                    safeCopy(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), targetPath);
                 }
             } catch (Exception e) {
                 printer().printf("Failed to create configuration resource %s - %s%n",
@@ -515,14 +518,18 @@ public class KubernetesExport extends Export {
         return imageRegistry;
     }
 
-    protected String[] extractPropertiesTraits(File file) throws Exception {
-        if (file.exists()) {
+    protected String[] extractPropertiesTraits(Path path) throws Exception {
+        if (Files.exists(path)) {
             Properties prop = new CamelCaseOrderedProperties();
-            RuntimeUtil.loadProperties(prop, file);
+            RuntimeUtil.loadProperties(prop, path);
             return TraitHelper.extractTraitsFromProperties(prop);
         } else {
             return null;
         }
+    }
+
+    protected String[] extractPropertiesTraits(File file) throws Exception {
+        return extractPropertiesTraits(file.toPath());
     }
 
     protected String getProjectName() {
@@ -583,6 +590,7 @@ public class KubernetesExport extends Export {
             boolean gradleWrapper,
             boolean fresh,
             boolean download,
+            boolean packageScanJars,
             boolean quiet,
             boolean logging,
             String loggingLevel,

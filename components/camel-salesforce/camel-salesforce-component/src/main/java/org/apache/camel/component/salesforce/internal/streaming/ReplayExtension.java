@@ -36,9 +36,6 @@ import org.cometd.bayeux.client.ClientSession.Extension;
 
 /**
  * The Bayeux extension for replay
- *
- * @author hal.hildebrand
- * @since  API v37.0
  */
 public class ReplayExtension implements Extension {
     private static final String EXTENSION_NAME = "replay";
@@ -50,6 +47,11 @@ public class ReplayExtension implements Extension {
 
     public void setReplayIdIfAbsent(final String channelName, final long replayId) {
         dataMap.putIfAbsent(channelName, replayId);
+    }
+
+    public void setReplayId(final String channelName, final long replayId) {
+        // force setting with a specific value
+        dataMap.put(channelName, replayId);
     }
 
     @Override

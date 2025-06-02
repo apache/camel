@@ -101,7 +101,7 @@ public abstract class HttpsV3Test extends ManagedCamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
-                equalTo("application/xml, application/json")));
+                equalTo("application/xml,application/json")));
     }
 
     @Override

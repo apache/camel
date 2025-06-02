@@ -20,7 +20,7 @@
     parameters:
       period: "1000"
     steps:
-      - set-body:
+      - setBody:
           constant: "Hello Yaml !!!"
       - transform:
           simple: "${body.toUpperCase()}"

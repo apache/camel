@@ -1,0 +1,287 @@
+= Dapr Component
+:doctitle: Dapr
+:shortname: dapr
+:artifactid: camel-dapr
+:description: Dapr component which interfaces with Dapr Building Blocks.
+:since: 4.12
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: dapr
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Dapr Component provides support for interacting with the https://docs.dapr.io/developing-applications/building-blocks/[Dapr Building Blocks].
+
+== URI format
+
+----
+dapr:operation[?options]
+----
+
+Where *operation* indicates the specific Dapr building block to interact with.
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+=== Dapr Producer operations
+
+Camel Dapr component provides a wide range of operations on the producer side:
+
+=== 1. *invokeService*:
+Using service invocation, your application can reliably and securely communicate with other applications using the standard HTTP protocol. For this operation `serviceToInvoke` and `methodToInvoke` are mandatory.
+
+=== 2. *state*:
+State management in Dapr allows your application to save, get and delete key-value pairs in a reliable and consistent way. For these operations `stateStore` is required.
+
+==== State Operations
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`save` |Store or update a single key-value pair in the state store. For this operation `payload` and `key` are required.
+|`saveBulk` |Store or update multiple key-value pairs in the state store in a single operation. For this operation (List<State<?>>) `states` is a required field.
+|`get` |Retrieve the value of a specific key from the state store. For this operation `key` is a required field.
+|`getBulk` |Retrieve values for multiple keys from the state store in a single request. For this operation (List<String>) `keys` is a required field.
+|`delete` |Remove a specific key and its associated value from the state store. For this operation `key` is a required field.
+|`executeTransaction` |Execute a batch of operations (save or delete) atomically within a transaction. For this operation (List<TransactionalStateOperation<?>>) `transactions` is a required field.
+|===
+
+=== 2. *pubSub*:
+Dapr’s publish-subscribe (Pub/Sub) building block enables asynchronous, event-driven communication between microservices. For this operation, the pubSubName and topic are required.
+
+=== 3. *invokeBinding*:
+Dapr’s bindings building block allows interaction with external systems via input/output bindings. The invokeBinding operation enables sending data to a configured output binding. This operation requires specifying the bindingName (the name of the binding component) and the bindingOperation (such as create, get, or delete, depending on the binding's capabilities).
+
+=== 4. *secret*:
+Dapr’s secret management building block enables secure retrieval of secrets from external secret stores. The secret operation fetches a secret from the specified secret store. If a key is provided, the operation retrieves the corresponding secret; if no key is specified, a bulk retrieval of all secrets from the store is performed. This operation requires the secretStore name, and optionally the key.
+
+=== 5. *configuration*:
+Dapr’s configuration building block allows applications to retrieve dynamic configuration values from external configuration stores. The configuration operation fetches values associated with keys specified in configKeys. This operation requires the configStore name, and the configKeys.
+
+=== Dapr Consumer operations
+
+=== 1. *pubSub*:
+The Dapr PubSub Consumer in Apache Camel allows your route to consume events from a Dapr-supported Pub/Sub system. It subscribes to a specified topic on a given pubsub component (pubSubName) and processes incoming CloudEvents as Camel Exchange objects.
+
+To configure a consumer, the pubSubName and topic must be provided. Alternatively, a preconfigured DaprPreviewClient can be registered in the Camel registry to allow the consumer to reuse it instead of creating a new one internally.
+
+=== 2. *configuration*:
+
+The Dapr Configuration Consumer in Apache Camel allows your route to receive real-time updates from a Dapr-supported configuration store. It listens for changes to specified keys in the configuration store and processes the updates as Camel Exchange objects.
+
+To configure the consumer, the configStore name and configKeys must be provided.
+
+== Examples
+
+=== Producer Operations Examples
+- `invokeService` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.VERB, "GET");
+  })
+  .to("dapr:invokeService?serviceToInvoke=myService&methodToInvoke=myMethod")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: save` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the payload you want to save as state
+    exchange.getIn().setBody("myValue");
+  })
+  .to("dapr:state?stateOperation=save&stateStore=myStore&key=myKey")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: saveBulk` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the list of states you want to save
+    State<String> state1 = new State<>("key1", "val1", "etag1");
+    State<String> state2 = new State<>("key2", "val1", "etag2");
+    List<State<?>> states = List.of(state1, state2);
+    exchange.getMessage().setHeader(DaprConstants.STATES, states);
+  })
+  .to("dapr:state?stateOperation=saveBulk&stateStore=myStore")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: get` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.CONCURRENCY, "FIRST_WRITE");
+    exchange.getIn().setHeader(DaprConstants.CONSISTENCY, "EVENTUAL");
+  })
+  .to("dapr:state?stateOperation=get&stateStore=myStore&key=myKey")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: getBulk` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.KEYS, List.of("key1", "key2"));
+  })
+  .to("dapr:state?stateOperation=getBulk&stateStore=myStore")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: delete` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.METADATA, Map.of("partitionKey", "myPartitionKey"));
+  })
+  .to("dapr:state?stateOperation=delete&stateStore=myStore&key=myKey")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: executeTransaction` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    TransactionalStateOperation.OperationType op = TransactionalStateOperation.OperationType.UPSERT;
+    List<TransactionalStateOperation<?>> transactions = List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
+    exchange.getIn().setHeader(DaprConstants.TRANSACTIONS, transactions);
+  })
+  .to("dapr:state?stateOperation=executeTransaction&stateStore=myStore")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `pubSub` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.CONTENT_TYPE, "application/json");
+  })
+  .to("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `invokeBinding` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the message body to the payload to send to the output binding
+    // e.g.:
+    exchange.getMessage().setBody("myBody");
+  })
+  .to("dapr:invokeBinding?bindingName=myBinding&bindingOperation=myOperation")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `secret` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .to("dapr:secret?secretStore=myStore&key=mySecret")
+  .log("Received secret from Dapr: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `secret: bulk` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  // when no secret key is passed, bulk retrieval is performed on secret store
+  .to("dapr:secret?secretStore=myStore")
+  .log("Received bulk secrets from Dapr: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `configuration` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.CONFIG_KEYS, List.of("k1", "k2"));
+  })
+  .to("dapr:configuration?configStore=myStore")
+  .log("Received config updates from Dapr: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Consumer Operations Examples
+
+- `pubSub` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
+  .log("Received message from Dapr pubsub: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `configuration` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("dapr:configuration?configStore=myStore&configKeys=k1,k2")
+  .log("Received config updates from Dapr: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+include::spring-boot:partial$starter.adoc[]

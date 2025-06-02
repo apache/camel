@@ -136,7 +136,7 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
             "camel.rest.", "camel.vault.", "camel.threadpool.", "camel.health.",
             "camel.lra.", "camel.opentelemetry2.", "camel.opentelemetry.",
-            "camel.telemetryDev.", "camel.metrics.", "camel.routeTemplate",
+            "camel.telemetryDev.", "camel.management.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             "camel.server.", "camel.ssl.", "camel.debug.", "camel.trace.", "camel.routeController." };
 
@@ -456,9 +456,8 @@ public abstract class BaseMainSupport extends BaseService {
 
         Optional<String> cloudLocations = pc.resolveProperty(MainConstants.CLOUD_PROPERTIES_LOCATION);
         if (cloudLocations.isPresent()) {
-            LOG.info("Cloud properties location: {}", cloudLocations);
             final Properties kp = tryLoadCloudProperties(op, cloudLocations.get());
-            if (kp != null) {
+            if (!kp.isEmpty()) {
                 pc.setOverrideProperties(kp);
             }
         }
@@ -481,8 +480,7 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     private static Properties tryLoadCloudProperties(
-            Properties overridProperties, String cloudPropertiesLocations)
-            throws IOException {
+            Properties overridProperties, String cloudPropertiesLocations) {
         final OrderedLocationProperties cp = new OrderedLocationProperties();
         try {
             String[] locations = cloudPropertiesLocations.split(",");
@@ -1263,6 +1261,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties devConsoleProperties = new OrderedLocationProperties();
         OrderedLocationProperties globalOptions = new OrderedLocationProperties();
         OrderedLocationProperties httpServerProperties = new OrderedLocationProperties();
+        OrderedLocationProperties httpManagementServerProperties = new OrderedLocationProperties();
         OrderedLocationProperties sslProperties = new OrderedLocationProperties();
         OrderedLocationProperties debuggerProperties = new OrderedLocationProperties();
         OrderedLocationProperties tracerProperties = new OrderedLocationProperties();
@@ -1372,6 +1371,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(13);
                 validateOptionAndValue(key, option, value);
                 httpServerProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, "camel.management.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(17);
+                validateOptionAndValue(key, option, value);
+                httpManagementServerProperties.put(loc, optionKey(option), value);
             } else if (startsWithIgnoreCase(key, "camel.ssl.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1436,6 +1441,13 @@ public abstract class BaseMainSupport extends BaseService {
         if (!httpServerProperties.isEmpty() || mainConfigurationProperties.hasHttpServerConfiguration()) {
             LOG.debug("Auto-configuring HTTP Server from loaded properties: {}", httpServerProperties.size());
             setHttpServerProperties(camelContext, httpServerProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!httpManagementServerProperties.isEmpty() || mainConfigurationProperties.hasHttpManagementServerConfiguration()) {
+            LOG.debug("Auto-configuring HTTP Management Server from loaded properties: {}",
+                    httpManagementServerProperties.size());
+            setHttpManagementServerProperties(camelContext, httpManagementServerProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
@@ -1607,6 +1619,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!httpServerProperties.isEmpty()) {
             httpServerProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.server.{}={}", k, v);
+            });
+        }
+        if (!httpManagementServerProperties.isEmpty()) {
+            httpManagementServerProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.management.{}={}", k, v);
             });
         }
 
@@ -1895,6 +1912,30 @@ public abstract class BaseMainSupport extends BaseService {
         camelContext.addService(http, true, true);
     }
 
+    private void setHttpManagementServerProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        HttpManagementServerConfigurationProperties server = mainConfigurationProperties.httpManagementServer();
+
+        setPropertiesOnTarget(camelContext, server, properties, "camel.management.",
+                mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+
+        if (!server.isEnabled()) {
+            // http management server is disabled
+            return;
+        }
+
+        // auto-detect camel-platform-http-main on classpath
+        MainHttpServerFactory sf = resolveMainHttpServerFactory(camelContext);
+        // create http management server as a service managed by camel context
+        Service http = sf.newHttpManagementServer(camelContext, server);
+        // force eager starting as embedded http management server is used for
+        // container platform to check readiness and need to be started eager
+        camelContext.addService(http, true, true);
+    }
+
     private void setVaultProperties(
             CamelContext camelContext, OrderedLocationProperties properties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties) {
@@ -2126,6 +2167,7 @@ public abstract class BaseMainSupport extends BaseService {
         camelContext.setBacklogTracing(config.isEnabled());
         camelContext.setBacklogTracingStandby(config.isStandby());
         camelContext.setBacklogTracingTemplates(config.isTraceTemplates());
+        camelContext.setBacklogTracingRests(config.isTraceRests());
 
         BacklogTracer tracer = org.apache.camel.impl.debugger.BacklogTracer.createTracer(camelContext);
         tracer.setEnabled(config.isEnabled());
@@ -2178,7 +2220,7 @@ public abstract class BaseMainSupport extends BaseService {
                 src.setBackOffMaxAttempts(config.getBackOffMaxAttempts());
             }
             if (config.getBackOffMaxDelay() > 0) {
-                src.setBackOffMaxDelay(config.getBackOffDelay());
+                src.setBackOffMaxDelay(config.getBackOffMaxDelay());
             }
             if (config.getBackOffMaxElapsedTime() > 0) {
                 src.setBackOffMaxElapsedTime(config.getBackOffMaxElapsedTime());

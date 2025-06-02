@@ -1,0 +1,359 @@
+= PQC Algorithms Component
+:doctitle: PQC Algorithms
+:shortname: pqc
+:artifactid: camel-pqc
+:description: Post Quantum Cryptography Signature and Verification component.
+:since: 4.12
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: pqc
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The PQC component supports signing and verifying payload using Post Quantum Cryptography algorithms. 
+
+Prerequisites
+
+== URI Format
+
+-------------------------
+pqc://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+== Supported Algorithms
+
+The component supports the following algorithms for signature and verification.
+
+Standardized and implemented
+
+- ML-DSA
+- SLH-DSA
+- LMS
+- XMSS
+
+Experimental and non-standardized
+
+- Falcon
+- Picnic
+- Rainbow
+
+== Supported operations
+
+The component supports five operations
+
+- sign
+- verify
+- generateSecretKeyEncapsulation
+- extractSecretKeyEncapsulation
+- extractSecretKeyFromEncapsulation
+
+== Signature and Verification
+
+The component expects to find a KeyPair and a Signature Objects in to the Camel Registry.
+
+In case the KeyPair and the Signature Objects are not in the registry, it will provide two instances of the Objects with default implementation.
+
+This will be true for standardized algorithms and for experimental ones.
+
+== Examples
+
+- ML-DSA
+
+[source,java]
+--------------------------------------------------------------------------------
+    from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+      .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
+        kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
+        KeyPair kp = kpGen.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("Signer")
+    public Signature getSigner() throws NoSuchAlgorithmException {
+        Signature mlDsa = Signature.getInstance("ML-DSA");
+        return mlDsa;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA").to("mock:sign")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=MLDSA")
+    .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultMLDSAMaterial`, which will create the Signature and KeyPair objects to be used.
+
+The Spec used for the KeyPair will be, in this case, `ML-DSA-65`.
+
+- SLH-DSA
+
+[source,java]
+--------------------------------------------------------------------------------
+    from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+      .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("SLH-DSA", "BC");
+        kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s);
+        KeyPair kp = kpGen.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("Signer")
+    public Signature getSigner() throws NoSuchAlgorithmException {
+        Signature slhDsa = Signature.getInstance("SLH-DSA");
+        return slhDsa;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=SLHDSA").to("mock:sign")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=SLHDSA")
+    .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultSLHDSAMaterial`, which will create the Signature and KeyPair objects to be used.
+
+The Spec used for the KeyPair will be, in this case, `SLH-DSA-SHA2-128s`.
+
+- LMS
+
+[source,java]
+--------------------------------------------------------------------------------
+    from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+      .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("LMS", "BC");
+        kpGen.initialize(new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w1));
+        KeyPair kp = kpGen.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("Signer")
+    public Signature getSigner() throws NoSuchAlgorithmException {
+        Signature lms = Signature.getInstance("LMS");
+        return lms;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=LMS").to("mock:sign")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=LMS")
+    .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultLMSMaterial`, which will create the Signature and KeyPair objects to be used.
+
+The Parameters used will be `LMS-SHA256-N32-H5` for the signature and `SHA256-n32-w1` for the one-time signature.
+
+- XMSS
+
+[source,java]
+--------------------------------------------------------------------------------
+    from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+      .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("XMSS", "BCPQC");
+        kpGen.initialize(new XMSSParameterSpec(10, XMSSParameterSpec.SHA256), new SecureRandom());
+        KeyPair kp = kpGen.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("Signer")
+    public Signature getSigner() throws NoSuchAlgorithmException {
+        Signature xmss = Signature.getInstance("XMSS");
+        return xmss;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=XMSS").to("mock:sign")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=XMSS")
+    .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultXMSSMaterial`, which will create the Signature and KeyPair objects to be used.
+
+The Parameters used will be `10` as tree height and `SHA-256` for the tree digest.
+
+== Key Encapsulation and Extraction
+
+In Post Quantum Cryptography it has been introduced the concept of Key Encapsulation Algorithm.
+
+In this context there are three entities to consider:
+
+- A key generation algorithm which generates a public key and a private key (a keypair).
+
+- An encapsulation algorithm which takes as input a public key, and outputs a shared secret value and an “encapsulation” (a ciphertext) of this secret value.
+
+- A decapsulation algorithm which takes as input the encapsulation and the private key, and outputs the shared secret value.
+
+In the component we are supporting the three phases in generateSecretKeyEncapsulation, extractSecretKeyEncapsulation and extractSecretKeyFromEncapsulation
+
+The KEM Algorithm supported are the following:
+
+Standardized and implemented
+
+- ML-KEM 
+
+Experimental and non-standardized
+
+- BIKE
+- CMCE
+- HQC
+- FRODO
+- SABER
+- NTRU
+- NTRULPRime
+
+The component expects to find a KeyGenerator and a KeyPair in to the Camel Registry.
+
+In case the KeyPair and the KeyGenerator Objects are not in the registry, it will provide two instances of the Objects with default implementation.
+
+This will be true for standardized algorithms and for experimental ones.
+
+A possible flow of the operation could be the following:
+
+- ML-KEM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+  .to("mock:encapsulate")
+  .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES").to("mock:extract");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+        kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
+        KeyPair kp = kpg.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("KeyGenerator")
+    public KeyGenerator setKeyGenerator()
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+        return kg;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `symmetricKeyAlgorithm` and `keyEncapsulationAlgorithm` parameters in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+   from("direct:encapsulate").to(
+     "pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=MLKEM")
+     .to("mock:encapsulate")
+     .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=MLKEM")
+     .to("mock:extract");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.kem.PQCDefaultMLKEMMaterial`, which will create the KeyGenerator and KeyPair objects to be used.
+
+The Spec used for the KeyPair will be, in this case, `ML-KEM-512`.
+
+== Extract Secret Key from Encapsulation for downstream usage
+
+Once you have the encapsulation you're able to decapsulate the secret key by using private key.
+
+All of this could be done to use the secret key coming from the encapsulation in the downstream route.
+
+As example you could use the secret key to dynamically instruct the CryptoDataFormat to use it, like in the following route.
+
+[source,java]
+--------------------------------------------------------------------------------
+        CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES", null);
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+                        .to("mock:encapsulate")
+                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES")
+                        .setHeader(CryptoDataFormat.KEY, body())
+                        .setBody(constant("Hello"))
+                        .marshal(cryptoFormat)
+                        .log("Encrypted ${body}")
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .log("Unencrypted ${body}")
+                        .to("mock:unencrypted");
+                ;
+            }
+--------------------------------------------------------------------------------
+
+This could be used to generate a secret key, protect it through Encapsulation and KEM approach and re-use it once extracted.
+
+include::spring-boot:partial$starter.adoc[]

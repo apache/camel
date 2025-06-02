@@ -205,6 +205,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File springSchemaDir;
 
     /**
+     * The directory where the camel-xml-io XML schema are
+     */
+    @Parameter(defaultValue = "${project.basedir}/../../core/camel-xml-io/target/classes")
+    protected File xmlioSchemaDir;
+
+    /**
      * The directory where the camel-main metadata are
      */
     @Parameter(defaultValue = "${project.basedir}/../../core/camel-main/target/classes/META-INF")
@@ -950,9 +956,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         newJsons.forEach(this::copy);
 
         for (Path file : jsonFiles) {
-
             OtherModel model = (OtherModel) allModels.get(file);
-
             String name = asComponentName(file);
 
             // grab the label, and remember it in the used labels
@@ -977,22 +981,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
         FileUtil.updateFile(all, String.join("\n", otherNames) + "\n");
 
         printOthersReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
-
         return otherNames;
     }
 
     protected void executeXmlSchemas() throws Exception {
         Path schemasOutDir = this.schemasOutDir.toPath();
-        Path springSchemaDir = this.springSchemaDir.toPath();
-
         getLog().info("Copying Spring XML schema");
-
-        copyFile(springSchemaDir.resolve("camel-spring.xsd"), schemasOutDir);
+        copyFile(this.springSchemaDir.toPath().resolve("camel-spring.xsd"), schemasOutDir);
+        getLog().info("Copying XML-IO schema");
+        copyFile(this.xmlioSchemaDir.toPath().resolve("camel-xml-io.xsd"), schemasOutDir);
     }
 
     protected void executeMain() throws Exception {
         getLog().info("Copying camel-main metadata");
-
         copyFile(mainDir.toPath().resolve("camel-main-configuration-metadata.json"), mainOutDir.toPath());
     }
 

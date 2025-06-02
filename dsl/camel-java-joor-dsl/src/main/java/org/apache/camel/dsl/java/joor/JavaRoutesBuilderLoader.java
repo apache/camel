@@ -41,12 +41,14 @@ import org.apache.camel.language.joor.CamelJoorClassLoader;
 import org.apache.camel.language.joor.CompilationUnit;
 import org.apache.camel.language.joor.JavaJoorClassLoader;
 import org.apache.camel.language.joor.MultiCompile;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.spi.CompilePreProcessor;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -66,6 +68,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
     private final ConcurrentMap<Collection<Resource>, CompilationUnit.Result> compiled = new ConcurrentHashMap<>();
     private final Map<String, Resource> nameToResource = new HashMap<>();
     private JavaJoorClassLoader classLoader;
+    private CamelBeanPostProcessor beanPostProcessor;
 
     public JavaRoutesBuilderLoader() {
         super(EXTENSION);
@@ -89,6 +92,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             if (cs != null && cs.getWorkDir() != null) {
                 classLoader.setCompileDirectory(cs.getWorkDir());
             }
+            beanPostProcessor = PluginHelper.getBeanPostProcessor(context);
         }
     }
 
@@ -148,7 +152,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 if (ctr && !skip) {
                     // create a new instance of the class
                     try {
-                        obj = getCamelContext().getInjector().newInstance(clazz);
+                        obj = getCamelContext().getInjector().newInstance(clazz, false);
                         if (obj != null) {
                             LOG.debug("Compiled: {} -> {}", className, obj);
 
@@ -172,6 +176,11 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             if (obj instanceof RouteBuilder) {
                 RouteBuilder builder = (RouteBuilder) obj;
                 answer.add(builder);
+            } else if (obj != null && beanPostProcessor != null) {
+                // we may have discovered pojo classes which we need to perform bean post-processing
+                // as they may have @BindToRegistry
+                beanPostProcessor.postProcessBeforeInitialization(obj, obj.getClass().getName());
+                beanPostProcessor.postProcessAfterInitialization(obj, obj.getClass().getName());
             }
         }
 

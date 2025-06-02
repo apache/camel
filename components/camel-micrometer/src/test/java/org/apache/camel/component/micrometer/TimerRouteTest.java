@@ -84,7 +84,7 @@ public class TimerRouteTest extends CamelSpringTestSupport {
                 from("direct:in-3")
                         .to("micrometer:timer:C?action=start")
                         .delay(DELAY)
-                        .to("micrometer:timer:C?action=stop&tags=a=${body}")
+                        .to("micrometer:timer:C?action=stop&tags.a=${body}")
                         .to("mock:out");
             }
         };

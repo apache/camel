@@ -94,6 +94,8 @@ public class DocumentationEnricher {
         } else if ("serviceRef".equals(name) && jsonFile.getName().endsWith("proxy.json")) {
             descriptionText
                     = "Reference to existing endpoint to lookup by endpoint id in the Camel registry to be used as proxied service";
+        } else if ("dataFormats".equals(name) && jsonFile.getName().endsWith("beans.json")) {
+            descriptionText = "List of data formats";
         }
 
         if (descriptionText == null || descriptionText.equals("null")) {
@@ -116,7 +118,10 @@ public class DocumentationEnricher {
         } else {
             // we should skip warning about these if no documentation as they are special
             boolean skip = "customId".equals(name) || "inheritErrorHandler".equals(name)
-                    || "rest".equals(name) && jsonFile.getName().endsWith("route.json");
+                    || ("rest".equals(name) && jsonFile.getName().endsWith("route.json"))
+                    || ("template".equals(name) && jsonFile.getName().endsWith("route.json"))
+                    || ("kamelet".equals(name) && jsonFile.getName().endsWith("route.json"))
+                    || ("routeProperty".equals(name) && jsonFile.getName().endsWith("route.json"));
             if (!skip) {
                 log.warn("Cannot find documentation for name: " + name + " in json schema: " + jsonFile);
             }

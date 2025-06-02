@@ -53,6 +53,14 @@ public class TransformMessageITCase extends JBangTestSupport {
         checkOutputFile("[[Jack Dalton,  115,  mad at Averell]");
     }
 
+    @Test
+    public void testTransformRouteDSL() throws IOException {
+        copyResourceInDataFolder(TestResources.ROUTE2);
+        execute(String.format("transform route --format=xml %s/route2.yaml --output=%s/route2.xml", mountPoint(),
+                mountPoint()));
+        assertFileInDataFolderContains("route2.xml", "<constant>Hello Camel from custom integration</constant>");
+    }
+
     private void runTransformation(String command) {
         checkCommandOutputs(command, "Camel Main: transform (state: Running)");
     }

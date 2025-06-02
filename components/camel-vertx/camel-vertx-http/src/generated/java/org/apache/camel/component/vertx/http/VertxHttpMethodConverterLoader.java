@@ -45,9 +45,21 @@ public final class VertxHttpMethodConverterLoader implements TypeConverterLoader
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, io.vertx.core.http.HttpMethod.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.vertx.http.VertxHttpMethodConverter.toHttpMethod((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.vertx.http.VertxHttpMethodConverter.toHttpMethod((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, io.vertx.core.http.HttpMethod.class, false,
-            (type, exchange, value) -> org.apache.camel.component.vertx.http.VertxHttpMethodConverter.toString((io.vertx.core.http.HttpMethod) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.vertx.http.VertxHttpMethodConverter.toString((io.vertx.core.http.HttpMethod) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

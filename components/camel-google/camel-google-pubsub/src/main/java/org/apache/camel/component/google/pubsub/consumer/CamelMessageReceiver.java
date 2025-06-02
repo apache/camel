@@ -69,7 +69,11 @@ public class CamelMessageReceiver implements MessageReceiver {
         try {
             processor.process(exchange);
         } catch (Exception e) {
-            consumer.getExceptionHandler().handleException(e);
+            exchange.setException(e);
+        }
+        if (exchange.getException() != null) {
+            consumer.getExceptionHandler().handleException(exchange.getException());
         }
     }
+
 }

@@ -238,9 +238,9 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                 new Column().header("COVER").with(this::getCoverage),
                 new Column().header("MSG/S").with(this::getThroughput),
-                new Column().header("TOTAL").with(r -> r.total),
-                new Column().header("FAIL").with(r -> r.failed),
-                new Column().header("INFLIGHT").with(r -> r.inflight),
+                new Column().header("TOTAL").with(this::getTotal),
+                new Column().header("FAIL").with(this::getFailed),
+                new Column().header("INFLIGHT").with(this::getInflight),
                 new Column().header("MEAN").with(r -> r.mean),
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),
@@ -390,6 +390,18 @@ public class CamelRouteStatus extends ProcessWatchCommand {
             }
         }
         return r.delta;
+    }
+
+    protected String getTotal(Row r) {
+        return r.total;
+    }
+
+    protected String getFailed(Row r) {
+        return r.failed;
+    }
+
+    protected String getInflight(Row r) {
+        return r.inflight;
     }
 
     static class Row {

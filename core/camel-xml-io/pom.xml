@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>4.12.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xml-io</artifactId>
@@ -79,6 +79,17 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>target/schema</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.class</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -91,6 +102,178 @@
                             <goal>generate-xml-parser</goal>
                             <goal>generate-xml-writer</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- generate XSD -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-schema</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>schemagen</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                    <sources>
+                        <source>${project.build.directory}/schema-src</source>
+                    </sources>
+                    <createJavaDocAnnotations>false</createJavaDocAnnotations>
+                    <schemaSourceExcludeFilters>
+                        <filter implementation="org.codehaus.mojo.jaxb2.shared.filters.pattern.PatternFileFilter">
+                            <patterns>
+                                <pattern>Helper.java</pattern>
+                                <pattern>Adapter.java</pattern>
+                            </patterns>
+                        </filter>
+                    </schemaSourceExcludeFilters>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>store-camel-schema-version-in-file</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <target>
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
+                                <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp" />
+                                <property name="mv" value="${project.version}" />
+                                <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0" />
+                                <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0" />
+                                <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0" />
+                                <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
+                                <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}" />
+                                <mkdir dir="target" />
+                                <echo file="target/camel.osgi.version.txt">
+                                    camel.schema.version = ${camel.schema.version}
+                                </echo>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <target>
+                                <echo>Copying code together for the XSD generation</echo>
+                                <mkdir dir="${project.build.directory}/schema-src" />
+                                <copy todir="${project.build.directory}/schema-src">
+                                    <fileset dir="${project.basedir}/../camel-api/src/main/java">
+                                        <include name="org/apache/camel/BeanScope.java" />
+                                        <include name="org/apache/camel/ExchangePattern.java" />
+                                        <include name="org/apache/camel/LoggingLevel.java" />
+                                        <include name="org/apache/camel/ManagementStatisticsLevel.java" />
+                                        <include name="org/apache/camel/ShutdownRoute.java" />
+                                        <include name="org/apache/camel/ShutdownRunningTask.java" />
+                                        <include name="org/apache/camel/StartupSummaryLevel.java" />
+                                        <include name="org/apache/camel/TypeConverterExists.java" />
+                                        <include name="org/apache/camel/WaitForTaskToComplete.java" />
+                                    </fileset>
+                                    <fileset dir="${project.basedir}/../camel-core-model/src/main/java">
+                                        <include name="org/apache/camel/model/**/*.java" />
+                                        <include name="org/apache/camel/package-info.java" />
+                                        <exclude name="org/apache/camel/model/console/**" />
+                                    </fileset>
+                                    <fileset dir="${project.basedir}/../camel-util/src/main/java">
+                                        <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <!-- after the eip-documentation-enricher we need to copy some schema files -->
+                    <execution>
+                        <id>include-schemas</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <echo>Updating namespace in XSD schema</echo>
+                                <replace file="${project.build.directory}/classes/camel-xml-io.xsd" token="&quot;http://camel.apache.org/schema/spring&quot;" value="&quot;http://camel.apache.org/schema/xml-io&quot;" preservelastmodified="true" />
+                                <copy file="${project.build.directory}/classes/camel-xml-io.xsd" tofile="${project.build.directory}/classes/camel-xml-io-v${camel.schema.version}.xsd" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/classes/camel-xml-io-v${camel.schema.version}.xsd" token="&quot;http://camel.apache.org/schema/xml-io&quot;" value="&quot;http://camel.apache.org/schema/xml-io/v${camel.schema.version}&quot;" preservelastmodified="true" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>init-camel-schema-version-property-from-file</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>target/camel.osgi.version.txt</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-eip-documentation-enricher-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>eip-documentation-enricher</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>eip-documentation-enricher</goal>
+                        </goals>
+                        <configuration>
+                            <inputCamelSchemaFile>${project.build.directory}/schema/schema1.xsd</inputCamelSchemaFile>
+                            <outputCamelSchemaFile>${project.build.directory}/classes/camel-xml-io.xsd</outputCamelSchemaFile>
+                            <camelCoreModelDir>${project.basedir}/../camel-core-model</camelCoreModelDir>
+                            <camelCoreXmlDir>${project.basedir}/../camel-core-xml</camelCoreXmlDir>
+                            <pathToModelDir>src/generated/resources/META-INF</pathToModelDir>
+                            <deleteFilesAfterRun>
+                                ${project.build.directory}/schema/schema1.xsd,${project.build.directory}/schema/schema2.xsd
+                            </deleteFilesAfterRun>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/classes/camel-xml-io.xsd</file>
+                                    <type>xsd</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

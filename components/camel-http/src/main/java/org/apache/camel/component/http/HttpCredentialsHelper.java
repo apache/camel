@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.BearerToken;
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.auth.CredentialsStore;
@@ -50,9 +51,13 @@ public final class HttpCredentialsHelper {
         return "Basic " + new String(encodedAuth);
     }
 
-    public static Credentials getCredentials(String method, String username, String password, String host, String domain) {
+    public static Credentials getCredentials(
+            String method, String username, String password, String host, String domain, String token) {
+        if ("BEARER".equalsIgnoreCase(method)) {
+            return new BearerToken(token);
+        }
         if (username != null && password != null) {
-            if (domain != null && host != null) {
+            if ("NTLM".equalsIgnoreCase(method)) {
                 return new NTCredentials(username, password.toCharArray(), host, domain);
             } else {
                 return new UsernamePasswordCredentials(username, password.toCharArray());

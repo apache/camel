@@ -42,5 +42,5 @@ spec:
       uri: "kamelet:source"
       steps:
         - to: "kamelet:prefix-action?prefix={{greeting}}"
-        - set-body:
+        - setBody:
             simple: "${body.toUpperCase()}"

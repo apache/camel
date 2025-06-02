@@ -44,7 +44,8 @@ public class KubernetesDelete extends KubernetesBaseCommand {
     }
 
     public Integer doCall() throws Exception {
-        namespace = Optional.ofNullable(namespace).orElse(getKubernetesClient().getNamespace());
+        var client = getKubernetesClient();
+        namespace = Optional.ofNullable(namespace).orElse(client.getNamespace());
         namespace = Optional.ofNullable(namespace).orElse("default");
         printer().printf("Deleting resources in namespace '%s' with name: %s%n", namespace, name);
         Map<String, String> labels = new HashMap<>();
@@ -52,16 +53,22 @@ public class KubernetesDelete extends KubernetesBaseCommand {
         List<StatusDetails> deleteStatuses = new ArrayList<>();
         try {
             // delete Deployment cascades to pod
-            deleteStatuses
-                    .addAll(getKubernetesClient().apps().deployments().inNamespace(namespace).withLabels(labels).delete());
+            deleteStatuses.addAll(client.apps().deployments().inNamespace(namespace).withLabels(labels).delete());
             // delete service
-            deleteStatuses.addAll(getKubernetesClient().services().inNamespace(namespace).withLabels(labels).delete());
+            deleteStatuses.addAll(client.services().inNamespace(namespace).withLabels(labels).delete());
             // delete configmap
-            deleteStatuses.addAll(getKubernetesClient().configMaps().inNamespace(namespace).withLabels(labels).delete());
+            deleteStatuses.addAll(client.configMaps().inNamespace(namespace).withLabels(labels).delete());
             // delete secrets
-            deleteStatuses.addAll(getKubernetesClient().secrets().inNamespace(namespace).withLabels(labels).delete());
+            deleteStatuses.addAll(client.secrets().inNamespace(namespace).withLabels(labels).delete());
+            // delete ingress
+            var ingresses = client.network().v1().ingresses().inNamespace(namespace).withLabels(labels);
+            try {
+                deleteStatuses.addAll(ingresses.delete());
+            } catch (Exception ex) {
+                // ignore
+            }
             // delete knative-services
-            var knativeServices = getKubernetesClient().genericKubernetesResources(new ResourceDefinitionContext.Builder()
+            var knativeServices = client.genericKubernetesResources(new ResourceDefinitionContext.Builder()
                     .withGroup("serving.knative.dev")
                     .withVersion("v1")
                     .withKind("Service")
@@ -76,7 +83,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             ClusterType clusterType = KubernetesHelper.discoverClusterType();
             if (ClusterType.OPENSHIFT == clusterType) {
                 // openshift specific: BuildConfig, ImageStreams, Route - BuildConfig cascade delete to Build and ConfigMap
-                OpenShiftClient ocpClient = getKubernetesClient().adapt(OpenShiftClient.class);
+                OpenShiftClient ocpClient = client.adapt(OpenShiftClient.class);
                 // BuildConfig
                 deleteStatuses.addAll(ocpClient.buildConfigs().inNamespace(namespace).withLabels(labels).delete());
                 // ImageStreams

@@ -83,7 +83,7 @@ public class CounterRouteTest extends CamelSpringTestSupport {
                         .to("mock:out");
 
                 from("direct:in-4")
-                        .to("micrometer:counter:D?increment=${body.length}&tags=a=${body.length}")
+                        .to("micrometer:counter:D?increment=${body.length}&tags.a=${body.length}")
                         .to("mock:out");
             }
         };

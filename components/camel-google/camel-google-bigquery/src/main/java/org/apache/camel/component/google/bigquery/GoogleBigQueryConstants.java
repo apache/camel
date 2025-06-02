@@ -39,6 +39,14 @@ public final class GoogleBigQueryConstants {
     @Metadata(description = "A custom `JobId` to use", javaType = "com.google.cloud.bigquery.JobId",
               applicableFor = SCHEME_BIGQUERY_SQL)
     public static final String JOB_ID = "CamelGoogleBigQueryJobId";
+    @Metadata(description = "The page token to retrieve a specific page of results from BigQuery. " +
+                            "If not set, the first page is returned",
+              javaType = "String", applicableFor = SCHEME_BIGQUERY_SQL)
+    public static final String PAGE_TOKEN = "CamelGoogleBigQueryPageToken";
+    @Metadata(description = "The next page token returned by BigQuery. Use this token in the " +
+                            "`CamelGoogleBigQueryPageToken` header of a subsequent request to retrieve the next page of results",
+              javaType = "String", applicableFor = SCHEME_BIGQUERY_SQL)
+    public static final String NEXT_PAGE_TOKEN = "CamelGoogleBigQueryNextPageToken";
 
     /**
      * Prevent instantiation.

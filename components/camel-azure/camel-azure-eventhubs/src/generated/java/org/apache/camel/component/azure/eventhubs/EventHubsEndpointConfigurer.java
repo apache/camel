@@ -77,7 +77,7 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"producerAsyncClient"};
+        return new String[]{"producerAsyncClient", "tokenCredential"};
     }
 
     @Override

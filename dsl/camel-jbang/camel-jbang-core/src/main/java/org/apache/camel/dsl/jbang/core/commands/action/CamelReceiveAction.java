@@ -16,10 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,10 +43,9 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -97,8 +96,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Action to start, stop, clear, list status, or dump messages")
     String action;
 
-    @CommandLine.Option(names = { "--endpoint" },
-                        description = "Endpoint to browse messages (can be uri or pattern to refer to existing endpoint)")
+    @CommandLine.Option(names = { "--endpoint", "--uri" },
+                        description = "Endpoint to receive messages from (can be uri or pattern to refer to existing endpoint)")
     String endpoint;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
@@ -129,6 +128,14 @@ public class CamelReceiveAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--grep" },
                         description = "Filter messages to only output matching text (ignore case).", arity = "0..*")
     String[] grep;
+
+    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
+                        description = "Show exchange properties in received messages")
+    boolean showExchangeProperties;
+
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
+                        description = "Show exchange variables in received messages")
+    boolean showExchangeVariables;
 
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
                         description = "Show message headers in received messages")
@@ -193,14 +200,14 @@ public class CamelReceiveAction extends ActionBaseCommand {
         List<Long> pids = findPids(name);
         for (long pid : pids) {
             if ("clear".equals(action)) {
-                File f = getReceiveFile("" + pid);
-                if (f.exists()) {
-                    IOHelper.writeText("{}", f);
+                Path f = getReceiveFile("" + pid);
+                if (Files.exists(f)) {
+                    Files.writeString(f, "{}");
                 }
             } else {
                 // ensure output file is deleted before executing action
-                File outputFile = getOutputFile(Long.toString(pid));
-                FileUtil.deleteFile(outputFile);
+                Path outputFile = getOutputFile(Long.toString(pid));
+                PathUtils.deleteFile(outputFile);
 
                 JsonObject root = new JsonObject();
                 root.put("action", "receive");
@@ -214,8 +221,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                 } else if ("stop".equals(action)) {
                     root.put("enabled", "false");
                 }
-                File f = getActionFile(Long.toString(pid));
-                IOHelper.writeText(root.toJson(), f);
+                Path f = getActionFile(Long.toString(pid));
+                Files.writeString(f, root.toJson());
 
                 JsonObject jo = waitForOutputFile(outputFile);
                 if (jo != null) {
@@ -250,7 +257,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
         return 0;
     }
 
-    protected JsonObject waitForOutputFile(File outputFile) {
+    protected JsonObject waitForOutputFile(Path outputFile) {
         return getJsonObject(outputFile);
     }
 
@@ -443,9 +450,9 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     private void tailReceiveFiles(Map<Long, Pid> pids, int tail) throws Exception {
         for (Pid pid : pids.values()) {
-            File file = getReceiveFile(pid.pid);
-            if (file.exists() && file.length() > 0) {
-                pid.reader = new LineNumberReader(new FileReader(file));
+            Path file = getReceiveFile(pid.pid);
+            if (Files.exists(file) && Files.size(file) > 0) {
+                pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                 String line;
                 if (tail <= 0) {
                     pid.fifo = new ArrayDeque<>();
@@ -514,12 +521,12 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
         for (Pid pid : pids.values()) {
             if (pid.reader == null) {
-                File file = getReceiveFile(pid.pid);
-                if (file.exists()) {
-                    pid.reader = new LineNumberReader(new FileReader(file));
+                Path file = getReceiveFile(pid.pid);
+                if (Files.exists(file)) {
+                    pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                     if (tail == 0) {
                         // only read new lines so forward to end of reader
-                        long size = file.length();
+                        long size = Files.size(file);
                         pid.reader.skip(size);
                     }
                 }
@@ -585,11 +592,18 @@ public class CamelReceiveAction extends ActionBaseCommand {
                     row.message = jo.getMap("message");
                     row.message.remove("exchangeId");
                     row.message.remove("exchangePattern");
-                    row.message.remove("exchangeProperties");
                     if (onlyBody) {
+                        row.message.remove("exchangeProperties");
+                        row.message.remove("exchangeVariables");
                         row.message.remove("headers");
                         row.message.remove("messageType");
                     } else {
+                        if (!showExchangeProperties) {
+                            row.message.remove("exchangeProperties");
+                        }
+                        if (!showExchangeVariables) {
+                            row.message.remove("exchangeVariables");
+                        }
                         if (!showHeaders) {
                             row.message.remove("headers");
                         }

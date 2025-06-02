@@ -22,7 +22,7 @@
     parameters:
       period: "{{period}}"
     steps:
-      - set-body:
+      - setBody:
           constant: "{{say}} Yaml !!!"
       - transform:
           simple: "${body.toUpperCase()}"

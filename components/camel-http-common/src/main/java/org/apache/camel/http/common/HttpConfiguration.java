@@ -25,15 +25,14 @@ public class HttpConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Metadata(label = "producer,security",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.")
+              description = "Authentication methods allowed to use as a comma separated list of values Basic, or NTLM. (NTLM is deprecated)")
     private String authMethod;
-    @Metadata(label = "producer,security", enums = "Basic,Digest,NTLM",
-              description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM.")
-    private String authMethodPriority;
     @Metadata(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
     @Metadata(label = "producer,security", secret = true, description = "Authentication password")
     private String authPassword;
+    @Metadata(label = "producer,security", secret = true, description = "Authentication bearer token")
+    private String authBearerToken;
     @Metadata(label = "producer,security", secret = true, description = "OAuth2 client id")
     private String oauth2ClientId;
     @Metadata(label = "producer,security", secret = true, description = "OAuth2 client secret")
@@ -46,7 +45,7 @@ public class HttpConfiguration implements Serializable {
     private String oauth2ResourceIndicator;
     @UriParam(label = "producer,security", defaultValue = "false",
               description = "Whether to cache OAuth2 client tokens.")
-    private boolean oauth2CacheTokens = false;
+    private boolean oauth2CacheTokens;
     @UriParam(label = "producer,security", defaultValue = "3600",
               description = "Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain 'expires_in' field.")
     private long oauth2CachedTokensDefaultExpirySeconds = 3600L;
@@ -57,9 +56,11 @@ public class HttpConfiguration implements Serializable {
                             +
                             "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
     private long oauth2CachedTokensExpirationMarginSeconds = 5L;
-    @Metadata(label = "producer,security", description = "Authentication domain to use with NTML")
+    @Metadata(label = "producer,security", description = "Authentication domain to use with NTLM")
+    @Deprecated
     private String authDomain;
-    @Metadata(label = "producer,security", description = "Authentication host to use with NTML")
+    @Metadata(label = "producer,security", description = "Authentication host to use with NTLM")
+    @Deprecated
     private String authHost;
     @Metadata(label = "producer,proxy", description = "Proxy hostname to use")
     private String proxyHost;
@@ -67,7 +68,7 @@ public class HttpConfiguration implements Serializable {
     private int proxyPort;
     @Metadata(label = "producer,proxy", enums = "http,https", description = "Authentication scheme to use")
     private String proxyAuthScheme;
-    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    @Metadata(label = "producer,proxy", enums = "Basic,Bearer,NTLM", description = "Proxy authentication method to use")
     private String proxyAuthMethod;
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
     private String proxyAuthUsername;
@@ -77,7 +78,8 @@ public class HttpConfiguration implements Serializable {
     private String proxyAuthHost;
     @Metadata(label = "producer,proxy", description = "Proxy authentication port")
     private int proxyAuthPort;
-    @Metadata(label = "producer,proxy", description = "Proxy authentication domain to use with NTML")
+    @Metadata(label = "producer,proxy", description = "Proxy authentication domain to use with NTLM")
+    @Deprecated
     private String proxyAuthDomain;
 
     public String getAuthMethod() {
@@ -85,21 +87,10 @@ public class HttpConfiguration implements Serializable {
     }
 
     /**
-     * Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.
+     * Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM (deprecated).
      */
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;
-    }
-
-    public String getAuthMethodPriority() {
-        return authMethodPriority;
-    }
-
-    /**
-     * Which authentication method to prioritize to use, either as Basic, Digest or NTLM.
-     */
-    public void setAuthMethodPriority(String authMethodPriority) {
-        this.authMethodPriority = authMethodPriority;
     }
 
     public String getAuthUsername() {
@@ -124,12 +115,23 @@ public class HttpConfiguration implements Serializable {
         this.authPassword = authPassword;
     }
 
+    public String getAuthBearerToken() {
+        return authBearerToken;
+    }
+
+    /**
+     * Authentication bearer token
+     */
+    public void setAuthBearerToken(String authBearerToken) {
+        this.authBearerToken = authBearerToken;
+    }
+
     public String getAuthDomain() {
         return authDomain;
     }
 
     /**
-     * Authentication domain to use with NTML
+     * Authentication domain to use with NTLM
      */
     public void setAuthDomain(String authDomain) {
         this.authDomain = authDomain;
@@ -140,7 +142,7 @@ public class HttpConfiguration implements Serializable {
     }
 
     /**
-     * Authentication host to use with NTML
+     * Authentication host to use with NTLM
      */
     public void setAuthHost(String authHost) {
         this.authHost = authHost;
@@ -195,7 +197,7 @@ public class HttpConfiguration implements Serializable {
     }
 
     /**
-     * Proxy authentication domain to use with NTML
+     * Proxy authentication domain to use with NTLM
      */
     public void setProxyAuthDomain(String proxyAuthDomain) {
         this.proxyAuthDomain = proxyAuthDomain;

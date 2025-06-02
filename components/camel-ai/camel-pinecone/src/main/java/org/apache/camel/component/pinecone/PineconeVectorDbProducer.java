@@ -210,7 +210,7 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
         Index index = this.client.getIndexConnection(indexName);
 
-        UpsertResponse result = index.upsert(indexId, elements, namespace);
+        UpsertResponse result = index.upsert(indexId, elements, null, null, null, namespace);
 
         populateUpsertResponse(result, exchange);
 

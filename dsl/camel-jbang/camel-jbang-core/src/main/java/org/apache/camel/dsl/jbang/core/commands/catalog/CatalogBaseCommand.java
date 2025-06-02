@@ -68,9 +68,9 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         description = "Sort by name, support-level, or description", defaultValue = "name")
     String sort;
 
-    @CommandLine.Option(names = { "--gav" },
+    @CommandLine.Option(names = { "--display-gav" },
                         description = "Display Maven GAV instead of name", defaultValue = "false")
-    boolean gav;
+    boolean displayGav;
 
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter by name or description")
@@ -151,9 +151,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                                         "native", row.nativeSupported)).collect(Collectors.toList())));
             } else {
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).maxWidth(nameWidth())
+                        new Column().header("NAME").visible(!displayGav).dataAlign(HorizontalAlign.LEFT).maxWidth(nameWidth())
                                 .with(r -> r.name),
-                        new Column().header("ARTIFACT-ID").visible(gav).dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
+                        new Column().header("ARTIFACT-ID").visible(displayGav).dataAlign(HorizontalAlign.LEFT)
+                                .with(this::shortGav),
                         new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
                         new Column().header("NATIVE").dataAlign(HorizontalAlign.CENTER)
                                 .visible(RuntimeType.quarkus == runtime).with(this::nativeSupported),

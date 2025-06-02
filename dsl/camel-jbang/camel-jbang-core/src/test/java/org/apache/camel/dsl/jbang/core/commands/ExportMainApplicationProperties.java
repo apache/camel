@@ -68,7 +68,7 @@ class ExportMainApplicationProperties {
     public void shouldExportUserPropertyOverride(RuntimeType rt) throws Exception {
         // prepare as we need application.properties that contains configuration to be overridden
         Files.copy(
-                new File("src/test/resources/sample-application.properties").toPath(),
+                Paths.get("src/test/resources/sample-application.properties"),
                 profile.toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
 

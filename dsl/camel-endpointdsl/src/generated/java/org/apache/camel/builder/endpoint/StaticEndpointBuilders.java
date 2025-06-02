@@ -3304,6 +3304,48 @@ public class StaticEndpointBuilders {
         return CxfRsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Dapr (camel-dapr)
+     * Dapr component which interfaces with Dapr Building Blocks.
+     * 
+     * Category: cloud,saas
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-dapr
+     * 
+     * Syntax: <code>dapr:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The Dapr building block operation to perform with this component
+     * There are 2 enums and the value can be one of: invokeService, state
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static DaprEndpointBuilderFactory.DaprEndpointBuilder dapr(String path) {
+        return dapr("dapr", path);
+    }
+    /**
+     * Dapr (camel-dapr)
+     * Dapr component which interfaces with Dapr Building Blocks.
+     * 
+     * Category: cloud,saas
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-dapr
+     * 
+     * Syntax: <code>dapr:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The Dapr building block operation to perform with this component
+     * There are 2 enums and the value can be one of: invokeService, state
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static DaprEndpointBuilderFactory.DaprEndpointBuilder dapr(String componentName, String path) {
+        return DaprEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
      * 
@@ -8368,7 +8410,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Kafka (camel-kafka)
-     * Sent and receive messages to/from an Apache Kafka broker.
+     * Send and receive messages to/from an Apache Kafka broker.
      * 
      * Category: messaging
      * Since: 2.13
@@ -8388,7 +8430,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Kafka (camel-kafka)
-     * Sent and receive messages to/from an Apache Kafka broker.
+     * Send and receive messages to/from an Apache Kafka broker.
      * 
      * Category: messaging
      * Since: 2.13
@@ -10142,9 +10184,6 @@ public class StaticEndpointBuilders {
      * Path parameter: metricsName (required)
      * Name of metrics
      * 
-     * Path parameter: tags
-     * Tags of metrics
-     * 
      * @param path metricsType:metricsName
      * @return the dsl builder
      */
@@ -10168,9 +10207,6 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
-     * 
-     * Path parameter: tags
-     * Tags of metrics
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -10773,12 +10809,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>netty:protocol://host:port</code>
      * 
      * Path parameter: protocol (required)
-     * The protocol to use which can be tcp or udp.
+     * The protocol to use which can be tcp or udp
      * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
-     * the producer the hostname is the remote host to connect to
+     * the producer the hostname is the remote host to connect to.
      * 
      * Path parameter: port (required)
      * The host port number
@@ -10800,12 +10836,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>netty:protocol://host:port</code>
      * 
      * Path parameter: protocol (required)
-     * The protocol to use which can be tcp or udp.
+     * The protocol to use which can be tcp or udp
      * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
-     * the producer the hostname is the remote host to connect to
+     * the producer the hostname is the remote host to connect to.
      * 
      * Path parameter: port (required)
      * The host port number
@@ -11963,6 +11999,46 @@ public class StaticEndpointBuilders {
      */
     public static MailEndpointBuilderFactory.MailEndpointBuilder pop3s(String path) {
         return imap("pop3s", path);
+    }
+    /**
+     * PQC Algorithms (camel-pqc)
+     * Post Quantum Cryptography Signature and Verification component.
+     * 
+     * Category: security
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-pqc
+     * 
+     * Syntax: <code>pqc:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static PQCEndpointBuilderFactory.PQCEndpointBuilder pqc(String path) {
+        return pqc("pqc", path);
+    }
+    /**
+     * PQC Algorithms (camel-pqc)
+     * Post Quantum Cryptography Signature and Verification component.
+     * 
+     * Category: security
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-pqc
+     * 
+     * Syntax: <code>pqc:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static PQCEndpointBuilderFactory.PQCEndpointBuilder pqc(String componentName, String path) {
+        return PQCEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * PubNub (camel-pubnub)
@@ -13284,7 +13360,7 @@ public class StaticEndpointBuilders {
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-smb
      * 
-     * Syntax: <code>smb:hostname:port/shareName</code>
+     * Syntax: <code>smb:hostname:port/shareName/path</code>
      * 
      * Path parameter: hostname (required)
      * The share hostname or IP address
@@ -13296,7 +13372,10 @@ public class StaticEndpointBuilders {
      * Path parameter: shareName (required)
      * The name of the share directory
      * 
-     * @param path hostname:port/shareName
+     * Path parameter: path
+     * The base directory within the share
+     * 
+     * @param path hostname:port/shareName/path
      * @return the dsl builder
      */
     public static SmbEndpointBuilderFactory.SmbEndpointBuilder smb(String path) {
@@ -13310,7 +13389,7 @@ public class StaticEndpointBuilders {
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-smb
      * 
-     * Syntax: <code>smb:hostname:port/shareName</code>
+     * Syntax: <code>smb:hostname:port/shareName/path</code>
      * 
      * Path parameter: hostname (required)
      * The share hostname or IP address
@@ -13322,9 +13401,12 @@ public class StaticEndpointBuilders {
      * Path parameter: shareName (required)
      * The name of the share directory
      * 
+     * Path parameter: path
+     * The base directory within the share
+     * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path hostname:port/shareName
+     * @param path hostname:port/shareName/path
      * @return the dsl builder
      */
     public static SmbEndpointBuilderFactory.SmbEndpointBuilder smb(String componentName, String path) {
@@ -15438,6 +15520,46 @@ public class StaticEndpointBuilders {
         return WeatherEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * weaviate (camel-weaviate)
+     * Perform operations on the Weaviate Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-weaviate
+     * 
+     * Syntax: <code>weaviate:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static WeaviateVectorDbEndpointBuilderFactory.WeaviateVectorDbEndpointBuilder weaviate(String path) {
+        return weaviate("weaviate", path);
+    }
+    /**
+     * weaviate (camel-weaviate)
+     * Perform operations on the Weaviate Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-weaviate
+     * 
+     * Syntax: <code>weaviate:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static WeaviateVectorDbEndpointBuilderFactory.WeaviateVectorDbEndpointBuilder weaviate(String componentName, String path) {
+        return WeaviateVectorDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
      * 
@@ -16087,7 +16209,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 377 enums and the value can be one of:
+     * There are 378 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -16128,19 +16250,19 @@ public class StaticEndpointBuilders {
      * DELETE_TRIGGER, DELETE_UPLOAD, DELETE_UPLOAD_1, DELETE_USER,
      * DELETE_USER_1, DELETE_USER_IDENTITY, DELETE_USER_IDENTITY_1,
      * DELETE_USER_IDENTITY_2, DELETE_USER_SEGMENT, DELETE_USER_SEGMENT_1,
-     * DELETE_USERS, GET_ACTIVE_TRIGGERS, GET_ARTICLE, GET_ARTICLE_FROM_SEARCH,
-     * GET_ARTICLE_FROM_SEARCH_1, GET_ARTICLE_SUBSCRIPTIONS,
-     * GET_ARTICLE_SUBSCRIPTIONS_1, GET_ARTICLE_TRANSLATIONS, GET_ARTICLES,
-     * GET_ARTICLES_1, GET_ARTICLES_2, GET_ARTICLES_3, GET_ARTICLES_4,
-     * GET_ARTICLES_5, GET_ARTICLES_FROM_ALL_LABELS,
-     * GET_ARTICLES_FROM_ANY_LABELS, GET_ARTICLES_FROM_PAGE,
-     * GET_ARTICLES_INCREMENTALLY, GET_ASSIGNABLE_GROUP_MEMBERSHIPS,
-     * GET_ASSIGNABLE_GROUP_MEMBERSHIPS_1, GET_ASSIGNABLE_GROUPS,
-     * GET_ASSIGNED_TICKETS_COUNT_FOR_USER, GET_ATTACHMENT, GET_ATTACHMENT_1,
-     * GET_ATTACHMENTS_FROM_ARTICLE, GET_AUTHENTICATED_USER,
-     * GET_AUTO_COMPLETE_ORGANIZATIONS, GET_AUTOMATION, GET_AUTOMATIONS,
-     * GET_BRANDS, GET_CC_REQUESTS, GET_CATEGORIES, GET_CATEGORY,
-     * GET_CATEGORY_TRANSLATIONS, GET_CCD_TICKETS_COUNT_FOR_USER,
+     * DELETE_USERS, EXECUTE_VIEW, GET_ACTIVE_TRIGGERS, GET_ARTICLE,
+     * GET_ARTICLE_FROM_SEARCH, GET_ARTICLE_FROM_SEARCH_1,
+     * GET_ARTICLE_SUBSCRIPTIONS, GET_ARTICLE_SUBSCRIPTIONS_1,
+     * GET_ARTICLE_TRANSLATIONS, GET_ARTICLES, GET_ARTICLES_1, GET_ARTICLES_2,
+     * GET_ARTICLES_3, GET_ARTICLES_4, GET_ARTICLES_5,
+     * GET_ARTICLES_FROM_ALL_LABELS, GET_ARTICLES_FROM_ANY_LABELS,
+     * GET_ARTICLES_FROM_PAGE, GET_ARTICLES_INCREMENTALLY,
+     * GET_ASSIGNABLE_GROUP_MEMBERSHIPS, GET_ASSIGNABLE_GROUP_MEMBERSHIPS_1,
+     * GET_ASSIGNABLE_GROUPS, GET_ASSIGNED_TICKETS_COUNT_FOR_USER,
+     * GET_ATTACHMENT, GET_ATTACHMENT_1, GET_ATTACHMENTS_FROM_ARTICLE,
+     * GET_AUTHENTICATED_USER, GET_AUTO_COMPLETE_ORGANIZATIONS, GET_AUTOMATION,
+     * GET_AUTOMATIONS, GET_BRANDS, GET_CC_REQUESTS, GET_CATEGORIES,
+     * GET_CATEGORY, GET_CATEGORY_TRANSLATIONS, GET_CCD_TICKETS_COUNT_FOR_USER,
      * GET_COMPLIANCE_DELETION_STATUSES, GET_CONTENT_TAG, GET_CONTENT_TAGS,
      * GET_CONTENT_TAGS_1, GET_CONTENT_TAGS_2, GET_CURRENT_USER,
      * GET_CUSTOM_AGENT_ROLES, GET_CUSTOM_TICKET_STATUSES, GET_DELETED_TICKETS,
@@ -16241,7 +16363,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 377 enums and the value can be one of:
+     * There are 378 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -16282,19 +16404,19 @@ public class StaticEndpointBuilders {
      * DELETE_TRIGGER, DELETE_UPLOAD, DELETE_UPLOAD_1, DELETE_USER,
      * DELETE_USER_1, DELETE_USER_IDENTITY, DELETE_USER_IDENTITY_1,
      * DELETE_USER_IDENTITY_2, DELETE_USER_SEGMENT, DELETE_USER_SEGMENT_1,
-     * DELETE_USERS, GET_ACTIVE_TRIGGERS, GET_ARTICLE, GET_ARTICLE_FROM_SEARCH,
-     * GET_ARTICLE_FROM_SEARCH_1, GET_ARTICLE_SUBSCRIPTIONS,
-     * GET_ARTICLE_SUBSCRIPTIONS_1, GET_ARTICLE_TRANSLATIONS, GET_ARTICLES,
-     * GET_ARTICLES_1, GET_ARTICLES_2, GET_ARTICLES_3, GET_ARTICLES_4,
-     * GET_ARTICLES_5, GET_ARTICLES_FROM_ALL_LABELS,
-     * GET_ARTICLES_FROM_ANY_LABELS, GET_ARTICLES_FROM_PAGE,
-     * GET_ARTICLES_INCREMENTALLY, GET_ASSIGNABLE_GROUP_MEMBERSHIPS,
-     * GET_ASSIGNABLE_GROUP_MEMBERSHIPS_1, GET_ASSIGNABLE_GROUPS,
-     * GET_ASSIGNED_TICKETS_COUNT_FOR_USER, GET_ATTACHMENT, GET_ATTACHMENT_1,
-     * GET_ATTACHMENTS_FROM_ARTICLE, GET_AUTHENTICATED_USER,
-     * GET_AUTO_COMPLETE_ORGANIZATIONS, GET_AUTOMATION, GET_AUTOMATIONS,
-     * GET_BRANDS, GET_CC_REQUESTS, GET_CATEGORIES, GET_CATEGORY,
-     * GET_CATEGORY_TRANSLATIONS, GET_CCD_TICKETS_COUNT_FOR_USER,
+     * DELETE_USERS, EXECUTE_VIEW, GET_ACTIVE_TRIGGERS, GET_ARTICLE,
+     * GET_ARTICLE_FROM_SEARCH, GET_ARTICLE_FROM_SEARCH_1,
+     * GET_ARTICLE_SUBSCRIPTIONS, GET_ARTICLE_SUBSCRIPTIONS_1,
+     * GET_ARTICLE_TRANSLATIONS, GET_ARTICLES, GET_ARTICLES_1, GET_ARTICLES_2,
+     * GET_ARTICLES_3, GET_ARTICLES_4, GET_ARTICLES_5,
+     * GET_ARTICLES_FROM_ALL_LABELS, GET_ARTICLES_FROM_ANY_LABELS,
+     * GET_ARTICLES_FROM_PAGE, GET_ARTICLES_INCREMENTALLY,
+     * GET_ASSIGNABLE_GROUP_MEMBERSHIPS, GET_ASSIGNABLE_GROUP_MEMBERSHIPS_1,
+     * GET_ASSIGNABLE_GROUPS, GET_ASSIGNED_TICKETS_COUNT_FOR_USER,
+     * GET_ATTACHMENT, GET_ATTACHMENT_1, GET_ATTACHMENTS_FROM_ARTICLE,
+     * GET_AUTHENTICATED_USER, GET_AUTO_COMPLETE_ORGANIZATIONS, GET_AUTOMATION,
+     * GET_AUTOMATIONS, GET_BRANDS, GET_CC_REQUESTS, GET_CATEGORIES,
+     * GET_CATEGORY, GET_CATEGORY_TRANSLATIONS, GET_CCD_TICKETS_COUNT_FOR_USER,
      * GET_COMPLIANCE_DELETION_STATUSES, GET_CONTENT_TAG, GET_CONTENT_TAGS,
      * GET_CONTENT_TAGS_1, GET_CONTENT_TAGS_2, GET_CURRENT_USER,
      * GET_CUSTOM_AGENT_ROLES, GET_CUSTOM_TICKET_STATUSES, GET_DELETED_TICKETS,

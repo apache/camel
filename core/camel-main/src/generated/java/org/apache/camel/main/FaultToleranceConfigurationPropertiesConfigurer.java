@@ -23,18 +23,17 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("BulkheadEnabled", java.lang.Boolean.class);
-        map.put("BulkheadExecutorService", java.lang.String.class);
         map.put("BulkheadMaxConcurrentCalls", java.lang.Integer.class);
         map.put("BulkheadWaitingTaskQueue", java.lang.Integer.class);
-        map.put("CircuitBreaker", java.lang.String.class);
         map.put("Delay", java.lang.Long.class);
         map.put("FailureRatio", java.lang.Integer.class);
         map.put("RequestVolumeThreshold", java.lang.Integer.class);
         map.put("SuccessThreshold", java.lang.Integer.class);
+        map.put("ThreadOffloadExecutorService", java.lang.String.class);
         map.put("TimeoutDuration", java.lang.Long.class);
         map.put("TimeoutEnabled", java.lang.Boolean.class);
         map.put("TimeoutPoolSize", java.lang.Integer.class);
-        map.put("TimeoutScheduledExecutorService", java.lang.String.class);
+        map.put("TypedGuard", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -44,14 +43,10 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bulkheadenabled":
         case "bulkheadEnabled": target.setBulkheadEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "bulkheadexecutorservice":
-        case "bulkheadExecutorService": target.setBulkheadExecutorService(property(camelContext, java.lang.String.class, value)); return true;
         case "bulkheadmaxconcurrentcalls":
         case "bulkheadMaxConcurrentCalls": target.setBulkheadMaxConcurrentCalls(property(camelContext, java.lang.Integer.class, value)); return true;
         case "bulkheadwaitingtaskqueue":
         case "bulkheadWaitingTaskQueue": target.setBulkheadWaitingTaskQueue(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "circuitbreaker":
-        case "circuitBreaker": target.setCircuitBreaker(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, java.lang.Long.class, value)); return true;
         case "failureratio":
         case "failureRatio": target.setFailureRatio(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -59,14 +54,16 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
         case "requestVolumeThreshold": target.setRequestVolumeThreshold(property(camelContext, java.lang.Integer.class, value)); return true;
         case "successthreshold":
         case "successThreshold": target.setSuccessThreshold(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "threadoffloadexecutorservice":
+        case "threadOffloadExecutorService": target.setThreadOffloadExecutorService(property(camelContext, java.lang.String.class, value)); return true;
         case "timeoutduration":
         case "timeoutDuration": target.setTimeoutDuration(property(camelContext, java.lang.Long.class, value)); return true;
         case "timeoutenabled":
         case "timeoutEnabled": target.setTimeoutEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "timeoutpoolsize":
         case "timeoutPoolSize": target.setTimeoutPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "timeoutscheduledexecutorservice":
-        case "timeoutScheduledExecutorService": target.setTimeoutScheduledExecutorService(property(camelContext, java.lang.String.class, value)); return true;
+        case "typedguard":
+        case "typedGuard": target.setTypedGuard(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -81,14 +78,10 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bulkheadenabled":
         case "bulkheadEnabled": return java.lang.Boolean.class;
-        case "bulkheadexecutorservice":
-        case "bulkheadExecutorService": return java.lang.String.class;
         case "bulkheadmaxconcurrentcalls":
         case "bulkheadMaxConcurrentCalls": return java.lang.Integer.class;
         case "bulkheadwaitingtaskqueue":
         case "bulkheadWaitingTaskQueue": return java.lang.Integer.class;
-        case "circuitbreaker":
-        case "circuitBreaker": return java.lang.String.class;
         case "delay": return java.lang.Long.class;
         case "failureratio":
         case "failureRatio": return java.lang.Integer.class;
@@ -96,14 +89,16 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
         case "requestVolumeThreshold": return java.lang.Integer.class;
         case "successthreshold":
         case "successThreshold": return java.lang.Integer.class;
+        case "threadoffloadexecutorservice":
+        case "threadOffloadExecutorService": return java.lang.String.class;
         case "timeoutduration":
         case "timeoutDuration": return java.lang.Long.class;
         case "timeoutenabled":
         case "timeoutEnabled": return java.lang.Boolean.class;
         case "timeoutpoolsize":
         case "timeoutPoolSize": return java.lang.Integer.class;
-        case "timeoutscheduledexecutorservice":
-        case "timeoutScheduledExecutorService": return java.lang.String.class;
+        case "typedguard":
+        case "typedGuard": return java.lang.String.class;
         default: return null;
         }
     }
@@ -114,14 +109,10 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bulkheadenabled":
         case "bulkheadEnabled": return target.getBulkheadEnabled();
-        case "bulkheadexecutorservice":
-        case "bulkheadExecutorService": return target.getBulkheadExecutorService();
         case "bulkheadmaxconcurrentcalls":
         case "bulkheadMaxConcurrentCalls": return target.getBulkheadMaxConcurrentCalls();
         case "bulkheadwaitingtaskqueue":
         case "bulkheadWaitingTaskQueue": return target.getBulkheadWaitingTaskQueue();
-        case "circuitbreaker":
-        case "circuitBreaker": return target.getCircuitBreaker();
         case "delay": return target.getDelay();
         case "failureratio":
         case "failureRatio": return target.getFailureRatio();
@@ -129,14 +120,16 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
         case "requestVolumeThreshold": return target.getRequestVolumeThreshold();
         case "successthreshold":
         case "successThreshold": return target.getSuccessThreshold();
+        case "threadoffloadexecutorservice":
+        case "threadOffloadExecutorService": return target.getThreadOffloadExecutorService();
         case "timeoutduration":
         case "timeoutDuration": return target.getTimeoutDuration();
         case "timeoutenabled":
         case "timeoutEnabled": return target.getTimeoutEnabled();
         case "timeoutpoolsize":
         case "timeoutPoolSize": return target.getTimeoutPoolSize();
-        case "timeoutscheduledexecutorservice":
-        case "timeoutScheduledExecutorService": return target.getTimeoutScheduledExecutorService();
+        case "typedguard":
+        case "typedGuard": return target.getTypedGuard();
         default: return null;
         }
     }

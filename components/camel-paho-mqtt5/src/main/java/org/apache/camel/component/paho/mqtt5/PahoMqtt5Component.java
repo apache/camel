@@ -43,8 +43,6 @@ public class PahoMqtt5Component extends DefaultComponent {
 
     public PahoMqtt5Component(CamelContext context) {
         super(context);
-
-        registerExtension(new PahoMqtt5ComponentVerifierExtension());
     }
 
     @Override

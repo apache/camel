@@ -48,7 +48,7 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
     /**
      * Salesforce client secret.
      */
-    @Parameter(property = "camelSalesforce.clientSecret", required = true)
+    @Parameter(property = "camelSalesforce.clientSecret")
     String clientSecret;
 
     /**
@@ -132,7 +132,7 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
     /**
      * Salesforce password.
      */
-    @Parameter(property = "camelSalesforce.password", required = true)
+    @Parameter(property = "camelSalesforce.password")
     String password;
 
     /**

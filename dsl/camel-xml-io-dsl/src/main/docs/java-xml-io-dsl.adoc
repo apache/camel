@@ -28,7 +28,7 @@ The following `my-route.xml` source file:
 .my-route.xml
 [source,xml]
 ----
-<routes xmlns="http://camel.apache.org/schema/spring">
+<routes xmlns="http://camel.apache.org/schema/xml-io">
     <route>
         <from uri="timer:tick"/>
         <setBody>
@@ -69,6 +69,10 @@ It is now possible with `xml-io-dsl` to declare some beans to be bound to xref:m
 
 </camel>
 ----
+
+=== Loading Spring XML files with embedded beans
+
+**Deprecated**
 
 While keeping all the benefits of fast XML parser used by `xml-io-dsl`, Camel can also process XML elements declared in other XML namespaces and process them separately. With this mechanism it is possible to include XML elements using Spring's `http://www.springframework.org/schema/beans` namespace.
 
@@ -291,7 +295,7 @@ You then have to declare those methods in XML DSL as follows:
 ----
 
 The init and destroy methods are optional, so a bean does not have to have both,
-for example you may only have destroy methods.
+for example you may only have a destroy methods.
 
 
 == See Also

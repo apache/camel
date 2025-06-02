@@ -19,17 +19,16 @@ package org.apache.camel.model.transformer;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Transformer;
 
 /**
- * Represents a CustomTransformer. One of the bean reference (ref) or fully qualified class name (type) of the custom
- * {@link Transformer} needs to be specified.
+ * To use a custom transformer on a route level.
  */
 @Metadata(label = "transformation")
-@XmlType(name = "customTransformer")
+@XmlRootElement(name = "customTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomTransformerDefinition extends TransformerDefinition {
 

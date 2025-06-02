@@ -22,12 +22,22 @@ public class ArangoDBRemoteInfraService implements ArangoDBInfraService {
 
     @Override
     public int getPort() {
+        return port();
+    }
+
+    @Override
+    public int port() {
         return Integer.valueOf(System.getProperty(ArangoDBProperties.ARANGODB_PORT));
     }
 
     @Override
-    public String getHost() {
+    public String host() {
         return System.getProperty(ArangoDBProperties.ARANGODB_HOST);
+    }
+
+    @Override
+    public String getHost() {
+        return host();
     }
 
     @Override

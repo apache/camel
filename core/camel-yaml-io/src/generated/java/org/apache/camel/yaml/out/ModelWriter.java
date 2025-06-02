@@ -784,8 +784,29 @@ public class ModelWriter extends BaseWriter {
     public void writeLangChain4jWordTokenizerDefinition(LangChain4jWordTokenizerDefinition def) throws IOException {
         doWriteLangChain4jWordTokenizerDefinition("langChain4jWordTokenizer", def);
     }
+    public void writeCustomTransformerDefinition(CustomTransformerDefinition def) throws IOException {
+        doWriteCustomTransformerDefinition("customTransformer", def);
+    }
+    public void writeDataFormatTransformerDefinition(DataFormatTransformerDefinition def) throws IOException {
+        doWriteDataFormatTransformerDefinition("dataFormatTransformer", def);
+    }
+    public void writeEndpointTransformerDefinition(EndpointTransformerDefinition def) throws IOException {
+        doWriteEndpointTransformerDefinition("endpointTransformer", def);
+    }
+    public void writeLoadTransformerDefinition(LoadTransformerDefinition def) throws IOException {
+        doWriteLoadTransformerDefinition("loadTransformer", def);
+    }
     public void writeTransformersDefinition(TransformersDefinition def) throws IOException {
         doWriteTransformersDefinition("transformers", def);
+    }
+    public void writeCustomValidatorDefinition(CustomValidatorDefinition def) throws IOException {
+        doWriteCustomValidatorDefinition("customValidator", def);
+    }
+    public void writeEndpointValidatorDefinition(EndpointValidatorDefinition def) throws IOException {
+        doWriteEndpointValidatorDefinition("endpointValidator", def);
+    }
+    public void writePredicateValidatorDefinition(PredicateValidatorDefinition def) throws IOException {
+        doWritePredicateValidatorDefinition("predicateValidator", def);
     }
     public void writeValidatorsDefinition(ValidatorsDefinition def) throws IOException {
         doWriteValidatorsDefinition("validators", def);
@@ -1015,18 +1036,17 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteFaultToleranceConfigurationCommonAttributes(FaultToleranceConfigurationCommon def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("delay", def.getDelay(), "5000");
+        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute("typedGuard", def.getTypedGuard(), null);
         doWriteAttribute("failureRatio", def.getFailureRatio(), "50");
-        doWriteAttribute("timeoutScheduledExecutorService", def.getTimeoutScheduledExecutorService(), null);
         doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
         doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
         doWriteAttribute("timeoutPoolSize", def.getTimeoutPoolSize(), "10");
         doWriteAttribute("successThreshold", def.getSuccessThreshold(), "1");
         doWriteAttribute("requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
-        doWriteAttribute("bulkheadExecutorService", def.getBulkheadExecutorService(), null);
-        doWriteAttribute("delay", def.getDelay(), "5000");
-        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
-        doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), null);
         doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
+        doWriteAttribute("threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
         doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
     }
     protected void doWriteFaultToleranceConfigurationCommon(String name, FaultToleranceConfigurationCommon def) throws IOException {
@@ -1897,7 +1917,7 @@ public class ModelWriter extends BaseWriter {
         doWriteElement(null, def.getTokenizerImplementation(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "LangChain4jCharacterTokenizerDefinition" -> doWriteLangChain4jCharacterTokenizerDefinition("langChain4jCharacterTokenizer", (LangChain4jCharacterTokenizerDefinition) v);
-                case "LangChain4jTokenizerDefinition" -> doWriteLangChain4jTokenizerDefinition("langChain4jLineTokenizer", (LangChain4jTokenizerDefinition) v);
+                case "LangChain4jLineTokenizerDefinition" -> doWriteLangChain4jLineTokenizerDefinition("langChain4jLineTokenizer", (LangChain4jLineTokenizerDefinition) v);
                 case "LangChain4jParagraphTokenizerDefinition" -> doWriteLangChain4jParagraphTokenizerDefinition("langChain4jParagraphTokenizer", (LangChain4jParagraphTokenizerDefinition) v);
                 case "LangChain4jSentenceTokenizerDefinition" -> doWriteLangChain4jSentenceTokenizerDefinition("langChain4jSentenceTokenizer", (LangChain4jSentenceTokenizerDefinition) v);
                 case "LangChain4jWordTokenizerDefinition" -> doWriteLangChain4jWordTokenizerDefinition("langChain4jWordTokenizer", (LangChain4jWordTokenizerDefinition) v);
@@ -3376,9 +3396,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
         doWriteAttribute("missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute("routeId", def.getRouteId(), null);
+        doWriteAttribute("apiContextPath", def.getApiContextPath(), null);
         doWriteAttribute("specification", def.getSpecification(), null);
         doWriteAttribute("disabled", def.getDisabled(), null);
-                doWriteElement("${n}", def.getApiContextPath(), this::doWriteString);
         endElement(name);
     }
     protected void doWriteOpenIdConnectDefinition(String name, OpenIdConnectDefinition def) throws IOException {
@@ -3521,7 +3541,7 @@ public class ModelWriter extends BaseWriter {
             switch (v.getClass().getSimpleName()) {
                 case "ApiKeyDefinition" -> doWriteApiKeyDefinition("apiKey", (ApiKeyDefinition) v);
                 case "BasicAuthDefinition" -> doWriteBasicAuthDefinition("basicAuth", (BasicAuthDefinition) v);
-                case "BearerTokenDefinition" -> doWriteBearerTokenDefinition("bearer", (BearerTokenDefinition) v);
+                case "BearerTokenDefinition" -> doWriteBearerTokenDefinition("bearerToken", (BearerTokenDefinition) v);
                 case "OAuth2Definition" -> doWriteOAuth2Definition("oauth2", (OAuth2Definition) v);
                 case "OpenIdConnectDefinition" -> doWriteOpenIdConnectDefinition("openIdConnect", (OpenIdConnectDefinition) v);
                 case "MutualTLSDefinition" -> doWriteMutualTLSDefinition("mutualTLS", (MutualTLSDefinition) v);

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.12.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kafka</artifactId>
@@ -45,6 +45,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-console</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- kafka java client -->

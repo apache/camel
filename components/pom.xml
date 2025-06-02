@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.12.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -115,6 +115,7 @@
         <module>camel-crypto-pgp</module>
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
+        <module>camel-dapr</module>
         <module>camel-datasonnet</module>
         <module>camel-debug</module>
         <module>camel-debezium</module>
@@ -169,6 +170,7 @@
         <module>camel-jackson-avro</module>
         <module>camel-jackson-protobuf</module>
         <module>camel-jacksonxml</module>
+        <module>camel-jandex</module>
         <module>camel-jasypt</module>
         <module>camel-javascript</module>
         <module>camel-jaxb</module>
@@ -249,7 +251,8 @@
         <module>camel-printer</module>
         <module>camel-protobuf</module>
         <module>camel-pubnub</module>
-        <module>camel-pulsar</module>
+	<module>camel-pulsar</module>
+	<module>camel-pqc</module>
         <module>camel-python</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>

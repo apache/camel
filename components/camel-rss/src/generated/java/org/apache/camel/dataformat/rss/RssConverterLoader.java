@@ -45,9 +45,21 @@ public final class RssConverterLoader implements TypeConverterLoader, CamelConte
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, com.rometools.rome.feed.synd.SyndFeed.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.dataformat.rss.RssConverter.xmlToFeed((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.dataformat.rss.RssConverter.xmlToFeed((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, com.rometools.rome.feed.synd.SyndFeed.class, false,
-            (type, exchange, value) -> org.apache.camel.dataformat.rss.RssConverter.feedToXml((com.rometools.rome.feed.synd.SyndFeed) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.dataformat.rss.RssConverter.feedToXml((com.rometools.rome.feed.synd.SyndFeed) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

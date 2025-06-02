@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.yaml.deserializers;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.api.ConstructNode;
@@ -38,13 +37,6 @@ public class CustomResolver implements YamlDeserializerResolver {
 
     @Override
     public ConstructNode resolve(String id) {
-        if (id != null && id.contains("-")) {
-            LOG.warn(
-                    "The kebab-case '{}' is deprecated and it will be removed in the next version. Use the camelCase '{}' instead.",
-                    id, StringHelper.dashToCamelCase(id));
-        }
-
-        id = org.apache.camel.util.StringHelper.dashToCamelCase(id);
         switch (id) {
             //
             // Route

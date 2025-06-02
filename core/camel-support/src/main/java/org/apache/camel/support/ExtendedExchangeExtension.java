@@ -26,9 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeExtension;
+import org.apache.camel.Message;
 import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.trait.message.MessageTrait;
+import org.apache.camel.trait.message.RedeliveryTraitPayload;
 
 public class ExtendedExchangeExtension implements ExchangeExtension {
     private final AbstractExchange exchange;
@@ -45,9 +48,13 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean notifyEvent;
     private boolean interruptable = true;
     private boolean interrupted;
+    private boolean routeStop;
+    private boolean rollbackOnly;
+    private boolean rollbackOnlyLast;
     private AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     private UnitOfWork unitOfWork;
     private List<Synchronization> onCompletions;
+    private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -267,6 +274,36 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     }
 
     @Override
+    public boolean isRollbackOnly() {
+        return rollbackOnly;
+    }
+
+    @Override
+    public void setRollbackOnly(boolean rollbackOnly) {
+        this.rollbackOnly = rollbackOnly;
+    }
+
+    @Override
+    public boolean isRollbackOnlyLast() {
+        return rollbackOnlyLast;
+    }
+
+    @Override
+    public void setRollbackOnlyLast(boolean rollbackOnlyLast) {
+        this.rollbackOnlyLast = rollbackOnlyLast;
+    }
+
+    @Override
+    public boolean isRouteStop() {
+        return routeStop;
+    }
+
+    @Override
+    public void setRouteStop(boolean routeStop) {
+        this.routeStop = routeStop;
+    }
+
+    @Override
     public <T> T getInOrNull(Class<T> type) {
         return this.exchange.getInOrNull(type);
     }
@@ -309,6 +346,14 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         this.failureHandled = failureHandled;
     }
 
+    @Override
+    public boolean isExternalRedelivered(Message message) {
+        if (externalRedelivered == RedeliveryTraitPayload.UNDEFINED_REDELIVERY) {
+            externalRedelivered = (RedeliveryTraitPayload) message.getPayloadForTrait(MessageTrait.REDELIVERY);
+        }
+        return externalRedelivered == RedeliveryTraitPayload.IS_REDELIVERY;
+    }
+
     UnitOfWork getUnitOfWork() {
         return unitOfWork;
     }
@@ -324,6 +369,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
             this.exchange.variableRepository.clear();
         }
 
+        this.externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
         setHistoryNodeId(null);
         setHistoryNodeLabel(null);
         setTransacted(false);
@@ -333,6 +379,9 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         setRedeliveryExhausted(false);
         setErrorHandlerHandled(null);
         setStreamCacheDisabled(false);
+        setRollbackOnly(false);
+        setRollbackOnlyLast(false);
+        setRouteStop(false);
     }
 
     @Override

@@ -34,8 +34,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.azure.eventhubs.CredentialType.CONNECTION_STRING;
-
 @UriParams
 public class EventHubsConfiguration implements Cloneable {
 
@@ -50,6 +48,7 @@ public class EventHubsConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String connectionString;
     @UriParam(label = "security", secret = true)
+    @Metadata(autowired = true)
     private TokenCredential tokenCredential;
     @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
@@ -84,7 +83,7 @@ public class EventHubsConfiguration implements Cloneable {
     private String partitionId;
     @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
               defaultValue = "CONNECTION_STRING")
-    private CredentialType credentialType = CONNECTION_STRING;
+    private CredentialType credentialType;
 
     /**
      * EventHubs namespace created in Azure Portal.

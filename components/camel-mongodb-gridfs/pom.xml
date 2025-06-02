@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.12.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-mongodb-gridfs</artifactId>
@@ -34,7 +34,6 @@
 
     <properties>
         <!-- MongoDB container is not available on these platforms -->
-        <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
     </properties>
 

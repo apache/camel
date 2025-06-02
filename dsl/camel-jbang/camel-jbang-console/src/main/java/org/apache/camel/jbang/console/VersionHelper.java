@@ -16,8 +16,10 @@
  */
 package org.apache.camel.jbang.console;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.camel.util.IOHelper;
 
@@ -28,13 +30,12 @@ public final class VersionHelper {
 
     public static String getJBangVersion() {
         try {
-            File file = new File(System.getProperty("user.home"), ".jbang/cache/version.txt");
-            if (file.exists() && file.isFile()) {
-                FileInputStream fis = new FileInputStream(file);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
-                text = text.trim();
-                return text;
+            Path path = Paths.get(System.getProperty("user.home"), ".jbang/cache/version.txt");
+            if (Files.exists(path) && Files.isRegularFile(path)) {
+                try (InputStream is = Files.newInputStream(path)) {
+                    String text = IOHelper.loadText(is);
+                    return text.trim();
+                }
             }
         } catch (Exception e) {
             // ignore

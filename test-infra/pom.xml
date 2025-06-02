@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.12.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -61,6 +61,7 @@
         <module>camel-test-infra-microprofile-lra</module>
         <module>camel-test-infra-minio</module>
         <module>camel-test-infra-nats</module>
+        <module>camel-test-infra-pinecone</module>
         <module>camel-test-infra-pulsar</module>
         <module>camel-test-infra-redis</module>
         <module>camel-test-infra-rocketmq</module>
@@ -90,6 +91,7 @@
         <module>camel-test-infra-tensorflow-serving</module>
         <module>camel-test-infra-triton</module>
         <module>camel-test-infra-neo4j</module>
+        <module>camel-test-infra-weaviate</module>
         <module>camel-test-infra-all</module>
     </modules>
 

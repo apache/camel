@@ -17,21 +17,20 @@
 package org.apache.camel.component.azure.servicebus;
 
 import java.util.Map;
-import java.util.Set;
 
-import com.azure.core.credential.TokenCredential;
+import com.azure.identity.DefaultAzureCredential;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Azure ServiceBus component
  */
 @Component("azure-servicebus")
 public class ServiceBusComponent extends DefaultComponent {
+
     @Metadata
     private ServiceBusConfiguration configuration = new ServiceBusConfiguration();
 
@@ -44,7 +43,6 @@ public class ServiceBusComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("A queue or topic name must be specified.");
         }
@@ -57,22 +55,19 @@ public class ServiceBusComponent extends DefaultComponent {
 
         final ServiceBusEndpoint endpoint = new ServiceBusEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        setCredentials(configuration);
+
+        // ensure we use default credential type if not configured
+        if (endpoint.getConfiguration().getTokenCredential() == null) {
+            if (endpoint.getConfiguration().getCredentialType() == null) {
+                endpoint.getConfiguration().setCredentialType(CredentialType.CONNECTION_STRING);
+            }
+        } else {
+            boolean azure = endpoint.getConfiguration().getTokenCredential() instanceof DefaultAzureCredential;
+            endpoint.getConfiguration()
+                    .setCredentialType(azure ? CredentialType.AZURE_IDENTITY : CredentialType.TOKEN_CREDENTIAL);
+        }
 
         return endpoint;
-    }
-
-    private void setCredentials(final ServiceBusConfiguration configuration) {
-        if (ObjectHelper.isNotEmpty(configuration.getFullyQualifiedNamespace()) &&
-                ObjectHelper.isEmpty(configuration.getTokenCredential())) {
-            final Set<TokenCredential> tokenCredentialFromRegistry
-                    = getCamelContext().getRegistry().findByType(TokenCredential.class);
-
-            // Find exactly one from the registry or create one
-            if (tokenCredentialFromRegistry.size() == 1) {
-                configuration.setTokenCredential(tokenCredentialFromRegistry.stream().findFirst().get());
-            }
-        }
     }
 
     /**

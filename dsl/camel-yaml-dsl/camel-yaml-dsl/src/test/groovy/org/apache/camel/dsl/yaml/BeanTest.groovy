@@ -48,22 +48,4 @@ class BeanTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "Error: kebab-case: bean-type"() {
-        when:
-        var route = """
-                - from:
-                   uri: "direct:route"
-                   steps:
-                     - bean:
-                         bean-type: ${MyUppercaseProcessor.name}
-                     - to: "mock:route"
-            """
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            assert e.message.contains("additional properties")
-        }
-    }
  }

@@ -36,36 +36,31 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.VariableRepository;
-import org.apache.camel.trait.message.MessageTrait;
-import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Base class for the two official and only implementations of {@link Exchange}, the {@link DefaultExchange} and
  * {@link DefaultPooledExchange}.
  *
- * Camel end users should use {@link DefaultExchange} if creating an {@link Exchange} manually. However that is more
- * seldom to use, as exchanges are created via {@link Endpoint}.
+ * Camel end users should use {@link DefaultExchange} if creating an {@link Exchange} manually. However, this is seldom
+ * used, because exchanges are created via {@link Endpoint}s.
  *
  * @see DefaultExchange
  */
 abstract class AbstractExchange implements Exchange {
-    protected final EnumMap<ExchangePropertyKey, Object> internalProperties;
 
-    protected final CamelContext context;
+    private final CamelContext context;
+    private final ExtendedExchangeExtension privateExtension;
+
+    protected final EnumMap<ExchangePropertyKey, Object> internalProperties;
     protected Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
+    protected Map<String, SafeCopyProperty> safeCopyProperties;
+    protected ExchangeVariableRepository variableRepository;
     protected Message in;
     protected Message out;
     protected Exception exception;
     protected String exchangeId;
     protected ExchangePattern pattern;
-    protected boolean routeStop;
-    protected boolean rollbackOnly;
-    protected boolean rollbackOnlyLast;
-    protected Map<String, SafeCopyProperty> safeCopyProperties;
-    protected ExchangeVariableRepository variableRepository;
-    private final ExtendedExchangeExtension privateExtension;
-    private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
     protected AbstractExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
                                Map<String, Object> properties) {
@@ -82,34 +77,29 @@ abstract class AbstractExchange implements Exchange {
     protected AbstractExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
         this.pattern = pattern;
-
-        internalProperties = new EnumMap<>(ExchangePropertyKey.class);
-        privateExtension = new ExtendedExchangeExtension(this);
+        this.internalProperties = new EnumMap<>(ExchangePropertyKey.class);
+        this.privateExtension = new ExtendedExchangeExtension(this);
     }
 
     protected AbstractExchange(Exchange parent) {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();
-
-        internalProperties = new EnumMap<>(ExchangePropertyKey.class);
-
-        privateExtension = new ExtendedExchangeExtension(this);
-        privateExtension.setFromEndpoint(parent.getFromEndpoint());
-        privateExtension.setFromRouteId(parent.getFromRouteId());
-        privateExtension.setUnitOfWork(parent.getUnitOfWork());
+        this.internalProperties = new EnumMap<>(ExchangePropertyKey.class);
+        this.privateExtension = new ExtendedExchangeExtension(this);
+        this.privateExtension.setFromEndpoint(parent.getFromEndpoint());
+        this.privateExtension.setFromRouteId(parent.getFromRouteId());
+        this.privateExtension.setUnitOfWork(parent.getUnitOfWork());
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
     protected AbstractExchange(AbstractExchange parent) {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();
-
         this.internalProperties = new EnumMap<>(parent.internalProperties);
-
-        privateExtension = new ExtendedExchangeExtension(this);
-        privateExtension.setFromEndpoint(parent.getFromEndpoint());
-        privateExtension.setFromRouteId(parent.getFromRouteId());
-        privateExtension.setUnitOfWork(parent.getUnitOfWork());
+        this.privateExtension = new ExtendedExchangeExtension(this);
+        this.privateExtension.setFromEndpoint(parent.getFromEndpoint());
+        this.privateExtension.setFromRouteId(parent.getFromRouteId());
+        this.privateExtension.setUnitOfWork(parent.getUnitOfWork());
 
         setIn(parent.getIn().copy());
 
@@ -118,14 +108,14 @@ abstract class AbstractExchange implements Exchange {
         }
 
         setException(parent.exception);
-        setRouteStop(parent.routeStop);
-        setRollbackOnly(parent.rollbackOnly);
-        setRollbackOnlyLast(parent.rollbackOnlyLast);
 
         privateExtension.setNotifyEvent(parent.getExchangeExtension().isNotifyEvent());
         privateExtension.setRedeliveryExhausted(parent.getExchangeExtension().isRedeliveryExhausted());
         privateExtension.setErrorHandlerHandled(parent.getExchangeExtension().getErrorHandlerHandled());
         privateExtension.setStreamCacheDisabled(parent.getExchangeExtension().isStreamCacheDisabled());
+        privateExtension.setRollbackOnly(parent.getExchangeExtension().isRollbackOnly());
+        privateExtension.setRollbackOnlyLast(parent.getExchangeExtension().isRollbackOnlyLast());
+        privateExtension.setRouteStop(parent.getExchangeExtension().isRouteStop());
 
         if (parent.hasVariables()) {
             if (this.variableRepository == null) {
@@ -195,13 +185,13 @@ abstract class AbstractExchange implements Exchange {
         return ExchangeHelper.convertToType(this, type, value);
     }
 
-    // TODO: fix re-assignment of the value instance here.
     @SuppressWarnings("unchecked")
-    private <T> T evalPropertyValue(final Object defaultValue, final Class<T> type, Object value) {
-        if (value == null) {
-            value = defaultValue;
+    private <T> T evalPropertyValue(final Object defaultValue, final Class<T> type, final Object value) {
+        Object val = value;
+        if (val == null) {
+            val = defaultValue;
         }
-        if (value == null) {
+        if (val == null) {
             // let's avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
                 return (T) Boolean.FALSE;
@@ -211,11 +201,11 @@ abstract class AbstractExchange implements Exchange {
 
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already is the same type
-        if (type.isInstance(value)) {
-            return (T) value;
+        if (type.isInstance(val)) {
+            return (T) val;
         }
 
-        return ExchangeHelper.convertToType(this, type, value);
+        return ExchangeHelper.convertToType(this, type, val);
     }
 
     @Override
@@ -647,41 +637,37 @@ abstract class AbstractExchange implements Exchange {
 
     @Override
     public boolean isRouteStop() {
-        return routeStop;
+        return privateExtension.isRouteStop();
     }
 
     @Override
     public void setRouteStop(boolean routeStop) {
-        this.routeStop = routeStop;
+        privateExtension.setRouteStop(routeStop);
     }
 
     @Override
     public boolean isExternalRedelivered() {
-        if (externalRedelivered == RedeliveryTraitPayload.UNDEFINED_REDELIVERY) {
-            Message message = getIn();
-            externalRedelivered = (RedeliveryTraitPayload) message.getPayloadForTrait(MessageTrait.REDELIVERY);
-        }
-        return externalRedelivered == RedeliveryTraitPayload.IS_REDELIVERY;
+        return privateExtension.isExternalRedelivered(getIn());
     }
 
     @Override
     public boolean isRollbackOnly() {
-        return rollbackOnly;
+        return privateExtension.isRollbackOnly();
     }
 
     @Override
     public void setRollbackOnly(boolean rollbackOnly) {
-        this.rollbackOnly = rollbackOnly;
+        privateExtension.setRollbackOnly(rollbackOnly);
     }
 
     @Override
     public boolean isRollbackOnlyLast() {
-        return rollbackOnlyLast;
+        return privateExtension.isRollbackOnlyLast();
     }
 
     @Override
     public void setRollbackOnlyLast(boolean rollbackOnlyLast) {
-        this.rollbackOnlyLast = rollbackOnlyLast;
+        privateExtension.setRollbackOnlyLast(rollbackOnlyLast);
     }
 
     @Override

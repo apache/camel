@@ -26,7 +26,7 @@ public final class CosmosDbTypeConverter {
     private CosmosDbTypeConverter() {
     }
 
-    @Converter
+    @Converter(allowNull = true)
     public static PartitionKey toPartitionKey(final String partitionKeyAsString) {
         if (ObjectHelper.isNotEmpty(partitionKeyAsString)) {
             return new PartitionKey(partitionKeyAsString);

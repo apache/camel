@@ -16,19 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
@@ -41,13 +40,13 @@ public final class RunHelper {
     }
 
     public static String mavenArtifactId() {
-        File f = new File("pom.xml");
-        if (f.exists() && f.isFile()) {
+        Path pomPath = Paths.get("pom.xml");
+        if (Files.exists(pomPath) && Files.isRegularFile(pomPath)) {
             // find additional dependencies form pom.xml
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-            try {
-                Model model = mavenReader.read(new FileReader(f));
-                model.setPomFile(f);
+            try (Reader reader = Files.newBufferedReader(pomPath)) {
+                Model model = mavenReader.read(reader);
+                model.setPomFile(pomPath.toFile()); // Still need File for Maven Model
 
                 return model.getArtifactId();
             } catch (Exception e) {
@@ -60,13 +59,15 @@ public final class RunHelper {
     public static List<String> scanMavenDependenciesFromPom() {
         List<String> answer = new ArrayList<>();
 
-        File f = new File("pom.xml");
-        if (f.exists() && f.isFile()) {
+        Path pomPath = Paths.get("pom.xml");
+        if (Files.exists(pomPath) && Files.isRegularFile(pomPath)) {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+
             // find additional dependencies form pom.xml
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-            try {
-                Model model = mavenReader.read(new FileReader(f));
-                model.setPomFile(f);
+            try (Reader reader = Files.newBufferedReader(pomPath)) {
+                Model model = mavenReader.read(reader);
+                model.setPomFile(pomPath.toFile()); // Still need File for Maven Model
 
                 for (Dependency d : model.getDependencies()) {
                     String g = d.getGroupId();
@@ -78,7 +79,7 @@ public final class RunHelper {
                         if (v != null && v.startsWith("${") && v.endsWith("}")) {
                             // version uses placeholder, so try to find them
                             v = v.substring(2, v.length() - 1);
-                            v = findMavenProperty(f, v);
+                            v = findMavenProperty((Path) pomPath, v);
                         }
                         if (v != null) {
                             String gav = "mvn:" + g + ":" + d.getArtifactId() + ":" + v;
@@ -90,7 +91,7 @@ public final class RunHelper {
                         // camel dependencies
                         String a = d.getArtifactId();
 
-                        if (!isInCamelCatalog(a)) {
+                        if (!isInCamelCatalog(catalog, a)) {
                             // not a known camel artifact
                             continue;
                         }
@@ -122,28 +123,27 @@ public final class RunHelper {
 
         // scan as maven based project
         Stream<Path> s = Stream.concat(walk(Path.of("src/main/java")), walk(Path.of("src/main/resources")));
-        s.filter(p -> p.toFile().isFile())
-                .map(p -> p.toFile().getPath())
+        s.filter(Files::isRegularFile)
+                .map(Path::toString)
                 .forEach(answer::add);
         return answer;
     }
 
-    public static String findMavenProperty(File f, String placeholder) {
-        if (f.exists() && f.isFile()) {
+    public static String findMavenProperty(Path pomPath, String placeholder) {
+        if (Files.exists(pomPath) && Files.isRegularFile(pomPath)) {
             // find additional dependencies form pom.xml
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-            try {
-                Model model = mavenReader.read(new FileReader(f));
-                model.setPomFile(f);
+            try (Reader reader = Files.newBufferedReader(pomPath)) {
+                Model model = mavenReader.read(reader);
+                model.setPomFile(pomPath.toFile()); // Still need File for Maven Model
                 String p = model.getProperties().getProperty(placeholder);
                 if (p != null) {
                     return p;
                 } else if (model.getParent() != null) {
                     p = model.getParent().getRelativePath();
                     if (p != null) {
-                        String dir = FileUtil.onlyPath(f.getAbsolutePath());
-                        String parent = FileUtil.compactPath(dir + File.separatorChar + p);
-                        return findMavenProperty(new File(parent), placeholder);
+                        Path parentPath = pomPath.getParent().resolve(p);
+                        return findMavenProperty(parentPath, placeholder);
                     }
                 }
             } catch (Exception ex) {
@@ -151,6 +151,12 @@ public final class RunHelper {
             }
         }
         return null;
+    }
+
+    // Keep for backward compatibility
+    @Deprecated
+    public static String findMavenProperty(java.io.File f, String placeholder) {
+        return findMavenProperty(f.toPath(), placeholder);
     }
 
     public static Stream<Path> walk(Path dir) {
@@ -166,7 +172,10 @@ public final class RunHelper {
     }
 
     public static boolean isInCamelCatalog(String artifactId) {
-        CamelCatalog catalog = new DefaultCamelCatalog();
+        return isInCamelCatalog(new DefaultCamelCatalog(), artifactId);
+    }
+
+    public static boolean isInCamelCatalog(CamelCatalog catalog, String artifactId) {
         for (String n : catalog.findComponentNames()) {
             String a = catalog.componentModel(n).getArtifactId();
             if (artifactId.equals(a)) {

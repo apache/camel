@@ -19,21 +19,20 @@ package org.apache.camel.main.util;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.catalog.lucene.LuceneSuggestionStrategy;
+import org.apache.camel.catalog.suggest.CatalogSuggestionStrategy;
 
 public final class SuggestSimilarHelper {
 
-    private static final int MAX_SUGGESTIONS = 5; // lucene recommends 5 as minimum
+    private static final int MAX_SUGGESTIONS = 5;
 
     private SuggestSimilarHelper() {
     }
 
     public static List<String> didYouMean(List<String> names, String unknown) {
-        String[] suggestions = LuceneSuggestionStrategy.suggestEndpointOptions(names, unknown, MAX_SUGGESTIONS);
+        String[] suggestions = CatalogSuggestionStrategy.suggestEndpointOptions(names, unknown, MAX_SUGGESTIONS);
         if (suggestions != null) {
             return Arrays.asList(suggestions);
         }
-
         return List.of();
     }
 

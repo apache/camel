@@ -55,7 +55,7 @@ public class ArangoCustomVertxIT extends BaseArangoDb {
             public void configure() {
                 from("direct:query")
                         .toF("arangodb:{{arangodb.testDb}}?host=%s&port=%d&operation=AQL_QUERY",
-                                service.getHost(), service.getPort());
+                                service.host(), service.port());
             }
         };
     }

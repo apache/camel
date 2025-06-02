@@ -26,8 +26,6 @@ import org.apache.camel.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_COOKIE;
-
 public abstract class AbstractOAuthProcessor implements Processor {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -42,20 +40,21 @@ public abstract class AbstractOAuthProcessor implements Processor {
         return findOAuth(context).orElseThrow(() -> new NoSuchElementException("No OAuth"));
     }
 
-    protected void authenticateExistingUserProfile(OAuth oauth, OAuthSession session) {
+    protected UserProfile authenticateExistingUserProfile(OAuth oauth, UserProfile userProfile) {
         // Remove before attempting to re-authenticate
-        var userProfile = session.removeUserProfile().orElseThrow();
         if (userProfile.expired()) {
             var creds = new UserCredentials(userProfile);
             userProfile = oauth.authenticate(creds);
-            userProfile.logDetails("Refreshed");
+            log.info("Refreshed {}", userProfile.subject());
+            userProfile.logDetails();
         } else {
             var creds = new TokenCredentials(userProfile.accessToken().orElseThrow());
             var updProfile = oauth.authenticate(creds);
             userProfile.merge(updProfile);
-            userProfile.logDetails("ReAuthenticated");
+            log.info("ReAuthenticated {}", userProfile.subject());
+            userProfile.logDetails();
         }
-        session.putUserProfile(userProfile);
+        return userProfile;
     }
 
     protected void logRequestHeaders(String msgPrefix, Message msg) {
@@ -70,12 +69,5 @@ public abstract class AbstractOAuthProcessor implements Processor {
         msg.setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
         msg.setHeader("Location", redirectUrl);
         msg.setBody("");
-    }
-
-    protected void setSessionCookie(Message msg, OAuthSession session) {
-        var sessionId = session.getSessionId();
-        var cookie = "%s=%s; Path=/; HttpOnly; SameSite=None; Secure".formatted(CAMEL_OAUTH_COOKIE, sessionId);
-        msg.setHeader("Set-Cookie", cookie);
-        log.debug("Set-Cookie: {}", cookie);
     }
 }

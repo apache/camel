@@ -28,6 +28,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
+import org.apache.camel.Expression;
 import org.apache.camel.component.xslt.SourceHandlerFactory;
 
 /**
@@ -65,8 +66,8 @@ public class JsonSourceHandlerFactoryImpl implements SourceHandlerFactory {
      * {@inheritDoc}
      */
     @Override
-    public Source getSource(Exchange exchange) throws Exception {
-        Object body = exchange.getIn().getBody();
+    public Source getSource(Exchange exchange, Expression source) throws Exception {
+        Object body = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
 
         JsonParser jsonParser = null;
         if (body instanceof File) {

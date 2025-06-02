@@ -21,9 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
-import io.smallrye.faulttolerance.ExecutorHolder;
-import io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker;
-import io.smallrye.faulttolerance.core.timer.Timer;
+import io.smallrye.faulttolerance.api.TypedGuard;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -67,12 +65,11 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
 
         FaultToleranceProcessor answer = new FaultToleranceProcessor(configuration, processor, fallback);
         // using any existing circuit breakers?
-        if (config.getCircuitBreaker() != null) {
-            CircuitBreaker<Exchange> cb = mandatoryLookup(parseString(config.getCircuitBreaker()), CircuitBreaker.class);
-            answer.setCircuitBreaker(cb);
+        if (config.getTypedGuard() != null) {
+            TypedGuard<Exchange> cb = mandatoryLookup(parseString(config.getTypedGuard()), TypedGuard.class);
+            answer.setTypedGuard(cb);
         }
-        configureBulkheadExecutorService(answer, config);
-        configureTimer(answer);
+        configureExecutorService(answer, config);
         return answer;
     }
 
@@ -93,12 +90,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
     }
 
     private void configureTimeLimiter(FaultToleranceConfigurationCommon config, FaultToleranceConfiguration target) {
-        if (!parseBoolean(config.getTimeoutEnabled(), false)) {
-            target.setTimeoutEnabled(false);
-        } else {
-            target.setTimeoutEnabled(true);
-        }
-
+        target.setTimeoutEnabled(parseBoolean(config.getTimeoutEnabled(), false));
         target.setTimeoutDuration(parseDuration(config.getTimeoutDuration(), 1000));
         target.setTimeoutPoolSize(parseInt(config.getTimeoutPoolSize(), 10));
     }
@@ -107,18 +99,13 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         if (!parseBoolean(config.getBulkheadEnabled(), false)) {
             return;
         }
-
         target.setBulkheadMaxConcurrentCalls(parseInt(config.getBulkheadMaxConcurrentCalls(), 10));
         target.setBulkheadWaitingTaskQueue(parseInt(config.getBulkheadWaitingTaskQueue(), 10));
     }
 
-    private void configureBulkheadExecutorService(FaultToleranceProcessor processor, FaultToleranceConfigurationCommon config) {
-        if (!parseBoolean(config.getBulkheadEnabled(), false)) {
-            return;
-        }
-
-        if (config.getBulkheadExecutorService() != null) {
-            String ref = config.getBulkheadExecutorService();
+    private void configureExecutorService(FaultToleranceProcessor processor, FaultToleranceConfigurationCommon config) {
+        if (config.getThreadOffloadExecutorService() != null) {
+            String ref = config.getThreadOffloadExecutorService();
             boolean shutdownThreadPool = false;
             ExecutorService executorService = lookupByNameAndType(ref, ExecutorService.class);
             if (executorService == null) {
@@ -128,25 +115,6 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
             processor.setExecutorService(executorService);
             processor.setShutdownExecutorService(shutdownThreadPool);
         }
-    }
-
-    private void configureTimer(FaultToleranceProcessor answer) throws Exception {
-        Timer timer;
-
-        // If running in a CDI container, try to find the singleton scoped ExecutorHolder. Else we have to manage the Timer ourselves
-        ExecutorHolder executorHolder = findSingleByType(ExecutorHolder.class);
-        if (executorHolder != null) {
-            timer = executorHolder.getTimer();
-        } else {
-            FaultToleranceTimerService threadTimerService = camelContext.hasService(FaultToleranceTimerService.class);
-            if (threadTimerService == null) {
-                threadTimerService = new FaultToleranceTimerService();
-                camelContext.addService(threadTimerService);
-            }
-            timer = threadTimerService.getTimer();
-        }
-
-        answer.setTimer(timer);
     }
 
     // *******************************

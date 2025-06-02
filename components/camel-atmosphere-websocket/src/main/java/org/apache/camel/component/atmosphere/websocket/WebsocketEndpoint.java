@@ -34,14 +34,14 @@ import org.apache.camel.util.StringHelper;
  * Expose WebSocket endpoints using the Atmosphere framework.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "atmosphere-websocket", extendsScheme = "servlet",
-             title = "Atmosphere Websocket",
-             syntax = "atmosphere-websocket:servicePath", category = { Category.HTTP, Category.NETWORKING },
+             title = "Atmosphere Websocket", syntax = "atmosphere-websocket:servicePath", category = {
+                     Category.HTTP, Category.NETWORKING },
              headersClass = WebsocketConstants.class)
-@Metadata(excludeProperties = "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost,"
+@Metadata(excludeProperties = "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authUsername,authPassword,authDomain,authHost,authBearerToken,"
                               + "copyHeaders,httpMethod,ignoreResponseBody,preserveHostHeader,throwExceptionOnFailure,okStatusCodeRange,"
                               + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
                               + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort,"
-                              + "oauth2ClientId,oauth2ClientSecret,oauth2TokenEndpoint,oauth2Scope,oauth2CacheTokens,oauth2CachedTokensDefaultExpirySeconds,oauth2CachedTokensExpirationMarginSeconds",
+                              + "oauth2ClientId,oauth2ClientSecret,oauth2TokenEndpoint,oauth2Scope,oauth2CacheTokens,oauth2CachedTokensDefaultExpirySeconds,oauth2CachedTokensExpirationMarginSeconds,oauth2ResourceIndicator",
           annotations = {
                   "protocol=http",
           })

@@ -37,7 +37,7 @@ public class FromSmbPreMoveDeleteIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/premove&preMove=work&delete=true",
+                "smb:%s/%s/premove?username=%s&password=%s&preMove=work&delete=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

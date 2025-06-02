@@ -48,6 +48,7 @@ public class SmbComponentIT extends CamelTestSupport {
     public void testSmbRead() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(100);
+        mock.allMessages().header(SmbConstants.SMB_UNC_PATH).startsWith("\\\\localhost\\data-rw\\");
 
         mock.assertIsSatisfied();
     }
@@ -55,7 +56,7 @@ public class SmbComponentIT extends CamelTestSupport {
     @Test
     public void testSmbSendFile() throws Exception {
         mockResultEndpoint.expectedMinimumMessageCount(1);
-        Exchange exchange = template.request("direct:smbSendFile", null);
+        template.request("direct:smbSendFile", null);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -74,14 +75,14 @@ public class SmbComponentIT extends CamelTestSupport {
                         .build();
                 context.getRegistry().bind("smbConfig", config);
 
-                fromF("smb:%s/%s?username=%s&password=%s&path=/&smbConfig=#smbConfig", service.address(), service.shareName(),
+                fromF("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig", service.address(), service.shareName(),
                         service.userName(), service.password())
                         .process(this::process)
                         .to("mock:result");
 
                 fromF("direct:smbSendFile")
-                        .to("smb:%s/%s?username=%s&password=%s&path=/&smbConfig=#smbConfig")
-                        .to("smb:%s/%s?username=%s&password=%s&path=/")
+                        .to("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig")
+                        .to("smb:%s/%s?username=%s&password=%s")
                         .to("mock:result");
 
             }

@@ -23,7 +23,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(78);
+        Set<String> props = new HashSet<>(79);
         props.add("accessKey");
         props.add("amazonS3Client");
         props.add("amazonS3Presigner");
@@ -79,6 +79,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
         props.add("proxyPort");
         props.add("proxyProtocol");
         props.add("region");
+        props.add("removePrefixOnMove");
         props.add("repeatCount");
         props.add("restartingPolicy");
         props.add("runLoggingLevel");

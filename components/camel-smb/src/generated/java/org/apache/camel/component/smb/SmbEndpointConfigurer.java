@@ -120,7 +120,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "oncompletionexceptionhandler":
         case "onCompletionExceptionHandler": target.setOnCompletionExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "path": target.getConfiguration().setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "premove":
@@ -295,7 +294,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "oncompletionexceptionhandler":
         case "onCompletionExceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "password": return java.lang.String.class;
-        case "path": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "premove":
@@ -466,7 +464,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "oncompletionexceptionhandler":
         case "onCompletionExceptionHandler": return target.getOnCompletionExceptionHandler();
         case "password": return target.getConfiguration().getPassword();
-        case "path": return target.getConfiguration().getPath();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "premove":

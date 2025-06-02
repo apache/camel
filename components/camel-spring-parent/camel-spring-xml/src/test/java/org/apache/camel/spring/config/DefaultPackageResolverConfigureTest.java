@@ -16,9 +16,9 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

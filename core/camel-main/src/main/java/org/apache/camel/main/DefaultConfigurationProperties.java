@@ -56,7 +56,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean loadTypeConverters;
     private boolean loadHealthChecks;
     private boolean devConsoleEnabled;
-    @Deprecated(since = "4.10")
     private boolean modeline;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled = true;
@@ -415,16 +414,16 @@ public abstract class DefaultConfigurationProperties<T> {
         this.devConsoleEnabled = devConsoleEnabled;
     }
 
-    @Deprecated(since = "4.10")
+    /**
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     */
     public boolean isModeline() {
         return modeline;
     }
 
     /**
-     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
-     * experience by being able to configure various settings using modeline directly in your route source code.
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
      */
-    @Deprecated(since = "4.10")
     public void setModeline(boolean modeline) {
         this.modeline = modeline;
     }
@@ -1806,10 +1805,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
-     * experience by being able to configure various settings using modeline directly in your route source code.
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
      */
-    @Deprecated
     public T withModeline(boolean modeline) {
         this.modeline = modeline;
         return (T) this;

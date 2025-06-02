@@ -46,21 +46,69 @@ public final class SaxonConverterLoader implements TypeConverterLoader, CamelCon
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, javax.xml.transform.dom.DOMSource.class, net.sf.saxon.om.NodeInfo.class, false,
-            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMSourceFromNodeInfo((net.sf.saxon.om.NodeInfo) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.converter.saxon.SaxonConverter.toDOMSourceFromNodeInfo((net.sf.saxon.om.NodeInfo) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.xml.transform.dom.DOMSource.class, net.sf.saxon.tree.tiny.TinyDocumentImpl.class, false,
-            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMSourceFromNodeInfo((net.sf.saxon.tree.tiny.TinyDocumentImpl) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.converter.saxon.SaxonConverter.toDOMSourceFromNodeInfo((net.sf.saxon.tree.tiny.TinyDocumentImpl) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.Document.class, net.sf.saxon.om.NodeInfo.class, false,
-            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMDocument((net.sf.saxon.om.NodeInfo) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.converter.saxon.SaxonConverter.toDOMDocument((net.sf.saxon.om.NodeInfo) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.Document.class, net.sf.saxon.tree.tiny.TinyDocumentImpl.class, false,
-            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMDocument((net.sf.saxon.tree.tiny.TinyDocumentImpl) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.converter.saxon.SaxonConverter.toDOMDocument((net.sf.saxon.tree.tiny.TinyDocumentImpl) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.Document.class, net.sf.saxon.tree.tiny.TinyElementImpl.class, false,
-            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMDocument((net.sf.saxon.tree.tiny.TinyElementImpl) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.converter.saxon.SaxonConverter.toDOMDocument((net.sf.saxon.tree.tiny.TinyElementImpl) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.Node.class, net.sf.saxon.om.NodeInfo.class, false,
-            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMNode((net.sf.saxon.om.NodeInfo) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.converter.saxon.SaxonConverter.toDOMNode((net.sf.saxon.om.NodeInfo) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.Node.class, net.sf.saxon.tree.tiny.TinyDocumentImpl.class, false,
-            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMNode((net.sf.saxon.tree.tiny.TinyDocumentImpl) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.converter.saxon.SaxonConverter.toDOMNode((net.sf.saxon.tree.tiny.TinyDocumentImpl) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.NodeList.class, java.util.List.class, false,
-            (type, exchange, value) -> org.apache.camel.converter.saxon.SaxonConverter.toDOMNodeList((java.util.List) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.converter.saxon.SaxonConverter.toDOMNodeList((java.util.List) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

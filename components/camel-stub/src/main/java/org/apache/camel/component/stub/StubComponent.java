@@ -39,9 +39,9 @@ import org.apache.camel.support.NormalizedUri;
 @org.apache.camel.spi.annotations.Component("stub")
 public class StubComponent extends SedaComponent {
 
-    @Metadata
+    @Metadata(label = "advanced")
     private boolean shadow;
-    @Metadata
+    @Metadata(label = "advanced")
     private String shadowPattern;
 
     public StubComponent() {

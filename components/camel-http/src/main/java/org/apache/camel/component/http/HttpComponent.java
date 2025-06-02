@@ -30,7 +30,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
@@ -137,7 +136,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     // proxy
     @Metadata(label = "producer,proxy", enums = "http,https", description = "Proxy authentication protocol scheme")
     protected String proxyAuthScheme;
-    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM",
+              description = "Proxy authentication method to use (NTLM is deprecated)")
     protected String proxyAuthMethod;
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
     protected String proxyAuthUsername;
@@ -210,7 +210,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected boolean logHttpActivity;
 
     public HttpComponent() {
-        registerExtension(HttpComponentVerifierExtension::new);
     }
 
     /**
@@ -288,15 +287,17 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             String authHost = getParameter(parameters, "authHost", String.class);
 
             return CompositeHttpConfigurer.combineConfigurers(configurer,
-                    new BasicAuthenticationHttpClientConfigurer(
-                            authUsername, authPassword, authDomain, authHost, credentialsProvider));
+                    new DefaultAuthenticationHttpClientConfigurer(
+                            authUsername, authPassword, authDomain, authHost, null, credentialsProvider));
         } else if (this.httpConfiguration != null) {
-            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
+            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())
+                    || "bearer".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
                 return CompositeHttpConfigurer.combineConfigurers(configurer,
-                        new BasicAuthenticationHttpClientConfigurer(
+                        new DefaultAuthenticationHttpClientConfigurer(
                                 this.httpConfiguration.getAuthUsername(),
                                 this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(),
-                                this.httpConfiguration.getAuthHost(), credentialsProvider));
+                                this.httpConfiguration.getAuthHost(), this.httpConfiguration.getAuthBearerToken(),
+                                credentialsProvider));
             }
         }
 
@@ -1084,10 +1085,5 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         ServiceHelper.stopService(httpActivityListener);
 
         super.doStop();
-    }
-
-    public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
-                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

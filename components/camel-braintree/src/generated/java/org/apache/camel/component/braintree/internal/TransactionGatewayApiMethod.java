@@ -52,11 +52,6 @@ public enum TransactionGatewayApiMethod implements ApiMethod {
         "find",
         arg("id", String.class)),
 
-    HOLD_IN_ESCROW(
-        com.braintreegateway.Result.class,
-        "holdInEscrow",
-        arg("id", String.class)),
-
     PACKAGE_TRACKING(
         com.braintreegateway.Result.class,
         "packageTracking",

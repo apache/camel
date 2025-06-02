@@ -64,7 +64,7 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.ObjectHelper.invokeMethod;
+import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 /**
  * A helper class for Camel based injector or bean post-processing hooks.
@@ -531,10 +531,14 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
         Object value;
         Object[] parameters = bindToRegistryParameterMapping(context, method);
-        if (parameters != null) {
-            value = invokeMethod(method, bean, parameters);
-        } else {
-            value = invokeMethod(method, bean);
+        try {
+            if (parameters != null) {
+                value = invokeMethodSafe(method, bean, parameters);
+            } else {
+                value = invokeMethodSafe(method, bean);
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
         }
         return value;
     }

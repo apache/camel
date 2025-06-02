@@ -66,7 +66,6 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Path to the OpenApi specification file. The scheme, host base path
          * are taken from this specification, but these can be overridden with
@@ -79,7 +78,6 @@ public interface RestOpenapiComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: openapi.json
          * Group: common
          * 
          * @param specificationUri the value to set

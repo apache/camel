@@ -345,6 +345,35 @@ Deprecated: null
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="customTransformer" type="tns:customTransformerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+To use a custom transformer on a route level.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="customValidator" type="tns:customValidatorDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+To use a custom validator on the route level.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="dataFormatTransformer" type="tns:dataFormatTransformerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Represents a org.apache.camel.processor.transformer.DataFormatTransformer which leverages
+org.apache.camel.spi.DataFormat to perform transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be
+specified.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="dataFormats" type="tns:dataFormatsDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -467,6 +496,24 @@ Route messages based on dynamic rules
       <xs:documentation xml:lang="en">
 <![CDATA[
 Camel endpoint configuration
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="endpointTransformer" type="tns:endpointTransformerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+To use a Camel endpoint to perform transformation on the route level.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="endpointValidator" type="tns:endpointValidatorDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+To use a Camel endpoint to perform validation on the route level.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -947,6 +994,15 @@ Deprecated: null
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="loadTransformer" type="tns:loadTransformerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+To load custom transformers from classpath scanning to be used for route level transformations.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="log" type="tns:logDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -1245,6 +1301,15 @@ Enriches messages with data polled from a secondary resource
       <xs:documentation xml:lang="en">
 <![CDATA[
 Rest POST command
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="predicateValidator" type="tns:predicateValidatorDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+To use a predicate to perform validation on the route level.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -4995,12 +5060,12 @@ Configures whether cancel is called on the running future. Defaults to true. Def
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence/>
-        <xs:attribute name="circuitBreaker" type="xs:string">
+        <xs:attribute name="typedGuard" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use from the
-registry. When using this, then any other circuit breaker options are not in use.
+Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry. When using
+this, then any other TypedGuard circuit breaker options are not in use.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5070,15 +5135,6 @@ Configures the pool size of the thread pool when timeout is enabled. Default val
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timeoutScheduledExecutorService" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-References to a custom thread pool to use when timeout is enabled.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="bulkheadEnabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -5106,11 +5162,11 @@ Configures the task queue size for holding waiting tasks to be processed by the 
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="bulkheadExecutorService" type="xs:string">
+        <xs:attribute name="threadOffloadExecutorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-References to a custom thread pool to use when bulkhead is enabled.
+References a custom thread pool to use when offloading a guarded action to another thread.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12521,7 +12577,15 @@ Sets the resume strategy to use.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="loggingLevel" type="xs:string"/>
+        <xs:attribute name="loggingLevel" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The logging level to use in case of failures. Default value: ERROR
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="intermittent" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -14396,7 +14460,7 @@ Whether to auto startup components when toD is starting up. Default value: true
         <xs:sequence>
           <xs:choice minOccurs="0">
             <xs:element ref="tns:langChain4jCharacterTokenizer"/>
-            <xs:element name="langChain4jLineTokenizer" type="tns:langChain4jTokenizerImplementation"/>
+            <xs:element ref="tns:langChain4jLineTokenizer"/>
             <xs:element ref="tns:langChain4jParagraphTokenizer"/>
             <xs:element ref="tns:langChain4jSentenceTokenizer"/>
             <xs:element ref="tns:langChain4jWordTokenizer"/>
@@ -14449,6 +14513,13 @@ Sets the maximum number of tokens that can overlap in each segment.
   <xs:complexType name="tokenizerImplementation">
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="langChain4JLineTokenizerDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:langChain4jTokenizerImplementation">
         <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
@@ -14906,6 +14977,13 @@ List of bean.
       </xs:element>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
       <xs:element minOccurs="0" name="dataFormats">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+List of data formats.
+]]>
+          </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
           <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="dataFormat" type="tns:dataFormat">
@@ -15401,14 +15479,22 @@ To configure a special tag for the operations within this rest definition.
   <xs:complexType name="openApiDefinition">
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="apiContextPath" type="xs:string"/>
-        </xs:sequence>
+        <xs:sequence/>
         <xs:attribute name="specification" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
 Path to the OpenApi specification file.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="apiContextPath" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to obtain
+the specification from the running Camel application.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15460,7 +15546,7 @@ patterns can be specified separated by comma. Default value: classpath:camel-moc
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element ref="tns:apiKey"/>
         <xs:element ref="tns:basicAuth"/>
-        <xs:element name="bearer" type="tns:bearerTokenDefinition"/>
+        <xs:element ref="tns:bearerToken"/>
         <xs:element ref="tns:oauth2"/>
         <xs:element ref="tns:openIdConnect"/>
         <xs:element ref="tns:mutualTLS"/>
@@ -17668,30 +17754,78 @@ Sets the component name that this definition will apply to.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="langChain4JLineTokenizerDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:langChain4jTokenizerImplementation">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="customTransformer">
+  <xs:complexType name="customTransformerDefinition">
     <xs:complexContent>
       <xs:extension base="tns:transformer">
         <xs:sequence/>
-        <xs:attribute name="ref" type="xs:string"/>
-        <xs:attribute name="className" type="xs:string"/>
+        <xs:attribute name="ref" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set a bean reference of the Transformer.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="className" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set a class name of the Transformer.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:complexType abstract="true" name="transformer">
     <xs:sequence/>
-    <xs:attribute name="scheme" type="xs:string"/>
-    <xs:attribute name="name" type="xs:string"/>
-    <xs:attribute name="fromType" type="xs:string"/>
-    <xs:attribute name="toType" type="xs:string"/>
+    <xs:attribute name="scheme" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv'
+from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Set the transformer name under which the transformer gets referenced when specifying the input/output data type on
+routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up
+for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched
+transformer exists.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="fromType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'.
+If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="toType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is
+'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or
+'json:DEF'.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
-  <xs:complexType name="dataFormatTransformer">
+  <xs:complexType name="dataFormatTransformerDefinition">
     <xs:complexContent>
       <xs:extension base="tns:transformer">
         <xs:sequence>
@@ -17744,57 +17878,130 @@ Sets the component name that this definition will apply to.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="endpointTransformer">
+  <xs:complexType name="endpointTransformerDefinition">
     <xs:complexContent>
       <xs:extension base="tns:transformer">
         <xs:sequence/>
-        <xs:attribute name="ref" type="xs:string"/>
-        <xs:attribute name="uri" type="xs:string"/>
+        <xs:attribute name="ref" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set the reference of the Endpoint.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="uri" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set the URI of the Endpoint.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="loadTransformer">
+  <xs:complexType name="loadTransformerDefinition">
     <xs:complexContent>
       <xs:extension base="tns:transformer">
         <xs:sequence/>
-        <xs:attribute name="packageScan" type="xs:string"/>
-        <xs:attribute name="defaults" type="xs:string"/>
+        <xs:attribute name="packageScan" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set the classpath location to scan for annotated transformers.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="defaults" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Enable loading of default transformers. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="transformersDefinition">
     <xs:sequence>
       <xs:choice maxOccurs="unbounded" minOccurs="0">
-        <xs:element name="dataFormatTransformer" type="tns:dataFormatTransformer"/>
-        <xs:element name="endpointTransformer" type="tns:endpointTransformer"/>
-        <xs:element name="loadTransformer" type="tns:loadTransformer"/>
-        <xs:element name="customTransformer" type="tns:customTransformer"/>
+        <xs:element ref="tns:dataFormatTransformer"/>
+        <xs:element ref="tns:endpointTransformer"/>
+        <xs:element ref="tns:loadTransformer"/>
+        <xs:element ref="tns:customTransformer"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="customValidator">
+  <xs:complexType name="customValidatorDefinition">
     <xs:complexContent>
       <xs:extension base="tns:validator">
         <xs:sequence/>
-        <xs:attribute name="ref" type="xs:string"/>
-        <xs:attribute name="className" type="xs:string"/>
+        <xs:attribute name="ref" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set a bean reference of the Validator.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="className" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set a class name of the Validator.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   <xs:complexType abstract="true" name="validator">
     <xs:sequence/>
-    <xs:attribute name="type" type="xs:string"/>
+    <xs:attribute name="type" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you
+specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
-  <xs:complexType name="endpointValidator">
+  <xs:complexType name="endpointValidatorDefinition">
     <xs:complexContent>
       <xs:extension base="tns:validator">
         <xs:sequence/>
-        <xs:attribute name="ref" type="xs:string"/>
-        <xs:attribute name="uri" type="xs:string"/>
+        <xs:attribute name="ref" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set the reference of the Endpoint.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="uri" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set the URI of the Endpoint.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="predicateValidator">
+  <xs:complexType name="predicateValidatorDefinition">
     <xs:complexContent>
       <xs:extension base="tns:validator">
         <xs:choice>
@@ -17832,9 +18039,9 @@ Sets the component name that this definition will apply to.
   <xs:complexType name="validatorsDefinition">
     <xs:sequence>
       <xs:choice maxOccurs="unbounded" minOccurs="0">
-        <xs:element name="endpointValidator" type="tns:endpointValidator"/>
-        <xs:element name="predicateValidator" type="tns:predicateValidator"/>
-        <xs:element name="customValidator" type="tns:customValidator"/>
+        <xs:element ref="tns:endpointValidator"/>
+        <xs:element ref="tns:predicateValidator"/>
+        <xs:element ref="tns:customValidator"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -18608,7 +18815,6 @@ An optional certificate alias to use. This is useful when the keystore has multi
       <xs:enumeration value="Fastjson"/>
       <xs:enumeration value="Gson"/>
       <xs:enumeration value="Jackson"/>
-      <xs:enumeration value="Johnzon"/>
       <xs:enumeration value="Jsonb"/>
     </xs:restriction>
   </xs:simpleType>

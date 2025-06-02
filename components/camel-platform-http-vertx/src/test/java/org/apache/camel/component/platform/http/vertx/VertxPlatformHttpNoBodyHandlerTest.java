@@ -18,6 +18,7 @@ package org.apache.camel.component.platform.http.vertx;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
@@ -63,11 +64,11 @@ public class VertxPlatformHttpNoBodyHandlerTest {
                 @Override
                 public void configure() {
                     from("platform-http:/camel?matchOnUriPrefix=true&useBodyHandler=false")
-                            .removeHeader("CamelHttpUri")
                             .setHeader("OrgCamelHttpUri", simple(mockUrl + "${header.CamelHttpPath}"))
-                            .setHeader("CamelHttpPath", simple(""))
+                            // matchOnUriPrefix is true so we need to strip the path header to get the correct target URL to bridge to
+                            .removeHeader(Exchange.HTTP_PATH)
                             .toD("${bean:" + PathCreator.class.getName()
-                                 + "?method=createNewUri(${header.OrgCamelHttpUri})}?bridgeEndpoint=true");
+                                 + "?method=createNewUri(${header.OrgCamelHttpUri}?bridgeEndpoint=true)}");
                 }
             });
 

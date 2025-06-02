@@ -314,6 +314,73 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether a lease should be acquired when accessing the blob. When
+         * set to true, the component will acquire a lease before performing
+         * blob operations that require exclusive access.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param leaseBlob the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder leaseBlob(boolean leaseBlob) {
+            doSetProperty("leaseBlob", leaseBlob);
+            return this;
+        }
+        /**
+         * Sets whether a lease should be acquired when accessing the blob. When
+         * set to true, the component will acquire a lease before performing
+         * blob operations that require exclusive access.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param leaseBlob the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder leaseBlob(String leaseBlob) {
+            doSetProperty("leaseBlob", leaseBlob);
+            return this;
+        }
+        /**
+         * Sets the lease duration in seconds. Use -1 for infinite or a value
+         * between 15 and 60 for fixed leases.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param leaseDurationInSeconds the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder leaseDurationInSeconds(Integer leaseDurationInSeconds) {
+            doSetProperty("leaseDurationInSeconds", leaseDurationInSeconds);
+            return this;
+        }
+        /**
+         * Sets the lease duration in seconds. Use -1 for infinite or a value
+         * between 15 and 60 for fixed leases.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param leaseDurationInSeconds the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder leaseDurationInSeconds(String leaseDurationInSeconds) {
+            doSetProperty("leaseDurationInSeconds", leaseDurationInSeconds);
+            return this;
+        }
+        /**
          * Specifies the maximum number of blobs to return, including all
          * BlobPrefix elements. If the request does not specify
          * maxResultsPerPage or specifies a value greater than 5,000, the server
@@ -861,7 +928,8 @@ public interface BlobEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -881,7 +949,8 @@ public interface BlobEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1466,6 +1535,73 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointProducerBuilder fileDir(String fileDir) {
             doSetProperty("fileDir", fileDir);
+            return this;
+        }
+        /**
+         * Sets whether a lease should be acquired when accessing the blob. When
+         * set to true, the component will acquire a lease before performing
+         * blob operations that require exclusive access.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param leaseBlob the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder leaseBlob(boolean leaseBlob) {
+            doSetProperty("leaseBlob", leaseBlob);
+            return this;
+        }
+        /**
+         * Sets whether a lease should be acquired when accessing the blob. When
+         * set to true, the component will acquire a lease before performing
+         * blob operations that require exclusive access.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param leaseBlob the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder leaseBlob(String leaseBlob) {
+            doSetProperty("leaseBlob", leaseBlob);
+            return this;
+        }
+        /**
+         * Sets the lease duration in seconds. Use -1 for infinite or a value
+         * between 15 and 60 for fixed leases.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param leaseDurationInSeconds the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder leaseDurationInSeconds(Integer leaseDurationInSeconds) {
+            doSetProperty("leaseDurationInSeconds", leaseDurationInSeconds);
+            return this;
+        }
+        /**
+         * Sets the lease duration in seconds. Use -1 for infinite or a value
+         * between 15 and 60 for fixed leases.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param leaseDurationInSeconds the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder leaseDurationInSeconds(String leaseDurationInSeconds) {
+            doSetProperty("leaseDurationInSeconds", leaseDurationInSeconds);
             return this;
         }
         /**
@@ -2423,6 +2559,73 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether a lease should be acquired when accessing the blob. When
+         * set to true, the component will acquire a lease before performing
+         * blob operations that require exclusive access.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param leaseBlob the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder leaseBlob(boolean leaseBlob) {
+            doSetProperty("leaseBlob", leaseBlob);
+            return this;
+        }
+        /**
+         * Sets whether a lease should be acquired when accessing the blob. When
+         * set to true, the component will acquire a lease before performing
+         * blob operations that require exclusive access.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param leaseBlob the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder leaseBlob(String leaseBlob) {
+            doSetProperty("leaseBlob", leaseBlob);
+            return this;
+        }
+        /**
+         * Sets the lease duration in seconds. Use -1 for infinite or a value
+         * between 15 and 60 for fixed leases.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param leaseDurationInSeconds the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder leaseDurationInSeconds(Integer leaseDurationInSeconds) {
+            doSetProperty("leaseDurationInSeconds", leaseDurationInSeconds);
+            return this;
+        }
+        /**
+         * Sets the lease duration in seconds. Use -1 for infinite or a value
+         * between 15 and 60 for fixed leases.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param leaseDurationInSeconds the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder leaseDurationInSeconds(String leaseDurationInSeconds) {
+            doSetProperty("leaseDurationInSeconds", leaseDurationInSeconds);
+            return this;
+        }
+        /**
          * Specifies the maximum number of blobs to return, including all
          * BlobPrefix elements. If the request does not specify
          * maxResultsPerPage or specifies a value greater than 5,000, the server
@@ -2931,6 +3134,35 @@ public interface BlobEndpointBuilderFactory {
          */
         public String azureStorageBlobBlobType() {
             return "CamelAzureStorageBlobBlobType";
+        }
+        /**
+         * Specifies whether blob leasing is enabled for the operation. When set
+         * to true, the component will acquire an exclusive lease on the target
+         * blob to prevent concurrent processing by multiple routes or
+         * applications.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageBlobLeaseBlob}.
+         */
+        public String azureStorageBlobLeaseBlob() {
+            return "CamelAzureStorageBlobLeaseBlob";
+        }
+        /**
+         * Specifies the lease duration in seconds. Valid values are between 15
+         * and 60 for fixed duration, or -1 for infinite duration.
+         * 
+         * The option is a: {@code java.lang.Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobLeaseDurationInSeconds}.
+         */
+        public String azureStorageBlobLeaseDurationInSeconds() {
+            return "CamelAzureStorageBlobLeaseDurationInSeconds";
         }
         /**
          * Status of the lease on the blob.

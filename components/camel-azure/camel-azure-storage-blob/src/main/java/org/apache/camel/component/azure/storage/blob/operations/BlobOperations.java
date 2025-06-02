@@ -50,6 +50,7 @@ import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.models.ParallelTransferOptions;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
+import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
@@ -188,8 +189,9 @@ public class BlobOperations {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Putting a block blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
         }
-
+        BlobLeaseClient leaseClient = null;
         try {
+            leaseClient = acquireLeaseIfConfigured(commonRequestOptions.getBlobRequestConditions(), exchange);
             final Response<BlockBlobItem> response = client.uploadBlockBlob(blobStreamAndLength.getInputStream(),
                     blobStreamAndLength.getStreamLength(), commonRequestOptions.getBlobHttpHeaders(),
                     commonRequestOptions.getMetadata(), commonRequestOptions.getAccessTier(),
@@ -199,6 +201,7 @@ public class BlobOperations {
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
             closeInputStreamIfNeeded(blobStreamAndLength.getInputStream());
+            releaseLeaseIfAcquired(leaseClient);
         }
     }
 
@@ -345,8 +348,9 @@ public class BlobOperations {
         }
 
         final BlobStreamAndLength streamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
-
+        BlobLeaseClient leaseClient = null;
         try {
+            leaseClient = acquireLeaseIfConfigured(commonRequestOptions.getBlobRequestConditions(), exchange);
             final Response<AppendBlobItem> response
                     = client.appendBlobBlock(streamAndLength.getInputStream(), streamAndLength.getStreamLength(),
                             commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(),
@@ -355,6 +359,7 @@ public class BlobOperations {
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
             closeInputStreamIfNeeded(streamAndLength.getInputStream());
+            releaseLeaseIfAcquired(leaseClient);
         }
     }
 
@@ -366,12 +371,18 @@ public class BlobOperations {
         final Long pageSize = getPageBlobSize(exchange);
         final BlobCommonRequestOptions requestOptions = getCommonRequestOptions(exchange);
         final Long sequenceNumber = configurationProxy.getBlobSequenceNumber(exchange);
+        BlobLeaseClient leaseClient = null;
+        try {
+            leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
+            final Response<PageBlobItem> response
+                    = client.createPageBlob(pageSize, sequenceNumber, requestOptions.getBlobHttpHeaders(),
+                            requestOptions.getMetadata(), requestOptions.getBlobRequestConditions(),
+                            requestOptions.getTimeout());
 
-        final Response<PageBlobItem> response
-                = client.createPageBlob(pageSize, sequenceNumber, requestOptions.getBlobHttpHeaders(),
-                        requestOptions.getMetadata(), requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
-
-        return BlobOperationResponse.createWithEmptyBody(response);
+            return BlobOperationResponse.createWithEmptyBody(response);
+        } finally {
+            releaseLeaseIfAcquired(leaseClient);
+        }
     }
 
     public BlobOperationResponse uploadPageBlob(final Exchange exchange) throws Exception {
@@ -390,8 +401,9 @@ public class BlobOperations {
         if (pageRange == null) {
             throw new IllegalArgumentException("You need to set page range in the exchange headers.");
         }
-
+        BlobLeaseClient leaseClient = null;
         try {
+            leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
             final Response<PageBlobItem> response
                     = client.uploadPageBlob(pageRange, is, requestOptions.getContentMD5(),
                             requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
@@ -399,6 +411,7 @@ public class BlobOperations {
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
             closeInputStreamIfNeeded(is);
+            releaseLeaseIfAcquired(leaseClient);
         }
     }
 
@@ -409,11 +422,16 @@ public class BlobOperations {
 
         final Long pageSize = getPageBlobSize(exchange);
         final BlobCommonRequestOptions requestOptions = getCommonRequestOptions(exchange);
+        BlobLeaseClient leaseClient = null;
+        try {
+            leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
+            final Response<PageBlobItem> response
+                    = client.resizePageBlob(pageSize, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
-        final Response<PageBlobItem> response
-                = client.resizePageBlob(pageSize, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
-
-        return BlobOperationResponse.createWithEmptyBody(response);
+            return BlobOperationResponse.createWithEmptyBody(response);
+        } finally {
+            releaseLeaseIfAcquired(leaseClient);
+        }
     }
 
     public BlobOperationResponse clearPageBlob(final Exchange exchange) {
@@ -425,11 +443,16 @@ public class BlobOperations {
         if (pageRange == null) {
             throw new IllegalArgumentException("You need to set page range in the exchange headers.");
         }
+        BlobLeaseClient leaseClient = null;
+        try {
+            leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
+            final Response<PageBlobItem> response
+                    = client.clearPagesBlob(pageRange, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
-        final Response<PageBlobItem> response
-                = client.clearPagesBlob(pageRange, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
-
-        return BlobOperationResponse.createWithEmptyBody(response);
+            return BlobOperationResponse.createWithEmptyBody(response);
+        } finally {
+            releaseLeaseIfAcquired(leaseClient);
+        }
     }
 
     public BlobOperationResponse getPageBlobRanges(final Exchange exchange) {
@@ -482,6 +505,26 @@ public class BlobOperations {
     private void closeInputStreamIfNeeded(InputStream inputStream) throws IOException {
         if (configurationProxy.getConfiguration().isCloseStreamAfterWrite()) {
             inputStream.close();
+        }
+    }
+
+    private BlobLeaseClient acquireLeaseIfConfigured(BlobRequestConditions requestConditions, Exchange exchange) {
+        if (requestConditions == null) {
+            requestConditions = new BlobRequestConditions();
+        }
+        if (requestConditions.getLeaseId() == null && configurationProxy.getLeaseBlob(exchange)) {
+            BlobLeaseClient leaseClient = client.getLeaseClient();
+            Integer leaseDurationInSeconds = configurationProxy.getLeaseDurationInSeconds(exchange);
+            String leaseId = leaseClient.acquireLease(leaseDurationInSeconds);
+            requestConditions.setLeaseId(leaseId);
+            return leaseClient;
+        }
+        return null;
+    }
+
+    private void releaseLeaseIfAcquired(BlobLeaseClient leaseClient) {
+        if (leaseClient != null) {
+            leaseClient.releaseLease();
         }
     }
 }

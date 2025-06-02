@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
-import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
@@ -74,7 +74,7 @@ import org.apache.camel.spi.Metadata;
  * needs to be specified.
  */
 @Metadata(label = "dataformat,transformation")
-@XmlType(name = "dataFormatTransformer")
+@XmlRootElement(name = "dataFormatTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatTransformerDefinition extends TransformerDefinition {
 

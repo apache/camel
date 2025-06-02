@@ -100,7 +100,7 @@ public final class CxfConverter {
         return DataFormat.valueOf(name.toUpperCase());
     }
 
-    @Converter
+    @Converter(allowNull = true)
     public static InputStream toInputStream(Response response, Exchange exchange) {
         Object obj = response.getEntity();
 

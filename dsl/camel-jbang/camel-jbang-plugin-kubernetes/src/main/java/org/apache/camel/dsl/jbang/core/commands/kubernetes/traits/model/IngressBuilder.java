@@ -28,6 +28,7 @@ public final class IngressBuilder {
     private Ingress.PathType pathType;
     private List<String> tlsHosts;
     private String tlsSecretName;
+    private String ingressClass;
 
     private IngressBuilder() {
     }
@@ -76,6 +77,11 @@ public final class IngressBuilder {
         return this;
     }
 
+    public IngressBuilder withIngressClass(String ingressClass) {
+        this.ingressClass = ingressClass;
+        return this;
+    }
+
     public Ingress build() {
         Ingress ingress = new Ingress();
         ingress.setAnnotations(annotations);
@@ -86,6 +92,7 @@ public final class IngressBuilder {
         ingress.setPathType(pathType);
         ingress.setTlsHosts(tlsHosts);
         ingress.setTlsSecretName(tlsSecretName);
+        ingress.setIngressClass(ingressClass);
         return ingress;
     }
 }

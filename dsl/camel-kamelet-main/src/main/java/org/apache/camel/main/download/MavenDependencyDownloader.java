@@ -212,6 +212,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
+    public void downloadDependencyWithParent(String parentGav, String groupId, String artifactId, String version) {
+        doDownloadDependencyWithParent(parentGav, groupId, artifactId, version, true, false, null);
+    }
+
+    @Override
     public void downloadDependency(String groupId, String artifactId, String version) {
         downloadDependency(groupId, artifactId, version, true);
     }
@@ -232,6 +237,13 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     protected void doDownloadDependency(
+            String groupId, String artifactId, String version, boolean transitively,
+            boolean hidden, String extraRepos) {
+        doDownloadDependencyWithParent(null, groupId, artifactId, version, transitively, hidden, extraRepos);
+    }
+
+    protected void doDownloadDependencyWithParent(
+            String parentGav,
             String groupId, String artifactId, String version, boolean transitively,
             boolean hidden, String extraRepos) {
 
@@ -279,7 +291,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 extraRepositories.addAll(resolveExtraRepositories(known));
             }
 
-            List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, extraRepositories,
+            List<MavenArtifact> artifacts = resolveDependenciesViaAether(parentGav, deps, extraRepositories,
                     transitively, useApacheSnapshots);
             List<File> files = new ArrayList<>();
             if (verbose) {
@@ -330,24 +342,29 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     @Override
     public MavenArtifact downloadArtifact(String groupId, String artifactId, String version) {
+        List<MavenArtifact> artifacts = downloadArtifacts(groupId, artifactId, version, false);
+        if (artifacts != null && artifacts.size() == 1) {
+            return artifacts.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public List<MavenArtifact> downloadArtifacts(String groupId, String artifactId, String version, boolean transitively) {
         String gav = groupId + ":" + artifactId + ":" + version;
         List<String> deps = List.of(gav);
 
         // include Apache snapshot to make it easy to use upcoming releases
         boolean useApacheSnapshots = "org.apache.camel".equals(groupId) && version.contains("SNAPSHOT");
 
-        List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, null, false, useApacheSnapshots);
+        List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, null, transitively, useApacheSnapshots);
         if (verbose) {
             LOG.info("Dependencies: {} -> [{}]", gav, artifacts);
         } else {
             LOG.debug("Dependencies: {} -> [{}]", gav, artifacts);
         }
 
-        if (artifacts.size() == 1) {
-            return artifacts.get(0);
-        }
-
-        return null;
+        return artifacts;
     }
 
     @Override
@@ -466,14 +483,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    public void onLoadingModeline(String key, String value) {
-        // trigger listener
-        for (DownloadListener listener : downloadListeners) {
-            listener.onLoadingModeline(key, value);
-        }
-    }
-
-    @Override
     public DownloadRecord getDownloadState(String groupId, String artifactId, String version) {
         return downloadRecords.get(groupId + ":" + artifactId + ":" + version);
     }
@@ -565,10 +574,18 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     public List<MavenArtifact> resolveDependenciesViaAether(
+            List<String> depIds,
+            Set<String> extraRepositories, boolean transitively, boolean useApacheSnapshots) {
+        return resolveDependenciesViaAether(null, depIds, extraRepositories, transitively,
+                useApacheSnapshots);
+    }
+
+    public List<MavenArtifact> resolveDependenciesViaAether(
+            String parentGav,
             List<String> depIds, Set<String> extraRepositories,
             boolean transitively, boolean useApacheSnapshots) {
         try {
-            return mavenDownloader.resolveArtifacts(depIds, extraRepositories, transitively, useApacheSnapshots);
+            return mavenDownloader.resolveArtifacts(parentGav, depIds, extraRepositories, transitively, useApacheSnapshots);
         } catch (MavenResolutionException e) {
             String repos = (e.getRepositories() == null || e.getRepositories().isEmpty())
                     ? "(empty URL list)"

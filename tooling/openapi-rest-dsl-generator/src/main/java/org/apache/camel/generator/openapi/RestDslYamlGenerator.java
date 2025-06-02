@@ -273,10 +273,6 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                     }
                     String k = "allowableValues";
                     r = pc.get(k);
-                    if (r == null) {
-                        k = "allowable-values";
-                        r = pc.get(k);
-                    }
                     if (r != null) {
                         // remove value node
                         JsonNode v = r.get("value");

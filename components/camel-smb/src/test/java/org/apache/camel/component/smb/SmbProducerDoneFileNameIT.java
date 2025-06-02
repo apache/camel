@@ -31,15 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
-    protected String getSmbUrl() {
+    protected String getSmbUrl(String path) {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s",
-                service.address(), service.shareName(), service.userName(), service.password());
+                "smb:%s/%s/%s?username=%s&password=%s",
+                service.address(), service.shareName(), path, service.userName(), service.password());
     }
 
     @Test
     public void testProducerConstantDoneFileName() {
-        template.sendBodyAndHeader(getSmbUrl() + "&path=/constdone&doneFileName=done", "Hello World", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(getSmbUrl("constdone") + "&doneFileName=done", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
         await().atMost(3, TimeUnit.SECONDS)
@@ -53,7 +53,7 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
     @Test
     public void testProducerPrefixDoneFileName() {
-        template.sendBodyAndHeader(getSmbUrl() + "&path=/prefixdone&doneFileName=done-${file:name}", "Hello World",
+        template.sendBodyAndHeader(getSmbUrl("prefixdone") + "&doneFileName=done-${file:name}", "Hello World",
                 Exchange.FILE_NAME,
                 "hello.txt");
 
@@ -68,7 +68,7 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
     @Test
     public void testProducerExtDoneFileName() {
-        template.sendBodyAndHeader(getSmbUrl() + "&path=/extdone&doneFileName=${file:name}.done", "Hello World",
+        template.sendBodyAndHeader(getSmbUrl("extdone") + "&doneFileName=${file:name}.done", "Hello World",
                 Exchange.FILE_NAME,
                 "hello.txt");
 
@@ -83,7 +83,7 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
     @Test
     public void testProducerReplaceExtDoneFileName() {
-        template.sendBodyAndHeader(getSmbUrl() + "&path=/replextdone&doneFileName=${file:name.noext}.done", "Hello World",
+        template.sendBodyAndHeader(getSmbUrl("replextdone") + "&doneFileName=${file:name.noext}.done", "Hello World",
                 Exchange.FILE_NAME,
                 "hello.txt");
 
@@ -98,7 +98,7 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
     @Test
     public void testProducerInvalidDoneFileName() {
-        String uri = getSmbUrl() + "&path=/invaliddone&doneFileName=${file:parent}/foo";
+        String uri = getSmbUrl("invaliddone") + "&doneFileName=${file:parent}/foo";
 
         Exception ex = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
@@ -111,7 +111,7 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
     @Test
     public void testProducerEmptyDoneFileName() {
-        String uri = getSmbUrl() + "&path=/emptydone&doneFileName=";
+        String uri = getSmbUrl("emptydone") + "&doneFileName=";
         Exception ex = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
 

@@ -33,6 +33,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.support.TempDirHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -46,12 +48,17 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultStreamCachingStrategy extends ServiceSupport implements CamelContextAware, StreamCachingStrategy {
 
+    // stream cache type converters
+    private record CoreConverter(Class<?> from, TypeConverter converter) {
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamCachingStrategy.class);
 
     private CamelContext camelContext;
     private boolean enabled;
     private String allowClassNames;
     private String denyClassNames;
+    private final Collection<CoreConverter> coreConverters = new ArrayList<>();
     private Collection<Class<?>> allowClasses;
     private Collection<Class<?>> denyClasses;
     private boolean spoolEnabled;
@@ -269,15 +276,36 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         StreamCache cache = null;
         // try convert to stream cache
         if (body != null) {
+            // fast skip some common types that should never be converted
+            if (body instanceof String) {
+                return null;
+            } else if (body instanceof byte[]) {
+                return null;
+            } else if (body instanceof Boolean) {
+                return null;
+            } else if (body instanceof Number) {
+                return null;
+            }
+            Class<?> type = body.getClass();
+            if (type.isPrimitive() || type.isEnum()) {
+                return null;
+            }
+            if (body instanceof WrappedFile<?> wf) {
+                body = wf.getBody();
+            }
+
             boolean allowed = allowClasses == null && denyClasses == null;
             if (!allowed) {
-                allowed = checkAllowDenyList(body);
+                allowed = checkAllowDenyList(type);
             }
             if (allowed) {
-                if (exchange != null) {
-                    cache = camelContext.getTypeConverter().convertTo(StreamCache.class, exchange, body);
-                } else {
-                    cache = camelContext.getTypeConverter().convertTo(StreamCache.class, body);
+                TypeConverter tc = lookupTypeConverter(body);
+                if (tc != null) {
+                    if (exchange != null) {
+                        cache = tc.convertTo(StreamCache.class, exchange, body);
+                    } else {
+                        cache = tc.convertTo(StreamCache.class, body);
+                    }
                 }
             }
         }
@@ -292,22 +320,30 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         return cache;
     }
 
-    private boolean checkAllowDenyList(Object body) {
+    private TypeConverter lookupTypeConverter(Object body) {
+        for (var tc : coreConverters) {
+            if (tc.from().isInstance(body)) {
+                return tc.converter();
+            }
+        }
+        return null;
+    }
+
+    private boolean checkAllowDenyList(Class<?> type) {
         boolean allowed;
-        Class<?> source = body.getClass();
         if (denyClasses != null && allowClasses != null) {
             // deny takes precedence
-            allowed = !isAssignableFrom(source, denyClasses);
+            allowed = !isAssignableFrom(type, denyClasses);
             if (allowed) {
-                allowed = isAssignableFrom(source, allowClasses);
+                allowed = isAssignableFrom(type, allowClasses);
             }
         } else if (denyClasses != null) {
-            allowed = !isAssignableFrom(source, denyClasses);
+            allowed = !isAssignableFrom(type, denyClasses);
         } else {
-            allowed = isAssignableFrom(source, allowClasses);
+            allowed = isAssignableFrom(type, allowClasses);
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Cache stream from class: {} is {}", source, allowed ? "allowed" : "denied");
+            LOG.trace("Cache stream from class: {} is {}", type, allowed ? "allowed" : "denied");
         }
         return allowed;
     }
@@ -339,6 +375,10 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             LOG.debug("StreamCaching is not enabled");
             return;
         }
+
+        // find core type converters that can convert to StreamCache
+        var set = getCamelContext().getTypeConverterRegistry().lookup(StreamCache.class).entrySet();
+        set.forEach(e -> coreConverters.add(new CoreConverter(e.getKey(), e.getValue())));
 
         if (allowClassNames != null) {
             if (allowClasses == null) {

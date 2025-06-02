@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import org.apache.avro.NameValidator;
 import org.apache.avro.Schema;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -64,7 +65,7 @@ public class AvroSchemaResolver implements SchemaResolver, Processor {
 
     public void setSchema(String schema) {
         if (ObjectHelper.isNotEmpty(schema)) {
-            this.schema = new AvroSchema(new Schema.Parser().setValidate(validate).parse(schema));
+            this.schema = new AvroSchema(new Schema.Parser(NameValidator.UTF_VALIDATOR).parse(schema));
         } else {
             this.schema = null;
         }
@@ -125,7 +126,7 @@ public class AvroSchemaResolver implements SchemaResolver, Processor {
 
         if (answer == null && exchange.getProperties().containsKey(SchemaHelper.SCHEMA)) {
             String schemaJson = exchange.getProperty(SchemaHelper.SCHEMA, String.class);
-            Schema raw = new Schema.Parser().setValidate(validate).parse(schemaJson);
+            Schema raw = new Schema.Parser(NameValidator.UTF_VALIDATOR).parse(schemaJson);
             answer = new AvroSchema(raw);
         }
 

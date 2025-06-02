@@ -71,36 +71,66 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private String name;
     @UriParam(label = "advanced", description = "Define the queue instance which will be used by the endpoint")
     private BlockingQueue<Exchange> queue;
-    @UriParam(defaultValue = "" + SedaConstants.QUEUE_SIZE)
+    @UriParam(defaultValue = "" + SedaConstants.QUEUE_SIZE,
+              description = "The maximum capacity of the SEDA queue (i.e., the number of messages it can hold). Will by default use the"
+                            + " queueSize set on the SEDA component.")
     private int size = SedaConstants.QUEUE_SIZE;
     @UriParam(label = "advanced", defaultValue = "100",
               description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
     private int browseLimit = 100;
 
-    @UriParam(label = "consumer", defaultValue = "1")
+    @UriParam(label = "consumer", defaultValue = "1",
+              description = "Number of concurrent threads processing exchanges.")
     private int concurrentConsumers = 1;
-    @UriParam(label = "consumer,advanced", defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true",
+              description = "Whether to limit the number of concurrentConsumers to the maximum of 500. By default, an exception will be thrown"
+                            + " if an endpoint is configured with a greater number. You can disable that check by turning this option off.")
     private boolean limitConcurrentConsumers = true;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "consumer,advanced",
+              description = "Specifies whether multiple consumers are allowed. If enabled, you can use SEDA for Publish-Subscribe messaging."
+                            + " That is, you can send a message to the SEDA queue and have each consumer receive a copy of the message. When"
+                            + " enabled, this option should be specified on every consumer endpoint.")
     private boolean multipleConsumers;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "consumer,advanced",
+              description = "Whether to purge the task queue when stopping the consumer/route. This allows to stop faster, as any pending"
+                            + " messages on the queue is discarded.")
     private boolean purgeWhenStopping;
-    @UriParam(label = "consumer,advanced", defaultValue = "1000")
+    @UriParam(label = "consumer,advanced", defaultValue = "1000",
+              description = "The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is"
+                            + " allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.")
     private int pollTimeout = 1000;
 
-    @UriParam(label = "producer", defaultValue = "IfReplyExpected")
+    @UriParam(label = "producer", defaultValue = "IfReplyExpected",
+              description = "Option to specify whether the caller should wait for the async task to complete or not before continuing. The"
+                            + " following three options are supported: Always, Never or IfReplyExpected. The first two values are"
+                            + " self-explanatory. The last value, IfReplyExpected, will only wait if the message is Request Reply based. The"
+                            + " default option is IfReplyExpected.")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
+    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration",
+              description = "Timeout before a SEDA producer will stop waiting for an asynchronous task to complete. You can"
+                            + " disable timeout by using 0 or a negative value.")
     private long timeout = 30000;
-    @UriParam(label = "producer", javaType = "java.time.Duration")
+    @UriParam(label = "producer,advanced", javaType = "java.time.Duration",
+              description = "Offer timeout can be added to the block case when queue is full. You can disable timeout by"
+                            + " using 0 or a negative value.")
     private long offerTimeout;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced",
+              description = "Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer"
+                            + " exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the"
+                            + " calling thread will instead block and wait until the message can be accepted.")
     private boolean blockWhenFull;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced",
+              description = "Whether a thread that sends messages to a full SEDA queue will be discarded. By default, an exception will be"
+                            + " thrown stating that the queue is full. By enabling this option, the calling thread will give up sending and"
+                            + " continue, meaning that the message was not sent to the SEDA queue.")
     private boolean discardWhenFull;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced",
+              description = "Whether the producer should fail by throwing an exception, when sending to a queue with no active consumers."
+                            + " Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time.")
     private boolean failIfNoConsumers;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced",
+              description = "Whether the producer should discard the message (do not add the message to the queue), when sending to a queue"
+                            + " with no active consumers. Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time.")
     private boolean discardIfNoConsumers;
 
     private BlockingQueueFactory<Exchange> queueFactory;

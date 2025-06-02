@@ -29,6 +29,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 import org.w3c.dom.Element;
 
+import jdk.jfr.Description;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
@@ -95,6 +96,7 @@ public class BeansDefinition {
     @XmlElementWrapper(name = "dataFormats")
     @XmlElement(name = "dataFormat")
     @DslProperty(name = "dataFormats") // yaml-dsl
+    @Description("Camel data formats")
     private List<DataFormatDefinition> dataFormats;
     @XmlElement(name = "restConfiguration")
     private List<RestConfigurationDefinition> restConfigurations = new ArrayList<>();

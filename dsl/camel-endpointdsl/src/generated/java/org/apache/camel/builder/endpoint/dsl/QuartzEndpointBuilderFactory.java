@@ -497,7 +497,8 @@ public interface QuartzEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure additional options on the job.
+         * To configure additional options on the job. This is a multi-value
+         * option with prefix: job.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -516,7 +517,8 @@ public interface QuartzEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure additional options on the job.
+         * To configure additional options on the job. This is a multi-value
+         * option with prefix: job.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -569,7 +571,7 @@ public interface QuartzEndpointBuilderFactory {
          * parameters repeatInterval and repeatCount are supported. Note: When
          * using repeatInterval values of 1000 or less, the first few events
          * after starting the camel context may be fired more rapidly than
-         * expected.
+         * expected. . This is a multi-value option with prefix: trigger.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -593,7 +595,7 @@ public interface QuartzEndpointBuilderFactory {
          * parameters repeatInterval and repeatCount are supported. Note: When
          * using repeatInterval values of 1000 or less, the first few events
          * after starting the camel context may be fired more rapidly than
-         * expected.
+         * expected. . This is a multi-value option with prefix: trigger.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

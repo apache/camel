@@ -627,6 +627,12 @@ public enum ZendeskApiMethod implements ApiMethod {
         "deleteUsers",
         arg("ids", long[].class)),
 
+    EXECUTE_VIEW(
+        java.util.Optional.class,
+        "executeView",
+        arg("id", long.class),
+        arg("clazz", Class.class)),
+
     GET_ACTIVE_TRIGGERS(
         Iterable.class,
         "getActiveTriggers"),

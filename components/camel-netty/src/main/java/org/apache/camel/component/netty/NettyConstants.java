@@ -45,7 +45,9 @@ public final class NettyConstants {
     public static final String NETTY_SSL_CLIENT_CERT_NOT_AFTER = "CamelNettySSLClientCertNotAfter";
     @Metadata(description = "The read timeout.", javaType = "Long")
     public static final String NETTY_REQUEST_TIMEOUT = "CamelNettyRequestTimeout";
+    @Metadata(description = "The Netty Channel object.", javaType = "io.netty.channel.Channel")
     public static final String NETTY_CHANNEL = "CamelNettyChannel";
+    // used internally for HTTP 100 continue
     public static final String NETTY_CLIENT_CONTINUE = "CamelClientContinue";
 
     private NettyConstants() {

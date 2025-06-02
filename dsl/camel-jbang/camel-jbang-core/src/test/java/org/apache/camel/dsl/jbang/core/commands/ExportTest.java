@@ -29,7 +29,6 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -55,7 +54,7 @@ class ExportTest {
     @AfterEach
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
-        FileUtil.removeDir(workingDir);
+        org.apache.camel.util.FileUtil.removeDir(workingDir);
     }
 
     private static Stream<Arguments> runtimeProvider() {
@@ -327,7 +326,7 @@ class ExportTest {
     }
 
     private Model readMavenModel() throws Exception {
-        File f = workingDir.toPath().resolve("pom.xml").toFile();
+        File f = new File(workingDir, "pom.xml");
         Assertions.assertTrue(f.isFile(), "Not a pom.xml file: " + f);
         MavenXpp3Reader mavenReader = new MavenXpp3Reader();
         Model model = mavenReader.read(new FileReader(f));
@@ -536,4 +535,34 @@ class ExportTest {
         appProps.load(new FileInputStream(appProperties));
         Assertions.assertEquals("world", appProps.getProperty("hello"));
     }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportGroovy(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt,
+                new String[] { "src/test/resources/groovy-demo.camel.yaml", "src/test/resources/demo.groovy" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-groovy", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-groovy-starter", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-groovy", null));
+        }
+
+        File f = workingDir.toPath().resolve("src/main/resources/demo.groovy").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+    }
+
 }

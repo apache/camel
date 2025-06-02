@@ -45,21 +45,69 @@ public final class OpensearchActionRequestConverterLoader implements TypeConvert
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.opensearch.client.opensearch.core.BulkRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toBulkRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toBulkRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.opensearch.client.opensearch.core.DeleteRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toDeleteRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toDeleteRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.opensearch.client.opensearch.core.GetRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toGetRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toGetRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.opensearch.client.opensearch.core.IndexRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toIndexRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toIndexRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.opensearch.client.opensearch.core.MgetRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toMgetRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toMgetRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.opensearch.client.opensearch.core.SearchRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toSearchRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toSearchRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.opensearch.client.opensearch.core.UpdateRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toUpdateRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toUpdateRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.opensearch.client.opensearch.indices.DeleteIndexRequest.Builder.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toDeleteIndexRequestBuilder(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.opensearch.converter.OpensearchActionRequestConverter.toDeleteIndexRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

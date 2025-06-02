@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.aws2.ddb.localstack;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -115,6 +114,109 @@ public class AWS2ScanRuleIT extends Aws2DDBBase {
 
         assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ITEMS));
         assertEquals(3, exchange.getIn().getHeader(Ddb2Constants.COUNT));
+    }
+
+    @Test
+    public void scanWithAttributeToGet() {
+
+        putItem(notRetrieveValue, "0");
+        putItem(notRetrieveValue, "4");
+
+        putItem(retrieveValue, "1");
+        putItem(retrieveValue, "2");
+        putItem(retrieveValue, "3");
+
+        Exchange exchange = template.send("direct:start", e -> {
+            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Scan);
+            e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
+            Map<String, Condition> keyConditions = new HashMap<>();
+            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
+                    ComparisonOperator.EQ.toString())
+                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
+                    .build());
+            Collection<String> coll = new ArrayList<>();
+            coll.add("clave");
+            e.getIn().setHeader(Ddb2Constants.SCAN_FILTER, keyConditions);
+            e.getIn().setHeader(Ddb2Constants.ATTRIBUTE_NAMES, coll);
+        });
+
+        assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ITEMS));
+        List<Map<String, AttributeValue>> items = exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class);
+        assertTrue(items.get(0).containsKey("clave"));
+        assertFalse(items.get(0).containsKey("secondary_attribute"));
+        assertTrue(items.get(1).containsKey("clave"));
+        assertFalse(items.get(1).containsKey("secondary_attribute"));
+        assertTrue(items.get(2).containsKey("clave"));
+        assertFalse(items.get(2).containsKey("secondary_attribute"));
+        assertEquals(3, exchange.getIn().getHeader(Ddb2Constants.COUNT));
+    }
+
+    @Test
+    public void scanWithAttributeToGetAndFilterExpression() {
+
+        putItem(notRetrieveValue, "0");
+        putItem(notRetrieveValue, "4");
+
+        putItem(retrieveValue, "1");
+        putItem(retrieveValue, "2");
+        putItem(retrieveValue, "3");
+
+        Exchange exchange = template.send("direct:start", e -> {
+            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Scan);
+            e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
+            Map<String, Condition> keyConditions = new HashMap<>();
+            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
+                    ComparisonOperator.EQ.toString())
+                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
+                    .build());
+            Collection<String> coll = new ArrayList<>();
+            coll.add("clave");
+            e.getIn().setHeader(Ddb2Constants.FILTER_EXPRESSION, "#v <> :num");
+            Map<String, AttributeValue> filterAttrValues = new HashMap<>();
+            filterAttrValues.put(":num", AttributeValue.builder().s("retrieve").build());
+            e.getIn().setHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.of("#v", "clave"));
+            e.getIn().setHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, filterAttrValues);
+        });
+
+        assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ITEMS));
+        List<Map<String, AttributeValue>> items = exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class);
+        assertTrue(items.get(0).containsKey("clave"));
+        assertTrue(items.get(0).containsKey("secondary_attribute"));
+        assertTrue(items.get(0).get("clave").equals(AttributeValue.builder().s("ignore").build()));
+        assertTrue(items.get(1).containsKey("clave"));
+        assertTrue(items.get(1).get("clave").equals(AttributeValue.builder().s("ignore").build()));
+        assertTrue(items.get(1).containsKey("secondary_attribute"));
+        assertEquals(2, exchange.getIn().getHeader(Ddb2Constants.COUNT));
+    }
+
+    @Test
+    public void scanWithProjectExpression() {
+
+        putItem(notRetrieveValue, "0");
+        putItem(notRetrieveValue, "4");
+
+        putItem(retrieveValue, "1");
+        putItem(retrieveValue, "2");
+        putItem(retrieveValue, "3");
+
+        Exchange exchange = template.send("direct:start", e -> {
+            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Scan);
+            e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
+            Map<String, Condition> keyConditions = new HashMap<>();
+            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
+                    ComparisonOperator.EQ.toString())
+                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
+                    .build());
+            Collection<String> coll = new ArrayList<>();
+            coll.add("clave");
+            e.getIn().setHeader(Ddb2Constants.PROJECT_EXPRESSION, "secondary_attribute");
+        });
+
+        assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ITEMS));
+        List<Map<String, AttributeValue>> items = exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class);
+        assertTrue(items.get(0).containsKey("secondary_attribute"));
+        assertTrue(items.get(0).get("secondary_attribute").equals(AttributeValue.builder().s("1").build()));
+        assertEquals(5, exchange.getIn().getHeader(Ddb2Constants.COUNT));
     }
 
     private void putItem(String value1, String value2) {
