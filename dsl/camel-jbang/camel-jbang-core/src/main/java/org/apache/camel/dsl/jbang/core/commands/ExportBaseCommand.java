@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -864,8 +863,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // set execute file permission on mvnw/mvnw.cmd files
-        Files.setPosixFilePermissions(mvnwPath, PosixFilePermissions.fromString("rwxr-xr-x"));
-        Files.setPosixFilePermissions(mvnwCmdPath, PosixFilePermissions.fromString("rwxr-xr-x"));
+        FileUtil.setPosixFilePermissions(mvnwPath, "rwxr-xr-x");
+        FileUtil.setPosixFilePermissions(mvnwCmdPath, "rwxr-xr-x");
     }
 
     protected void copyGradleWrapper() throws Exception {
@@ -893,8 +892,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // set execute file permission on gradlew/gradlew.bat files
-        Files.setPosixFilePermissions(gradlewPath, PosixFilePermissions.fromString("rwxr-xr-x"));
-        Files.setPosixFilePermissions(gradlewBatPath, PosixFilePermissions.fromString("rwxr-xr-x"));
+        FileUtil.setPosixFilePermissions(gradlewPath, "rwxr-xr-x");
+        FileUtil.setPosixFilePermissions(gradlewBatPath, "rwxr-xr-x");
     }
 
     protected String applicationPropertyLine(String key, String value) {
