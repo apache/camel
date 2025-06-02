@@ -114,53 +114,10 @@ public class NatsProducer extends DefaultAsyncProducer {
             return false;
         } else {
             LOG.debug("Publishing to subject: {}", config.getTopic());
-
             if (config.isJetstreamEnabled() && this.connection.getServerInfo().isJetStreamAvailable()) {
-                LOG.debug("JetStream is available");
-
-                JetStreamManagement jsm;
-                JetStream js;
-                try {
-                    jsm = this.connection.jetStreamManagement();
-                    js = jsm.jetStream();
-                    if(js == null) {
-                        jsm.addStream(StreamConfiguration.builder()
-                                .name(config.getJetstreamName())
-                                .subjects(config.getTopic())
-                                .build());
-                        js = jsm.jetStream();
-                    }
-                } catch (IOException | JetStreamApiException e) {
-                    throw new RuntimeException(e);
-                }
-                PublishAck pa;
-                if (config.isJetstreamAsync()) {
-                    CompletableFuture<PublishAck> future = js.publishAsync(config.getTopic(), body);
-                    try {
-                        pa = future.get(1, TimeUnit.SECONDS);
-                    } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                        throw new RuntimeException(e);
-                    }
-                    LOG.info("Publish Sequence async: {}", pa.getSeqno());
-                } else {
-                    try {
-                        pa = js.publish(config.getTopic(), body);
-                    } catch (IOException | JetStreamApiException e) {
-                        throw new RuntimeException(e);
-                    }
-                    LOG.info("Publish Sequence synchronously: {}", pa.getSeqno());
-                }
+                publishWithJetStream(config, body, exchange);
             } else {
-                final NatsMessage.Builder builder = NatsMessage.builder()
-                        .data(body)
-                        .subject(config.getTopic())
-                        .headers(this.buildHeaders(exchange));
-
-                if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
-                    final String replySubject = config.getReplySubject();
-                    builder.replyTo(replySubject);
-                }
-                this.connection.publish(builder.build());
+                publishWithoutJetStream(config, body, exchange);
             }
             callback.done(true);
             return true;
@@ -237,6 +194,67 @@ public class NatsProducer extends DefaultAsyncProducer {
             }
         }
         super.doStop();
+    }
+
+    private void publishWithJetStream(NatsConfiguration config, final byte[] body, final Exchange exchange) {
+        LOG.debug("JetStream is available");
+        JetStreamManagement jsm;
+        JetStream js;
+        try {
+            jsm = this.connection.jetStreamManagement();
+            js = jsm.jetStream();
+            if (js == null) {
+                jsm.addStream(StreamConfiguration.builder()
+                        .name(config.getJetstreamName())
+                        .subjects(config.getTopic())
+                        .build());
+                js = jsm.jetStream();
+            }
+        } catch (IOException | JetStreamApiException e) {
+            throw new RuntimeException("Failed to initialize JetStream: " + e.getMessage(), e);
+        }
+
+        final NatsMessage.Builder builder = NatsMessage.builder()
+                .data(body)
+                .subject(config.getTopic())
+                .headers(this.buildHeaders(exchange));
+
+        if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
+            final String replySubject = config.getReplySubject();
+            builder.replyTo(replySubject);
+        }
+        final Message jetStreamMessage = builder.build();
+
+        PublishAck pa;
+        if (config.isJetstreamAsync()) {
+            CompletableFuture<PublishAck> future = js.publishAsync(jetStreamMessage);
+            try {
+                pa = future.get(1, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                throw new RuntimeException("Failed to publish message asynchronously with JetStream: " + e.getMessage(), e);
+            }
+            LOG.info("Publish Sequence async: {}", pa.getSeqno());
+        } else {
+            try {
+                pa = js.publish(jetStreamMessage);
+            } catch (IOException | JetStreamApiException e) {
+                throw new RuntimeException("Failed to publish message synchronously with JetStream: " + e.getMessage(), e);
+            }
+            LOG.info("Publish Sequence synchronously: {}", pa.getSeqno());
+        }
+    }
+
+    private void publishWithoutJetStream(NatsConfiguration config, final byte[] body, final Exchange exchange) {
+        final NatsMessage.Builder builder = NatsMessage.builder()
+                .data(body)
+                .subject(config.getTopic())
+                .headers(this.buildHeaders(exchange));
+
+        if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
+            final String replySubject = config.getReplySubject();
+            builder.replyTo(replySubject);
+        }
+        this.connection.publish(builder.build());
     }
 
 }
