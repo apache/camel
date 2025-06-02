@@ -24,7 +24,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
  * This launcher provides a self-contained executable JAR that includes all dependencies required to run Camel JBang
  * without the need for the JBang two-step process.
  */
-public class CamelJBangLauncher {
+public class CamelLauncher {
 
     /**
      * Main entry point for the Camel JBang Fat-Jar Launcher.

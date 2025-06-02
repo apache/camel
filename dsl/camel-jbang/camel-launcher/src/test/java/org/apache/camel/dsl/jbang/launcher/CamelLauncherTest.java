@@ -26,9 +26,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test for the CamelJBangLauncher.
+ * Test for the CamelLauncher.
  */
-public class CamelJBangLauncherTest {
+public class CamelLauncherTest {
 
     /**
      * A simple PrintStream-based Printer implementation for testing.

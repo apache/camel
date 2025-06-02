@@ -11,31 +11,31 @@ mvn clean package
 ```
 
 This will create:
-1. A fat-jar (`camel-jbang-launcher-<version>.jar`) in the `target` directory
-2. Distribution archives (`camel-jbang-launcher-<version>-bin.zip` and `camel-jbang-launcher-<version>-bin.tar.gz`) in the `target` directory
+1. A fat-jar (`camel-launcher-<version>.jar`) in the `target` directory
+2. Distribution archives (`camel-launcher-<version>-bin.zip` and `camel-launcher-<version>-bin.tar.gz`) in the `target` directory
 
 ## Usage
 
 ### Using the JAR directly
 
 ```bash
-java -jar camel-jbang-launcher-<version>.jar [command] [options]
+java -jar camel-launcher-<version>.jar [command] [options]
 ```
 
 For example:
 
 ```bash
-java -jar camel-jbang-launcher-<version>.jar version
-java -jar camel-jbang-launcher-<version>.jar run hello.java
+java -jar camel-launcher-<version>.jar version
+java -jar camel-launcher-<version>.jar run hello.java
 ```
 
 ### Using the distribution
 
 1. Extract the distribution archive:
    ```bash
-   unzip camel-jbang-launcher-<version>-bin.zip
+   unzip camel-launcher-<version>-bin.zip
    # or
-   tar -xzf camel-jbang-launcher-<version>-bin.tar.gz
+   tar -xzf camel-launcher-<version>-bin.tar.gz
    ```
 
 2. Use the provided scripts:
