@@ -98,8 +98,8 @@
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <classgraph-version>4.8.179</classgraph-version>
         <cloudant-version>0.10.0</cloudant-version>
-        <cometd-java-client-version>8.0.6</cometd-java-client-version>
-        <cometd-java-server-version>8.0.6</cometd-java-server-version>
+        <cometd-java-client-version>8.0.8</cometd-java-client-version>
+        <cometd-java-server-version>8.0.8</cometd-java-server-version>
         <commons-beanutils-version>1.11.0</commons-beanutils-version>
         <commons-codec-version>1.18.0</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
@@ -278,7 +278,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>5.2.0</jedis-client-version>
         <jetcd-version>0.8.4</jetcd-version>
-        <jetty-version>12.0.20</jetty-version>
+        <jetty-version>12.0.21</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
