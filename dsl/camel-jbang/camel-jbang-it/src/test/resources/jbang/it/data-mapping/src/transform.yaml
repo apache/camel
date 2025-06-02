@@ -16,22 +16,31 @@
 #
 
 - route:
-    nodePrefixId: route-c38
     id: route-66b0
+    nodePrefixId: route-c38
     from:
-      uri: kamelet:beer-source
       id: from-3996
+      uri: timer
+      parameters:
+        timerName: tick
       steps:
-        - setBody:
+        - filter:
+            id: filter-7063
             expression:
               simple:
-                expression: >-
-                  {
-                    "kind": "${jq(.brand)}",
-                    "beer": "${jq(.name)}"
-                  }
-                id: simple-b320
-            id: setBody-fa01
-        - log:
-            message: ${body}
-            id: log-0c79
+                id: simple-ce10
+                expression: ${body} != null
+            steps:
+              - setBody:
+                  id: setBody-fa01
+                  expression:
+                    simple:
+                      id: simple-b320
+                      expression: |-
+                        {
+                          "kind": "${jq(.brand)}",
+                          "beer": "${jq(.name)}"
+                        }
+              - log:
+                  id: log-0c79
+                  message: ${body}

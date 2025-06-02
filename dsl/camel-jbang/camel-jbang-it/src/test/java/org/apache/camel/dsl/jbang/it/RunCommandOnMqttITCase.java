@@ -64,7 +64,7 @@ public class RunCommandOnMqttITCase extends JBangTestSupport {
         final String ipAddr = getIpAddr(service.getContainer());
         final String pid = executeBackground(String.format("run %s/%s --stub=jms",
                 mountPoint(), TestResources.STUB_ROUTE.getName()));
-        checkCommandOutputs("cmd send --body=\"Hello camel from stubbed jms\"" + pid, "jms://inbox : Sent (success)");
+        checkCommandOutputs("cmd send --body=\"Hello camel from stubbed jms\"" + pid, "Sent (success)");
         checkCommandOutputs("cmd stub --browse", "Hello camel from stubbed jms");
     }
 

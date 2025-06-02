@@ -84,7 +84,9 @@ public abstract class JBangTestSupport {
         logger.debug("ending {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
         assertNoErrors();
         logger.debug("clean up data folder");
-        FileUtils.deleteQuietly(new File(containerDataFolder));
+        if (containerDataFolder != null) {
+            FileUtils.deleteQuietly(new File(containerDataFolder));
+        }
     }
 
     protected void stopAllRoutes() {
