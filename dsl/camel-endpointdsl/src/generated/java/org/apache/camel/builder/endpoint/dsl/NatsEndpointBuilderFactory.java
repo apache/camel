@@ -814,6 +814,81 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder jetstreamAsync(boolean jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder jetstreamAsync(String jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder jetstreamEnabled(boolean jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder jetstreamEnabled(String jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets the name of the JetStream stream to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: default-stream
+         * Group: advanced
+         * 
+         * @param jetstreamName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder jetstreamName(String jetstreamName) {
+            doSetProperty("jetstreamName", jetstreamName);
+            return this;
+        }
+        /**
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
@@ -1511,6 +1586,81 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder jetstreamAsync(boolean jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder jetstreamAsync(String jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder jetstreamEnabled(boolean jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder jetstreamEnabled(String jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets the name of the JetStream stream to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: default-stream
+         * Group: advanced
+         * 
+         * @param jetstreamName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder jetstreamName(String jetstreamName) {
+            doSetProperty("jetstreamName", jetstreamName);
+            return this;
+        }
+        /**
          * Whether or not connection trace messages should be printed to
          * standard out for fine grained debugging of connection issues.
          * 
@@ -2119,6 +2269,81 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointBuilder headerFilterStrategy(String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder jetstreamAsync(boolean jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder jetstreamAsync(String jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder jetstreamEnabled(boolean jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder jetstreamEnabled(String jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets the name of the JetStream stream to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: default-stream
+         * Group: advanced
+         * 
+         * @param jetstreamName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder jetstreamName(String jetstreamName) {
+            doSetProperty("jetstreamName", jetstreamName);
             return this;
         }
         /**
