@@ -141,8 +141,10 @@ public class NatsConsumer extends DefaultConsumer {
 
                 if (config.isJetstreamEnabled() && connection.getServerInfo().isJetStreamAvailable()) {
                     String streamName = this.configuration.getJetstreamName();
-                    String consumerName = ObjectHelper.isNotEmpty(queueName) ? queueName : "consumer-" + System.currentTimeMillis(); // Generate a default consumer name if queueName is not provided
-                    LOG.info("Setting up JetStream PUSH consumer for stream: '{}', durable: '{}', topic: {} ", streamName, consumerName, this.configuration.getTopic());
+                    String consumerName
+                            = ObjectHelper.isNotEmpty(queueName) ? queueName : "consumer-" + System.currentTimeMillis(); // Generate a default consumer name if queueName is not provided
+                    LOG.info("Setting up JetStream PUSH consumer for stream: '{}', durable: '{}', topic: {} ", streamName,
+                            consumerName, this.configuration.getTopic());
 
                     JetStreamManagement jsm = connection.jetStreamManagement();
                     try {
@@ -182,7 +184,8 @@ public class NatsConsumer extends DefaultConsumer {
 
                     NatsConsumer.this.setActive(true);
                 } else {
-                    LOG.debug("Setting up standard NATS consumer for topic: {}", NatsConsumer.this.getEndpoint().getConfiguration().getTopic());
+                    LOG.debug("Setting up standard NATS consumer for topic: {}",
+                            NatsConsumer.this.getEndpoint().getConfiguration().getTopic());
                     NatsConsumer.this.dispatcher = connection.createDispatcher(new CamelNatsMessageHandler());
                     if (ObjectHelper.isNotEmpty(queueName)) {
                         NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher.subscribe(topic, queueName);

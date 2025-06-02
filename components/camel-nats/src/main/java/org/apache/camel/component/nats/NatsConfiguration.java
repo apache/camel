@@ -476,8 +476,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * The name of the JetStream stream to use. If not specified, a default stream
-     * will be used if JetStream is enabled.
+     * The name of the JetStream stream to use. If not specified, a default stream will be used if JetStream is enabled.
      */
     public String getJetstreamName() {
         return jetstreamName;
@@ -491,8 +490,8 @@ public class NatsConfiguration {
     }
 
     /**
-     * Whether to operate JetStream requests asynchronously. This can improve
-     * performance but requires careful handling of results.
+     * Whether to operate JetStream requests asynchronously. This can improve performance but requires careful handling
+     * of results.
      */
     public boolean isJetstreamAsync() {
         return jetstreamAsync;

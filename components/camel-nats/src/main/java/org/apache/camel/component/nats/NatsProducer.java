@@ -22,9 +22,8 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
-
+import java.util.concurrent.TimeoutException;
 
 import io.nats.client.Connection;
 import io.nats.client.Connection.Status;
@@ -167,7 +166,7 @@ public class NatsProducer extends DefaultAsyncProducer {
         }
         this.scheduler
                 = this.executorServiceManager.newScheduledThreadPool(this,
-                NatsConstants.NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME, profile);
+                        NatsConstants.NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME, profile);
         super.doStart();
         LOG.debug("Starting Nats Producer");
 
