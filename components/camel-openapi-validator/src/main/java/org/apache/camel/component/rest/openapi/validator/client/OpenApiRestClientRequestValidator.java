@@ -23,6 +23,7 @@ import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.rest.openapi.RestOpenApiHelper;
 import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ExchangeHelper;
@@ -40,6 +41,13 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
 
         String method = exchange.getMessage().getHeader(Exchange.HTTP_METHOD, String.class);
         String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
+
+        // need to clip base-path
+        String basePath = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
+        if (path != null && path.startsWith(basePath)) {
+            path = path.substring(basePath.length());
+        }
+
         String accept = exchange.getMessage().getHeader("Accept", String.class);
         String contentType = ExchangeHelper.getContentType(exchange);
         String body = MessageHelper.extractBodyAsString(exchange.getIn());
@@ -56,6 +64,7 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         }
         // Use all non-Camel headers
         for (String header : exchange.getMessage().getHeaders().keySet()) {
+            // TODO: should skip standard HTTP headers like: Host, User-Agent
             if (!startsWithIgnoreCase(header, "Camel")) {
                 builder.withHeader(header, exchange.getMessage().getHeader(header, String.class));
             }

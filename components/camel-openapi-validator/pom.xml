@@ -40,7 +40,7 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-rest-openapi</artifactId>
         </dependency>
 
         <dependency>

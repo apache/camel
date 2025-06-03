@@ -34,7 +34,7 @@ import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.util.StringHelper.notEmpty;
 
-final class RestOpenApiHelper {
+public final class RestOpenApiHelper {
 
     private static final Pattern HOST_PATTERN = Pattern.compile("https?://[^:]+(:\\d+)?", Pattern.CASE_INSENSITIVE);
     private static final List<String> YAML_CONTENT_TYPES = Arrays.asList("application/yaml", "application/yml",
