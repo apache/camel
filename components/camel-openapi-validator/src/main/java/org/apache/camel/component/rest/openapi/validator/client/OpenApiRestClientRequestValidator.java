@@ -24,6 +24,7 @@ import com.atlassian.oai.validator.report.ValidationReport;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.rest.openapi.RestOpenApiHelper;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.RestClientRequestValidator;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ExchangeHelper;
@@ -31,6 +32,18 @@ import org.apache.camel.support.MessageHelper;
 
 @JdkService(RestClientRequestValidator.FACTORY)
 public class OpenApiRestClientRequestValidator implements RestClientRequestValidator {
+
+    private final HttpHeaderFilterStrategy filter = new HttpHeaderFilterStrategy();
+
+    public OpenApiRestClientRequestValidator() {
+        // add extra additional HTTP request headers to skip
+        filter.getOutFilter().add("accept");
+        filter.getOutFilter().add("authorization");
+        filter.getOutFilter().add("content-encoding");
+        filter.getOutFilter().add("cookie");
+        filter.getOutFilter().add("origin");
+        filter.getOutFilter().add("user-agent");
+    }
 
     @Override
     public ValidationError validate(Exchange exchange, ValidationContext validationContent) {
@@ -62,11 +75,14 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         if (body != null) {
             builder.withBody(body);
         }
-        // Use all non-Camel headers
-        for (String header : exchange.getMessage().getHeaders().keySet()) {
-            // TODO: should skip standard HTTP headers like: Host, User-Agent
-            if (!startsWithIgnoreCase(header, "Camel")) {
-                builder.withHeader(header, exchange.getMessage().getHeader(header, String.class));
+        // Use all non-Camel/non-HTTP headers
+        for (var header : exchange.getMessage().getHeaders().entrySet()) {
+            String key = header.getKey();
+            Object value = header.getValue();
+            boolean customHeader
+                    = !startsWithIgnoreCase(key, "Camel") && !filter.applyFilterToCamelHeaders(key, value, exchange);
+            if (customHeader) {
+                builder.withHeader(key, exchange.getMessage().getHeader(key, String.class));
             }
         }
         // Use query parameters, if present
@@ -94,10 +110,11 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
             }
             return new ValidationError(400, msg);
         }
+
         return null;
     }
 
-    boolean startsWithIgnoreCase(String s, String prefix) {
+    private static boolean startsWithIgnoreCase(String s, String prefix) {
         return s.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 }
