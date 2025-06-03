@@ -27,11 +27,15 @@ import java.util.stream.Stream;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ContentTypeAware;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.StringHelper.notEmpty;
 
 public final class RestOpenApiHelper {
@@ -92,6 +96,41 @@ public final class RestOpenApiHelper {
             return false;
         }
         return location.toLowerCase().endsWith(".yml") || location.toLowerCase().endsWith(".yaml");
+    }
+
+    /**
+     * Determines the base-path according to various configuration on component/endpoint and in the spec
+     */
+    public static String determineBasePath(
+            CamelContext camelContext, RestOpenApiComponent component, RestOpenApiEndpoint endpoint, OpenAPI openAPI) {
+        if (endpoint != null && isNotEmpty(endpoint.getBasePath())) {
+            return endpoint.getBasePath();
+        }
+
+        if (component != null) {
+            String componentBasePath = component.getBasePath();
+            if (isNotEmpty(componentBasePath)) {
+                return componentBasePath;
+            }
+        }
+
+        if (openAPI != null) {
+            String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
+            if (isNotEmpty(specificationBasePath)) {
+                return specificationBasePath;
+            }
+        }
+
+        String cn = endpoint != null ? endpoint.determineComponentName() : null;
+        RestConfiguration restConfiguration
+                = CamelContextHelper.getRestConfiguration(camelContext, null, cn);
+        String restConfigurationBasePath = restConfiguration.getContextPath();
+
+        if (isNotEmpty(restConfigurationBasePath)) {
+            return restConfigurationBasePath;
+        }
+
+        return RestOpenApiComponent.DEFAULT_BASE_PATH;
     }
 
     public static String getBasePathFromOpenApi(final OpenAPI openApi) {

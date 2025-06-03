@@ -75,7 +75,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private final List<String> uris = new ArrayList<>();
 
     @Override
-    public void validateOpenApi(OpenAPI openAPI, PlatformHttpConsumerAware platformHttpConsumer) throws Exception {
+    public void validateOpenApi(OpenAPI openAPI, String basePath, PlatformHttpConsumerAware platformHttpConsumer)
+            throws Exception {
         List<String> ids = new ArrayList<>();
         for (var e : openAPI.getPaths().entrySet()) {
             for (var o : e.getValue().readOperationsMap().entrySet()) {
@@ -115,7 +116,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         // enlist open-api rest services
         PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
         if (phc != null) {
-            String path = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
+            String path = basePath;
             if (path == null || path.isEmpty() || path.equals("/")) {
                 path = "";
             }

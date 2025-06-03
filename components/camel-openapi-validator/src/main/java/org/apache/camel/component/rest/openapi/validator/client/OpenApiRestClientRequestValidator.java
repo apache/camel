@@ -23,6 +23,7 @@ import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
 import org.apache.camel.component.rest.openapi.RestOpenApiHelper;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.RestClientRequestValidator;
@@ -55,8 +56,10 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
         String method = exchange.getMessage().getHeader(Exchange.HTTP_METHOD, String.class);
         String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
 
+        // find the base-path which can be configured in various places
+        RestOpenApiComponent comp = (RestOpenApiComponent) exchange.getContext().hasComponent("rest-openapi");
+        String basePath = RestOpenApiHelper.determineBasePath(exchange.getContext(), comp, null, openAPI);
         // need to clip base-path
-        String basePath = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
         if (path != null && path.startsWith(basePath)) {
             path = path.substring(basePath.length());
         }

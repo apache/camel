@@ -188,7 +188,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         ServiceHelper.initService(restOpenapiProcessorStrategy);
 
         // validate openapi contract
-        restOpenapiProcessorStrategy.validateOpenApi(openAPI, platformHttpConsumer);
+        restOpenapiProcessorStrategy.validateOpenApi(openAPI, basePath, platformHttpConsumer);
     }
 
     private RestBindingConfiguration createRestBindingConfiguration(Operation o) throws Exception {

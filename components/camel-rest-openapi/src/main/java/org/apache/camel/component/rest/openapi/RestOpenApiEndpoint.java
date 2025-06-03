@@ -507,6 +507,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return new RestOpenApiProducer(endpoint.createProducer(), hasHost, requestValidator);
     }
 
+    @Deprecated
     String determineBasePath(final OpenAPI openapi) {
         if (isNotEmpty(basePath)) {
             return basePath;
