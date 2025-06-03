@@ -1871,9 +1871,11 @@ public class Run extends CamelCommand {
         }
 
         // skip dirs
-        Path path = Paths.get(name);
-        if (Files.exists(path) && Files.isDirectory(path)) {
-            return true;
+        if (!name.startsWith("classpath:")) {
+            Path path = Path.of(name);
+            if (Files.exists(path) && Files.isDirectory(path)) {
+                return true;
+            }
         }
 
         if (FileUtil.onlyExt(name) == null) {
