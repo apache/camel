@@ -37,6 +37,7 @@ import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.TimeoutHandler;
 import io.vertx.ext.web.impl.RouteImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -125,6 +126,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         super.doStart();
 
         final Route newRoute = router.route(path);
+
+        if (getEndpoint().getRequestTimeout() > 0) {
+            newRoute.handler(TimeoutHandler.create(getEndpoint().getRequestTimeout()));
+        }
 
         if (getEndpoint().getCamelContext().getRestConfiguration().isEnableCORS() && getEndpoint().getConsumes() != null) {
             ((RouteImpl) newRoute).setEmptyBodyPermittedWithConsumes(true);

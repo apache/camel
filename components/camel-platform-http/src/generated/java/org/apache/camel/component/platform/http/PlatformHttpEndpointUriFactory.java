@@ -23,7 +23,7 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(24);
+        Set<String> props = new HashSet<>(25);
         props.add("bridgeErrorHandler");
         props.add("consumes");
         props.add("cookieDomain");
@@ -44,6 +44,7 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
         props.add("platformHttpEngine");
         props.add("populateBodyWithForm");
         props.add("produces");
+        props.add("requestTimeout");
         props.add("returnHttpRequestHeaders");
         props.add("useBodyHandler");
         props.add("useCookieHandler");

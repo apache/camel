@@ -61,6 +61,9 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
                             + " should catch any failure during writing response and store this on the Exchange, which allows onCompletion/UnitOfWork to"
                             + " regard the Exchange as failed and have access to the caused exception from the HTTP server.")
     private boolean handleWriteResponseError;
+    @Metadata(label = "advanced,consumer",
+              description = "The period in milliseconds after which the request should be timed out.")
+    private long requestTimeout;
 
     private final Set<HttpEndpointModel> httpEndpoints = new TreeSet<>();
     private final List<PlatformHttpListener> listeners = new ArrayList<>();
@@ -79,6 +82,7 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
         PlatformHttpEndpoint endpoint = new PlatformHttpEndpoint(uri, remaining, this);
         endpoint.setPlatformHttpEngine(engine);
         endpoint.setHandleWriteResponseError(handleWriteResponseError);
+        endpoint.setRequestTimeout(requestTimeout);
         setEndpointHeaderFilterStrategy(endpoint);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -202,6 +206,14 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
 
     public void setHandleWriteResponseError(boolean handleWriteResponseError) {
         this.handleWriteResponseError = handleWriteResponseError;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 
     private Consumer doCreateConsumer(
