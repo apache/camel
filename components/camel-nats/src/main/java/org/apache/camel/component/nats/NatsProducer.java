@@ -228,18 +228,18 @@ public class NatsProducer extends DefaultAsyncProducer {
         if (config.isJetstreamAsync()) {
             CompletableFuture<PublishAck> future = js.publishAsync(jetStreamMessage);
             try {
-                pa = future.get(1, TimeUnit.SECONDS);
+                pa = future.get(config.getRequestTimeout(), TimeUnit.MILLISECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 throw new RuntimeException("Failed to publish message asynchronously with JetStream: " + e.getMessage(), e);
             }
-            LOG.info("Publish Sequence async: {}", pa.getSeqno());
+            LOG.debug("Publish Sequence async: {}", pa.getSeqno());
         } else {
             try {
                 pa = js.publish(jetStreamMessage);
             } catch (IOException | JetStreamApiException e) {
                 throw new RuntimeException("Failed to publish message synchronously with JetStream: " + e.getMessage(), e);
             }
-            LOG.info("Publish Sequence synchronously: {}", pa.getSeqno());
+            LOG.debug("Publish Sequence synchronously: {}", pa.getSeqno());
         }
     }
 
