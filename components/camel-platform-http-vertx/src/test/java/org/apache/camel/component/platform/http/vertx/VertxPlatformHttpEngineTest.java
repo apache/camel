@@ -225,6 +225,69 @@ public class VertxPlatformHttpEngineTest {
     }
 
     @Test
+    public void testSlowConsumerWithTimeout() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.getRegistry().bind(
+                    "vertx-options",
+                    new VertxOptions()
+                            .setMaxEventLoopExecuteTime(2)
+                            .setMaxEventLoopExecuteTimeUnit(TimeUnit.SECONDS));
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/get?requestTimeout=500")
+                            .routeId("get")
+                            .delay(1000)
+                            .setBody().constant("get");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(503);
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testTimeoutNotExceeded() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        String response = "Request did not time out";
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/get?requestTimeout=500")
+                            .routeId("get")
+                            .setBody().constant(response);
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo(response));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
     public void testFailingConsumer() throws Exception {
         final CamelContext context = createCamelContext();
 

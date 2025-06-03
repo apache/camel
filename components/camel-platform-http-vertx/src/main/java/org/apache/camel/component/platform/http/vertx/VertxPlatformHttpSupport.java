@@ -176,6 +176,13 @@ public final class VertxPlatformHttpSupport {
     static Future<Void> writeResponse(
             RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy, boolean muteExceptions) {
         final Promise<Void> promise = Promise.promise();
+
+        // Nothing to do if the response is already ended due to request timeout etc
+        if (ctx.response().ended()) {
+            promise.complete();
+            return promise.future();
+        }
+
         try {
             final Object body = toHttpResponse(ctx, camelExchange.getMessage(), headerFilterStrategy, muteExceptions);
             if (body == null) {
