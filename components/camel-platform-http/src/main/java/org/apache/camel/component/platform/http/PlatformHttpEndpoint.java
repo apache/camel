@@ -133,6 +133,9 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     @UriParam(label = "advanced,consumer", defaultValue = "true",
               description = "Whether to use BodyHandler for the request. If set to false then the request will no be read and parsed.")
     private boolean useBodyHandler = true;
+    @UriParam(label = "advanced,consumer",
+              description = "The period in milliseconds after which the request should be timed out.")
+    private long requestTimeout;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -332,5 +335,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public void setUseBodyHandler(final boolean useBodyHandler) {
         this.useBodyHandler = useBodyHandler;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 }

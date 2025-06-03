@@ -394,6 +394,36 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * The period in milliseconds after which the request should be timed
+         * out.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * The period in milliseconds after which the request should be timed
+         * out.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
          * Whether to include HTTP request headers (Accept, User-Agent, etc.)
          * into HTTP response produced by this endpoint.
          * 
