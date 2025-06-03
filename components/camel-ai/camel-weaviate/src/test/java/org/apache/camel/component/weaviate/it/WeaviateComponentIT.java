@@ -86,8 +86,8 @@ public class WeaviateComponentIT extends CamelTestSupport {
         Result<WeaviateObject> res = (Result<WeaviateObject>) result.getIn().getBody();
         CREATEID = res.getResult().getId();
 
-        assertThat(!res.hasErrors());
-        assertThat(res != null);
+        assertThat(res.hasErrors()).isFalse();
+        assertThat(res).isNotNull();
     }
 
     @Test
@@ -104,14 +104,14 @@ public class WeaviateComponentIT extends CamelTestSupport {
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
         Result<WeaviateObject> res = (Result<WeaviateObject>) result.getIn().getBody();
-        assertThat(!res.hasErrors());
+        assertThat(res.hasErrors()).isFalse();
 
         List<WeaviateObject> list = (List) res.getResult();
         for (WeaviateObject wo : list) {
 
             Map<String, Object> map = wo.getProperties();
-            assertThat(map.containsKey("sky"));
-            assertThat(map.containsKey("age"));
+            assertThat(map).containsKey("sky");
+            assertThat(map).containsKey("age");
         }
 
     }
@@ -137,8 +137,8 @@ public class WeaviateComponentIT extends CamelTestSupport {
         assertThat(result).isNotNull();
 
         Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
-        assertThat(!res.hasErrors());
-        assertThat(res.getResult() == true);
+        assertThat(res.hasErrors()).isFalse();
+        assertThat(res.getResult()).isTrue();
         assertThat(result.getException()).isNull();
     }
 
@@ -163,9 +163,9 @@ public class WeaviateComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         List<Float> vector = (List<Float>) result.getIn().getBody();
-        assertThat(vector.get(0) == 1.0f);
-        assertThat(vector.get(1) == 2.0f);
-        assertThat(vector.get(2) == 3.0f);
+        assertThat(vector.get(0)).isEqualTo(1.0f);
+        assertThat(vector.get(1)).isEqualTo(2.0f);
+        assertThat(vector.get(2)).isEqualTo(3.2f);
     }
 
     @Test
@@ -182,8 +182,8 @@ public class WeaviateComponentIT extends CamelTestSupport {
         assertThat(result).isNotNull();
         Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
 
-        assertThat(!res.hasErrors());
-        assertThat(res.getResult() == true);
+        assertThat(res.hasErrors()).isFalse();
+        assertThat(res.getResult()).isTrue();
         assertThat(result.getException()).isNull();
     }
 
@@ -198,8 +198,8 @@ public class WeaviateComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
-        assertThat(!res.hasErrors());
-        assertThat(res.getResult() == true);
+        assertThat(res.hasErrors()).isFalse();
+        assertThat(res.getResult()).isTrue();
         assertThat(result.getException()).isNull();
     }
 

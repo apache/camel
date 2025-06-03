@@ -426,6 +426,19 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
         public String weaviateQueryTopK() {
             return "CamelWeaviateQueryTopK";
         }
+        /**
+         * Merges properties into the object.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @return the name of the header {@code WeaviateUpdateWithMerge}.
+         */
+        public String weaviateUpdateWithMerge() {
+            return "CamelWeaviateUpdateWithMerge";
+        }
     }
     static WeaviateVectorDbEndpointBuilder endpointBuilder(String componentName, String path) {
         class WeaviateVectorDbEndpointBuilderImpl extends AbstractEndpointBuilder implements WeaviateVectorDbEndpointBuilder, AdvancedWeaviateVectorDbEndpointBuilder {

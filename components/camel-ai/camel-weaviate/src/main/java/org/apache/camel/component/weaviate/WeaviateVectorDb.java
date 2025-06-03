@@ -64,5 +64,8 @@ public class WeaviateVectorDb {
 
         @Metadata(description = "Query Top K", javaType = "Integer")
         public static final String QUERY_TOP_K = "CamelWeaviateQueryTopK";
+
+        @Metadata(description = "Merges properties into the object", javaType = "Boolean", defaultValue = "true")
+        public static final String UPDATE_WITH_MERGE = "CamelWeaviateUpdateWithMerge";
     }
 }
