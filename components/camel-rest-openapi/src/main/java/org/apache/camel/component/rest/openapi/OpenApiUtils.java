@@ -64,9 +64,9 @@ public class OpenApiUtils {
 
     private final AtomicBoolean packageScanInit = new AtomicBoolean();
     private final Set<Class<?>> scannedClasses = new HashSet<>();
-    private CamelContext camelContext;
-    private String bindingPackage;
-    private Components components;
+    private final CamelContext camelContext;
+    private final String bindingPackage;
+    private final Components components;
 
     public OpenApiUtils(CamelContext camelContext, String bindingPackage, Components components) {
         this.camelContext = camelContext;

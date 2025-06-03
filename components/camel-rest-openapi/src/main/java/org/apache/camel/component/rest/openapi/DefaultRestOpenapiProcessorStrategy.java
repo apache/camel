@@ -116,7 +116,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         // enlist open-api rest services
         PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
         if (phc != null) {
-            String path = basePath != null ? basePath : RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
+            String path = basePath;
             if (path == null || path.isEmpty() || path.equals("/")) {
                 path = "";
             }

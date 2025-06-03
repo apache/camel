@@ -56,7 +56,7 @@ public interface RestOpenapiProcessorStrategy {
      * Validates the OpenAPI specification on startup
      *
      * @param  openAPI              the openapi specification
-     * @param  basePath             optional base path
+     * @param  basePath             base path
      * @param  platformHttpConsumer the platform http consumer
      * @throws Exception            is thrown if validation error on startup
      */
@@ -77,7 +77,7 @@ public interface RestOpenapiProcessorStrategy {
      * @param  callback  the AsyncCallback will be invoked when the processing of the exchange is completed. If the
      *                   exchange is completed synchronously, then the callback is also invoked synchronously. The
      *                   callback should therefore be careful of starting recursive loop.
-     * @return           (doneSync) true to continue execute synchronously, false to continue being executed
+     * @return           (doneSync) true to continue to execute synchronously, false to continue being executed
      *                   asynchronously
      */
     boolean process(
@@ -93,7 +93,7 @@ public interface RestOpenapiProcessorStrategy {
      * @param  callback the AsyncCallback will be invoked when the processing of the exchange is completed. If the
      *                  exchange is completed synchronously, then the callback is also invoked synchronously. The
      *                  callback should therefore be careful of starting recursive loop.
-     * @return          (doneSync) true to continue execute synchronously, false to continue being executed
+     * @return          (doneSync) true to continue to execute synchronously, false to continue being executed
      *                  asynchronously
      */
     boolean processApiSpecification(String specificationUri, Exchange exchange, AsyncCallback callback);
