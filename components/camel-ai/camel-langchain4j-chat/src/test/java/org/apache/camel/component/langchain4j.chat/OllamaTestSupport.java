@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.chat;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
@@ -27,7 +27,7 @@ import static java.time.Duration.ofSeconds;
 
 public class OllamaTestSupport extends CamelTestSupport {
 
-    protected ChatLanguageModel chatLanguageModel;
+    protected ChatModel chatModel;
 
     @RegisterExtension
     static OllamaService OLLAMA = OllamaServiceFactory.createService();
@@ -36,10 +36,10 @@ public class OllamaTestSupport extends CamelTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatLanguageModel = createModel();
+        chatModel = createModel();
     }
 
-    protected ChatLanguageModel createModel() {
+    protected ChatModel createModel() {
         return OllamaChatModel.builder()
                 .baseUrl(OLLAMA.getEndpoint())
                 .modelName(OLLAMA.getModel())
