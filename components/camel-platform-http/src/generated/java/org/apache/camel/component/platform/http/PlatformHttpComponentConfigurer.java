@@ -32,6 +32,8 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "handleWriteResponseError": target.setHandleWriteResponseError(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }
@@ -48,6 +50,8 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "handleWriteResponseError": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
         default: return null;
         }
     }
@@ -65,6 +69,8 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "handleWriteResponseError": return target.isHandleWriteResponseError();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "requesttimeout":
+        case "requestTimeout": return target.getRequestTimeout();
         default: return null;
         }
     }
