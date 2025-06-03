@@ -90,11 +90,11 @@ public class NatsConfiguration {
     private boolean traceConnection;
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    @UriParam(label = "advanced", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false")
     private boolean jetstreamEnabled = false;
-    @UriParam(label = "advanced", defaultValue = "default-stream")
-    private String jetstreamName = "default-stream";
-    @UriParam(label = "advanced", defaultValue = "true")
+    @UriParam(label = "common")
+    private String jetstreamName;
+    @UriParam(label = "common", defaultValue = "true")
     private boolean jetstreamAsync = true;
 
     /**
