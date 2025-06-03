@@ -30,6 +30,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class TransformTest {
 
     private Path workingDir;
@@ -75,7 +77,7 @@ class TransformTest {
         String data = Files.readString(outPath);
         String expected
                 = IOHelper.stripLineComments(Paths.get("src/test/resources/blueprint-out.yaml"), "#", true);
-        Assertions.assertEquals(expected, data);
+        assertThat(data).isEqualToIgnoringNewLines(expected);
     }
 
     private TransformRoute createCommand(String[] files, String... args) {
