@@ -1571,7 +1571,7 @@ public class Run extends CamelCommand {
 
         // cleanup and delete log file
         if (logFile != null) {
-            Files.deleteIfExists(logFile);
+            FileUtil.deleteFile(logFile);
         }
 
         return main.getExitCode();
