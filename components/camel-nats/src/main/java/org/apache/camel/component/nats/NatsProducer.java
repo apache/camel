@@ -113,10 +113,16 @@ public class NatsProducer extends DefaultAsyncProducer {
             return false;
         } else {
             LOG.debug("Publishing to subject: {}", config.getTopic());
-            if (config.isJetstreamEnabled() && this.connection.getServerInfo().isJetStreamAvailable()) {
-                publishWithJetStream(config, body, exchange);
-            } else {
-                publishWithoutJetStream(config, body, exchange);
+            try {
+                if (config.isJetstreamEnabled() && this.connection.getServerInfo().isJetStreamAvailable()) {
+                    publishWithJetStream(config, body, exchange);
+                } else {
+                    publishWithoutJetStream(config, body, exchange);
+                }
+            } catch (Exception e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
             }
             callback.done(true);
             return true;
@@ -195,7 +201,7 @@ public class NatsProducer extends DefaultAsyncProducer {
         super.doStop();
     }
 
-    private void publishWithJetStream(NatsConfiguration config, final byte[] body, final Exchange exchange) {
+    private void publishWithJetStream(NatsConfiguration config, final byte[] body, final Exchange exchange) throws Exception {
         LOG.debug("JetStream is available");
         JetStreamManagement jsm;
         JetStream js;
@@ -210,7 +216,7 @@ public class NatsProducer extends DefaultAsyncProducer {
                 js = jsm.jetStream();
             }
         } catch (IOException | JetStreamApiException e) {
-            throw new RuntimeException("Failed to initialize JetStream: " + e.getMessage(), e);
+            throw new Exception("Failed to initialize JetStream: " + e.getMessage(), e);
         }
 
         final NatsMessage.Builder builder = NatsMessage.builder()
@@ -230,14 +236,14 @@ public class NatsProducer extends DefaultAsyncProducer {
             try {
                 pa = future.get(config.getRequestTimeout(), TimeUnit.MILLISECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                throw new RuntimeException("Failed to publish message asynchronously with JetStream: " + e.getMessage(), e);
+                throw new Exception("Failed to publish message asynchronously with JetStream: " + e.getMessage(), e);
             }
             LOG.debug("Publish Sequence async: {}", pa.getSeqno());
         } else {
             try {
                 pa = js.publish(jetStreamMessage);
             } catch (IOException | JetStreamApiException e) {
-                throw new RuntimeException("Failed to publish message synchronously with JetStream: " + e.getMessage(), e);
+                throw new Exception("Failed to publish message synchronously with JetStream: " + e.getMessage(), e);
             }
             LOG.debug("Publish Sequence synchronously: {}", pa.getSeqno());
         }
