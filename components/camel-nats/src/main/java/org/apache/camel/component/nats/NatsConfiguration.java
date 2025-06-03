@@ -94,7 +94,7 @@ public class NatsConfiguration {
     private boolean jetstreamEnabled = false;
     @UriParam(label = "common")
     private String jetstreamName;
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean jetstreamAsync = true;
 
     /**
