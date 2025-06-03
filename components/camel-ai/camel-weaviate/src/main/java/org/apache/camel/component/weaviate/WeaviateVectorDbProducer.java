@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 
 import io.weaviate.client.WeaviateClient;
 import io.weaviate.client.base.Result;
+import io.weaviate.client.v1.data.api.ObjectUpdater;
 import io.weaviate.client.v1.data.model.WeaviateObject;
 import io.weaviate.client.v1.graphql.model.GraphQLResponse;
 import io.weaviate.client.v1.graphql.query.argument.NearVectorArgument;
@@ -163,12 +164,20 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         }
 
         Float[] vectors = (Float[]) elements.toArray(new Float[0]);
+        HashMap<String, Object> props = in.getHeader(WeaviateVectorDb.Headers.PROPERTIES, HashMap.class);
 
-        Result<Boolean> result = client.data().updater()
-                .withMerge()
+        ObjectUpdater ou = client.data().updater();
+
+        boolean updateWithMerge = in.getHeader(WeaviateVectorDb.Headers.UPDATE_WITH_MERGE, true, Boolean.class);
+        if (updateWithMerge) {
+            ou.withMerge();
+        }
+
+        Result<Boolean> result = ou
                 .withID(indexId)
                 .withClassName(collectionName)
                 .withVector(vectors)
+                .withProperties(props)
                 .run();
 
         populateResponse(result, exchange);
