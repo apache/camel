@@ -288,7 +288,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
     }
 
     protected void stopVertx() {
-        if (this.vertx == null || this.localVertx) {
+        if (this.vertx == null || !this.localVertx) {
             return;
         }
 
