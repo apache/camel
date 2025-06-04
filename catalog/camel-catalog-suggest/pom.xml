@@ -42,26 +42,12 @@
             <artifactId>camel-catalog</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
 
-        <!-- disable all components -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-allcomponents</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
+        <!-- test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
