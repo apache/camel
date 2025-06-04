@@ -24,7 +24,6 @@ import java.util.Collections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +38,8 @@ public class RestProducerTest {
         DefaultExchange exchange = new DefaultExchange(camelContext);
         exchange.getMessage().setHeader("multiple", Arrays.asList("value1", "value2", "value3"));
 
-        assertEquals("param=value1&param=value2&param=value3", RestProducer.createQueryParameters("param={multiple}", exchange));
+        assertEquals("param=value1&param=value2&param=value3",
+                RestProducer.createQueryParameters("param={multiple}", exchange));
     }
 
     @Test
