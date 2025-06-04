@@ -380,8 +380,9 @@ class ExportQuarkus extends Export {
             // skip "camel.server." as this is for camel-main only
             return null;
         }
-        // quarkus use dash cased properties and lets turn camel into dash as well
-        if (key.startsWith("quarkus.") || key.startsWith("camel.")) {
+        // quarkus use dash cased properties and lets turn camel into dash as well (skip hawtio)
+        boolean dash = key.startsWith("camel.") || (key.startsWith("quarkus.") && !key.startsWith("quarkus.hawtio."));
+        if (dash) {
             key = StringHelper.camelCaseToDash(key);
         }
         return super.applicationPropertyLine(key, value);
