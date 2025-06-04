@@ -77,6 +77,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class VertxPlatformHttpEngineTest {
     public static SSLContextParameters serverSSLParameters;
@@ -137,6 +138,7 @@ public class VertxPlatformHttpEngineTest {
     @Test
     public void testEngine() throws Exception {
         final CamelContext context = createCamelContext();
+        VertxPlatformHttpServer platformHttpServer;
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -180,9 +182,14 @@ public class VertxPlatformHttpEngineTest {
             assertNotNull(server);
             assertEquals("http", server.getScheme());
             assertEquals(RestAssured.port, server.getServerPort());
+
+            platformHttpServer = context.hasService(VertxPlatformHttpServer.class);
+            assertNotNull(platformHttpServer.getVertx());
         } finally {
             context.stop();
         }
+
+        assertNull(platformHttpServer.getVertx());
     }
 
     @Test
