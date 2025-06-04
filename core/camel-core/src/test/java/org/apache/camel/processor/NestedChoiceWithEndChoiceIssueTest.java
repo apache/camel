@@ -26,9 +26,9 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NestedChoiceWithEndChoiceIssueTest extends ContextTestSupport {
@@ -61,7 +61,7 @@ public class NestedChoiceWithEndChoiceIssueTest extends ContextTestSupport {
                         Paths.get("src/test/resources/org/apache/camel/processor/NestedChoiceWithEndChoiceIssueTest.xml"), "#",
                         true);
         expected = StringHelper.after(expected, "-->");
-        Assertions.assertEquals(expected, "\n" + xml + "\n");
+        assertThat(expected).isEqualToNormalizingNewlines("\n" + xml + "\n");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived("2");
