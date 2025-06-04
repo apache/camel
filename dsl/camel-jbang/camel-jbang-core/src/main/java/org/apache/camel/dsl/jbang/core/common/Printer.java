@@ -48,10 +48,12 @@ public interface Printer {
     class SystemOutPrinter implements Printer {
         public void println() {
             System.out.println();
+            System.out.flush();
         }
 
         public void println(String line) {
             System.out.println(line);
+            System.out.flush();
         }
 
         public void print(String output) {
