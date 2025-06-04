@@ -257,7 +257,7 @@ public class EnrichDefinition extends ExpressionNode
     }
 
     /**
-     * Whether to allow components to optimise enricher if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     * Whether to allow components to optimise enricher if they are {@link org.apache.camel.spi.SendDynamicAware}
      *
      * @return the builder
      */
@@ -266,7 +266,7 @@ public class EnrichDefinition extends ExpressionNode
     }
 
     /**
-     * Whether to allow components to optimise enricher if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     * Whether to allow components to optimise enricher if they are {@link org.apache.camel.spi.SendDynamicAware}
      *
      * @return the builder
      */

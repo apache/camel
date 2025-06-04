@@ -291,7 +291,7 @@ public class PollEnrichDefinition extends ExpressionNode
     }
 
     /**
-     * Whether to allow components to optimise if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     * Whether to allow components to optimise if they are {@link org.apache.camel.spi.PollDynamicAware}
      *
      * @return the builder
      */
@@ -301,7 +301,7 @@ public class PollEnrichDefinition extends ExpressionNode
     }
 
     /**
-     * Whether to allow components to optimise if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     * Whether to allow components to optimise if they are {@link org.apache.camel.spi.PollDynamicAware}
      *
      * @return the builder
      */

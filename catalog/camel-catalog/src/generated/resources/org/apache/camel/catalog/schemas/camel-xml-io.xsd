@@ -4466,7 +4466,7 @@ Ignore the invalidate endpoint exception when try to create a producer with that
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to allow components to optimise enricher if they are org.apache.camel.spi.SendDynamicAware . Default value: true
+Whether to allow components to optimise enricher if they are org.apache.camel.spi.SendDynamicAware. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10601,7 +10601,7 @@ Ignore the invalidate endpoint exception when try to create a producer with that
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to allow components to optimise if they are org.apache.camel.spi.SendDynamicAware . Default value: true
+Whether to allow components to optimise if they are org.apache.camel.spi.PollDynamicAware. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>

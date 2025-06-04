@@ -1382,7 +1382,7 @@
           "allowOptimisedComponents" : {
             "type" : "boolean",
             "title" : "Allow Optimised Components",
-            "description" : "Whether to allow components to optimise enricher if they are org.apache.camel.spi.SendDynamicAware ."
+            "description" : "Whether to allow components to optimise enricher if they are org.apache.camel.spi.SendDynamicAware"
           },
           "autoStartComponents" : {
             "type" : "boolean",
@@ -4117,7 +4117,7 @@
           "allowOptimisedComponents" : {
             "type" : "boolean",
             "title" : "Allow Optimised Components",
-            "description" : "Whether to allow components to optimise if they are org.apache.camel.spi.SendDynamicAware ."
+            "description" : "Whether to allow components to optimise if they are org.apache.camel.spi.PollDynamicAware"
           },
           "autoStartComponents" : {
             "type" : "boolean",
