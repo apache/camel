@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.weaviate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -249,11 +248,8 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         if (in.getHeader(WeaviateVectorDb.Headers.FIELDS, HashMap.class) != null) {
             HashMap<String, Object> fieldToSearch = in.getHeader(WeaviateVectorDb.Headers.FIELDS, HashMap.class);
 
-            List<Field> fieldList = new ArrayList<>();
-            for (String key : fieldToSearch.keySet()) {
-                fieldList.add(Field.builder().name(key).build());
-            }
-            Field[] fieldArray = (Field[]) fieldList.toArray();
+            Field[] fieldArray
+                    = fieldToSearch.keySet().stream().map(k -> Field.builder().name(k).build()).toArray(Field[]::new);
             fields = Fields.builder().fields(fieldArray).build();
 
         } else {

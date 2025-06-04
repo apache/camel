@@ -23,11 +23,15 @@ import java.util.Map;
 
 import io.weaviate.client.base.Result;
 import io.weaviate.client.v1.data.model.WeaviateObject;
+import io.weaviate.client.v1.graphql.model.GraphQLResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.weaviate.WeaviateTestSupport;
 import org.apache.camel.component.weaviate.WeaviateVectorDb;
 import org.apache.camel.component.weaviate.WeaviateVectorDbAction;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
@@ -42,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WeaviateContainerIT extends WeaviateTestSupport {
-    private static final String COLLECTION = "WeaviateComponentITCollection";
+    private static final String COLLECTION = "WeaviateITCollection";
     private static String CREATEID = null;
 
     @Test
@@ -50,7 +54,7 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
     public void createCollection() {
 
         Exchange result = fluentTemplate
-                .to("weaviate:test-collection")
+                .to(getUri())
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.CREATE_COLLECTION)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
                 .request(Exchange.class);
@@ -73,7 +77,7 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
         map.put("age", "34");
 
         Exchange result = fluentTemplate
-                .to("weaviate:test-collection")
+                .to(getUri())
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.CREATE)
                 .withBody(elements)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
@@ -90,51 +94,6 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
     }
 
     @Test
-    @Order(8)
-    public void queryByVector() {
-
-        List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
-
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("sky", "blue");
-
-        Exchange result = fluentTemplate
-                .to("weaviate:test-collection")
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.QUERY)
-                .withBody(
-                        elements)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
-                .withHeader(WeaviateVectorDb.Headers.QUERY_TOP_K, 20)
-                .withHeader(WeaviateVectorDb.Headers.FIELDS, map)
-                .request(Exchange.class);
-
-        assertThat(result).isNotNull();
-        List<Float> vector = (List<Float>) result.getIn().getBody();
-        assertThat(vector.get(0)).isEqualTo(1.0f);
-        assertThat(vector.get(1)).isEqualTo(2.0f);
-        assertThat(vector.get(2)).isEqualTo(3.2f);
-    }
-
-    @Test
-    @Order(9)
-    public void deleteById() {
-
-        Exchange result = fluentTemplate
-                .to("weaviate:test-collection")
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.DELETE_BY_ID)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
-                .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
-                .request(Exchange.class);
-
-        assertThat(result).isNotNull();
-        Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
-
-        assertThat(res.hasErrors()).isFalse();
-        assertThat(res.getResult()).isTrue();
-        assertThat(result.getException()).isNull();
-    }
-
-    @Test
     @Order(7)
     public void updateById() {
 
@@ -143,8 +102,7 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("dog", "dachshund");
 
-        Exchange result = fluentTemplate.to(
-                "weaviate:test-collection")
+        Exchange result = fluentTemplate.to(getUri())
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.UPDATE_BY_ID)
                 .withBody(elements)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
@@ -164,8 +122,7 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
     @Order(8)
     public void queryById() {
 
-        Exchange result = fluentTemplate.to(
-                "weaviate:test-collection")
+        Exchange result = fluentTemplate.to(getUri())
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.QUERY_BY_ID)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
                 .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
@@ -187,11 +144,56 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
 
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    @Order(8)
+    public void queryByVector() {
+
+        List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
+
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("sky", "blue");
+
+        Exchange result = fluentTemplate
+                .to(getUri())
+                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.QUERY)
+                .withBody(
+                        elements)
+                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDb.Headers.QUERY_TOP_K, 20)
+                .withHeader(WeaviateVectorDb.Headers.FIELDS, map)
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        GraphQLResponse<?> qlResponse = (GraphQLResponse<?>) result.getIn().getBody(Result.class).getResult();
+        var dataMap = (Map<String, Map<String, List<Map<String, String>>>>) qlResponse.getData();
+        assertThat(dataMap.get("Get").get(COLLECTION).get(0)).containsEntry("sky", "blue");
+    }
+
+    @Test
+    @Order(9)
+    public void deleteById() {
+
+        Exchange result = fluentTemplate
+                .to(getUri())
+                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.DELETE_BY_ID)
+                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
+
+        assertThat(res.hasErrors()).isFalse();
+        assertThat(res.getResult()).isTrue();
+        assertThat(result.getException()).isNull();
+    }
+
     @Test
     @Order(10)
     public void deleteCollection() {
         Exchange result = fluentTemplate
-                .to("weaviate:test-collection")
+                .to(getUri())
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.DELETE_COLLECTION)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
                 .request(Exchange.class);
@@ -201,6 +203,14 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
         assertThat(res.hasErrors()).isFalse();
         assertThat(res.getResult()).isTrue();
         assertThat(result.getException()).isNull();
+    }
+
+    private String getUri() {
+        if (System.getProperties().containsKey("weaviate.apikey")) {
+            return "weaviate:test-collection?scheme={{weaviate.scheme}}&host={{weaviate.host}}&apiKey={{weaviate.apikey}}";
+        }
+
+        return "weaviate:test-collection";
     }
 
 }
