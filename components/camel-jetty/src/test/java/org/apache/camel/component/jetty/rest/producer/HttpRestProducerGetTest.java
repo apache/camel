@@ -27,9 +27,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpRestProducerGetTest extends BaseJettyTest {
 
     @Test
-    public void testHttpProducerGet() {
+    public void testHttpProducerGetWithHeader() {
         String out = fluentTemplate.withHeader("id", "123").to("direct:start").request(String.class);
         assertEquals("123;Donald Duck", out);
+    }
+
+    @Test
+    public void testHttpProducerGetWithVariable() {
+        String out = fluentTemplate.withVariable("id", "456").to("direct:start").request(String.class);
+        assertEquals("456;Donald Duck", out);
     }
 
     @Override
