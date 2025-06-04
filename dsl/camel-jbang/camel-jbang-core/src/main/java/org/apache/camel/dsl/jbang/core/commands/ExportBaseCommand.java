@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -757,13 +758,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
             customize.apply(profileProps);
         }
 
-        // User properties
-        Properties userProps = new CamelCaseOrderedProperties();
-        prepareUserProperties(userProps);
-
         Path appPropsPath = targetDir.resolve("application.properties");
         StringBuilder content = new StringBuilder();
-
         for (Map.Entry<Object, Object> entry : profileProps.entrySet()) {
             String k = entry.getKey().toString();
             String v = entry.getValue().toString();
@@ -790,6 +786,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 }
             }
         }
+
+        // User properties
+        Properties userProps = new CamelCaseOrderedProperties();
+        prepareUserProperties(userProps);
         for (Map.Entry<Object, Object> entryUserProp : userProps.entrySet()) {
             String uK = entryUserProp.getKey().toString();
             String uV = entryUserProp.getValue().toString();
@@ -799,6 +799,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
+        // write all the properties
         Files.writeString(appPropsPath, content.toString(), StandardCharsets.UTF_8);
     }
 
@@ -813,7 +814,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Map<String, String> propertiesMap(String[]... propertySources) {
         Map<String, String> result = new LinkedHashMap<>();
         if (propertySources != null) {
-            for (String[] props : Arrays.stream(propertySources).filter((arr) -> arr != null).toList()) {
+            for (String[] props : Arrays.stream(propertySources).filter(Objects::nonNull).toList()) {
                 for (String s : props) {
                     String[] kv = s.split("=");
                     if (kv.length != 2) {
