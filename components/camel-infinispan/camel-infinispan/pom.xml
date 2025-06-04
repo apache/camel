@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.infinispan.protostream</groupId>
             <artifactId>protostream-processor</artifactId>
-            <version>${protostream-version}</version>
+            <version>${infinispan-protostream-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>org.infinispan.protostream</groupId>
             <artifactId>protostream</artifactId>
-            <version>${protostream-version}</version>
+            <version>${infinispan-protostream-version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -173,12 +173,12 @@
             <dependency>
                 <groupId>org.infinispan.protostream</groupId>
                 <artifactId>protostream</artifactId>
-                <version>${protostream-version}</version>
+                <version>${infinispan-protostream-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.infinispan.protostream</groupId>
                 <artifactId>protostream-types</artifactId>
-                <version>${protostream-version}</version>
+                <version>${infinispan-protostream-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

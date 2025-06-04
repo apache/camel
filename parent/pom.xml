@@ -239,6 +239,7 @@
         <ignite-version>2.17.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
         <infinispan-version>15.2.1.Final</infinispan-version>
+        <infinispan-protostream-version>15.0.13.Final</infinispan-protostream-version>
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>7.3.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
@@ -428,7 +429,6 @@
         <protobuf-version>3.25.5</protobuf-version>
         <protobuf-maven-plugin-version>3.4.0</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
-        <protostream-version>5.0.12.Final</protostream-version>
         <prowide-version>SRU2024-10.2.7</prowide-version>
         <pubnub-version>10.5.2</pubnub-version>
         <pulsar-version>4.0.5</pulsar-version>
