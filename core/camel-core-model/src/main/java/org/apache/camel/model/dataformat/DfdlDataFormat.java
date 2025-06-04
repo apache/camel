@@ -27,7 +27,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Handle DFDL (Data Format Description Language) transformation.
+ * Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).
  */
 @Metadata(firstVersion = "4.11.0", label = "dataformat,transformation", title = "DFDL")
 @XmlRootElement(name = "dfdl")

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "dfdl",
     "title": "DFDL",
-    "description": "Handle DFDL (Data Format Description Language) transformation.",
+    "description": "Transforms fixed format data such as EDI message from\/to XML using a Data Format Description Language (DFDL).",
     "deprecated": false,
     "firstVersion": "4.11.0",
     "label": "dataformat,transformation",

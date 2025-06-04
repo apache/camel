@@ -10723,7 +10723,7 @@
       },
       "org.apache.camel.model.dataformat.DfdlDataFormat" : {
         "title" : "DFDL",
-        "description" : "Handle DFDL (Data Format Description Language) transformation.",
+        "description" : "Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).",
         "oneOf" : [ {
           "type" : "string"
         }, {

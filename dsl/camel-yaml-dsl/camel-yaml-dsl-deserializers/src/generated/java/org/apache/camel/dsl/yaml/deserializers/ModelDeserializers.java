@@ -4924,7 +4924,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.DfdlDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "DFDL",
-            description = "Handle DFDL (Data Format Description Language) transformation.",
+            description = "Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),

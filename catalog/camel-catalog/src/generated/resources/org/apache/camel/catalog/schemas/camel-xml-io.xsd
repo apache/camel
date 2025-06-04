@@ -414,7 +414,7 @@ Rest DELETE command
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Handle DFDL (Data Format Description Language) transformation.
+Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).
 ]]>
       </xs:documentation>
     </xs:annotation>

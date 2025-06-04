@@ -2,7 +2,7 @@
 :doctitle: DFDL
 :shortname: dfdl
 :artifactid: camel-dfdl
-:description: Handle DFDL (Data Format Description Language) transformation.
+:description: Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).
 :since: 4.11
 :supportlevel: Stable
 :tabs-sync-option:
