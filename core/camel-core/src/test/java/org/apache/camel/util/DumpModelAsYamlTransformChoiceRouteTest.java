@@ -23,6 +23,7 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DumpModelAsYamlTransformChoiceRouteTest extends DumpModelAsYamlTestSupport {
@@ -36,7 +37,7 @@ public class DumpModelAsYamlTransformChoiceRouteTest extends DumpModelAsYamlTest
         String expected
                 = IOHelper.stripLineComments(Paths.get("src/test/resources/org/apache/camel/util/transform3.xml"), "#", true);
         expected = StringHelper.after(expected, "-->");
-        Assertions.assertEquals(expected, "\n" + xml + "\n");
+        assertThat(expected).isEqualToNormalizingNewlines("\n" + xml + "\n");
     }
 
     @Test
