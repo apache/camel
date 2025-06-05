@@ -314,8 +314,12 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                             } catch (Exception e) {
                                 setLastError(e);
                                 incFailedCounter();
+                                String msg = e.getMessage();
+                                if (msg.endsWith(".")) {
+                                    msg = msg.substring(0, msg.length() - 1);
+                                }
                                 LOG.warn("Error reloading routes from file: {} due to: {}. This exception is ignored.", name,
-                                        e.getMessage(), e);
+                                        msg, e);
                             }
                         }
                     }
