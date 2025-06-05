@@ -125,7 +125,6 @@ public final class ServiceHelper {
         if (service != null) {
             service.start();
         }
-
     }
 
     /**

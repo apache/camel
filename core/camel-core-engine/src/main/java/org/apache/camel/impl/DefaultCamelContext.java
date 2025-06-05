@@ -236,6 +236,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public void removeModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
+        model.removeModelLifecycleStrategy(modelLifecycleStrategy);
+    }
+
+    @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
         return model.getModelLifecycleStrategies();
     }

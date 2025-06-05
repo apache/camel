@@ -44,6 +44,13 @@ public interface Model {
     void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy);
 
     /**
+     * Removes the given model lifecycle strategy
+     *
+     * @param modelLifecycleStrategy the strategy
+     */
+    void removeModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy);
+
+    /**
      * Returns the model lifecycle strategies used to handle lifecycle notifications
      *
      * @return the lifecycle strategies
