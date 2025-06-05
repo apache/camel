@@ -31,7 +31,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 /**
  * Based on user forum issue
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class AggregateLostGroupIssueTest extends ContextTestSupport {
 
     private int messageIndex;

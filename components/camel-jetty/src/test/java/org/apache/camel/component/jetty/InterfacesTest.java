@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Slow test")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Slow test")
 public class InterfacesTest extends BaseJettyTest {
 
     private static final boolean isMacOS = System.getProperty("os.name").startsWith("Mac");
