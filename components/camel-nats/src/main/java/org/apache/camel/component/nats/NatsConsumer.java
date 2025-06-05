@@ -159,24 +159,14 @@ public class NatsConsumer extends DefaultConsumer {
                     consumerName, this.configuration.getTopic());
 
             JetStreamManagement jsm = connection.jetStreamManagement();
-            try {
-                // Try to get the stream, create it if it doesn't exist
-                jsm.getStreamInfo(streamName);
-            } catch (JetStreamApiException e) {
-                if (e.getErrorCode() == 404) {
-                    StreamConfiguration streamConfig = StreamConfiguration.builder()
-                            .name(streamName)
-                            .subjects(topic)
-                            .build();
-                    jsm.addStream(streamConfig);
-                } else {
-                    throw e;
-                }
-            }
+            StreamConfiguration streamConfig = StreamConfiguration.builder()
+                    .name(streamName)
+                    .subjects(topic)
+                    .build();
+            jsm.addStream(streamConfig);
 
             ConsumerConfiguration.Builder ccBuilder = ConsumerConfiguration.builder()
                     .durable(consumerName);
-
             ccBuilder.deliverSubject(null);
             ConsumerConfiguration cc = ccBuilder.build();
 
