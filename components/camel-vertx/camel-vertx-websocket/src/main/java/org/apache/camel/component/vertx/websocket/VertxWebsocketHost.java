@@ -17,12 +17,11 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
@@ -53,7 +52,7 @@ public class VertxWebsocketHost {
     private final VertxWebsocketHostConfiguration hostConfiguration;
     private final VertxWebsocketHostKey hostKey;
     private final Map<String, Route> routeRegistry = new HashMap<>();
-    private final List<VertxWebsocketPeer> connectedPeers = Collections.synchronizedList(new ArrayList<>());
+    private final List<VertxWebsocketPeer> connectedPeers = new CopyOnWriteArrayList<>(); // thread-safe
     private final CamelContext camelContext;
     private HttpServer server;
     private int port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
