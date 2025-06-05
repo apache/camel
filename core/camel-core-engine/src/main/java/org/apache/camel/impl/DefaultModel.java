@@ -104,6 +104,11 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    public void removeModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
+        this.modelLifecycleStrategies.remove(modelLifecycleStrategy);
+    }
+
+    @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
         return modelLifecycleStrategies;
     }
