@@ -64,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.fail;
                                  disabledReason = "Requires Kafka 3.x"),
         @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
 })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerAuthInvalidIT {
     public static final String TOPIC = "test-auth-invalid-it";

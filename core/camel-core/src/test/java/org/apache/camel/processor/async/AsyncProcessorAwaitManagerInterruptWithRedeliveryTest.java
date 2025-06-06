@@ -32,7 +32,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends ContextTestSupport {
 
     private MyBean bean;

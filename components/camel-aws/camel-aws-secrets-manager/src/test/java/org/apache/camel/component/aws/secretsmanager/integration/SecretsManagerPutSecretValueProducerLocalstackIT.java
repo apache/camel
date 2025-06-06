@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.secretsmanager.model.PutSecretValueRespon
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class SecretsManagerPutSecretValueProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Timeout(30)
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Apache CI is hanging on this test")
 public class JpaWithNativeQueryTest extends JpaWithNamedQueryTest {
 

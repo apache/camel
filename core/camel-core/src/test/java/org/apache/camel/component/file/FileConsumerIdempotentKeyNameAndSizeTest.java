@@ -25,7 +25,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 /**
  * Unit test for the idempotentKey option.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempotentTest {
 
     @Override

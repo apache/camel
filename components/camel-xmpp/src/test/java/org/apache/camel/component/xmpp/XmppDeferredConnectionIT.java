@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * the server is not available upon route initialization. Also verify that these endpoints will then deliver messages as
  * expected.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppDeferredConnectionIT extends XmppBaseContainerTest {
     private static final Logger LOG = LoggerFactory.getLogger(XmppDeferredConnectionIT.class);

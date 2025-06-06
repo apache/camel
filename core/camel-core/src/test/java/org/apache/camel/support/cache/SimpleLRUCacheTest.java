@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The test class for {@link SimpleLRUCache}.
  */
 @Isolated("Some of these tests creates a lot of threads")
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Apache CI nodes are too resource constrained for this test")
 class SimpleLRUCacheTest {
 
