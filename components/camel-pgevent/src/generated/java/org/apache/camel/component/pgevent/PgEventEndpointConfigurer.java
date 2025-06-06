@@ -33,7 +33,15 @@ public class PgEventEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "pass": target.setPass(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnectdelay":
+        case "reconnectDelay": target.setReconnectDelay(property(camelContext, int.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "workerpool":
+        case "workerPool": target.setWorkerPool(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
+        case "workerpoolcoresize":
+        case "workerPoolCoreSize": target.setWorkerPoolCoreSize(property(camelContext, int.class, value)); return true;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": target.setWorkerPoolMaxSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -51,7 +59,15 @@ public class PgEventEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "pass": return java.lang.String.class;
+        case "reconnectdelay":
+        case "reconnectDelay": return int.class;
         case "user": return java.lang.String.class;
+        case "workerpool":
+        case "workerPool": return java.util.concurrent.ExecutorService.class;
+        case "workerpoolcoresize":
+        case "workerPoolCoreSize": return int.class;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": return int.class;
         default: return null;
         }
     }
@@ -70,7 +86,15 @@ public class PgEventEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "pass": return target.getPass();
+        case "reconnectdelay":
+        case "reconnectDelay": return target.getReconnectDelay();
         case "user": return target.getUser();
+        case "workerpool":
+        case "workerPool": return target.getWorkerPool();
+        case "workerpoolcoresize":
+        case "workerPoolCoreSize": return target.getWorkerPoolCoreSize();
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": return target.getWorkerPoolMaxSize();
         default: return null;
         }
     }

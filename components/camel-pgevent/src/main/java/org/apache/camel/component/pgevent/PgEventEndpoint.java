@@ -18,6 +18,7 @@ package org.apache.camel.component.pgevent;
 
 import java.sql.DriverManager;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import javax.sql.DataSource;
 
@@ -70,6 +71,14 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
     private String pass;
     @UriParam(label = "advanced")
     private DataSource datasource;
+    @UriParam(label = "consumer,advanced", defaultValue = "5000")
+    private int reconnectDelay = 5000;
+    @UriParam(label = "consumer,advanced")
+    private ExecutorService workerPool;
+    @UriParam(label = "consumer,advanced", defaultValue = "1")
+    private int workerPoolCoreSize = 1;
+    @UriParam(label = "consumer,advanced", defaultValue = "10")
+    private int workerPoolMaxSize = 10;
 
     private final String uri;
 
@@ -186,6 +195,11 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
         return consumer;
     }
 
+    ExecutorService createWorkerPool() {
+        return getCamelContext().getExecutorServiceManager().newThreadPool(this,
+                "PgEventConsumer[" + channel + "]", workerPoolCoreSize, workerPoolMaxSize);
+    }
+
     public String getHost() {
         return host;
     }
@@ -262,5 +276,50 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
      */
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;
+    }
+
+    public int getReconnectDelay() {
+        return reconnectDelay;
+    }
+
+    /**
+     * When the consumer unexpected lose connection to the database, then this specifies the interval (millis) between
+     * re-connection attempts to establish a new connection.
+     */
+    public void setReconnectDelay(int reconnectDelay) {
+        this.reconnectDelay = reconnectDelay;
+    }
+
+    public ExecutorService getWorkerPool() {
+        return workerPool;
+    }
+
+    /**
+     * To use a custom worker pool for processing the events from the database.
+     */
+    public void setWorkerPool(ExecutorService workerPool) {
+        this.workerPool = workerPool;
+    }
+
+    public int getWorkerPoolCoreSize() {
+        return workerPoolCoreSize;
+    }
+
+    /**
+     * Number of core threads in the worker pool for processing the events from the database.
+     */
+    public void setWorkerPoolCoreSize(int workerPoolCoreSize) {
+        this.workerPoolCoreSize = workerPoolCoreSize;
+    }
+
+    public int getWorkerPoolMaxSize() {
+        return workerPoolMaxSize;
+    }
+
+    /**
+     * Maximum number of threads in the worker pool for processing the events from the database.
+     */
+    public void setWorkerPoolMaxSize(int workerPoolMaxSize) {
+        this.workerPoolMaxSize = workerPoolMaxSize;
     }
 }

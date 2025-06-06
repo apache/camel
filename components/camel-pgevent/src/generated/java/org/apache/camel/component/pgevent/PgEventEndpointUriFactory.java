@@ -23,7 +23,7 @@ public class PgEventEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(15);
         props.add("bridgeErrorHandler");
         props.add("channel");
         props.add("database");
@@ -34,7 +34,11 @@ public class PgEventEndpointUriFactory extends org.apache.camel.support.componen
         props.add("lazyStartProducer");
         props.add("pass");
         props.add("port");
+        props.add("reconnectDelay");
         props.add("user");
+        props.add("workerPool");
+        props.add("workerPoolCoreSize");
+        props.add("workerPoolMaxSize");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("pass");
