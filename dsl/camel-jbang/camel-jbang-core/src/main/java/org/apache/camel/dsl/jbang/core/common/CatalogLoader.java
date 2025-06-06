@@ -40,6 +40,7 @@ import org.apache.camel.tooling.maven.MavenArtifact;
 
 public final class CatalogLoader {
 
+    public static final String QUARKUS_GROUP_ID = "io.quarkus.platform";
     private static final String DEFAULT_CAMEL_CATALOG = "org.apache.camel.catalog.DefaultCamelCatalog";
 
     private static final String SPRING_BOOT_CATALOG_PROVIDER = "org.apache.camel.springboot.catalog.SpringBootRuntimeProvider";
@@ -168,7 +169,7 @@ public final class CatalogLoader {
             // shrinkwrap does not return POM file as result (they are hardcoded to be filtered out)
             // so after this we download a JAR and then use its File location to compute the file for the downloaded POM
             if (quarkusGroupId == null) {
-                quarkusGroupId = "io.quarkus.platform";
+                quarkusGroupId = QUARKUS_GROUP_ID;
             }
             MavenArtifact ma = downloader.downloadArtifact(quarkusGroupId, "quarkus-camel-bom:pom", quarkusVersion);
             if (ma != null && ma.getFile() != null) {
