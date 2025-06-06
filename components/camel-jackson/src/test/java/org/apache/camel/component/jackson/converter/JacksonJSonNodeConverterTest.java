@@ -33,6 +33,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JacksonJSonNodeConverterTest extends CamelTestSupport {
@@ -106,7 +107,7 @@ public class JacksonJSonNodeConverterTest extends CamelTestSupport {
         String text = context.getTypeConverter().convertTo(String.class, exchange, node);
         assertNotNull(text);
 
-        Assertions.assertEquals("{\n  \"message\" : \"Hello Camel\"\n}", text);
+        assertThat(text).isEqualToNormalizingNewlines("{\n  \"message\" : \"Hello Camel\"\n}");
     }
 
     @Test
