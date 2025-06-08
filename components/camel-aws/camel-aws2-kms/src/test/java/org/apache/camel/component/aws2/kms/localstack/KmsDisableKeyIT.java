@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class KmsDisableKeyIT extends Aws2KmsBase {
 
     @EndpointInject

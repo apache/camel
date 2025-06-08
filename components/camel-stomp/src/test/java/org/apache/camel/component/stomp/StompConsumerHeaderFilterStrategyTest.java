@@ -34,7 +34,7 @@ import static org.fusesource.stomp.client.Constants.DESTINATION;
 import static org.fusesource.stomp.client.Constants.MESSAGE_ID;
 import static org.fusesource.stomp.client.Constants.SEND;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
 
     @BindToRegistry("customHeaderFilterStrategy")

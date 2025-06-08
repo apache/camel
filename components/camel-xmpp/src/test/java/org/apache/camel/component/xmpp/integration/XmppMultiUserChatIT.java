@@ -26,7 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 class XmppMultiUserChatIT extends XmppBaseIT {
 

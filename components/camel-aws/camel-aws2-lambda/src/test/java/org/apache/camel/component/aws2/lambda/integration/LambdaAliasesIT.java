@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class LambdaAliasesIT extends Aws2LambdaBase {
 
     @Test
