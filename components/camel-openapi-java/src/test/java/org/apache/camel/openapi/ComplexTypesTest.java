@@ -41,7 +41,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -175,7 +175,7 @@ public class ComplexTypesTest extends CamelTestSupport {
                 .collect(Collectors.joining("\n"));
         is.close();
 
-        assertEquals(expected, json);
+        assertThat(json).isEqualToNormalizingNewlines(expected);
     }
 
     private BeanConfig getBeanConfig(String apiVersion) {
