@@ -95,6 +95,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "responsePayloadStreamingThreshold": target.setResponsePayloadStreamingThreshold(property(camelContext, int.class, value)); return true;
         case "responsetimeout":
         case "responseTimeout": target.setResponseTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
+        case "skipcontrolheaders":
+        case "skipControlHeaders": target.setSkipControlHeaders(property(camelContext, boolean.class, value)); return true;
         case "skiprequestheaders":
         case "skipRequestHeaders": target.setSkipRequestHeaders(property(camelContext, boolean.class, value)); return true;
         case "skipresponseheaders":
@@ -195,6 +197,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "responsePayloadStreamingThreshold": return int.class;
         case "responsetimeout":
         case "responseTimeout": return org.apache.hc.core5.util.Timeout.class;
+        case "skipcontrolheaders":
+        case "skipControlHeaders": return boolean.class;
         case "skiprequestheaders":
         case "skipRequestHeaders": return boolean.class;
         case "skipresponseheaders":
@@ -291,6 +295,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "responsePayloadStreamingThreshold": return target.getResponsePayloadStreamingThreshold();
         case "responsetimeout":
         case "responseTimeout": return target.getResponseTimeout();
+        case "skipcontrolheaders":
+        case "skipControlHeaders": return target.isSkipControlHeaders();
         case "skiprequestheaders":
         case "skipRequestHeaders": return target.isSkipRequestHeaders();
         case "skipresponseheaders":

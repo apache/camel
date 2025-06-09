@@ -162,14 +162,16 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
                                                          + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
     @UriParam(label = "producer",
-              description = "Whether to skip mapping all the Camel headers as HTTP request headers."
-                            + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
-                            + " parsing overhead with many object allocations for the JVM garbage collector.")
+              description = "Whether to skip Camel control headers (CamelHttp... headers) to influence this endpoint. Control headers from previous HTTP components can influence"
+                            +
+                            " how this Camel component behaves such as CamelHttpPath, CamelHttpQuery, etc.")
+    private boolean skipControlHeaders;
+    @UriParam(label = "producer",
+              description = "Whether to skip mapping the Camel headers as HTTP request headers." +
+                            " This is useful when you know that calling the HTTP service should not include any custom headers.")
     private boolean skipRequestHeaders;
     @UriParam(label = "producer",
-              description = "Whether to skip mapping all the HTTP response headers to Camel headers."
-                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
-                            + " with many object allocations for the JVM garbage collector.")
+              description = "Whether to skip mapping all the HTTP response headers to Camel headers.")
     private boolean skipResponseHeaders;
     @UriParam(label = "producer,advanced", defaultValue = "false",
               description = "Whether to the HTTP request should follow redirects."
@@ -691,12 +693,24 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     }
 
     /**
-     * Whether to skip mapping all the Camel headers as HTTP request headers. If there are no data from Camel headers
-     * needed to be included in the HTTP request then this can avoid parsing overhead with many object allocations for
-     * the JVM garbage collector.
+     * Whether to skip mapping the Camel headers as HTTP request headers. This is useful when you know that calling the
+     * HTTP service should not include any custom headers.
      */
     public void setSkipRequestHeaders(boolean skipRequestHeaders) {
         this.skipRequestHeaders = skipRequestHeaders;
+    }
+
+    public boolean isSkipControlHeaders() {
+        return skipControlHeaders;
+    }
+
+    /**
+     * Whether to skip Camel control headers (CamelHttp... headers) to influence this endpoint. Control headers from
+     * previous HTTP components can influence how this Camel component behaves such as CamelHttpPath, CamelHttpQuery,
+     * etc.
+     */
+    public void setSkipControlHeaders(boolean skipControlHeaders) {
+        this.skipControlHeaders = skipControlHeaders;
     }
 
     public boolean isFollowRedirects() {
@@ -715,8 +729,7 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     }
 
     /**
-     * Whether to skip mapping all the HTTP response headers to Camel headers. If there are no data needed from HTTP
-     * headers then this can avoid parsing overhead with many object allocations for the JVM garbage collector.
+     * Whether to skip mapping all the HTTP response headers to Camel headers.
      */
     public void setSkipResponseHeaders(boolean skipResponseHeaders) {
         this.skipResponseHeaders = skipResponseHeaders;
