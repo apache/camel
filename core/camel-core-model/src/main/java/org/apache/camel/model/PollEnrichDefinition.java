@@ -237,8 +237,7 @@ public class PollEnrichDefinition extends ExpressionNode
     }
 
     /**
-     /**
-     * Sets the maximum size used by the {@link org.apache.camel.spi.ConsumerCache} which is used to cache and reuse
+     * /** Sets the maximum size used by the {@link org.apache.camel.spi.ConsumerCache} which is used to cache and reuse
      * consumers when uris are reused.
      *
      * Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic

@@ -96,10 +96,29 @@ public interface HttpsComponentBuilderFactory {
     
         
         /**
+         * Whether to skip Camel control headers (CamelHttp... headers) to
+         * influence this endpoint. Control headers from previous HTTP
+         * components can influence how this Camel component behaves such as
+         * CamelHttpPath, CamelHttpQuery, etc.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param skipControlHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder skipControlHeaders(boolean skipControlHeaders) {
+            doSetProperty("skipControlHeaders", skipControlHeaders);
+            return this;
+        }
+    
+        
+        /**
          * Whether to skip mapping all the Camel headers as HTTP request
-         * headers. If there are no data from Camel headers needed to be
-         * included in the HTTP request then this can avoid parsing overhead
-         * with many object allocations for the JVM garbage collector.
+         * headers. This is useful when you know that calling the HTTP service
+         * should not include any custom headers.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -117,9 +136,7 @@ public interface HttpsComponentBuilderFactory {
         
         /**
          * Whether to skip mapping all the HTTP response headers to Camel
-         * headers. If there are no data needed from HTTP headers then this can
-         * avoid parsing overhead with many object allocations for the JVM
-         * garbage collector.
+         * headers.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -847,6 +864,7 @@ public interface HttpsComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((HttpComponent) component).setLazyStartProducer((boolean) value); return true;
             case "logHttpActivity": ((HttpComponent) component).setLogHttpActivity((boolean) value); return true;
+            case "skipControlHeaders": ((HttpComponent) component).setSkipControlHeaders((boolean) value); return true;
             case "skipRequestHeaders": ((HttpComponent) component).setSkipRequestHeaders((boolean) value); return true;
             case "skipResponseHeaders": ((HttpComponent) component).setSkipResponseHeaders((boolean) value); return true;
             case "cookieStore": ((HttpComponent) component).setCookieStore((org.apache.hc.client5.http.cookie.CookieStore) value); return true;
