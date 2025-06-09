@@ -183,14 +183,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
               description = "Disables the default user agent set by this builder if none has been provided by the user")
     protected boolean defaultUserAgentDisabled;
     @Metadata(label = "producer",
+              description = "Whether to skip Camel control headers (CamelHttp... headers) to influence this endpoint. Control headers from previous HTTP components can influence"
+                            + " how this Camel component behaves such as CamelHttpPath, CamelHttpQuery, etc.")
+    private boolean skipControlHeaders;
+    @Metadata(label = "producer",
               description = "Whether to skip mapping all the Camel headers as HTTP request headers."
-                            + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
-                            + " parsing overhead with many object allocations for the JVM garbage collector.")
+                            + " This is useful when you know that calling the HTTP service should not include any custom headers.")
     protected boolean skipRequestHeaders;
     @Metadata(label = "producer",
-              description = "Whether to skip mapping all the HTTP response headers to Camel headers."
-                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
-                            + " with many object allocations for the JVM garbage collector.")
+              description = "Whether to skip mapping all the HTTP response headers to Camel headers.")
     protected boolean skipResponseHeaders;
     @Metadata(label = "producer,advanced",
               defaultValue = "true",
@@ -442,6 +443,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         endpoint.setConnectTimeout(valConnectTimeout);
         endpoint.setConnectionRequestTimeout(valConnectionRequestTimeout);
         endpoint.setCopyHeaders(copyHeaders);
+        endpoint.setSkipControlHeaders(skipControlHeaders);
         endpoint.setSkipRequestHeaders(skipRequestHeaders);
         endpoint.setSkipResponseHeaders(skipResponseHeaders);
         endpoint.setUserAgent(userAgent);
@@ -1014,6 +1016,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     public void setCopyHeaders(boolean copyHeaders) {
         this.copyHeaders = copyHeaders;
+    }
+
+    public boolean isSkipControlHeaders() {
+        return skipControlHeaders;
+    }
+
+    public void setSkipControlHeaders(boolean skipControlHeaders) {
+        this.skipControlHeaders = skipControlHeaders;
     }
 
     public boolean isSkipRequestHeaders() {

@@ -292,10 +292,45 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to skip mapping all the Camel headers as HTTP request
-         * headers. If there are no data from Camel headers needed to be
-         * included in the HTTP request then this can avoid parsing overhead
-         * with many object allocations for the JVM garbage collector.
+         * Whether to skip Camel control headers (CamelHttp... headers) to
+         * influence this endpoint. Control headers from previous HTTP
+         * components can influence how this Camel component behaves such as
+         * CamelHttpPath, CamelHttpQuery, etc.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param skipControlHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder skipControlHeaders(boolean skipControlHeaders) {
+            doSetProperty("skipControlHeaders", skipControlHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip Camel control headers (CamelHttp... headers) to
+         * influence this endpoint. Control headers from previous HTTP
+         * components can influence how this Camel component behaves such as
+         * CamelHttpPath, CamelHttpQuery, etc.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param skipControlHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder skipControlHeaders(String skipControlHeaders) {
+            doSetProperty("skipControlHeaders", skipControlHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping the Camel headers as HTTP request headers.
+         * This is useful when you know that calling the HTTP service should not
+         * include any custom headers.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -310,10 +345,9 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to skip mapping all the Camel headers as HTTP request
-         * headers. If there are no data from Camel headers needed to be
-         * included in the HTTP request then this can avoid parsing overhead
-         * with many object allocations for the JVM garbage collector.
+         * Whether to skip mapping the Camel headers as HTTP request headers.
+         * This is useful when you know that calling the HTTP service should not
+         * include any custom headers.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -329,9 +363,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Whether to skip mapping all the HTTP response headers to Camel
-         * headers. If there are no data needed from HTTP headers then this can
-         * avoid parsing overhead with many object allocations for the JVM
-         * garbage collector.
+         * headers.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -347,9 +379,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Whether to skip mapping all the HTTP response headers to Camel
-         * headers. If there are no data needed from HTTP headers then this can
-         * avoid parsing overhead with many object allocations for the JVM
-         * garbage collector.
+         * headers.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
