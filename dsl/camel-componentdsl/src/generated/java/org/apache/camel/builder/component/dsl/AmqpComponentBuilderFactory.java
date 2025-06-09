@@ -51,6 +51,22 @@ public interface AmqpComponentBuilderFactory {
     interface AmqpComponentBuilder extends ComponentBuilder<AMQPComponent> {
     
         /**
+         * Remote URL to broker. The URL is used to setup connection factory and
+         * is broker specific (such as ActiveMQ).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param brokerUrl the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder brokerUrl(java.lang.String brokerUrl) {
+            doSetProperty("brokerUrl", brokerUrl);
+            return this;
+        }
+    
+        /**
          * Sets the JMS client ID to use. Note that this value, if specified,
          * must be unique and can only be used by a single JMS connection
          * instance. It is typically only required for durable topic
@@ -2385,6 +2401,7 @@ public interface AmqpComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "brokerUrl": ((AMQPComponent) component).setBrokerUrl((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((AMQPComponent) component).setClientId((java.lang.String) value); return true;
             case "connectionFactory": getOrCreateConfiguration((AMQPComponent) component).setConnectionFactory((jakarta.jms.ConnectionFactory) value); return true;
             case "disableReplyTo": getOrCreateConfiguration((AMQPComponent) component).setDisableReplyTo((boolean) value); return true;

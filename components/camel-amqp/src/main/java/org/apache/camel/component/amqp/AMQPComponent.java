@@ -40,6 +40,8 @@ public class AMQPComponent extends JmsComponent {
     public static final String AMQP_DEFAULT_HOST = "localhost";
     public static final int AMQP_DEFAULT_PORT = 5672;
 
+    @Metadata(description = "Remote URL to broker. The URL is used to setup connection factory and is broker specific (such as ActiveMQ).")
+    private String brokerUrl;
     @Metadata(description = "The host name or IP address of the computer that hosts the AMQP Broker.")
     private String host;
     @Metadata(description = "The port number on which the AMPQ Broker listens.")
@@ -97,7 +99,14 @@ public class AMQPComponent extends JmsComponent {
 
     @Override
     protected void doInit() throws Exception {
-        if (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
+        if (brokerUrl != null) {
+            JmsConnectionFactory connectionFactory
+                    = new JmsConnectionFactory(brokerUrl);
+            if (useTopicPrefix != Boolean.FALSE) {
+                connectionFactory.setTopicPrefix("topic://");
+            }
+            getConfiguration().setConnectionFactory(connectionFactory);
+        } else if (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
                 || useSsl != null) {
             StringBuilder sb = new StringBuilder();
             sb.append(useSsl == Boolean.TRUE ? "amqps://" : "amqp://");
@@ -179,6 +188,14 @@ public class AMQPComponent extends JmsComponent {
                             PropertyConfigurerSupport.property(getCamelContext(), boolean.class, includeAmqpAnnotations));
         }
         super.setProperties(bean, parameters);
+    }
+
+    public String getBrokerUrl() {
+        return brokerUrl;
+    }
+
+    public void setBrokerUrl(String brokerUrl) {
+        this.brokerUrl = brokerUrl;
     }
 
     public String getHost() {
