@@ -30,12 +30,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.qpid.jms.JmsConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Messaging with AMQP protocol using Apache QPid Client.
  */
 @Component("amqp")
 public class AMQPComponent extends JmsComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AMQPComponent.class);
 
     public static final String AMQP_DEFAULT_HOST = "localhost";
     public static final int AMQP_DEFAULT_PORT = 5672;
@@ -129,6 +133,7 @@ public class AMQPComponent extends JmsComponent {
             Set<AMQPConnectionDetails> connectionDetails
                     = getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
             if (connectionDetails.size() == 1) {
+                LOG.warn("Using AMQPConnectionDetails is deprecated");
                 AMQPConnectionDetails details = connectionDetails.iterator().next();
                 JmsConnectionFactory connectionFactory
                         = new JmsConnectionFactory(details.username(), details.password(), details.uri());

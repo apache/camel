@@ -23,25 +23,18 @@ import org.apache.camel.spi.PropertiesComponent;
 import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
 import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
 
-@Deprecated
+@Deprecated(since = "4.9.0")
 public class AMQPConnectionDetails {
 
     public static final String AMQP_HOST = "AMQP_SERVICE_HOST";
-
     public static final String AMQP_PORT = "AMQP_SERVICE_PORT";
-
     public static final String AMQP_USERNAME = "AMQP_SERVICE_USERNAME";
-
     public static final String AMQP_PASSWORD = "AMQP_SERVICE_PASSWORD";
-
     public static final String AMQP_SET_TOPIC_PREFIX = "AMQP_SET_TOPIC_PREFIX";
 
     private final String uri;
-
     private final String username;
-
     private final String password;
-
     private final boolean setTopicPrefix;
 
     public AMQPConnectionDetails(String uri, String username, String password) {

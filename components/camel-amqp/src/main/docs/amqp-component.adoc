@@ -129,55 +129,6 @@ If `host` or `port` options have not been provided and the component is initiali
 options the host on the AMQP JMSConnectionFactory URI is set to 'localhost' if not provided, and the port is set to '5672'
 if not provided.
 
-*Spring AMQP connection details auto-configuration*
-
-[source,java]
-----
-@Bean
-AMQPConnectionDetails amqpConnection() {
-  return new AMQPConnectionDetails("amqp://localhost:5672"); 
-}
- 
-@Bean
-AMQPConnectionDetails securedAmqpConnection() {
-  return new AMQPConnectionDetails("amqp://localhost:5672", "username", "password"); 
-}
-----
-
-Likewise, you can also use CDI producer methods when using Camel-CDI
-
-*AMQP connection details auto-configuration for CDI*
-
-[source,java]
-----
-@Produces
-AMQPConnectionDetails amqpConnection() {
-  return new AMQPConnectionDetails("amqp://localhost:5672");
-}
-----
-
-You can also rely on the xref:properties-component.adoc[Camel properties] to read
-the AMQP connection details. Factory
-method `AMQPConnectionDetails.discoverAMQP()` attempts to read Camel
-properties in a Kubernetes-like convention, just as demonstrated on the
-snippet below:
-
-*AMQP connection details auto-configuration*
-
-[source,java]
-----
-export AMQP_SERVICE_HOST = "mybroker.com"
-export AMQP_SERVICE_PORT = "6666"
-export AMQP_SERVICE_USERNAME = "username"
-export AMQP_SERVICE_PASSWORD = "password"
- 
-...
- 
-@Bean
-AMQPConnectionDetails amqpConnection() {
-  return AMQPConnectionDetails.discoverAMQP(); 
-}
-----
 
 *Enabling AMQP specific options*
 
