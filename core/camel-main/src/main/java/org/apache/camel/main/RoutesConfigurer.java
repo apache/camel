@@ -18,12 +18,13 @@ package org.apache.camel.main;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
@@ -329,6 +330,9 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
         // sort routes according to ordered
         routes.sort(OrderedComparator.get());
 
+        // prepare duplicate route id detector
+        detector.clear();
+
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
             try {
@@ -369,6 +373,17 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             }
+        }
+
+        // check for duplicate route ids
+        var ids = detector.getRouteIds();
+        var dups = ids.stream()
+                .filter(i -> Collections.frequency(ids, i) > 1)
+                .collect(Collectors.toSet());
+        if (!dups.isEmpty()) {
+            String id = String.join(",", dups);
+            throw new FailedToCreateRouteException(
+                    "duplicate route ids detected: " + id + ". Please correct ids to be unique among all your routes.");
         }
     }
 
@@ -537,10 +552,14 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
 
     private static class DuplicateRouteDetector extends ModelLifecycleStrategySupport {
 
-        private final Set<String> ids = new HashSet<>();
+        private final List<String> ids = new ArrayList<>();
 
         void clear() {
             ids.clear();
+        }
+
+        public List<String> getRouteIds() {
+            return ids;
         }
 
         @Override
@@ -550,16 +569,17 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
             if (id == null || id.isEmpty()) {
                 return;
             }
+            // skip inlined
+            if (definition.isInlined()) {
+                return;
+            }
             String prefix = definition.getNodePrefixId();
+
             if (prefix == null) {
                 prefix = "";
             }
             String key = id + prefix;
-            if (!ids.add(key)) {
-                throw new FailedToCreateRouteException(
-                        definition.getId(), definition.toString(),
-                        "duplicate route id detected " + id + ". Please correct ids to be unique among all your routes.");
-            }
+            ids.add(key);
         }
     }
 }
