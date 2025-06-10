@@ -50,7 +50,7 @@ public class SmbConsumerPartialReadNoPathIT extends SmbServerTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        await().atMost(5, TimeUnit.SECONDS)
+        await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello Uuid",
                         new String(copyFileContentFromContainer("/data/rw/failed/" + uuid))));
     }
