@@ -19,6 +19,7 @@ package org.apache.camel.component.smb;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultUuidGenerator;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SmbConsumerPartialReadNoPathIT extends SmbServerTestSupport {
 
@@ -44,15 +46,21 @@ public class SmbConsumerPartialReadNoPathIT extends SmbServerTestSupport {
 
     @Test
     public void testSmbSimpleConsumeNoPath() throws Exception {
+        NotifyBuilder nb = new NotifyBuilder(context).whenDone(1).create();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Uuid");
         mock.expectedHeaderReceived(Exchange.FILE_NAME, uuid);
 
         MockEndpoint.assertIsSatisfied(context);
 
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello Uuid",
-                        new String(copyFileContentFromContainer("/data/rw/failed/" + uuid))));
+        assertTrue(nb.matchesWaitTime());
+
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    byte[] arr = copyFileContentFromContainer("/data/rw/failed/" + uuid);
+                    assertEquals("Hello Uuid", new String(arr));
+                });
     }
 
     @Override
