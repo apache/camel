@@ -20,7 +20,6 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class MainScan3Test {
@@ -33,8 +32,9 @@ public class MainScan3Test {
             main.start();
             fail();
         } catch (FailedToCreateRouteException e) {
-            assertEquals("foo2", e.getRouteId());
-            assertTrue(e.getMessage().contains("because of duplicate route id detected foo2"));
+            assertEquals(
+                    "Failed to create route because of duplicate route ids detected: foo2. Please correct ids to be unique among all your routes.",
+                    e.getMessage());
         }
 
         main.stop();

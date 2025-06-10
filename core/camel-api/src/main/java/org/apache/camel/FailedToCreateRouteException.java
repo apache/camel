@@ -25,6 +25,11 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
 
     private final String routeId;
 
+    public FailedToCreateRouteException(String cause) {
+        super("Failed to create route because of " + cause);
+        this.routeId = null;
+    }
+
     public FailedToCreateRouteException(String routeId, String route, String cause) {
         super("Failed to create route " + routeId + ": " + getRouteMessage(route) + " because of " + cause);
         this.routeId = routeId;
