@@ -22,6 +22,7 @@ import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.context.Scope;
 import org.apache.camel.telemetry.TagConstants;
 
@@ -78,6 +79,7 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     @Override
     public void setError(boolean isError) {
         this.setTag(TagConstants.ERROR, "" + isError);
+        this.otelSpan.setStatus(isError ? StatusCode.ERROR : StatusCode.OK);
     }
 
     private String getEventNameFromFields(Map<String, ?> fields) {

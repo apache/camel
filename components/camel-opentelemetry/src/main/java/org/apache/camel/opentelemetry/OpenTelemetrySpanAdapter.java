@@ -23,6 +23,7 @@ import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.baggage.BaggageBuilder;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
@@ -67,6 +68,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     @Override
     public void setError(boolean error) {
         this.span.setAttribute("error", error);
+        this.span.setStatus(error ? StatusCode.ERROR : StatusCode.OK);
     }
 
     @Override
