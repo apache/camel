@@ -39,14 +39,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 class ExportTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
 
     private File workingDir;
 
     @BeforeEach
     public void setup() throws IOException {
+        LOG.info("Preparing ExportTest");
         Path base = Paths.get("target");
         workingDir = Files.createTempDirectory(base, "camel-export").toFile();
     }
@@ -67,6 +72,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateProject(RuntimeType rt) throws Exception {
+        LOG.info("shouldGenerateProject {}", rt);
         Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
         int exit = command.doCall();
@@ -83,6 +89,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportDifferentVersion(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportDifferentVersion {}", rt);
         // only test for main/spring-boot
         if (rt == RuntimeType.quarkus) {
             return;
@@ -111,6 +118,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateProjectWithBuildProperties(RuntimeType rt) throws Exception {
+        LOG.info("shouldGenerateProjectWithBuildProperties {}", rt);
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar", "target/test-classes/route.yaml");
@@ -128,6 +136,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void testShouldGenerateProjectMultivalue(RuntimeType rt) throws Exception {
+        LOG.info("testShouldGenerateProjectMultivalue {}", rt);
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()), "--dep=foo:bar:1.0,jupiter:rocks:2.0",
@@ -164,6 +173,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportLazyBean(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportLazyBean {}", rt);
         Export command = createCommand(rt, new String[] { "classpath:route.yaml", "file:src/test/resources/LazyFoo.java" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--lazy-bean=true");
         int exit = command.doCall();
@@ -178,6 +188,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportCustomKamelet(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportCustomKamelet {}", rt);
         Export command = createCommand(rt,
                 new String[] { "src/test/resources/route.yaml", "src/test/resources/user-source.kamelet.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
@@ -219,6 +230,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportOfficialKamelet(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportOfficialKamelet {}", rt);
         Export command = createCommand(rt, new String[] { "src/test/resources/counter.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
         int exit = command.doCall();
@@ -256,6 +268,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportSecret(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportSecret {}", rt);
         Export command = createCommand(rt,
                 new String[] { "src/test/resources/k8s-secret.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
@@ -282,6 +295,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportPipeOfficialAndCustomKamelet(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportPipeOfficialAndCustomKamelet {}", rt);
         Export command = createCommand(rt,
                 new String[] { "src/test/resources/mypipe.yaml", "src/test/resources/mytimer.kamelet.yaml" },
                 "--gav=examples:pipe:1.0.0", "--dir=" + workingDir, "--quiet");
@@ -357,6 +371,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateContent(RuntimeType rt) throws Exception {
+        LOG.info("shouldGenerateContent {}", rt);
         // We need a real file as we want to test the generated content
         Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
@@ -400,6 +415,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateJavaContent(RuntimeType rt) throws Exception {
+        LOG.info("shouldGenerateJavaContent {}", rt);
         // We need a real file as we want to test the generated content
         Export command = createCommand(rt, new String[] { "src/test/resources/Hey.java" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
@@ -425,6 +441,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportActiveMQ(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportActiveMQ {}", rt);
         Export command = createCommand(rt, new String[] { "src/test/resources/ActiveMQRoute.java" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
         int exit = command.doCall();
@@ -453,6 +470,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportKafka(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportKafka {}", rt);
         Export command = createCommand(rt, new String[] { "src/test/resources/MyKafkaRepo.java" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
         int exit = command.doCall();
@@ -478,6 +496,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportSecretBean(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportSecretBean {}", rt);
         Export command = createCommand(rt,
                 new String[] { "src/test/resources/k8s-secret-bean.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
@@ -518,6 +537,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportUserProperty(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportUserProperty {}", rt);
         // We need a real file as we want to test the generated content
         Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
@@ -539,6 +559,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportGroovy(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportGroovy {}", rt);
         Export command = createCommand(rt,
                 new String[] { "src/test/resources/groovy-demo.camel.yaml", "src/test/resources/demo.groovy" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
