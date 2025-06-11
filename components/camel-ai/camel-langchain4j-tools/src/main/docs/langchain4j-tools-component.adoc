@@ -74,14 +74,14 @@ Consider, for instance, two consumer routes capable of query an user database by
 .Queries user by ID
 [source, java]
 ----
-from("langchain4j-tool:userInfo?tags=users&description=Query database by user ID")
+from("langchain4j-tools:userInfo?tags=users&description=Query database by user ID")
     .to("sql:SELECT name FROM users WHERE id = :#number");
 ----
 
 .Queries user by SSN
 [source, java]
 ----
-from("langchain4j-tool:userInfo?tags=users&description=Query database by user social security ID")
+from("langchain4j-tools:userInfo?tags=users&description=Query database by user social security ID")
     .to("sql:SELECT name FROM users WHERE ssn = :#ssn");
 ----
 
@@ -99,7 +99,7 @@ Such a route could receive questions in english such as:
 [source, java]
 ----
 from(source)
-    .to("langchain4j-tool:userInfo?tags=users");
+    .to("langchain4j-tools:userInfo?tags=users");
 ----
 
 === Tool Tags
