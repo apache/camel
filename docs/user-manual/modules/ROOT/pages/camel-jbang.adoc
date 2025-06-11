@@ -2300,10 +2300,10 @@ You can use the following Spring Boot annotations:
 
 You can use the following Quarkus annotations:
 
-- `@javax.enterprise.context.ApplicationScoped` or `@javax.inject.Singleton` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@javax.inject.Named` can be used to specify the bean id.
-- `@javax.inject.Inject` to dependency inject a bean on a class field. `@javax.inject.Named` can be used to specify the bean id.
+- `@jakarta.enterprise.context.ApplicationScoped` or `@jakarta.inject.Singleton` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@jakarta.inject.Named` can be used to specify the bean id.
+- `@jakarta.inject.Inject` to dependency inject a bean on a class field. `@jakarta.inject.Named` can be used to specify the bean id.
 - `@org.eclipse.microprofile.config.inject.ConfigProperty` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
-- `@javax.enterprise.inject.Produces` on a method to create a bean by invoking the method. `@javax.inject.Named` can be used to specify the bean id.
+- `@jakarta.enterprise.inject.Produces` on a method to create a bean by invoking the method. `@jakarta.inject.Named` can be used to specify the bean id.
 
 ==== Using beans in Camel XML DSL
 
