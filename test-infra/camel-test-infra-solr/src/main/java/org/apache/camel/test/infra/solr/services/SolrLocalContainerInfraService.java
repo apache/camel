@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.solr.services;
 
 import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.solr.common.SolrProperties;
 import org.slf4j.Logger;
@@ -31,7 +32,8 @@ public class SolrLocalContainerInfraService implements SolrInfraService, Contain
     private final SolrContainer container;
 
     public SolrLocalContainerInfraService() {
-        container = SolrContainer.initContainer(SolrContainer.CONTAINER_NAME);
+        container = SolrContainer.initContainer(SolrContainer.CONTAINER_NAME,
+                ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.time.Duration;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.milvus.common.MilvusProperties;
 import org.slf4j.Logger;
@@ -51,8 +52,19 @@ public class MilvusLocalContainerInfraService implements MilvusInfraService, Con
     }
 
     protected MilvusContainer initContainer(String imageName) {
-        return new MilvusContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("milvusdb/milvus"))
-                .withStartupTimeout(Duration.ofMinutes(3L));
+        class TestInfraMilvusContainer extends MilvusContainer {
+            public TestInfraMilvusContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("milvusdb/milvus"));
+                withStartupTimeout(Duration.ofMinutes(3L));
+
+                if (fixedPort) {
+                    addFixedExposedPort(9091, 9091);
+                    addFixedExposedPort(19530, 19530);
+                }
+            }
+        }
+
+        return new TestInfraMilvusContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

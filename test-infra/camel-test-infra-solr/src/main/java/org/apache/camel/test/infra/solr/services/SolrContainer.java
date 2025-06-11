@@ -48,16 +48,23 @@ public class SolrContainer extends GenericContainer<SolrContainer> {
         super(DockerImageName.parse(imageName));
     }
 
-    public static SolrContainer initContainer(String networkAlias) {
-        return new SolrContainer()
+    public static SolrContainer initContainer(String networkAlias, boolean fixedPort) {
+        SolrContainer solrContainer = new SolrContainer()
                 .withNetworkAliases(networkAlias)
                 .withEnv("SOLR_OPTS", "-Dsolr.environment=test,label=camel-solr-test-infra,color=sandybrown")
                 .withEnv("GC_LOG_OPTS", "-verbose:")
                 .withAccessToHost(true)
                 .withLogConsumer(new Slf4jLogConsumer(LOG).withPrefix(CONTAINER_NAME))
-                .withExposedPorts(SolrProperties.DEFAULT_PORT)
                 .withCommand(SOLR_CONTAINER_COMMANDS)
                 .waitingFor(Wait.forHttp("/solr/" + SOLR_DFT_COLLECTION + "/admin/ping?docker-ping"));
+
+        if (fixedPort) {
+            solrContainer.addFixedExposedPort(SolrProperties.DEFAULT_PORT, SolrProperties.DEFAULT_PORT);
+        } else {
+            solrContainer.withExposedPorts(SolrProperties.DEFAULT_PORT);
+        }
+
+        return solrContainer;
     }
 
 }

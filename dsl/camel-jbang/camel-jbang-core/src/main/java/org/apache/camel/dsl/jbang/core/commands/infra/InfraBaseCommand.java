@@ -60,6 +60,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
         jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
         jsonMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
         jsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+        jsonMapper.configure(MapperFeature.REQUIRE_HANDLERS_FOR_JAVA8_OPTIONALS, false);
     }
 
     protected List<TestInfraService> getMetadata() throws IOException {

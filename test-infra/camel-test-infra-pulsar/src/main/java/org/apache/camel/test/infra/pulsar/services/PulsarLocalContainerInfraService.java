@@ -20,6 +20,7 @@ import java.time.Duration;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.pulsar.common.PulsarProperties;
 import org.slf4j.Logger;
@@ -49,8 +50,21 @@ public class PulsarLocalContainerInfraService implements PulsarInfraService, Con
     }
 
     protected PulsarContainer initContainer(String imageName) {
-        return new PulsarContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("apachepulsar/pulsar"))
-                .withStartupTimeout(Duration.ofMinutes(3L));
+        class TestInfraPulsarContainer extends PulsarContainer {
+            public TestInfraPulsarContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName)
+                        .asCompatibleSubstituteFor("apachepulsar/pulsar"));
+
+                withStartupTimeout(Duration.ofMinutes(3L));
+
+                if (fixedPort) {
+                    addFixedExposedPort(6650, 6650);
+                    addFixedExposedPort(8085, 8080);
+                }
+            }
+        }
+
+        return new TestInfraPulsarContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

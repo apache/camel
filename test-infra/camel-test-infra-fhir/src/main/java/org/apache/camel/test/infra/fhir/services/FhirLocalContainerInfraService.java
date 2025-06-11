@@ -20,6 +20,7 @@ import java.time.Duration;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.fhir.common.FhirProperties;
 import org.slf4j.Logger;
@@ -53,16 +54,26 @@ public class FhirLocalContainerInfraService implements FhirInfraService, Contain
     }
 
     protected GenericContainer initContainer(String imageName, String containerName) {
-        return new GenericContainer(imageName)
-                .withNetworkAliases(containerName)
-                .withExposedPorts(FhirProperties.DEFAULT_SERVICE_PORT)
-                .withStartupTimeout(Duration.ofMinutes(3L))
-                .withStartupAttempts(5)
-                .withEnv("hapi.fhir.allow_multiple_delete", "true")
-                .withEnv("hapi.fhir.fhir_version", "R4")
-                .withEnv("hapi.fhir.reuse_cached_search_results_millis", "-1")
-                .waitingFor(Wait.forListeningPort())
-                .waitingFor(Wait.forHttp("/fhir/metadata").withStartupTimeout(Duration.ofMinutes(3L)));
+        class FhirContainer extends GenericContainer<FhirContainer> {
+            public FhirContainer(boolean fixedPort) {
+                super(imageName);
+                withNetworkAliases(containerName);
+                if (fixedPort) {
+                    addFixedExposedPort(FhirProperties.DEFAULT_SERVICE_PORT, FhirProperties.DEFAULT_SERVICE_PORT);
+                } else {
+                    withExposedPorts(FhirProperties.DEFAULT_SERVICE_PORT);
+                }
+                withStartupTimeout(Duration.ofMinutes(3L));
+                withStartupAttempts(5);
+                withEnv("hapi.fhir.allow_multiple_delete", "true");
+                withEnv("hapi.fhir.fhir_version", "R4");
+                withEnv("hapi.fhir.reuse_cached_search_results_millis", "-1");
+                waitingFor(Wait.forListeningPort());
+                waitingFor(Wait.forHttp("/fhir/metadata").withStartupTimeout(Duration.ofMinutes(3L)));
+            }
+        }
+
+        return new FhirContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

@@ -34,11 +34,17 @@ public class AzuriteContainer extends GenericContainer<AzuriteContainer> {
                 AzureProperties.AZURE_CONTAINER);
     }
 
-    public AzuriteContainer(String containerName) {
+    public AzuriteContainer(String containerName, boolean fixedPort) {
         super(containerName);
 
-        withExposedPorts(AzureServices.BLOB_SERVICE, AzureServices.QUEUE_SERVICE)
-                .waitingFor(Wait.forListeningPort());
+        if (fixedPort) {
+            addFixedExposedPort(AzureServices.BLOB_SERVICE, AzureServices.BLOB_SERVICE);
+            addFixedExposedPort(AzureServices.QUEUE_SERVICE, AzureServices.QUEUE_SERVICE);
+        } else {
+            withExposedPorts(AzureServices.BLOB_SERVICE, AzureServices.QUEUE_SERVICE);
+        }
+
+        waitingFor(Wait.forListeningPort());
     }
 
     public AzureCredentialsHolder azureCredentials() {

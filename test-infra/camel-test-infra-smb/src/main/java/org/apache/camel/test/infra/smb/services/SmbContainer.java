@@ -27,13 +27,18 @@ public class SmbContainer extends GenericContainer<SmbContainer> {
     public static final String DEFAULT_USER = "camel";
     public static final String DEFAULT_PASSWORD = "camelTester123";
 
-    public SmbContainer() {
+    public SmbContainer(boolean fixedPort) {
         super(new ImageFromDockerfile("localhost/samba:camel", false)
                 .withFileFromClasspath(".",
                         "org/apache/camel/test/infra/smb/services/"));
 
-        super.withExposedPorts(SMB_PORT_DEFAULT)
-                .waitingFor(Wait.forListeningPort());
+        if (fixedPort) {
+            addFixedExposedPort(SMB_PORT_DEFAULT, SMB_PORT_DEFAULT);
+        } else {
+            super.withExposedPorts(SMB_PORT_DEFAULT);
+        }
+
+        waitingFor(Wait.forListeningPort());
     }
 
     public String getUser() {

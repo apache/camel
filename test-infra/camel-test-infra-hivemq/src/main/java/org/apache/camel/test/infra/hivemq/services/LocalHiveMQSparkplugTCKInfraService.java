@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.hivemq.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.hivemq.common.HiveMQProperties;
 import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.images.builder.ImageFromDockerfile;
@@ -43,9 +44,19 @@ public class LocalHiveMQSparkplugTCKInfraService extends AbstractLocalHiveMQServ
                 = new ImageFromDockerfile(imageName, false).withFileFromClasspath(".", dockerfileResourcePath);
         String newImageName = newImage.get();
 
-        HiveMQContainer newContainer
-                = new HiveMQContainer(DockerImageName.parse(newImageName).asCompatibleSubstituteFor("hivemq/hivemq-ce"));
+        class TestInfraHiveMQContainer extends HiveMQContainer {
+            public TestInfraHiveMQContainer(boolean fixedPort) {
+                super(DockerImageName.parse(newImageName)
+                        .asCompatibleSubstituteFor("hivemq/hivemq-ce"));
 
-        return newContainer;
+                if (fixedPort) {
+                    addFixedExposedPort(1883, 1883);
+                } else {
+                    addExposedPort(1883);
+                }
+            }
+        }
+
+        return new TestInfraHiveMQContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 }

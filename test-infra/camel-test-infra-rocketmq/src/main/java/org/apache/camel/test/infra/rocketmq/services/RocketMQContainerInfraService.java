@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.rocketmq.common.RocketMQProperties;
 import org.awaitility.Awaitility;
@@ -49,7 +50,8 @@ public class RocketMQContainerInfraService implements RocketMQInfraService, Cont
 
         nameserverContainer = new RocketMQNameserverContainer(network);
 
-        brokerContainer1 = new RocketMQBrokerContainer(network, "broker1");
+        brokerContainer1
+                = new RocketMQBrokerContainer(network, "broker1", ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

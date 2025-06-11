@@ -43,6 +43,16 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
                 .waitingFor(Wait.forListeningPort());
     }
 
+    public static ArtemisContainer withFixedPort() {
+        ArtemisContainer container = new ArtemisContainer();
+        container.addFixedExposedPort(DEFAULT_MQTT_PORT, DEFAULT_MQTT_PORT);
+        container.addFixedExposedPort(DEFAULT_AMQP_PORT, DEFAULT_AMQP_PORT);
+        container.addFixedExposedPort(DEFAULT_ADMIN_PORT, DEFAULT_ADMIN_PORT);
+        container.addFixedExposedPort(DEFAULT_ACCEPTOR_PORT, DEFAULT_ACCEPTOR_PORT);
+
+        return container;
+    }
+
     /**
      * Gets the port number used for exchanging messages using the AMQP protocol
      *

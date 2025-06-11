@@ -22,6 +22,7 @@ import java.time.Duration;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.weaviate.common.WeaviateProperties;
 import org.slf4j.Logger;
@@ -52,8 +53,21 @@ public class WeaviateLocalContainerInfraService implements WeaviateInfraService,
     }
 
     protected WeaviateContainer initContainer(String imageName) {
-        return new WeaviateContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("semitechnologies/weaviate"))
-                .withStartupTimeout(Duration.ofMinutes(3L));
+        class TestInfraWeaviateContainer extends WeaviateContainer {
+            public TestInfraWeaviateContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName)
+                        .asCompatibleSubstituteFor("semitechnologies/weaviate"));
+
+                withStartupTimeout(Duration.ofMinutes(3L));
+
+                if (fixedPort) {
+                    addFixedExposedPort(8087, 8080);
+                    addFixedExposedPort(50051, 50051);
+                }
+            }
+        }
+
+        return new TestInfraWeaviateContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

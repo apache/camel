@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.qdrant.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.qdrant.common.QdrantProperties;
 import org.slf4j.Logger;
@@ -42,11 +43,27 @@ public class QdrantLocalContainerInfraService implements QdrantInfraService, Con
     }
 
     public QdrantLocalContainerInfraService(String imageName) {
-        this(new QdrantContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("qdrant/qdrant")));
+        this.container = initContainer(imageName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     public QdrantLocalContainerInfraService(QdrantContainer container) {
         this.container = container;
+    }
+
+    private QdrantContainer initContainer(String imageName, boolean fixedPort) {
+        class TestInfraQdrantContainer extends QdrantContainer {
+            public TestInfraQdrantContainer() {
+                super(DockerImageName.parse(imageName)
+                        .asCompatibleSubstituteFor("qdrant/qdrant"));
+
+                if (fixedPort) {
+                    addFixedExposedPort(6333, 6333);
+                    addFixedExposedPort(6334, 6334);
+                }
+            }
+        }
+
+        return new TestInfraQdrantContainer();
     }
 
     @Override

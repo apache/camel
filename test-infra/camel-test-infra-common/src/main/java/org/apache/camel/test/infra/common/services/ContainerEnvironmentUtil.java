@@ -56,4 +56,14 @@ public final class ContainerEnvironmentUtil {
         int startupAttempts = Integer.valueOf(System.getProperty(property, String.valueOf(defaultValue)));
         container.setStartupAttempts(startupAttempts);
     }
+
+    public static boolean isFixedPort(Class cls) {
+        for (Class<?> i : cls.getInterfaces()) {
+            if (i.getName().contains("InfraService")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

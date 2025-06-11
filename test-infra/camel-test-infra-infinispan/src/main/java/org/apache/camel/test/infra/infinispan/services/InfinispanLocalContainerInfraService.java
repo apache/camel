@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 import org.slf4j.Logger;
@@ -63,21 +64,29 @@ public class InfinispanLocalContainerInfraService implements InfinispanInfraServ
         final Logger containerLog = LoggerFactory.getLogger("container." + containerName);
         final Consumer<OutputFrame> logConsumer = new Slf4jLogConsumer(containerLog);
 
-        final GenericContainer c = new GenericContainer<>(imageName)
-                .withNetworkAliases(containerName)
-                .withEnv("USER", DEFAULT_USERNAME)
-                .withEnv("PASS", DEFAULT_PASSWORD)
-                .withLogConsumer(logConsumer)
-                .withClasspathResourceMapping("infinispan.xml", "/user-config/infinispan.xml", BindMode.READ_ONLY)
-                .withCommand("-c", "/user-config/infinispan.xml")
-                .waitingFor(Wait.forLogMessage(".*Infinispan.*Server.*started.*", 1));
-        if (isNetworkHost) {
-            c.withNetworkMode("host");
-        } else {
-            c.withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
-                    .waitingFor(Wait.forListeningPort());
+        class InfinispanContainer extends GenericContainer<InfinispanContainer> {
+            public InfinispanContainer(boolean fixedPort) {
+                super(imageName);
+                withNetworkAliases(containerName)
+                        .withEnv("USER", DEFAULT_USERNAME)
+                        .withEnv("PASS", DEFAULT_PASSWORD)
+                        .withLogConsumer(logConsumer)
+                        .withClasspathResourceMapping("infinispan.xml", "/user-config/infinispan.xml", BindMode.READ_ONLY)
+                        .withCommand("-c", "/user-config/infinispan.xml")
+                        .waitingFor(Wait.forLogMessage(".*Infinispan.*Server.*started.*", 1));
+
+                if (isNetworkHost) {
+                    withNetworkMode("host");
+                } else if (fixedPort) {
+                    addFixedExposedPort(InfinispanProperties.DEFAULT_SERVICE_PORT, InfinispanProperties.DEFAULT_SERVICE_PORT);
+                } else {
+                    withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
+                            .waitingFor(Wait.forListeningPort());
+                }
+            }
         }
-        return c;
+
+        return new InfinispanContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

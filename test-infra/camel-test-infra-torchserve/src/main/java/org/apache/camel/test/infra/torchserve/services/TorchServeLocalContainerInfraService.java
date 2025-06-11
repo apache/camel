@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.torchserve.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.torchserve.common.TorchServeProperties;
 import org.slf4j.Logger;
@@ -52,16 +53,30 @@ public class TorchServeLocalContainerInfraService implements TorchServeInfraServ
 
     @SuppressWarnings("resource")
     protected GenericContainer<?> initContainer(String imageName) {
-        return new GenericContainer<>(DockerImageName.parse(imageName))
-                .withExposedPorts(INFERENCE_PORT, MANAGEMENT_PORT, METRICS_PORT)
-                .withCopyFileToContainer(
+        class TorchServeContainer extends GenericContainer<TorchServeContainer> {
+            public TorchServeContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName));
+
+                withCopyFileToContainer(
                         MountableFile.forClasspathResource("config.properties"),
                         "/home/model-server/config.properties")
-                .withCopyFileToContainer(
-                        MountableFile.forClasspathResource("models/squeezenet1_1.mar"),
-                        "/home/model-server/model-store/squeezenet1_1.mar")
-                .waitingFor(Wait.forListeningPorts(INFERENCE_PORT, MANAGEMENT_PORT, METRICS_PORT))
-                .withCommand(CONTAINER_COMMAND);
+                        .withCopyFileToContainer(
+                                MountableFile.forClasspathResource("models/squeezenet1_1.mar"),
+                                "/home/model-server/model-store/squeezenet1_1.mar")
+                        .waitingFor(Wait.forListeningPorts(INFERENCE_PORT, MANAGEMENT_PORT, METRICS_PORT))
+                        .withCommand(CONTAINER_COMMAND);
+
+                if (fixedPort) {
+                    addFixedExposedPort(INFERENCE_PORT, INFERENCE_PORT);
+                    addFixedExposedPort(MANAGEMENT_PORT, MANAGEMENT_PORT);
+                    addFixedExposedPort(METRICS_PORT, METRICS_PORT);
+                } else {
+                    withExposedPorts(INFERENCE_PORT, MANAGEMENT_PORT, METRICS_PORT);
+                }
+            }
+        }
+
+        return new TorchServeContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

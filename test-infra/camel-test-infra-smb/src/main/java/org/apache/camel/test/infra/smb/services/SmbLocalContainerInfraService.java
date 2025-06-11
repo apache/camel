@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.smb.services;
 
 import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ import org.slf4j.LoggerFactory;
               serviceAlias = "smb")
 public class SmbLocalContainerInfraService implements SmbInfraService {
     protected static final Logger LOG = LoggerFactory.getLogger(SmbLocalContainerInfraService.class);
-    protected final SmbContainer container = new SmbContainer();
+    protected final SmbContainer container = new SmbContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
 
     public SmbLocalContainerInfraService() {
     }

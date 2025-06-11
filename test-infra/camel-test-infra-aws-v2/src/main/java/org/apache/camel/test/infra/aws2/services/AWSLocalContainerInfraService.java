@@ -49,7 +49,8 @@ public abstract class AWSLocalContainerInfraService implements AWSInfraService, 
     }
 
     protected AWSContainer initContainer(String imageName, Service... services) {
-        return new AWSContainer(imageName, services);
+        boolean fixedPort = !this.getClass().getName().contains("TestService");
+        return new AWSContainer(imageName, fixedPort, services);
     }
 
     private String getAmazonHost() {

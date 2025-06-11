@@ -36,6 +36,7 @@ import java.util.function.Consumer;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.hashicorp.vault.common.HashicorpVaultProperties;
 import org.slf4j.Logger;
@@ -76,13 +77,25 @@ public class HashicorpVaultLocalContainerInfraService
         final Logger containerLog = LoggerFactory.getLogger("container." + containerName);
         final Consumer<OutputFrame> logConsumer = new Slf4jLogConsumer(containerLog);
 
-        return new GenericContainer<>(imageName)
-                .withNetworkAliases(containerName)
-                .withEnv("VAULT_DEV_ROOT_TOKEN_ID", DEFAULT_TOKEN)
-                .withLogConsumer(logConsumer)
-                .withExposedPorts(HashicorpVaultProperties.DEFAULT_SERVICE_PORT)
-                .waitingFor(Wait.forListeningPort())
-                .waitingFor(Wait.forLogMessage(".*Development.*mode.*should.*", 1));
+        class HashicorpVaultContainer extends GenericContainer<HashicorpVaultContainer> {
+            public HashicorpVaultContainer(boolean fixedPort) {
+                new GenericContainer<>(imageName)
+                        .withNetworkAliases(containerName)
+                        .withEnv("VAULT_DEV_ROOT_TOKEN_ID", DEFAULT_TOKEN)
+                        .withLogConsumer(logConsumer)
+                        .waitingFor(Wait.forListeningPort())
+                        .waitingFor(Wait.forLogMessage(".*Development.*mode.*should.*", 1));
+
+                if (fixedPort) {
+                    addFixedExposedPort(HashicorpVaultProperties.DEFAULT_SERVICE_PORT,
+                            HashicorpVaultProperties.DEFAULT_SERVICE_PORT);
+                } else {
+                    withExposedPorts(HashicorpVaultProperties.DEFAULT_SERVICE_PORT);
+                }
+            }
+        }
+
+        return new HashicorpVaultContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

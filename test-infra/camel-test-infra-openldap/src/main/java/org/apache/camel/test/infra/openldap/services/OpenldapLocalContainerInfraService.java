@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.openldap.services;
 
 import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.openldap.common.OpenldapProperties;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class OpenldapLocalContainerInfraService implements OpenldapInfraService,
     private final OpenLdapContainer container;
 
     public OpenldapLocalContainerInfraService() {
-        container = new OpenLdapContainer();
+        container = new OpenLdapContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

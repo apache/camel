@@ -51,11 +51,11 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
         super(imageName);
     }
 
-    public AWSContainer(String imageName, Service... services) {
+    public AWSContainer(String imageName, boolean fixedPort, Service... services) {
         super(imageName);
 
         setupServices(services);
-        setupContainer();
+        setupContainer(fixedPort);
     }
 
     @Deprecated
@@ -63,7 +63,7 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
         super(imageName);
 
         setupServices(serviceList);
-        setupContainer();
+        setupContainer(false);
     }
 
     public void setupServices(Service... services) {
@@ -80,9 +80,14 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
         withEnv("SERVICE", serviceList);
     }
 
-    protected void setupContainer() {
-        withExposedPorts(SERVICE_PORT)
-                .waitingFor(Wait.forLogMessage(".*Ready\\.\n", 1));
+    protected void setupContainer(boolean fixedPort) {
+        if (fixedPort) {
+            addFixedExposedPort(SERVICE_PORT, SERVICE_PORT);
+        } else {
+            withExposedPorts(SERVICE_PORT);
+        }
+
+        waitingFor(Wait.forLogMessage(".*Ready\\.\n", 1));
     }
 
     public AwsCredentialsProvider getCredentialsProvider() {

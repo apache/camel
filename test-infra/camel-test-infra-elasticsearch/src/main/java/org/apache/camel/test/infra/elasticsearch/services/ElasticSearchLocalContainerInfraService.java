@@ -65,18 +65,27 @@ public class ElasticSearchLocalContainerInfraService
     }
 
     protected ElasticsearchContainer initContainer(String imageName) {
-        DockerImageName customImage = DockerImageName.parse(imageName)
-                .asCompatibleSubstituteFor("docker.elastic.co/elasticsearch/elasticsearch");
-        ElasticsearchContainer elasticsearchContainer = new ElasticsearchContainer(customImage)
-                .withPassword(PASSWORD);
-        // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
-        // on the build pipeline
-        elasticsearchContainer.setWaitStrategy(
-                new LogMessageWaitStrategy()
-                        .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
-                        .withStartupTimeout(Duration.ofSeconds(90)));
-        return elasticsearchContainer;
+        class TestInfraElasticsearchContainer extends ElasticsearchContainer {
+            public TestInfraElasticsearchContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName)
+                        .asCompatibleSubstituteFor("docker.elastic.co/elasticsearch/elasticsearch"));
 
+                withPassword(PASSWORD);
+
+                if (fixedPort) {
+                    addFixedExposedPort(ELASTIC_SEARCH_PORT, ELASTIC_SEARCH_PORT);
+                } else {
+                    withExposedPorts(ELASTIC_SEARCH_PORT);
+                }
+
+                setWaitStrategy(
+                        new LogMessageWaitStrategy()
+                                .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
+                                .withStartupTimeout(Duration.ofSeconds(90)));
+            }
+        }
+
+        return new TestInfraElasticsearchContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

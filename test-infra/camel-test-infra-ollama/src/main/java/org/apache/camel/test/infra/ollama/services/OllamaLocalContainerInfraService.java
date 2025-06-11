@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.ollama.commons.OllamaProperties;
 import org.slf4j.Logger;
@@ -59,9 +60,18 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
     }
 
     protected OllamaContainer initContainer() {
-        return new OllamaContainer(
-                DockerImageName.parse(CONTAINER_NAME)
+        class TestInfraOllamaContainer extends OllamaContainer {
+            public TestInfraOllamaContainer(boolean fixedPort) {
+                super(DockerImageName.parse(CONTAINER_NAME)
                         .asCompatibleSubstituteFor("ollama/ollama"));
+
+                if (fixedPort) {
+                    addFixedExposedPort(11434, 11434);
+                }
+            }
+        }
+
+        return new TestInfraOllamaContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

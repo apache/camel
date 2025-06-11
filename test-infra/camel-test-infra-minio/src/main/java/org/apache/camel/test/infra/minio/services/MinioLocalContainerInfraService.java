@@ -20,6 +20,7 @@ import java.time.Duration;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.minio.common.MinioProperties;
 import org.slf4j.Logger;
@@ -58,16 +59,28 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
     }
 
     protected GenericContainer initContainer(String imageName, String containerName) {
-        return new GenericContainer(imageName)
-                .withNetworkAliases(containerName)
-                .withEnv("MINIO_ACCESS_KEY", accessKey())
-                .withEnv("MINIO_SECRET_KEY", secretKey())
-                .withCommand("server /data")
-                .withExposedPorts(BROKER_PORT)
-                .waitingFor(new HttpWaitStrategy()
-                        .forPath("/minio/health/live")
-                        .forPort(BROKER_PORT)
-                        .withStartupTimeout(Duration.ofSeconds(10)));
+
+        class MinioContainer extends GenericContainer<MinioContainer> {
+            public MinioContainer(boolean fixedPort) {
+                super(imageName);
+                withNetworkAliases(containerName)
+                        .withEnv("MINIO_ACCESS_KEY", accessKey())
+                        .withEnv("MINIO_SECRET_KEY", secretKey())
+                        .withCommand("server /data")
+                        .waitingFor(new HttpWaitStrategy()
+                                .forPath("/minio/health/live")
+                                .forPort(BROKER_PORT)
+                                .withStartupTimeout(Duration.ofSeconds(10)));
+
+                if (fixedPort) {
+                    addFixedExposedPort(BROKER_PORT, BROKER_PORT);
+                } else {
+                    withExposedPorts(BROKER_PORT);
+                }
+            }
+        }
+
+        return new MinioContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override
