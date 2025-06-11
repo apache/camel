@@ -37,13 +37,11 @@
         <componentName>GooglePubSub</componentName>
         <componentPackage>org.apache.camel.component.google.pubsub</componentPackage>
 
-        <!-- The emulator is only available for x86 -->
+        <!-- The emulator is not available for these -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipTests.ppc64le>true</skipTests.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
         <skipTests.s390x>true</skipTests.s390x>
-        <skipITs.aarch64>true</skipITs.aarch64>
-        <skipTests.aarch64>true</skipTests.aarch64>
     </properties>
 
     <dependencies>
