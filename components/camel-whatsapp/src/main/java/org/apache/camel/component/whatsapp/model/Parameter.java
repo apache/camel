@@ -28,6 +28,7 @@ public class Parameter {
     private MediaMessage image;
     private MediaMessage document;
     private MediaMessage video;
+    private String payload;
 
     public Parameter() {
     }
@@ -86,6 +87,14 @@ public class Parameter {
 
     public void setVideo(MediaMessage video) {
         this.video = video;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
     }
 
 }
