@@ -26,8 +26,7 @@ public enum PQCSignatureAlgorithms {
 
     // Experimental and non-standardized
     FALCON("FALCON", "BCPQC"),
-    PICNIC("PICNIC", "BCPQC"),
-    RAINBOW("RAINBOW", "BCPQC");
+    PICNIC("PICNIC", "BCPQC");
 
     private final String algorithm;
     private final String bcProvider;
