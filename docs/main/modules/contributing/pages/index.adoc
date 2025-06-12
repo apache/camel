@@ -185,9 +185,23 @@ Then you can access the service by using the methods and properties provided by 
 
 If you need to implement a new test-infra service, check the https://github.com/apache/camel/tree/main/test-infra#readme[readme on the test-infra module] for additional details.
 
-== Verifying the coding style
+== Formatting the code
 
 Apache Camel source code uses a coding style/format that can be verified for compliance using the "checkstyle" plugin.
+
+You could run the following commands to format the code
+[source,bash]
+----
+mvn formatter:format
+----
+
+And to sort the imports, you can run:
+[source,bash]
+----
+mvn impsort:sort
+----
+
+== Verifying the coding style
 
 To enable source style checking, build Camel with the `-Psourcecheck` profile:
 
