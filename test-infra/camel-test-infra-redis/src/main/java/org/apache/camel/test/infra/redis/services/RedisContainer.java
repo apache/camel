@@ -38,7 +38,20 @@ public class RedisContainer extends GenericContainer<RedisContainer> {
         super(DockerImageName.parse(imageName));
     }
 
-    public static RedisContainer initContainer(String imageName, String networkAlias) {
+    public static RedisContainer initContainer(String imageName, String networkAlias, boolean fixedPort) {
+        class TestInfraRedisContainer extends RedisContainer {
+            public TestInfraRedisContainer() {
+                super(imageName);
+                waitingFor(Wait.forListeningPort());
+
+                if (fixedPort) {
+                    addFixedExposedPort(RedisProperties.DEFAULT_PORT, RedisProperties.DEFAULT_PORT);
+                } else {
+                    withNetworkAliases(networkAlias)
+                            .withExposedPorts(RedisProperties.DEFAULT_PORT);
+                }
+            }
+        }
         return new RedisContainer(imageName)
                 .withNetworkAliases(networkAlias)
                 .withExposedPorts(RedisProperties.DEFAULT_PORT)

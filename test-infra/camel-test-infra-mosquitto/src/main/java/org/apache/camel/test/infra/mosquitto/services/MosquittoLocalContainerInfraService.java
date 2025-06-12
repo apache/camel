@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.mosquitto.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.mosquitto.common.MosquittoProperties;
 import org.slf4j.Logger;
@@ -52,7 +53,11 @@ public class MosquittoLocalContainerInfraService implements MosquittoInfraServic
     }
 
     public MosquittoLocalContainerInfraService(String imageName) {
-        container = initContainer(imageName, null);
+        if (ContainerEnvironmentUtil.isFixedPort(this.getClass())) {
+            container = initContainer(imageName, CONTAINER_PORT);
+        } else {
+            container = initContainer(imageName, null);
+        }
     }
 
     public MosquittoLocalContainerInfraService(GenericContainer container) {

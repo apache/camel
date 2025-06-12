@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
@@ -46,9 +47,18 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
     }
 
     protected KafkaContainer initContainer() {
-        return new KafkaContainer(
-                DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
+        class TestInfraKafkaContainer extends KafkaContainer {
+            public TestInfraKafkaContainer(boolean fixedPort) {
+                super(DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
                         .asCompatibleSubstituteFor("apache/kafka"));
+
+                if (fixedPort) {
+                    addFixedExposedPort(9092, 9092);
+                }
+            }
+        }
+
+        return new TestInfraKafkaContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     public String getBootstrapServers() {

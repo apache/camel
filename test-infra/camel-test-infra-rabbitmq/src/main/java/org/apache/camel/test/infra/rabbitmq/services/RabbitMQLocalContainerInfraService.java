@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.rabbitmq.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.rabbitmq.common.RabbitMQProperties;
 import org.slf4j.Logger;
@@ -48,7 +49,20 @@ public class RabbitMQLocalContainerInfraService implements RabbitMQInfraService,
     }
 
     protected RabbitMQContainer initContainer(String imageName) {
-        return new RabbitMQContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("rabbitmq"));
+        class TestInfraRabbitMQContainer extends RabbitMQContainer {
+            public TestInfraRabbitMQContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("rabbitmq"));
+
+                if (fixedPort) {
+                    addFixedExposedPort(5672, 5672);
+                    addFixedExposedPort(5671, 5671);
+                    addFixedExposedPort(15671, 15671);
+                    addFixedExposedPort(15672, 15672);
+                }
+            }
+        }
+
+        return new TestInfraRabbitMQContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

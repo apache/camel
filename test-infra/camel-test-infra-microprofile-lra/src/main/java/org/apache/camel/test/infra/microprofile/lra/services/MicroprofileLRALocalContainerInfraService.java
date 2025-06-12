@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.microprofile.lra.services;
 import com.github.dockerjava.api.model.Network;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.microprofile.lra.common.MicroprofileLRAProperties;
 import org.slf4j.Logger;
@@ -56,11 +57,23 @@ public class MicroprofileLRALocalContainerInfraService
     }
 
     public GenericContainer initContainer(String imageName, String networkAlias) {
-        return new GenericContainer<>(DockerImageName.parse(imageName))
-                .withNetworkAliases(networkAlias)
-                .withExposedPorts(MicroprofileLRAProperties.DEFAULT_PORT)
-                .waitingFor(Wait.forListeningPort())
-                .waitingFor(Wait.forLogMessage(".*lra-coordinator-quarkus.*Listening on.*", 1));
+        class MicroprofileLRAContainer extends GenericContainer<MicroprofileLRAContainer> {
+            public MicroprofileLRAContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName));
+
+                withNetworkAliases(networkAlias)
+                        .waitingFor(Wait.forListeningPort())
+                        .waitingFor(Wait.forLogMessage(".*lra-coordinator-quarkus.*Listening on.*", 1));
+
+                if (fixedPort) {
+                    addFixedExposedPort(MicroprofileLRAProperties.DEFAULT_PORT, MicroprofileLRAProperties.DEFAULT_PORT);
+                } else {
+                    withExposedPorts(MicroprofileLRAProperties.DEFAULT_PORT);
+                }
+            }
+        }
+
+        return new MicroprofileLRAContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

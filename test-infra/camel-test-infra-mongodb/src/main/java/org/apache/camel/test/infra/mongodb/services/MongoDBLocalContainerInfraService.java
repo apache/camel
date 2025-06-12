@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.mongodb.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
 import org.slf4j.Logger;
@@ -47,11 +48,31 @@ public class MongoDBLocalContainerInfraService implements MongoDBInfraService, C
     }
 
     protected MongoDBContainer initContainer(String imageName) {
+
+        class TestInfraMongoDBContainer extends MongoDBContainer {
+            public TestInfraMongoDBContainer(boolean fixedPort) {
+                super();
+                addPort(fixedPort);
+            }
+
+            public TestInfraMongoDBContainer(boolean fixedPort, String imageName) {
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("mongo"));
+                addPort(fixedPort);
+            }
+
+            private void addPort(boolean fixedPort) {
+                if (fixedPort) {
+                    addFixedExposedPort(27017, 27017);
+                } else {
+                    addExposedPort(27017);
+                }
+            }
+        }
+
         if (imageName == null || imageName.isEmpty()) {
-            return new MongoDBContainer();
+            return new TestInfraMongoDBContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
         } else {
-            return new MongoDBContainer(
-                    DockerImageName.parse(imageName).asCompatibleSubstituteFor("mongo"));
+            return new TestInfraMongoDBContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()), imageName);
         }
     }
 

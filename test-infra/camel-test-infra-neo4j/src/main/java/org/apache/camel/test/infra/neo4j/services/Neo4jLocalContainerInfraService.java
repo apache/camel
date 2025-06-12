@@ -20,6 +20,7 @@ import java.time.Duration;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.neo4j.common.Neo4jProperties;
 import org.slf4j.Logger;
@@ -51,9 +52,22 @@ public class Neo4jLocalContainerInfraService implements Neo4jInfraService, Conta
     }
 
     protected Neo4jContainer initContainer(String imageName) {
-        return new Neo4jContainer<>(DockerImageName.parse(imageName).asCompatibleSubstituteFor("neo4j"))
-                .withStartupTimeout(Duration.ofMinutes(3L))
-                .withRandomPassword();
+        class TestInfraNeo4jContainer extends Neo4jContainer {
+            public TestInfraNeo4jContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("neo4j"));
+
+                withStartupTimeout(Duration.ofMinutes(3L));
+                withRandomPassword();
+
+                if (fixedPort) {
+                    addFixedExposedPort(7687, 7687);
+                    addFixedExposedPort(7473, 7473);
+                    addFixedExposedPort(7474, 7474);
+                }
+            }
+        }
+
+        return new TestInfraNeo4jContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

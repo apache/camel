@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.nats.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.nats.common.NatsProperties;
 import org.slf4j.Logger;
@@ -44,10 +45,22 @@ public class NatsLocalContainerInfraService implements NatsInfraService, Contain
     }
 
     protected GenericContainer initContainer(String imageName, String containerName) {
-        return new GenericContainer(imageName)
-                .withNetworkAliases(containerName)
-                .withExposedPorts(PORT)
-                .waitingFor(Wait.forLogMessage(".*Listening.*for.*route.*connections.*", 1));
+        class NatsContainer extends GenericContainer<NatsContainer> {
+            public NatsContainer(boolean fixedPort) {
+                super(imageName);
+
+                withNetworkAliases(containerName)
+                        .waitingFor(Wait.forLogMessage(".*Listening.*for.*route.*connections.*", 1));
+
+                if (fixedPort) {
+                    addFixedExposedPort(PORT, PORT);
+                } else {
+                    withExposedPorts(PORT);
+                }
+            }
+        }
+
+        return new NatsContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

@@ -26,13 +26,19 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class RocketMQBrokerContainer extends GenericContainer<RocketMQBrokerContainer> {
 
-    public RocketMQBrokerContainer(Network network, String confName) {
+    public RocketMQBrokerContainer(Network network, String confName, boolean fixedPort) {
         super(RocketMQContainerInfraService.ROCKETMQ_IMAGE);
 
-        withNetwork(network);
-        withExposedPorts(RocketMQProperties.ROCKETMQ_BROKER3_PORT,
-                RocketMQProperties.ROCKETMQ_BROKER2_PORT,
-                RocketMQProperties.ROCKETMQ_BROKER1_PORT);
+        if (fixedPort) {
+            addFixedExposedPort(RocketMQProperties.ROCKETMQ_BROKER3_PORT, RocketMQProperties.ROCKETMQ_BROKER3_PORT);
+            addFixedExposedPort(RocketMQProperties.ROCKETMQ_BROKER2_PORT, RocketMQProperties.ROCKETMQ_BROKER2_PORT);
+            addFixedExposedPort(RocketMQProperties.ROCKETMQ_BROKER1_PORT, RocketMQProperties.ROCKETMQ_BROKER1_PORT);
+        } else {
+            withNetwork(network);
+            withExposedPorts(RocketMQProperties.ROCKETMQ_BROKER3_PORT,
+                    RocketMQProperties.ROCKETMQ_BROKER2_PORT,
+                    RocketMQProperties.ROCKETMQ_BROKER1_PORT);
+        }
         withEnv("NAMESRV_ADDR", "nameserver:9876");
         withClasspathResourceMapping(confName + "/" + confName + ".conf",
                 "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf",

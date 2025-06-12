@@ -43,6 +43,14 @@ public class XmppServerContainer extends GenericContainer<XmppServerContainer> {
                 .waitingFor(Wait.forLogMessage(".*Started Application in.*", 1));
     }
 
+    public XmppServerContainer(boolean fixedPort) {
+        this();
+        if (fixedPort) {
+            addFixedExposedPort(XmppProperties.PORT_DEFAULT, XmppProperties.PORT_DEFAULT);
+            addFixedExposedPort(8088, PORT_REST);
+        }
+    }
+
     public String getUrl() {
         return String.format("%s:%d", this.getHost(), this.getMappedPort(XmppProperties.PORT_DEFAULT));
     }

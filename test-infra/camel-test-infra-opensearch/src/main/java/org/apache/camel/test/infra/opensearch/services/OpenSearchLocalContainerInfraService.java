@@ -51,20 +51,27 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
     }
 
     protected OpensearchContainer initContainer(String imageName) {
-        DockerImageName customImage = DockerImageName.parse(imageName)
-                .asCompatibleSubstituteFor("opensearchproject/opensearch");
-        OpensearchContainer opensearchContainer = new OpensearchContainer(customImage);
-        // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
-        // on the build pipeline
-        opensearchContainer.setWaitStrategy(
-                new LogMessageWaitStrategy()
-                        .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
-                        .withStartupTimeout(Duration.ofSeconds(90)));
+        class TestInfraOpensearchContainer extends OpensearchContainer {
+            public TestInfraOpensearchContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName)
+                        .asCompatibleSubstituteFor("opensearchproject/opensearch"));
 
-        opensearchContainer.withLogConsumer(new Slf4jLogConsumer(LOG));
+                // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
+                // on the build pipeline
+                setWaitStrategy(
+                        new LogMessageWaitStrategy()
+                                .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
+                                .withStartupTimeout(Duration.ofSeconds(90)));
 
-        return opensearchContainer;
+                withLogConsumer(new Slf4jLogConsumer(LOG));
 
+                if (fixedPort) {
+                    addFixedExposedPort(OPEN_SEARCH_PORT, OPEN_SEARCH_PORT);
+                }
+            }
+        }
+
+        return new TestInfraOpensearchContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

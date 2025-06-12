@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.azure.common.services;
 import org.apache.camel.test.infra.azure.common.AzureConfigs;
 import org.apache.camel.test.infra.azure.common.AzureProperties;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public abstract class AzureStorageInfraService implements AzureInfraService, Con
     }
 
     protected AzuriteContainer initContainer(String imageName) {
-        return new AzuriteContainer(imageName);
+        return new AzuriteContainer(imageName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     public AzuriteContainer getContainer() {

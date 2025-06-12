@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.redis.services;
 
 import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.redis.common.RedisProperties;
 import org.slf4j.Logger;
@@ -35,7 +36,8 @@ public class RedisLocalContainerInfraService implements RedisInfraService, Conta
     }
 
     public RedisLocalContainerInfraService(String imageName) {
-        container = RedisContainer.initContainer(imageName, RedisContainer.CONTAINER_NAME);
+        container = RedisContainer.initContainer(imageName, RedisContainer.CONTAINER_NAME,
+                ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

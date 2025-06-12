@@ -26,11 +26,16 @@ public class OpenLdapContainer extends GenericContainer<OpenLdapContainer> {
     public static final int CONTAINER_PORT_LDAP = 389;
     public static final int CONTAINER_PORT_LDAP_OVER_SSL = 636;
 
-    public OpenLdapContainer() {
+    public OpenLdapContainer(boolean fixedPort) {
         super(LocalPropertyResolver.getProperty(OpenldapLocalContainerInfraService.class,
                 OpenldapProperties.OPENLDAP_CONTAINER));
 
-        this.withExposedPorts(CONTAINER_PORT_LDAP, CONTAINER_PORT_LDAP_OVER_SSL)
-                .withNetworkAliases(CONTAINER_NAME);
+        if (fixedPort) {
+            this.addFixedExposedPort(CONTAINER_PORT_LDAP, CONTAINER_PORT_LDAP);
+            this.addFixedExposedPort(CONTAINER_PORT_LDAP_OVER_SSL, CONTAINER_PORT_LDAP_OVER_SSL);
+        } else {
+            this.withExposedPorts(CONTAINER_PORT_LDAP, CONTAINER_PORT_LDAP_OVER_SSL)
+                    .withNetworkAliases(CONTAINER_NAME);
+        }
     }
 }

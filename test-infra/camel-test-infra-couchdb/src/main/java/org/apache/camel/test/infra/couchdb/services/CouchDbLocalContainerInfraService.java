@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.couchdb.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.couchdb.common.CouchDbProperties;
 import org.slf4j.Logger;
@@ -51,10 +52,21 @@ public class CouchDbLocalContainerInfraService implements CouchDbInfraService, C
     }
 
     protected GenericContainer initContainer(String imageName, String containerName) {
-        return new GenericContainer<>(DockerImageName.parse(imageName))
-                .withNetworkAliases(containerName)
-                .withExposedPorts(CouchDbProperties.DEFAULT_PORT)
-                .waitingFor(Wait.forListeningPort());
+        class CouchDBContainer extends GenericContainer<CouchDBContainer> {
+            public CouchDBContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName));
+                withNetworkAliases(containerName);
+                waitingFor(Wait.forListeningPort());
+
+                if (fixedPort) {
+                    addFixedExposedPort(CouchDbProperties.DEFAULT_PORT, CouchDbProperties.DEFAULT_PORT);
+                } else {
+                    withExposedPorts(CouchDbProperties.DEFAULT_PORT);
+                }
+            }
+        }
+
+        return new CouchDBContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

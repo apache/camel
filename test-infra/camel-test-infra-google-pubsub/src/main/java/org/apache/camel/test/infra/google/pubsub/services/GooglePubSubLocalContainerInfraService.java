@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.google.pubsub.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.google.pubsub.common.GooglePubSubProperties;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public class GooglePubSubLocalContainerInfraService
     public static final String PROJECT_ID;
     private static final Logger LOG = LoggerFactory.getLogger(GooglePubSubLocalContainerInfraService.class);
     private static final String DEFAULT_PROJECT_ID = "test-project";
+    private static final int PORT = 8085;
 
     static {
         PROJECT_ID = System.getProperty(GooglePubSubProperties.PROJECT_ID, DEFAULT_PROJECT_ID);
@@ -57,7 +59,18 @@ public class GooglePubSubLocalContainerInfraService
     }
 
     protected PubSubEmulatorContainer initContainer(String imageName) {
-        return new PubSubEmulatorContainer(DockerImageName.parse(imageName));
+        class TestInfraPubSubEmulatorContainer extends PubSubEmulatorContainer {
+            public TestInfraPubSubEmulatorContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName));
+
+                if (fixedPort) {
+                    addFixedExposedPort(PORT, PORT);
+                } else {
+                    addExposedPort(PORT);
+                }
+            }
+        }
+        return new TestInfraPubSubEmulatorContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

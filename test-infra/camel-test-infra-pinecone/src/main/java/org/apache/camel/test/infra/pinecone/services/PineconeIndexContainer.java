@@ -31,10 +31,10 @@ public class PineconeIndexContainer extends GenericContainer<PineconeIndexContai
             "ghcr.io/pinecone-io/pinecone-index");
 
     public PineconeIndexContainer(String dockerImageName) {
-        this(DockerImageName.parse(dockerImageName));
+        this(DockerImageName.parse(dockerImageName), false);
     }
 
-    public PineconeIndexContainer(DockerImageName dockerImageName) {
+    public PineconeIndexContainer(DockerImageName dockerImageName, boolean fixedPort) {
         super(dockerImageName);
         dockerImageName.assertCompatibleWith(DEFAULT_IMAGE_NAME);
         withEnv("PINECONE_HOST", "localhost");
@@ -43,7 +43,11 @@ public class PineconeIndexContainer extends GenericContainer<PineconeIndexContai
         withEnv("INDEX_TYPE", "serverless");
         withEnv("METRIC", "cosine");
         withEnv("PORT", String.valueOf(CLIENT_PORT));
-        withExposedPorts(CLIENT_PORT);
+        if (fixedPort) {
+            addFixedExposedPort(CLIENT_PORT, CLIENT_PORT);
+        } else {
+            withExposedPorts(CLIENT_PORT);
+        }
     }
 
     public String getEndpoint() {

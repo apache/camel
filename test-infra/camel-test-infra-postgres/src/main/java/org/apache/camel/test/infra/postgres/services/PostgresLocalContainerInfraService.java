@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.postgres.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.postgres.common.PostgresProperties;
 import org.slf4j.Logger;
@@ -48,8 +49,18 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
     }
 
     protected PostgreSQLContainer initContainer(String imageName) {
-        return new PostgreSQLContainer(
-                DockerImageName.parse(imageName).asCompatibleSubstituteFor("postgres"));
+        class TestInfraPostgreSQLContainer extends PostgreSQLContainer {
+            public TestInfraPostgreSQLContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName)
+                        .asCompatibleSubstituteFor("postgres"));
+
+                if (fixedPort) {
+                    addFixedExposedPort(5432, 5432);
+                }
+            }
+        }
+
+        return new TestInfraPostgreSQLContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.time.Duration;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.pinecone.common.PineconeProperties;
 import org.slf4j.Logger;
@@ -52,9 +53,20 @@ public class PineconeLocalContainerInfraService implements PineconeInfraService,
     }
 
     protected PineconeLocalContainer initContainer(String imageName) {
-        return new PineconeLocalContainer(
-                DockerImageName.parse(imageName).asCompatibleSubstituteFor("pinecone-io/pinecone-local"))
-                .withStartupTimeout(Duration.ofMinutes(3L));
+        class TestInfraPineconeLocalContainer extends PineconeLocalContainer {
+            public TestInfraPineconeLocalContainer(boolean fixedPort) {
+                super(DockerImageName.parse(imageName)
+                        .asCompatibleSubstituteFor("pinecone-io/pinecone-local"));
+
+                withStartupTimeout(Duration.ofMinutes(3L));
+
+                if (fixedPort) {
+                    addFixedExposedPort(5080, 5080);
+                }
+            }
+        }
+
+        return new TestInfraPineconeLocalContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

@@ -35,7 +35,7 @@ public class ArtemisAllInfraService implements ArtemisInfraService, ContainerSer
     }
 
     protected ArtemisContainer initContainer() {
-        return new ArtemisContainer();
+        return ArtemisContainer.withFixedPort();
     }
 
     @Override
