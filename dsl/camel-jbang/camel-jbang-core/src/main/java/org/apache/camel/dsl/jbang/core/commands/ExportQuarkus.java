@@ -39,6 +39,7 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -167,7 +168,7 @@ class ExportQuarkus extends Export {
             if ("camel.main.routesIncludePattern".equals(k)) {
                 v = Arrays.stream(v.split(","))
                         .filter(d -> !d.endsWith(".java")) // skip .java as they are in the src/main/java folder
-                        .map(ExportQuarkus::removeScheme) // remove scheme and routes are in camel sub-folder
+                        .map(ExportQuarkus::stripPath) // remove scheme and routes are in camel sub-folder
                         .map(s -> {
                             if (s.endsWith("kamelet.yaml")) {
                                 return "kamelets/" + s;
@@ -182,7 +183,7 @@ class ExportQuarkus extends Export {
             if ("camel.jbang.classpathFiles".equals(k)) {
                 v = Arrays.stream(v.split(","))
                         .filter(d -> !d.endsWith(".jar")) // skip local lib JARs
-                        .map(ExportQuarkus::removeScheme) // remove scheme
+                        .map(ExportQuarkus::stripPath) // remove scheme
                         .collect(Collectors.joining(","));
                 sj2.add(v);
             }
@@ -219,15 +220,13 @@ class ExportQuarkus extends Export {
         }
     }
 
-    private static String removeScheme(String s) {
-        if (s.contains(":")) {
-            s = StringHelper.after(s, ":");
+    private static String stripPath(String fileName) {
+        if (fileName.contains(":")) {
+            fileName = StringHelper.after(fileName, ":");
         }
-        if (s.contains(File.separator)) {
-            s = StringHelper.afterLast(s, File.separator);
-        }
-        s = s.replace(CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/", "");
-        return s;
+        fileName = FileUtil.stripPath(fileName);
+        fileName = fileName.replace(CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/", "");
+        return fileName;
     }
 
     private void createGradleProperties(Path output) throws Exception {
