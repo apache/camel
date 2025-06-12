@@ -128,4 +128,19 @@ public class RabbitMQLocalContainerInfraService implements RabbitMQInfraService,
     public void shutdown() {
         container.stop();
     }
+
+    @Override
+    public String managementUsername() {
+        return container.getAdminUsername();
+    }
+
+    @Override
+    public String managementPassword() {
+        return container.getAdminPassword();
+    }
+
+    @Override
+    public String managementUri() {
+        return String.format("http://%s:%s", container.getHost(), container.getHttpPort());
+    }
 }
