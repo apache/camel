@@ -110,6 +110,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             timeoutWatch.takenAndRestart();
         }
 
+        // If timeout has expired, process current batch but continue to handle new records
         if (hasExpiredRecords(consumerRecords)) {
             LOG.debug(
                     "The polling timeout has expired with {} records in cache. Dispatching the incomplete batch for processing",
@@ -118,9 +119,10 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             // poll timeout has elapsed, so check for expired records
             processBatch(camelKafkaConsumer);
             exchangeList.clear();
-            return ProcessingResult.newUnprocessed();
+            timeoutWatch.takenAndRestart(); // restart timer after processing expired batch
         }
 
+        // Always add new records after handling any expiration
         for (ConsumerRecord<Object, Object> consumerRecord : consumerRecords) {
             TopicPartition tp = new TopicPartition(consumerRecord.topic(), consumerRecord.partition());
             Exchange childExchange = toExchange(camelKafkaConsumer, tp, consumerRecord);
@@ -130,6 +132,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             if (exchangeList.size() >= configuration.getMaxPollRecords()) {
                 processBatch(camelKafkaConsumer);
                 exchangeList.clear();
+                timeoutWatch.takenAndRestart(); // restart timer after batch processed
             }
         }
 
