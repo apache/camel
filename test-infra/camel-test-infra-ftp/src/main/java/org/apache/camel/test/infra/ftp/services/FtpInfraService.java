@@ -32,7 +32,13 @@ public interface FtpInfraService extends InfrastructureService {
 
     int port();
 
+    @Deprecated
+    // use host
     default String hostname() {
+        return "localhost";
+    }
+
+    default String host() {
         return "localhost";
     }
 

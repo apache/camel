@@ -29,6 +29,7 @@ import java.util.function.BiConsumer;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.services.AbstractService;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpInfraService;
 import org.apache.sshd.common.NamedFactory;
@@ -88,7 +89,11 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
 
     public void setUpServer() throws Exception {
         sshd = SshServer.setUpDefaultServer();
-        sshd.setPort(port);
+        if (ContainerEnvironmentUtil.isFixedPort(this.getClass())) {
+            sshd.setPort(2222);
+        } else {
+            sshd.setPort(port);
+        }
 
         sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get(embeddedConfiguration.getKeyPairFile())));
         sshd.setSubsystemFactories(Collections.singletonList(new SftpSubsystemFactory()));
