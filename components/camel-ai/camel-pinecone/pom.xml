@@ -42,6 +42,7 @@
 
         <!-- Pinecone Docker image is not available for this architecture -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
+        <langchain4j-version>1.0.1</langchain4j-version>
     </properties>
 
     <dependencies>

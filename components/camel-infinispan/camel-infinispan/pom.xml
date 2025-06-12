@@ -36,6 +36,7 @@
         <!-- Infinispan container is not available on these platforms -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
+        <langchain4j-version>1.0.1</langchain4j-version>
     </properties>
 
     <dependencies>
