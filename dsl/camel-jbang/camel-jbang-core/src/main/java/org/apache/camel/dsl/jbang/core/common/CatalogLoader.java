@@ -224,6 +224,31 @@ public final class CatalogLoader {
         return answer;
     }
 
+    public static String resolveCamelVersionFromSpringBoot(String repos, String camelSpringBootVersion) throws Exception {
+        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setRepositories(repos);
+        downloader.setClassLoader(cl);
+        try {
+            downloader.start();
+
+            List<MavenArtifact> artifacts
+                    = downloader.downloadArtifacts("org.apache.camel.springboot", "camel-catalog-provider-springboot",
+                            camelSpringBootVersion, true);
+            for (MavenArtifact ma : artifacts) {
+                String g = ma.getGav().getGroupId();
+                String a = ma.getGav().getArtifactId();
+                if ("org.apache.camel".equals(g) && "camel-catalog".equals(a)) {
+                    return ma.getGav().getVersion();
+                }
+            }
+        } finally {
+            downloader.stop();
+        }
+
+        return null;
+    }
+
     public static String resolveCamelVersionFromQuarkus(String repos, String camelQuarkusVersion) throws Exception {
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();

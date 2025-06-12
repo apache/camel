@@ -23,15 +23,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.Stream;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ReflectionHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 public final class RunHelper {
@@ -56,66 +61,106 @@ public final class RunHelper {
         return null;
     }
 
-    public static List<String> scanMavenDependenciesFromPom() {
-        List<String> answer = new ArrayList<>();
-
-        Path pomPath = Paths.get("pom.xml");
+    public static Model loadMavenModel(Path pomPath) throws Exception {
+        Model answer = null;
         if (Files.exists(pomPath) && Files.isRegularFile(pomPath)) {
-            CamelCatalog catalog = new DefaultCamelCatalog();
-
             // find additional dependencies form pom.xml
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
             try (Reader reader = Files.newBufferedReader(pomPath)) {
-                Model model = mavenReader.read(reader);
-                model.setPomFile(pomPath.toFile()); // Still need File for Maven Model
-
-                for (Dependency d : model.getDependencies()) {
-                    String g = d.getGroupId();
-                    String scope = d.getScope();
-                    boolean accept = scope == null || "compile".equals(scope);
-                    // 3rd party dependencies
-                    if (accept && !g.startsWith("org.apache.camel")) {
-                        String v = d.getVersion();
-                        if (v != null && v.startsWith("${") && v.endsWith("}")) {
-                            // version uses placeholder, so try to find them
-                            v = v.substring(2, v.length() - 1);
-                            v = findMavenProperty((Path) pomPath, v);
-                        }
-                        if (v != null) {
-                            String gav = "mvn:" + g + ":" + d.getArtifactId() + ":" + v;
-                            if (!answer.contains(gav)) {
-                                answer.add(gav);
-                            }
-                        }
-                    } else if (accept && g.startsWith("org.apache.camel")) {
-                        // camel dependencies
-                        String a = d.getArtifactId();
-
-                        if (!isInCamelCatalog(catalog, a)) {
-                            // not a known camel artifact
-                            continue;
-                        }
-
-                        if (a.endsWith("-starter")) {
-                            a = StringHelper.before(a, "-starter");
-                        }
-                        if (a.startsWith("camel-quarkus-")) {
-                            a = StringHelper.after(a, "camel-quarkus");
-                        }
-                        if (a.startsWith("camel-")) {
-                            a = StringHelper.after(a, "camel-");
-                        }
-                        String gav = "camel:" + a;
-                        if (!answer.contains(gav)) {
-                            answer.add(gav);
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                // do something better here
+                answer = mavenReader.read(reader);
+                answer.setPomFile(pomPath.toFile()); // Still need File for Maven Model
             }
         }
         return answer;
+    }
+
+    public static List<String> scanMavenDependenciesFromPom(Path pomPath) throws Exception {
+        Model model = loadMavenModel(pomPath);
+        if (model != null) {
+            return scanMavenDependenciesFromModel(pomPath, model);
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    public static List<String> scanMavenDependenciesFromModel(Path pomPath, Model model) throws Exception {
+        String camelVersion = null;
+        String camelSpringBootVersion = null;
+        String springBootVersion = null;
+        String quarkusVersion = null;
+
+        StringJoiner sj = new StringJoiner(",");
+        for (Repository r : model.getRepositories()) {
+            sj.add(r.getUrl());
+        }
+
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        if (sj.length() > 0) {
+            downloader.setRepositories(sj.toString());
+        }
+        downloader.build();
+
+        List<String> answer = new ArrayList<>();
+        if (model.getDependencyManagement() != null) {
+            for (Dependency d : model.getDependencyManagement().getDependencies()) {
+                String g = resolveDependencyPlaceholder(d.getGroupId(), pomPath, downloader);
+                String a = resolveDependencyPlaceholder(d.getArtifactId(), pomPath, downloader);
+                String v = resolveDependencyPlaceholder(d.getVersion(), pomPath, downloader);
+                if (v != null) {
+                    if ("org.apache.camel".equals(g) && "camel-bom".equals(a)) {
+                        camelVersion = v;
+                    } else if ("org.apache.camel.springboot".equals(g)
+                            && "camel-spring-boot-bom".equals(a)) {
+                        camelSpringBootVersion = v;
+                    } else if ("org.springframework.boot".equals(g)
+                            && "spring-boot-dependencies".equals(a)) {
+                        springBootVersion = v;
+                    } else if ("io.quarkus.platform".equals(g)
+                            && "quarkus-bom".equals(a)) {
+                        quarkusVersion = v;
+                    }
+                    String gav = "mvn:" + g + ":" + a + ":" + v;
+                    if (!answer.contains(gav)) {
+                        answer.add(gav);
+                    }
+                }
+            }
+        }
+
+        for (Dependency d : model.getDependencies()) {
+            String scope = d.getScope();
+            boolean accept = scope == null || "compile".equals(scope);
+            if (accept) {
+                String g = resolveDependencyPlaceholder(d.getGroupId(), pomPath, downloader);
+                String a = resolveDependencyPlaceholder(d.getArtifactId(), pomPath, downloader);
+                String v = resolveDependencyPlaceholder(d.getVersion(), pomPath, downloader);
+                if (v == null && ("org.apache.camel".equals(g))) {
+                    v = camelVersion;
+                } else if (v == null && ("org.apache.camel.springboot".equals(g))) {
+                    v = camelSpringBootVersion;
+                } else if (v == null && "org.springframework.boot".equals(g)) {
+                    v = springBootVersion;
+                } else if (v == null && "io.quarkus.platform".equals(g)) {
+                    v = quarkusVersion;
+                }
+                String gav = "mvn:" + g + ":" + a;
+                if (v != null) {
+                    gav += ":" + v;
+                }
+                if (!answer.contains(gav)) {
+                    answer.add(gav);
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static String resolveDependencyPlaceholder(String value, Path pomPath, MavenDependencyDownloader downloader) {
+        if (value != null && value.startsWith("${") && value.endsWith("}")) {
+            // version uses placeholder, so try to find them
+            value = value.substring(2, value.length() - 1);
+            value = findMavenProperty(pomPath, value, downloader);
+        }
+        return value;
     }
 
     public static List<String> scanMavenOrGradleProject() {
@@ -129,7 +174,7 @@ public final class RunHelper {
         return answer;
     }
 
-    public static String findMavenProperty(Path pomPath, String placeholder) {
+    public static String findMavenProperty(Path pomPath, String placeholder, MavenDependencyDownloader downloader) {
         if (Files.exists(pomPath) && Files.isRegularFile(pomPath)) {
             // find additional dependencies form pom.xml
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
@@ -137,13 +182,33 @@ public final class RunHelper {
                 Model model = mavenReader.read(reader);
                 model.setPomFile(pomPath.toFile()); // Still need File for Maven Model
                 String p = model.getProperties().getProperty(placeholder);
+                if (p != null && p.startsWith("${") && p.endsWith("}")) {
+                    p = p.substring(2, p.length() - 1);
+                    if ("project.version".equals(p)) {
+                        p = model.getVersion();
+                    } else {
+                        p = model.getProperties().getProperty(p);
+                    }
+                }
                 if (p != null) {
                     return p;
                 } else if (model.getParent() != null) {
                     p = model.getParent().getRelativePath();
                     if (p != null) {
-                        Path parentPath = pomPath.getParent().resolve(p);
-                        return findMavenProperty(parentPath, placeholder);
+                        String dir = FileUtil.onlyPath(pomPath.toAbsolutePath().toString());
+                        p = FileUtil.compactPath(dir + "/" + p);
+                        pomPath = Paths.get(p);
+                        boolean exists = Files.exists(pomPath) && Files.isRegularFile(pomPath);
+                        if (exists) {
+                            return findMavenProperty(pomPath, placeholder, downloader);
+                        } else if (downloader != null) {
+                            // download dependency as it's not in local path
+                            MavenArtifact ma = downloader.downloadArtifact(model.getParent().getGroupId(),
+                                    model.getParent().getArtifactId() + ":pom", model.getParent().getVersion());
+                            if (ma != null) {
+                                return findMavenProperty(ma.getFile(), placeholder, downloader);
+                            }
+                        }
                     }
                 }
             } catch (Exception ex) {
@@ -155,8 +220,8 @@ public final class RunHelper {
 
     // Keep for backward compatibility
     @Deprecated
-    public static String findMavenProperty(java.io.File f, String placeholder) {
-        return findMavenProperty(f.toPath(), placeholder);
+    public static String findMavenProperty(java.io.File f, String placeholder, MavenDependencyDownloader downloader) {
+        return findMavenProperty(f.toPath(), placeholder, downloader);
     }
 
     public static Stream<Path> walk(Path dir) {

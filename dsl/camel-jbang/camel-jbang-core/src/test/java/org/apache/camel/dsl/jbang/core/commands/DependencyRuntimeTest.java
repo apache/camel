@@ -40,12 +40,16 @@ class DependencyRuntimeTest extends CamelCommandBaseTest {
     Path pomFilePath;
 
     private static Stream<Arguments> testOutputArguments() {
-        return Stream.of(Arguments.of(TestArguments.QUARKUS_POM, TestArguments.QUARKUS_POM_OUTPUT),
+        return Stream.of(
+                Arguments.of(TestArguments.MAIN_POM, TestArguments.MAIN_POM_OUTPUT),
+                Arguments.of(TestArguments.QUARKUS_POM, TestArguments.QUARKUS_POM_OUTPUT),
                 Arguments.of(TestArguments.SPRING_BOOT_POM, TestArguments.SPRING_BOOT_POM_OUTPUT));
     }
 
     private static Stream<Arguments> testJsonOutputArguments() {
-        return Stream.of(Arguments.of(TestArguments.QUARKUS_POM, TestArguments.QUARKUS_POM_JSON_OUTPUT),
+        return Stream.of(
+                Arguments.of(TestArguments.MAIN_POM, TestArguments.MAIN_POM_JSON_OUTPUT),
+                Arguments.of(TestArguments.QUARKUS_POM, TestArguments.QUARKUS_POM_JSON_OUTPUT),
                 Arguments.of(TestArguments.SPRING_BOOT_POM, TestArguments.SPRING_BOOT_POM_JSON_OUTPUT));
     }
 
@@ -105,20 +109,28 @@ class DependencyRuntimeTest extends CamelCommandBaseTest {
     private static class TestArguments {
         static final String QUARKUS_POM = "pom-xml-files/quarkus-pom.xml";
         static final String QUARKUS_POM_OUTPUT = """
-                Runtime: quarkus
+                Runtime: camel-quarkus
                 Camel Version: 4.11.0
                 Camel Quarkus Version: 3.23.0
                 Quarkus Version: 3.23.0""";
         static final String QUARKUS_POM_JSON_OUTPUT
-                = "{\"type\":\"quarkus\",\"camelVersion\":\"4.11.0\",\"camelQuarkusVersion\":\"3.23.0\",\"quarkusVersion\":\"3.23.0\",\"quarkusGroupId\":\"io.quarkus.platform\"}";
+                = "{\"runtime\":\"camel-quarkus\",\"camelVersion\":\"4.11.0\",\"camelQuarkusVersion\":\"3.23.0\",\"quarkusVersion\":\"3.23.0\",\"quarkusGroupId\":\"io.quarkus.platform\"}";
 
         static final String SPRING_BOOT_POM = "pom-xml-files/springboot-pom.xml";
         static final String SPRING_BOOT_POM_OUTPUT = """
-                Runtime: springBoot
+                Runtime: camel-spring-boot
                 Camel Version: 4.12.0
+                Camel Spring Boot Version: 4.12.0
                 Spring Boot Version: 3.4.5""";
         static final String SPRING_BOOT_POM_JSON_OUTPUT
-                = "{\"type\":\"springBoot\",\"camelVersion\":\"4.12.0\",\"springBootVersion\":\"3.4.5\",\"quarkusGroupId\":\"io.quarkus.platform\"}";
+                = "{\"runtime\":\"camel-spring-boot\",\"camelVersion\":\"4.12.0\",\"camelSpringBootVersion\":\"4.12.0\",\"springBootVersion\":\"3.4.5\"}";
+
+        static final String MAIN_POM = "pom-xml-files/main-pom.xml";
+        static final String MAIN_POM_OUTPUT = """
+                Runtime: camel-main
+                Camel Version: 4.12.0""";
+        static final String MAIN_POM_JSON_OUTPUT
+                = "{\"runtime\":\"camel-main\",\"camelVersion\":\"4.12.0\"}";
 
     }
 }
