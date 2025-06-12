@@ -22,6 +22,7 @@ import org.apache.camel.util.xml.BytesSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.xml.validation.XmlValidator;
 import org.springframework.xml.validation.XmlValidatorFactory;
@@ -30,7 +31,7 @@ public class CamelSpringXSDValidateTest {
 
     @Test
     public void testValidateXSD() throws Exception {
-        Resource r = new ClassPathResource("camel-spring.xsd");
+        Resource r = new FileSystemResource("target/classes/camel-spring.xsd");
         Resource r2 = new ClassPathResource("org/springframework/beans/factory/xml/spring-beans.xsd");
         XmlValidator val = XmlValidatorFactory.createValidator(new Resource[] { r, r2 }, XmlValidatorFactory.SCHEMA_W3C_XML);
 
