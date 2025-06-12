@@ -36,6 +36,11 @@ public final class KafkaServiceFactory {
         }
 
         @Override
+        public String brokers() {
+            return getService().brokers();
+        }
+
+        @Override
         public final void beforeAll(ExtensionContext extensionContext) {
             super.beforeAll(extensionContext);
         }
