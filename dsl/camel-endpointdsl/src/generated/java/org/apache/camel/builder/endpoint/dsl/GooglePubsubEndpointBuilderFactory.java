@@ -44,69 +44,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (AdvancedGooglePubsubEndpointConsumerBuilder) this;
         }
         /**
-         * Use Credentials when interacting with PubSub service (no
-         * authentication is required when using emulator).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param authenticate the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder authenticate(boolean authenticate) {
-            doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
-         * Use Credentials when interacting with PubSub service (no
-         * authentication is required when using emulator).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         * 
-         * @param authenticate the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder authenticate(String authenticate) {
-            doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
-         * Logger ID to use when a match to the parent route required.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param loggerId the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder loggerId(String loggerId) {
-            doSetProperty("loggerId", loggerId);
-            return this;
-        }
-        /**
-         * The Service account key that can be used as credentials for the
-         * PubSub publisher/subscriber. It can be loaded by default from
-         * classpath, but you can prefix with classpath:, file:, or http: to
-         * load the resource from different systems.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param serviceAccountKey the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder serviceAccountKey(String serviceAccountKey) {
-            doSetProperty("serviceAccountKey", serviceAccountKey);
-            return this;
-        }
-        /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
          * process has to ack/nack explicitly.
          * 
@@ -141,129 +78,52 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of parallel streams consuming from the subscription.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder concurrentConsumers(Integer concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * The number of parallel streams consuming from the subscription.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param concurrentConsumers the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder concurrentConsumers(String concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Set the maximum period a message ack deadline will be extended. Value
-         * in seconds.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 3600
-         * Group: consumer
-         * 
-         * @param maxAckExtensionPeriod the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder maxAckExtensionPeriod(int maxAckExtensionPeriod) {
-            doSetProperty("maxAckExtensionPeriod", maxAckExtensionPeriod);
-            return this;
-        }
-        /**
-         * Set the maximum period a message ack deadline will be extended. Value
-         * in seconds.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 3600
-         * Group: consumer
-         * 
-         * @param maxAckExtensionPeriod the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder maxAckExtensionPeriod(String maxAckExtensionPeriod) {
-            doSetProperty("maxAckExtensionPeriod", maxAckExtensionPeriod);
-            return this;
-        }
-        /**
-         * The max number of messages to receive from the server in a single API
-         * call.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param maxMessagesPerPoll the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(Integer maxMessagesPerPoll) {
-            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
-            return this;
-        }
-        /**
-         * The max number of messages to receive from the server in a single API
-         * call.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 1
-         * Group: consumer
-         * 
-         * @param maxMessagesPerPoll the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(String maxMessagesPerPoll) {
-            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
-            return this;
-        }
-        /**
-         * Synchronously pull batches of messages.
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Default: true
+         * Group: security
          * 
-         * @param synchronousPull the value to set
+         * @param authenticate the value to set
          * @return the dsl builder
          */
-        default GooglePubsubEndpointConsumerBuilder synchronousPull(boolean synchronousPull) {
-            doSetProperty("synchronousPull", synchronousPull);
+        default GooglePubsubEndpointConsumerBuilder authenticate(boolean authenticate) {
+            doSetProperty("authenticate", authenticate);
             return this;
         }
         /**
-         * Synchronously pull batches of messages.
+         * Use Credentials when interacting with PubSub service (no
+         * authentication is required when using emulator).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Default: true
+         * Group: security
          * 
-         * @param synchronousPull the value to set
+         * @param authenticate the value to set
          * @return the dsl builder
          */
-        default GooglePubsubEndpointConsumerBuilder synchronousPull(String synchronousPull) {
-            doSetProperty("synchronousPull", synchronousPull);
+        default GooglePubsubEndpointConsumerBuilder authenticate(String authenticate) {
+            doSetProperty("authenticate", authenticate);
+            return this;
+        }
+        /**
+         * The Service account key that can be used as credentials for the
+         * PubSub publisher/subscriber. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder serviceAccountKey(String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
     }
@@ -327,6 +187,37 @@ public interface GooglePubsubEndpointBuilderFactory {
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * The number of parallel streams consuming from the subscription.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 1
+         * Group: consumer (advanced)
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder concurrentConsumers(Integer concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
+         * The number of parallel streams consuming from the subscription.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 1
+         * Group: consumer (advanced)
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder concurrentConsumers(String concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -394,6 +285,116 @@ public interface GooglePubsubEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * Set the maximum period a message ack deadline will be extended. Value
+         * in seconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 3600
+         * Group: consumer (advanced)
+         * 
+         * @param maxAckExtensionPeriod the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder maxAckExtensionPeriod(int maxAckExtensionPeriod) {
+            doSetProperty("maxAckExtensionPeriod", maxAckExtensionPeriod);
+            return this;
+        }
+        /**
+         * Set the maximum period a message ack deadline will be extended. Value
+         * in seconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 3600
+         * Group: consumer (advanced)
+         * 
+         * @param maxAckExtensionPeriod the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder maxAckExtensionPeriod(String maxAckExtensionPeriod) {
+            doSetProperty("maxAckExtensionPeriod", maxAckExtensionPeriod);
+            return this;
+        }
+        /**
+         * The max number of messages to receive from the server in a single API
+         * call.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 1
+         * Group: consumer (advanced)
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(Integer maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * The max number of messages to receive from the server in a single API
+         * call.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 1
+         * Group: consumer (advanced)
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(String maxMessagesPerPoll) {
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            return this;
+        }
+        /**
+         * Synchronously pull batches of messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder synchronousPull(boolean synchronousPull) {
+            doSetProperty("synchronousPull", synchronousPull);
+            return this;
+        }
+        /**
+         * Synchronously pull batches of messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder synchronousPull(String synchronousPull) {
+            doSetProperty("synchronousPull", synchronousPull);
+            return this;
+        }
+        /**
+         * To use a custom logger name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param loggerId the value to set
+         * @return the dsl builder
+         */
+        @Deprecated
+        default AdvancedGooglePubsubEndpointConsumerBuilder loggerId(String loggerId) {
+            doSetProperty("loggerId", loggerId);
+            return this;
+        }
     }
 
     /**
@@ -413,7 +414,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: security
          * 
          * @param authenticate the value to set
          * @return the dsl builder
@@ -429,27 +430,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: security
          * 
          * @param authenticate the value to set
          * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder authenticate(String authenticate) {
             doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
-         * Logger ID to use when a match to the parent route required.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param loggerId the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointProducerBuilder loggerId(String loggerId) {
-            doSetProperty("loggerId", loggerId);
             return this;
         }
         /**
@@ -460,7 +447,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param serviceAccountKey the value to set
          * @return the dsl builder
@@ -635,6 +622,21 @@ public interface GooglePubsubEndpointBuilderFactory {
             doSetProperty("serializer", serializer);
             return this;
         }
+        /**
+         * To use a custom logger name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param loggerId the value to set
+         * @return the dsl builder
+         */
+        @Deprecated
+        default AdvancedGooglePubsubEndpointProducerBuilder loggerId(String loggerId) {
+            doSetProperty("loggerId", loggerId);
+            return this;
+        }
     }
 
     /**
@@ -655,7 +657,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: security
          * 
          * @param authenticate the value to set
          * @return the dsl builder
@@ -671,27 +673,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: security
          * 
          * @param authenticate the value to set
          * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder authenticate(String authenticate) {
             doSetProperty("authenticate", authenticate);
-            return this;
-        }
-        /**
-         * Logger ID to use when a match to the parent route required.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param loggerId the value to set
-         * @return the dsl builder
-         */
-        default GooglePubsubEndpointBuilder loggerId(String loggerId) {
-            doSetProperty("loggerId", loggerId);
             return this;
         }
         /**
@@ -702,7 +690,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          * 
          * @param serviceAccountKey the value to set
          * @return the dsl builder
@@ -724,6 +712,21 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (GooglePubsubEndpointBuilder) this;
         }
 
+        /**
+         * To use a custom logger name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param loggerId the value to set
+         * @return the dsl builder
+         */
+        @Deprecated
+        default AdvancedGooglePubsubEndpointBuilder loggerId(String loggerId) {
+            doSetProperty("loggerId", loggerId);
+            return this;
+        }
     }
 
     public interface GooglePubsubBuilders {
