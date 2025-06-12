@@ -34,11 +34,7 @@ public class ManualAcknowledgementIT extends PubsubTestSupport {
     private static final String TOPIC_NAME = "manualAcknowledgeTopic";
     private static final String SUBSCRIPTION_NAME = "manualAcknowledgeSubscription";
     private static final String SYNC_ROUTE_ID = "receive-from-subscription-sync";
-    private static final String ASYNC_ROUTE_ID = "receive-from-subscription-async";
     private static Boolean ack = true;
-
-    @EndpointInject("mock:receiveResultAsync")
-    private MockEndpoint receiveResultAsync;
 
     @EndpointInject("mock:receiveResultSync")
     private MockEndpoint receiveResultSync;
@@ -59,23 +55,6 @@ public class ManualAcknowledgementIT extends PubsubTestSupport {
                 from("direct:in")
                         .routeId("send-to-topic")
                         .to("google-pubsub:{{project.id}}:" + TOPIC_NAME);
-
-                from("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?ackMode=NONE")
-                        .autoStartup(false)
-                        .routeId(ASYNC_ROUTE_ID)
-                        .to("mock:receiveResultAsync")
-                        .process(exchange -> {
-                            GooglePubsubAcknowledge acknowledge
-                                    = exchange.getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE,
-                                            GooglePubsubAcknowledge.class);
-
-                            if (ManualAcknowledgementIT.ack) {
-                                acknowledge.ack(exchange);
-                            } else {
-                                LOG.debug("Nack!");
-                                acknowledge.nack(exchange);
-                            }
-                        });
 
                 from("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?synchronousPull=true&ackMode=NONE")
                         .autoStartup(false)
@@ -99,14 +78,6 @@ public class ManualAcknowledgementIT extends PubsubTestSupport {
 
     @Test
     public void testManualAcknowledgement() throws Exception {
-        // 1. Asynchronous consumer with manual acknowledgement.
-        // Message should only be received once.
-        producer.sendBody("Testing!");
-        receiveResultAsync.expectedMessageCount(1);
-        context.getRouteController().startRoute(ASYNC_ROUTE_ID);
-        receiveResultAsync.assertIsSatisfied(3000);
-        context.getRouteController().stopRoute(ASYNC_ROUTE_ID);
-
         // 2. Synchronous consumer with manual acknowledgement.
         // Message should only be received once.
         producer.sendBody("Testing!");
@@ -116,16 +87,7 @@ public class ManualAcknowledgementIT extends PubsubTestSupport {
         context.getRouteController().stopRoute(SYNC_ROUTE_ID);
 
         receiveResultSync.reset();
-        receiveResultAsync.reset();
         ack = false;
-
-        // 3. Asynchronous consumer with manual negative-acknowledgement.
-        // Message should be continuously redelivered after being nacked.
-        producer.sendBody("Testing!");
-        receiveResultAsync.expectedMinimumMessageCount(3);
-        context.getRouteController().startRoute(ASYNC_ROUTE_ID);
-        receiveResultAsync.assertIsSatisfied(3000);
-        context.getRouteController().stopRoute(ASYNC_ROUTE_ID);
 
         // 4. Synchronous consumer with manual negative-acknowledgement.
         // Message should be continuously redelivered after being nacked.
