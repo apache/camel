@@ -39,7 +39,7 @@ public abstract class RabbitMQITSupport extends CamelTestSupport {
         if (confirm) {
             cf.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.CORRELATED);
         }
-        cf.setUri(service.getAmqpUrl());
+        cf.setUri(service.uri());
         return cf;
     }
 

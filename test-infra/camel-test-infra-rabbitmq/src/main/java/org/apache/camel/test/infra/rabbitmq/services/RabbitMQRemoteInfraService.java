@@ -69,4 +69,19 @@ public class RabbitMQRemoteInfraService implements RabbitMQInfraService {
     public void shutdown() {
 
     }
+
+    @Override
+    public String managementUsername() {
+        return connectionProperties().username();
+    }
+
+    @Override
+    public String managementPassword() {
+        return connectionProperties().password();
+    }
+
+    @Override
+    public String managementUri() {
+        return String.format("http://%s:%s", connectionProperties().hostname(), getHttpPort());
+    }
 }
