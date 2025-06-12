@@ -26,6 +26,7 @@ import java.util.function.BiConsumer;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.services.AbstractService;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpInfraService;
 import org.apache.commons.io.FileUtils;
@@ -132,7 +133,11 @@ public class FtpEmbeddedInfraService extends AbstractService implements FtpInfra
         serverFactory.setConnectionConfig(new ConnectionConfigFactory().createConnectionConfig());
 
         ListenerFactory factory = new ListenerFactory();
-        factory.setPort(port);
+        if (ContainerEnvironmentUtil.isFixedPort(this.getClass())) {
+            factory.setPort(2221);
+        } else {
+            factory.setPort(port);
+        }
         factory.setServerAddress(embeddedConfiguration.getServerAddress());
 
         final Listener listener = factory.createListener();
