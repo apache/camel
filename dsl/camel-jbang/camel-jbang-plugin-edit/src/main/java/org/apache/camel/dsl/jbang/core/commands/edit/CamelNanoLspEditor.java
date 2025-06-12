@@ -36,6 +36,7 @@ import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.tooling.util.Strings;
 import org.eclipse.lsp4j.CompletionItem;
+import org.eclipse.lsp4j.CompletionItemTag;
 import org.eclipse.lsp4j.CompletionList;
 import org.eclipse.lsp4j.CompletionParams;
 import org.eclipse.lsp4j.InsertReplaceEdit;
@@ -91,19 +92,23 @@ public class CamelNanoLspEditor extends Nano {
         }
         try {
             List<CompletionItem> left = eitherCompletableFuture.get().getLeft();
-            AttributedStyle typeStyle = AttributedStyle.DEFAULT.foreground(AttributedStyle.MAGENTA + AttributedStyle.BRIGHT);
             for (CompletionItem item : left) {
                 List<AttributedString> docs = new ArrayList<>();
+                docs.add(new AttributedString(item.getLabel(), AttributedStyle.BOLD));
+                docs.add(new AttributedString(""));
                 String type = item.getDetail();
                 if (!Strings.isEmpty(type)) {
-                    docs.add(new AttributedString(type, typeStyle));
-                    docs.add(new AttributedString(""));
+                    docs.add(new AttributedString("Type: " + type));
+                }
+                List<CompletionItemTag> tags = item.getTags();
+                if (tags != null && tags.contains(CompletionItemTag.Deprecated)) {
+                    docs.add(new AttributedString("Deprecated: true"));
                 }
                 Either<String, MarkupContent> docMap = item.getDocumentation();
                 if (docMap != null) {
                     String doc = docMap.getLeft();
                     if (!Strings.isEmpty(doc)) {
-                        docs.add(new AttributedString(doc));
+                        doc.lines().forEach(s -> docs.add(new AttributedString(s)));
                     }
                 }
                 suggestions.put(new AttributedString(item.getLabel()), docs);
