@@ -261,6 +261,7 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Http responseCode: {}", responseCode);
                             }
+                            populateResponseCode(exchange.getOut(), httpResponse, responseCode);
 
                             if (!throwException) {
                                 // if we do not use failed exception then populate response for all response codes
@@ -355,7 +356,7 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             throws IOException, ClassNotFoundException {
         // We just make the out message is not create when extractResponseBody throws exception
         Object response = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
-        final Message answer = createResponseMessage(exchange, httpResponse, responseCode);
+        Message answer = exchange.getOut();
         answer.setBody(response);
 
         if (!getEndpoint().isSkipResponseHeaders()) {
@@ -406,19 +407,16 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
         }
     }
 
-    private static Message createResponseMessage(Exchange exchange, ClassicHttpResponse httpResponse, int responseCode) {
-        Message answer = exchange.getOut();
-
+    private static void populateResponseCode(Message message, ClassicHttpResponse httpResponse, int responseCode) {
         // optimize for 200 response code as the boxing is outside the cached integers
         if (responseCode == 200) {
-            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
+            message.setHeader(HttpConstants.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
         } else {
-            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
+            message.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
         }
         if (httpResponse.getReasonPhrase() != null) {
-            answer.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, httpResponse.getReasonPhrase());
+            message.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, httpResponse.getReasonPhrase());
         }
-        return answer;
     }
 
     protected Exception populateHttpOperationFailedException(
