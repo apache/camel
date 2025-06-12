@@ -19,6 +19,7 @@ package org.apache.camel.component.qdrant.transform;
 
 import java.util.UUID;
 
+import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import io.qdrant.client.PointIdFactory;
@@ -52,10 +53,10 @@ public class QdrantEmbeddingsDataTypeTransformer extends Transformer {
 
         if (text != null) {
             builder.putPayload("text_segment", ValueFactory.value(text.text()));
+            Metadata metadata = text.metadata();
+            metadata.toMap()
+                    .forEach((key, value) -> builder.putPayload(key, ValueFactory.value((String) value)));
 
-            text.metadata()
-                    .asMap()
-                    .forEach((key, value) -> builder.putPayload(key, ValueFactory.value(value)));
         }
 
         message.setBody(builder.build());

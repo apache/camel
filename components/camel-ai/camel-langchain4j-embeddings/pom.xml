@@ -39,6 +39,9 @@
         <skipITs.s390x>true</skipITs.s390x>
         <skipTests.ppc64le>true</skipTests.ppc64le>
         <skipTests.s390x>true</skipTests.s390x>
+        <langchain4j-version>1.0.1</langchain4j-version>
+        <langchain4j-embeddings-version>1.0.1-beta6</langchain4j-embeddings-version>
+        <langchain4j-hugging-face-version>1.0.1-beta6</langchain4j-hugging-face-version>
     </properties>
 
     <dependencies>
@@ -48,8 +51,9 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-langchain4j-core</artifactId>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
+            <version>${langchain4j-version}</version>
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
@@ -59,7 +63,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-hugging-face</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-hugging-face-version}</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -112,13 +116,13 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-embeddings</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-embeddings-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-embeddings-version}</version>
             <scope>test</scope>
         </dependency>
 
