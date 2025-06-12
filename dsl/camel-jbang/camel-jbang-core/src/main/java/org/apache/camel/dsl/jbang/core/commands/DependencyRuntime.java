@@ -32,7 +32,6 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.XmlHelper;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
