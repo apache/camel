@@ -42,8 +42,6 @@ import picocli.CommandLine;
                      showDefaultValues = true)
 public class DependencyRuntime extends CamelCommand {
 
-    protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
-
     @CommandLine.Option(names = { "--json" },
                         description = "Output in JSON Format")
     boolean jsonOutput;

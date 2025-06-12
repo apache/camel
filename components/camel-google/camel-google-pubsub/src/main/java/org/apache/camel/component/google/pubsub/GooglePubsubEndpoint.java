@@ -82,16 +82,17 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
               defaultValue = "3600")
     private int maxAckExtensionPeriod = 3600;
     @UriParam(label = "producer,advanced",
-            description = "Should message ordering be enabled")
+              description = "Should message ordering be enabled")
     private boolean messageOrderingEnabled;
     @UriParam(label = "producer,advanced",
-            description = "Pub/Sub endpoint to use. Required when using message ordering, and ensures that messages are received in order even when multiple publishers are used")
+              description = "Pub/Sub endpoint to use. Required when using message ordering, and ensures that messages are received in order even when multiple publishers are used")
     private String pubsubEndpoint;
     @UriParam(label = "producer,advanced",
               description = "A custom GooglePubsubSerializer to use for serializing message payloads in the producer")
     @Metadata(autowired = true)
     private GooglePubsubSerializer serializer;
-    @UriParam(label = "producer,advanced", description = "A custom RetrySettings to control how the publisher handles retry-able failures")
+    @UriParam(label = "producer,advanced",
+              description = "A custom RetrySettings to control how the publisher handles retry-able failures")
     private RetrySettings retry;
 
     public GooglePubsubEndpoint(String uri, Component component) {
