@@ -28,11 +28,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ManualAcknowledgementIT extends PubsubTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(ManualAcknowledgementIT.class);
+public class ManualAcknowledgementAsyncIT extends PubsubTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(ManualAcknowledgementAsyncIT.class);
 
-    private static final String TOPIC_NAME = "manualAcknowledgeTopic";
-    private static final String SUBSCRIPTION_NAME = "manualAcknowledgeSubscription";
+    private static final String TOPIC_NAME = "manualAcknowledgeAsyncTopic";
+    private static final String SUBSCRIPTION_NAME = "manualAcknowledgeAsyncSubscription";
     private static final String ROUTE_ID = "receive-from-subscription";
     private static Boolean ack = true;
 
@@ -56,7 +56,7 @@ public class ManualAcknowledgementIT extends PubsubTestSupport {
                         .routeId("send-to-topic")
                         .to("google-pubsub:{{project.id}}:" + TOPIC_NAME);
 
-                from("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?synchronousPull=true&ackMode=NONE")
+                from("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?synchronousPull=false&ackMode=NONE")
                         .autoStartup(false)
                         .routeId(ROUTE_ID)
                         .to("mock:receiveResult")
@@ -65,7 +65,7 @@ public class ManualAcknowledgementIT extends PubsubTestSupport {
                                     = exchange.getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE,
                                             GooglePubsubAcknowledge.class);
 
-                            if (ManualAcknowledgementIT.ack) {
+                            if (ManualAcknowledgementAsyncIT.ack) {
                                 acknowledge.ack(exchange);
                             } else {
                                 LOG.debug("Nack!");
@@ -86,11 +86,12 @@ public class ManualAcknowledgementIT extends PubsubTestSupport {
         receiveResult.assertIsSatisfied(3000);
 
         receiveResult.reset();
+
         ack = false;
 
         // 4. Synchronous consumer with manual negative-acknowledgement.
         // Message should be continuously redelivered after being nacked.
-        producer.sendBody("Testing!");
+        producer.sendBody("Testing2!");
         receiveResult.expectedMinimumMessageCount(3);
         receiveResult.assertIsSatisfied(3000);
     }
