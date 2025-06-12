@@ -86,10 +86,6 @@ public class PQCComponent extends HealthCheckComponent {
                         configuration.setSigner(PQCDefaultPicnicMaterial.signer);
                         configuration.setKeyPair(PQCDefaultPicnicMaterial.keyPair);
                         break;
-                    case "RAINBOW":
-                        configuration.setSigner(PQCDefaultRainbowMaterial.signer);
-                        configuration.setKeyPair(PQCDefaultRainbowMaterial.keyPair);
-                        break;
                     default:
                         break;
                 }
