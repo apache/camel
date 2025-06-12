@@ -30,6 +30,11 @@ public class RemoteKafkaInfraService implements KafkaInfraService {
     }
 
     @Override
+    public String brokers() {
+        return getBootstrapServers();
+    }
+
+    @Override
     public void registerProperties() {
         // NO-OP
     }
