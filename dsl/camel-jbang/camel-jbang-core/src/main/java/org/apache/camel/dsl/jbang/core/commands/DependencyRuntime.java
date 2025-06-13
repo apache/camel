@@ -102,12 +102,12 @@ public class DependencyRuntime extends CamelCommand {
             }
         }
 
-        if (springBootVersion != null && camelVersion == null) {
-            camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(mavenRepos(model, repositories),
-                    camelSpringBootVersion, download);
-        }
         if (springBootVersion == null && camelSpringBootVersion != null) {
             springBootVersion = CatalogLoader.resolveSpringBootVersionFromCamelSpringBoot(mavenRepos(model, repositories),
+                    camelSpringBootVersion, download);
+        }
+        if (springBootVersion != null && camelVersion == null) {
+            camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(mavenRepos(model, repositories),
                     camelSpringBootVersion, download);
         }
         if (quarkusVersion != null && camelVersion == null) {
