@@ -61,6 +61,11 @@ public class RedpandaInfraService implements KafkaInfraService, ContainerService
     }
 
     @Override
+    public String brokers() {
+        return getBootstrapServers();
+    }
+
+    @Override
     public void registerProperties() {
         System.setProperty(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS, getBootstrapServers());
     }
