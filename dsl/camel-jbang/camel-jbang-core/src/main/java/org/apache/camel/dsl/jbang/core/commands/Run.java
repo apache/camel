@@ -572,7 +572,7 @@ public class Run extends CamelCommand {
         final KameletMain main = createMainInstance();
         main.setProfile(profile);
         if (repositories != null && !repositories.isBlank()) {
-            main.setRepositories(String.join(",", repositories));
+            main.setRepositories(repositories);
         }
         main.setDownload(download);
         main.setPackageScanJars(packageScanJars);
@@ -637,7 +637,7 @@ public class Run extends CamelCommand {
         }
         writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
         if (repositories != null) {
-            writeSetting(main, profileProperties, "camel.jbang.repos", String.join(",", repositories));
+            writeSetting(main, profileProperties, "camel.jbang.repos", repositories);
         }
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");

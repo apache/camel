@@ -175,7 +175,7 @@ class ExportSpringBoot extends Export {
         RuntimeUtil.loadProperties(prop, settings);
         String repos = getMavenRepositories(settings, prop, camelSpringBootVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion, download);
         if (ObjectHelper.isEmpty(camelVersion)) {
             camelVersion = catalog.getLoadedVersion();
         }
@@ -279,7 +279,7 @@ class ExportSpringBoot extends Export {
         RuntimeUtil.loadProperties(prop, settings);
         String repos = getMavenRepositories(settings, prop, camelSpringBootVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion, download);
         String camelVersion = catalog.getLoadedVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);

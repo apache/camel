@@ -25,6 +25,7 @@ import java.util.StringJoiner;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.model.Model;
@@ -37,6 +38,14 @@ public class DependencyRuntime extends CamelCommand {
 
     @CommandLine.Parameters(description = "The pom.xml to analyze", arity = "1", paramLabel = "<pom.xml>")
     Path pomXml;
+
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    String repositories;
+
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    boolean download = true;
 
     @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
     boolean jsonOutput;
@@ -94,35 +103,29 @@ public class DependencyRuntime extends CamelCommand {
         }
 
         if (springBootVersion != null && camelVersion == null) {
-            StringJoiner sj = new StringJoiner(",");
-            for (Repository r : model.getRepositories()) {
-                sj.add(r.getUrl());
-            }
-            String repos = sj.length() > 0 ? sj.toString() : null;
-            camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(repos, camelSpringBootVersion);
+            camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(mavenRepos(model, repositories),
+                    camelSpringBootVersion, download);
         }
-
-        // its a bit harder to know the camel version from Quarkus because of the universal BOM
+        if (springBootVersion == null && camelSpringBootVersion != null) {
+            springBootVersion = CatalogLoader.resolveSpringBootVersionFromCamelSpringBoot(mavenRepos(model, repositories),
+                    camelSpringBootVersion, download);
+        }
         if (quarkusVersion != null && camelVersion == null) {
-            StringJoiner sj = new StringJoiner(",");
-            for (Repository r : model.getRepositories()) {
-                sj.add(r.getUrl());
-            }
-            String repos = sj.length() > 0 ? sj.toString() : null;
-            CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId);
+            String repos = mavenRepos(model, repositories);
+            CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId, download);
             if (catalog != null) {
                 // find out the camel quarkus version via the constant language that are built-in camel-core
                 camelQuarkusVersion = catalog.languageModel("constant").getVersion();
                 // okay so the camel version is also hard to resolve from quarkus
-                camelVersion = CatalogLoader.resolveCamelVersionFromQuarkus(repos, camelQuarkusVersion);
+                camelVersion = CatalogLoader.resolveCamelVersionFromQuarkus(repos, camelQuarkusVersion, download);
             }
         }
 
-        String runtime = "camel-main";
+        String runtime = RuntimeType.main.runtime();
         if (springBootVersion != null) {
-            runtime = "camel-spring-boot";
+            runtime = RuntimeType.springBoot.runtime();
         } else if (quarkusVersion != null) {
-            runtime = "camel-quarkus";
+            runtime = RuntimeType.quarkus.runtime();
         }
 
         if (jsonOutput) {
@@ -166,5 +169,21 @@ public class DependencyRuntime extends CamelCommand {
         }
 
         return 0;
+    }
+
+    private static String mavenRepos(Model model, String repositories) {
+        StringJoiner sj = new StringJoiner(",");
+        for (Repository r : model.getRepositories()) {
+            sj.add(r.getUrl());
+        }
+        String answer = sj.length() > 0 ? sj.toString() : null;
+        if (repositories != null) {
+            if (answer == null) {
+                answer = repositories;
+            } else {
+                answer += "," + repositories;
+            }
+        }
+        return answer;
     }
 }

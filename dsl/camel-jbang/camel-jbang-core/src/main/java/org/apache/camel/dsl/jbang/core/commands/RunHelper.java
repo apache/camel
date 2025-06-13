@@ -106,16 +106,14 @@ public final class RunHelper {
                 String a = resolveDependencyPlaceholder(d.getArtifactId(), pomPath, downloader);
                 String v = resolveDependencyPlaceholder(d.getVersion(), pomPath, downloader);
                 if (v != null) {
-                    if ("org.apache.camel".equals(g) && "camel-bom".equals(a)) {
+                    if ("camel-bom".equals(a)) {
                         camelVersion = v;
-                    } else if ("org.apache.camel.springboot".equals(g)
-                            && "camel-spring-boot-bom".equals(a)) {
+                    } else if ("camel-spring-boot-bom".equals(a)) {
                         camelSpringBootVersion = v;
                     } else if ("org.springframework.boot".equals(g)
                             && "spring-boot-dependencies".equals(a)) {
                         springBootVersion = v;
-                    } else if ("io.quarkus.platform".equals(g)
-                            && "quarkus-bom".equals(a)) {
+                    } else if ("quarkus-bom".equals(a)) {
                         quarkusVersion = v;
                     }
                     String gav = "mvn:" + g + ":" + a + ":" + v;

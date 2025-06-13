@@ -109,28 +109,28 @@ class DependencyRuntimeTest extends CamelCommandBaseTest {
     private static class TestArguments {
         static final String QUARKUS_POM = "pom-xml-files/quarkus-pom.xml";
         static final String QUARKUS_POM_OUTPUT = """
-                Runtime: camel-quarkus
+                Runtime: quarkus
                 Camel Version: 4.11.0
                 Camel Quarkus Version: 3.23.0
                 Quarkus Version: 3.23.0""";
         static final String QUARKUS_POM_JSON_OUTPUT
-                = "{\"runtime\":\"camel-quarkus\",\"camelVersion\":\"4.11.0\",\"camelQuarkusVersion\":\"3.23.0\",\"quarkusVersion\":\"3.23.0\",\"quarkusGroupId\":\"io.quarkus.platform\"}";
+                = "{\"runtime\":\"quarkus\",\"camelVersion\":\"4.11.0\",\"camelQuarkusVersion\":\"3.23.0\",\"quarkusVersion\":\"3.23.0\",\"quarkusGroupId\":\"io.quarkus.platform\"}";
 
         static final String SPRING_BOOT_POM = "pom-xml-files/springboot-pom.xml";
         static final String SPRING_BOOT_POM_OUTPUT = """
-                Runtime: camel-spring-boot
+                Runtime: spring-boot
                 Camel Version: 4.12.0
                 Camel Spring Boot Version: 4.12.0
                 Spring Boot Version: 3.4.5""";
         static final String SPRING_BOOT_POM_JSON_OUTPUT
-                = "{\"runtime\":\"camel-spring-boot\",\"camelVersion\":\"4.12.0\",\"camelSpringBootVersion\":\"4.12.0\",\"springBootVersion\":\"3.4.5\"}";
+                = "{\"runtime\":\"spring-boot\",\"camelVersion\":\"4.12.0\",\"camelSpringBootVersion\":\"4.12.0\",\"springBootVersion\":\"3.4.5\"}";
 
         static final String MAIN_POM = "pom-xml-files/main-pom.xml";
         static final String MAIN_POM_OUTPUT = """
-                Runtime: camel-main
+                Runtime: main
                 Camel Version: 4.12.0""";
         static final String MAIN_POM_JSON_OUTPUT
-                = "{\"runtime\":\"camel-main\",\"camelVersion\":\"4.12.0\"}";
+                = "{\"runtime\":\"main\",\"camelVersion\":\"4.12.0\"}";
 
     }
 }

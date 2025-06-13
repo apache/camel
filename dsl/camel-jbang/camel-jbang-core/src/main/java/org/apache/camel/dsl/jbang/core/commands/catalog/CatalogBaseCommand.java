@@ -52,6 +52,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime;
 
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    boolean download = true;
+
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
                         defaultValue = RuntimeType.QUARKUS_VERSION)
     String quarkusVersion;
@@ -102,14 +106,14 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
     CamelCatalog loadCatalog() throws Exception {
         if (RuntimeType.springBoot == runtime) {
-            return CatalogLoader.loadSpringBootCatalog(repos, camelVersion);
+            return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, download);
         } else if (RuntimeType.quarkus == runtime) {
-            return CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId);
+            return CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId, download);
         }
         if (camelVersion == null) {
             return new DefaultCamelCatalog(true);
         } else {
-            return CatalogLoader.loadCatalog(repos, camelVersion);
+            return CatalogLoader.loadCatalog(repos, camelVersion, download);
         }
     }
 
