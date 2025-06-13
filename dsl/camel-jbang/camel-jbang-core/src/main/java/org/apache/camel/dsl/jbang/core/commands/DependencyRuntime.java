@@ -18,30 +18,26 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
-import org.apache.camel.dsl.jbang.core.common.RuntimeInformation;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.XmlHelper;
+import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.json.Jsoner;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Repository;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "runtime", description = "Display Camel runtime and version for given Maven project",
                      sortOptions = false, showDefaultValues = true)
 public class DependencyRuntime extends CamelCommand {
 
-    @CommandLine.Parameters(description = "The pom.xml to analyze.", arity = "1", paramLabel = "<pom.xml>")
-    public Path pomXml;
+    @CommandLine.Parameters(description = "The pom.xml to analyze", arity = "1", paramLabel = "<pom.xml>")
+    Path pomXml;
+
     @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
     boolean jsonOutput;
 
@@ -57,117 +53,115 @@ public class DependencyRuntime extends CamelCommand {
             return 1;
         }
 
-        DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document dom = db.parse(Files.newInputStream(pomXml));
-        NodeList nl = dom.getElementsByTagName("dependency");
+        Model model = RunHelper.loadMavenModel(pomXml);
+        if (model == null) {
+            return 0;
+        }
 
-        RuntimeInformation runtimeInformation = new RuntimeInformation();
+        List<String> deps = RunHelper.scanMavenDependenciesFromModel(pomXml, model);
+        if (deps.isEmpty()) {
+            return 0;
+        }
 
-        for (int i = 0; i < nl.getLength(); i++) {
-            Element node = (Element) nl.item(i);
+        String camelVersion = null;
+        String camelSpringBootVersion = null;
+        String camelQuarkusVersion = null;
+        String springBootVersion = null;
+        String quarkusVersion = null;
+        String quarkusGroupId = null;
 
-            // must be child at <project/dependencyManagement> or <project/dependencies>
-            String p = node.getParentNode().getNodeName();
-            String p2 = node.getParentNode().getParentNode().getNodeName();
-            boolean accept = ("dependencyManagement".equals(p2) || "project".equals(p2)) && (p.equals("dependencies"));
-            if (!accept) {
-                continue;
+        for (String dep : deps) {
+            MavenGav gav = MavenGav.parseGav(dep);
+            if (camelVersion == null && "org.apache.camel".equals(gav.getGroupId())) {
+                camelVersion = gav.getVersion();
             }
-
-            String g = node.getElementsByTagName("groupId").item(0).getTextContent();
-            String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
-            String v = null;
-            NodeList vl = node.getElementsByTagName("version");
-            if (vl.getLength() > 0) {
-                v = vl.item(0).getTextContent();
+            if (camelSpringBootVersion == null && "org.apache.camel.springboot".equals(gav.getGroupId())) {
+                camelSpringBootVersion = gav.getVersion();
             }
-
-            // BOMs
-            if ("org.apache.camel".equals(g) && "camel-bom".equals(a)) {
-                runtimeInformation.setCamelVersion(v);
-                continue;
+            if (camelQuarkusVersion == null && "org.apache.camel.quarkus".equals(gav.getGroupId())) {
+                camelQuarkusVersion = gav.getVersion();
             }
-            if ("org.apache.camel.springboot".equals(g) && "camel-spring-boot-bom".equals(a)) {
-                runtimeInformation.setCamelVersion(v);
-                continue;
+            if (springBootVersion == null && "org.springframework.boot".equals(gav.getGroupId())) {
+                springBootVersion = gav.getVersion();
             }
-            if ("org.springframework.boot".equals(g) && "spring-boot-dependencies".equals(a)) {
-                runtimeInformation.setSpringBootVersion(v);
-                continue;
+            if (quarkusVersion == null && "io.quarkus".equals(gav.getGroupId())) {
+                quarkusVersion = gav.getVersion();
             }
-            if (("${quarkus.platform.group-id}".equals(g) || "io.quarkus.platform".equals(g)) &&
-                    ("${quarkus.platform.artifact-id}".equals(a) || "quarkus-bom".equals(a))) {
-                if ("${quarkus.platform.version}".equals(v)) {
-                    runtimeInformation.setQuarkusVersion(
-                            dom.getElementsByTagName("quarkus.platform.version").item(0).getTextContent());
-                } else {
-                    runtimeInformation.setQuarkusVersion(v);
-                }
-                continue;
-            }
-            if (("${quarkus.platform.group-id}".equals(g))) {
-                runtimeInformation.setQuarkusGroupId(
-                        dom.getElementsByTagName("quarkus.platform.group-id").item(0).getTextContent());
+            if (quarkusGroupId == null && "quarkus-bom".equals(gav.getArtifactId())) {
+                quarkusGroupId = gav.getGroupId();
+                quarkusVersion = gav.getVersion();
             }
         }
 
-        String repos = null;
-        StringJoiner sj = new StringJoiner(",");
-        nl = dom.getElementsByTagName("repository");
-        for (int i = 0; i < nl.getLength(); i++) {
-            Element node = (Element) nl.item(i);
-
-            // must be child at <repositories/repository>
-            String p = node.getParentNode().getNodeName();
-            boolean accept = "repositories".equals(p);
-            if (!accept) {
-                continue;
+        if (springBootVersion != null && camelVersion == null) {
+            StringJoiner sj = new StringJoiner(",");
+            for (Repository r : model.getRepositories()) {
+                sj.add(r.getUrl());
             }
-            String url = node.getElementsByTagName("url").item(0).getTextContent();
-            sj.add(url);
-        }
-        if (sj.length() > 0) {
-            repos = sj.toString();
+            String repos = sj.length() > 0 ? sj.toString() : null;
+            camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(repos, camelSpringBootVersion);
         }
 
-        // it's a bit harder to know the camel version from Quarkus because of the universal BOM
-        if (runtimeInformation.getQuarkusVersion() != null && runtimeInformation.getCamelVersion() == null) {
-            CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, runtimeInformation.getQuarkusVersion(),
-                    runtimeInformation.getQuarkusGroupId());
+        // its a bit harder to know the camel version from Quarkus because of the universal BOM
+        if (quarkusVersion != null && camelVersion == null) {
+            StringJoiner sj = new StringJoiner(",");
+            for (Repository r : model.getRepositories()) {
+                sj.add(r.getUrl());
+            }
+            String repos = sj.length() > 0 ? sj.toString() : null;
+            CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId);
             if (catalog != null) {
                 // find out the camel quarkus version via the constant language that are built-in camel-core
-                runtimeInformation.setCamelQuarkusVersion(catalog.languageModel("constant").getVersion());
+                camelQuarkusVersion = catalog.languageModel("constant").getVersion();
                 // okay so the camel version is also hard to resolve from quarkus
-                runtimeInformation.setCamelVersion(CatalogLoader.resolveCamelVersionFromQuarkus(repos,
-                        runtimeInformation.getCamelQuarkusVersion()));
+                camelVersion = CatalogLoader.resolveCamelVersionFromQuarkus(repos, camelQuarkusVersion);
             }
         }
 
-        runtimeInformation.setType(RuntimeType.main);
-        if (runtimeInformation.getSpringBootVersion() != null) {
-            runtimeInformation.setType(RuntimeType.springBoot);
-        } else if (runtimeInformation.getQuarkusVersion() != null) {
-            runtimeInformation.setType(RuntimeType.quarkus);
+        String runtime = "camel-main";
+        if (springBootVersion != null) {
+            runtime = "camel-spring-boot";
+        } else if (quarkusVersion != null) {
+            runtime = "camel-quarkus";
         }
 
         if (jsonOutput) {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            String json = mapper.writeValueAsString(runtimeInformation);
-            printer().println(json);
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("runtime", runtime);
+            if (camelVersion != null) {
+                map.put("camelVersion", camelVersion);
+            }
+            if (camelSpringBootVersion != null) {
+                map.put("camelSpringBootVersion", camelSpringBootVersion);
+            }
+            if (camelQuarkusVersion != null) {
+                map.put("camelQuarkusVersion", camelQuarkusVersion);
+            }
+            if (springBootVersion != null) {
+                map.put("springBootVersion", springBootVersion);
+            }
+            if (quarkusVersion != null) {
+                map.put("quarkusVersion", quarkusVersion);
+            }
+            if (quarkusGroupId != null) {
+                map.put("quarkusGroupId", quarkusGroupId);
+            }
+            printer().println(Jsoner.serialize(map));
         } else {
-            printer().println("Runtime: " + runtimeInformation.getType());
-            if (runtimeInformation.getCamelVersion() != null) {
-                printer().println("Camel Version: " + runtimeInformation.getCamelVersion());
+            printer().println("Runtime: " + runtime);
+            if (camelVersion != null) {
+                printer().println("Camel Version: " + camelVersion);
             }
-            if (runtimeInformation.getCamelQuarkusVersion() != null) {
-                printer().println("Camel Quarkus Version: " + runtimeInformation.getCamelQuarkusVersion());
+            if (camelSpringBootVersion != null) {
+                printer().println("Camel Spring Boot Version: " + camelSpringBootVersion);
             }
-            if (runtimeInformation.getSpringBootVersion() != null) {
-                printer().println("Spring Boot Version: " + runtimeInformation.getSpringBootVersion());
-            } else if (runtimeInformation.getQuarkusVersion() != null) {
-                printer().println("Quarkus Version: " + runtimeInformation.getQuarkusVersion());
+            if (camelQuarkusVersion != null) {
+                printer().println("Camel Quarkus Version: " + camelQuarkusVersion);
+            }
+            if (springBootVersion != null) {
+                printer().println("Spring Boot Version: " + springBootVersion);
+            } else if (quarkusVersion != null) {
+                printer().println("Quarkus Version: " + quarkusVersion);
             }
         }
 

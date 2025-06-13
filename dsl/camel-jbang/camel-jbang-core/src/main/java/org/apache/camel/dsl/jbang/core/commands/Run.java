@@ -733,7 +733,7 @@ public class Run extends CamelCommand {
             // find source files
             files = RunHelper.scanMavenOrGradleProject();
             // include extra dependencies from pom.xml
-            var pomDependencies = RunHelper.scanMavenDependenciesFromPom();
+            var pomDependencies = RunHelper.scanMavenDependenciesFromPom(Paths.get("pom.xml"));
             addDependencies(pomDependencies.toArray(new String[0]));
         }
 
