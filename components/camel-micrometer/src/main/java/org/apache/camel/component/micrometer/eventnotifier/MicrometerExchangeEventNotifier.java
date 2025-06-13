@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer.eventnotifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 
 import io.micrometer.core.instrument.Gauge;
@@ -27,6 +28,7 @@ import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
@@ -39,6 +41,9 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 
 public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNotifier<ExchangeEvent> {
+    // Used as a backing value for the camel exchange last timestamp meter
+    private static AtomicLong lastExchangeTimestampHolder = new AtomicLong(0);
+
     private InflightRepository inflightRepository;
 
     private final Map<String, Meter> meterMap = new HashMap<>();
@@ -198,6 +203,20 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         if (sample != null) {
             sample.stop(getMeterRegistry().timer(name, tags));
         }
+        setLastTimeExchange();
+    }
+
+    private void setLastTimeExchange() {
+        Gauge meter = getMeterRegistry().find(MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME).gauge();
+        if (meter == null) {
+            meter = Gauge.builder(
+                    MicrometerConstants.CAMEL_EXCHANGE_LAST_TIME_METER_NAME,
+                    MicrometerExchangeEventNotifier.lastExchangeTimestampHolder,
+                    AtomicLong::get)
+                    .description("Last exchange processed time in milliseconds since the Unix epoch")
+                    .register(getMeterRegistry());
+        }
+        MicrometerExchangeEventNotifier.lastExchangeTimestampHolder.set(System.currentTimeMillis());
     }
 
 }
