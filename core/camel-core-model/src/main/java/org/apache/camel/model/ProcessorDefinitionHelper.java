@@ -403,6 +403,9 @@ public final class ProcessorDefinitionHelper {
                 StackTraceElement e = st[i];
                 if (!e.getClassName().startsWith("org.apache.camel.model") &&
                         !e.getClassName().startsWith("org.apache.camel.builder.RouteBuilder") &&
+                        !e.getClassName().startsWith("org.apache.camel.reifier.RouteReifier") &&
+                        !e.getClassName().startsWith("org.apache.camel.impl") &&
+                        !e.getClassName().startsWith("org.apache.camel.support") &&
                         !e.getClassName().startsWith("org.apache.camel.dsl")) {
                     // when we are no longer in model/RouteBuilder, we have found the location:line-number
                     node.setLineNumber(e.getLineNumber());

@@ -641,7 +641,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     if (duplicate != null) {
                         throw new FailedToStartRouteException(
                                 routeDefinition.getId(),
-                                "duplicate id detected: " + duplicate
+                                "Duplicate id detected: " + duplicate
                                                          + ". Please correct ids to be unique among all your routes.");
                     }
 

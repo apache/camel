@@ -41,6 +41,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupStep;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ContractAdvice;
@@ -57,6 +58,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -87,9 +89,10 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         } catch (FailedToCreateRouteException e) {
             throw e;
         } catch (Exception e) {
-            // wrap in exception which provide more details about which route
-            // was failing
-            throw new FailedToCreateRouteException(definition.getId(), definition.toString(), e);
+            // location on route is stored on input
+            ProcessorDefinitionHelper.prepareSourceLocation(definition.getResource(), definition.getInput());
+            String source = LoggerHelper.getSourceLocationOnly(definition.getInput());
+            throw new FailedToCreateRouteException(definition.getRouteId(), source, definition.toString(), e);
         }
     }
 
@@ -213,7 +216,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             Exception cause = new IllegalArgumentException(
                     "Route " + definition.getId() + " has no output processors."
                                                            + " You need to add outputs to the route such as to(\"log:foo\").");
-            throw new FailedToCreateRouteException(definition.getId(), definition.toString(), at, cause);
+            // location on route is stored on input
+            ProcessorDefinitionHelper.prepareSourceLocation(definition.getResource(), definition.getInput());
+            String source = LoggerHelper.getSourceLocationOnly(definition.getInput());
+            throw new FailedToCreateRouteException(
+                    definition.getRouteId(), source, definition.toString(), at, cause);
         }
 
         List<ProcessorDefinition<?>> list = new ArrayList<>(definition.getOutputs());
@@ -232,7 +239,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
                 camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
             } catch (Exception e) {
-                throw new FailedToCreateRouteException(definition.getId(), definition.toString(), output.toString(), e);
+                // location on route is stored on input
+                String source = LoggerHelper
+                        .getLineNumberLoggerName(definition.getInput() != null ? definition.getInput().getLocation() : null);
+                throw new FailedToCreateRouteException(
+                        definition.getRouteId(), source, definition.toString(), output.toString(), e);
             }
         }
 

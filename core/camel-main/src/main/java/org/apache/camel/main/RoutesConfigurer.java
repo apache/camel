@@ -383,7 +383,7 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
         if (!dups.isEmpty()) {
             String id = String.join(",", dups);
             throw new FailedToCreateRouteException(
-                    "duplicate route ids detected: " + id + ". Please correct ids to be unique among all your routes.");
+                    "Duplicate route ids detected: " + id + ". Please correct ids to be unique among all your routes.");
         }
     }
 

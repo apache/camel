@@ -24,31 +24,43 @@ import org.apache.camel.util.URISupport;
 public class FailedToCreateRouteException extends RuntimeCamelException {
 
     private final String routeId;
+    private final String location;
 
     public FailedToCreateRouteException(String cause) {
-        super("Failed to create route because of " + cause);
+        super("Failed to create route because: " + cause);
         this.routeId = null;
+        this.location = null;
     }
 
-    public FailedToCreateRouteException(String routeId, String route, String cause) {
-        super("Failed to create route " + routeId + ": " + getRouteMessage(route) + " because of " + cause);
+    public FailedToCreateRouteException(String routeId, String location, String route, String cause) {
+        super("Failed to create route: " + routeId + (location != null ? " (source: " + location + ")" : "") + ": "
+              + getRouteMessage(route) + " because: " + cause);
         this.routeId = routeId;
+        this.location = location;
     }
 
-    public FailedToCreateRouteException(String routeId, String route, Throwable cause) {
-        super("Failed to create route " + routeId + ": " + getRouteMessage(route) + " because of " + getExceptionMessage(cause),
+    public FailedToCreateRouteException(String routeId, String location, String route, Throwable cause) {
+        super("Failed to create route: " + routeId + (location != null ? " (source: " + location + ")" : "") + ": "
+              + getRouteMessage(route) + " because: " + getExceptionMessage(cause),
               cause);
         this.routeId = routeId;
+        this.location = location;
     }
 
-    public FailedToCreateRouteException(String routeId, String route, String at, Throwable cause) {
-        super("Failed to create route " + routeId + " at: >>> " + at + " <<< in route: " + getRouteMessage(route)
-              + " because of " + getExceptionMessage(cause), cause);
+    public FailedToCreateRouteException(String routeId, String location, String route, String at, Throwable cause) {
+        super("Failed to create route: " + routeId + (location != null ? " (source: " + location + ")" : "") + " at: >>> " + at
+              + " <<< in route: " + getRouteMessage(route)
+              + " because: " + getExceptionMessage(cause), cause);
         this.routeId = routeId;
+        this.location = location;
     }
 
     public String getRouteId() {
         return routeId;
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     protected static String getExceptionMessage(Throwable cause) {

@@ -36,7 +36,6 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.StartupStep;
 import org.apache.camel.spi.IdAware;
@@ -77,6 +76,10 @@ public class RouteService extends ChildServiceSupport {
 
     public String getId() {
         return route.getId();
+    }
+
+    public String getLocation() {
+        return route.getSourceLocationShort();
     }
 
     public CamelContext getCamelContext() {
@@ -123,7 +126,7 @@ public class RouteService extends ChildServiceSupport {
         try {
             doWarmUp();
         } catch (Exception e) {
-            throw new FailedToStartRouteException(getId(), e.getLocalizedMessage(), e);
+            throw new FailedToStartRouteException(getId(), getLocation(), e.getLocalizedMessage(), e);
         }
     }
 
@@ -132,7 +135,7 @@ public class RouteService extends ChildServiceSupport {
             try {
                 doSetup();
             } catch (Exception e) {
-                throw new FailedToStartRouteException(getId(), e.getLocalizedMessage(), e);
+                throw new FailedToStartRouteException(getId(), getLocation(), e.getLocalizedMessage(), e);
             }
         }
     }
@@ -240,12 +243,8 @@ public class RouteService extends ChildServiceSupport {
             EventHelper.notifyRouteStarting(camelContext, route);
         }
 
-        try {
-            // ensure we are warmed up
-            warmUp();
-        } catch (FailedToStartRouteException e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
-        }
+        // ensure we are warmed up
+        warmUp();
 
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
             // start the route itself

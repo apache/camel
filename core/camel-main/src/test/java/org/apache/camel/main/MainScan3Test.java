@@ -33,7 +33,7 @@ public class MainScan3Test {
             fail();
         } catch (FailedToCreateRouteException e) {
             assertEquals(
-                    "Failed to create route because of duplicate route ids detected: foo2. Please correct ids to be unique among all your routes.",
+                    "Failed to create route because: Duplicate route ids detected: foo2. Please correct ids to be unique among all your routes.",
                     e.getMessage());
         }
 

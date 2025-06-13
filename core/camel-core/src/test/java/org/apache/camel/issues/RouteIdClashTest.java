@@ -47,7 +47,7 @@ public class RouteIdClashTest extends ContextTestSupport {
         } catch (FailedToStartRouteException e) {
             Assertions.assertEquals("myroute", e.getRouteId());
             Assertions.assertEquals(
-                    "Failed to start route myroute because of duplicate id detected: myroute. Please correct ids to be unique among all your routes.",
+                    "Failed to start route: myroute because: Duplicate id detected: myroute. Please correct ids to be unique among all your routes.",
                     e.getMessage());
         }
     }

@@ -576,7 +576,7 @@ public class DefaultModel implements Model {
         if (duplicate != null) {
             throw new FailedToCreateRouteFromTemplateException(
                     routeId, routeTemplateId,
-                    "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+                    "Duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
         }
 
         // must use route collection to prepare the created route to

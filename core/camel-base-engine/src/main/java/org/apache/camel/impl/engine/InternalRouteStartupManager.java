@@ -283,8 +283,10 @@ final class InternalRouteStartupManager {
         if (other != null && answer != other) {
             String otherId = other.getRoute().getId();
             throw new FailedToStartRouteException(
-                    answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder " + answer
-                            .getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
+                    answer.getRoute().getId(), "Route startup order clash. Route " + otherId + " already has startupOrder "
+                                               + answer
+                                                       .getStartupOrder()
+                                               + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
         }
         // check in existing already started as well
         for (RouteStartupOrder order : camelContext.getCamelContextExtension().getRouteStartupOrder()) {
@@ -294,7 +296,7 @@ final class InternalRouteStartupManager {
             if (!answer.getRoute().getId().equals(otherId)
                     && answer.getStartupOrder() == order.getStartupOrder()) {
                 throw new FailedToStartRouteException(
-                        answer.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder "
+                        answer.getRoute().getId(), "Route startup order clash. Route " + otherId + " already has startupOrder "
                                                    + answer.getStartupOrder()
                                                    + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
             }

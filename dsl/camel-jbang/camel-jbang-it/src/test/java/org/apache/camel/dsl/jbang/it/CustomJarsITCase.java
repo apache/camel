@@ -30,7 +30,7 @@ public class CustomJarsITCase extends JBangTestSupport {
         Assertions
                 .assertThatCode(() -> execute(String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer", mountPoint())))
                 .as("the application without dependency will cause error")
-                .hasStackTraceContaining("Failed to create route circuitBreaker")
+                .hasStackTraceContaining("Failed to create route: circuitBreaker")
                 .hasStackTraceContaining(
                         "Cannot find camel-resilience4j or camel-microprofile-fault-tolerance on the classpath.");
         executeBackground(String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer,camel-resilience4j", mountPoint()));
