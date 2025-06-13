@@ -182,10 +182,12 @@ public final class RunHelper {
                 String p = model.getProperties().getProperty(placeholder);
                 if (p != null && p.startsWith("${") && p.endsWith("}")) {
                     p = p.substring(2, p.length() - 1);
-                    if ("project.version".equals(p)) {
-                        p = model.getVersion();
-                    } else {
-                        p = model.getProperties().getProperty(p);
+                    p = model.getProperties().getProperty(p);
+                }
+                if ("project.version".equals(p) || "project.version".equals(placeholder)) {
+                    p = model.getVersion();
+                    if (p == null && model.getParent() != null) {
+                        p = model.getParent().getVersion();
                     }
                 }
                 if (p != null) {

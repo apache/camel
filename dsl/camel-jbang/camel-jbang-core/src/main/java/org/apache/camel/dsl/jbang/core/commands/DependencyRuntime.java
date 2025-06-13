@@ -77,7 +77,12 @@ public class DependencyRuntime extends CamelCommand {
         String camelQuarkusVersion = null;
         String springBootVersion = null;
         String quarkusVersion = null;
-        String quarkusGroupId = null;
+        String quarkusBomGroupId = null;
+        String quarkusBomArtifactId = null;
+        String camelQuarkusBomGroupId = null;
+        String camelQuarkusBomArtifactId = null;
+        String camelSpringBootBomGroupId = null;
+        String camelSpringBootBomArtifactId = null;
 
         for (String dep : deps) {
             MavenGav gav = MavenGav.parseGav(dep);
@@ -96,9 +101,18 @@ public class DependencyRuntime extends CamelCommand {
             if (quarkusVersion == null && "io.quarkus".equals(gav.getGroupId())) {
                 quarkusVersion = gav.getVersion();
             }
-            if (quarkusGroupId == null && "quarkus-bom".equals(gav.getArtifactId())) {
-                quarkusGroupId = gav.getGroupId();
+            if (quarkusBomGroupId == null && "quarkus-bom".equals(gav.getArtifactId())) {
+                quarkusBomGroupId = gav.getGroupId();
+                quarkusBomArtifactId = gav.getArtifactId();
                 quarkusVersion = gav.getVersion();
+            }
+            if (camelQuarkusBomGroupId == null && "quarkus-camel-bom".equals(gav.getArtifactId())) {
+                camelQuarkusBomGroupId = gav.getGroupId();
+                camelQuarkusBomArtifactId = gav.getArtifactId();
+            }
+            if (camelSpringBootBomGroupId == null && "camel-spring-boot-bom".equals(gav.getArtifactId())) {
+                camelSpringBootBomGroupId = gav.getGroupId();
+                camelSpringBootBomArtifactId = gav.getArtifactId();
             }
         }
 
@@ -106,13 +120,13 @@ public class DependencyRuntime extends CamelCommand {
             springBootVersion = CatalogLoader.resolveSpringBootVersionFromCamelSpringBoot(mavenRepos(model, repositories),
                     camelSpringBootVersion, download);
         }
-        if (springBootVersion != null && camelVersion == null) {
+        if (camelSpringBootVersion != null && camelVersion == null) {
             camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(mavenRepos(model, repositories),
                     camelSpringBootVersion, download);
         }
         if (quarkusVersion != null && camelVersion == null) {
             String repos = mavenRepos(model, repositories);
-            CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId, download);
+            CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusBomGroupId, download);
             if (catalog != null) {
                 // find out the camel quarkus version via the constant language that are built-in camel-core
                 camelQuarkusVersion = catalog.languageModel("constant").getVersion();
@@ -146,8 +160,23 @@ public class DependencyRuntime extends CamelCommand {
             if (quarkusVersion != null) {
                 map.put("quarkusVersion", quarkusVersion);
             }
-            if (quarkusGroupId != null) {
-                map.put("quarkusGroupId", quarkusGroupId);
+            if (camelSpringBootBomGroupId != null) {
+                map.put("camelSpringBootBomGroupId", camelSpringBootBomGroupId);
+            }
+            if (camelSpringBootBomArtifactId != null) {
+                map.put("camelSpringBootBomArtifactId", camelSpringBootBomArtifactId);
+            }
+            if (quarkusBomGroupId != null) {
+                map.put("quarkusBomGroupId", quarkusBomGroupId);
+            }
+            if (quarkusBomArtifactId != null) {
+                map.put("quarkusBomArtifactId", quarkusBomArtifactId);
+            }
+            if (camelQuarkusBomGroupId != null) {
+                map.put("camelQuarkusBomGroupId", camelQuarkusBomGroupId);
+            }
+            if (camelQuarkusBomArtifactId != null) {
+                map.put("camelQuarkusBomArtifactId", camelQuarkusBomArtifactId);
             }
             printer().println(Jsoner.serialize(map));
         } else {
