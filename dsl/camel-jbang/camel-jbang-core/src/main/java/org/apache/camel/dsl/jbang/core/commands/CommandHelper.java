@@ -84,8 +84,8 @@ public final class CommandHelper {
         public void run() {
             if (System.console() != null) {
                 System.console().readLine();
+                listener.run();
             }
-            listener.run();
         }
     }
 }
