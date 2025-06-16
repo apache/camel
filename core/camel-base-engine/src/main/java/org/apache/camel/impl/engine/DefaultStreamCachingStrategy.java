@@ -407,7 +407,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         }
 
         // if we can overflow to disk then make sure directory exists / is created
-        if (spoolEnabled && (spoolThreshold > 0 || spoolUsedHeapMemoryThreshold > 0)) {
+        if (spoolEnabled && (spoolThreshold > 0 || spoolUsedHeapMemoryThreshold > 0 || !spoolRules.isEmpty())) {
             if (spoolDirectory == null && spoolDirectoryName == null) {
                 throw new IllegalArgumentException("SpoolDirectory must be configured when using SpoolThreshold > 0");
             }
