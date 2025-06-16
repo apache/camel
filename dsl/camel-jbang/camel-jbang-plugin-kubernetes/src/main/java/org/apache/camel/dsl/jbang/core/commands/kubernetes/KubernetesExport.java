@@ -210,7 +210,7 @@ public class KubernetesExport extends Export {
         }
 
         String projectName = getProjectName();
-        CamelCatalog catalog = CatalogHelper.loadCatalog(runtime, runtime.version());
+        CamelCatalog catalog = CatalogHelper.loadCatalog(runtime, runtime.version(), download);
 
         List<Source> sources;
         try {

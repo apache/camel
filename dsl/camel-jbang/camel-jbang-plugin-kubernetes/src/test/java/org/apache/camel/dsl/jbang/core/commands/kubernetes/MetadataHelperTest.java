@@ -41,7 +41,7 @@ public class MetadataHelperTest {
 
     @Test
     public void testInspectHttpService() throws Exception {
-        CamelCatalog catalog = CatalogHelper.loadCatalog(RuntimeType.quarkus, RuntimeType.quarkus.version());
+        CamelCatalog catalog = CatalogHelper.loadCatalog(RuntimeType.quarkus, RuntimeType.quarkus.version(), true);
         Source source = SourceHelper.resolveSource("classpath:PlatformHttpServer.java");
         SourceMetadata metadata = MetadataHelper.readFromSource(catalog, source);
 
