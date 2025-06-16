@@ -31,11 +31,12 @@ public class CatalogHelper {
         return loadCatalog(runtime, runtimeVersion, "", null, download);
     }
 
-    public static CamelCatalog loadCatalog(RuntimeType runtime, String runtimeVersion, String repos, String quarkusGroupId, boolean download)
+    public static CamelCatalog loadCatalog(
+            RuntimeType runtime, String runtimeVersion, String repos, String quarkusGroupId, boolean download)
             throws Exception {
         switch (runtime) {
             case springBoot:
-                return CatalogLoader.loadSpringBootCatalog(repos, runtimeVersion,download);
+                return CatalogLoader.loadSpringBootCatalog(repos, runtimeVersion, download);
             case quarkus:
                 return CatalogLoader.loadQuarkusCatalog(repos, runtimeVersion, quarkusGroupId, download);
             case main:
