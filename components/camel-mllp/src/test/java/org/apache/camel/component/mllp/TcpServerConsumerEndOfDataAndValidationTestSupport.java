@@ -116,7 +116,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     }
 
     @Override
-    public void doPostTearDown() throws InterruptedException {
+    public void cleanupResources() throws InterruptedException {
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
