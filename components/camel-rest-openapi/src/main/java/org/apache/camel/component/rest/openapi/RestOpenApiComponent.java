@@ -126,6 +126,9 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     @Metadata(label = "consumer",
               description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
     private boolean clientRequestValidation;
+    @Metadata(label = "consumer",
+              description = "Whether to enable validation of the client request to check if the outgoing response from Camel is valid according to the OpenAPI specification")
+    private boolean clientResponseValidation;
     @Metadata(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
     @Metadata(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
@@ -160,6 +163,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         endpoint.setBasePath(getBasePath());
         endpoint.setBindingPackageScan(getBindingPackageScan());
         endpoint.setClientRequestValidation(isClientRequestValidation());
+        endpoint.setClientResponseValidation(isClientResponseValidation());
         endpoint.setComponentName(getComponentName());
         endpoint.setConsumerComponentName(getConsumerComponentName());
         endpoint.setConsumes(getConsumes());
@@ -314,6 +318,14 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     public void setClientRequestValidation(boolean clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
+    }
+
+    public boolean isClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
+    public void setClientResponseValidation(boolean clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
     }
 
     public String getBindingPackageScan() {

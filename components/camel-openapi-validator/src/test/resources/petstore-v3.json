@@ -767,13 +767,14 @@
             "headers": {
               "X-Rate-Limit": {
                 "description": "calls per hour allowed by the user",
+                "required": true,
                 "schema": {
                   "type": "integer",
                   "format": "int32"
                 }
               },
               "X-Expires-After": {
-                "description": "date in UTC when toekn expires",
+                "description": "date in UTC when token expires",
                 "schema": {
                   "type": "string",
                   "format": "date-time"

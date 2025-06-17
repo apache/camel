@@ -3457,6 +3457,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("code", def.getCode(), "200");
         doWriteAttribute("responseModel", def.getResponseModel(), null);
         doWriteAttribute("message", def.getMessage(), null);
+        doWriteAttribute("contentType", def.getContentType(), null);
         doWriteList(null, "header", def.getHeaders(), this::doWriteResponseHeaderDefinition);
         doWriteList(null, "examples", def.getExamples(), this::doWriteRestPropertyDefinition);
         endElement(name);
@@ -3467,6 +3468,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
         doWriteAttribute("type", def.getType(), null);
         doWriteAttribute("outType", def.getOutType(), null);
+        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), "false");
         doWriteAttribute("component", def.getComponent(), null);
         doWriteAttribute("bindingMode", def.getBindingMode(), "off");
         doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
@@ -3493,6 +3495,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("apiHost", def.getApiHost(), null);
         doWriteAttribute("contextPath", def.getContextPath(), null);
         doWriteAttribute("apiContextRouteId", def.getApiContextRouteId(), null);
+        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), "false");
         doWriteAttribute("component", def.getComponent(), null);
         doWriteAttribute("bindingMode", toString(def.getBindingMode()), "off");
         doWriteAttribute("port", def.getPort(), null);
@@ -3513,6 +3516,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
+        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), "false");
         doWriteAttribute("path", def.getPath(), null);
         doWriteAttribute("bindingMode", def.getBindingMode(), "off");
         doWriteAttribute("apiDocs", def.getApiDocs(), "true");
@@ -3577,6 +3581,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("streamCache", def.getStreamCache(), null);
         doWriteAttribute("type", def.getType(), null);
         doWriteAttribute("outType", def.getOutType(), null);
+        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), "false");
         doWriteAttribute("path", def.getPath(), null);
         doWriteAttribute("routeId", def.getRouteId(), null);
         doWriteAttribute("bindingMode", def.getBindingMode(), "off");

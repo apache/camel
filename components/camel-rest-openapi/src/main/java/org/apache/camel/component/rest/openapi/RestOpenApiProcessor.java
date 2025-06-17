@@ -200,6 +200,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         bc.setEnableCORS(config.isEnableCORS());
         bc.setCorsHeaders(config.getCorsHeaders());
         bc.setClientRequestValidation(config.isClientRequestValidation() || endpoint.isClientRequestValidation());
+        bc.setClientResponseValidation(config.isClientResponseValidation() || endpoint.isClientResponseValidation());
         bc.setEnableNoContentResponse(config.isEnableNoContentResponse());
         bc.setSkipBindingOnErrorCode(config.isSkipBindingOnErrorCode());
 

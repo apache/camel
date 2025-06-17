@@ -46,21 +46,25 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
     @Test
     public void testValidateBody() {
         exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
-        exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
         exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "PUT");
         exchange.getMessage().setHeader(Exchange.HTTP_PATH, "pet");
+        exchange.getMessage().setHeader("Content-Type", "application/json");
         exchange.getMessage().setHeader("Accept", "application/json");
         exchange.getMessage().setBody("");
 
         RestClientRequestValidator.ValidationError error
                 = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
                         "application/json", "application/json", true, null, null, null, null));
-
         Assertions.assertNotNull(error);
         Assertions.assertTrue(error.body().contains("A request body is required but none found"));
 
-        exchange.getMessage().setBody("{ some body here }");
+        exchange.getMessage().setBody("{ \"name\": \"tiger\" }");
+        error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
+                "application/json", "application/json", true, null, null, null, null));
+        Assertions.assertNotNull(error);
+        Assertions.assertTrue(error.body().contains("Object has missing required properties ([\\\"photoUrls\\\"])"));
 
+        exchange.getMessage().setBody("{ \"name\": \"tiger\", \"photoUrls\": [\"image.jpg\"] }");
         error = validator.validate(exchange, new RestClientRequestValidator.ValidationContext(
                 "application/json", "application/json", true, null, null, null, null));
         Assertions.assertNull(error);
@@ -69,7 +73,6 @@ public class OpenApiRestClientRequestValidatorTest extends ExchangeTestSupport {
     @Test
     public void testValidateQueryParam() {
         exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
-        exchange.setProperty(Exchange.CONTENT_TYPE, "application/json");
         exchange.getMessage().setHeader(Exchange.HTTP_METHOD, "GET");
         exchange.getMessage().setHeader(Exchange.HTTP_PATH, "pet/findByStatus");
         exchange.getMessage().setHeader("Accept", "application/json");

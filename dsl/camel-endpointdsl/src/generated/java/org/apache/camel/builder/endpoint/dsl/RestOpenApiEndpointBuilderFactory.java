@@ -106,6 +106,40 @@ public interface RestOpenApiEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable validation of the client request to check if the
+         * outgoing response from Camel is valid according to the OpenAPI
+         * specification.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param clientResponseValidation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder clientResponseValidation(boolean clientResponseValidation) {
+            doSetProperty("clientResponseValidation", clientResponseValidation);
+            return this;
+        }
+        /**
+         * Whether to enable validation of the client request to check if the
+         * outgoing response from Camel is valid according to the OpenAPI
+         * specification.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param clientResponseValidation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder clientResponseValidation(String clientResponseValidation) {
+            doSetProperty("clientResponseValidation", clientResponseValidation);
+            return this;
+        }
+        /**
          * What payload type this component capable of consuming. Could be one
          * type, like application/json or multiple types as application/json,
          * application/xml; q=0.5 according to the RFC7231. This equates or
