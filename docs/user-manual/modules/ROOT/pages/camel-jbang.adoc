@@ -4160,7 +4160,7 @@ $ camel infra run arangodb
 $ camel infra ps
  ALIAS             IMPLEMENTATION  DESCRIPTION
  arangodb                          ArangoDB is a multi-model database for high-performance applications.
----
+----
 
 === Get running service
 
@@ -4177,7 +4177,7 @@ $ camel infra get openldap
   "getSslPort" : 32775,
   "getHost" : "localhost"
 }
----
+----
 
 === Get running services logs
 
@@ -4197,7 +4197,7 @@ $ camel infra log
 [service1] ...
 [service1] ...
 [service1] ...
----
+----
 
 In order to retrieve the log of a specific service the service alias can be provided
 
@@ -4207,7 +4207,7 @@ $ camel infra log service
 [service] ...
 [service] ...
 [service] ...
----
+----
 
 == Update
 
