@@ -31,6 +31,7 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("BindingMode", java.lang.String.class);
         map.put("BindingPackageScan", java.lang.String.class);
         map.put("ClientRequestValidation", boolean.class);
+        map.put("ClientResponseValidation", boolean.class);
         map.put("Component", java.lang.String.class);
         map.put("ComponentProperties", java.util.Map.class);
         map.put("ConsumerProperties", java.util.Map.class);
@@ -76,6 +77,8 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "bindingPackageScan": target.setBindingPackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "clientrequestvalidation":
         case "clientRequestValidation": target.setClientRequestValidation(property(camelContext, boolean.class, value)); return true;
+        case "clientresponsevalidation":
+        case "clientResponseValidation": target.setClientResponseValidation(property(camelContext, boolean.class, value)); return true;
         case "component": target.setComponent(property(camelContext, java.lang.String.class, value)); return true;
         case "componentproperties":
         case "componentProperties": target.setComponentProperties(property(camelContext, java.util.Map.class, value)); return true;
@@ -142,6 +145,8 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "bindingPackageScan": return java.lang.String.class;
         case "clientrequestvalidation":
         case "clientRequestValidation": return boolean.class;
+        case "clientresponsevalidation":
+        case "clientResponseValidation": return boolean.class;
         case "component": return java.lang.String.class;
         case "componentproperties":
         case "componentProperties": return java.util.Map.class;
@@ -204,6 +209,8 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "bindingPackageScan": return target.getBindingPackageScan();
         case "clientrequestvalidation":
         case "clientRequestValidation": return target.isClientRequestValidation();
+        case "clientresponsevalidation":
+        case "clientResponseValidation": return target.isClientResponseValidation();
         case "component": return target.getComponent();
         case "componentproperties":
         case "componentProperties": return target.getComponentProperties();

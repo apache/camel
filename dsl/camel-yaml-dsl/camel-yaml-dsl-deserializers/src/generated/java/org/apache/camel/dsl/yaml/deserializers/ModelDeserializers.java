@@ -4770,6 +4770,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "apiDocs", type = "boolean", description = "Whether to include or exclude this rest operation in API documentation. The default value is true.", displayName = "Api Docs"),
                     @YamlProperty(name = "bindingMode", type = "enum:off,auto,json,xml,json_xml", defaultValue = "off", description = "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is off", displayName = "Binding Mode"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
+                    @YamlProperty(name = "clientResponseValidation", type = "boolean", description = "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.", displayName = "Client Response Validation"),
                     @YamlProperty(name = "consumes", type = "string", description = "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level", displayName = "Consumes"),
                     @YamlProperty(name = "deprecated", type = "boolean", description = "Marks this rest operation as deprecated in OpenApi documentation.", displayName = "Deprecated"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
@@ -4818,6 +4819,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "clientRequestValidation": {
                     String val = asText(node);
                     target.setClientRequestValidation(val);
+                    break;
+                }
+                case "clientResponseValidation": {
+                    String val = asText(node);
+                    target.setClientResponseValidation(val);
                     break;
                 }
                 case "consumes": {
@@ -6290,6 +6296,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "apiDocs", type = "boolean", description = "Whether to include or exclude this rest operation in API documentation. The default value is true.", displayName = "Api Docs"),
                     @YamlProperty(name = "bindingMode", type = "enum:off,auto,json,xml,json_xml", defaultValue = "off", description = "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is off", displayName = "Binding Mode"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
+                    @YamlProperty(name = "clientResponseValidation", type = "boolean", description = "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.", displayName = "Client Response Validation"),
                     @YamlProperty(name = "consumes", type = "string", description = "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level", displayName = "Consumes"),
                     @YamlProperty(name = "deprecated", type = "boolean", description = "Marks this rest operation as deprecated in OpenApi documentation.", displayName = "Deprecated"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
@@ -6338,6 +6345,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "clientRequestValidation": {
                     String val = asText(node);
                     target.setClientRequestValidation(val);
+                    break;
+                }
+                case "clientResponseValidation": {
+                    String val = asText(node);
+                    target.setClientResponseValidation(val);
                     break;
                 }
                 case "consumes": {
@@ -6748,6 +6760,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "apiDocs", type = "boolean", description = "Whether to include or exclude this rest operation in API documentation. The default value is true.", displayName = "Api Docs"),
                     @YamlProperty(name = "bindingMode", type = "enum:off,auto,json,xml,json_xml", defaultValue = "off", description = "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is off", displayName = "Binding Mode"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
+                    @YamlProperty(name = "clientResponseValidation", type = "boolean", description = "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.", displayName = "Client Response Validation"),
                     @YamlProperty(name = "consumes", type = "string", description = "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level", displayName = "Consumes"),
                     @YamlProperty(name = "deprecated", type = "boolean", description = "Marks this rest operation as deprecated in OpenApi documentation.", displayName = "Deprecated"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
@@ -6796,6 +6809,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "clientRequestValidation": {
                     String val = asText(node);
                     target.setClientRequestValidation(val);
+                    break;
+                }
+                case "clientResponseValidation": {
+                    String val = asText(node);
+                    target.setClientResponseValidation(val);
                     break;
                 }
                 case "consumes": {
@@ -11607,6 +11625,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "apiDocs", type = "boolean", description = "Whether to include or exclude this rest operation in API documentation. The default value is true.", displayName = "Api Docs"),
                     @YamlProperty(name = "bindingMode", type = "enum:off,auto,json,xml,json_xml", defaultValue = "off", description = "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is off", displayName = "Binding Mode"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
+                    @YamlProperty(name = "clientResponseValidation", type = "boolean", description = "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.", displayName = "Client Response Validation"),
                     @YamlProperty(name = "consumes", type = "string", description = "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level", displayName = "Consumes"),
                     @YamlProperty(name = "deprecated", type = "boolean", description = "Marks this rest operation as deprecated in OpenApi documentation.", displayName = "Deprecated"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
@@ -11655,6 +11674,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "clientRequestValidation": {
                     String val = asText(node);
                     target.setClientRequestValidation(val);
+                    break;
+                }
+                case "clientResponseValidation": {
+                    String val = asText(node);
+                    target.setClientResponseValidation(val);
                     break;
                 }
                 case "consumes": {
@@ -12156,6 +12180,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "apiDocs", type = "boolean", description = "Whether to include or exclude this rest operation in API documentation. The default value is true.", displayName = "Api Docs"),
                     @YamlProperty(name = "bindingMode", type = "enum:off,auto,json,xml,json_xml", defaultValue = "off", description = "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is off", displayName = "Binding Mode"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
+                    @YamlProperty(name = "clientResponseValidation", type = "boolean", description = "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.", displayName = "Client Response Validation"),
                     @YamlProperty(name = "consumes", type = "string", description = "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level", displayName = "Consumes"),
                     @YamlProperty(name = "deprecated", type = "boolean", description = "Marks this rest operation as deprecated in OpenApi documentation.", displayName = "Deprecated"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
@@ -12204,6 +12229,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "clientRequestValidation": {
                     String val = asText(node);
                     target.setClientRequestValidation(val);
+                    break;
+                }
+                case "clientResponseValidation": {
+                    String val = asText(node);
+                    target.setClientResponseValidation(val);
                     break;
                 }
                 case "consumes": {
@@ -12687,6 +12717,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "apiDocs", type = "boolean", description = "Whether to include or exclude this rest operation in API documentation. The default value is true.", displayName = "Api Docs"),
                     @YamlProperty(name = "bindingMode", type = "enum:off,auto,json,xml,json_xml", defaultValue = "off", description = "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is off", displayName = "Binding Mode"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
+                    @YamlProperty(name = "clientResponseValidation", type = "boolean", description = "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.", displayName = "Client Response Validation"),
                     @YamlProperty(name = "consumes", type = "string", description = "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level", displayName = "Consumes"),
                     @YamlProperty(name = "deprecated", type = "boolean", description = "Marks this rest operation as deprecated in OpenApi documentation.", displayName = "Deprecated"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
@@ -12735,6 +12766,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "clientRequestValidation": {
                     String val = asText(node);
                     target.setClientRequestValidation(val);
+                    break;
+                }
+                case "clientResponseValidation": {
+                    String val = asText(node);
+                    target.setClientResponseValidation(val);
                     break;
                 }
                 case "consumes": {
@@ -14083,6 +14119,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "code", type = "string", defaultValue = "200", description = "The response code such as a HTTP status code", displayName = "Code"),
+                    @YamlProperty(name = "contentType", type = "string", description = "The response content-type such as application/json.", displayName = "Content Type"),
                     @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Examples of response messages", displayName = "Examples"),
                     @YamlProperty(name = "header", type = "array:org.apache.camel.model.rest.ResponseHeaderDefinition", description = "Adds a response header", displayName = "Header"),
                     @YamlProperty(name = "message", type = "string", required = true, description = "The response message (description)", displayName = "Message"),
@@ -14107,6 +14144,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "code": {
                     String val = asText(node);
                     target.setCode(val);
+                    break;
+                }
+                case "contentType": {
+                    String val = asText(node);
+                    target.setContentType(val);
                     break;
                 }
                 case "examples": {
@@ -14147,6 +14189,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "bindingMode", type = "enum:off,auto,json,xml,json_xml", defaultValue = "off", description = "Sets the binding mode to use. The default value is off", displayName = "Binding Mode"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
+                    @YamlProperty(name = "clientResponseValidation", type = "boolean", description = "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.", displayName = "Client Response Validation"),
                     @YamlProperty(name = "component", type = "string", description = "Sets the component name that this definition will apply to", displayName = "Component"),
                     @YamlProperty(name = "consumes", type = "string", description = "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json", displayName = "Consumes"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
@@ -14182,6 +14225,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "clientRequestValidation": {
                     String val = asText(node);
                     target.setClientRequestValidation(val);
+                    break;
+                }
+                case "clientResponseValidation": {
+                    String val = asText(node);
+                    target.setClientResponseValidation(val);
                     break;
                 }
                 case "component": {
@@ -14260,6 +14308,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "bindingMode", type = "enum:auto,json,json_xml,off,xml", defaultValue = "off", description = "Sets the binding mode to use. The default value is off", displayName = "Binding Mode"),
                     @YamlProperty(name = "bindingPackageScan", type = "string", description = "Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.", displayName = "Binding Package Scan"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
+                    @YamlProperty(name = "clientResponseValidation", type = "boolean", description = "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.", displayName = "Client Response Validation"),
                     @YamlProperty(name = "component", type = "enum:platform-http,servlet,jetty,undertow,netty-http,coap", description = "The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used.", displayName = "Component"),
                     @YamlProperty(name = "componentProperty", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the rest component in use.", displayName = "Component Property"),
                     @YamlProperty(name = "consumerProperty", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure as many additional properties for the rest consumer in use.", displayName = "Consumer Property"),
@@ -14339,6 +14388,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "clientRequestValidation": {
                     String val = asText(node);
                     target.setClientRequestValidation(val);
+                    break;
+                }
+                case "clientResponseValidation": {
+                    String val = asText(node);
+                    target.setClientResponseValidation(val);
                     break;
                 }
                 case "component": {
@@ -14503,6 +14557,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "apiDocs", type = "boolean", description = "Whether to include or exclude this rest operation in API documentation. This option will override what may be configured on a parent level. The default value is true.", displayName = "Api Docs"),
                     @YamlProperty(name = "bindingMode", type = "enum:off,auto,json,xml,json_xml", defaultValue = "off", description = "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is auto", displayName = "Binding Mode"),
                     @YamlProperty(name = "clientRequestValidation", type = "boolean", description = "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.", displayName = "Client Request Validation"),
+                    @YamlProperty(name = "clientResponseValidation", type = "boolean", description = "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected.", displayName = "Client Response Validation"),
                     @YamlProperty(name = "consumes", type = "string", description = "To define the content type what the REST service consumes (accept as input), such as application/xml or application/json. This option will override what may be configured on a parent level", displayName = "Consumes"),
                     @YamlProperty(name = "delete", type = "array:org.apache.camel.model.rest.DeleteDefinition"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
@@ -14552,6 +14607,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "clientRequestValidation": {
                     String val = asText(node);
                     target.setClientRequestValidation(val);
+                    break;
+                }
+                case "clientResponseValidation": {
+                    String val = asText(node);
+                    target.setClientResponseValidation(val);
                     break;
                 }
                 case "consumes": {

@@ -85,6 +85,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private String clientRequestValidation;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String clientResponseValidation;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
@@ -249,6 +252,21 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
+    }
+
+    public String getClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
+    /**
+     * Whether to check what Camel is returning as response to the client:
+     *
+     * 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included
+     * according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid
+     * JSon. Returns 500 if validation error detected.
+     */
+    public void setClientResponseValidation(String clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
     }
 
     public String getEnableCORS() {
@@ -682,6 +700,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
             verb.setClientRequestValidation(Boolean.toString(clientRequestValidation));
+        }
+
+        return this;
+    }
+
+    public RestDefinition clientResponseValidation(boolean clientResponseValidation) {
+        if (getVerbs().isEmpty()) {
+            this.clientResponseValidation = Boolean.toString(clientResponseValidation);
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setClientResponseValidation(Boolean.toString(clientResponseValidation));
         }
 
         return this;
@@ -1169,6 +1199,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setClientRequestValidation(getClientRequestValidation());
             }
+            if (verb.getClientResponseValidation() != null) {
+                binding.setClientResponseValidation(parseText(camelContext, verb.getClientResponseValidation()));
+            } else {
+                binding.setClientResponseValidation(getClientResponseValidation());
+            }
             if (verb.getEnableCORS() != null) {
                 binding.setEnableCORS(parseText(camelContext, verb.getEnableCORS()));
             } else {
@@ -1182,24 +1217,34 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             for (ParamDefinition param : verb.getParams()) {
                 // register all the default values for the query and header parameters
                 RestParamType type = param.getType();
+                String name = parseText(camelContext, param.getName());
                 if ((RestParamType.query == type || RestParamType.header == type)
                         && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
-                    binding.addDefaultValue(param.getName(), parseText(camelContext, param.getDefaultValue()));
+                    binding.addDefaultValue(name, parseText(camelContext, param.getDefaultValue()));
                 }
                 // register all allowed values for the query and header parameters
                 if ((RestParamType.query == type || RestParamType.header == type)
                         && param.getAllowableValues() != null) {
-                    binding.addAllowedValue(param.getName(), parseText(camelContext, param.getAllowableValuesAsCommaString()));
+                    binding.addAllowedValue(name, parseText(camelContext, param.getAllowableValuesAsCommaString()));
                 }
                 // register which parameters are required
                 Boolean required = param.getRequired();
                 if (required != null && required) {
                     if (RestParamType.query == type) {
-                        binding.addRequiredQueryParameter(param.getName());
+                        binding.addRequiredQueryParameter(name);
                     } else if (RestParamType.header == type) {
-                        binding.addRequiredHeader(param.getName());
+                        binding.addRequiredHeader(name);
                     } else if (RestParamType.body == type) {
                         binding.setRequiredBody(true);
+                    }
+                }
+            }
+            for (ResponseMessageDefinition rm : verb.getResponseMsgs()) {
+                binding.addResponseCode(rm.getCode(), rm.getContentType());
+                if (rm.getHeaders() != null) {
+                    for (var header : rm.getHeaders()) {
+                        String name = parseText(camelContext, header.getName());
+                        binding.addResponseHeader(name);
                     }
                 }
             }

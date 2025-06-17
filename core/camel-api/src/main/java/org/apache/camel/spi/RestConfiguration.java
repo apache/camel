@@ -67,6 +67,7 @@ public class RestConfiguration {
     private String bindingPackageScan;
     private boolean skipBindingOnErrorCode = true;
     private boolean clientRequestValidation;
+    private boolean clientResponseValidation;
     private boolean inlineRoutes = true;
     private boolean enableCORS;
     private boolean enableNoContentResponse;
@@ -414,8 +415,23 @@ public class RestConfiguration {
         this.clientRequestValidation = clientRequestValidation;
     }
 
+    public boolean isClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
     /**
-     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * Whether to check what Camel is returning as response to the client:
+     *
+     * 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included
+     * according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid
+     * JSon. Returns 500 if validation error detected.
+     */
+    public void setClientResponseValidation(boolean clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
+    }
+
+    /**
+     * To specify whether to enable CORS which means Camel will automatically include CORS in the HTTP headers in the
      * response.
      * <p/>
      * This option is default <tt>false</tt>

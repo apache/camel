@@ -931,6 +931,7 @@ public class ModelParser extends BaseParser {
                 case "apiDocs": def.setApiDocs(val); yield true;
                 case "bindingMode": def.setBindingMode(val); yield true;
                 case "clientRequestValidation": def.setClientRequestValidation(val); yield true;
+                case "clientResponseValidation": def.setClientResponseValidation(val); yield true;
                 case "consumes": def.setConsumes(val); yield true;
                 case "disabled": def.setDisabled(val); yield true;
                 case "enableCORS": def.setEnableCORS(val); yield true;
@@ -957,6 +958,7 @@ public class ModelParser extends BaseParser {
         return doParse(new RestBindingDefinition(), (def, key, val) -> switch (key) {
                 case "bindingMode": def.setBindingMode(val); yield true;
                 case "clientRequestValidation": def.setClientRequestValidation(val); yield true;
+                case "clientResponseValidation": def.setClientResponseValidation(val); yield true;
                 case "component": def.setComponent(val); yield true;
                 case "consumes": def.setConsumes(val); yield true;
                 case "enableCORS": def.setEnableCORS(val); yield true;
@@ -1431,6 +1433,7 @@ public class ModelParser extends BaseParser {
                 case "bindingMode": def.setBindingMode(RestBindingMode.valueOf(val)); yield true;
                 case "bindingPackageScan": def.setBindingPackageScan(val); yield true;
                 case "clientRequestValidation": def.setClientRequestValidation(val); yield true;
+                case "clientResponseValidation": def.setClientResponseValidation(val); yield true;
                 case "component": def.setComponent(val); yield true;
                 case "contextPath": def.setContextPath(val); yield true;
                 case "enableCORS": def.setEnableCORS(val); yield true;
@@ -2570,6 +2573,7 @@ public class ModelParser extends BaseParser {
             case "apiDocs": def.setApiDocs(val); yield true;
             case "bindingMode": def.setBindingMode(val); yield true;
             case "clientRequestValidation": def.setClientRequestValidation(val); yield true;
+            case "clientResponseValidation": def.setClientResponseValidation(val); yield true;
             case "consumes": def.setConsumes(val); yield true;
             case "deprecated": def.setDeprecated(val); yield true;
             case "disabled": def.setDisabled(val); yield true;
@@ -2615,6 +2619,7 @@ public class ModelParser extends BaseParser {
     protected ResponseMessageDefinition doParseResponseMessageDefinition() throws IOException, XmlPullParserException {
         return doParse(new ResponseMessageDefinition(), (def, key, val) -> switch (key) {
                 case "code": def.setCode(val); yield true;
+                case "contentType": def.setContentType(val); yield true;
                 case "message": def.setMessage(val); yield true;
                 case "responseModel": def.setResponseModel(val); yield true;
                 default: yield false;

@@ -22,13 +22,13 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 
 /**
- * Used for validating incoming client requests with Camel Rest DSL.
+ * Used for validating incoming client responses with Camel Rest DSL.
  * <p>
  * This allows to plugin different validators.
  */
-public interface RestClientRequestValidator {
+public interface RestClientResponseValidator {
 
-    String FACTORY = "rest-client-request-validator-factory";
+    String FACTORY = "rest-client-response-validator-factory";
 
     /**
      * Validation error
@@ -42,24 +42,17 @@ public interface RestClientRequestValidator {
     /**
      * Validation context to use during validation
      *
-     * @param consumes                content-type this service can consume
-     * @param produces                content-type this service can produce
-     * @param requiredBody            whether the message body is required
-     * @param queryDefaultValues      default values for HTTP query parameters
-     * @param queryAllowedValues      allowed values for HTTP query parameters
-     * @param requiredQueryParameters names of HTTP query parameters that are required
-     * @param requiredHeaders         names of HTTP headers parameters that are required
+     * @param consumes        content-type this service can consume
+     * @param produces        content-type this service can produce
+     * @param responseCode    the different response codes and their content-type
+     * @param responseHeaders the response headers
      */
     record ValidationContext(String consumes, String produces,
-            boolean requiredBody,
-            Map<String, String> queryDefaultValues,
-            Map<String, String> queryAllowedValues,
-            Set<String> requiredQueryParameters,
-            Set<String> requiredHeaders) {
+            Map<String, String> responseCode, Set<String> responseHeaders) {
     }
 
     /**
-     * Validates the incoming client request
+     * Validates the incoming client response
      *
      * @param  exchange          the current exchange
      * @param  validationContent validation context

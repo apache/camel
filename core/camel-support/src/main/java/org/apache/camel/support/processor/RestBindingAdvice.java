@@ -31,14 +31,13 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RestClientRequestValidator;
+import org.apache.camel.spi.RestClientResponseValidator;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Used for Rest DSL with binding to json/xml for incoming requests and outgoing responses.
@@ -52,13 +51,13 @@ import org.slf4j.LoggerFactory;
  */
 public class RestBindingAdvice extends ServiceSupport implements CamelInternalProcessorAdvice<Map<String, Object>> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RestBindingAdvice.class);
     private static final String STATE_KEY_DO_MARSHAL = "doMarshal";
     private static final String STATE_KEY_ACCEPT = "accept";
     private static final String STATE_JSON = "json";
     private static final String STATE_XML = "xml";
 
     private final RestClientRequestValidator clientRequestValidator;
+    private final RestClientResponseValidator clientResponseValidator;
     private final AsyncProcessor jsonUnmarshal;
     private final AsyncProcessor xmlUnmarshal;
     private final AsyncProcessor jsonMarshal;
@@ -68,6 +67,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     private final String bindingMode;
     private final boolean skipBindingOnErrorCode;
     private final boolean clientRequestValidation;
+    private final boolean clientResponseValidation;
     private final boolean enableCORS;
     private final boolean enableNoContentResponse;
     private final Map<String, String> corsHeaders;
@@ -76,6 +76,8 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     private final boolean requiredBody;
     private final Set<String> requiredQueryParameters;
     private final Set<String> requiredHeaders;
+    private final Map<String, String> responseCodes;
+    private final Set<String> responseHeaders;
 
     /**
      * Use {@link RestBindingAdviceFactory} to create.
@@ -83,14 +85,16 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     public RestBindingAdvice(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                              DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
                              String consumes, String produces, String bindingMode,
-                             boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
-                             boolean enableNoContentResponse,
+                             boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean clientResponseValidation,
+                             boolean enableCORS, boolean enableNoContentResponse,
                              Map<String, String> corsHeaders,
                              Map<String, String> queryDefaultValues,
                              Map<String, String> queryAllowedValues,
                              boolean requiredBody, Set<String> requiredQueryParameters,
                              Set<String> requiredHeaders,
-                             RestClientRequestValidator clientRequestValidator) throws Exception {
+                             Map<String, String> responseCodes, Set<String> responseHeaders,
+                             RestClientRequestValidator clientRequestValidator,
+                             RestClientResponseValidator clientResponseValidator) throws Exception {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -136,6 +140,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         this.bindingMode = bindingMode;
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
         this.clientRequestValidation = clientRequestValidation;
+        this.clientResponseValidation = clientResponseValidation;
         this.enableCORS = enableCORS;
         this.corsHeaders = corsHeaders;
         this.queryDefaultValues = queryDefaultValues;
@@ -143,8 +148,11 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         this.requiredBody = requiredBody;
         this.requiredQueryParameters = requiredQueryParameters;
         this.requiredHeaders = requiredHeaders;
+        this.responseCodes = responseCodes;
+        this.responseHeaders = responseHeaders;
         this.enableNoContentResponse = enableNoContentResponse;
         this.clientRequestValidator = clientRequestValidator;
+        this.clientResponseValidator = clientResponseValidator;
     }
 
     @Override
@@ -223,7 +231,7 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         }
 
         // perform client request validation
-        if (clientRequestValidation) {
+        if (clientRequestValidation && clientRequestValidator != null) {
             RestClientRequestValidator.ValidationContext vc = new RestClientRequestValidator.ValidationContext(
                     consumes, produces, requiredBody, queryDefaultValues, queryAllowedValues, requiredQueryParameters,
                     requiredHeaders);
@@ -463,6 +471,17 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
             }
         } catch (Exception e) {
             exchange.setException(e);
+        }
+
+        // perform client response validation
+        if (clientResponseValidation && clientResponseValidator != null && !exchange.isFailed()) {
+            RestClientResponseValidator.ValidationContext vc = new RestClientResponseValidator.ValidationContext(
+                    consumes, produces, responseCodes, responseHeaders);
+            RestClientResponseValidator.ValidationError error = clientResponseValidator.validate(exchange, vc);
+            if (error != null) {
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());
+                exchange.getMessage().setBody(error.body());
+            }
         }
     }
 

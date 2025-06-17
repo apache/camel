@@ -41,6 +41,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "bindingPackageScan": target.setBindingPackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "clientrequestvalidation":
         case "clientRequestValidation": target.setClientRequestValidation(property(camelContext, boolean.class, value)); return true;
+        case "clientresponsevalidation":
+        case "clientResponseValidation": target.setClientResponseValidation(property(camelContext, boolean.class, value)); return true;
         case "component": target.setComponent(property(camelContext, java.lang.String.class, value)); return true;
         case "componentproperties":
         case "componentProperties": target.setComponentProperties(property(camelContext, java.util.Map.class, value)); return true;
@@ -102,6 +104,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "bindingPackageScan": return java.lang.String.class;
         case "clientrequestvalidation":
         case "clientRequestValidation": return boolean.class;
+        case "clientresponsevalidation":
+        case "clientResponseValidation": return boolean.class;
         case "component": return java.lang.String.class;
         case "componentproperties":
         case "componentProperties": return java.util.Map.class;
@@ -164,6 +168,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "bindingPackageScan": return target.getBindingPackageScan();
         case "clientrequestvalidation":
         case "clientRequestValidation": return target.isClientRequestValidation();
+        case "clientresponsevalidation":
+        case "clientResponseValidation": return target.isClientResponseValidation();
         case "component": return target.getComponent();
         case "componentproperties":
         case "componentProperties": return target.getComponentProperties();
