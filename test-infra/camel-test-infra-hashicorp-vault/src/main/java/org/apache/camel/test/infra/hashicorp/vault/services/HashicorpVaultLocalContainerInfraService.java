@@ -45,6 +45,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = HashicorpVaultInfraService.class,
               description = "Vault is a tool for securely accessing secrets",
@@ -79,8 +80,9 @@ public class HashicorpVaultLocalContainerInfraService
 
         class HashicorpVaultContainer extends GenericContainer<HashicorpVaultContainer> {
             public HashicorpVaultContainer(boolean fixedPort) {
-                new GenericContainer<>(imageName)
-                        .withNetworkAliases(containerName)
+                super(DockerImageName.parse(imageName));
+
+                withNetworkAliases(containerName)
                         .withEnv("VAULT_DEV_ROOT_TOKEN_ID", DEFAULT_TOKEN)
                         .withLogConsumer(logConsumer)
                         .waitingFor(Wait.forListeningPort())
