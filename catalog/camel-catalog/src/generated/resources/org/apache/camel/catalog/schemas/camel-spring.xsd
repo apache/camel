@@ -15080,6 +15080,15 @@ Allows to configure custom CORS headers.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="validationLevels" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Allows to configure custom validation levels when using camel-openapi-validator with client request/response validator.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
     <xs:attribute name="component" type="xs:string">
       <xs:annotation>

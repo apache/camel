@@ -3507,6 +3507,7 @@ public class ModelWriter extends BaseWriter {
         doWriteList(null, "consumerProperty", def.getConsumerProperties(), this::doWriteRestPropertyDefinition);
         doWriteList(null, "corsHeaders", def.getCorsHeaders(), this::doWriteRestPropertyDefinition);
         doWriteList(null, "componentProperty", def.getComponentProperties(), this::doWriteRestPropertyDefinition);
+        doWriteList(null, "validationLevels", def.getValidationLevels(), this::doWriteRestPropertyDefinition);
         doWriteList(null, "apiProperty", def.getApiProperties(), this::doWriteRestPropertyDefinition);
         doWriteList(null, "endpointProperty", def.getEndpointProperties(), this::doWriteRestPropertyDefinition);
         doWriteList(null, "dataFormatProperty", def.getDataFormatProperties(), this::doWriteRestPropertyDefinition);

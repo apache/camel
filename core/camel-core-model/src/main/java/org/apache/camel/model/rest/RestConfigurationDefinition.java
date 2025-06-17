@@ -127,6 +127,9 @@ public class RestConfigurationDefinition {
     @XmlElement(name = "corsHeaders")
     @Metadata(label = "consumer,advanced")
     private List<RestPropertyDefinition> corsHeaders = new ArrayList<>();
+    @XmlElement(name = "validationLevels")
+    @Metadata(label = "consumer,advanced")
+    private List<RestPropertyDefinition> validationLevels = new ArrayList<>();
 
     public String getComponent() {
         return component;
@@ -517,6 +520,17 @@ public class RestConfigurationDefinition {
      */
     public void setCorsHeaders(List<RestPropertyDefinition> corsHeaders) {
         this.corsHeaders = corsHeaders;
+    }
+
+    public List<RestPropertyDefinition> getValidationLevels() {
+        return validationLevels;
+    }
+
+    /**
+     * Allows to configure custom validation levels when using camel-openapi-validator with client request/response validator.
+     */
+    public void setValidationLevels(List<RestPropertyDefinition> validationLevels) {
+        this.validationLevels = validationLevels;
     }
 
     public String getUseXForwardHeaders() {
@@ -935,6 +949,17 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * For configuring validation error levels
+     */
+    public RestConfigurationDefinition validationLevelProperty(String key, String value) {
+        RestPropertyDefinition prop = new RestPropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+        getValidationLevels().add(prop);
+        return this;
+    }
+
+    /**
      * Shortcut for setting the Access-Control-Allow-Credentials header.
      */
     public RestConfigurationDefinition corsAllowCredentials(boolean corsAllowCredentials) {
@@ -1102,6 +1127,15 @@ public class RestConfigurationDefinition {
                 props.put(key, value);
             }
             target.setCorsHeaders(props);
+        }
+        if (!validationLevels.isEmpty()) {
+            Map<String, String> props = new HashMap<>();
+            for (RestPropertyDefinition prop : validationLevels) {
+                String key = prop.getKey();
+                String value = CamelContextHelper.parseText(context, prop.getValue());
+                props.put(key, value);
+            }
+            target.setValidationLevels(props);
         }
         return target;
     }

@@ -79,6 +79,7 @@ public class RestConfiguration {
     private Map<String, Object> dataFormatProperties;
     private Map<String, Object> apiProperties;
     private Map<String, String> corsHeaders;
+    private Map<String, String> validationLevels;
 
     /**
      * Gets the name of the Camel component to use as the REST consumer
@@ -636,5 +637,21 @@ public class RestConfiguration {
      */
     public void setCorsHeaders(Map<String, String> corsHeaders) {
         this.corsHeaders = corsHeaders;
+    }
+
+    /**
+     * Gets the client request validation levels when using camel-openapi-validator.
+     *
+     * @return the validation levels
+     */
+    public Map<String, String> getValidationLevels() {
+        return validationLevels;
+    }
+
+    /**
+     * Sets the client request validation levels when using camel-openapi-validator.
+     */
+    public void setValidationLevels(Map<String, String> validationLevels) {
+        this.validationLevels = validationLevels;
     }
 }

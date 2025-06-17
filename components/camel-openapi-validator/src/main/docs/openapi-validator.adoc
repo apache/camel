@@ -20,3 +20,17 @@ NOTE: This library does not work with running in `camel-jbang`.
 == Auto-detection from classpath
 
 To use this implementation all you need to do is to add the `camel-openapi-validator` dependency to the classpath.
+
+=== Configuring levels of errors
+
+The Atlassian Swagger Request Validator supports configuring https://bitbucket.org/atlassian/swagger-request-validator/src/c6200d0d849ae69be679f7fe01042cd9e84637c4/swagger-request-validator-core/README.md[fine-grained levels]
+for validating. This allows to turn on ignoring some specific errors.
+
+For example, you can ignore query parameters
+
+[source,properties]
+----
+camel.rest.validation-levels[validation.schema.required] = INFO
+camel.rest.validation-levels[validation.request.parameter.query.missing] = IGNORE
+camel.rest.validation-levels[validation.response.body.missing] = WARN
+----

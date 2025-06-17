@@ -47,6 +47,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
         setDataFormatProperties(null);
         setApiProperties(null);
         setCorsHeaders(null);
+        setValidationLevels(null);
     }
 
     // getter and setters
@@ -360,6 +361,17 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
             setCorsHeaders(new HashMap<>());
         }
         getCorsHeaders().put(key, value);
+        return this;
+    }
+
+    /**
+     * Adds a validation error property
+     */
+    public RestConfigurationProperties withValidationLevel(String key, String value) {
+        if (getValidationLevels() == null) {
+            setValidationLevels(new HashMap<>());
+        }
+        getValidationLevels().put(key, value);
         return this;
     }
 

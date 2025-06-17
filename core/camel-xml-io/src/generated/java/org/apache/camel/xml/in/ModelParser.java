@@ -1457,6 +1457,7 @@ public class ModelParser extends BaseParser {
                 case "corsHeaders": doAdd(doParseRestPropertyDefinition(), def.getCorsHeaders(), def::setCorsHeaders); yield true;
                 case "dataFormatProperty": doAdd(doParseRestPropertyDefinition(), def.getDataFormatProperties(), def::setDataFormatProperties); yield true;
                 case "endpointProperty": doAdd(doParseRestPropertyDefinition(), def.getEndpointProperties(), def::setEndpointProperties); yield true;
+                case "validationLevels": doAdd(doParseRestPropertyDefinition(), def.getValidationLevels(), def::setValidationLevels); yield true;
                 default: yield false;
             }, noValueHandler());
     }

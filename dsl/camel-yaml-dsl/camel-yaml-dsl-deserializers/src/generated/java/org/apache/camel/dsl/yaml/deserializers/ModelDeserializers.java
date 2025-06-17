@@ -14328,6 +14328,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "scheme", type = "string", description = "The scheme to use for exposing the REST service. Usually http or https is supported. The default value is http", displayName = "Scheme"),
                     @YamlProperty(name = "skipBindingOnErrorCode", type = "boolean", description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.", displayName = "Skip Binding On Error Code"),
                     @YamlProperty(name = "useXForwardHeaders", type = "boolean", description = "Whether to use X-Forward headers to set host etc. for OpenApi. This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc. Then the proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema that camel-openapi-java generates from Rest DSL routes.", displayName = "Use XForward Headers"),
+                    @YamlProperty(name = "validationLevels", type = "array:org.apache.camel.model.rest.RestPropertyDefinition", description = "Allows to configure custom validation levels when using camel-openapi-validator with client request/response validator.", displayName = "Validation Levels"),
                     @YamlProperty(name = "xmlDataFormat", type = "string", description = "Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.", displayName = "Xml Data Format")
             }
     )
@@ -14487,6 +14488,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "useXForwardHeaders": {
                     String val = asText(node);
                     target.setUseXForwardHeaders(val);
+                    break;
+                }
+                case "validationLevels": {
+                    java.util.List<org.apache.camel.model.rest.RestPropertyDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestPropertyDefinition.class);
+                    target.setValidationLevels(val);
                     break;
                 }
                 case "xmlDataFormat": {

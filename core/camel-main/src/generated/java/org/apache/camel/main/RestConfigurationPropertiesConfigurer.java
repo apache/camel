@@ -51,6 +51,7 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("Scheme", java.lang.String.class);
         map.put("SkipBindingOnErrorCode", boolean.class);
         map.put("UseXForwardHeaders", boolean.class);
+        map.put("ValidationLevels", java.util.Map.class);
         map.put("XmlDataFormat", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -113,6 +114,8 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "skipBindingOnErrorCode": target.setSkipBindingOnErrorCode(property(camelContext, boolean.class, value)); return true;
         case "usexforwardheaders":
         case "useXForwardHeaders": target.setUseXForwardHeaders(property(camelContext, boolean.class, value)); return true;
+        case "validationlevels":
+        case "validationLevels": target.setValidationLevels(property(camelContext, java.util.Map.class, value)); return true;
         case "xmldataformat":
         case "xmlDataFormat": target.setXmlDataFormat(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -181,6 +184,8 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "skipBindingOnErrorCode": return boolean.class;
         case "usexforwardheaders":
         case "useXForwardHeaders": return boolean.class;
+        case "validationlevels":
+        case "validationLevels": return java.util.Map.class;
         case "xmldataformat":
         case "xmlDataFormat": return java.lang.String.class;
         default: return null;
@@ -245,6 +250,8 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "skipBindingOnErrorCode": return target.isSkipBindingOnErrorCode();
         case "usexforwardheaders":
         case "useXForwardHeaders": return target.isUseXForwardHeaders();
+        case "validationlevels":
+        case "validationLevels": return target.getValidationLevels();
         case "xmldataformat":
         case "xmlDataFormat": return target.getXmlDataFormat();
         default: return null;
@@ -266,6 +273,8 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "dataFormatProperties": return java.lang.Object.class;
         case "endpointproperties":
         case "endpointProperties": return java.lang.Object.class;
+        case "validationlevels":
+        case "validationLevels": return java.lang.String.class;
         default: return null;
         }
     }

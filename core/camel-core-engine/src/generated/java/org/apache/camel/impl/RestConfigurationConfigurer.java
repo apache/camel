@@ -77,6 +77,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "skipBindingOnErrorCode": target.setSkipBindingOnErrorCode(property(camelContext, boolean.class, value)); return true;
         case "usexforwardheaders":
         case "useXForwardHeaders": target.setUseXForwardHeaders(property(camelContext, boolean.class, value)); return true;
+        case "validationlevels":
+        case "validationLevels": target.setValidationLevels(property(camelContext, java.util.Map.class, value)); return true;
         case "xmldataformat":
         case "xmlDataFormat": target.setXmlDataFormat(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -140,6 +142,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "skipBindingOnErrorCode": return boolean.class;
         case "usexforwardheaders":
         case "useXForwardHeaders": return boolean.class;
+        case "validationlevels":
+        case "validationLevels": return java.util.Map.class;
         case "xmldataformat":
         case "xmlDataFormat": return java.lang.String.class;
         default: return null;
@@ -204,6 +208,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "skipBindingOnErrorCode": return target.isSkipBindingOnErrorCode();
         case "usexforwardheaders":
         case "useXForwardHeaders": return target.isUseXForwardHeaders();
+        case "validationlevels":
+        case "validationLevels": return target.getValidationLevels();
         case "xmldataformat":
         case "xmlDataFormat": return target.getXmlDataFormat();
         default: return null;
@@ -225,6 +231,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "dataFormatProperties": return java.lang.Object.class;
         case "endpointproperties":
         case "endpointProperties": return java.lang.Object.class;
+        case "validationlevels":
+        case "validationLevels": return java.lang.String.class;
         default: return null;
         }
     }
