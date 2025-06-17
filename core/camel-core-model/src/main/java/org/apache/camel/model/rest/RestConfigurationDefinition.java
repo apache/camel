@@ -527,7 +527,8 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Allows to configure custom validation levels when using camel-openapi-validator with client request/response validator.
+     * Allows to configure custom validation levels when using camel-openapi-validator with client request/response
+     * validator.
      */
     public void setValidationLevels(List<RestPropertyDefinition> validationLevels) {
         this.validationLevels = validationLevels;
