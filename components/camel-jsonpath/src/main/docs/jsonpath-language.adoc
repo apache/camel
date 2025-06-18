@@ -252,6 +252,24 @@ XML DSL::
 
 ====
 
+=== Using variables as source
+
+By default, the message body is the source for the jsonpath evaluation.
+However, if you need to refer to a variable or message header instead as the body,
+then this is easy as shown below:
+
+[source,java]
+----
+from("direct:start")
+    .setVariable("cars", constant("[\"Ford\", \"BMW\", \"Fiat\"]"))
+    .setBody(simple("${jsonpath(variable:cars , $.length())}"))
+    .to("mock:cars");
+----
+
+Here we set a variable named _cars_ with a json array of 3 cars. Then we want to count the length
+of the array using jsonpath length function. Notice how we use the inlined simple language, and can
+easily refer to the variable as the source using `variable:cars`.
+
 === JSONPath injection
 
 You can use xref:manual::bean-integration.adoc[Bean Integration] to invoke a

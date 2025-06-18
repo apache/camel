@@ -30,7 +30,7 @@ public class JsonPathVariableTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .setVariable("cars", constant("[\"Ford\", \"BMW\", \"Fiat\"]"))
-                        .setBody(simple("${jsonpath(variable:cars,$.length())}"))
+                        .setBody(simple("${jsonpath(variable:cars , $.length())}"))
                         .to("mock:result");
             }
         };
