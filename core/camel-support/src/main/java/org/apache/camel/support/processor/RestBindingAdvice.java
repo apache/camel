@@ -231,17 +231,12 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         }
 
         // perform client request validation
-        if (clientRequestValidation && clientRequestValidator != null) {
-            RestClientRequestValidator.ValidationContext vc = new RestClientRequestValidator.ValidationContext(
-                    consumes, produces, requiredBody, queryDefaultValues, queryAllowedValues, requiredQueryParameters,
-                    requiredHeaders);
-            RestClientRequestValidator.ValidationError error = clientRequestValidator.validate(exchange, vc);
-            if (error != null) {
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());
-                exchange.getMessage().setBody(error.body());
-                exchange.setRouteStop(true);
-                return;
-            }
+        RestClientRequestValidator.ValidationError error = doClientRequestValidation(exchange);
+        if (error != null) {
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());
+            exchange.getMessage().setBody(error.body());
+            exchange.setRouteStop(true);
+            return;
         }
 
         String body = null;
@@ -474,14 +469,10 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         }
 
         // perform client response validation
-        if (clientResponseValidation && clientResponseValidator != null && !exchange.isFailed()) {
-            RestClientResponseValidator.ValidationContext vc = new RestClientResponseValidator.ValidationContext(
-                    consumes, produces, responseCodes, responseHeaders);
-            RestClientResponseValidator.ValidationError error = clientResponseValidator.validate(exchange, vc);
-            if (error != null) {
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());
-                exchange.getMessage().setBody(error.body());
-            }
+        RestClientResponseValidator.ValidationError error = doClientResponseValidation(exchange);
+        if (error != null) {
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());
+            exchange.getMessage().setBody(error.body());
         }
     }
 
@@ -554,6 +545,37 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         if (allowCredentials != null) {
             msg.setHeader("Access-Control-Allow-Credentials", allowCredentials);
         }
+    }
+
+    /**
+     * Performs the client request validation (if enabled)
+     *
+     * @param  exchange the exchange
+     * @return          null if success otherwise an error is returned
+     */
+    public RestClientRequestValidator.ValidationError doClientRequestValidation(Exchange exchange) {
+        if (clientRequestValidation && clientRequestValidator != null) {
+            RestClientRequestValidator.ValidationContext vc = new RestClientRequestValidator.ValidationContext(
+                    consumes, produces, requiredBody, queryDefaultValues, queryAllowedValues, requiredQueryParameters,
+                    requiredHeaders);
+            return clientRequestValidator.validate(exchange, vc);
+        }
+        return null;
+    }
+
+    /**
+     * Performs the client response validation (if enabled)
+     *
+     * @param  exchange the exchange
+     * @return          null if success otherwise an error is returned
+     */
+    public RestClientResponseValidator.ValidationError doClientResponseValidation(Exchange exchange) {
+        if (clientResponseValidation && clientResponseValidator != null && !exchange.isFailed()) {
+            RestClientResponseValidator.ValidationContext vc = new RestClientResponseValidator.ValidationContext(
+                    consumes, produces, responseCodes, responseHeaders);
+            return clientResponseValidator.validate(exchange, vc);
+        }
+        return null;
     }
 
     @Override
