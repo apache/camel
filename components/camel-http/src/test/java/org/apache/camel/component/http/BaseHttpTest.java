@@ -41,8 +41,12 @@ public abstract class BaseHttpTest extends HttpServerTestSupport {
 
     protected void assertHeaders(Map<String, Object> headers) {
         assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("12", headers.get(CONTENT_LENGTH));
+        assertEquals(expectedContentLength(), headers.get(CONTENT_LENGTH));
         assertNotNull(headers.get(CONTENT_TYPE), "Should have Content-Type header");
+    }
+
+    protected String expectedContentLength() {
+        return "12";
     }
 
     protected void assertBody(String body) {
