@@ -23,10 +23,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Disabled("CAMEL-22174")
 public class SmbStreamDownloadIT extends SmbServerTestSupport {
 
     @Override
