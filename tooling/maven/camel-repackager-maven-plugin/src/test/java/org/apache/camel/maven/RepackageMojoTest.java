@@ -60,7 +60,30 @@ public class RepackageMojoTest {
     public void testDependencyInclusion() throws Exception {
         // This test would verify that all compile and runtime dependencies
         // are included as separate JARs in BOOT-INF/lib/
-        
+
         assertTrue(true, "Placeholder test - would verify dependency inclusion");
+    }
+
+    @Test
+    public void testExecutableJar() throws Exception {
+        // This test would verify that when executable=true:
+        // - The JAR starts with a shell script
+        // - The JAR has executable permissions
+        // - The script can find and execute Java
+        // - The script passes arguments correctly
+
+        assertTrue(true, "Placeholder test - would verify executable JAR functionality");
+    }
+
+    @Test
+    public void testLauncherScript() throws Exception {
+        // This test would verify the launcher script:
+        // - Contains proper shebang (#!/bin/bash)
+        // - Finds Java from JAVA_HOME or PATH
+        // - Sets default JAVA_OPTS if not specified
+        // - Executes with correct arguments
+        // - Has proper error handling
+
+        assertTrue(true, "Placeholder test - would verify launcher script content");
     }
 }

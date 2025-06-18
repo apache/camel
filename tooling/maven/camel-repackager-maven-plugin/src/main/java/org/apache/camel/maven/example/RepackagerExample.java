@@ -53,6 +53,7 @@ public class RepackagerExample {
         
         System.out.println("Created self-executing JAR: " + outputJar);
         System.out.println("Run with: java -jar " + outputJar);
+        System.out.println("Or directly: ./" + outputJar.getName() + " (if executable=true)");
     }
     
     /**
@@ -115,10 +116,19 @@ public class RepackagerExample {
      *       +-... (all other dependency JARs)
      * 
      * When you run: java -jar my-app-1.0-executable.jar
-     * 
-     * 1. JVM starts JarLauncher (Spring Boot's launcher)
-     * 2. JarLauncher sets up a custom ClassLoader that can read from nested JARs
-     * 3. JarLauncher loads your main class (CamelLauncher) from BOOT-INF/classes/
-     * 4. Your application runs, loading dependencies from BOOT-INF/lib/ as needed
+     * OR directly: ./my-app-1.0-executable.jar (if executable=true)
+     *
+     * 1. If executable: Shell script finds Java and executes the JAR portion
+     * 2. JVM starts JarLauncher (Spring Boot's launcher)
+     * 3. JarLauncher sets up a custom ClassLoader that can read from nested JARs
+     * 4. JarLauncher loads your main class (CamelLauncher) from BOOT-INF/classes/
+     * 5. Your application runs, loading dependencies from BOOT-INF/lib/ as needed
+     *
+     * The executable JAR structure with launcher script:
+     * #!/bin/bash
+     * # Launcher script that finds Java and executes this file as a JAR
+     * exec java -jar "$0" "$@"
+     * # === JAR CONTENT STARTS BELOW ===
+     * PK... (actual JAR bytes)
      */
 }

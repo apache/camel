@@ -17,7 +17,13 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Set;
 
@@ -80,6 +86,12 @@ public class RepackageMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     private boolean backupSource;
 
+    /**
+     * Whether to make the JAR executable by prepending a launcher script.
+     */
+    @Parameter(defaultValue = "true")
+    private boolean executable;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -96,6 +108,11 @@ public class RepackageMojo extends AbstractMojo {
 
             File targetFile = getTargetFile();
             repackager.repackage(targetFile, this::getLibraries);
+
+            // Make the JAR executable by prepending a launcher script
+            if (executable) {
+                makeExecutable(targetFile);
+            }
 
             getLog().info("Successfully created self-executing JAR: " + targetFile);
 
@@ -150,5 +167,78 @@ public class RepackageMojo extends AbstractMojo {
             default:
                 return LibraryScope.COMPILE;
         }
+    }
+
+    private void makeExecutable(File jarFile) throws IOException {
+        getLog().info("Making JAR executable by prepending launcher script");
+
+        // Create a temporary file for the executable JAR
+        File tempFile = new File(jarFile.getParentFile(), jarFile.getName() + ".tmp");
+
+        try (FileOutputStream out = new FileOutputStream(tempFile)) {
+            // Write the launcher script
+            String launcherScript = createLauncherScript();
+            out.write(launcherScript.getBytes(StandardCharsets.UTF_8));
+
+            // Append the original JAR content
+            try (FileInputStream in = new FileInputStream(jarFile)) {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+        }
+
+        // Replace the original JAR with the executable version
+        if (!jarFile.delete()) {
+            throw new IOException("Failed to delete original JAR: " + jarFile);
+        }
+        if (!tempFile.renameTo(jarFile)) {
+            throw new IOException("Failed to rename temporary file to: " + jarFile);
+        }
+
+        // Make the file executable
+        if (!jarFile.setExecutable(true)) {
+            getLog().warn("Failed to set executable permission on: " + jarFile);
+        }
+
+        getLog().info("JAR is now executable: " + jarFile.getName());
+    }
+
+    private String createLauncherScript() {
+        return "#!/bin/bash\n" +
+               "#\n" +
+               "# Camel Self-Executing JAR Launcher\n" +
+               "# This script finds Java and executes the embedded JAR\n" +
+               "#\n" +
+               "\n" +
+               "# Find Java executable\n" +
+               "if [ -n \"$JAVA_HOME\" ] && [ -x \"$JAVA_HOME/bin/java\" ]; then\n" +
+               "    JAVA=\"$JAVA_HOME/bin/java\"\n" +
+               "elif command -v java >/dev/null 2>&1; then\n" +
+               "    JAVA=\"java\"\n" +
+               "else\n" +
+               "    echo \"Error: Java not found. Please install Java or set JAVA_HOME.\" >&2\n" +
+               "    exit 1\n" +
+               "fi\n" +
+               "\n" +
+               "# Get the directory of this script\n" +
+               "SCRIPT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n" +
+               "SCRIPT_NAME=\"$(basename \"${BASH_SOURCE[0]}\")\"\n" +
+               "JAR_FILE=\"$SCRIPT_DIR/$SCRIPT_NAME\"\n" +
+               "\n" +
+               "# Set default JVM options if not specified\n" +
+               "if [ -z \"$JAVA_OPTS\" ]; then\n" +
+               "    JAVA_OPTS=\"-Xmx512m\"\n" +
+               "fi\n" +
+               "\n" +
+               "# Execute the JAR with all arguments passed to this script\n" +
+               "exec \"$JAVA\" $JAVA_OPTS -jar \"$JAR_FILE\" \"$@\"\n" +
+               "\n" +
+               "# This line should never be reached, but just in case:\n" +
+               "exit $?\n" +
+               "\n" +
+               "# === JAR CONTENT STARTS BELOW ===\n";
     }
 }

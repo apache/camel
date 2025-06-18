@@ -31,6 +31,7 @@ example.jar
 - **Avoids classpath conflicts**: Preserves original JAR signatures and avoids file conflicts
 - **Smaller memory footprint**: Only loads classes that are actually used
 - **Better debugging**: Easier to identify which JAR a class comes from
+- **Direct execution**: Can be run directly as `./camel.jar` without `java -jar`
 
 ## Usage
 
@@ -65,6 +66,7 @@ Add the plugin to your `pom.xml`:
 | `outputDirectory` | The output directory for the repackaged JAR | `${project.build.directory}` | No |
 | `finalName` | The final name of the repackaged JAR (without extension) | `${project.build.finalName}` | No |
 | `backupSource` | Whether to backup the source JAR | `true` | No |
+| `executable` | Whether to make the JAR directly executable by prepending a launcher script | `true` | No |
 
 ## How it works
 
@@ -73,6 +75,24 @@ Add the plugin to your `pom.xml`:
 3. Includes all compile and runtime dependencies as separate JARs in `BOOT-INF/lib/`
 4. Adds Spring Boot's loader classes to handle the nested JAR loading
 5. Sets up the manifest to use `JarLauncher` as the main class and your class as `Start-Class`
+6. Optionally prepends a launcher script to make the JAR directly executable
+
+## Direct Execution
+
+When `executable=true` (default), the plugin creates a JAR that can be run directly:
+
+```bash
+# Instead of: java -jar camel-launcher.jar
+./camel-launcher.jar
+
+# Or with arguments:
+./camel-launcher.jar run hello.java
+
+# The launcher script automatically:
+# - Finds Java (from JAVA_HOME or PATH)
+# - Sets default JVM options (JAVA_OPTS)
+# - Executes the embedded JAR
+```
 
 ## Comparison with maven-shade-plugin
 

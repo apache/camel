@@ -20,6 +20,14 @@ This will create:
 
 ### Using the JAR directly
 
+The JAR can be executed in two ways:
+
+**Direct execution (recommended):**
+```bash
+./camel-launcher-<version>.jar [command] [options]
+```
+
+**Traditional Java execution:**
 ```bash
 java -jar camel-launcher-<version>.jar [command] [options]
 ```
@@ -27,6 +35,11 @@ java -jar camel-launcher-<version>.jar [command] [options]
 For example:
 
 ```bash
+# Direct execution
+./camel-launcher-<version>.jar version
+./camel-launcher-<version>.jar run hello.java
+
+# Or traditional way
 java -jar camel-launcher-<version>.jar version
 java -jar camel-launcher-<version>.jar run hello.java
 ```
@@ -53,6 +66,7 @@ java -jar camel-launcher-<version>.jar run hello.java
 
 - No need for JBang installation
 - Single executable JAR with all dependencies included
+- **Direct execution**: Run as `./camel-launcher.jar` without needing `java -jar`
 - Faster startup time (no dependency resolution step, on-demand class loading)
 - Better memory usage (only loads classes that are actually used)
 - Avoids classpath conflicts (dependencies kept as separate JARs)
