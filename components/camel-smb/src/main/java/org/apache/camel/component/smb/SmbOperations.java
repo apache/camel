@@ -558,19 +558,20 @@ public class SmbOperations implements SmbFileOperations {
 
     public InputStream getBodyAsInputStream(Exchange exchange, String path) {
         connectIfNecessary();
-        try (File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null,
-                SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
-            InputStream is = shareFile.getInputStream();
+        InputStream is = null;
+        try {
+            File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null,
+                    SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
+            is = shareFile.getInputStream();
             exchange.getIn().setHeader(SmbComponent.SMB_FILE_INPUT_STREAM, is);
             exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
-            return is;
         } catch (SMBRuntimeException smbre) {
             if (smbre.getCause() instanceof TransportException) {
                 disconnect();
                 throw smbre;
             }
         }
-        return null;
+        return is;
     }
 
     /*

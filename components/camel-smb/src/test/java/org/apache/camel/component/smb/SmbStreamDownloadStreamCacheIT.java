@@ -20,10 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("CAMEL-22174")
 public class SmbStreamDownloadStreamCacheIT extends SmbServerTestSupport {
 
     @Override
