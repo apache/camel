@@ -587,7 +587,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
                 exp = StringHelper.after(exp, ",");
-                return ExpressionBuilder.singleInputLanguageExpression("jq", exp, input);
+                return ExpressionBuilder.singleInputLanguageExpression("jsonpath", exp, input);
             }
             return ExpressionBuilder.languageExpression("jsonpath", exp);
         }
@@ -602,7 +602,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
                 exp = StringHelper.after(exp, ",");
-                return ExpressionBuilder.singleInputLanguageExpression("jq", exp, input);
+                return ExpressionBuilder.singleInputLanguageExpression("xpath", exp, input);
             }
             return ExpressionBuilder.languageExpression("xpath", exp);
         }
