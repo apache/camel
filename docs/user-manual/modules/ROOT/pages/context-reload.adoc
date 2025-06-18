@@ -25,20 +25,12 @@ ContextReloadStrategy reload = new DefaultContextReloadStrategy();
 context.addService(reload);
 ----
 
-And with Camel Quarkus / Camel Main you can configure this in `application.properties:`
+And with Camel Quarkus / Camel Main / Camel Spring Boot you can configure this in `application.properties:`
 
 [source,properties]
 ----
 # turn on context reloading
 camel.main.context-reload-enabled = true
-----
-
-And in Spring Boot:
-
-[source,properties]
-----
-# turn on context reloading
-camel.springboot.context-reload-enabled = true
 ----
 
 == Triggering context reloading
