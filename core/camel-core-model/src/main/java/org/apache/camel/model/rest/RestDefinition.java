@@ -940,7 +940,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         if (openApi != null) {
             addRouteDefinition(camelContext, openApi, answer, config.getComponent(), config.getProducerComponent(),
-                    config.getApiContextPath(), config.isClientRequestValidation());
+                    config.getApiContextPath(), config.isClientRequestValidation(), config.isClientResponseValidation());
         }
 
         return answer;
@@ -1035,7 +1035,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private void addRouteDefinition(
             CamelContext camelContext, OpenApiDefinition openApi, List<RouteDefinition> answer,
             String component, String producerComponent, String apiContextPath,
-            boolean clientValidation) {
+            boolean clientRequestValidation, boolean clientResponseValidation) {
 
         RouteDefinition route = new RouteDefinition();
         if (openApi.getRouteId() != null) {
@@ -1044,7 +1044,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // add dummy empty stop
         route.getOutputs().add(new StopDefinition());
 
-        final RestBindingDefinition binding = getRestBindingDefinition(camelContext, component);
+        // local configuration can override global
+        if (getClientRequestValidation() != null) {
+            clientRequestValidation = parseBoolean(camelContext, getClientRequestValidation());
+        }
+        if (getClientResponseValidation() != null) {
+            clientResponseValidation = parseBoolean(camelContext, getClientResponseValidation());
+        }
+
+        final RestBindingDefinition binding
+                = getRestBindingDefinition(camelContext, component, clientRequestValidation, clientResponseValidation);
         route.setRestBindingDefinition(binding);
 
         // append options
@@ -1055,10 +1064,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         if (binding.getProduces() != null) {
             options.put("produces", parseText(camelContext, binding.getProduces()));
         }
-        if (getClientRequestValidation() != null) {
-            options.put("clientRequestValidation", parseBoolean(camelContext, getClientRequestValidation()));
-        } else if (clientValidation) {
+        if (clientRequestValidation) {
             options.put("clientRequestValidation", "true");
+        }
+        if (clientResponseValidation) {
+            options.put("clientResponseValidation", "true");
         }
         if (openApi.getMissingOperation() != null) {
             options.put("missingOperation", parseText(camelContext, openApi.getMissingOperation()));
@@ -1097,7 +1107,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         answer.add(route);
     }
 
-    private RestBindingDefinition getRestBindingDefinition(CamelContext camelContext, String component) {
+    private RestBindingDefinition getRestBindingDefinition(
+            CamelContext camelContext, String component,
+            boolean clientRequestValidation, boolean clientResponseValidation) {
         String mode = getBindingMode();
         if (mode == null) {
             mode = camelContext.getRestConfiguration().getBindingMode().name();
@@ -1117,7 +1129,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
         binding.setBindingMode(mode);
         binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
-        binding.setClientRequestValidation(getClientRequestValidation());
+        if (clientRequestValidation) {
+            binding.setClientRequestValidation("true");
+        }
+        if (clientResponseValidation) {
+            binding.setClientResponseValidation("true");
+        }
         binding.setEnableCORS(getEnableCORS());
         binding.setEnableNoContentResponse(getEnableNoContentResponse());
         return binding;

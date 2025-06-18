@@ -15,8 +15,6 @@ The `camel-openapi-validator` uses the third party https://bitbucket.org/atlassi
 library instead for client request/response validator. This library is a more extensive validator than
 the default validator from `camel-core`.
 
-NOTE: This library does not work with running in `camel-jbang`.
-
 == Auto-detection from classpath
 
 To use this implementation all you need to do is to add the `camel-openapi-validator` dependency to the classpath.

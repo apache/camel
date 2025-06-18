@@ -114,13 +114,6 @@ public final class RestOpenApiHelper {
             }
         }
 
-        if (openAPI != null) {
-            String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
-            if (isNotEmpty(specificationBasePath)) {
-                return specificationBasePath;
-            }
-        }
-
         String cn = endpoint != null ? endpoint.determineComponentName() : null;
         RestConfiguration restConfiguration
                 = CamelContextHelper.getRestConfiguration(camelContext, null, cn);
@@ -128,6 +121,14 @@ public final class RestOpenApiHelper {
 
         if (isNotEmpty(restConfigurationBasePath)) {
             return restConfigurationBasePath;
+        }
+
+        // openapi spec should be last, as all the above can override the configuration
+        if (openAPI != null) {
+            String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
+            if (isNotEmpty(specificationBasePath)) {
+                return specificationBasePath;
+            }
         }
 
         return RestOpenApiComponent.DEFAULT_BASE_PATH;
