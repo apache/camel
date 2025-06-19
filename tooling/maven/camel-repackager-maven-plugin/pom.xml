@@ -82,6 +82,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
+                <version>${maven-plugin-tools-version}</version>
                 <configuration>
                     <goalPrefix>camel-repackager</goalPrefix>
                 </configuration>
@@ -102,6 +103,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-plugin-plugin</artifactId>
+                        <version>${maven-plugin-tools-version}</version>
                         <configuration>
                             <goalPrefix>camel-repackager</goalPrefix>
                         </configuration>

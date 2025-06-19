@@ -43,7 +43,7 @@ import org.springframework.boot.loader.tools.Repackager;
  * JARs in BOOT-INF/lib/ and application classes are in BOOT-INF/classes/.
  */
 @Mojo(name = "repackage", defaultPhase = LifecyclePhase.PACKAGE,
-        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
+      requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class RepackageMojo extends AbstractMojo {
 
     /**
@@ -154,14 +154,14 @@ public class RepackageMojo extends AbstractMojo {
     private LibraryScope getLibraryScope(Artifact artifact) {
         String scope = artifact.getScope();
         switch (scope) {
-            case Artifact.SCOPE_COMPILE:
-                return LibraryScope.COMPILE;
-            case Artifact.SCOPE_RUNTIME:
-                return LibraryScope.RUNTIME;
-            case Artifact.SCOPE_PROVIDED:
-                return LibraryScope.PROVIDED;
-            default:
-                return LibraryScope.COMPILE;
+        case Artifact.SCOPE_COMPILE:
+            return LibraryScope.COMPILE;
+        case Artifact.SCOPE_RUNTIME:
+            return LibraryScope.RUNTIME;
+        case Artifact.SCOPE_PROVIDED:
+            return LibraryScope.PROVIDED;
+        default:
+            return LibraryScope.COMPILE;
         }
     }
 
@@ -203,38 +203,40 @@ public class RepackageMojo extends AbstractMojo {
     }
 
     private String createLauncherScript() {
-        return "#!/bin/bash\n" +
-               "#\n" +
-               "# Camel Self-Executing JAR Launcher\n" +
-               "# This script finds Java and executes the embedded JAR\n" +
-               "#\n" +
-               "\n" +
-               "# Find Java executable\n" +
-               "if [ -n \"$JAVA_HOME\" ] && [ -x \"$JAVA_HOME/bin/java\" ]; then\n" +
-               "    JAVA=\"$JAVA_HOME/bin/java\"\n" +
-               "elif command -v java >/dev/null 2>&1; then\n" +
-               "    JAVA=\"java\"\n" +
-               "else\n" +
-               "    echo \"Error: Java not found. Please install Java or set JAVA_HOME.\" >&2\n" +
-               "    exit 1\n" +
-               "fi\n" +
-               "\n" +
-               "# Get the directory of this script\n" +
-               "SCRIPT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n" +
-               "SCRIPT_NAME=\"$(basename \"${BASH_SOURCE[0]}\")\"\n" +
-               "JAR_FILE=\"$SCRIPT_DIR/$SCRIPT_NAME\"\n" +
-               "\n" +
-               "# Set default JVM options if not specified\n" +
-               "if [ -z \"$JAVA_OPTS\" ]; then\n" +
-               "    JAVA_OPTS=\"-Xmx512m\"\n" +
-               "fi\n" +
-               "\n" +
-               "# Execute the JAR with all arguments passed to this script\n" +
-               "exec \"$JAVA\" $JAVA_OPTS -jar \"$JAR_FILE\" \"$@\"\n" +
-               "\n" +
-               "# This line should never be reached, but just in case:\n" +
-               "exit $?\n" +
-               "\n" +
-               "# === JAR CONTENT STARTS BELOW ===\n";
+        StringBuilder script = new StringBuilder();
+        script.append("#!/bin/bash\n");
+        script.append("#\n");
+        script.append("# Camel Self-Executing JAR Launcher\n");
+        script.append("# This script finds Java and executes the embedded JAR\n");
+        script.append("#\n");
+        script.append("\n");
+        script.append("# Find Java executable\n");
+        script.append("if [ -n \"$JAVA_HOME\" ] && [ -x \"$JAVA_HOME/bin/java\" ]; then\n");
+        script.append("    JAVA=\"$JAVA_HOME/bin/java\"\n");
+        script.append("elif command -v java >/dev/null 2>&1; then\n");
+        script.append("    JAVA=\"java\"\n");
+        script.append("else\n");
+        script.append("    echo \"Error: Java not found. Please install Java or set JAVA_HOME.\" >&2\n");
+        script.append("    exit 1\n");
+        script.append("fi\n");
+        script.append("\n");
+        script.append("# Get the directory of this script\n");
+        script.append("SCRIPT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n");
+        script.append("SCRIPT_NAME=\"$(basename \"${BASH_SOURCE[0]}\")\"\n");
+        script.append("JAR_FILE=\"$SCRIPT_DIR/$SCRIPT_NAME\"\n");
+        script.append("\n");
+        script.append("# Set default JVM options if not specified\n");
+        script.append("if [ -z \"$JAVA_OPTS\" ]; then\n");
+        script.append("    JAVA_OPTS=\"-Xmx512m\"\n");
+        script.append("fi\n");
+        script.append("\n");
+        script.append("# Execute the JAR with all arguments passed to this script\n");
+        script.append("exec \"$JAVA\" $JAVA_OPTS -jar \"$JAR_FILE\" \"$@\"\n");
+        script.append("\n");
+        script.append("# This line should never be reached, but just in case:\n");
+        script.append("exit $?\n");
+        script.append("\n");
+        script.append("# === JAR CONTENT STARTS BELOW ===\n");
+        return script.toString();
     }
 }
