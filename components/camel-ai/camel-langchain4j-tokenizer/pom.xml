@@ -62,14 +62,14 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-azure-open-ai</artifactId>
-            <version>${langchain4j-beta-version}</version>
+            <version>${langchain4j-rc-version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-community-dashscope</artifactId>
-            <version>${langchain4j-beta-version}</version>
+            <version>${langchain4j-community-version}</version>
             <scope>provided</scope>
             <exclusions>
                 <!-- messes up with the log -->
