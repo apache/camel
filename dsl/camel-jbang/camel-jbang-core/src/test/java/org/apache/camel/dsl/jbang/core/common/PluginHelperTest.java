@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PluginHelperTest {
@@ -38,11 +39,8 @@ public class PluginHelperTest {
     }
 
     @Test
-    public void testEmbeddedPluginDetection() throws Exception {
-        // Test that embedded plugins can be detected
-        boolean hasEmbedded = PluginHelper.hasEmbeddedPlugins();
-        // This may be false in test environment, but should not throw exceptions
-        assertNotNull(hasEmbedded);
+    public void testEmbeddedPluginDetectionDoesNotThrowException() {
+        assertDoesNotThrow(PluginHelper::hasEmbeddedPlugins);
     }
 
     @Test
