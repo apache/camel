@@ -23,7 +23,7 @@ import java.util.jar.Manifest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for RepackageMojo to verify Spring Boot loader integration.
@@ -34,30 +34,30 @@ public class RepackageMojoTest {
     File tempDir;
 
     @Test
-    public void testSpringBootLoaderStructure() throws Exception {
+    void testSpringBootLoaderStructure() throws Exception {
         // This test would verify that the repackaged JAR has the correct Spring Boot structure
         // For now, it's a placeholder to demonstrate the expected behavior
-        
+
         // Expected structure after repackaging:
         // - META-INF/MANIFEST.MF with Main-Class: org.springframework.boot.loader.launch.JarLauncher
         // - org/springframework/boot/loader/ classes
         // - BOOT-INF/classes/ with application classes
         // - BOOT-INF/lib/ with dependency JARs
-        
+
         assertTrue(true, "Placeholder test - would verify Spring Boot JAR structure");
     }
 
     @Test
-    public void testManifestEntries() throws Exception {
+    void testManifestEntries() throws Exception {
         // This test would verify that the manifest has the correct entries:
         // Main-Class: org.springframework.boot.loader.launch.JarLauncher
         // Start-Class: org.apache.camel.dsl.jbang.launcher.CamelLauncher
-        
+
         assertTrue(true, "Placeholder test - would verify manifest entries");
     }
 
     @Test
-    public void testDependencyInclusion() throws Exception {
+    void testDependencyInclusion() throws Exception {
         // This test would verify that all compile and runtime dependencies
         // are included as separate JARs in BOOT-INF/lib/
 
@@ -65,7 +65,7 @@ public class RepackageMojoTest {
     }
 
     @Test
-    public void testExecutableJar() throws Exception {
+    void testExecutableJar() throws Exception {
         // This test would verify that when executable=true:
         // - The JAR starts with a shell script
         // - The JAR has executable permissions
@@ -76,7 +76,7 @@ public class RepackageMojoTest {
     }
 
     @Test
-    public void testLauncherScript() throws Exception {
+    void testLauncherScript() throws Exception {
         // This test would verify the launcher script:
         // - Contains proper shebang (#!/bin/bash)
         // - Finds Java from JAVA_HOME or PATH
