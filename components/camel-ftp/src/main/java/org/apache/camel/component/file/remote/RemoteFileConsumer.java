@@ -40,6 +40,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     protected transient boolean loggedIn;
     protected transient boolean loggedInWarning;
+    protected transient boolean autoCreatedDone;
+    protected transient boolean autoCreateWarning;
 
     protected RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations,
                                  GenericFileProcessStrategy processStrategy) {
@@ -72,17 +74,35 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         if (LOG.isTraceEnabled()) {
             LOG.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
+        Exception cause;
         try {
             connectIfNecessary();
+            loggedIn = true;
+            if (!autoCreatedDone) {
+                autoCreateIfNecessary();
+                autoCreatedDone = true;
+            }
         } catch (Exception e) {
+            cause = e;
+            String msg = "Cannot connect/login to: " + remoteServer();
+            if (loggedIn && !autoCreatedDone) {
+                msg = "Cannot auto-create starting directory at: " + remoteServer();
+            }
+            LOG.debug(msg, cause);
             loggedIn = false;
-
-            // login failed should we thrown exception
             if (getEndpoint().getConfiguration().isThrowExceptionOnConnectFailed()) {
                 throw e;
             }
         }
 
+        if (loggedIn && !autoCreatedDone) {
+            String message = "Cannot auto-create starting directory at: " + remoteServer() + ". Will skip this poll.";
+            if (!autoCreateWarning) {
+                LOG.warn(message);
+                autoCreateWarning = true;
+            }
+            return false;
+        }
         if (!loggedIn) {
             String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
             if (!loggedInWarning) {
@@ -230,6 +250,14 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             if (loggedIn && LOG.isDebugEnabled()) {
                 LOG.debug("Connected and logged in to: {}", remoteServer());
             }
+        }
+    }
+
+    protected void autoCreateIfNecessary() throws GenericFileOperationFailedException {
+        if (endpoint.isAutoCreate() && hasStartingDirectory()) {
+            String dir = endpoint.getConfiguration().getDirectory();
+            LOG.debug("Auto creating directory: {}", dir);
+            getOperations().buildDirectory(dir, true);
         }
     }
 
