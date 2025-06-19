@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.boot.loader.tools.Libraries;
 import org.springframework.boot.loader.tools.Library;
 import org.springframework.boot.loader.tools.LibraryCallback;
 import org.springframework.boot.loader.tools.LibraryScope;
@@ -49,7 +50,7 @@ public class RepackagerExample {
         File outputJar = new File("target/my-app-1.0-executable.jar");
         
         // 5. Repackage with dependencies
-        repackager.repackage(outputJar, new ExampleLibraryCallback());
+        repackager.repackage(outputJar, new ExampleLibraries());
         
         System.out.println("Created self-executing JAR: " + outputJar);
         System.out.println("Run with: java -jar " + outputJar);
@@ -57,32 +58,28 @@ public class RepackagerExample {
     }
     
     /**
-     * Example implementation of LibraryCallback that provides dependencies.
+     * Example implementation of Libraries interface that provides dependencies.
      * In the real Maven plugin, this would iterate over Maven artifacts.
      */
-    static class ExampleLibraryCallback implements LibraryCallback {
-        
+    static class ExampleLibraries implements Libraries {
+
         @Override
-        public void library(Library library) throws IOException {
-            // This method is called by the repackager for each dependency
-            System.out.println("Including library: " + library.getName() + 
-                             " (scope: " + library.getScope() + ")");
-        }
-        
-        // In a real implementation, you would provide the actual dependency JARs
-        public void provideDependencies() throws IOException {
+        public void doWithLibraries(LibraryCallback callback) throws IOException {
             // Example dependencies that would be included
             List<String> exampleDeps = Arrays.asList(
                 "camel-jbang-core-4.12.0.jar",
-                "camel-main-4.12.0.jar", 
+                "camel-main-4.12.0.jar",
                 "jackson-core-2.15.2.jar",
                 "slf4j-api-1.7.36.jar"
             );
-            
+
             for (String dep : exampleDeps) {
                 File depFile = new File("dependencies/" + dep);
                 if (depFile.exists()) {
-                    library(new Library(depFile, LibraryScope.COMPILE));
+                    System.out.println("Including library: " + dep);
+                    callback.library(new Library(depFile, LibraryScope.COMPILE));
+                } else {
+                    System.out.println("Would include library: " + dep + " (file not found for demo)");
                 }
             }
         }
