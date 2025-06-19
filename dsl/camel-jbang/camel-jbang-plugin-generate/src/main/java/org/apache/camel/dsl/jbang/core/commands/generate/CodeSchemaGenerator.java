@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.schema.generator;
+package org.apache.camel.dsl.jbang.core.commands.generate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,8 +42,8 @@ import java.util.List;
  * a JSON Schema (Draft 2020-12) for the given fully qualified class name.
  *
  * Usage Examples:
- * - camel generate-schema fhir org.hl7.fhir.r4.model.Patient
- * - camel generate-schema http org.apache.camel.component.http.HttpConfiguration
+ * - camel generate schema fhir org.hl7.fhir.r4.model.Patient
+ * - camel generate schema http org.apache.camel.component.http.HttpConfiguration
  *
  * The generated schema includes:
  * - Public and non-public fields (with getters)
@@ -57,9 +57,9 @@ import java.util.List;
  * - 3: Schema generation failed
  * - 4: General error
  */
-@CommandLine.Command(name = "generate-schema",
+@CommandLine.Command(name = "schema",
         description = "Create a JSON schema for a given Camel component and Java Object")
-public class JsonSchemaGeneratorCommand extends CamelCommand {
+public class CodeSchemaGenerator extends CamelCommand {
 
     @CommandLine.Parameters(description = "Camel component name (e.g., 'fhir', 'http', 'jms')", arity = "1")
     private String camelComponent;
@@ -79,7 +79,7 @@ public class JsonSchemaGeneratorCommand extends CamelCommand {
             description = "Enable verbose logging")
     private boolean verbose = false;
 
-    public JsonSchemaGeneratorCommand(CamelJBangMain main) {
+    public CodeSchemaGenerator(CamelJBangMain main) {
         super(main);
     }
 
@@ -189,7 +189,7 @@ public class JsonSchemaGeneratorCommand extends CamelCommand {
             }
 
             DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(
-                    JsonSchemaGeneratorCommand.class.getClassLoader());
+                    CodeSchemaGenerator.class.getClassLoader());
 
             MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setClassLoader(cl);
@@ -324,7 +324,7 @@ public class JsonSchemaGeneratorCommand extends CamelCommand {
         ObjectMapper objectMapper = new ObjectMapper();
 
         objectMapper.writerWithDefaultPrettyPrinter()
-                        .writeValue(new File(outputFile), schema);
+                .writeValue(new File(outputFile), schema);
 
         printer().println("Schema saved to: " + outputFile);
     }

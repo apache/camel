@@ -49,7 +49,6 @@ import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginGet;
 import org.apache.camel.dsl.jbang.core.commands.process.*;
-import org.apache.camel.dsl.jbang.core.commands.schema.generator.JsonSchemaGeneratorCommand;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateCommand;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateList;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateRun;
@@ -184,7 +183,6 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("update", new CommandLine(new UpdateCommand(main))
                         .addSubcommand("list", new CommandLine(new UpdateList(main)))
                         .addSubcommand("run", new CommandLine(new UpdateRun(main))))
-                .addSubcommand("generate-schema", new CommandLine(new JsonSchemaGeneratorCommand(main)))
                 .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
 
         PluginHelper.addPlugins(commandLine, main, args);
