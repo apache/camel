@@ -86,7 +86,9 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     private void processError(ServiceBusErrorContext errorContext) {
-        LOG.error("Error from Service Bus client: {}", errorContext.getErrorSource(), errorContext.getException());
+        Throwable cause = errorContext.getException();
+        String msg = "Error from Service Bus: " + errorContext.getErrorSource() + " due to: " + cause.getMessage();
+        handleException(msg, cause);
     }
 
     @Override
