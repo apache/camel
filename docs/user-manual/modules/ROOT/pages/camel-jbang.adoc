@@ -4289,3 +4289,32 @@ Update a Spring Boot application with and extra Spring Boot 3.3 upgrade recipe
 ----
 $ camel update run 4.9.0 --runtime=spring-boot --extraActiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3 --extraRecipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:6.0.2
 ----
+
+=== Generate JSON schema plugin
+
+The *generate schema* plugin automatically creates JSON Schema definitions for Java objects, enabling seamless integration with low-code/no-code platforms and visual development tools.
+
+==== Key Benefits
+
+===== Low-Code Platform Integration
+
+- *Visual Development*: Integrates with low-code platforms like Kaoto and Karavan
+- *Drag-and-Drop Compatibility*: Generated schemas enable intuitive component configuration in visual builders
+
+===== Alternative to Custom Processors
+
+- *Eliminates Custom Code*: Replaces the need for custom processors with declarative schema definitions
+- *Standardized Approach*: Uses industry-standard JSON Schema format for consistent data modeling
+- *Reduced Development Time*: Accelerates integration development by providing ready-to-use object definitions
+
+==== Examples
+
+[source,bash]
+----
+# Generate schema for FHIR Patient object
+$ camel generate schema fhir org.hl7.fhir.r4.model.Patient
+
+Schema saved to: ./org.hl7.fhir.r4.model.Patient-schema.json
+----
+
+The generated schemas can then be imported into visual development tools, enabling drag-and-drop integration development without requiring deep knowledge of the underlying Java objects.
