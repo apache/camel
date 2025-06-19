@@ -63,6 +63,7 @@ import org.springframework.core.metrics.StartupStep;
  * Used for parsing and discovering legacy Spring XML <beans> to make it runnable on camel-jbang, and for tooling to
  * migrate this to modern Camel DSL in plain Camel XML or YAML DSL.
  */
+@Deprecated(since = "4.13.0")
 public class SpringXmlBeansHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringXmlBeansHandler.class);
@@ -81,7 +82,7 @@ public class SpringXmlBeansHandler {
     public void processSpringBeans(
             CamelContext camelContext, MainConfigurationProperties config, final Map<String, Document> xmls) {
 
-        LOG.debug("Loading beans from classic Spring <beans> XML");
+        LOG.warn("Loading beans from classic Spring <beans> XML is deprecated (use camel-spring-xml)");
 
         // we _could_ create something like org.apache.camel.spring.spi.ApplicationContextBeanRepository, but
         // wrapping DefaultListableBeanFactory and use it as one of the
