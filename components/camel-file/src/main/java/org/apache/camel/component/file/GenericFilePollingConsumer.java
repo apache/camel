@@ -38,17 +38,20 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer imple
     }
 
     @Override
+    public GenericFileEndpoint getEndpoint() {
+        return (GenericFileEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected Consumer createConsumer() throws Exception {
         // lets add ourselves as a consumer
         GenericFileConsumer consumer = (GenericFileConsumer) super.createConsumer();
         // do not start scheduler as we poll manually
         consumer.setStartScheduler(false);
-        // when using polling consumer we poll only 1 file per poll so we can
-        // limit
+        // when using polling consumer we poll only 1 file per poll so we can limit
         consumer.setMaxMessagesPerPoll(1);
-        // however do not limit eager as we may sort the files and thus need to
-        // do a full scan so we can sort afterwards
-        consumer.setEagerLimitMaxMessagesPerPoll(false);
+        // respect the eager limit (true is faster but does not respect when need to sort all files first)
+        consumer.setEagerLimitMaxMessagesPerPoll(getEndpoint().isEagerMaxMessagesPerPoll());
         // we only want to poll once so disconnect by default
         return consumer;
     }
