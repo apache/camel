@@ -72,6 +72,9 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     @XmlAttribute
     @Metadata(label = "advanced")
     private String scriptLanguage;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", label = "advanced", defaultValue = "true")
+    private String scriptPropertyPlaceholders;
     @XmlElement(name = "constructors")
     @XmlJavaTypeAdapter(BeanConstructorsAdapter.class)
     private Map<Integer, Object> constructors;
@@ -232,6 +235,17 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
      */
     public void setScriptLanguage(String scriptLanguage) {
         this.scriptLanguage = scriptLanguage;
+    }
+
+    public String getScriptPropertyPlaceholders() {
+        return scriptPropertyPlaceholders;
+    }
+
+    /**
+     * Whether the script should support using Camel property placeholder syntax {{ }}.
+     */
+    public void setScriptPropertyPlaceholders(String scriptPropertyPlaceholders) {
+        this.scriptPropertyPlaceholders = scriptPropertyPlaceholders;
     }
 
     /**
@@ -515,6 +529,22 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
      */
     public BeanFactoryDefinition<P> properties(Map<String, Object> properties) {
         this.properties = properties;
+        return this;
+    }
+
+    /**
+     * Whether the script should support using Camel property placeholder syntax {{ }}.
+     */
+    public BeanFactoryDefinition<P> scriptPropertyPlaceholders(boolean scriptPropertyPlaceholders) {
+        this.scriptPropertyPlaceholders = scriptPropertyPlaceholders ? "true" : "false";
+        return this;
+    }
+
+    /**
+     * Whether the script should support using Camel property placeholder syntax {{ }}.
+     */
+    public BeanFactoryDefinition<P> scriptPropertyPlaceholders(String scriptPropertyPlaceholders) {
+        this.scriptPropertyPlaceholders = scriptPropertyPlaceholders;
         return this;
     }
 

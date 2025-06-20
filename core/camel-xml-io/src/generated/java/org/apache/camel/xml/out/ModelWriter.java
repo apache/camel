@@ -884,6 +884,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("builderClass", def.getBuilderClass(), null);
         doWriteAttribute("type", def.getType(), null);
         doWriteAttribute("factoryBean", def.getFactoryBean(), null);
+        doWriteAttribute("scriptPropertyPlaceholders", def.getScriptPropertyPlaceholders(), "true");
         doWriteAttribute("initMethod", def.getInitMethod(), null);
         doWriteAttribute("name", def.getName(), null);
         doWriteAttribute("builderMethod", def.getBuilderMethod(), "build");

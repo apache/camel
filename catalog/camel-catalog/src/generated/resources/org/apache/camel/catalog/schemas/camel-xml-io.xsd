@@ -2980,6 +2980,15 @@ The script language to use when using inlined script for creating the bean, such
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="scriptPropertyPlaceholders" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Whether the script should support using Camel property placeholder syntax {{ }}. Default value: true
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="beanConstructorsDefinition">
     <xs:sequence>

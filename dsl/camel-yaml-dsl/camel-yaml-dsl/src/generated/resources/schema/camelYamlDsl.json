@@ -635,6 +635,11 @@
             "title" : "Script Language",
             "description" : "The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc."
           },
+          "scriptPropertyPlaceholders" : {
+            "type" : "boolean",
+            "title" : "Script Property Placeholders",
+            "description" : "Whether the script should support using Camel property placeholder syntax {{ }}."
+          },
           "type" : {
             "type" : "string",
             "title" : "Type",

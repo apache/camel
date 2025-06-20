@@ -230,6 +230,65 @@ class BeansTest extends YamlTestSupport {
         }
     }
 
+    def "beans with script property placeholder default"() {
+        when:
+        context.getPropertiesComponent().addInitialProperty("cheese", "gauda")
+        context.getPropertiesComponent().addInitialProperty("cake", "strawberry")
+        loadRoutes """
+                - beans:
+                  - name: myBean
+                    type: ${MyBean.class.name}
+                    scriptLanguage: groovy
+                    script: "var b = new ${MyBean.class.name}(); b.field1 = '{{cheese}}'; b.field2 = '{{cake}}'; return b"
+            """
+
+        then:
+        with(context.registry.lookupByName('myBean'), MyBean) {
+            it.field1 == 'gauda'
+            it.field2 == 'strawberry'
+        }
+    }
+
+    def "beans with script property placeholder true"() {
+        when:
+        context.getPropertiesComponent().addInitialProperty("cheese", "gauda")
+        context.getPropertiesComponent().addInitialProperty("cake", "strawberry")
+        loadRoutes """
+                - beans:
+                  - name: myBean
+                    type: ${MyBean.class.name}
+                    scriptLanguage: groovy
+                    scriptPropertyPlaceholders: true
+                    script: "var b = new ${MyBean.class.name}(); b.field1 = '{{cheese}}'; b.field2 = '{{cake}}'; return b"
+            """
+
+        then:
+        with(context.registry.lookupByName('myBean'), MyBean) {
+            it.field1 == 'gauda'
+            it.field2 == 'strawberry'
+        }
+    }
+
+    def "beans with script property placeholder false"() {
+        when:
+        context.getPropertiesComponent().addInitialProperty("cheese", "gauda")
+        context.getPropertiesComponent().addInitialProperty("cake", "strawberry")
+        loadRoutes """
+                - beans:
+                  - name: myBean
+                    type: ${MyBean.class.name}
+                    scriptLanguage: groovy
+                    scriptPropertyPlaceholders: false
+                    script: "var b = new ${MyBean.class.name}(); b.field1 = '{{cheese}}'; b.field2 = '{{cake}}'; return b"
+            """
+
+        then:
+        with(context.registry.lookupByName('myBean'), MyBean) {
+            it.field1 == '{{cheese}}'
+            it.field2 == '{{cake}}'
+        }
+    }
+
     def "beans with builder class"() {
         when:
         loadRoutes """

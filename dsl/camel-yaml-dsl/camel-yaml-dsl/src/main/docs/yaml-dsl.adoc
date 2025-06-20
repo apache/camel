@@ -309,6 +309,42 @@ This gives flexibility to use a bit of programming to create and configure the b
 
 NOTE: When using `script` then constructors and factory bean/method is not in use
 
+You can refer to property placeholder values using `{{ }}` syntax inside the script, such as:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    scriptLanguage: groovy
+    script: >
+      // some groovy script here to create the bean
+      bean = ...
+      bean.street = '{{addressLine1}}`
+      bean.street2 = '{{addressLine2}}`
+      ...
+      return bean
+----
+
+If there is some problems with using `{{ }}` inside the script, then this can be turned off by setting `scriptPropertyPlaceholders: false`.
+Instead, you can invoke the APIs on `CamelContext` such as:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    scriptLanguage: groovy
+    scriptPropertyPlaceholders: false
+    script: >
+      // some groovy script here to create the bean
+      bean = ...
+      bean.street = context.resolvePropertyPlaceholders('addressLine1')
+      bean.street2 = context.resolvePropertyPlaceholders('addressLine2')
+      ...
+      return bean
+----
+
 === Using init and destroy methods on beans
 
 Sometimes beans need to do some initialization and cleanup work before a bean is ready to be used.
