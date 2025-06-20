@@ -97,7 +97,7 @@ pipeline {
                     stage('Clean workspace') {
                         steps {
                             cleanWs()
-                            sh 'rm -rv /home/jenkins/.m2/repository/org/apache/camel/camel-buildtools'
+                            sh 'rm -rv /home/jenkins/.m2/repository/org/apache/camel'
                             checkout scm
                         }
                     }
