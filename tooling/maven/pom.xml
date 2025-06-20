@@ -42,6 +42,7 @@
         <module>camel-restdsl-openapi-plugin</module>
         <module>sync-properties-maven-plugin</module>
         <module>camel-component-maven-plugin</module>
+        <module>camel-repackager-maven-plugin</module>
     </modules>
 
     <!-- Apply to children. -->
