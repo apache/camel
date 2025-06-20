@@ -33,10 +33,10 @@ public class FileConsumeTemplateTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
-        Exchange out = consumer.receive(fileUri("?sortBy=file:name"));
+        Exchange out = consumer.receive(fileUri("?sortBy=file:name&eagerMaxMessagesPerPoll=false"));
         assertNotNull(out);
 
-        Exchange out2 = consumer.receive(fileUri("?sortBy=file:name"));
+        Exchange out2 = consumer.receive(fileUri("?sortBy=file:name&eagerMaxMessagesPerPoll=false"));
         assertNotNull(out2);
 
         String body = out.getIn().getBody(String.class);
