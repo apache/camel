@@ -185,7 +185,7 @@ from("direct:start")
         //required headers can be added here
         exchange.getIn().setHeader(DataLakeConstants.LIST_FILESYSTEMS_OPTIONS, new ListFileSystemsOptions().setMaxResultsPerPage(10));
     })
-    .to("azure-storage-datalake:cameltesting?operation=listFileSystem&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting?operation=listFileSystem&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -197,7 +197,7 @@ from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.FILESYSTEM_NAME, "test1");
     })
-    .to("azure-storage-datalake:cameltesting?operation=createFileSystem&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting?operation=createFileSystem&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -209,7 +209,7 @@ from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.FILESYSTEM_NAME, "test1");
     })
-    .to("azure-storage-datalake:cameltesting?operation=deleteFileSystem&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting?operation=deleteFileSystem&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -221,7 +221,7 @@ from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.LIST_PATH_OPTIONS, new ListPathsOptions().setPath("/main"));
     })
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=listPaths&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=listPaths&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -236,7 +236,7 @@ from("direct:start")
         // set an OutputStream where the file data can should be written
         exchange.getIn().setBody(outputStream);
     })
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=getFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=getFile&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -246,7 +246,7 @@ in azure portal.
 [source,java]
 ----
 from("direct:start")
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=getFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=getFile&fileName=test.txt&serviceClient=#serviceClient")
     .process(exchange -> {
         InputStream inputStream = exchange.getMessage().getBody(InputStream.class);
         System.out.Println(IOUtils.toString(inputStream, StandardCharcets.UTF_8.name()));
@@ -259,7 +259,7 @@ from("direct:start")
 [source,java]
 ----
 from("direct:start")
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=deleteFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=deleteFile&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -268,7 +268,7 @@ from("direct:start")
 [source,java]
 ----
 from("direct:start")
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=downloadToFile&fileName=test.txt&fileDir=/test/mydir&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=downloadToFile&fileName=test.txt&fileDir=/test/mydir&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -277,7 +277,7 @@ from("direct:start")
 [source,java]
 ----
 from("direct:start")
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=downloadLink&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=downloadLink&fileName=test.txt&serviceClient=#serviceClient")
     .process(exchange -> {
         String link = exchange.getMessage().getBody(String.class);
         System.out.println(link);
@@ -295,7 +295,7 @@ from("direct:start")
         final InputStream inputStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
         exchange.getIn().setBody(inputStream);
     })
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=appendToFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=appendToFile&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -307,7 +307,7 @@ from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.POSITION, 0);
     })
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=flushToFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=flushToFile&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -321,7 +321,7 @@ from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.QUERY_OPTIONS, new FileQueryOptions("SELECT * from BlobStorage"));
     })
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=openQueryInputStream&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=openQueryInputStream&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -335,7 +335,7 @@ from("direct:start")
         final InputStream inputStream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
         exchange.getIn().setBody(inputStream);
     })
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=upload&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=upload&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -347,7 +347,7 @@ from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.PATH, "test/file.txt");
     })
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=uploadFromFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=uploadFromFile&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -359,7 +359,7 @@ from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.DIRECTORY_NAME, "test/file/");
     })
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=createFile&fileName=test.txt&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=createFile&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
@@ -371,7 +371,7 @@ from("direct:start")
     .process(exchange -> {
         exchange.getIn().setHeader(DataLakeConstants.DIRECTORY_NAME, "test/file/");
     })
-    .to("azure-storage-datalake:cameltesting/filesystem?operation=deleteDirectory&dataLakeServiceClient=#serviceClient")
+    .to("azure-storage-datalake:cameltesting/filesystem?operation=deleteDirectory&serviceClient=#serviceClient")
     .to("mock:results");
 ----
 
