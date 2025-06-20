@@ -1181,6 +1181,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "properties", type = "object", description = "Optional properties to set on the created bean.", displayName = "Properties"),
                     @YamlProperty(name = "script", type = "string", description = "The script to execute that creates the bean when using scripting languages. If the script use the prefix resource: such as resource:classpath:com/foo/myscript.groovy, resource:file:/var/myscript.groovy, then its loaded from the external resource.", displayName = "Script"),
                     @YamlProperty(name = "scriptLanguage", type = "string", description = "The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.", displayName = "Script Language"),
+                    @YamlProperty(name = "scriptPropertyPlaceholders", type = "boolean", description = "Whether the script should support using Camel property placeholder syntax {{ }}.", displayName = "Script Property Placeholders"),
                     @YamlProperty(name = "type", type = "string", required = true, description = "The class name (fully qualified) of the bean", displayName = "Type")
             }
     )
@@ -1252,6 +1253,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "scriptLanguage": {
                     String val = asText(node);
                     target.setScriptLanguage(val);
+                    break;
+                }
+                case "scriptPropertyPlaceholders": {
+                    String val = asText(node);
+                    target.setScriptPropertyPlaceholders(val);
                     break;
                 }
                 case "type": {

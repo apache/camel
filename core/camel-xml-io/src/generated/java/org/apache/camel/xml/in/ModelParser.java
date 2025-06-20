@@ -176,6 +176,7 @@ public class ModelParser extends BaseParser {
                 case "initMethod": def.setInitMethod(val); yield true;
                 case "name": def.setName(val); yield true;
                 case "scriptLanguage": def.setScriptLanguage(val); yield true;
+                case "scriptPropertyPlaceholders": def.setScriptPropertyPlaceholders(val); yield true;
                 case "type": def.setType(val); yield true;
                 default: yield false;
             }, (def, key) -> switch (key) {

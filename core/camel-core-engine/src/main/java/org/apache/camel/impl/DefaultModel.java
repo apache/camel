@@ -604,6 +604,9 @@ public class DefaultModel implements Model {
     private static void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target)
             throws Exception {
         for (BeanFactoryDefinition b : target.getTemplateBeans()) {
+            // route template beans do not directly support property placeholders
+            // but need to use rtc.property API calls
+            b.setScriptPropertyPlaceholders("false");
             BeanModelHelper.bind(b, routeTemplateContext);
         }
     }
