@@ -76,12 +76,12 @@ public class OpenApiITCase extends JBangTestSupport {
         //verify mock
         HttpResponse<String> response = executeHttpRequest("/myapi/pet/123", true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
-        Assertions.assertThat(response.body()).contains("donald the dock");
+        Assertions.assertThat(response.body()).contains("Donald the duck");
 
         //verify sample response
         response = executeHttpRequest("/myapi/pet/" + new Random().nextInt(124, 500), true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
-        Assertions.assertThat(response.body()).contains("jack the cat");
+        Assertions.assertThat(response.body()).contains("Jack the cat");
 
         //verify api-doc
         response = executeHttpRequest("/myapi/api-doc", true);
