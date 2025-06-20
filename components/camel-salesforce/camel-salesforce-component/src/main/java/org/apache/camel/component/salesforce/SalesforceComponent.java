@@ -276,9 +276,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
               javaType = "java.lang.String", label = "common")
     private String packages;
 
+    // TODO: is it safe to remove (it's not used anymore)? Is there a way to deprecate it?
     @Metadata(description = "Timeout in seconds to validate when a custom pubSubReplayId has been configured, when starting the Camel Salesforce consumer.",
               defaultValue = "30", label = "consumer,advanced")
     private int initialReplyIdTimeout = 30;
+
+    @Metadata(description = "Whether the consumer needs to fallback to the latest replay id when the provided id is not valid",
+              defaultValue = "false", label = "consumer,advanced")
+    private boolean fallbackToLatestReplayId = false;
 
     // component state
     private SalesforceHttpClient httpClient;
@@ -841,6 +846,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public void setInitialReplyIdTimeout(int initialReplyIdTimeout) {
         this.initialReplyIdTimeout = initialReplyIdTimeout;
+    }
+
+    public boolean isFallbackToLatestReplayId() {
+        return fallbackToLatestReplayId;
+    }
+
+    public void setFallbackToLatestReplayId(boolean fallbackToLatestReplayId) {
+        this.fallbackToLatestReplayId = fallbackToLatestReplayId;
     }
 
     public SalesforceSession getSession() {
