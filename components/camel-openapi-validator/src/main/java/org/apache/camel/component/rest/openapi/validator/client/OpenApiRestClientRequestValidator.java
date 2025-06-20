@@ -19,6 +19,7 @@ package org.apache.camel.component.rest.openapi.validator.client;
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.report.JsonValidationReportFormat;
+import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -27,12 +28,17 @@ import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
 import org.apache.camel.component.rest.openapi.RestOpenApiHelper;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.RestClientRequestValidator;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @JdkService(RestClientRequestValidator.FACTORY)
 public class OpenApiRestClientRequestValidator implements RestClientRequestValidator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OpenApiRestClientRequestValidator.class);
 
     private final HttpHeaderFilterStrategy filter = new HttpHeaderFilterStrategy();
 
@@ -102,16 +108,36 @@ public class OpenApiRestClientRequestValidator implements RestClientRequestValid
             }
         }
 
-        OpenApiInteractionValidator validator = OpenApiInteractionValidator.createFor(openAPI).build();
+        LevelResolver.Builder lr = LevelResolver.create();
+        RestConfiguration rc = exchange.getContext().getRestConfiguration();
+        if (rc.getValidationLevels() != null) {
+            for (var e : rc.getValidationLevels().entrySet()) {
+                String key = e.getKey();
+                var level = ValidationReport.Level.valueOf(e.getValue());
+                if ("defaultLevel".equalsIgnoreCase(key)) {
+                    lr.withDefaultLevel(level);
+                } else {
+                    lr.withLevel(key, level);
+                }
+            }
+        }
+        OpenApiInteractionValidator validator = OpenApiInteractionValidator.createFor(openAPI)
+                .withLevelResolver(lr.build())
+                .build();
         ValidationReport report = validator.validateRequest(builder.build());
-        if (report.hasErrors()) {
+
+        // create report if error of DEBUG logging
+        if (report.hasErrors() || LOG.isDebugEnabled()) {
             String msg;
             if (accept != null && accept.contains("application/json")) {
                 msg = JsonValidationReportFormat.getInstance().apply(report);
             } else {
                 msg = SimpleValidationReportFormat.getInstance().apply(report);
             }
-            return new ValidationError(400, msg);
+            LOG.debug("Client Request Validation: {}", msg);
+            if (report.hasErrors()) {
+                return new ValidationError(400, msg);
+            }
         }
 
         return null;

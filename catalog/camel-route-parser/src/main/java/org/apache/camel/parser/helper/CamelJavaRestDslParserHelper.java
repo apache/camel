@@ -224,6 +224,7 @@ public final class CamelJavaRestDslParserHelper {
                 node.setProduces(verb.getProduces());
                 node.setSkipBindingOnErrorCode(verb.getSkipBindingOnErrorCode());
                 node.setClientRequestValidation(verb.getClientRequestValidation());
+                node.setClientResponseValidation(verb.getClientResponseValidation());
                 node.setApiDocs(verb.getApiDocs());
                 node.setDescription(verb.getDescription());
             }
@@ -282,6 +283,8 @@ public final class CamelJavaRestDslParserHelper {
             node.setSkipBindingOnErrorCode(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("clientRequestValidation".equals(name)) {
             node.setClientRequestValidation(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("clientResponseValidation".equals(name)) {
+            node.setClientResponseValidation(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("enableCORS".equals(name)) {
             node.setEnableCORS(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("jsonDataFormat".equals(name)) {
@@ -355,6 +358,8 @@ public final class CamelJavaRestDslParserHelper {
             verb.setSkipBindingOnErrorCode(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("clientRequestValidation".equals(name)) {
             verb.setClientRequestValidation(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("clientResponseValidation".equals(name)) {
+            verb.setClientResponseValidation(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("consumes".equals(name)) {
             verb.setConsumes(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("produces".equals(name)) {

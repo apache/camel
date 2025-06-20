@@ -59,7 +59,7 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
         if (traitConfig.getKnativeService() != null) {
             enabled = Optional.ofNullable(traitConfig.getKnativeService().getEnabled()).orElse(false);
         }
-        return enabled && TraitHelper.exposesHttpService(context);
+        return enabled && TraitHelper.exposesHttpService(context, true);
     }
 
     @Override

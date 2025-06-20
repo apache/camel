@@ -549,6 +549,7 @@ The Rest DSL supports the following options:
 | *apiVendorExtension* | Whether a vendor extension is enabled in the Rest APIs. If enabled, then Camel will include additional information as a vendor extension (e.g., keys starting with `_x-_`) such as route ids, class names etc. Not all third party API gateways and tools support vendor-extensions when importing your API docs. | false | boolean
 | *bindingMode* | Sets the binding mode to be used by the REST consumer | RestBindingMode.off | RestBindingMode
 | *clientRequestValidation* | Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSON, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error. | false | boolean
+| *clientResponseValidation* | Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected. | false | boolean
 | *component* | Sets the name of the Camel component to use as the REST consumer |  | String
 | *componentProperties* | Sets additional options on component level |  | Map
 | *consumerProperties* | Sets additional options on consumer level |  | Map
@@ -770,7 +771,7 @@ Request headers may also be defaulted in the same way.
       .post("/neworder").to("direct:customerNewOrder");
 ----
 
-== Client Request Validation
+== Client Request and Response Validation
 
 It is possible to enable validation of the incoming client request.
 The validation checks for the following:
@@ -792,6 +793,25 @@ It can be turned on via `clientRequestValidation` as shown below:
 restConfiguration().component("jetty").host("localhost")
     .clientRequestValidation(true);
 ----
+
+The validator is pluggable and Camel provides a default implementation out of the box.
+However, the `camel-openapi-validator` uses the third party https://bitbucket.org/atlassian/swagger-request-validator/src/master/[Atlassian Swagger Request Validator]
+library instead for client request validator. This library is a more extensive validator than
+the default validator from `camel-core`, such as being able to validate the payload
+is structured according to the OpenAPI specification.
+
+In **Camel 4.13** we added a _response validator_ as well which is intended more as development assistance
+that you can enable while building your Camel integrations, and help ensure what Camel is sending back
+to the HTTP client is valid. The response validator checks for the following:
+
+- Status-code and Content-Type matches Rest DSL response messages.
+- Check whether expected headers is included according to the Rest DSL repose message headers.
+- If the response body is JSon then check whether its valid JSon.
+
+If any error is detected the HTTP Status 500 is returned.
+
+Also, the `camel-openapi-validator` can be added to the classpath to have a more powerful response validator,
+that can be used to validate the response payload is structured according to the OpenAPI specification.
 
 == OpenAPI / Swagger API
 

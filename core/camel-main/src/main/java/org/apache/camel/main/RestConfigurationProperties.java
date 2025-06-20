@@ -47,6 +47,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
         setDataFormatProperties(null);
         setApiProperties(null);
         setCorsHeaders(null);
+        setValidationLevels(null);
     }
 
     // getter and setters
@@ -244,6 +245,18 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
     }
 
     /**
+     * Whether to check what Camel is returning as response to the client:
+     *
+     * 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included
+     * according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid
+     * JSon. Returns 500 if validation error detected.
+     */
+    public RestConfigurationProperties withClientResponseValidation(boolean clientResponseValidation) {
+        setClientResponseValidation(clientResponseValidation);
+        return this;
+    }
+
+    /**
      * Whether to enable CORS headers in the HTTP response.
      * <p/>
      * The default value is false.
@@ -348,6 +361,17 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
             setCorsHeaders(new HashMap<>());
         }
         getCorsHeaders().put(key, value);
+        return this;
+    }
+
+    /**
+     * Adds a validation error property
+     */
+    public RestConfigurationProperties withValidationLevel(String key, String value) {
+        if (getValidationLevels() == null) {
+            setValidationLevels(new HashMap<>());
+        }
+        getValidationLevels().put(key, value);
         return this;
     }
 

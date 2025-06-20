@@ -52,6 +52,8 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     private final String endpointPath;
     protected transient boolean loggedIn;
     protected transient boolean loggedInWarning;
+    protected transient boolean autoCreatedDone;
+    protected transient boolean autoCreateWarning;
 
     public SmbConsumer(SmbEndpoint endpoint, Processor processor,
                        GenericFileOperations<FileIdBothDirectoryInformation> fileOperations,
@@ -207,18 +209,34 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         if (LOG.isTraceEnabled()) {
             LOG.trace("prePollCheck on {}", getEndpoint());
         }
+        Exception cause;
         try {
             getOperations().connectIfNecessary();
             loggedIn = true;
+            if (!autoCreatedDone) {
+                autoCreateIfNecessary();
+                autoCreatedDone = true;
+            }
         } catch (Exception e) {
+            cause = e;
+            String msg = "Cannot connect/login to: " + remoteServer();
+            if (loggedIn && !autoCreatedDone) {
+                msg = "Cannot auto-create starting directory at: " + remoteServer();
+            }
+            LOG.debug(msg, cause);
             loggedIn = false;
-
-            // login failed should we thrown exception
             if (configuration.isThrowExceptionOnConnectFailed()) {
                 throw e;
             }
         }
-
+        if (loggedIn && !autoCreatedDone) {
+            String message = "Cannot auto-create starting directory at: " + remoteServer() + ". Will skip this poll.";
+            if (!autoCreateWarning) {
+                LOG.warn(message);
+                autoCreateWarning = true;
+            }
+            return false;
+        }
         if (!loggedIn) {
             String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
             if (!loggedInWarning) {
@@ -235,6 +253,14 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         forceConsumerAsReady();
 
         return true;
+    }
+
+    protected void autoCreateIfNecessary() throws GenericFileOperationFailedException {
+        if (endpoint.isAutoCreate() && hasStartingDirectory()) {
+            String dir = endpoint.getConfiguration().getDirectory();
+            LOG.debug("Auto creating directory: {}", dir);
+            operations.buildDirectory(dir, true);
+        }
     }
 
     /**
@@ -318,7 +344,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         genericFile.setHostname(configuration.getHostname());
         genericFile.setFile(file);
         genericFile.setEndpointPath(endpointPath);
-        genericFile.setLastModified(file.getChangeTime().toEpochMillis());
+        genericFile.setLastModified(file.getLastWriteTime().toEpochMillis());
         genericFile.setCharset(charset);
         genericFile.setFileNameOnly(file.getFileName());
         genericFile.setDirectory(isDirectory(file));

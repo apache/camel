@@ -13774,6 +13774,15 @@ Allows to configure custom CORS headers.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="validationLevels" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+Allows to configure custom validation levels when using camel-openapi-validator with client request/response validator.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
     <xs:attribute name="component" type="xs:string">
       <xs:annotation>
@@ -13966,6 +13975,18 @@ Status 400 if validation error. Default value: false
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="clientResponseValidation" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL
+response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If
+the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected. Default value:
+false
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="enableCORS" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
@@ -14133,6 +14154,18 @@ returns HTTP Status 415 if validation error. 2) Accept header matches what the R
 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if
 validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
 Status 400 if validation error. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="clientResponseValidation" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL
+response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If
+the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected. Default value:
+false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14546,6 +14579,18 @@ Status 400 if validation error. Default value: false
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="clientResponseValidation" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL
+response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If
+the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected. Default value:
+false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="enableCORS" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -14740,6 +14785,15 @@ Examples of response messages.
         <xs:documentation xml:lang="en">
 <![CDATA[
 The response code such as a HTTP status code. Default value: 200
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="contentType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The response content-type such as application/json.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -16413,6 +16467,18 @@ returns HTTP Status 415 if validation error. 2) Accept header matches what the R
 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if
 validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP
 Status 400 if validation error. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="clientResponseValidation" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL
+response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If
+the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected. Default value:
+false
 ]]>
             </xs:documentation>
           </xs:annotation>

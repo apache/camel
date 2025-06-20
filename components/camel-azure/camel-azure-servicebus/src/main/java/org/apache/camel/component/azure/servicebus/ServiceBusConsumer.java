@@ -86,7 +86,13 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     private void processError(ServiceBusErrorContext errorContext) {
-        LOG.error("Error from Service Bus client: {}", errorContext.getErrorSource(), errorContext.getException());
+        final Exchange exchange = createServiceBusExchange(errorContext);
+
+        // log exception if an exception occurred and was not handled
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error from Service Bus: " + errorContext.getErrorSource(), exchange,
+                    exchange.getException());
+        }
     }
 
     @Override
@@ -107,6 +113,12 @@ public class ServiceBusConsumer extends DefaultConsumer {
     @Override
     public ServiceBusEndpoint getEndpoint() {
         return (ServiceBusEndpoint) super.getEndpoint();
+    }
+
+    private Exchange createServiceBusExchange(final ServiceBusErrorContext errorContext) {
+        final Exchange exchange = createExchange(true);
+        exchange.setException(errorContext.getException());
+        return exchange;
     }
 
     private Exchange createServiceBusExchange(final ServiceBusReceivedMessage receivedMessage) {

@@ -51,7 +51,7 @@ public class ServiceTrait extends BaseTrait {
             return true;
         }
 
-        return TraitHelper.exposesHttpService(context);
+        return TraitHelper.exposesHttpService(context, true);
     }
 
     @Override

@@ -145,6 +145,11 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         ObjectHelper.notNull(operations, PARAM_OPERATIONS);
         ObjectHelper.notNull(file, PARAM_FILE);
 
+        if (maxMessagesPerPoll > 1) {
+            throw new IllegalArgumentException(
+                    "The option maxMessagesPerPoll is not supported for polling consumer (such as when using poll or pollEnrich EIP)");
+        }
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
                     getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(),

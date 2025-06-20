@@ -28,7 +28,7 @@ import org.apache.camel.Exchange;
  */
 public interface RestClientRequestValidator {
 
-    String FACTORY = "rest-client-validator-factory";
+    String FACTORY = "rest-client-request-validator-factory";
 
     /**
      * Validation error

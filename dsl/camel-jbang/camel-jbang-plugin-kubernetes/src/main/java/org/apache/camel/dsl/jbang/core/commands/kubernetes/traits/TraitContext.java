@@ -206,10 +206,10 @@ public class TraitContext {
         return annotations;
     }
 
-    public CamelCatalog getCatalog() {
+    public CamelCatalog getCatalog(boolean download) {
         if (catalog == null) {
             try {
-                catalog = CatalogHelper.loadCatalog(RuntimeType.quarkus, RuntimeType.QUARKUS_VERSION);
+                catalog = CatalogHelper.loadCatalog(RuntimeType.quarkus, RuntimeType.QUARKUS_VERSION, download);
             } catch (Exception e) {
                 throw new RuntimeCamelException("Failed to create default Quarkus Camel catalog", e);
             }

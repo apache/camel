@@ -82,8 +82,10 @@ public final class CommandHelper {
 
         @Override
         public void run() {
-            System.console().readLine();
-            listener.run();
+            if (System.console() != null) {
+                System.console().readLine();
+                listener.run();
+            }
         }
     }
 }

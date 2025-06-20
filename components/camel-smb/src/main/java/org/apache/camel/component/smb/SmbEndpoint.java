@@ -184,6 +184,11 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
+        if (maxMessagesPerPoll > 1) {
+            throw new IllegalArgumentException(
+                    "The option maxMessagesPerPoll is not supported for polling consumer (such as when using poll or pollEnrich EIP)");
+        }
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
                     getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(),

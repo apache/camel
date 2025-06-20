@@ -104,7 +104,7 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest
     @Override
     @Test
     public void testMessageWithoutEndOfDataByte() {
-        expectedCompleteCount = 1;
+        expectedCompleteCount = 2;
 
         assertDoesNotThrow(this::runMessageWithoutEndOfDataByte);
     }

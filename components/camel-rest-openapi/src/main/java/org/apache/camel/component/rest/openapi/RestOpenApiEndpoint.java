@@ -154,6 +154,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer",
               description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
     private boolean clientRequestValidation;
+    @UriParam(label = "consumer",
+              description = "Whether to enable validation of the client request to check if the outgoing response from Camel is valid according to the OpenAPI specification")
+    private boolean clientResponseValidation;
     @UriParam(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
     @UriParam(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
@@ -434,6 +437,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public void setClientRequestValidation(boolean clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
+    }
+
+    public boolean isClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
+    public void setClientResponseValidation(boolean clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
     }
 
     public RestOpenapiProcessorStrategy getRestOpenapiProcessorStrategy() {

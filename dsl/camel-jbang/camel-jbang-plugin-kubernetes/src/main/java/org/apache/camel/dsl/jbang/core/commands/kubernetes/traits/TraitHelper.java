@@ -328,10 +328,10 @@ public final class TraitHelper {
      * @param  context the trait context holding all route sources.
      * @return         true when routes expose a Http service, false otherwise.
      */
-    public static boolean exposesHttpService(TraitContext context) {
+    public static boolean exposesHttpService(TraitContext context, boolean download) {
         try {
             boolean exposesHttpServices = false;
-            CamelCatalog catalog = context.getCatalog();
+            CamelCatalog catalog = context.getCatalog(download);
             if (context.getSources() != null) {
                 for (Source source : context.getSources()) {
                     SourceMetadata metadata = context.inspectMetaData(source);

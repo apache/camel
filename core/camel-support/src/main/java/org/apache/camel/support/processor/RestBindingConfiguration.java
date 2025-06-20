@@ -30,6 +30,7 @@ public class RestBindingConfiguration {
     private String bindingPackageScan;
     private boolean skipBindingOnErrorCode;
     private boolean clientRequestValidation;
+    private boolean clientResponseValidation;
     private boolean enableCORS;
     private boolean enableNoContentResponse;
     private Map<String, String> corsHeaders;
@@ -42,6 +43,8 @@ public class RestBindingConfiguration {
     private Class<?> typeClass;
     private String outType;
     private Class<?> outTypeClass;
+    private Map<String, String> responseCodes;
+    private Set<String> responseHeaders;
 
     public String getConsumes() {
         return consumes;
@@ -89,6 +92,14 @@ public class RestBindingConfiguration {
 
     public void setClientRequestValidation(boolean clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
+    }
+
+    public boolean isClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
+    public void setClientResponseValidation(boolean clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
     }
 
     public boolean isEnableCORS() {
@@ -185,5 +196,21 @@ public class RestBindingConfiguration {
 
     public void setOutTypeClass(Class<?> outTypeClass) {
         this.outTypeClass = outTypeClass;
+    }
+
+    public Map<String, String> getResponseCodes() {
+        return responseCodes;
+    }
+
+    public void setResponseCodes(Map<String, String> responseCodes) {
+        this.responseCodes = responseCodes;
+    }
+
+    public Set<String> getResponseHeaders() {
+        return responseHeaders;
+    }
+
+    public void setResponseHeaders(Set<String> responseHeaders) {
+        this.responseHeaders = responseHeaders;
     }
 }

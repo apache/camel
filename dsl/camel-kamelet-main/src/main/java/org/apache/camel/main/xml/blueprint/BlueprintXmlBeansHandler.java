@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
  * Used for parsing and discovering legacy OSGi <blueprint> XML to make it runnable on camel-jbang, and for tooling to
  * migrate this to modern Camel DSL in plain Camel XML or YAML DSL.
  */
+@Deprecated(since = "4.13.0")
 public class BlueprintXmlBeansHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlueprintXmlBeansHandler.class);
@@ -84,7 +85,7 @@ public class BlueprintXmlBeansHandler {
     public void processBlueprintBeans(
             CamelContext camelContext, MainConfigurationProperties config, final Map<String, Document> xmls) {
 
-        LOG.debug("Loading beans from classic OSGi <blueprint> XML");
+        LOG.warn("Loading beans from classic OSGi <blueprint> XML is deprecated");
 
         xmls.forEach((id, doc) -> {
             if (id.startsWith("camel-xml-io-dsl-blueprint-xml:")) {

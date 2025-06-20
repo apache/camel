@@ -11,6 +11,20 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 Added a 2nd `lookup` method to `org.apache.camel.spi.TypeConverterRegistry` and changed the `addConverter` to no longer have
 an empty default noop implementation in the interface.
 
+=== camel-file / camel-ftp / camel-smb / camel-azure-files
+
+When using `poll` or `pollEnrich` with the file based components, then the `eagerLimitMaxMessagesPerPoll` option
+has changed default from `false` to `true`. Only use-cases where you need to sort the files first,
+requires to explicit set the option `eagerMaxMessagesPerPoll=false` to make Camel scan for all files first before sorting,
+and then `poll` or `pollEnrich` will then pick the top file after the sorting.
+
+This improves performance for use-cases without need for sorting first.
+
+The consumers (`camel-ftp`, `camel-smb`, and `camel-azure-files`) will now in case of failure to create starting directory,
+on startup, keep attempting to create the directory on polling, until its successfully created.
+Previously in case of error creating the starting directory then this could cause the consumer to not be able to recover,
+and you would have to restart the route to attempt again.
+
 === camel-http
 
 Renamed class `org.apache.camel.component.http.BasicAuthenticationHttpClientConfigurer` to `org.apache.camel.component.http.DefaultAuthenticationHttpClientConfigurer`.

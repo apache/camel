@@ -363,7 +363,7 @@ The camel.health supports 8 options, which are listed below.
 
 
 === Camel Rest-DSL configurations
-The camel.rest supports 29 options, which are listed below.
+The camel.rest supports 31 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -377,6 +377,7 @@ The camel.rest supports 29 options, which are listed below.
 | *camel.rest.bindingMode* | Sets the binding mode to be used by the REST consumer | RestBindingMode.off | RestBindingMode
 | *camel.rest.bindingPackageScan* | Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma. |  | String
 | *camel.rest.clientRequest{zwsp}Validation* | Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error. | false | boolean
+| *camel.rest.clientResponse{zwsp}Validation* | Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected. | false | boolean
 | *camel.rest.component* | Sets the name of the Camel component to use as the REST consumer |  | String
 | *camel.rest.componentProperties* | Sets additional options on component level |  | Map
 | *camel.rest.consumerProperties* | Sets additional options on consumer level |  | Map
@@ -396,6 +397,7 @@ The camel.rest supports 29 options, which are listed below.
 | *camel.rest.scheme* | Sets the scheme to use by the REST consumer |  | String
 | *camel.rest.skipBindingOnError{zwsp}Code* | Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true. | true | boolean
 | *camel.rest.useXForwardHeaders* | Whether to use X-Forward headers to set host etc. for OpenApi. This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc. Then the proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema that camel-openapi-java generates from Rest DSL routes. | false | boolean
+| *camel.rest.validationLevels* | Sets the client request validation levels when using camel-openapi-validator. |  | Map
 | *camel.rest.xmlDataFormat* | Sets a custom xml data format to be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 |===
 
