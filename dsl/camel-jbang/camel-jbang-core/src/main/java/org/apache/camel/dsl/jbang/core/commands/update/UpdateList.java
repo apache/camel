@@ -136,13 +136,15 @@ public class UpdateList extends CamelCommand {
             recipesVersions.quarkusUpdateRecipes().forEach(l -> {
                 List<String[]> runtimeVersions = recipesVersions.qVersions().stream().filter(v -> v[1].startsWith(l.version()))
                         .collect(Collectors.toList());
-                runtimeVersions.sort(Comparator.comparing(o -> o[1]));
-                String[] runtimeVersion = runtimeVersions.get(runtimeVersions.size() - 1);
-                // Quarkus may release patches independently, therefore, we do not know the real micro version
-                String quarkusVersion = runtimeVersion[1];
-                quarkusVersion = quarkusVersion.substring(0, quarkusVersion.lastIndexOf('.')) + ".x";
+                if (!runtimeVersions.isEmpty()) {
+                    runtimeVersions.sort(Comparator.comparing(o -> o[1]));
+                    String[] runtimeVersion = runtimeVersions.get(runtimeVersions.size() - 1);
+                    // Quarkus may release patches independently, therefore, we do not know the real micro version
+                    String quarkusVersion = runtimeVersion[1];
+                    quarkusVersion = quarkusVersion.substring(0, quarkusVersion.lastIndexOf('.')) + ".x";
 
-                rows.add(new Row(runtimeVersion[0], "Camel Quarkus", quarkusVersion, l.description()));
+                    rows.add(new Row(runtimeVersion[0], "Camel Quarkus", quarkusVersion, l.description()));
+                }
             });
         }
 
