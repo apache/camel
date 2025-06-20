@@ -33,9 +33,9 @@ public interface RabbitMQInfraService extends InfrastructureService {
      *
      * @return the connection URI in the format amqp://host:port
      */
+    @Deprecated
     default String getAmqpUrl() {
-        ConnectionProperties properties = connectionProperties();
-        return String.format("amqp://%s:%s", properties.hostname(), properties.port());
+        return uri();
     }
 
     /**
@@ -54,4 +54,15 @@ public interface RabbitMQInfraService extends InfrastructureService {
      * Shuts down the service after the test has completed
      */
     void shutdown();
+
+    default String uri() {
+        ConnectionProperties properties = connectionProperties();
+        return String.format("amqp://%s:%s", properties.hostname(), properties.port());
+    }
+
+    String managementUsername();
+
+    String managementPassword();
+
+    String managementUri();
 }
