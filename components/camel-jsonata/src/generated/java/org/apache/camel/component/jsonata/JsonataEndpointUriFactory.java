@@ -23,13 +23,15 @@ public class JsonataEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(9);
         props.add("allowContextMapAll");
+        props.add("allowTemplateFromHeader");
         props.add("contentCache");
         props.add("frameBinding");
         props.add("inputType");
         props.add("lazyStartProducer");
         props.add("outputType");
+        props.add("prettyPrint");
         props.add("resourceUri");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

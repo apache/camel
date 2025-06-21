@@ -25,6 +25,8 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "framebinding":
@@ -35,6 +37,8 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outputtype":
         case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.jsonata.JsonataInputOutputType.class, value)); return true;
+        case "prettyprint":
+        case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -44,6 +48,8 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
         case "contentcache":
         case "contentCache": return boolean.class;
         case "framebinding":
@@ -54,6 +60,8 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return boolean.class;
         case "outputtype":
         case "outputType": return org.apache.camel.component.jsonata.JsonataInputOutputType.class;
+        case "prettyprint":
+        case "prettyPrint": return boolean.class;
         default: return null;
         }
     }
@@ -64,6 +72,8 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return target.isAllowContextMapAll();
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "contentcache":
         case "contentCache": return target.isContentCache();
         case "framebinding":
@@ -74,6 +84,8 @@ public class JsonataEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "outputtype":
         case "outputType": return target.getOutputType();
+        case "prettyprint":
+        case "prettyPrint": return target.isPrettyPrint();
         default: return null;
         }
     }
