@@ -25,6 +25,7 @@ import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BackOffTimerFactory;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
@@ -574,5 +575,13 @@ public final class PluginHelper {
     public static AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory(
             ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(AnnotationBasedProcessorFactory.class);
+    }
+
+    /**
+     * Gets the {@link BackOffTimerFactory} to use.
+     */
+    public static BackOffTimerFactory getBackOffTimerFactory(
+            ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(BackOffTimerFactory.class);
     }
 }

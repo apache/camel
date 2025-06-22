@@ -327,4 +327,23 @@ public final class CamelOpenMBeanTypes {
         return new TabularType("variables", "Variables", ct, new String[] { "id", "key" });
     }
 
+    public static TabularType listBackoffTTaskTabularType() throws OpenDataException {
+        CompositeType ct = listBackoffTaskCompositeType();
+        return new TabularType(
+                "listBackoff", "Lists all the backoff tasks", ct,
+                new String[] { "name" });
+    }
+
+    public static CompositeType listBackoffTaskCompositeType() throws OpenDataException {
+        return new CompositeType(
+                "tasks", "Tasks",
+                new String[] {
+                        "name", "status", "attempts", "delay", "elapsed", "firstTime", "lastTime", "nextTime", "failure" },
+                new String[] {
+                        "Name", "Status", "Attempts", "Delay", "Elapsed", "FirstTime", "LastTime", "NextTime", "Failure" },
+                new OpenType[] {
+                        SimpleType.STRING, SimpleType.STRING, SimpleType.LONG, SimpleType.LONG, SimpleType.LONG,
+                        SimpleType.LONG, SimpleType.LONG, SimpleType.LONG, SimpleType.STRING });
+    }
+
 }

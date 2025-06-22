@@ -36,7 +36,7 @@ public final class TimeUtils {
     }
 
     /**
-     * Prints the since ago in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, as seen on Kubernetes etc.
+     * Prints since ago in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, as seen on Kubernetes etc.
      *
      * @param  time time of the event (millis since epoch)
      * @return      ago in human-readable since the given time.
@@ -47,6 +47,18 @@ public final class TimeUtils {
     }
 
     /**
+     * Prints since ago in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, as seen on Kubernetes etc.
+     *
+     * @param  time    time of the event (millis since epoch)
+     * @param  precise whether to be precise and include more details
+     * @return         ago in human-readable since the given time.
+     */
+    public static String printSince(long time, boolean precise) {
+        long age = System.currentTimeMillis() - time;
+        return printDuration(age, precise);
+    }
+
+    /**
      * Prints the ago in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, as seen on Kubernetes etc.
      *
      * @param  age age in millis
@@ -54,6 +66,17 @@ public final class TimeUtils {
      */
     public static String printAge(long age) {
         return printDuration(age, false);
+    }
+
+    /**
+     * Prints the ago in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, as seen on Kubernetes etc.
+     *
+     * @param  age     age in millis
+     * @param  precise whether to be precise and include more details
+     * @return         ago in human-readable.
+     */
+    public static String printAge(long age, boolean precise) {
+        return printDuration(age, precise);
     }
 
     /**

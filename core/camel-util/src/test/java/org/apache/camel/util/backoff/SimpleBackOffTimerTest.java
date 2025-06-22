@@ -29,15 +29,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BackOffTimerTest {
+public class SimpleBackOffTimerTest {
 
     @Test
     public void testBackOffTimer() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-        final BackOff backOff = BackOff.builder().delay(100).build();
-        final BackOffTimer timer = new BackOffTimer(executor);
+        final BackOff backOff = BackOff.builder().delay(100).removeOnComplete(false).build();
+        final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
         final AtomicLong first = new AtomicLong();
 
         BackOffTimer.Task task = timer.schedule(
@@ -63,6 +63,10 @@ public class BackOffTimerTest {
 
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdownNow();
+
+        assertEquals(1, timer.size());
+        assertEquals(BackOffTimer.Task.Status.Completed, timer.getTasks().iterator().next().getStatus());
+        timer.close();
     }
 
     @Test
@@ -70,8 +74,8 @@ public class BackOffTimerTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-        final BackOff backOff = BackOff.builder().delay(100).maxAttempts(5L).build();
-        final BackOffTimer timer = new BackOffTimer(executor);
+        final BackOff backOff = BackOff.builder().delay(100).maxAttempts(5L).removeOnComplete(false).build();
+        final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
 
         BackOffTimer.Task task = timer.schedule(
                 backOff,
@@ -92,6 +96,10 @@ public class BackOffTimerTest {
 
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdownNow();
+
+        assertEquals(1, timer.size());
+        assertEquals(BackOffTimer.Task.Status.Exhausted, timer.getTasks().iterator().next().getStatus());
+        timer.close();
     }
 
     @Test
@@ -99,8 +107,8 @@ public class BackOffTimerTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-        final BackOff backOff = BackOff.builder().delay(100).maxElapsedTime(400).build();
-        final BackOffTimer timer = new BackOffTimer(executor);
+        final BackOff backOff = BackOff.builder().delay(100).maxElapsedTime(400).removeOnComplete(false).build();
+        final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
 
         BackOffTimer.Task task = timer.schedule(
                 backOff,
@@ -121,6 +129,10 @@ public class BackOffTimerTest {
 
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdownNow();
+
+        assertEquals(1, timer.size());
+        assertEquals(BackOffTimer.Task.Status.Exhausted, timer.getTasks().iterator().next().getStatus());
+        timer.close();
     }
 
     @Test
@@ -128,8 +140,8 @@ public class BackOffTimerTest {
         final CountDownLatch latch = new CountDownLatch(5);
         final AtomicBoolean done = new AtomicBoolean();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-        final BackOff backOff = BackOff.builder().delay(100).build();
-        final BackOffTimer timer = new BackOffTimer(executor);
+        final BackOff backOff = BackOff.builder().delay(100).removeOnComplete(false).build();
+        final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
 
         BackOffTimer.Task task = timer.schedule(
                 backOff,
@@ -148,9 +160,53 @@ public class BackOffTimerTest {
                 });
 
         latch.await(2, TimeUnit.SECONDS);
+        assertEquals(1, timer.size());
+        assertEquals(BackOffTimer.Task.Status.Completed, timer.getTasks().iterator().next().getStatus());
         task.cancel();
+        assertEquals(0, timer.size());
         assertTrue(done.get());
 
         executor.shutdownNow();
+
+        timer.close();
     }
+
+    @Test
+    public void testBackOffTimerRemoveOnComplete() throws Exception {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicInteger counter = new AtomicInteger();
+        final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
+        final BackOff backOff = BackOff.builder().delay(100).removeOnComplete(true).build();
+        final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
+        final AtomicLong first = new AtomicLong();
+
+        BackOffTimer.Task task = timer.schedule(
+                backOff,
+                context -> {
+                    assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
+                    assertEquals(100, context.getCurrentDelay());
+                    assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
+                    if (first.get() == 0) {
+                        first.set(context.getFirstAttemptTime());
+                    } else {
+                        assertEquals(first.get(), context.getFirstAttemptTime());
+                    }
+
+                    return counter.get() < 5;
+                });
+
+        task.whenComplete(
+                (context, throwable) -> {
+                    assertEquals(5, counter.get());
+                    latch.countDown();
+                });
+
+        latch.await(5, TimeUnit.SECONDS);
+        executor.shutdownNow();
+
+        // task is removed
+        assertEquals(0, timer.size());
+        timer.close();
+    }
+
 }

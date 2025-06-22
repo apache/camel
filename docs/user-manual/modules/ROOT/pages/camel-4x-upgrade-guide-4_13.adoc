@@ -11,6 +11,21 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 Added a 2nd `lookup` method to `org.apache.camel.spi.TypeConverterRegistry` and changed the `addConverter` to no longer have
 an empty default noop implementation in the interface.
 
+The class `org.apache.camel.util.backoff.BackOffTimer` has been refactored as an interface,
+and the basic implementation is `org.apache.camel.util.backoff.SimpleBackOffTimer` in `camel-util` JAR.
+
+To get hold of a `BackOffTimer` then use the new factory as shown below:
+
+[source,java]
+----
+BackOffTimer timer = PluginHelper.getBackOffTimerFactory(camelContext.getCamelContextExtension())
+    .newBackOffTimer("NameOfTimer", executorService);
+----
+
+The `BackOffTimer` is mostly used internally in Camel components to conduct tasks that should
+be repeated until completed, such as recovery tasks. And as such this refactor is not
+expected to impact Camel end users.
+
 === camel-file / camel-ftp / camel-smb / camel-azure-files
 
 When using `poll` or `pollEnrich` with the file based components, then the `eagerLimitMaxMessagesPerPoll` option

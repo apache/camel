@@ -52,7 +52,9 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.backoff.BackOff;
@@ -231,14 +233,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
     @Override
     protected void doStart() throws Exception {
-        this.backOff = new BackOff(
-                Duration.ofMillis(backOffDelay),
-                backOffMaxDelay > 0 ? Duration.ofMillis(backOffMaxDelay) : null,
-                backOffMaxElapsedTime > 0 ? Duration.ofMillis(backOffMaxElapsedTime) : null,
-                backOffMaxAttempts > 0 ? backOffMaxAttempts : Long.MAX_VALUE,
-                backOffMultiplier);
-
         CamelContext context = getCamelContext();
+
         if (threadPoolSize == 1) {
             executorService
                     = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "SupervisingRouteController");
@@ -246,16 +242,25 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             executorService = context.getExecutorServiceManager().newScheduledThreadPool(this, "SupervisingRouteController",
                     threadPoolSize);
         }
-        timer = new BackOffTimer(executorService);
+        backOff = new BackOff(
+                Duration.ofMillis(backOffDelay),
+                backOffMaxDelay > 0 ? Duration.ofMillis(backOffMaxDelay) : null,
+                backOffMaxElapsedTime > 0 ? Duration.ofMillis(backOffMaxElapsedTime) : null,
+                backOffMaxAttempts > 0 ? backOffMaxAttempts : Long.MAX_VALUE,
+                backOffMultiplier, false);
+
+        timer = PluginHelper.getBackOffTimerFactory(context.getCamelContextExtension())
+                .newBackOffTimer("SupervisingRouteController", executorService);
+        ServiceHelper.startService(timer);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (getCamelContext() != null && executorService != null) {
+        if (getCamelContext() != null) {
             getCamelContext().getExecutorServiceManager().shutdown(executorService);
-            executorService = null;
-            timer = null;
         }
+        executorService = null;
+        ServiceHelper.stopService(timer);
     }
 
     // *********************************

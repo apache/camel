@@ -35,6 +35,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.sjms.SessionMessageListener;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.backoff.BackOff;
 import org.apache.camel.util.backoff.BackOffTimer;
@@ -63,6 +65,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     private Set<MessageConsumer> consumers;
     private Set<Session> sessions;
     private BackOffTimer.Task recoverTask;
+    private BackOffTimer timer;
     private ScheduledExecutorService scheduler;
 
     public SimpleMessageListenerContainer(SjmsEndpoint endpoint) {
@@ -219,7 +222,13 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         // we need to recover using a background task
         if (recoverTask == null || recoverTask.getStatus() != BackOffTimer.Task.Status.Active) {
             BackOff backOff = BackOff.builder().delay(endpoint.getRecoveryInterval()).build();
-            recoverTask = new BackOffTimer(scheduler).schedule(backOff, this::recoverConnection);
+            if (timer == null) {
+                timer = PluginHelper.getBackOffTimerFactory(endpoint.getCamelContext().getCamelContextExtension())
+                        .newBackOffTimer("SjmsConnectionRecovery",
+                                scheduler);
+                ServiceHelper.startService(timer);
+            }
+            recoverTask = timer.schedule(backOff, this::recoverConnection);
         }
     }
 
@@ -242,6 +251,8 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(scheduler);
             scheduler = null;
         }
+        ServiceHelper.stopService(timer);
+        timer = null;
     }
 
     @Override

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.pgevent;
 
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 
 import javax.sql.DataSource;
@@ -121,6 +123,9 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
         if (this.getDatasource() != null) {
             conn = PgEventHelper.toPGConnection(this.getDatasource().getConnection());
         } else {
+            // trigger service loaded to load drivers
+            ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
+
             // ensure we can load the class
             ClassResolver classResolver = getCamelContext().getClassResolver();
             classResolver.resolveMandatoryClass(PGDriver.class.getName(), PgEventComponent.class.getClassLoader());
