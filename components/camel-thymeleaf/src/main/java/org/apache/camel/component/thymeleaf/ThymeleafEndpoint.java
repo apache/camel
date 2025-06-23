@@ -27,6 +27,8 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -346,6 +348,11 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
 
             // remove the header so that it is not propagated in the exchange
             exchange.getIn().removeHeader(ThymeleafConstants.THYMELEAF_VARIABLE_MAP);
+        }
+
+        if (!resolver.equals(ThymeleafResolverType.URL) && ResourceHelper.hasScheme(this.template)) {
+            // favour to use Camel to load via resource loader
+            this.template = IOHelper.loadText(getResourceAsInputStream());
         }
 
         // let thymeleaf parse and generate the result
