@@ -34,6 +34,7 @@ import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BackOffTimerFactory;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
@@ -738,6 +739,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected StartupConditionStrategy createStartupConditionStrategy() {
         return new DefaultStartupConditionStrategy();
+    }
+
+    @Override
+    protected BackOffTimerFactory createBackOffTimerFactory() {
+        return new DefaultBackOffTimerFactory(this);
     }
 
     @Override

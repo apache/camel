@@ -87,6 +87,7 @@ import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BackOffTimerFactory;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -384,6 +385,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
                 this::createAnnotationBasedProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(DumpRoutesStrategy.class, this::createDumpRoutesStrategy);
+        camelContextExtension.lazyAddContextPlugin(BackOffTimerFactory.class, this::createBackOffTimerFactory);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -4341,6 +4343,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract EndpointServiceRegistry createEndpointServiceRegistry();
 
     protected abstract StartupConditionStrategy createStartupConditionStrategy();
+
+    protected abstract BackOffTimerFactory createBackOffTimerFactory();
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.

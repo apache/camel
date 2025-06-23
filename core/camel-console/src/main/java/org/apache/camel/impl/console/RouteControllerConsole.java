@@ -119,7 +119,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    %s %s (%s) ", status, routeId, uri));
                     sb.append(String.format("\n        Supervising: %s", supervising));
                     sb.append(String.format("\n            Attempts: %s", attempts));
-                    sb.append(String.format("\n            Last Ago: %s", last));
+                    sb.append(String.format("\n            Last: %s", last));
                     sb.append(String.format("\n            Next Attempt: %s", next));
                     sb.append(String.format("\n            Elapsed: %s", elapsed));
                     if (error != null) {
