@@ -574,20 +574,20 @@ Flatpack library.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="fory" type="tns:foryDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Serialize and deserialize messages using Apache Fory
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="from" type="tns:fromDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
 Act as a message source as input to a route
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="fury" type="tns:furyDataFormat">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Serialize and deserialize messages using Apache Fury
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -6221,7 +6221,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
-            <xs:element ref="tns:fury"/>
+            <xs:element ref="tns:fory"/>
             <xs:element ref="tns:grok"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
@@ -7541,7 +7541,7 @@ References to a custom parser factory to lookup in the registry.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="furyDataFormat">
+  <xs:complexType name="foryDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
@@ -7567,16 +7567,16 @@ Whether to require register classes. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to use the threadsafe fury. Default value: true
+Whether to use the threadsafe fory. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="allowAutoWiredFury" type="xs:string">
+        <xs:attribute name="allowAutoWiredFory" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to auto-discover Fury from the registry. Default value: true
+Whether to auto-discover Fory from the registry. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13498,7 +13498,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
-            <xs:element ref="tns:fury"/>
+            <xs:element ref="tns:fory"/>
             <xs:element ref="tns:grok"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
@@ -15771,7 +15771,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:fhirJson"/>
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
-        <xs:element ref="tns:fury"/>
+        <xs:element ref="tns:fory"/>
         <xs:element ref="tns:grok"/>
         <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
@@ -16621,7 +16621,7 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
-            <xs:element ref="tns:fury"/>
+            <xs:element ref="tns:fory"/>
             <xs:element ref="tns:grok"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>

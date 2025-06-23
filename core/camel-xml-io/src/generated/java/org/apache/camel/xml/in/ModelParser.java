@@ -1934,9 +1934,9 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
-    protected FuryDataFormat doParseFuryDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new FuryDataFormat(), (def, key, val) -> switch (key) {
-                case "allowAutoWiredFury": def.setAllowAutoWiredFury(val); yield true;
+    protected ForyDataFormat doParseForyDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new ForyDataFormat(), (def, key, val) -> switch (key) {
+                case "allowAutoWiredFory": def.setAllowAutoWiredFory(val); yield true;
                 case "requireClassRegistration": def.setRequireClassRegistration(val); yield true;
                 case "threadSafe": def.setThreadSafe(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
@@ -2950,7 +2950,7 @@ public class ModelParser extends BaseParser {
             case "fhirJson": return doParseFhirJsonDataFormat();
             case "fhirXml": return doParseFhirXmlDataFormat();
             case "flatpack": return doParseFlatpackDataFormat();
-            case "fury": return doParseFuryDataFormat();
+            case "fory": return doParseForyDataFormat();
             case "grok": return doParseGrokDataFormat();
             case "gzipDeflater": return doParseGzipDeflaterDataFormat();
             case "hl7": return doParseHL7DataFormat();
