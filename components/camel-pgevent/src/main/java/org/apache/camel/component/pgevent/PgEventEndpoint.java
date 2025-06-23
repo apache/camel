@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.pgevent;
 
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 
 import javax.sql.DataSource;
