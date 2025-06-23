@@ -117,7 +117,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             builder.writableStackTraceEnabled(parseBoolean(config.getWritableStackTraceEnabled()));
         }
         if (config.getRecordExceptions() != null) {
-            builder.ignoreExceptions(createRecordExceptionClasses());
+            builder.recordExceptions(createRecordExceptionClasses());
         }
         if (config.getIgnoreExceptions() != null) {
             builder.ignoreExceptions(createIgnoreExceptionClasses());
