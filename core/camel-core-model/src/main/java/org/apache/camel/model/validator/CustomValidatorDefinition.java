@@ -37,10 +37,6 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
     @XmlAttribute
     private String className;
 
-    public String getRef() {
-        return ref;
-    }
-
     public CustomValidatorDefinition() {
     }
 
@@ -53,6 +49,10 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
     @Override
     public CustomValidatorDefinition copyDefinition() {
         return null;
+    }
+
+    public String getRef() {
+        return ref;
     }
 
     /**

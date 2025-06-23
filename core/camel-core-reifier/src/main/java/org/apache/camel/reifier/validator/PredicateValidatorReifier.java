@@ -34,7 +34,7 @@ public class PredicateValidatorReifier extends ValidatorReifier<PredicateValidat
     protected Validator doCreateValidator() {
         Predicate pred = createPredicate(definition.getExpression());
         PredicateValidatingProcessor processor = new PredicateValidatingProcessor(pred);
-        return new ProcessorValidator(camelContext).setProcessor(processor).setType(definition.getType());
+        return new ProcessorValidator(camelContext).setProcessor(processor).setType(parseString(definition.getType()));
     }
 
 }
