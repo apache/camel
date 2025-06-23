@@ -255,6 +255,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         // be loaded in all kind of environments such as JEE servers and OSGi etc.
         List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
         for (String name : list) {
+            name = parseString(name);
             Class<Throwable> type = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
             answer.add(type);
         }
