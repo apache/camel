@@ -71,7 +71,7 @@ public class ForyDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public String getDataFormatName() {
-        return "fury";
+        return "fory";
     }
 
     @Override

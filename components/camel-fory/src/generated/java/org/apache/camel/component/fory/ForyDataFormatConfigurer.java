@@ -26,8 +26,6 @@ public class ForyDataFormatConfigurer extends PropertyConfigurerSupport implemen
         case "requireClassRegistration": dataformat.setRequireClassRegistration(property(camelContext, boolean.class, value)); return true;
         case "threadsafe":
         case "threadSafe": dataformat.setThreadSafe(property(camelContext, boolean.class, value)); return true;
-        case "allowautowiredfury":
-        case "allowAutoWiredFury": dataformat.setAllowAutoWiredFury(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
