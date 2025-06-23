@@ -16,7 +16,7 @@ DfdlDataFormat
 FhirJsonDataFormat
 FhirXmlDataFormat
 FlatpackDataFormat
-FuryDataFormat
+ForyDataFormat
 GrokDataFormat
 GzipDeflaterDataFormat
 HL7DataFormat

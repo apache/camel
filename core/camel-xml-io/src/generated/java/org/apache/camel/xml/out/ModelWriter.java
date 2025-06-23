@@ -484,8 +484,8 @@ public class ModelWriter extends BaseWriter {
     public void writeFlatpackDataFormat(FlatpackDataFormat def) throws IOException {
         doWriteFlatpackDataFormat("flatpack", def);
     }
-    public void writeFuryDataFormat(FuryDataFormat def) throws IOException {
-        doWriteFuryDataFormat("fury", def);
+    public void writeForyDataFormat(ForyDataFormat def) throws IOException {
+        doWriteForyDataFormat("fory", def);
     }
     public void writeGrokDataFormat(GrokDataFormat def) throws IOException {
         doWriteGrokDataFormat("grok", def);
@@ -1215,7 +1215,7 @@ public class ModelWriter extends BaseWriter {
                 case "FhirJsonDataFormat" -> doWriteFhirJsonDataFormat("fhirJson", (FhirJsonDataFormat) v);
                 case "FhirXmlDataFormat" -> doWriteFhirXmlDataFormat("fhirXml", (FhirXmlDataFormat) v);
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
-                case "FuryDataFormat" -> doWriteFuryDataFormat("fury", (FuryDataFormat) v);
+                case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
@@ -1974,7 +1974,7 @@ public class ModelWriter extends BaseWriter {
                 case "FhirJsonDataFormat" -> doWriteFhirJsonDataFormat("fhirJson", (FhirJsonDataFormat) v);
                 case "FhirXmlDataFormat" -> doWriteFhirXmlDataFormat("fhirXml", (FhirXmlDataFormat) v);
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
-                case "FuryDataFormat" -> doWriteFuryDataFormat("fury", (FuryDataFormat) v);
+                case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
@@ -2536,7 +2536,7 @@ public class ModelWriter extends BaseWriter {
                 case "FhirJsonDataFormat" -> doWriteFhirJsonDataFormat("fhirJson", (FhirJsonDataFormat) v);
                 case "FhirXmlDataFormat" -> doWriteFhirXmlDataFormat("fhirXml", (FhirXmlDataFormat) v);
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
-                case "FuryDataFormat" -> doWriteFuryDataFormat("fury", (FuryDataFormat) v);
+                case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
@@ -2627,13 +2627,13 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("ignoreExtraColumns", def.getIgnoreExtraColumns(), null);
         endElement(name);
     }
-    protected void doWriteFuryDataFormat(String name, FuryDataFormat def) throws IOException {
+    protected void doWriteForyDataFormat(String name, ForyDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("allowAutoWiredFory", def.getAllowAutoWiredFory(), "true");
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("threadSafe", def.getThreadSafe(), "true");
         doWriteAttribute("requireClassRegistration", def.getRequireClassRegistration(), "true");
-        doWriteAttribute("allowAutoWiredFury", def.getAllowAutoWiredFury(), "true");
         endElement(name);
     }
     protected void doWriteGrokDataFormat(String name, GrokDataFormat def) throws IOException {
@@ -3669,7 +3669,7 @@ public class ModelWriter extends BaseWriter {
                 case "FhirJsonDataFormat" -> doWriteFhirJsonDataFormat("fhirJson", (FhirJsonDataFormat) v);
                 case "FhirXmlDataFormat" -> doWriteFhirXmlDataFormat("fhirXml", (FhirXmlDataFormat) v);
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
-                case "FuryDataFormat" -> doWriteFuryDataFormat("fury", (FuryDataFormat) v);
+                case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
