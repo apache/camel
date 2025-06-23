@@ -316,7 +316,7 @@
         <json-smart-version>2.5.2</json-smart-version>
         <jsonata-version>0.9.8</jsonata-version>
         <json-unit-version>4.1.1</json-unit-version>
-        <jsoup-version>1.20.1</jsoup-version>
+        <jsoup-version>1.21.1</jsoup-version>
         <jt400-version>21.0.4</jt400-version>
         <jte-version>3.2.1</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
