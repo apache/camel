@@ -3,7 +3,7 @@
 A template engine is a tool that generates text output, such as emails, XML, or code, by combining templates with dynamic data. 
 In Apache Camel, templates are primarily used to create layouts while dynamically using exchange data.
 
-Below is a list of template engines that are provided by Apache Camel.
+Below is a list of the template engines that are provided by Apache Camel.
 
 [cols="1,1,1,3", options="header"]
 |===
@@ -19,10 +19,11 @@ Below is a list of template engines that are provided by Apache Camel.
 |Velocity        |camel-velocity         |1.2   |https://velocity.apache.org/[velocity.apache.org]
 |===
 
-=== Which template engine to choose?
+== Which template engine to choose
 
 Velocity is a mature template engine with long-term support from Camel. It can be used for text generation, such as emails. 
 Mustache can be used for similar purposes and is cross-platform. 
 For templates that require more conditional logic and XML or HTML output, Freemarker, MVEL, and Thymeleaf are good choices. JTE is known to be fast due to its compile-time template processing.
 
-Note: These template engines perform directly on the echange, if you want to template routes, look at xref:manual::route-template.adoc[Route Templates].
+NOTE: These template engines perform directly on the Exchange, if you want to template routes, look at xref:manual::route-template.adoc[Route Templates].
+
