@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Predicate;
 
 import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -41,6 +42,7 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
@@ -71,9 +73,18 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         if (b != null) {
             throwExceptionWhenHalfOpenOrOpenState = b;
         }
+        Predicate<Throwable> recordPredicate = null;
+        if (!config.getRecordExceptions().isEmpty()) {
+            recordPredicate = cbConfig.getRecordExceptionPredicate();
+        }
+        Predicate<Throwable> ignorePredicate = null;
+        if (!config.getIgnoreExceptions().isEmpty()) {
+            ignorePredicate = cbConfig.getIgnoreExceptionPredicate();
+        }
 
         ResilienceProcessor answer = new ResilienceProcessor(
-                cbConfig, bhConfig, tlConfig, processor, fallback, throwExceptionWhenHalfOpenOrOpenState);
+                cbConfig, bhConfig, tlConfig, processor, fallback, throwExceptionWhenHalfOpenOrOpenState, recordPredicate,
+                ignorePredicate);
         configureTimeoutExecutorService(answer, config);
         // using any existing circuit breakers?
         if (config.getCircuitBreaker() != null) {
@@ -116,11 +127,11 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         if (config.getWritableStackTraceEnabled() != null) {
             builder.writableStackTraceEnabled(parseBoolean(config.getWritableStackTraceEnabled()));
         }
-        if (config.getRecordExceptions() != null) {
-            builder.recordExceptions(createRecordExceptionClasses());
+        if (!config.getRecordExceptions().isEmpty()) {
+            builder.recordException(createExceptionPredicate(createRecordExceptionClasses()));
         }
-        if (config.getIgnoreExceptions() != null) {
-            builder.ignoreExceptions(createIgnoreExceptionClasses());
+        if (!config.getIgnoreExceptions().isEmpty()) {
+            builder.ignoreException(createExceptionPredicate(createIgnoreExceptionClasses()));
         }
         return builder.build();
     }
@@ -261,4 +272,18 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         }
         return answer.toArray(new Class[0]);
     }
+
+    private Predicate<Throwable> createExceptionPredicate(final Class<? extends Throwable>[] exceptions) {
+        return t -> {
+            for (Throwable te : ObjectHelper.createExceptionIterable(t)) {
+                for (var ex : exceptions) {
+                    if (ex.isInstance(te)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+    }
+
 }
