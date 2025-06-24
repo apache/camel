@@ -37,7 +37,7 @@ The following components have been removed:
 | camel-jclouds                        | none
 | camel-johnzon                        | camel-jackson, camel-fastjson, camel-gson
 | camel-microprofile-metrics           | camel-micrometer, camel-opentelemetry
-| camel-milo                           | none
+| camel-milo                           | camel-plc4x
 | camel-opentracing                    | camel-micrometer, camel-opentelemetry
 | camel-rabbitmq                       | spring-rabbitmq-component
 | camel-rest-swagger                   | camel-openapi-rest
