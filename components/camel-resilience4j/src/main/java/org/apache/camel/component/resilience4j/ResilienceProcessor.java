@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
@@ -85,6 +86,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     private final Processor processor;
     private final Processor fallback;
     private final boolean throwExceptionWhenHalfOpenOrOpenState;
+    private final Predicate<Throwable> recordPredicate;
+    private final Predicate<Throwable> ignorePredicate;
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
     private ProcessorExchangeFactory processorExchangeFactory;
@@ -93,13 +96,16 @@ public class ResilienceProcessor extends AsyncProcessorSupport
 
     public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
                                TimeLimiterConfig timeLimiterConfig, Processor processor,
-                               Processor fallback, boolean throwExceptionWhenHalfOpenOrOpenState) {
+                               Processor fallback, boolean throwExceptionWhenHalfOpenOrOpenState,
+                               Predicate<Throwable> recordPredicate, Predicate<Throwable> ignorePredicate) {
         this.circuitBreakerConfig = circuitBreakerConfig;
         this.bulkheadConfig = bulkheadConfig;
         this.timeLimiterConfig = timeLimiterConfig;
         this.processor = processor;
         this.fallback = fallback;
         this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
+        this.recordPredicate = recordPredicate;
+        this.ignorePredicate = ignorePredicate;
     }
 
     @Override
@@ -621,8 +627,31 @@ public class ResilienceProcessor extends AsyncProcessorSupport
 
         @Override
         public Exchange apply(Throwable throwable) {
+            // check again if we should ignore or not record the throw exception as a failure
+            if (ignorePredicate != null && ignorePredicate.test(throwable)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchange: {} recover task using circuit breaker: {} ignored exception: {}",
+                            exchange.getExchangeId(),
+                            id, throwable);
+                }
+                // exception should be ignored
+                exchange.setException(null);
+                return exchange;
+            }
+            if (recordPredicate != null && !recordPredicate.test(throwable)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchange: {} recover task using circuit breaker: {} success exception: {}",
+                            exchange.getExchangeId(),
+                            id, throwable);
+                }
+                // exception is a success
+                exchange.setException(null);
+                return exchange;
+            }
+
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchange: {} recover task using circuit breaker: {} from: {}", exchange.getExchangeId(),
+                LOG.trace("Processing exchange: {} recover task using circuit breaker: {} failed exception: {}",
+                        exchange.getExchangeId(),
                         id, throwable);
             }
 
@@ -688,7 +717,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                 LOG.debug("Running fallback: {} with exchange: {}", fallback, exchange);
                 // process the fallback until its fully done
                 fallback.process(exchange);
-                LOG.debug("Running fallback: {} with exchange: {} done", fallback, exchange);
+                LOG.trace("Running fallback: {} with exchange: {} done", fallback, exchange);
             } catch (Throwable e) {
                 exchange.setException(e);
             }
