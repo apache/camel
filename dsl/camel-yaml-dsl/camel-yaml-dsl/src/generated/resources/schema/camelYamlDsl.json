@@ -5893,7 +5893,7 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
-                "description" : "Expression to return the transformed message body (the new message body to use)",
+                "description" : "Script to be executed.",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
