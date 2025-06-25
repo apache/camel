@@ -443,6 +443,10 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                     ExchangeHelper.copyResults(exchange, copy);
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                    String state = getCircuitBreakerState();
+                    if (state != null) {
+                        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
+                    }
                 }
             } catch (Exception e) {
                 exchange.setException(e);
@@ -486,6 +490,11 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
 
         @Override
         public Exchange call() throws Exception {
+            String state = getCircuitBreakerState();
+            if (state != null) {
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
+            }
+
             Throwable throwable = exchange.getException();
             if (fallbackProcessor == null) {
                 if (throwable instanceof TimeoutException) {

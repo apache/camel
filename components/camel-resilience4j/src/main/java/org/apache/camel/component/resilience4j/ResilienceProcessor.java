@@ -493,7 +493,10 @@ public class ResilienceProcessor extends AsyncProcessorSupport
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Processing exchange: {} using circuit breaker: {}", exchange.getExchangeId(), id);
             }
-            Try.ofCallable(callable).recover(fallbackTask).get();
+            Try.ofCallable(callable)
+                    .andThen(this::successState)
+                    .recover(fallbackTask)
+                    .get();
         } catch (Exception e) {
             exchange.setException(e);
         } finally {
@@ -514,6 +517,11 @@ public class ResilienceProcessor extends AsyncProcessorSupport
         exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
         callback.done(true);
         return true;
+    }
+
+    private void successState(Exchange exchange) {
+        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
+        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, circuitBreaker.getState().name());
     }
 
     private Exchange processTask(Exchange exchange) {
@@ -633,6 +641,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
         @Override
         public Exchange apply(Throwable throwable) {
             String state = circuitBreaker.getState().name();
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, state);
 
             // check again if we should ignore or not record the throw exception as a failure
             if (ignorePredicate != null && ignorePredicate.test(throwable)) {
