@@ -517,11 +517,16 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     }
 
     private Exchange processTask(Exchange exchange) {
+        String state = circuitBreaker.getState().name();
+
         Exchange copy = null;
         UnitOfWork uow = null;
         Throwable cause;
         try {
-            LOG.debug("Running processor: {} with exchange: {}", processor, exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange: {} using circuit breaker ({}):{} with processor: {}",
+                        exchange.getExchangeId(), state, id, processor);
+            }
             // prepare a copy of exchange so downstream processors don't
             // cause side-effects if they mutate the exchange
             // in case timeout processing and continue with the fallback etc
@@ -627,12 +632,13 @@ public class ResilienceProcessor extends AsyncProcessorSupport
 
         @Override
         public Exchange apply(Throwable throwable) {
+            String state = circuitBreaker.getState().name();
+
             // check again if we should ignore or not record the throw exception as a failure
             if (ignorePredicate != null && ignorePredicate.test(throwable)) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchange: {} recover task using circuit breaker: {} ignored exception: {}",
-                            exchange.getExchangeId(),
-                            id, throwable);
+                    LOG.trace("Processing exchange: {} recover task using circuit breaker ({}):{} ignored exception: {}",
+                            exchange.getExchangeId(), state, id, throwable);
                 }
                 // exception should be ignored
                 exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
@@ -644,9 +650,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport
             }
             if (recordPredicate != null && !recordPredicate.test(throwable)) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchange: {} recover task using circuit breaker: {} success exception: {}",
-                            exchange.getExchangeId(),
-                            id, throwable);
+                    LOG.trace("Processing exchange: {} recover task using circuit breaker ({}):{} success exception: {}",
+                            exchange.getExchangeId(), state, id, throwable);
                 }
                 // exception is a success
                 exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
@@ -657,9 +662,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchange: {} recover task using circuit breaker: {} failed exception: {}",
-                        exchange.getExchangeId(),
-                        id, throwable);
+                LOG.trace("Processing exchange: {} recover task using circuit breaker ({}):{} failed exception: {}",
+                        exchange.getExchangeId(), state, id, throwable);
             }
 
             if (fallback == null) {
@@ -721,10 +725,12 @@ public class ResilienceProcessor extends AsyncProcessorSupport
             exchange.getExchangeExtension().setRedeliveryExhausted(false);
             // run the fallback processor
             try {
-                LOG.debug("Running fallback: {} with exchange: {}", fallback, exchange);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchange: {} using circuit breaker ({}):{} with fallback: {}",
+                            exchange.getExchangeId(), state, id, fallback);
+                }
                 // process the fallback until its fully done
                 fallback.process(exchange);
-                LOG.trace("Running fallback: {} with exchange: {} done", fallback, exchange);
             } catch (Throwable e) {
                 exchange.setException(e);
             }
