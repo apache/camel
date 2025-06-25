@@ -25,7 +25,17 @@ public interface MilvusInfraService extends InfrastructureService {
 
     String getMilvusEndpointUrl();
 
-    String getMilvusHost();
+    @Deprecated
+    default String getMilvusHost() {
+        return host();
+    }
 
-    int getMilvusPort();
+    @Deprecated
+    default int getMilvusPort() {
+        return port();
+    }
+
+    String host();
+
+    int port();
 }
