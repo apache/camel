@@ -30,9 +30,19 @@ public interface QdrantInfraService extends InfrastructureService {
 
     int getHttpPort();
 
-    String getGrpcHost();
+    @Deprecated
+    default String getGrpcHost() {
+        return host();
+    }
 
-    int getGrpcPort();
+    @Deprecated
+    default int getGrpcPort() {
+        return port();
+    }
+
+    String host();
+
+    int port();
 
     default HttpResponse<byte[]> put(String path, Map<Object, Object> body) throws Exception {
         final String reqPath = !path.startsWith("/") ? "/" + path : path;

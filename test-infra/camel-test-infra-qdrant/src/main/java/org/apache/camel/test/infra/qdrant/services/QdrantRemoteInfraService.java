@@ -46,12 +46,12 @@ public class QdrantRemoteInfraService implements QdrantInfraService {
     }
 
     @Override
-    public String getGrpcHost() {
+    public String host() {
         return System.getProperty(QdrantProperties.QDRANT_GRPC_HOST);
     }
 
     @Override
-    public int getGrpcPort() {
+    public int port() {
         return Integer.getInteger(QdrantProperties.QDRANT_GRPC_PORT);
     }
 }

@@ -54,6 +54,16 @@ public final class QdrantServiceFactory {
         }
 
         @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
         public HttpResponse<byte[]> put(String path, Map<Object, Object> body) throws Exception {
             return getService().put(path, body);
         }

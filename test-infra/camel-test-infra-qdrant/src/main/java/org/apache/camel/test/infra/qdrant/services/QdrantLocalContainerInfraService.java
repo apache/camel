@@ -106,12 +106,12 @@ public class QdrantLocalContainerInfraService implements QdrantInfraService, Con
     }
 
     @Override
-    public String getGrpcHost() {
+    public String host() {
         return container.getHost();
     }
 
     @Override
-    public int getGrpcPort() {
+    public int port() {
         return container.getMappedPort(GRPC_PORT);
     }
 }
