@@ -41,6 +41,7 @@ public enum ExchangePropertyKey {
     CIRCUIT_BREAKER_RESPONSE_TIMED_OUT(CircuitBreakerConstants.RESPONSE_TIMED_OUT),
     CIRCUIT_BREAKER_RESPONSE_REJECTED(CircuitBreakerConstants.RESPONSE_REJECTED),
     CIRCUIT_BREAKER_RESPONSE_IGNORED(CircuitBreakerConstants.RESPONSE_IGNORED),
+    CIRCUIT_BREAKER_RESPONSE_STATE(CircuitBreakerConstants.RESPONSE_STATE),
     CLAIM_CHECK_REPOSITORY(Exchange.CLAIM_CHECK_REPOSITORY),
     CORRELATION_ID(Exchange.CORRELATION_ID),
     DUPLICATE_MESSAGE(Exchange.DUPLICATE_MESSAGE),
@@ -129,6 +130,8 @@ public enum ExchangePropertyKey {
                 return CIRCUIT_BREAKER_RESPONSE_REJECTED;
             case CircuitBreakerConstants.RESPONSE_IGNORED:
                 return CIRCUIT_BREAKER_RESPONSE_IGNORED;
+            case CircuitBreakerConstants.RESPONSE_STATE:
+                return CIRCUIT_BREAKER_RESPONSE_STATE;
             case Exchange.CLAIM_CHECK_REPOSITORY:
                 return CLAIM_CHECK_REPOSITORY;
             case Exchange.CORRELATION_ID:
