@@ -100,7 +100,7 @@ public class MilvusLocalContainerInfraService implements MilvusInfraService, Con
     }
 
     @Override
-    public String getMilvusHost() {
+    public String host() {
         URL url = null;
         try {
             url = new URL(container.getEndpoint());
@@ -111,7 +111,7 @@ public class MilvusLocalContainerInfraService implements MilvusInfraService, Con
     }
 
     @Override
-    public int getMilvusPort() {
+    public int port() {
         URL url = null;
         try {
             url = new URL(container.getEndpoint());

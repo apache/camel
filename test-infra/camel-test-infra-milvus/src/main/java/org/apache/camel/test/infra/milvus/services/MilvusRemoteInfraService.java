@@ -41,12 +41,12 @@ public class MilvusRemoteInfraService implements MilvusInfraService {
     }
 
     @Override
-    public String getMilvusHost() {
+    public String host() {
         return System.getProperty(MilvusProperties.MILVUS_ENDPOINT_HOST);
     }
 
     @Override
-    public int getMilvusPort() {
+    public int port() {
         return Integer.parseInt(System.getProperty(MilvusProperties.MILVUS_ENDPOINT_PORT));
     }
 }
