@@ -99,7 +99,10 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
 
     /**
      * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due
-     * circuit breaker is half open or open.
+     * circuit breaker is half open (and was not attempted but rejected immediately) or open (always rejected).
+     *
+     * This option is only in use when there is NOT a fallback configured on the circuit breaker. When there is a
+     * fallback then the fallback is always executed and CallNotPermittedException is not thrown.
      */
     public Resilience4jConfigurationDefinition throwExceptionWhenHalfOpenOrOpenState(
             boolean throwExceptionWhenHalfOpenOrOpenState) {
