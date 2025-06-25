@@ -635,6 +635,10 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                             id, throwable);
                 }
                 // exception should be ignored
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_IGNORED, true);
                 exchange.setException(null);
                 return exchange;
             }
@@ -645,6 +649,9 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                             id, throwable);
                 }
                 // exception is a success
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+                exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
                 exchange.setException(null);
                 return exchange;
             }

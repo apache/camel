@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +30,7 @@ public class ResilienceIgnoreExceptionTest extends CamelTestSupport {
     @Test
     public void testHello() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         template.sendBody("direct:start", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -36,6 +38,11 @@ public class ResilienceIgnoreExceptionTest extends CamelTestSupport {
     @Test
     public void testFile() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("file");
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, false);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_IGNORED, true);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
         template.sendBody("direct:start", "file");
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -43,6 +50,8 @@ public class ResilienceIgnoreExceptionTest extends CamelTestSupport {
     @Test
     public void testKaboom() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
         template.sendBody("direct:start", "kaboom");
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -50,6 +59,11 @@ public class ResilienceIgnoreExceptionTest extends CamelTestSupport {
     @Test
     public void testIo() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("io");
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED, false);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_IGNORED, true);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
         template.sendBody("direct:start", "io");
         MockEndpoint.assertIsSatisfied(context);
     }
