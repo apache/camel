@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class ResilienceRouteFallbackTest extends CamelTestSupport {
@@ -40,6 +41,7 @@ public class ResilienceRouteFallbackTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
+        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_STATE, "CLOSED");
 
         template.sendBody(endPointUri, "Hello World");
 
@@ -58,7 +60,10 @@ public class ResilienceRouteFallbackTest extends CamelTestSupport {
                 from("direct:start.with.timeout.enabled").to("log:start.with.timeout.enabled").circuitBreaker()
                         .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
                         .throwException(new TimeoutException("Forced"))
-                        .onFallback().transform().constant("Fallback message")
+                        .onFallback()
+                        .process(e -> {
+                            Assertions.assertEquals("CLOSED", e.getProperty(CircuitBreakerConstants.RESPONSE_STATE));
+                        }).transform().constant("Fallback message")
                         .end().to("log:result").to("mock:result");
             }
         };
