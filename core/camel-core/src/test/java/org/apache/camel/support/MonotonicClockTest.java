@@ -16,29 +16,26 @@
  */
 package org.apache.camel.support;
 
-import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import org.apache.camel.clock.Clock;
+public class MonotonicClockTest {
 
-/**
- * A clock that increases monotonically (i.e.: does not go back in time) for precise elapsed calculations.
- */
-public final class MonotonicClock implements Clock {
-    private final long created;
-    private final long createdNano;
+    @Test
+    public void testElapsed() throws Exception {
+        MonotonicClock clock = new MonotonicClock();
+        long e = clock.elapsed();
+        long c = clock.getCreated();
+        Assertions.assertNotEquals(e, c);
 
-    public MonotonicClock() {
-        this.created = System.currentTimeMillis();
-        this.createdNano = System.nanoTime();
-    }
+        // elapse a tiny bit of time
+        Thread.sleep(2);
 
-    @Override
-    public long elapsed() {
-        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - createdNano);
-    }
-
-    @Override
-    public long getCreated() {
-        return created;
+        long e2 = clock.elapsed();
+        long c2 = clock.getCreated();
+        Assertions.assertNotEquals(e2, c2);
+        Assertions.assertNotEquals(e, e2);
+        Assertions.assertTrue(e2 > e);
+        Assertions.assertEquals(c, c2);
     }
 }
