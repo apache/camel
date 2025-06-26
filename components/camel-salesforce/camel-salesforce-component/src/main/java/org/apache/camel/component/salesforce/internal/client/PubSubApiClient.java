@@ -70,6 +70,7 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.allegro.schema.json2avro.converter.AvroJsonConverter;
 import tech.allegro.schema.json2avro.converter.JsonAvroConverter;
 
 public class PubSubApiClient extends ServiceSupport {
@@ -475,7 +476,7 @@ public class PubSubApiClient extends ServiceSupport {
 
         private Object deserializeJson(ConsumerEvent ce, Schema schema) throws IOException {
             final GenericRecord genericRecord = deserializeGenericRecord(ce, schema);
-            JsonAvroConverter converter = new JsonAvroConverter();
+            AvroJsonConverter converter = new AvroJsonConverter();
             final byte[] bytes = converter.convertToJson(genericRecord);
             return new String(bytes);
         }

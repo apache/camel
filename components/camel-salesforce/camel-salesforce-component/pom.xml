@@ -140,7 +140,7 @@
         <dependency>
             <groupId>tech.allegro.schema.json2avro</groupId>
             <artifactId>converter</artifactId>
-            <version>0.2.15</version>
+            <version>${allegro-converter-version}</version>
         </dependency>
 
         <!-- logging -->
