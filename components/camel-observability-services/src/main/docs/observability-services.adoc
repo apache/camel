@@ -11,7 +11,7 @@
 
 The Camel Observability Services provide services for observing the state of Camel. Examples are health and metrics services. Each service configuration is opinionated and abstracts away from implementations, such as OpenTelemetry, Prometheus, or Micrometer. Although the services are primarily intended for the cloud, they can be used in any environment.
 
-=== What is observability?
+== What is observability?
 
 Modern systems (especially distributed ones like Camel) are complex. When something breaks or slows down, you need visibility into what's happening inside without manually digging into every part. Observability gives you that visibility. 
 
