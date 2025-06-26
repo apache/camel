@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Transforms JSON using JSON patch (RFC 6902).
@@ -31,6 +32,9 @@ import org.apache.camel.spi.UriEndpoint;
              remote = false, producerOnly = true,
              category = { Category.TRANSFORMATION }, headersClass = JsonPatchConstants.class)
 public class JsonPatchEndpoint extends ResourceEndpoint {
+
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
 
     public JsonPatchEndpoint() {
     }
@@ -59,4 +63,17 @@ public class JsonPatchEndpoint extends ResourceEndpoint {
         throw new UnsupportedOperationException("You cannot consume from this endpoint");
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
 }

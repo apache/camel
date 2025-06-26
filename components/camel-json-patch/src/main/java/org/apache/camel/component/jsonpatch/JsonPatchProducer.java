@@ -39,7 +39,10 @@ public class JsonPatchProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        String resourceUri = exchange.getIn().getHeader(JsonPatchConstants.JSON_PATCH_RESOURCE_URI, String.class);
+        String resourceUri = null;
+        if (endpoint.isAllowTemplateFromHeader()) {
+            resourceUri = exchange.getIn().getHeader(JsonPatchConstants.JSON_PATCH_RESOURCE_URI, String.class);
+        }
         if (resourceUri == null || resourceUri.isEmpty()) {
             resourceUri = endpoint.getResourceUri();
         }
