@@ -50,7 +50,7 @@ public class LanguageScriptInHeaderRouteTakePrecedenceTest extends ContextTestSu
             @Override
             public void configure() {
                 String script = URLEncoder.encode("Bye ${body}", StandardCharsets.UTF_8);
-                from("direct:start").to("language:simple:" + script).to("mock:result");
+                from("direct:start").to("language:simple:" + script + "?allowTemplateFromHeader=true").to("mock:result");
             }
         };
     }

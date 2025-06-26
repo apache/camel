@@ -44,6 +44,10 @@ and you would have to restart the route to attempt again.
 
 Renamed class `org.apache.camel.component.http.BasicAuthenticationHttpClientConfigurer` to `org.apache.camel.component.http.DefaultAuthenticationHttpClientConfigurer`.
 
+=== camel-language
+
+If using a header to provide a custom script, then this must now be turned on via `allowTemplateFromHeader=true` on the endpoint or component.
+
 === camel-yaml-dsl
 
 The deprecated kebab-case has been removed.
