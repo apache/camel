@@ -75,6 +75,8 @@ so this can be configured globally.
 - camel-thymeleaf
 - camel-velocity
 
+Also, most of the components above supports using a header to provide a custom template, then this must now be turned on via `allowTemplateFromHeader=true` on the endpoint or component.
+
 == Camel Spring Boot
 
 Remove the deprecated `camel.springboot.xxx` configuration syntax. Use `camel.main.xxx` syntax
