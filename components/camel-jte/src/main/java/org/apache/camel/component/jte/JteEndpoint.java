@@ -26,7 +26,9 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Transform messages using a Java based template engine (JTE).
@@ -35,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
              remote = false, producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = JteConstants.class)
 public class JteEndpoint extends ResourceEndpoint {
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowTemplateFromHeader;
 
     public JteEndpoint() {
@@ -92,6 +94,7 @@ public class JteEndpoint extends ResourceEndpoint {
             }
         }
 
+        JteCodeResolver codeResolver = getComponent().getCodeResolver();
         String name = getResourceUri();
         String content;
         if (allowTemplateFromHeader) {
@@ -100,12 +103,16 @@ public class JteEndpoint extends ResourceEndpoint {
                 // remove the header to avoid it being propagated in the routing
                 exchange.getIn().removeHeader(JteConstants.JTE_TEMPLATE);
                 // add template in code resolver so we can find it
-                JteCodeResolver codeResolver = getComponent().getCodeResolver();
                 if (codeResolver != null) {
                     name = exchange.getExchangeId();
                     codeResolver.addTemplateFromHeader(name, content);
                 }
             }
+        } else if (ResourceHelper.hasScheme(name)) {
+            // name should not include scheme
+            String uri = StringHelper.after(name, ":");
+            name = StringHelper.before(name, ":");
+            codeResolver.addPathMapping(name, uri);
         }
         Object dataModel = null;
         if (allowTemplateFromHeader) {
