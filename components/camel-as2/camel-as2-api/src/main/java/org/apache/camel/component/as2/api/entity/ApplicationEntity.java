@@ -68,7 +68,7 @@ public abstract class ApplicationEntity extends MimeEntity {
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
         try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name());
-             OutputStream transferEncodedStream = EntityUtils.encode(canonicalOutstream, getContentTransferEncodingValue())) {
+             OutputStream transferEncodedStream = EntityUtils.encode(ncos, getContentTransferEncodingValue())) {
 
             // Write out mime part headers if this is not the main body of message.
             if (!isMainBody()) {
