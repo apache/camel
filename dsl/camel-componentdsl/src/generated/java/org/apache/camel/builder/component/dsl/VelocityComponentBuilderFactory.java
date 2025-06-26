@@ -94,6 +94,23 @@ public interface VelocityComponentBuilderFactory {
     
         
         /**
+         * Sets whether to use resource content cache or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
+         */
+        default VelocityComponentBuilder contentCache(boolean contentCache) {
+            doSetProperty("contentCache", contentCache);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -171,6 +188,7 @@ public interface VelocityComponentBuilderFactory {
             switch (name) {
             case "allowContextMapAll": ((VelocityComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((VelocityComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
+            case "contentCache": ((VelocityComponent) component).setContentCache((boolean) value); return true;
             case "lazyStartProducer": ((VelocityComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((VelocityComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "velocityEngine": ((VelocityComponent) component).setVelocityEngine((org.apache.velocity.app.VelocityEngine) value); return true;

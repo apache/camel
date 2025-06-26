@@ -94,6 +94,23 @@ public interface MvelComponentBuilderFactory {
     
         
         /**
+         * Sets whether to use resource content cache or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
+         */
+        default MvelComponentBuilder contentCache(boolean contentCache) {
+            doSetProperty("contentCache", contentCache);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -155,6 +172,7 @@ public interface MvelComponentBuilderFactory {
             switch (name) {
             case "allowContextMapAll": ((MvelComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((MvelComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
+            case "contentCache": ((MvelComponent) component).setContentCache((boolean) value); return true;
             case "lazyStartProducer": ((MvelComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((MvelComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;

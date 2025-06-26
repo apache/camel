@@ -94,6 +94,23 @@ public interface MustacheComponentBuilderFactory {
     
         
         /**
+         * Sets whether to use resource content cache or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
+         */
+        default MustacheComponentBuilder contentCache(boolean contentCache) {
+            doSetProperty("contentCache", contentCache);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -172,6 +189,7 @@ public interface MustacheComponentBuilderFactory {
             switch (name) {
             case "allowContextMapAll": ((MustacheComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((MustacheComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
+            case "contentCache": ((MustacheComponent) component).setContentCache((boolean) value); return true;
             case "lazyStartProducer": ((MustacheComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((MustacheComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "mustacheFactory": ((MustacheComponent) component).setMustacheFactory((com.github.mustachejava.MustacheFactory) value); return true;

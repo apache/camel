@@ -94,6 +94,23 @@ public interface JteComponentBuilderFactory {
     
         
         /**
+         * Sets whether to use resource content cache or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
+         */
+        default JteComponentBuilder contentCache(boolean contentCache) {
+            doSetProperty("contentCache", contentCache);
+            return this;
+        }
+    
+        
+        /**
          * Content type the JTE engine should use.
          * 
          * The option is a: &lt;code&gt;gg.jte.ContentType&lt;/code&gt; type.
@@ -209,6 +226,7 @@ public interface JteComponentBuilderFactory {
             switch (name) {
             case "allowContextMapAll": ((JteComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((JteComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
+            case "contentCache": ((JteComponent) component).setContentCache((boolean) value); return true;
             case "contentType": ((JteComponent) component).setContentType((gg.jte.ContentType) value); return true;
             case "lazyStartProducer": ((JteComponent) component).setLazyStartProducer((boolean) value); return true;
             case "preCompile": ((JteComponent) component).setPreCompile((boolean) value); return true;
