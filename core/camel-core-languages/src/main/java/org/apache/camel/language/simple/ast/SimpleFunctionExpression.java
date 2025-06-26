@@ -902,7 +902,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
             if (tokens.length > 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
@@ -916,7 +916,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String values = StringHelper.beforeLast(remainder, ")");
             String[] tokens = null;
             if (ObjectHelper.isNotEmpty(values)) {
-                tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
             }
             return SimpleExpressionBuilder.listExpression(tokens);
         }
