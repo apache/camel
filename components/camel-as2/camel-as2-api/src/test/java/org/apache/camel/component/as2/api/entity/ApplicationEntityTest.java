@@ -72,7 +72,6 @@ public class ApplicationEntityTest {
         return Stream.of(
                 Arguments.of("\r", "CR"),
                 Arguments.of("\n", "LF"),
-                        Arguments.of("\r\n", "CRLF")
-        );
+                Arguments.of("\r\n", "CRLF"));
     }
 }
