@@ -26,14 +26,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * Unit test testing the Removr.
- */
-public class JoltDefaultrTest extends CamelTestSupport {
+public class JoltRefTest extends CamelTestSupport {
+
+    private static final String TEMP = """
+            {
+              "a": "aa",
+              "b": "bb"
+             }""";
 
     @Test
-    public void testFirstSampleJolt() {
-        Exchange exchange = template.request("direct://start", exchange1 -> {
+    public void testRef() {
+        Exchange exchange = template.request("direct:a", exchange1 -> {
             Map<String, String> body = new HashMap<>();
             body.put("Hello", "World");
             exchange1.getIn().setBody(body);
@@ -49,8 +52,10 @@ public class JoltDefaultrTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://start")
-                        .to("jolt:org/apache/camel/component/jolt/defaultr.json?transformDsl=Defaultr");
+                context.getRegistry().bind("mytemp", TEMP);
+
+                from("direct:a").to(
+                        "jolt:ref:mytemp?transformDsl=Defaultr");
             }
         };
     }

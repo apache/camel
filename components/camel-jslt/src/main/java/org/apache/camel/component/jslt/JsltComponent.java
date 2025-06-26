@@ -30,19 +30,21 @@ import org.apache.camel.support.ResourceHelper;
 @Component("jslt")
 public class JsltComponent extends DefaultComponent {
 
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache;
+    @Metadata(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
     @Metadata(label = "advanced")
     private Collection<Function> functions;
     @Metadata(label = "advanced")
     private JsonFilter objectFilter;
-    @Metadata(defaultValue = "false")
-    private boolean allowTemplateFromHeader;
 
     public JsltComponent() {
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
 
         JsltEndpoint answer = new JsltEndpoint(uri, this, remaining);
         answer.setContentCache(cache);
@@ -56,6 +58,17 @@ public class JsltComponent extends DefaultComponent {
         }
 
         return answer;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
     }
 
     public Collection<Function> getFunctions() {

@@ -175,7 +175,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          * 
          * @param contentCache the value to set
@@ -190,7 +190,7 @@ public interface ThymeleafEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          * 
          * @param contentCache the value to set

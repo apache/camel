@@ -35,6 +35,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("freemarker")
 public class FreemarkerComponent extends DefaultComponent {
 
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache;
     @Metadata
     private boolean allowTemplateFromHeader;
     @Metadata
@@ -53,7 +55,7 @@ public class FreemarkerComponent extends DefaultComponent {
         // should we use regular configuration or no cache (content cache is default true)
         Configuration config;
         String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
         int templateUpdateDelay = getAndRemoveParameter(parameters, "templateUpdateDelay", Integer.class, 0);
         if (cache) {
             config = getConfiguration();
@@ -89,7 +91,7 @@ public class FreemarkerComponent extends DefaultComponent {
         lock.lock();
         try {
             if (configuration == null) {
-                configuration = new Configuration(Configuration.VERSION_2_3_32);
+                configuration = new Configuration(Configuration.VERSION_2_3_34);
                 configuration.setLocalizedLookup(isLocalizedLookup());
                 configuration.setTemplateLoader(new URLTemplateLoader() {
 
@@ -116,6 +118,17 @@ public class FreemarkerComponent extends DefaultComponent {
      */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
     }
 
     public boolean isAllowTemplateFromHeader() {

@@ -87,7 +87,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          * 
          * @param contentCache the value to set
@@ -102,7 +102,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: producer
          * 
          * @param contentCache the value to set

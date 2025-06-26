@@ -98,6 +98,12 @@ public class JsltEndpoint extends ResourceEndpoint {
     }
 
     @Override
+    public void clearContentCache() {
+        super.clearContentCache();
+        this.transform = null;
+    }
+
+    @Override
     public ExchangePattern getExchangePattern() {
         return ExchangePattern.InOut;
     }

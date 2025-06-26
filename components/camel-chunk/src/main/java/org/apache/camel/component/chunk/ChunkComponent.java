@@ -26,6 +26,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("chunk")
 public class ChunkComponent extends DefaultComponent {
 
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache;
     @Metadata(defaultValue = "false")
     private boolean allowTemplateFromHeader;
     @Metadata(defaultValue = "false")
@@ -39,6 +41,7 @@ public class ChunkComponent extends DefaultComponent {
         ChunkEndpoint endpoint = new ChunkEndpoint(uri, this, remaining);
         endpoint.setAllowTemplateFromHeader(allowTemplateFromHeader);
         endpoint.setAllowContextMapAll(allowContextMapAll);
+        endpoint.setContentCache(contentCache);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -70,4 +73,14 @@ public class ChunkComponent extends DefaultComponent {
         this.allowContextMapAll = allowContextMapAll;
     }
 
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
+    }
 }

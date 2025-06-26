@@ -153,7 +153,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param contentCache the value to set
@@ -168,7 +168,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param contentCache the value to set
@@ -1695,7 +1695,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param contentCache the value to set
@@ -1710,7 +1710,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param contentCache the value to set
@@ -2641,7 +2641,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param contentCache the value to set
@@ -2656,7 +2656,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: common
          * 
          * @param contentCache the value to set
