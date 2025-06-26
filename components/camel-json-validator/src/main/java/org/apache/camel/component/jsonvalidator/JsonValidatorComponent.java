@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultComponent;
 public class JsonValidatorComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
-    private boolean contentCache;
+    private boolean contentCache = true;
     @Metadata(defaultValue = "true")
     private boolean useDefaultObjectMapper = true;
     @Metadata(label = "advanced")

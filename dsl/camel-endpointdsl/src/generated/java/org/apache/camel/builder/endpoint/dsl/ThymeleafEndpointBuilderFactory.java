@@ -83,6 +83,44 @@ public interface ThymeleafEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
+         */
+        default ThymeleafEndpointBuilder allowTemplateFromHeader(boolean allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
+         */
+        default ThymeleafEndpointBuilder allowTemplateFromHeader(String allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+        /**
          * Whether templates have to be considered cacheable or not.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
@@ -168,36 +206,6 @@ public interface ThymeleafEndpointBuilderFactory {
          */
         default ThymeleafEndpointBuilder checkExistence(String checkExistence) {
             doSetProperty("checkExistence", checkExistence);
-            return this;
-        }
-        /**
-         * Sets whether to use resource content cache or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param contentCache the value to set
-         * @return the dsl builder
-         */
-        default ThymeleafEndpointBuilder contentCache(boolean contentCache) {
-            doSetProperty("contentCache", contentCache);
-            return this;
-        }
-        /**
-         * Sets whether to use resource content cache or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param contentCache the value to set
-         * @return the dsl builder
-         */
-        default ThymeleafEndpointBuilder contentCache(String contentCache) {
-            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**

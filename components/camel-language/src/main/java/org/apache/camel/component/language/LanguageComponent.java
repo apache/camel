@@ -37,8 +37,8 @@ public class LanguageComponent extends DefaultComponent {
     public static final String RESOURCE = "resource:";
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
-    private boolean contentCache;
-    @Metadata(defaultValue = "false")
+    private boolean contentCache = true;
+    @Metadata
     private boolean allowTemplateFromHeader;
 
     public LanguageComponent() {

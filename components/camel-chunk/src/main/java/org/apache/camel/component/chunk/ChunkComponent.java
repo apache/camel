@@ -27,10 +27,10 @@ import org.apache.camel.support.DefaultComponent;
 public class ChunkComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
-    private boolean contentCache;
-    @Metadata(defaultValue = "false")
+    private boolean contentCache = true;
+    @Metadata
     private boolean allowTemplateFromHeader;
-    @Metadata(defaultValue = "false")
+    @Metadata
     private boolean allowContextMapAll;
 
     public ChunkComponent() {

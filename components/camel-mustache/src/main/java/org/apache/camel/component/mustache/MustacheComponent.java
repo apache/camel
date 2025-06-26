@@ -37,15 +37,24 @@ import org.apache.camel.support.DefaultComponent;
 public class MustacheComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
-    private boolean contentCache;
+    private boolean contentCache = true;
     @Metadata
     private boolean allowTemplateFromHeader;
     @Metadata
     private boolean allowContextMapAll;
     @Metadata(label = "advanced", autowired = true)
-    private MustacheFactory mustacheFactory = new DefaultMustacheFactory();
+    private MustacheFactory mustacheFactory;
 
     public MustacheComponent() {
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (mustacheFactory == null) {
+            mustacheFactory = new DefaultMustacheFactory();
+        }
     }
 
     @Override

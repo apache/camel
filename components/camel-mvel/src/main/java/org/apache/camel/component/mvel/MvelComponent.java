@@ -31,7 +31,7 @@ import org.apache.camel.support.ResourceHelper;
 public class MvelComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
-    private boolean contentCache;
+    private boolean contentCache = true;
     @Metadata
     private boolean allowTemplateFromHeader;
     @Metadata
