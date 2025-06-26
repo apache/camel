@@ -210,7 +210,15 @@ public class KubernetesExport extends Export {
         }
 
         String projectName = getProjectName();
-        CamelCatalog catalog = CatalogHelper.loadCatalog(runtime, runtime.version(), download);
+        String runtimeVersion;
+        if (runtime == RuntimeType.quarkus) {
+            runtimeVersion = quarkusVersion;
+        } else if (runtime == RuntimeType.springBoot) {
+            runtimeVersion = camelSpringBootVersion;
+        } else {
+            runtimeVersion = camelVersion;
+        }
+        CamelCatalog catalog = CatalogHelper.loadCatalog(runtime, runtimeVersion, download);
 
         List<Source> sources;
         try {
