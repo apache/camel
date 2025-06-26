@@ -53,6 +53,16 @@ public class JteEndpoint extends ResourceEndpoint {
     }
 
     @Override
+    public void clearContentCache() {
+        super.clearContentCache();
+        TemplateEngine template = getComponent().getTemplateEngine();
+        if (template != null) {
+            template.clearCache();
+            template.cleanAll();
+        }
+    }
+
+    @Override
     public JteComponent getComponent() {
         return (JteComponent) super.getComponent();
     }
