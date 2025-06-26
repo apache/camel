@@ -49,7 +49,7 @@ public class ThymeleafDefaultResolverTest extends ThymeleafAbstractBaseTest {
         mock.assertIsSatisfied();
 
         ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(
-                "thymeleaf:dontcare?templateMode=HTML&allowContextMapAll=true&resolver=DEFAULT",
+                "thymeleaf:dontcare?allowTemplateFromHeader=true&templateMode=HTML&allowContextMapAll=true&resolver=DEFAULT",
                 ThymeleafEndpoint.class);
 
         assertAll("properties",
@@ -87,7 +87,7 @@ public class ThymeleafDefaultResolverTest extends ThymeleafAbstractBaseTest {
 
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to("thymeleaf:dontcare?templateMode=HTML&allowContextMapAll=true&resolver=DEFAULT")
+                        .to("thymeleaf:dontcare?allowTemplateFromHeader=true&templateMode=HTML&allowContextMapAll=true&resolver=DEFAULT")
                         .to(MOCK_RESULT);
             }
         };

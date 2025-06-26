@@ -25,13 +25,13 @@ public class ThymeleafEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "cachetimetolive":
         case "cacheTimeToLive": target.setCacheTimeToLive(property(camelContext, java.lang.Long.class, value)); return true;
         case "cacheable": target.setCacheable(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "checkexistence":
         case "checkExistence": target.setCheckExistence(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "contentcache":
-        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -50,13 +50,13 @@ public class ThymeleafEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
         case "cachetimetolive":
         case "cacheTimeToLive": return java.lang.Long.class;
         case "cacheable": return java.lang.Boolean.class;
         case "checkexistence":
         case "checkExistence": return java.lang.Boolean.class;
-        case "contentcache":
-        case "contentCache": return boolean.class;
         case "encoding": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -76,13 +76,13 @@ public class ThymeleafEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return target.isAllowContextMapAll();
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "cachetimetolive":
         case "cacheTimeToLive": return target.getCacheTimeToLive();
         case "cacheable": return target.getCacheable();
         case "checkexistence":
         case "checkExistence": return target.getCheckExistence();
-        case "contentcache":
-        case "contentCache": return target.isContentCache();
         case "encoding": return target.getEncoding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

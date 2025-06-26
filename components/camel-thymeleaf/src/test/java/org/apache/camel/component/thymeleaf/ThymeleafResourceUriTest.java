@@ -23,8 +23,7 @@ import org.junit.jupiter.api.Test;
 public class ThymeleafResourceUriTest extends ThymeleafAbstractBaseTest {
 
     @Test
-    public void testThymeleaf() throws InterruptedException {
-
+    public void testThymeleaf() throws Exception {
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
         mock.expectedMessageCount(1);
         mock.message(0).body().contains(THANK_YOU_FOR_YOUR_ORDER);
@@ -39,14 +38,12 @@ public class ThymeleafResourceUriTest extends ThymeleafAbstractBaseTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
 
             public void configure() {
-
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to("thymeleaf:dontcare?allowContextMapAll=true&resolver=CLASS_LOADER")
+                        .to("thymeleaf:dontcare?allowTemplateFromHeader=true&allowContextMapAll=true&resolver=CLASS_LOADER")
                         .to(MOCK_RESULT);
             }
         };

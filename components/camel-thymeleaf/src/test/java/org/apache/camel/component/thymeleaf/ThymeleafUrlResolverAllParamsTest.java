@@ -39,8 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ThymeleafUrlResolverAllParamsTest extends ThymeleafAbstractBaseTest {
 
     @Test
-    public void testThymeleaf() throws InterruptedException {
-
+    public void testThymeleaf() throws Exception {
         stubFor(get("/dontcare.html").willReturn(ok(fragment())));
 
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
@@ -54,7 +53,7 @@ public class ThymeleafUrlResolverAllParamsTest extends ThymeleafAbstractBaseTest
         mock.assertIsSatisfied();
 
         ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(
-                "thymeleaf:dontcare?allowContextMapAll=true&cacheTimeToLive=500&cacheable=false&encoding=UTF-8&order=1&prefix=&suffix=.html&resolver=URL&templateMode=HTML",
+                "thymeleaf:dontcare?allowTemplateFromHeader=true&allowContextMapAll=true&cacheTimeToLive=500&cacheable=false&encoding=UTF-8&order=1&prefix=&suffix=.html&resolver=URL&templateMode=HTML",
                 ThymeleafEndpoint.class);
 
         assertAll("properties",
@@ -90,20 +89,17 @@ public class ThymeleafUrlResolverAllParamsTest extends ThymeleafAbstractBaseTest
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
 
             public void configure() {
-
                 from(DIRECT_START)
-                        .to("thymeleaf:dontcare?allowContextMapAll=true&cacheTimeToLive=500&cacheable=false&encoding=UTF-8&order=1&prefix=&suffix=.html&resolver=URL&templateMode=HTML")
+                        .to("thymeleaf:dontcare?allowTemplateFromHeader=true&allowContextMapAll=true&cacheTimeToLive=500&cacheable=false&encoding=UTF-8&order=1&prefix=&suffix=.html&resolver=URL&templateMode=HTML")
                         .to(MOCK_RESULT);
             }
         };
     }
 
     protected String fragment() {
-
         return """
                 <span th:fragment="test" th:remove="tag">
                 You will be notified when your order ships.

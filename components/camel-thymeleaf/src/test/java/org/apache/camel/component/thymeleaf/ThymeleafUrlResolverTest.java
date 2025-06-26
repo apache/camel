@@ -39,8 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ThymeleafUrlResolverTest extends ThymeleafAbstractBaseTest {
 
     @Test
-    public void testThymeleaf() throws InterruptedException {
-
+    public void testThymeleaf() throws Exception {
         stubFor(get("/dontcare.html").willReturn(ok(fragment())));
 
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
@@ -54,7 +53,7 @@ public class ThymeleafUrlResolverTest extends ThymeleafAbstractBaseTest {
         mock.assertIsSatisfied();
 
         ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(
-                "thymeleaf:dontcare?allowContextMapAll=true&resolver=URL",
+                "thymeleaf:dontcare?allowTemplateFromHeader=true&allowContextMapAll=true&resolver=URL",
                 ThymeleafEndpoint.class);
 
         assertAll("properties",
@@ -90,20 +89,17 @@ public class ThymeleafUrlResolverTest extends ThymeleafAbstractBaseTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
 
             public void configure() {
-
                 from(DIRECT_START)
-                        .to("thymeleaf:dontcare?allowContextMapAll=true&resolver=URL")
+                        .to("thymeleaf:dontcare?allowTemplateFromHeader=true&allowContextMapAll=true&resolver=URL")
                         .to(MOCK_RESULT);
             }
         };
     }
 
     protected String fragment() {
-
         return """
                 <span th:fragment="test" th:remove="tag">
                 You will be notified when your order ships.
