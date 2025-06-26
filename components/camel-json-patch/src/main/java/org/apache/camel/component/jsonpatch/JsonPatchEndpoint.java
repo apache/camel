@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
              category = { Category.TRANSFORMATION }, headersClass = JsonPatchConstants.class)
 public class JsonPatchEndpoint extends ResourceEndpoint {
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowTemplateFromHeader;
 
     public JsonPatchEndpoint() {
