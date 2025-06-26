@@ -44,10 +44,38 @@ and you would have to restart the route to attempt again.
 
 Renamed class `org.apache.camel.component.http.BasicAuthenticationHttpClientConfigurer` to `org.apache.camel.component.http.DefaultAuthenticationHttpClientConfigurer`.
 
+=== camel-language
+
+If using a header to provide a custom script, then this must now be turned on via `allowTemplateFromHeader=true` on the endpoint or component.
+
 === camel-yaml-dsl
 
 The deprecated kebab-case has been removed.
 For example `set-body` and `set-header` should be `setBody` / `setHeader` etc.
+
+=== template components
+
+The following components has corrected `contentCache` option to be default true. For most this was already the case,
+but the documentation was mistakenly defined as `false`. We also added `contentCache` on component level,
+so this can be configured globally.
+
+- camel-chunk
+- camel-freemarker
+- camel-jolt
+- camel-jslt
+- camel-json-patch
+- camel-json-validator
+- camel-jsonata
+- camel-jte
+- camel-language
+- camel-mustache
+- camel-mvel
+- camel-robotframework
+- camel-stringtemplate
+- camel-thymeleaf
+- camel-velocity
+
+Also, most of the components above supports using a header to provide a custom template, then this must now be turned on via `allowTemplateFromHeader=true` on the endpoint or component.
 
 == Camel Spring Boot
 

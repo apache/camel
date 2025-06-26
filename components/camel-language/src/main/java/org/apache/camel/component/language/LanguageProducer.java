@@ -47,14 +47,17 @@ public class LanguageProducer extends DefaultProducer {
         String script = null;
 
         // is there a custom expression in the header?
-        Expression exp = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, Expression.class);
-        if (exp == null) {
-            script = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, String.class);
-            if (script != null) {
-                // the script may be a file: so resolve it before using
-                script = getEndpoint().resolveScript(script);
-                exp = getEndpoint().getLanguage().createExpression(script);
-                exp.init(getEndpoint().getCamelContext());
+        Expression exp = null;
+        if (getEndpoint().isAllowTemplateFromHeader()) {
+            exp = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, Expression.class);
+            if (exp == null) {
+                script = exchange.getIn().getHeader(LanguageConstants.LANGUAGE_SCRIPT, String.class);
+                if (script != null) {
+                    // the script may be a file: so resolve it before using
+                    script = getEndpoint().resolveScript(script);
+                    exp = getEndpoint().getLanguage().createExpression(script);
+                    exp.init(getEndpoint().getCamelContext());
+                }
             }
         }
         // if not fallback to use expression from endpoint

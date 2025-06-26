@@ -26,6 +26,11 @@ import org.apache.camel.support.ResourceHelper;
 
 @Component("jsonata")
 public class JsonataComponent extends DefaultComponent {
+
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache = true;
+    @Metadata
+    private boolean allowTemplateFromHeader;
     @Metadata(label = "advanced",
               description = "To configure custom frame bindings and inject user functions.")
     protected JsonataFrameBinding frameBinding;
@@ -35,7 +40,7 @@ public class JsonataComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
 
         JsonataFrameBinding frameBinding
                 = resolveAndRemoveReferenceParameter(parameters, "frameBinding", JsonataFrameBinding.class);
@@ -46,6 +51,7 @@ public class JsonataComponent extends DefaultComponent {
 
         JsonataEndpoint answer = new JsonataEndpoint(uri, this, remaining, frameBinding);
         answer.setContentCache(cache);
+        answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {
@@ -54,6 +60,31 @@ public class JsonataComponent extends DefaultComponent {
         }
 
         return answer;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
     /**

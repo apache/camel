@@ -51,7 +51,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowTemplateFromHeader;
     @UriParam(defaultValue = "true")
     private boolean loaderCache = true;

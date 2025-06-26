@@ -43,6 +43,8 @@ public class JteComponent extends DefaultComponent {
     private boolean preCompile;
     @Metadata(defaultValue = "Plain")
     private ContentType contentType = ContentType.Plain;
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache = true;
     @Metadata
     private boolean allowTemplateFromHeader;
     @Metadata
@@ -53,6 +55,7 @@ public class JteComponent extends DefaultComponent {
         JteEndpoint endpoint = new JteEndpoint(uri, this, remaining);
         endpoint.setAllowTemplateFromHeader(allowTemplateFromHeader);
         endpoint.setAllowContextMapAll(allowContextMapAll);
+        endpoint.setContentCache(contentCache);
 
         setProperties(endpoint, parameters);
 
@@ -132,6 +135,17 @@ public class JteComponent extends DefaultComponent {
      */
     public void setContentType(ContentType contentType) {
         this.contentType = contentType;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
     }
 
     public boolean isAllowTemplateFromHeader() {

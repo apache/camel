@@ -28,7 +28,9 @@ import org.apache.camel.support.ResourceHelper;
 @Component("jolt")
 public class JoltComponent extends DefaultComponent {
 
-    @Metadata(defaultValue = "false")
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache = true;
+    @Metadata
     private boolean allowTemplateFromHeader;
     @Metadata(label = "advanced")
     private Transform transform;
@@ -38,7 +40,7 @@ public class JoltComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
 
         JoltEndpoint answer = new JoltEndpoint(uri, this, remaining);
         answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
@@ -53,6 +55,17 @@ public class JoltComponent extends DefaultComponent {
         }
 
         return answer;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
     }
 
     public Transform getTransform() {

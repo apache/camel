@@ -38,7 +38,7 @@ public class LanguageLoadScriptFromClasspathHeaderTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("language:simple").to("mock:result");
+                from("direct:start").to("language:simple?allowTemplateFromHeader=true").to("mock:result");
             }
         };
     }

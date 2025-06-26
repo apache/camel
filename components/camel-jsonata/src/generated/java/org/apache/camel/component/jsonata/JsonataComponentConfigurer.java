@@ -23,8 +23,12 @@ public class JsonataComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsonataComponent target = (JsonataComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "framebinding":
         case "frameBinding": target.setFrameBinding(property(camelContext, org.apache.camel.component.jsonata.JsonataFrameBinding.class, value)); return true;
         case "lazystartproducer":
@@ -36,8 +40,12 @@ public class JsonataComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
         case "framebinding":
         case "frameBinding": return org.apache.camel.component.jsonata.JsonataFrameBinding.class;
         case "lazystartproducer":
@@ -50,8 +58,12 @@ public class JsonataComponentConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JsonataComponent target = (JsonataComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "contentcache":
+        case "contentCache": return target.isContentCache();
         case "framebinding":
         case "frameBinding": return target.getFrameBinding();
         case "lazystartproducer":

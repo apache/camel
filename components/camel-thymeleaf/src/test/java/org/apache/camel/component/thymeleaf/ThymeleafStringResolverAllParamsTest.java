@@ -48,7 +48,7 @@ public class ThymeleafStringResolverAllParamsTest extends ThymeleafAbstractBaseT
         mock.assertIsSatisfied();
 
         ThymeleafEndpoint thymeleafEndpoint = context.getEndpoint(
-                "thymeleaf:dontcare?cacheable=true&cacheTimeToLive=500&checkExistence=true&order=1&allowContextMapAll=true&resolver=STRING",
+                "thymeleaf:dontcare?allowTemplateFromHeader=true&cacheable=true&cacheTimeToLive=500&checkExistence=true&order=1&allowContextMapAll=true&resolver=STRING",
                 ThymeleafEndpoint.class);
 
         assertAll("properties",
@@ -88,7 +88,7 @@ public class ThymeleafStringResolverAllParamsTest extends ThymeleafAbstractBaseT
 
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to("thymeleaf:dontcare?cacheable=true&cacheTimeToLive=500&checkExistence=true&order=1&allowContextMapAll=true&resolver=STRING")
+                        .to("thymeleaf:dontcare?allowTemplateFromHeader=true&cacheable=true&cacheTimeToLive=500&checkExistence=true&order=1&allowContextMapAll=true&resolver=STRING")
                         .to(MOCK_RESULT);
             }
         };

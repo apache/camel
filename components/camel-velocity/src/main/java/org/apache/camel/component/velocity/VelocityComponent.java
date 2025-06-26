@@ -28,11 +28,13 @@ import org.apache.velocity.app.VelocityEngine;
 @Component("velocity")
 public class VelocityComponent extends DefaultComponent {
 
-    @Metadata(defaultValue = "false")
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache = true;
+    @Metadata
     private boolean allowTemplateFromHeader;
-    @Metadata(defaultValue = "false")
+    @Metadata
     private boolean allowContextMapAll;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", autowired = true)
     private VelocityEngine velocityEngine;
 
     public VelocityComponent() {
@@ -47,6 +49,17 @@ public class VelocityComponent extends DefaultComponent {
      */
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
     }
 
     public boolean isAllowTemplateFromHeader() {
@@ -78,7 +91,7 @@ public class VelocityComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
 
         VelocityEndpoint answer = new VelocityEndpoint(uri, this, remaining);
         answer.setContentCache(cache);

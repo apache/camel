@@ -50,7 +50,7 @@ public class MustacheEndpoint extends ResourceEndpoint {
     private MustacheFactory mustacheFactory;
     private Mustache mustache;
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowTemplateFromHeader;
     @UriParam
     private String encoding;

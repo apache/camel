@@ -94,6 +94,23 @@ public interface FreemarkerComponentBuilderFactory {
     
         
         /**
+         * Sets whether to use resource content cache or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
+         */
+        default FreemarkerComponentBuilder contentCache(boolean contentCache) {
+            doSetProperty("contentCache", contentCache);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -189,6 +206,7 @@ public interface FreemarkerComponentBuilderFactory {
             switch (name) {
             case "allowContextMapAll": ((FreemarkerComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((FreemarkerComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
+            case "contentCache": ((FreemarkerComponent) component).setContentCache((boolean) value); return true;
             case "lazyStartProducer": ((FreemarkerComponent) component).setLazyStartProducer((boolean) value); return true;
             case "localizedLookup": ((FreemarkerComponent) component).setLocalizedLookup((boolean) value); return true;
             case "autowiredEnabled": ((FreemarkerComponent) component).setAutowiredEnabled((boolean) value); return true;

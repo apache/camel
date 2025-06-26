@@ -52,6 +52,44 @@ public interface LanguageComponentBuilderFactory {
     
         
         /**
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
+         */
+        default LanguageComponentBuilder allowTemplateFromHeader(boolean allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
+    
+        
+        /**
+         * Sets whether to use resource content cache or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
+         */
+        default LanguageComponentBuilder contentCache(boolean contentCache) {
+            doSetProperty("contentCache", contentCache);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -111,6 +149,8 @@ public interface LanguageComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "allowTemplateFromHeader": ((LanguageComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
+            case "contentCache": ((LanguageComponent) component).setContentCache((boolean) value); return true;
             case "lazyStartProducer": ((LanguageComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((LanguageComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;

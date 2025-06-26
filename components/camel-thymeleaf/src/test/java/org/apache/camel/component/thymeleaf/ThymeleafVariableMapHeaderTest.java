@@ -23,8 +23,7 @@ import org.junit.jupiter.api.Test;
 public class ThymeleafVariableMapHeaderTest extends ThymeleafAbstractBaseTest {
 
     @Test
-    public void testThymeleaf() throws InterruptedException {
-
+    public void testThymeleaf() throws Exception {
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
         mock.expectedMessageCount(1);
         mock.message(0).body().contains(THANK_YOU_FOR_YOUR_ORDER);
@@ -40,14 +39,12 @@ public class ThymeleafVariableMapHeaderTest extends ThymeleafAbstractBaseTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
 
             public void configure() {
-
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to("thymeleaf:dontcare?templateMode=HTML&resolver=DEFAULT")
+                        .to("thymeleaf:dontcare?allowTemplateFromHeader=true&templateMode=HTML&resolver=DEFAULT")
                         .to(MOCK_RESULT);
             }
         };

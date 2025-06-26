@@ -14,36 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.language;
+package org.apache.camel.component.chunk;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class ChunkRefTest extends CamelTestSupport {
+
+    private static final String TEMP = "Hello {$headers.lastName}, {$headers.firstName}";
 
     @Test
-    public void testLanguage() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+    public void testRef() {
+        Exchange exchange = template.request("direct:a", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader("firstName", "Jack");
+                exchange.getIn().setHeader("lastName", "Sparrow");
+            }
+        });
 
-        template.sendBody("direct:start", "World");
-
-        assertMockEndpointsSatisfied();
+        assertEquals("Hello Sparrow, Jack" + System.lineSeparator(), exchange.getMessage().getBody());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            @Override
             public void configure() {
-                // START SNIPPET: e1
-                LanguageEndpoint le = new LanguageEndpoint();
-                le.setCamelContext(context);
-                le.setLanguageName("simple");
-                le.setScript("Hello ${body}");
+                context.getRegistry().bind("mytemp", TEMP);
 
-                from("direct:start").to(le).to("mock:result");
-                // END SNIPPET: e1
+                from("direct:a").to(
+                        "chunk:ref:mytemp?allowContextMapAll=true");
             }
         };
     }

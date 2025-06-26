@@ -23,7 +23,7 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(69);
+        Set<String> props = new HashSet<>(68);
         props.add("allowContextMapAll");
         props.add("allowTemplateFromHeader");
         props.add("argumentFiles");
@@ -32,7 +32,6 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
         props.add("backoffMultiplier");
         props.add("bridgeErrorHandler");
         props.add("combinedTagStats");
-        props.add("contentCache");
         props.add("criticalTags");
         props.add("debugFile");
         props.add("delay");

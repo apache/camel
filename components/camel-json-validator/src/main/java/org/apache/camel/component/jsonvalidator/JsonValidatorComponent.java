@@ -31,6 +31,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("json-validator")
 public class JsonValidatorComponent extends DefaultComponent {
 
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache = true;
     @Metadata(defaultValue = "true")
     private boolean useDefaultObjectMapper = true;
     @Metadata(label = "advanced")
@@ -46,8 +48,20 @@ public class JsonValidatorComponent extends DefaultComponent {
             ObjectMapper om = CamelContextHelper.findSingleByType(getCamelContext(), ObjectMapper.class);
             endpoint.setObjectMapper(om);
         }
+        endpoint.setContentCache(contentCache);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
     }
 
     public boolean isUseDefaultObjectMapper() {

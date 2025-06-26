@@ -25,6 +25,8 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "binary": target.setBinary(property(camelContext, boolean.class, value)); return true;
         case "cachescript":
         case "cacheScript": target.setCacheScript(property(camelContext, boolean.class, value)); return true;
@@ -45,6 +47,8 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
         case "binary": return boolean.class;
         case "cachescript":
         case "cacheScript": return boolean.class;
@@ -66,6 +70,8 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return target.isAllowContextMapAll();
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "binary": return target.isBinary();
         case "cachescript":
         case "cacheScript": return target.isCacheScript();

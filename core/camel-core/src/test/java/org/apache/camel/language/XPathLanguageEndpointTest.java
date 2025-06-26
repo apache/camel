@@ -53,7 +53,7 @@ public class XPathLanguageEndpointTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .setHeader(Exchange.LANGUAGE_SCRIPT, constant("/foo/text()"))
-                        .to("language:xpath")
+                        .to("language:xpath?allowTemplateFromHeader=true")
                         .to("mock:result");
             }
         };

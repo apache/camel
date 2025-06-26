@@ -23,6 +23,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
@@ -34,6 +35,7 @@ import org.robotframework.RobotFramework;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "robotframework", title = "Robot Framework",
              syntax = "robotframework:resourceUri", category = { Category.TESTING },
              remote = false, headersClass = RobotFrameworkCamelConstants.class)
+@Metadata(excludeProperties = "contentCache")
 public class RobotFrameworkEndpoint extends ResourceEndpoint {
 
     @UriParam

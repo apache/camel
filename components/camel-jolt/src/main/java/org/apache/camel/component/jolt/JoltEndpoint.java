@@ -73,6 +73,12 @@ public class JoltEndpoint extends ResourceEndpoint {
     }
 
     @Override
+    public void clearContentCache() {
+        super.clearContentCache();
+        transform = null;
+    }
+
+    @Override
     public ExchangePattern getExchangePattern() {
         return ExchangePattern.InOut;
     }

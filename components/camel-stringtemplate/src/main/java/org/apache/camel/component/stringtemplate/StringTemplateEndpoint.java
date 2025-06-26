@@ -41,7 +41,7 @@ import org.stringtemplate.v4.STGroup;
              headersClass = StringTemplateConstants.class)
 public class StringTemplateEndpoint extends ResourceEndpoint {
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowTemplateFromHeader;
     @UriParam(defaultValue = "<")
     private char delimiterStart = STGroup.defaultGroup.delimiterStartChar;
