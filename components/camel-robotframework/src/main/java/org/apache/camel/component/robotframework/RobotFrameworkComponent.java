@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.ResourceHelper;
 
 @Component("robotframework")
 public class RobotFrameworkComponent extends DefaultComponent {
@@ -78,8 +79,10 @@ public class RobotFrameworkComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        if (ResourceHelper.hasScheme(remaining)) {
+            throw new IllegalArgumentException("Resources can only be load from file system. Remove scheme");
+        }
         final RobotFrameworkCamelConfiguration configuration = this.configuration.copy();
-
         RobotFrameworkEndpoint endpoint = new RobotFrameworkEndpoint(uri, this, remaining, configuration);
         setProperties(endpoint, parameters);
         return endpoint;

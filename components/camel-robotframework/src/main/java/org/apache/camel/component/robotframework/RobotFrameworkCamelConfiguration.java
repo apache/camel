@@ -87,50 +87,35 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     private String suiteStatLevel;
     @UriParam
     private String tagStatIncludes;
-
     @UriParam
     private String tagStatExcludes;
-
     @UriParam
     private String combinedTagStats;
-
     @UriParam
     private String tagDocs;
-
     @UriParam
     private String tagStatLinks;
-
     @UriParam
     private String listeners;
-
     @UriParam
     private String listener;
-
     @UriParam
     private boolean warnOnSkippedFiles;
-
     @UriParam(defaultValue = "78")
     private String monitorWidth;
-
     @UriParam
     private String monitorColors;
-
     @UriParam
     private String argumentFiles;
-
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean runEmptySuite;
-
     @UriParam
     private String runFailed;
-
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean noStatusReturnCode;
-
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowTemplateFromHeader;
-
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowContextMapAll;
 
     public String getName() {

@@ -41,7 +41,7 @@ import org.mvel2.templates.TemplateRuntime;
              remote = false, category = { Category.TRANSFORMATION, Category.SCRIPT }, headersClass = MvelConstants.class)
 public class MvelEndpoint extends ResourceEndpoint {
 
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean allowTemplateFromHeader;
     @UriParam
     private String encoding;
@@ -56,6 +56,13 @@ public class MvelEndpoint extends ResourceEndpoint {
     @Override
     public boolean isRemote() {
         return false;
+    }
+
+    @Override
+    public void clearContentCache() {
+        super.clearContentCache();
+        this.template = null;
+        this.compiled = null;
     }
 
     @Override

@@ -39,8 +39,6 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "combinedtagstats":
         case "combinedTagStats": target.getConfiguration().setCombinedTagStats(property(camelContext, java.lang.String.class, value)); return true;
-        case "contentcache":
-        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "criticaltags":
         case "criticalTags": target.getConfiguration().setCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
         case "debugfile":
@@ -163,8 +161,6 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": return boolean.class;
         case "combinedtagstats":
         case "combinedTagStats": return java.lang.String.class;
-        case "contentcache":
-        case "contentCache": return boolean.class;
         case "criticaltags":
         case "criticalTags": return java.lang.String.class;
         case "debugfile":
@@ -288,8 +284,6 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "combinedtagstats":
         case "combinedTagStats": return target.getConfiguration().getCombinedTagStats();
-        case "contentcache":
-        case "contentCache": return target.isContentCache();
         case "criticaltags":
         case "criticalTags": return target.getConfiguration().getCriticalTags();
         case "debugfile":
