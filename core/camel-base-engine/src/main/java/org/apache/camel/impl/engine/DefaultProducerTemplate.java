@@ -38,7 +38,6 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
-import org.apache.camel.support.processor.ConvertBodyProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -401,7 +400,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     @Override
     public <T> T requestBody(Endpoint endpoint, Object body, Class<T> type) {
         Exchange exchange
-                = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), new ConvertBodyProcessor(type));
+                = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body),
+                        new ProducerTemplateResultProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -410,7 +410,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public <T> T requestBody(String endpointUri, Object body, Class<T> type) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         Exchange exchange
-                = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), new ConvertBodyProcessor(type));
+                = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body),
+                        new ProducerTemplateResultProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -418,7 +419,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     @Override
     public <T> T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type) {
         Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue),
-                new ConvertBodyProcessor(type));
+                new ProducerTemplateResultProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -427,7 +428,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public <T> T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue),
-                new ConvertBodyProcessor(type));
+                new ProducerTemplateResultProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -436,7 +437,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         Exchange exchange
-                = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), new ConvertBodyProcessor(type));
+                = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers),
+                        new ProducerTemplateResultProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -444,7 +446,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     @Override
     public <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type) {
         Exchange exchange
-                = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), new ConvertBodyProcessor(type));
+                = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers),
+                        new ProducerTemplateResultProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -673,7 +676,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     protected <T> CompletableFuture<T> asyncRequestBody(final Endpoint endpoint, Processor processor, final Class<T> type) {
-        return asyncRequestBody(endpoint, processor, new ConvertBodyProcessor(type))
+        return asyncRequestBody(endpoint, processor, new ProducerTemplateResultProcessor(type))
                 .thenApply(answer -> camelContext.getTypeConverter().convertTo(type, answer));
     }
 

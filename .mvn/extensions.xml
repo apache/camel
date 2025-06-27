@@ -3,11 +3,17 @@
     <extension>
         <groupId>org.l2x6.cq</groupId>
         <artifactId>cq-alias-fastinstall-quickly-extension</artifactId>
-        <version>4.14.2</version>
+        <version>4.17.9</version>
     </extension>
     <extension>
-        <groupId>com.tisonkun.os</groupId>
-        <artifactId>os-detector-maven-plugin</artifactId>
-        <version>0.6.0</version>
+        <groupId>eu.maveniverse.maven.nisse</groupId>
+        <artifactId>extension</artifactId>
+        <version>0.4.6</version>
     </extension>
+<!-- Temporarily disabled due to INFRA-26647 -->
+<!--    <extension>-->
+<!--        <groupId>com.gradle</groupId>-->
+<!--        <artifactId>develocity-maven-extension</artifactId>-->
+<!--        <version>1.23.2</version>-->
+<!--    </extension>-->
 </extensions>

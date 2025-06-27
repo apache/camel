@@ -119,6 +119,12 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
     }
 
     @Override
+    public void bind(String id, Class<?> type, Supplier<Object> bean, String initMethod, String destroyMethod)
+            throws RuntimeCamelException {
+        throw new UnsupportedOperationException("Use SupplierRegistry");
+    }
+
+    @Override
     public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) {
         throw new UnsupportedOperationException("Use SupplierRegistry");
     }

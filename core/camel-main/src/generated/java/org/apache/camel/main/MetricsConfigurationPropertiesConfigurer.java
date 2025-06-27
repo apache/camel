@@ -22,29 +22,36 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("BaseEndpointURIExchangeEventNotifier", boolean.class);
         map.put("Binders", java.lang.String.class);
         map.put("ClearOnReload", boolean.class);
         map.put("EnableExchangeEventNotifier", boolean.class);
+        map.put("EnableInstrumentedThreadPoolFactory", boolean.class);
         map.put("EnableMessageHistory", boolean.class);
         map.put("EnableRouteEventNotifier", boolean.class);
         map.put("EnableRoutePolicy", boolean.class);
         map.put("Enabled", boolean.class);
         map.put("NamingStrategy", java.lang.String.class);
+        map.put("Path", java.lang.String.class);
         map.put("RoutePolicyLevel", java.lang.String.class);
+        map.put("SkipCamelInfo", boolean.class);
         map.put("TextFormatVersion", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MetricsConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": target.setBaseEndpointURIExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
         case "clearonreload":
         case "clearOnReload": target.setClearOnReload(property(camelContext, boolean.class, value)); return true;
         case "enableexchangeeventnotifier":
         case "enableExchangeEventNotifier": target.setEnableExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
+        case "enableinstrumentedthreadpoolfactory":
+        case "enableInstrumentedThreadPoolFactory": target.setEnableInstrumentedThreadPoolFactory(property(camelContext, boolean.class, value)); return true;
         case "enablemessagehistory":
         case "enableMessageHistory": target.setEnableMessageHistory(property(camelContext, boolean.class, value)); return true;
         case "enablerouteeventnotifier":
@@ -54,8 +61,11 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "routepolicylevel":
         case "routePolicyLevel": target.setRoutePolicyLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "skipcamelinfo":
+        case "skipCamelInfo": target.setSkipCamelInfo(property(camelContext, boolean.class, value)); return true;
         case "textformatversion":
         case "textFormatVersion": target.setTextFormatVersion(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -67,18 +77,18 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         return ALL_OPTIONS;
     }
 
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
-    }
-
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": return boolean.class;
         case "binders": return java.lang.String.class;
         case "clearonreload":
         case "clearOnReload": return boolean.class;
         case "enableexchangeeventnotifier":
         case "enableExchangeEventNotifier": return boolean.class;
+        case "enableinstrumentedthreadpoolfactory":
+        case "enableInstrumentedThreadPoolFactory": return boolean.class;
         case "enablemessagehistory":
         case "enableMessageHistory": return boolean.class;
         case "enablerouteeventnotifier":
@@ -88,8 +98,11 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "enabled": return boolean.class;
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
+        case "path": return java.lang.String.class;
         case "routepolicylevel":
         case "routePolicyLevel": return java.lang.String.class;
+        case "skipcamelinfo":
+        case "skipCamelInfo": return boolean.class;
         case "textformatversion":
         case "textFormatVersion": return java.lang.String.class;
         default: return null;
@@ -100,11 +113,15 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": return target.isBaseEndpointURIExchangeEventNotifier();
         case "binders": return target.getBinders();
         case "clearonreload":
         case "clearOnReload": return target.isClearOnReload();
         case "enableexchangeeventnotifier":
         case "enableExchangeEventNotifier": return target.isEnableExchangeEventNotifier();
+        case "enableinstrumentedthreadpoolfactory":
+        case "enableInstrumentedThreadPoolFactory": return target.isEnableInstrumentedThreadPoolFactory();
         case "enablemessagehistory":
         case "enableMessageHistory": return target.isEnableMessageHistory();
         case "enablerouteeventnotifier":
@@ -114,8 +131,11 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "enabled": return target.isEnabled();
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
+        case "path": return target.getPath();
         case "routepolicylevel":
         case "routePolicyLevel": return target.getRoutePolicyLevel();
+        case "skipcamelinfo":
+        case "skipCamelInfo": return target.isSkipCamelInfo();
         case "textformatversion":
         case "textFormatVersion": return target.getTextFormatVersion();
         default: return null;

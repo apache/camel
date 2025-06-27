@@ -459,7 +459,8 @@ public final class RouteDefinitionHelper {
             // validate that top-level is only added on the route (eg top level)
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(child);
             boolean parentIsRoute = child.getParent() == route;
-            if (child.isTopLevelOnly() && !parentIsRoute) {
+            boolean parentIsAlreadyTop = child.getParent() == null || child.getParent().isTopLevelOnly();
+            if (child.isTopLevelOnly() && !(parentIsRoute || parentIsAlreadyTop)) {
                 throw new IllegalArgumentException(
                         "The output must be added as top-level on the route. Try moving " + child + " to the top of route.");
             }
@@ -578,7 +579,6 @@ public final class RouteDefinitionHelper {
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
             for (InterceptDefinition intercept : intercepts) {
-                intercept.afterPropertiesSet();
                 // init the parent
                 initParent(intercept);
                 // add as first output so intercept is handled before the actual
@@ -643,7 +643,6 @@ public final class RouteDefinitionHelper {
                 }
 
                 if (match) {
-                    intercept.afterPropertiesSet();
                     // init the parent
                     initParent(intercept);
                     // add as first output so intercept is handled before the

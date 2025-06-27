@@ -25,10 +25,12 @@ import java.util.stream.IntStream;
 
 import org.apache.camel.ContextEvents;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.clock.EventClock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -51,6 +53,8 @@ import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeNa
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SEQUENCE_NUMBER;
 
 @ExtendWith(MockitoExtension.class)
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 class Sqs2ConsumerTest extends CamelTestSupport {
     private AmazonSQSClientMock sqsClientMock;
     private Sqs2Configuration configuration;
@@ -204,6 +208,30 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             assertThat(receiveMessageBodies()).containsExactly("A");
             assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(expectedReceiveRequest(1));
             assertThat(sqsClientMock.getQueues()).isEmpty();
+        }
+    }
+
+    @Test
+    void consumerStopsExchangeFromExtendingVisibilityOnError() throws Exception {
+        // given
+        sqsClientMock.addMessage(message("A"));
+        configuration.setExtendMessageVisibility(true);
+        configuration.setWaitTimeSeconds(5);
+        configuration.setVisibilityTimeout(2);
+        configuration.setConcurrentConsumers(1);
+        try (var tested = createConsumerWithProcessor(1, exchange -> {
+            Thread.sleep(2000L);
+            throw new OutOfMemoryError();
+        })) {
+            //when
+            try {
+                tested.poll();
+            } catch (Error e) {
+            }
+            //simulate some time pass after error
+            Thread.sleep(2000L);
+            // then
+            assertThat(sqsClientMock.getChangeMessageVisibilityBatchRequests().size()).isEqualTo(2);
         }
     }
 
@@ -616,6 +644,21 @@ class Sqs2ConsumerTest extends CamelTestSupport {
         endpoint.setClock(clock);
 
         var consumer = new Sqs2Consumer(endpoint, receivedExchanges::add);
+        consumer.setStartScheduler(false);
+        consumer.start();
+        return consumer;
+    }
+
+    private Sqs2Consumer createConsumerWithProcessor(int maxNumberOfMessages, Processor processor) throws Exception {
+        var component = new Sqs2Component(context());
+        component.setConfiguration(configuration);
+
+        var endpoint = (Sqs2Endpoint) component.createEndpoint("aws2-sqs://%s?maxMessagesPerPoll=%s"
+                .formatted(configuration.getQueueName(), maxNumberOfMessages));
+        endpoint.setClient(sqsClientMock);
+        endpoint.setClock(clock);
+
+        var consumer = new Sqs2Consumer(endpoint, processor);
         consumer.setStartScheduler(false);
         consumer.start();
         return consumer;

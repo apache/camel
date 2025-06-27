@@ -24,50 +24,7 @@ import java.util.function.BiFunction;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.dataformat.ASN1DataFormat;
-import org.apache.camel.model.dataformat.AvroDataFormat;
-import org.apache.camel.model.dataformat.BarcodeDataFormat;
-import org.apache.camel.model.dataformat.Base64DataFormat;
-import org.apache.camel.model.dataformat.BeanioDataFormat;
-import org.apache.camel.model.dataformat.BindyDataFormat;
-import org.apache.camel.model.dataformat.CBORDataFormat;
-import org.apache.camel.model.dataformat.ContentTypeHeaderAware;
-import org.apache.camel.model.dataformat.CryptoDataFormat;
-import org.apache.camel.model.dataformat.CsvDataFormat;
-import org.apache.camel.model.dataformat.CustomDataFormat;
-import org.apache.camel.model.dataformat.FhirDataformat;
-import org.apache.camel.model.dataformat.FhirJsonDataFormat;
-import org.apache.camel.model.dataformat.FhirXmlDataFormat;
-import org.apache.camel.model.dataformat.FlatpackDataFormat;
-import org.apache.camel.model.dataformat.GrokDataFormat;
-import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
-import org.apache.camel.model.dataformat.HL7DataFormat;
-import org.apache.camel.model.dataformat.IcalDataFormat;
-import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
-import org.apache.camel.model.dataformat.JaxbDataFormat;
-import org.apache.camel.model.dataformat.JsonApiDataFormat;
-import org.apache.camel.model.dataformat.JsonDataFormat;
-import org.apache.camel.model.dataformat.LZFDataFormat;
-import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
-import org.apache.camel.model.dataformat.PGPDataFormat;
-import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
-import org.apache.camel.model.dataformat.ProtobufDataFormat;
-import org.apache.camel.model.dataformat.RssDataFormat;
-import org.apache.camel.model.dataformat.SmooksDataFormat;
-import org.apache.camel.model.dataformat.SoapDataFormat;
-import org.apache.camel.model.dataformat.SwiftMtDataFormat;
-import org.apache.camel.model.dataformat.SwiftMxDataFormat;
-import org.apache.camel.model.dataformat.SyslogDataFormat;
-import org.apache.camel.model.dataformat.TarFileDataFormat;
-import org.apache.camel.model.dataformat.ThriftDataFormat;
-import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
-import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
-import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
-import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
-import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
-import org.apache.camel.model.dataformat.YAMLDataFormat;
-import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
-import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.model.dataformat.*;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
@@ -197,6 +154,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new CsvDataFormatReifier(camelContext, definition);
         } else if (definition instanceof CustomDataFormat) {
             return new CustomDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof DfdlDataFormat) {
+            return new DfdlDataFormatReifier(camelContext, definition);
         } else if (definition instanceof FhirJsonDataFormat) {
             return new FhirJsonDataFormatReifier(camelContext, definition);
         } else if (definition instanceof FhirXmlDataFormat) {
@@ -205,6 +164,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new FhirDataFormatReifier<>(camelContext, definition);
         } else if (definition instanceof FlatpackDataFormat) {
             return new FlatpackDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof ForyDataFormat) {
+            return new ForyDataFormatReifier(camelContext, definition);
         } else if (definition instanceof GrokDataFormat) {
             return new GrokDataFormatReifier(camelContext, definition);
         } else if (definition instanceof GzipDeflaterDataFormat) {

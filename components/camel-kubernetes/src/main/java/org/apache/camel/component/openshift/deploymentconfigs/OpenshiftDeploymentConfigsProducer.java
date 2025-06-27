@@ -199,7 +199,7 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
         DeploymentConfig deploymentConfigScaled
                 = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
                         .inNamespace(namespaceName)
-                        .withName(deploymentName).scale(replicasNumber, false);
+                        .withName(deploymentName).scale(replicasNumber);
 
         prepareOutboundMessage(exchange, deploymentConfigScaled.getStatus().getReplicas());
     }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka.consumer.support.batching;
 
 import java.util.Set;
@@ -30,16 +29,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class KafkaRecordBatchingProcessorFacade extends AbstractKafkaRecordProcessorFacade {
+
     private static final Logger LOG = LoggerFactory.getLogger(KafkaRecordBatchingProcessorFacade.class);
+
     private final KafkaRecordBatchingProcessor kafkaRecordProcessor;
 
-    public KafkaRecordBatchingProcessorFacade(
-                                              KafkaConsumer camelKafkaConsumer, String threadId,
+    public KafkaRecordBatchingProcessorFacade(KafkaConsumer camelKafkaConsumer, String threadId,
                                               CommitManager commitManager, KafkaConsumerListener consumerListener) {
         super(camelKafkaConsumer, threadId, commitManager, consumerListener);
-
         kafkaRecordProcessor = buildKafkaRecordProcessor(commitManager);
-
     }
 
     private KafkaRecordBatchingProcessor buildKafkaRecordProcessor(CommitManager commitManager) {
@@ -52,10 +50,8 @@ public class KafkaRecordBatchingProcessorFacade extends AbstractKafkaRecordProce
     @Override
     public ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords) {
         logRecords(allRecords);
-
         Set<TopicPartition> partitions = allRecords.partitions();
         LOG.debug("Poll received records on {} partitions", partitions.size());
-
         return kafkaRecordProcessor.processExchange(camelKafkaConsumer, allRecords);
     }
 

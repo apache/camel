@@ -447,6 +447,36 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable session support.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sessionEnabled the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder sessionEnabled(boolean sessionEnabled) {
+            doSetProperty("sessionEnabled", sessionEnabled);
+            return this;
+        }
+        /**
+         * Enable session support.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sessionEnabled the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder sessionEnabled(String sessionEnabled) {
+            doSetProperty("sessionEnabled", sessionEnabled);
+            return this;
+        }
+        /**
          * Sets the type of the SubQueue to connect to.
          * 
          * The option is a:
@@ -1081,6 +1111,20 @@ public interface ServiceBusEndpointBuilderFactory {
          */
         default ServiceBusEndpointProducerBuilder serviceBusTransactionContext(String serviceBusTransactionContext) {
             doSetProperty("serviceBusTransactionContext", serviceBusTransactionContext);
+            return this;
+        }
+        /**
+         * Session ID for session-enabled queues or topics.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param sessionId the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointProducerBuilder sessionId(String sessionId) {
+            doSetProperty("sessionId", sessionId);
             return this;
         }
         /**

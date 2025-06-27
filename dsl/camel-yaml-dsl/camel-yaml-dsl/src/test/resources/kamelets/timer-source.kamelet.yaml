@@ -61,9 +61,9 @@ spec:
       parameters:
         period: "{{period}}"
       steps:
-        - set-body:
+        - setBody:
             constant: "{{message}}"
-        - set-header:
+        - setHeader:
             name: "Content-Type"
             constant: "{{contentType}}"
         - to: kamelet:sink

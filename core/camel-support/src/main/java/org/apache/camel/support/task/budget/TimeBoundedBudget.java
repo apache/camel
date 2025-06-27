@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task.budget;
 
 import java.time.Duration;
@@ -24,12 +23,14 @@ import java.time.Instant;
  * This task budget limits the execution by both a maximum amount of time for the execution.
  */
 public class TimeBoundedBudget implements TimeBudget {
+
     public static final long UNLIMITED_DURATION = -1;
 
     private final long initialDelay;
     private final long interval;
     private final long maxDuration;
     private final Instant startTime;
+    private int iterations;
 
     TimeBoundedBudget(long initialDelay, long interval, long maxDuration) {
         this.initialDelay = initialDelay;
@@ -70,7 +71,13 @@ public class TimeBoundedBudget implements TimeBudget {
 
     @Override
     public boolean next() {
+        iterations++;
         return true;
+    }
+
+    @Override
+    public int iteration() {
+        return iterations;
     }
 
     @Override

@@ -99,7 +99,10 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
 
     /**
      * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due
-     * circuit breaker is half open or open.
+     * circuit breaker is half open (and was not attempted but rejected immediately) or open (always rejected).
+     *
+     * This option is only in use when there is NOT a fallback configured on the circuit breaker. When there is a
+     * fallback then the fallback is always executed and CallNotPermittedException is not thrown.
      */
     public Resilience4jConfigurationDefinition throwExceptionWhenHalfOpenOrOpenState(
             boolean throwExceptionWhenHalfOpenOrOpenState) {
@@ -272,6 +275,18 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Configure a list of exceptions that are recorded as a failure and thus increase the failure rate. Any exception
+     * matching or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.
+     */
+    @SafeVarargs
+    public final Resilience4jConfigurationDefinition recordException(Class<? extends Throwable>... exception) {
+        for (Class<? extends Throwable> t : exception) {
+            getRecordExceptions().add(t.getName());
+        }
+        return this;
+    }
+
+    /**
      * Configure a list of exceptions that are ignored and neither count as a failure nor success. Any exception
      * matching or inheriting from one of the list will not count as a failure nor success, even if the exceptions is
      * part of recordExceptions.
@@ -279,6 +294,19 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     public Resilience4jConfigurationDefinition ignoreException(Throwable... exception) {
         for (Throwable t : exception) {
             getIgnoreExceptions().add(t.getClass().getName());
+        }
+        return this;
+    }
+
+    /**
+     * Configure a list of exceptions that are ignored and neither count as a failure nor success. Any exception
+     * matching or inheriting from one of the list will not count as a failure nor success, even if the exceptions is
+     * part of recordExceptions.
+     */
+    @SafeVarargs
+    public final Resilience4jConfigurationDefinition ignoreException(Class<? extends Throwable>... exception) {
+        for (Class<? extends Throwable> t : exception) {
+            getIgnoreExceptions().add(t.getName());
         }
         return this;
     }

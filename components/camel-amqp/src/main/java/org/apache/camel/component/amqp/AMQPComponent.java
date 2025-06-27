@@ -30,6 +30,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.qpid.jms.JmsConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Messaging with AMQP protocol using Apache QPid Client.
@@ -37,9 +39,13 @@ import org.apache.qpid.jms.JmsConnectionFactory;
 @Component("amqp")
 public class AMQPComponent extends JmsComponent {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AMQPComponent.class);
+
     public static final String AMQP_DEFAULT_HOST = "localhost";
     public static final int AMQP_DEFAULT_PORT = 5672;
 
+    @Metadata(description = "Remote URL to broker. The URL is used to setup connection factory and is broker specific (such as ActiveMQ).")
+    private String brokerUrl;
     @Metadata(description = "The host name or IP address of the computer that hosts the AMQP Broker.")
     private String host;
     @Metadata(description = "The port number on which the AMPQ Broker listens.")
@@ -97,7 +103,14 @@ public class AMQPComponent extends JmsComponent {
 
     @Override
     protected void doInit() throws Exception {
-        if (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
+        if (brokerUrl != null) {
+            JmsConnectionFactory connectionFactory
+                    = new JmsConnectionFactory(brokerUrl);
+            if (useTopicPrefix != Boolean.FALSE) {
+                connectionFactory.setTopicPrefix("topic://");
+            }
+            getConfiguration().setConnectionFactory(connectionFactory);
+        } else if (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
                 || useSsl != null) {
             StringBuilder sb = new StringBuilder();
             sb.append(useSsl == Boolean.TRUE ? "amqps://" : "amqp://");
@@ -120,6 +133,7 @@ public class AMQPComponent extends JmsComponent {
             Set<AMQPConnectionDetails> connectionDetails
                     = getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
             if (connectionDetails.size() == 1) {
+                LOG.warn("Using AMQPConnectionDetails is deprecated");
                 AMQPConnectionDetails details = connectionDetails.iterator().next();
                 JmsConnectionFactory connectionFactory
                         = new JmsConnectionFactory(details.username(), details.password(), details.uri());
@@ -179,6 +193,14 @@ public class AMQPComponent extends JmsComponent {
                             PropertyConfigurerSupport.property(getCamelContext(), boolean.class, includeAmqpAnnotations));
         }
         super.setProperties(bean, parameters);
+    }
+
+    public String getBrokerUrl() {
+        return brokerUrl;
+    }
+
+    public void setBrokerUrl(String brokerUrl) {
+        this.brokerUrl = brokerUrl;
     }
 
     public String getHost() {

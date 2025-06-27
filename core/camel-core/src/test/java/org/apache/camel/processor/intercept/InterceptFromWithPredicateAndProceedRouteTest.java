@@ -23,7 +23,7 @@ public class InterceptFromWithPredicateAndProceedRouteTest extends InterceptFrom
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b");
+                interceptFrom().onWhen(header("foo").isEqualTo("bar")).to("mock:b");
 
                 from("direct:start").to("mock:a");
             }

@@ -3,7 +3,7 @@
 :shortname: clickup
 :artifactid: camel-clickup
 :description: Receives events from ClickUp
-:since: 4.9.0-SNAPSHOT
+:since: 4.9
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only consumer is supported
@@ -13,6 +13,19 @@
 This component is for receiving events from ClickUp.
 
 *{component-header}*
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-clickup</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
 
 == URI format
 
@@ -60,5 +73,5 @@ from("webhook:clickup:<workspaceId>?&authorizationToken=<authorizationToken>&eve
 ---------------------------------------------------------
 
 You can follow the
-https://clickup.com/api/developer-portal/webhooks[set up webhooks guide]
+https://clickup.com/api/developer-portal/webhooks[set-up webhooks guide]
 to enable and configure the webhook.

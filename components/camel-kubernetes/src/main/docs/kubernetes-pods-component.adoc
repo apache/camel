@@ -84,18 +84,26 @@ This operation returns a list of pods from your cluster using a label selector (
 
 [source,java]
 --------------------------------------------------------------------------------
-fromF("kubernetes-pods://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
-    public class KubernertesProcessor implements Processor {
+fromF("kubernetes-pods://%s?oauthToken=%s", host, authToken)
+    .process(new KubernetesProcessor()).to("mock:result");
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Pod pod = exchange.getIn().getBody(Pod.class);
-            log.info("Got event with configmap name: " + pod.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with pod name: " + pod.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 --------------------------------------------------------------------------------
 
-This consumer will return a list of events on the namespace default for the pod test.
+This consumer returns a message per event received for all Pods from all namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Pods with the specified label in any namespace.
+- `namespace` - Watch all Pods in the specified namespace.
+- `namespace` + `resourceName` - Watch the Pod with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch Pods with the specified label in the given namespace.
 
 
 include::spring-boot:partial$starter.adoc[]

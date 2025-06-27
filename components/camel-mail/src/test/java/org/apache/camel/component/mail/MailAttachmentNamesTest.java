@@ -42,7 +42,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailAttachmentNamesTest extends CamelTestSupport {
@@ -170,7 +169,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
         resultDefaultEndpoint.assertIsSatisfied();
         Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
         assertNotNull(exchange.getIn(AttachmentMessage.class));
-        assertNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
+        assertEquals(0, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().size());
     }
 
     /**
@@ -185,7 +184,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
         resultDefaultEndpoint.assertIsSatisfied();
         Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
         assertNotNull(exchange.getIn(AttachmentMessage.class));
-        assertNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
+        assertEquals(0, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().size());
     }
 
     @Test

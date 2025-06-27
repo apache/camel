@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.aws2.sqs.integration;
 
-import org.apache.camel.*;
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.sqs.Sqs2Component;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;

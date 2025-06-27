@@ -44,7 +44,7 @@ class RestOpenapiProcessorStrategyTest extends ManagedCamelTestSupport {
         ((DefaultRestOpenapiProcessorStrategy) restOpenapiProcessorStrategy).setCamelContext(camelContext);
         restOpenapiProcessorStrategy.setMissingOperation("fail");
         Exception ex = assertThrows(IllegalArgumentException.class,
-                () -> restOpenapiProcessorStrategy.validateOpenApi(getOpenApi(), mock(PlatformHttpConsumerAware.class)));
+                () -> restOpenapiProcessorStrategy.validateOpenApi(getOpenApi(), null, mock(PlatformHttpConsumerAware.class)));
         assertTrue(ex.getMessage().contains("direct:GENOPID_GET.users"));
         assertTrue(ex.getMessage().contains("direct:GENOPID_GET.user._id_"));
 

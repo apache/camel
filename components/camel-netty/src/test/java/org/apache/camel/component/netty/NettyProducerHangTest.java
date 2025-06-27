@@ -44,7 +44,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
                     acceptReplyAcceptClose();
                     acceptReplyAcceptClose();
                 } catch (IOException e) {
-                    LOG.error("Exception occured: {}", e.getMessage(), e);
+                    LOG.error("Exception occurred: {}", e.getMessage(), e);
                 }
             }
         }).start();

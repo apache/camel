@@ -16,7 +16,7 @@ The Bean language is used for calling a method on an existing Java bean.
 Camel adapts to the method being called via xref:manual::bean-binding.adoc[Bean Binding].
 The binding process will, for example, automatically convert the message payload to the parameter
 of type of the first parameter in the method.
-The binding process has a lot more features, so it is recommended to read the xref:manual::bean-binding.adoc[Bean Binding] documentation for mor details.
+The binding process has a lot more features, so it is recommended to read the xref:manual::bean-binding.adoc[Bean Binding] documentation for more details.
 
 == Bean Method options
 

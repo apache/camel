@@ -16,18 +16,11 @@
  */
 package org.apache.camel.test.infra.redis.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Redis
  */
-public interface RedisService extends TestService {
-
-    String host();
-
-    int port();
-
-    default String getServiceAddress() {
-        return String.format("%s:%d", host(), port());
-    }
+public interface RedisService extends TestService, RedisInfraService, ContainerTestService {
 }

@@ -8,11 +8,10 @@
 
 A sampling throttler allows you to extract a sample of the exchanges from the traffic through a route.
 
-image::eip/WireTap.gif[image]
+image::eip/Sample.png[image]
 
-The Sample EIP works similar to a wire tap, but instead of tapping every message, the sampling will
-select a single message in a given time period. This selected message is allowed to pass through,
-and all other messages are stopped.
+The Sample EIP selects a single message in a given time period or every nth message.
+This selected message is allowed to pass through, and all other messages are stopped.
 
 == Options
 // eip options: START
@@ -47,9 +46,8 @@ XML::
 ----
 <route>
     <from uri="direct:sample"/>
-    <sample>
-        <to uri="direct:sampled"/>
-    </sample>
+    <sample/>
+    <to uri="direct:sampled"/>
 </route>
 ----
 ====
@@ -66,7 +64,7 @@ Java::
 [source,java]
 ----
 from("direct:sample")
-    .sample(5, TimeUnit.SECONDS)
+    .sample(Duration.of(5, ChronoUnit.SECONDS))
     .to("direct:sampled");
 ----
 
@@ -76,9 +74,8 @@ XML::
 ----
 <route>
     <from uri="direct:sample"/>
-    <sample samplePeriod="5000">
-        <to uri="direct:sampled"/>
-    </sample>
+    <sample samplePeriod="5000"/>
+    <to uri="direct:sampled"/>
 </route>
 ----
 ====
@@ -106,9 +103,49 @@ XML::
 ----
 <route>
     <from uri="direct:sample"/>
-    <sample messageFrequency="10">
-        <to uri="direct:sampled"/>
-    </sample>
+    <sample messageFrequency="10"/>
+    <to uri="direct:sampled"/>
+</route>
+----
+====
+
+=== Sampling with wiretap
+
+The sampling throttler will stop all exchanges not included in the sample. This may be undesirable if you want to
+perform custom processing on the sample while still allowing all 10 messages to flow to an endpoint after the sample EIP.
+
+For this use case, you can combine the sample EIP with wiretap EIP. In the example below, we sample every 10th message
+and send it to direct:sampleProcessing, while all 10 messages are still sent to direct:regularProcessing.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .wireTap("direct:sample")
+  .to("direct:regularProcessing")
+
+from("direct:sample")
+  .sample(10)
+  .to("direct:sampleProcessing");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <wireTap uri="direct:sample"/>
+    <to uri="direct:regularProcessing"/>
+</route>
+
+<route>
+    <from uri="direct:sample"/>
+    <sample messageFrequency="10"/>
+    <to uri="direct:sampleProcessing"/>
 </route>
 ----
 ====

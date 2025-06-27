@@ -2476,4 +2476,158 @@ public class KnativeHttpTest {
             server.stop();
         }
     }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testOidcServiceOptions(CloudEvent ce) throws Exception {
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                sourceEvent(
+                        "default",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "myEvent",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        KnativeOidcServiceOptions serviceOptions = new KnativeOidcServiceOptions(context);
+        serviceOptions.setOidcEnabled(true);
+        serviceOptions.setOidcTokenPath("classpath:oidc/token.txt");
+
+        if (component.getConsumerFactory() instanceof KnativeHttpConsumerFactory consumerFactory) {
+            consumerFactory.setServiceOptions(serviceOptions);
+        }
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:event/myEvent")
+                    .to("mock:ce");
+        });
+
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:ce", MockEndpoint.class);
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, ce.version());
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "myEvent");
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_ID, "myEventID");
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "/somewhere");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain");
+        mock.expectedMessagesMatches(e -> e.getMessage().getHeaders().containsKey(CloudEvent.CAMEL_CLOUD_EVENT_TIME));
+        mock.expectedBodiesReceived("test");
+        mock.expectedMessageCount(1);
+
+        given()
+                .body("test")
+                .header(Exchange.CONTENT_TYPE, "text/plain")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
+                .when()
+                .post()
+                .then()
+                .statusCode(401); // forbidden - missing token
+
+        given()
+                .body("test")
+                .header(Exchange.CONTENT_TYPE, "text/plain")
+                .header("Authorization", "Bearer wrong_token")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
+                .when()
+                .post()
+                .then()
+                .statusCode(401); // forbidden - wrong token
+
+        given()
+                .body("test")
+                .header(Exchange.CONTENT_TYPE, "text/plain")
+                .header("Authorization", "Bearer whatever_the_token_is")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
+                .when()
+                .post()
+                .then()
+                .statusCode(200);
+
+        mock.assertIsSatisfied();
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testOidcServiceOptionsPropertyConf(CloudEvent ce) throws Exception {
+        context.getPropertiesComponent().addInitialProperty("camel.knative.service.oidc.enabled", "true");
+        context.getPropertiesComponent().addInitialProperty("camel.knative.service.oidc.token.path",
+                "classpath:oidc/token.txt");
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                sourceEvent(
+                        "default",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "myEvent",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:event/myEvent")
+                    .to("mock:ce");
+        });
+
+        PropertyBindingSupport.build().bind(context, component,
+                "camel.component.knative.consumerFactory.serviceOptions",
+                "#class:" + KnativeOidcServiceOptions.class.getName());
+
+        context.start();
+
+        MockEndpoint mock = context.getEndpoint("mock:ce", MockEndpoint.class);
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, ce.version());
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "myEvent");
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_ID, "myEventID");
+        mock.expectedHeaderReceived(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "/somewhere");
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain");
+        mock.expectedMessagesMatches(e -> e.getMessage().getHeaders().containsKey(CloudEvent.CAMEL_CLOUD_EVENT_TIME));
+        mock.expectedBodiesReceived("test");
+        mock.expectedMessageCount(1);
+
+        given()
+                .body("test")
+                .header(Exchange.CONTENT_TYPE, "text/plain")
+                .header("Authorization", "Bearer wrong_token")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
+                .when()
+                .post()
+                .then()
+                .statusCode(401); // forbidden - wrong token
+
+        given()
+                .body("test")
+                .header(Exchange.CONTENT_TYPE, "text/plain")
+                .header("Authorization", "Bearer whatever_the_token_is")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION), ce.version())
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE), "myEvent")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID), "myEventID")
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TIME),
+                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()))
+                .header(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE), "/somewhere")
+                .when()
+                .post()
+                .then()
+                .statusCode(200);
+
+        mock.assertIsSatisfied();
+    }
 }

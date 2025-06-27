@@ -44,6 +44,16 @@ public final class MilvusServiceFactory {
         public int getMilvusPort() {
             return getService().getMilvusPort();
         }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
     }
 
     public static SimpleTestServiceBuilder<MilvusService> builder() {
@@ -61,5 +71,11 @@ public final class MilvusServiceFactory {
         return builder()
                 .addLocalMapping(() -> new SingletonMilvusService(new MilvusLocalContainerService(), "milvus"))
                 .build();
+    }
+
+    public static class MilvusLocalContainerService extends MilvusLocalContainerInfraService implements MilvusService {
+    }
+
+    public static class MilvusRemoteService extends MilvusRemoteInfraService implements MilvusService {
     }
 }

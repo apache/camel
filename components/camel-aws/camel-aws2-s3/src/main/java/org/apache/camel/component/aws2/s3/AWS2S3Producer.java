@@ -704,7 +704,7 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void headBucket(S3Client s3Client, Exchange exchange) {
-        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
+        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, String.class);
         if (ObjectHelper.isEmpty(bucketName)) {
             throw new IllegalArgumentException(
                     "Head Bucket operation requires to specify a bucket name via Header");

@@ -22,6 +22,8 @@ import org.apache.camel.support.http.HttpUtil;
 
 /**
  * Default Netty {@link HeaderFilterStrategy} used when binding with {@link NettyHttpBinding}.
+ *
+ * @deprecated use {@link org.apache.camel.http.base.HttpHeaderFilterStrategy} instead.
  */
 public class NettyHttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 

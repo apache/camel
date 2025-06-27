@@ -59,8 +59,9 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
+        String scheme = service.getSslContext().isPresent() ? "https" : "http";
         HttpHost host
-                = new HttpHost(service.getElasticSearchHost(), service.getPort(), "https");
+                = new HttpHost(service.getElasticSearchHost(), service.getPort(), scheme);
         final RestClientBuilder builder = RestClient.builder(host);
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY,
@@ -68,7 +69,9 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
         builder.setHttpClientConfigCallback(
                 httpClientBuilder -> {
                     httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                    httpClientBuilder.setSSLContext(service.getSslContext().orElseThrow());
+                    service.getSslContext().ifPresent(sslContext -> {
+                        httpClientBuilder.setSSLContext(sslContext);
+                    });
                     return httpClientBuilder;
                 });
         restClient = builder.build();
@@ -86,11 +89,13 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final ElasticsearchComponent elasticsearchComponent = new ElasticsearchComponent();
-        elasticsearchComponent.setEnableSSL(true);
+        elasticsearchComponent.setEnableSSL(service.getSslContext().isPresent());
         elasticsearchComponent.setHostAddresses(service.getHttpHostAddress());
         elasticsearchComponent.setUser(service.getUsername());
         elasticsearchComponent.setPassword(service.getPassword());
-        elasticsearchComponent.setCertificatePath("file:%s".formatted(service.getCertificatePath().orElseThrow()));
+        service.getCertificatePath().ifPresent(certificatePath -> {
+            elasticsearchComponent.setCertificatePath("file:%s".formatted(certificatePath));
+        });
 
         CamelContext context = super.createCamelContext();
         context.addComponent("elasticsearch", elasticsearchComponent);

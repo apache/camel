@@ -34,7 +34,7 @@ class ParameterExceptionHandlerTest {
         Assertions.assertEquals(5, lines.length, "5 lines for the error is expected but received " + lines.length);
         Assertions.assertEquals("Unmatched argument at index 0: 'firstInvalid'", lines[0],
                 "First line mentioning unmatched argument");
-        Assertions.assertEquals("Did you mean: camel bind or camel plugin or camel version?", lines[1],
+        Assertions.assertEquals("Did you mean: camel bind or camel infra or camel plugin?", lines[1],
                 "Second line with suggestion in case it is a typo");
         Assertions.assertEquals(
                 "Maybe a specific Camel JBang plugin must be installed? (Try camel plugin --help' for more information)",

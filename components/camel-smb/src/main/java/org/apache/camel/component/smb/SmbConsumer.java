@@ -16,137 +16,415 @@
  */
 package org.apache.camel.component.smb;
 
-import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Supplier;
 
+import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
-import com.hierynomus.smbj.SMBClient;
-import com.hierynomus.smbj.auth.AuthenticationContext;
-import com.hierynomus.smbj.connection.Connection;
-import com.hierynomus.smbj.session.Session;
-import com.hierynomus.smbj.share.DiskShare;
-import com.hierynomus.smbj.share.File;
+import com.hierynomus.protocol.commons.EnumWithValue;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Message;
+import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ScheduledPollConsumer;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileConsumer;
+import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.function.Suppliers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class SmbConsumer extends ScheduledPollConsumer {
+public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformation> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SmbConsumer.class);
+
     private final SmbEndpoint endpoint;
     private final SmbConfiguration configuration;
+    private final String endpointPath;
+    protected transient boolean loggedIn;
+    protected transient boolean loggedInWarning;
+    protected transient boolean autoCreatedDone;
+    protected transient boolean autoCreateWarning;
 
-    private final SMBClient smbClient;
-    private Connection connection;
-    private Session session;
-    private DiskShare share;
-
-    public SmbConsumer(SmbEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
+    public SmbConsumer(SmbEndpoint endpoint, Processor processor,
+                       GenericFileOperations<FileIdBothDirectoryInformation> fileOperations,
+                       GenericFileProcessStrategy<FileIdBothDirectoryInformation> processStrategy) {
+        super(endpoint, processor, fileOperations, processStrategy);
         this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
-
-        if (this.configuration.getSmbConfig() != null) {
-            smbClient = new SMBClient(this.configuration.getSmbConfig());
-        } else {
-            smbClient = new SMBClient();
-        }
-    }
-
-    private int pollDirectory(DiskShare share, SmbConfiguration configuration, int polledCount, String path) throws Exception {
-        SmbIOBean smbIOBean = configuration.getSmbIoBean();
-        String searchPattern = configuration.getSearchPattern();
-        IdempotentRepository repository = configuration.getIdempotentRepository();
-
-        path = (path == null) ? "" : path;
-
-        for (FileIdBothDirectoryInformation f : share.list(path, searchPattern)) {
-            if (f.getFileName().equals(".") || f.getFileName().equals("..")) {
-                continue;
-            }
-
-            String fullFilePath = "";
-            if (!"".equals(path)) {
-                fullFilePath = new String(path + java.io.File.separator + f.getFileName());
-            }
-
-            if (share.folderExists(fullFilePath)) {
-                if (configuration.isRecursive()) {
-                    polledCount = pollDirectory(share, configuration, polledCount, new String(fullFilePath));
-                }
-                continue;
-            }
-
-            if (!repository.contains(fullFilePath)) {
-                polledCount++;
-                final Exchange exchange = createExchange(true);
-
-                final File file = share.openFile(fullFilePath,
-                        smbIOBean.accessMask(),
-                        smbIOBean.attributes(),
-                        smbIOBean.shareAccesses(),
-                        smbIOBean.createDisposition(),
-                        smbIOBean.createOptions());
-
-                repository.add(fullFilePath);
-
-                SmbFile smbFile = new SmbFile(file);
-
-                smbFile.populateHeaders(exchange);
-                exchange.getMessage().setBody(smbFile);
-                try {
-                    getProcessor().process(exchange);
-                } catch (Exception e) {
-                    exchange.setException(e);
-                }
-                if (exchange.getException() != null) {
-                    Exception e = exchange.getException();
-                    String msg = "Error processing file " + fullFilePath + " due to " + e.getMessage();
-                    handleException(msg, exchange, e);
-                }
-            }
-        }
-        return polledCount;
+        this.endpointPath = this.configuration.getDirectory() == null ? "" : this.configuration.getDirectory();
+        this.setRetrieveFile(configuration.isDownload());
     }
 
     @Override
-    protected int poll() throws Exception {
-        int polledCount = 0;
-
-        polledCount = pollDirectory(share, configuration, polledCount, configuration.getPath());
-
-        return polledCount;
+    @SuppressWarnings("unchecked")
+    public GenericFileEndpoint<FileIdBothDirectoryInformation> getEndpoint() {
+        return (GenericFileEndpoint<FileIdBothDirectoryInformation>) super.getEndpoint();
     }
 
-    private void refreshConnection() throws IOException {
-        if (connection != null && connection.isConnected()) {
-            return;
+    @Override
+    protected boolean pollDirectory(
+            Exchange dynamic, String path, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth) {
+        depth++;
+        path = (path == null) ? "" : path;
+        FileIdBothDirectoryInformation[] files = getSmbFiles(path);
+
+        if (files.length == 0) {
+            LOG.trace("No files found in directory: {}", path);
+            return true;
         }
 
-        connection = smbClient.connect(endpoint.getHostname(), endpoint.getPort());
+        if (getEndpoint().isPreSort()) {
+            Arrays.sort(files, Comparator.comparing(FileIdBothDirectoryInformation::getFileName));
+        }
 
-        // start a single threaded pool to monitor events
-        AuthenticationContext ac = new AuthenticationContext(
-                configuration.getUsername(), configuration.getPassword().toCharArray(),
-                configuration.getDomain());
-        session = connection.authenticate(ac);
+        for (FileIdBothDirectoryInformation file : files) {
+            if (file.getFileName().equals(".") || file.getFileName().equals("..")) {
+                continue;
+            }
+            if (!canPollMoreFiles(fileList)) {
+                return false;
+            }
 
-        // Connect to the share
-        share = (DiskShare) session.connectShare(endpoint.getShareName());
+            String fullFilePath = file.getFileName();
+            if (!path.isEmpty()) {
+                fullFilePath
+                        = path + (path.endsWith("/") ? "" : "/") + file.getFileName();
+            }
+
+            if (handleSmbEntries(dynamic, fullFilePath, fileList, depth, files, file)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private FileIdBothDirectoryInformation[] getSmbFiles(String dir) {
+        LOG.trace("Polling directory: {}", dir);
+        return getOperations().listFiles(dir, configuration.getSearchPattern());
+    }
+
+    private boolean handleSmbEntries(
+            Exchange dynamic,
+            String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
+            FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
+
+        if (isDirectory(file)) {
+            LOG.trace("SmbFile[name={}, dir=true]", file.getFileName());
+            return handleDirectory(dynamic, fullFilePath, fileList, depth, files, file);
+        } else {
+            LOG.trace("SmbFile[name={}, file=true]", file.getFileName());
+            handleFile(dynamic, fullFilePath, fileList, depth, files, file);
+        }
+        return false;
+    }
+
+    private boolean handleDirectory(
+            Exchange dynamic,
+            String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
+            FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
+
+        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            SmbFile smbFile = asGenericFile(fullFilePath, file, getEndpoint().getCharset());
+            Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
+            Supplier<String> relativePath = smbFile::getRelativeFilePath;
+            if (isValidFile(dynamic, genericFileSupplier, file.getFileName(),
+                    smbFile.getAbsoluteFilePath(), relativePath, true, files)) {
+                // recursive scan and add the sub files and folders
+                boolean canPollMore = pollDirectory(dynamic, fullFilePath, fileList, depth);
+                return !canPollMore;
+            }
+        }
+        return false;
+    }
+
+    private void handleFile(
+            Exchange dynamic,
+            String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
+            FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
+
+        if (depth >= endpoint.getMinDepth()) {
+            SmbFile smbFile = asGenericFile(fullFilePath, file, getEndpoint().getCharset());
+            Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
+            Supplier<String> relativePath = smbFile::getRelativeFilePath;
+
+            if (isValidFile(dynamic, genericFileSupplier, file.getFileName(),
+                    smbFile.getAbsoluteFilePath(), relativePath, false, files)) {
+                fileList.add(smbFile);
+            }
+        }
+    }
+
+    @Override
+    protected Exchange createExchange(GenericFile<FileIdBothDirectoryInformation> file) {
+        Exchange exchange = createExchange(true);
+        if (file != null) {
+            file.bindToExchange(exchange);
+        }
+        return exchange;
+    }
+
+    @Override
+    protected void updateFileHeaders(GenericFile<FileIdBothDirectoryInformation> file, Message message) {
+        // noop
+    }
+
+    @Override
+    protected Supplier<String> getRelativeFilePath(
+            String endpointPath, String path, String absolutePath, FileIdBothDirectoryInformation file) {
+        return () -> {
+            // the relative filename, skip the leading endpoint configured path
+            String relativePath = StringHelper.after(absolutePath, endpointPath);
+            // skip leading /
+            return FileUtil.stripLeadingSeparator(relativePath);
+        };
+    }
+
+    @Override
+    protected boolean isMatched(
+            Supplier<GenericFile<FileIdBothDirectoryInformation>> file, String doneFileName,
+            FileIdBothDirectoryInformation[] files) {
+
+        String onlyName = FileUtil.stripPath(doneFileName);
+        for (FileIdBothDirectoryInformation f : files) {
+            if (f.getFileName().equals(onlyName)) {
+                return true;
+            }
+        }
+        LOG.trace("Done file: {} does not exist", doneFileName);
+        return false;
+    }
+
+    @Override
+    protected boolean prePollCheck() throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("prePollCheck on {}", getEndpoint());
+        }
+        Exception cause;
+        try {
+            getOperations().connectIfNecessary();
+            loggedIn = true;
+            if (!autoCreatedDone) {
+                autoCreateIfNecessary();
+                autoCreatedDone = true;
+            }
+        } catch (Exception e) {
+            cause = e;
+            String msg = "Cannot connect/login to: " + remoteServer();
+            if (loggedIn && !autoCreatedDone) {
+                msg = "Cannot auto-create starting directory at: " + remoteServer();
+            }
+            LOG.debug(msg, cause);
+            loggedIn = false;
+            if (configuration.isThrowExceptionOnConnectFailed()) {
+                throw e;
+            }
+        }
+        if (loggedIn && !autoCreatedDone) {
+            String message = "Cannot auto-create starting directory at: " + remoteServer() + ". Will skip this poll.";
+            if (!autoCreateWarning) {
+                LOG.warn(message);
+                autoCreateWarning = true;
+            }
+            return false;
+        }
+        if (!loggedIn) {
+            String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
+            if (!loggedInWarning) {
+                LOG.warn(message);
+                loggedInWarning = true;
+            }
+            return false;
+        } else {
+            // need to log the failed log again
+            loggedInWarning = false;
+        }
+
+        // we are logged in so lets mark the consumer as ready
+        forceConsumerAsReady();
+
+        return true;
+    }
+
+    protected void autoCreateIfNecessary() throws GenericFileOperationFailedException {
+        if (endpoint.isAutoCreate() && hasStartingDirectory()) {
+            String dir = endpoint.getConfiguration().getDirectory();
+            LOG.debug("Auto creating directory: {}", dir);
+            operations.buildDirectory(dir, true);
+        }
+    }
+
+    /**
+     * Returns human-readable server information for logging purpose
+     */
+    protected String remoteServer() {
+        return configuration.remoteServerInformation();
+    }
+
+    protected void disconnect() {
+        // eager indicate we are no longer logged in
+        loggedIn = false;
+
+        // disconnect
+        try {
+            if (getOperations().isConnected()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Disconnecting from: {}", remoteServer());
+                }
+                getOperations().disconnect();
+            }
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(), e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    protected void postPollCheck(int polledMessages) {
+        // if we did not poll any messages, but are configured to disconnect
+        // then we need to do this now
+        // as there is no exchanges to be routed that otherwise will disconnect
+        // from the last UoW
+        if (polledMessages == 0) {
+            if (configuration.isDisconnect()) {
+                LOG.trace("postPollCheck disconnect from: {}", getEndpoint());
+                disconnect();
+            }
+        }
+    }
+
+    @Override
+    protected boolean processExchange(Exchange exchange) {
+        // defer disconnect til the UoW is complete - but only the last exchange
+        // from the batch should do that
+        boolean isLast = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, true, Boolean.class);
+        if (isLast && configuration.isDisconnect()) {
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    LOG.trace("processExchange disconnect from: {}", getEndpoint());
+                    disconnect();
+                }
+
+                @Override
+                public boolean allowHandover() {
+                    // do not allow handover as we must execute the callbacks in
+                    // the same thread as this consumer
+                    return false;
+                }
+
+                @Override
+                public int getOrder() {
+                    // we want to disconnect last
+                    return Ordered.LOWEST;
+                }
+
+                public String toString() {
+                    return "Disconnect";
+                }
+            });
+        }
+
+        return super.processExchange(exchange);
+    }
+
+    private SmbFile asGenericFile(String path, FileIdBothDirectoryInformation file, String charset) {
+        SmbFile genericFile = new SmbFile(getOperations(), configuration.isDownload(), configuration.isStreamDownload());
+        genericFile.setHostname(configuration.getHostname());
+        genericFile.setFile(file);
+        genericFile.setEndpointPath(endpointPath);
+        genericFile.setLastModified(file.getLastWriteTime().toEpochMillis());
+        genericFile.setCharset(charset);
+        genericFile.setFileNameOnly(file.getFileName());
+        genericFile.setDirectory(isDirectory(file));
+        genericFile.setFileLength(file.getEndOfFile());
+
+        boolean absolute = FileUtil.hasLeadingSeparator(path);
+        genericFile.setAbsolute(absolute);
+
+        String absoluteFileName = FileUtil.stripLeadingSeparator(path);
+        // if absolute start with a leading separator otherwise let it be relative
+        if (absolute) {
+            absoluteFileName = "/" + absoluteFileName;
+        }
+        genericFile.setAbsoluteFilePath(absoluteFileName);
+
+        String relativePath = StringHelper.after(absoluteFileName, endpointPath);
+        relativePath = FileUtil.stripLeadingSeparator(relativePath);
+        genericFile.setRelativeFilePath(relativePath);
+        genericFile.setFileName(relativePath);
+
+        return genericFile;
     }
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
-        refreshConnection();
+        // turn off scheduler first, so autoCreate is handled before scheduler starts
+        boolean startScheduler = isStartScheduler();
+        setStartScheduler(false);
+        try {
+            super.doStart();
+            if (endpoint.isAutoCreate() && hasStartingDirectory()) {
+                String dir = endpoint.getConfiguration().getDirectory();
+                LOG.debug("Auto creating directory: {}", dir);
+                try {
+                    operations.buildDirectory(dir, true);
+                } catch (GenericFileOperationFailedException e) {
+                    // log a WARN as we want to start the consumer.
+                    LOG.warn(
+                            "Error auto creating directory: " + dir + " due " + e.getMessage() + ". This exception is ignored.",
+                            e);
+                }
+            } else if (configuration.isStartingDirectoryMustExist() && hasStartingDirectory()) {
+                String dir = endpoint.getConfiguration().getDirectory();
+                SmbOperations ops = (SmbOperations) operations;
+                boolean exists = ops.existsFolder(dir);
+                if (!exists) {
+                    throw new GenericFileOperationFailedException("Starting directory does not exist: " + dir);
+                }
+            }
+        } finally {
+            if (startScheduler) {
+                setStartScheduler(true);
+                startScheduler();
+            }
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (connection != null) {
-            IOHelper.close(connection);
-        }
-
         super.doStop();
+        disconnect();
+    }
+
+    private SmbOperations getOperations() {
+        return (SmbOperations) operations;
+    }
+
+    /**
+     * Whether there is a starting directory configured.
+     */
+    private boolean hasStartingDirectory() {
+        String dir = endpoint.getConfiguration().getDirectory();
+        if (ObjectHelper.isEmpty(dir)) {
+            return false;
+        }
+        // should not be an empty separator
+        return !dir.equals("/") && !dir.equals("\\");
+    }
+
+    private boolean isDirectory(FileIdBothDirectoryInformation file) {
+        return EnumWithValue.EnumUtils.isSet(file.getFileAttributes(), FileAttributes.FILE_ATTRIBUTE_DIRECTORY);
     }
 }

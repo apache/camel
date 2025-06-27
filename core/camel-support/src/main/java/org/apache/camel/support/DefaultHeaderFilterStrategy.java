@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -43,17 +42,17 @@ import org.apache.camel.spi.Metadata;
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
-     * A filter pattern that only accepts keys starting with <tt>Camel</tt> or <tt>org.apache.camel.</tt>
+     * A filter pattern that only accepts keys starting with <tt>Camel</tt>.
      *
      * @deprecated use {@link #CAMEL_FILTER_STARTS_WITH}
      */
     @Deprecated(since = "3.9.0")
-    public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)(Camel|org\\.apache\\.camel)[.a-zA-z0-9]*");
+    public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)Camel[.a-zA-z0-9]*");
 
     /**
-     * A filter pattern for keys starting with <tt>Camel</tt>, <tt>camel</tt>, or <tt>org.apache.camel.</tt>
+     * A filter pattern for keys starting with <tt>Camel</tt>, or <tt>camel</tt>.
      */
-    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel", "org.apache.camel." };
+    public static final String[] CAMEL_FILTER_STARTS_WITH = new String[] { "Camel", "camel" };
 
     @Metadata(javaType = "java.lang.String",
               description = "Sets the in direction filter set. The in direction is referred to copying headers from an external message to a Camel message."
@@ -76,10 +75,10 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     @Metadata(label = "advanced", defaultValue = "false",
               description = "Whether to allow null values. By default a header is skipped if its value is null. Setting this to true will preserve the header.")
     private boolean allowNullValues;
-    @Metadata(label = "advanced", defaultValue = "false",
+    @Metadata(label = "advanced", defaultValue = "true",
               description = "Sets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive"
                             + " when checking it with the filter set. It does not affect filtering using regular expression pattern.")
-    private boolean caseInsensitive;
+    private boolean caseInsensitive = true;
     @Metadata(label = "advanced", defaultValue = "true",
               description = "Sets what to do when a pattern or filter set is matched."
                             + " When set to true, a match will filter out the header. This is the default value for backwards compatibility."
@@ -344,20 +343,28 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             startsWith = inFilterStartsWith;
         }
 
+        String lower = null;
+
         if (startsWith != null) {
             if (tryHeaderMatch(headerName, startsWith)) {
                 return filterOnMatch;
             }
+            if (lowerCase) {
+                lower = headerName.toLowerCase();
+                if (tryHeaderMatch(lower, startsWith)) {
+                    return filterOnMatch;
+                }
+            }
         }
 
         if (pattern != null) {
-            if (tryPattern(headerName, pattern)) {
+            if (tryPattern(headerName, lower, pattern)) {
                 return filterOnMatch;
             }
         }
 
         if (filter != null) {
-            if (evalFilterMatch(headerName, filter)) {
+            if (evalFilterMatch(headerName, lower, filter)) {
                 return filterOnMatch;
             }
         }
@@ -365,13 +372,21 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         return extendedFilter(direction, headerName, headerValue, exchange);
     }
 
-    private boolean tryPattern(String headerName, Pattern pattern) {
+    private boolean tryPattern(String headerName, String lower, Pattern pattern) {
         // optimize if its the default pattern as we know the pattern is to check for keys starting with Camel
         if (pattern == CAMEL_FILTER_PATTERN) {
-            boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel")
-                    || headerName.startsWith("org.apache.camel.");
+            boolean match = headerName.startsWith("Camel") || headerName.startsWith("camel");
             if (match) {
                 return true;
+            }
+            if (lowerCase) {
+                if (lower == null) {
+                    lower = headerName.toLowerCase();
+                }
+                match = lower.startsWith("camel");
+                if (match) {
+                    return true;
+                }
             }
         } else if (pattern.matcher(headerName).matches()) {
             return true;
@@ -389,15 +404,17 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         return false;
     }
 
-    private boolean evalFilterMatch(String headerName, Set<String> filter) {
+    private boolean evalFilterMatch(String headerName, String lower, Set<String> filter) {
         if (isCaseInsensitive()) {
             for (String filterString : filter) {
                 if (filterString.equalsIgnoreCase(headerName)) {
                     return true;
                 }
             }
-        } else if (isLowerCase()) {
-            String lower = headerName.toLowerCase(Locale.ENGLISH);
+        } else if (lowerCase) {
+            if (lower == null) {
+                lower = headerName.toLowerCase();
+            }
             if (filter.contains(lower)) {
                 return true;
             }

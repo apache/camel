@@ -56,7 +56,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "customHeaders": target.withCustomHeaders(property(camelContext, java.util.Map.class, value)); return true;
         case "disablehostnameverification":
         case "disableHostnameVerification": target.withDisableHostnameVerification(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "file": target.withFile(property(camelContext, java.io.File.class, value)); return true;
         case "http2disable":
         case "http2Disable": target.withHttp2Disable(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "httpproxy":
@@ -162,7 +161,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "customHeaders": return java.util.Map.class;
         case "disablehostnameverification":
         case "disableHostnameVerification": return java.lang.Boolean.class;
-        case "file": return java.io.File.class;
         case "http2disable":
         case "http2Disable": return java.lang.Boolean.class;
         case "httpproxy":
@@ -269,7 +267,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "customHeaders": return target.getCustomHeaders();
         case "disablehostnameverification":
         case "disableHostnameVerification": return target.getDisableHostnameVerification();
-        case "file": return target.getFile();
         case "http2disable":
         case "http2Disable": return target.getHttp2Disable();
         case "httpproxy":

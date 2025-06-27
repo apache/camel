@@ -38,7 +38,6 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
         map.put("Standby", boolean.class);
         map.put("WaitForAttach", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(DebuggerConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -79,10 +78,6 @@ public class DebuggerConfigurationPropertiesConfigurer extends org.apache.camel.
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

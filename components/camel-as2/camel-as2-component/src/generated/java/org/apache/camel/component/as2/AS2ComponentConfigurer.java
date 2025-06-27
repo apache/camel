@@ -26,6 +26,8 @@ public class AS2ComponentConfigurer extends PropertyConfigurerSupport implements
         map.put("LazyStartProducer", boolean.class);
         map.put("AutowiredEnabled", boolean.class);
         map.put("Configuration", org.apache.camel.component.as2.AS2Configuration.class);
+        map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("UseGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
     }
 
@@ -40,6 +42,10 @@ public class AS2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.as2.AS2Configuration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -59,6 +65,10 @@ public class AS2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "configuration": return org.apache.camel.component.as2.AS2Configuration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
         default: return null;
         }
     }
@@ -74,6 +84,10 @@ public class AS2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;
         }
     }

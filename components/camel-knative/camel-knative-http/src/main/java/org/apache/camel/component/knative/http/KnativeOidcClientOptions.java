@@ -20,7 +20,6 @@ package org.apache.camel.component.knative.http;
 import java.io.IOException;
 import java.util.Optional;
 
-import io.vertx.ext.web.client.OAuth2WebClientOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.ResourceHelper;
@@ -37,8 +36,6 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
 
     private static final String PROPERTY_PREFIX = "camel.knative.client.oidc.";
 
-    private final OAuth2WebClientOptions oAuth2ClientOptions = new OAuth2WebClientOptions().setRenewTokenOnForbidden(true);
-
     private boolean oidcEnabled;
 
     private String oidcTokenPath;
@@ -46,6 +43,8 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
     private String oidcToken;
 
     private boolean cacheTokens = true;
+
+    private boolean renewTokenOnForbidden = true;
 
     public KnativeOidcClientOptions() {
     }
@@ -74,7 +73,7 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
             boolean renewTokenOnForbidden = Boolean.parseBoolean(
                     propertiesComponent.resolveProperty(PROPERTY_PREFIX + "renew.tokens.on.forbidden").orElse("true"));
 
-            oAuth2ClientOptions.setRenewTokenOnForbidden(renewTokenOnForbidden);
+            setRenewTokenOnForbidden(renewTokenOnForbidden);
 
             boolean cacheTokens = Boolean.parseBoolean(
                     propertiesComponent.resolveProperty(PROPERTY_PREFIX + "cache.tokens").orElse("true"));
@@ -133,14 +132,10 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
     }
 
     public void setRenewTokenOnForbidden(boolean enabled) {
-        this.oAuth2ClientOptions.setRenewTokenOnForbidden(enabled);
+        this.renewTokenOnForbidden = enabled;
     }
 
     public boolean isRenewTokenOnForbidden() {
-        return this.oAuth2ClientOptions.isRenewTokenOnForbidden();
-    }
-
-    public OAuth2WebClientOptions getOAuth2ClientOptions() {
-        return oAuth2ClientOptions;
+        return this.renewTokenOnForbidden;
     }
 }

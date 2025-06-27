@@ -78,7 +78,7 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
         ChoiceDefinition choice = (ChoiceDefinition) route.getOutputs().get(0);
         assertNotNull(choice.getId());
 
-        WhenDefinition when = (WhenDefinition) choice.getOutputs().get(0);
+        WhenDefinition when = choice.getWhenClauses().get(0);
         assertNotNull(when.getId());
 
         LogDefinition log1 = (LogDefinition) when.getOutputs().get(0);
@@ -87,7 +87,7 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
         ToDefinition to1 = (ToDefinition) when.getOutputs().get(1);
         assertEquals("camel", to1.getId());
 
-        OtherwiseDefinition other = (OtherwiseDefinition) choice.getOutputs().get(1);
+        OtherwiseDefinition other = choice.getOtherwise();
         assertNotNull(other.getId());
 
         LogDefinition log2 = (LogDefinition) other.getOutputs().get(0);

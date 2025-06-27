@@ -314,6 +314,22 @@ public interface GoogleStorageComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The prefix which is used in the BlobListOptions to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder prefix(java.lang.String prefix) {
+            doSetProperty("prefix", prefix);
+            return this;
+        }
+    
         
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -464,6 +480,7 @@ public interface GoogleStorageComponentBuilderFactory {
             case "includeBody": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setIncludeFolders((boolean) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setMoveAfterRead((boolean) value); return true;
+            case "prefix": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setPrefix((java.lang.String) value); return true;
             case "lazyStartProducer": ((GoogleCloudStorageComponent) component).setLazyStartProducer((boolean) value); return true;
             case "objectName": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setObjectName((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setOperation((org.apache.camel.component.google.storage.GoogleCloudStorageOperations) value); return true;

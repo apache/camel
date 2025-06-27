@@ -355,6 +355,13 @@ public interface CamelCatalog {
     String springSchemaAsXml();
 
     /**
+     * Returns the Camel XML-IO schema
+     *
+     * @return the XML-IO schema
+     */
+    String xmlIoSchemaAsXml();
+
+    /**
      * Returns the camel-main json schema
      *
      * @return the camel-main json schema

@@ -23,4 +23,5 @@ public enum QdrantAction {
     RETRIEVE,
     DELETE,
     COLLECTION_INFO,
+    SIMILARITY_SEARCH
 }

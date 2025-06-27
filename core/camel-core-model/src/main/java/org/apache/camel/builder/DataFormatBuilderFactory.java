@@ -26,9 +26,11 @@ import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
+import org.apache.camel.model.dataformat.DfdlDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
+import org.apache.camel.model.dataformat.ForyDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -135,6 +137,13 @@ public final class DataFormatBuilderFactory {
     }
 
     /**
+     * Uses the DFDL data format
+     */
+    public DfdlDataFormat.Builder dfdl() {
+        return new DfdlDataFormat.Builder();
+    }
+
+    /**
      * Uses the FHIR JSON data format
      */
     public FhirJsonDataFormat.Builder fhirJson() {
@@ -153,6 +162,13 @@ public final class DataFormatBuilderFactory {
      */
     public FlatpackDataFormat.Builder flatpack() {
         return new FlatpackDataFormat.Builder();
+    }
+
+    /**
+     * Uses the Fory data format
+     */
+    public ForyDataFormat.Builder fory() {
+        return new ForyDataFormat.Builder();
     }
 
     /**

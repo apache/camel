@@ -1,0 +1,154 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.main;
+
+import org.apache.camel.spi.BootstrapCloseable;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
+
+/**
+ * Global configuration for OpenTelemetry 2 (based on camel-telemetry)
+ */
+@Configurer(extended = true)
+public class Otel2ConfigurationProperties implements BootstrapCloseable {
+
+    private MainConfigurationProperties parent;
+
+    private boolean enabled;
+    @Metadata(defaultValue = "camel", required = true)
+    private String instrumentationName = "camel";
+    private boolean encoding;
+    private String excludePatterns;
+    private boolean traceProcessors;
+
+    public Otel2ConfigurationProperties(MainConfigurationProperties parent) {
+        this.parent = parent;
+    }
+
+    public MainConfigurationProperties end() {
+        return parent;
+    }
+
+    @Override
+    public void close() {
+        parent = null;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * To enable OpenTelemetry 2
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getInstrumentationName() {
+        return instrumentationName;
+    }
+
+    /**
+     * A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully
+     * qualified class name. Must not be null.
+     */
+    public void setInstrumentationName(String instrumentationName) {
+        this.instrumentationName = instrumentationName;
+    }
+
+    public boolean isEncoding() {
+        return encoding;
+    }
+
+    /**
+     * Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need
+     * for instances to be encoded for JMS property keys.
+     */
+    public void setEncoding(boolean encoding) {
+        this.encoding = encoding;
+    }
+
+    public String getExcludePatterns() {
+        return excludePatterns;
+    }
+
+    /**
+     * Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns
+     * can be separated by comma.
+     */
+    public void setExcludePatterns(String excludePatterns) {
+        this.excludePatterns = excludePatterns;
+    }
+
+    public boolean isTraceProcessors() {
+        return traceProcessors;
+    }
+
+    /**
+     * Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern
+     * property to filter out Processors.
+     */
+    public void setTraceProcessors(boolean traceProcessors) {
+        this.traceProcessors = traceProcessors;
+    }
+
+    /**
+     * A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully
+     * qualified class name. Must not be null.
+     */
+    public Otel2ConfigurationProperties withInstrumentationName(String instrumentationName) {
+        this.instrumentationName = instrumentationName;
+        return this;
+    }
+
+    /**
+     * To enable OpenTelemetry
+     */
+    public Otel2ConfigurationProperties withEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    /**
+     * Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need
+     * for instances to be encoded for JMS property keys.
+     */
+    public Otel2ConfigurationProperties withEncoding(boolean encoding) {
+        this.encoding = encoding;
+        return this;
+    }
+
+    /**
+     * Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns
+     * can be separated by comma.
+     */
+    public Otel2ConfigurationProperties withExcludePatterns(String excludePatterns) {
+        this.excludePatterns = excludePatterns;
+        return this;
+    }
+
+    /**
+     * Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern
+     * property to filter out Processors.
+     */
+    public Otel2ConfigurationProperties withTraceProcessors(boolean traceProcessors) {
+        this.traceProcessors = traceProcessors;
+        return this;
+    }
+
+}

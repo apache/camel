@@ -18,8 +18,12 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.TreeMap;
 
+import com.jcraft.jsch.JSch;
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.StringHelper;
@@ -28,6 +32,7 @@ import org.apache.camel.util.StringHelper;
  * Secure FTP Component
  */
 @Component("sftp")
+@ManagedResource(description = "Managed SFTP Component")
 public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
 
     public SftpComponent() {
@@ -60,6 +65,20 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
     @Override
     protected void afterPropertiesSet(GenericFileEndpoint<SftpRemoteFile> endpoint) throws Exception {
         // noop
+    }
+
+    @ManagedOperation(description = "Dump JSCH Configuration")
+    public String dumpConfiguration() {
+        StringBuilder sb = new StringBuilder();
+
+        Map<String, String> map = new TreeMap<>(String::compareToIgnoreCase);
+        map.putAll(JSch.getConfig());
+        for (var e : map.entrySet()) {
+            String v = e.getValue() != null ? e.getValue() : "";
+            sb.append(String.format("%s = %s%n", e.getKey(), v));
+        }
+
+        return sb.toString();
     }
 
 }

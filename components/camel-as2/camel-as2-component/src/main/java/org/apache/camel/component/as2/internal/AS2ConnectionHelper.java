@@ -105,7 +105,9 @@ public final class AS2ConnectionHelper {
                                     configuration.getSigningAlgorithm(),
                                     configuration.getSigningCertificateChain(), configuration.getSigningPrivateKey(),
                                     configuration.getDecryptingPrivateKey(), configuration.getMdnMessageTemplate(),
-                                    configuration.getValidateSigningCertificateChain(), configuration.getSslContext());
+                                    configuration.getValidateSigningCertificateChain(), configuration.getSslContext(),
+                                    configuration.getMdnUserName(), configuration.getMdnPassword(),
+                                    configuration.getMdnAccessToken());
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
                         }

@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5.util;
 
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.test.CamelRouteCoverageDumper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RouteCoverageDumperExtension {
+
     private static final Logger LOG = LoggerFactory.getLogger(RouteCoverageDumperExtension.class);
+
     private final ModelCamelContext context;
 
     public RouteCoverageDumperExtension(ModelCamelContext context) {

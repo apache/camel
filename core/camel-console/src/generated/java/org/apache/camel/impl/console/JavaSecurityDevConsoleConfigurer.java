@@ -24,7 +24,6 @@ public class JavaSecurityDevConsoleConfigurer extends org.apache.camel.support.c
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("CamelContext", org.apache.camel.CamelContext.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(JavaSecurityDevConsoleConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -40,10 +39,6 @@ public class JavaSecurityDevConsoleConfigurer extends org.apache.camel.support.c
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

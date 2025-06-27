@@ -15,16 +15,11 @@
 # limitations under the License.
 #
 
-camel-3:
-  - base-branch:
-      - 'camel-3.21.x'
-      - 'camel-3.22.x'
-      - 'camel-3.x'
-
 camel-4:
   - base-branch:
       - 'main'
-      - 'camel-4.0.x'
+      - 'camel-4.4.x'
+      - 'camel-4.8.x'
 
 ci:
   - changed-files:
@@ -60,6 +55,11 @@ components:
   - changed-files:
       - any-glob-to-any-file:
         - components/**/*
+
+components-ai:
+  - changed-files:
+      - any-glob-to-any-file:
+          - components/camel-ai/**/*
 
 components-aws:
   - changed-files:

@@ -17,14 +17,12 @@
 package org.apache.camel.component.langchain4j.chat;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.PropertiesHelper;
 
 import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME;
 
@@ -60,11 +58,7 @@ public class LangChain4jChatComponent extends DefaultComponent {
 
         LangChain4jChatConfiguration langchain4jChatConfiguration = this.configuration.copy();
 
-        Map<String, Object> toolParameters = PropertiesHelper.extractProperties(parameters, "parameter.");
         Endpoint endpoint = new LangChain4jChatEndpoint(uri, this, remaining, langchain4jChatConfiguration);
-        ((LangChain4jChatEndpoint) endpoint).setParameters(toolParameters.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> (String) e.getValue())));
-
         setProperties(endpoint, parameters);
         return endpoint;
     }

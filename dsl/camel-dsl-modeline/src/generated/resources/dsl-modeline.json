@@ -3,13 +3,13 @@
     "kind": "other",
     "name": "dsl-modeline",
     "title": "DSL Modeline",
-    "description": "Camel DSL Camel K modeline",
+    "description": "Camel DSL modeline",
     "deprecated": false,
     "firstVersion": "3.16.0",
     "label": "dsl",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dsl-modeline",
-    "version": "4.9.0-SNAPSHOT"
+    "version": "4.13.0-SNAPSHOT"
   }
 }

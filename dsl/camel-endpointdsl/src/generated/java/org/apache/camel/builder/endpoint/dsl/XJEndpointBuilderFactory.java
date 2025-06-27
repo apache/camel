@@ -267,6 +267,23 @@ public interface XJEndpointBuilderFactory {
             return this;
         }
         /**
+         * Source to use, instead of message body. You can prefix with
+         * variable:, header:, or property: to specify kind of source.
+         * Otherwise, the source is assumed to be a variable. Use empty or null
+         * to use default source, which is the message body.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param source the value to set
+         * @return the dsl builder
+         */
+        default XJEndpointBuilder source(String source) {
+            doSetProperty("source", source);
+            return this;
+        }
+        /**
          * Transform direction. Either XML2JSON or JSON2XML.
          * 
          * The option is a:

@@ -54,6 +54,16 @@ public final class QdrantServiceFactory {
         }
 
         @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
         public HttpResponse<byte[]> put(String path, Map<Object, Object> body) throws Exception {
             return getService().put(path, body);
         }
@@ -75,5 +85,11 @@ public final class QdrantServiceFactory {
                 .addLocalMapping(
                         () -> new SingletonQdrantService(new QdrantLocalContainerService(), QdrantProperties.INFRA_TYPE))
                 .build();
+    }
+
+    public static class QdrantLocalContainerService extends QdrantLocalContainerInfraService implements QdrantService {
+    }
+
+    public static class QdrantRemoteService extends QdrantRemoteInfraService implements QdrantService {
     }
 }

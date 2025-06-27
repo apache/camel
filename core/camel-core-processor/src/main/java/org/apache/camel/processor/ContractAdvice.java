@@ -182,10 +182,6 @@ public class ContractAdvice implements CamelInternalProcessorAdvice<Object> {
         return false;
     }
 
-    private Class<?> getClazz(String type, CamelContext context) throws Exception {
-        return context.getClassResolver().resolveMandatoryClass(type);
-    }
-
     private void doValidate(Message message, DataType type) throws ValidationException {
         Validator validator = message.getExchange().getContext().resolveValidator(type);
         if (validator != null) {

@@ -90,6 +90,12 @@ public class NatsConfiguration {
     private boolean traceConnection;
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean jetstreamEnabled = false;
+    @UriParam(label = "common")
+    private String jetstreamName;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean jetstreamAsync = true;
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
@@ -353,7 +359,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * Define the header filtering strategy
+     * To use a custom header filter strategy.
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
@@ -453,5 +459,48 @@ public class NatsConfiguration {
 
     public void setTraceConnection(boolean traceConnection) {
         this.traceConnection = traceConnection;
+    }
+
+    /**
+     * Whether to enable JetStream support for this endpoint.
+     */
+    public boolean isJetstreamEnabled() {
+        return jetstreamEnabled;
+    }
+
+    /**
+     * Sets whether to enable JetStream support for this endpoint.
+     */
+    public void setJetstreamEnabled(boolean jetstreamEnabled) {
+        this.jetstreamEnabled = jetstreamEnabled;
+    }
+
+    /**
+     * The name of the JetStream stream to use. If not specified, a default stream will be used if JetStream is enabled.
+     */
+    public String getJetstreamName() {
+        return jetstreamName;
+    }
+
+    /**
+     * Sets the name of the JetStream stream to use.
+     */
+    public void setJetstreamName(String jetstreamName) {
+        this.jetstreamName = jetstreamName;
+    }
+
+    /**
+     * Whether to operate JetStream requests asynchronously. This can improve performance but requires careful handling
+     * of results.
+     */
+    public boolean isJetstreamAsync() {
+        return jetstreamAsync;
+    }
+
+    /**
+     * Sets whether to operate JetStream requests asynchronously.
+     */
+    public void setJetstreamAsync(boolean jetstreamAsync) {
+        this.jetstreamAsync = jetstreamAsync;
     }
 }

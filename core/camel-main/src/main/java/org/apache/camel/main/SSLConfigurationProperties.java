@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for SSL.
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class SSLConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

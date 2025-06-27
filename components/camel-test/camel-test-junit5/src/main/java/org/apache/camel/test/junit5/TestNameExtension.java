@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -27,9 +26,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * Helper utility to get the test name for legacy test. Do not use. Prefer to use JUnit's TestInfo whenever possible.
  */
 public class TestNameExtension
-        implements BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback,
-        AfterTestExecutionCallback {
-    private static final String START_TIME = "start time";
+        implements BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback {
+
     private String currentTestName;
 
     @Override
@@ -54,8 +52,6 @@ public class TestNameExtension
 
     /**
      * Ges the current test name
-     *
-     * @return the current test name
      */
     public String getCurrentTestName() {
         return currentTestName;

@@ -16,14 +16,11 @@
  */
 package org.apache.camel.test.infra.pulsar.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Pulsar
  */
-public interface PulsarService extends TestService {
-
-    String getPulsarAdminUrl();
-
-    String getPulsarBrokerUrl();
+public interface PulsarService extends TestService, PulsarInfraService, ContainerTestService {
 }

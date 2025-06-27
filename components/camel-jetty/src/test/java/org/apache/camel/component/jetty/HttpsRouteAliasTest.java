@@ -22,10 +22,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 
+@Isolated
 @ResourceLock(SSL_SYSPROPS)
 public class HttpsRouteAliasTest extends HttpsRouteTest {
 

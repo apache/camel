@@ -32,6 +32,7 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -91,6 +92,33 @@ public class VertxPlatformHttpStreamingTest {
         } finally {
             context.stop();
             Files.deleteIfExists(testFile);
+        }
+    }
+
+    @Test
+    void testPopulateOnlyHeadersWithFormUrlEncodedBody() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/form?populateBodyWithForm=false")
+                            .log("Done processing request");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .contentType(ContentType.URLENC)
+                    .formParam("foo", "bar")
+                    .post("/form")
+                    .then()
+                    .statusCode(204)
+                    .header("foo", "bar")
+                    .body(is(emptyOrNullString()));
+        } finally {
+            context.stop();
         }
     }
 

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.pubnub;
 
-import com.pubnub.api.PNConfiguration;
-import com.pubnub.api.PubNub;
 import com.pubnub.api.PubNubException;
 import com.pubnub.api.UserId;
+import com.pubnub.api.java.PubNub;
+import com.pubnub.api.java.v2.PNConfiguration;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -89,13 +89,11 @@ public class PubNubEndpoint extends DefaultEndpoint {
     }
 
     private PubNub getInstance() throws PubNubException {
-        PNConfiguration pnConfiguration = new PNConfiguration(new UserId(configuration.getUuid()));
-        pnConfiguration.setPublishKey(configuration.getPublishKey());
-        pnConfiguration.setSubscribeKey(configuration.getSubscribeKey());
-        pnConfiguration.setSecretKey(configuration.getSecretKey());
-        pnConfiguration.setAuthKey(configuration.getAuthKey());
-        pnConfiguration.setCipherKey(configuration.getCipherKey());
-        pnConfiguration.setSecure(configuration.isSecure());
-        return PubNub.create(pnConfiguration);
+        PNConfiguration config = PNConfiguration.builder(new UserId(configuration.getUuid()), configuration.getSubscribeKey())
+                .publishKey(configuration.getPublishKey())
+                .secretKey(configuration.getSecretKey())
+                .authKey(configuration.getAuthKey())
+                .secure(configuration.isSecure()).build();
+        return PubNub.create(config);
     }
 }

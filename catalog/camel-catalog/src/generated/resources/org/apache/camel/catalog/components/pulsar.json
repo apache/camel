@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pulsar",
-    "version": "4.9.0-SNAPSHOT",
+    "version": "4.13.0-SNAPSHOT",
     "scheme": "pulsar",
     "extendsScheme": "",
     "syntax": "pulsar:persistence:\/\/tenant\/namespace\/topic",
@@ -88,7 +88,8 @@
     "CamelPulsarProducerMessageProperties": { "index": 11, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The properties of the message to add.", "constantName": "org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders#PROPERTIES_OUT" },
     "CamelPulsarProducerMessageEventTime": { "index": 12, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The event time of the message message.", "constantName": "org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders#EVENT_TIME_OUT" },
     "CamelPulsarProducerMessageDeliverAt": { "index": 13, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Deliver the message only at or after the specified absolute timestamp. The timestamp is milliseconds and based on UTC (eg: System.currentTimeMillis) Note: messages are only delivered with delay when a consumer is consuming through a Shared subscription. With other subscription types, the messages will still be delivered immediately.", "constantName": "org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders#DELIVER_AT_OUT" },
-    "CamelPulsarRedeliveryCount": { "index": 14, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The message redelivery count, redelivery count maintain in pulsar broker.", "constantName": "org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders#PULSAR_REDELIVERY_COUNT" }
+    "CamelPulsarRedeliveryCount": { "index": 14, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "int", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The message redelivery count, redelivery count maintain in pulsar broker.", "constantName": "org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders#PULSAR_REDELIVERY_COUNT" },
+    "CamelPulsarProducerMessageDeliverAfter": { "index": 15, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Deliver the message after a given delayed time (millis).", "constantName": "org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders#DELIVER_AFTER" }
   },
   "properties": {
     "persistence": { "index": 0, "kind": "path", "displayName": "Persistence", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "enum": [ "persistent", "non-persistent" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Whether the topic is persistent or non-persistent" },

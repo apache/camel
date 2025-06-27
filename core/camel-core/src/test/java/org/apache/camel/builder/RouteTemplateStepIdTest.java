@@ -34,14 +34,16 @@ public class RouteTemplateStepIdTest extends ContextTestSupport {
 
         assertEquals(2, context.getRoutes().size());
 
-        StepProcessor step1 = context.getProcessor("one", StepProcessor.class);
+        String nodePrefix = context.getRoute("one").getNodePrefixId();
+        StepProcessor step1 = context.getProcessor(nodePrefix + "one", StepProcessor.class);
         Assertions.assertNotNull(step1);
-        Assertions.assertEquals("one", step1.getId());
+        Assertions.assertEquals(nodePrefix + "one", step1.getId());
         Assertions.assertEquals("one", step1.getRouteId());
 
-        StepProcessor step2 = context.getProcessor("deux", StepProcessor.class);
+        nodePrefix = context.getRoute("deux").getNodePrefixId();
+        StepProcessor step2 = context.getProcessor(nodePrefix + "deux", StepProcessor.class);
         Assertions.assertNotNull(step2);
-        Assertions.assertEquals("deux", step2.getId());
+        Assertions.assertEquals(nodePrefix + "deux", step2.getId());
         Assertions.assertEquals("deux", step2.getRouteId());
     }
 

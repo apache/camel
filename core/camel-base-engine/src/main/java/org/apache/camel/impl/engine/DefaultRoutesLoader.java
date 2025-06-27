@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StaticService;
@@ -299,6 +300,14 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         for (RoutesBuilder builder : builders) {
             // update any existing routes
             Set<String> ids = builder.updateRoutesToCamelContext(getCamelContext());
+            // check we do not have duplicate route ids in this group of resources
+            for (String id : ids) {
+                if (answer.contains(id)) {
+                    throw new FailedToStartRouteException(
+                            id,
+                            "duplicate route id detected " + id + ". Please correct ids to be unique among all your routes.");
+                }
+            }
             answer.addAll(ids);
         }
 

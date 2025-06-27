@@ -49,7 +49,7 @@ public class KameletProcessor extends AsyncProcessorSupport
     private String id;
     private String routeId;
 
-    public KameletProcessor(CamelContext camelContext, String name, Processor processor) {
+    public KameletProcessor(CamelContext camelContext, String name, Processor processor) throws Exception {
         this.camelContext = camelContext;
         this.name = name;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
@@ -116,27 +116,16 @@ public class KameletProcessor extends AsyncProcessorSupport
     }
 
     @Override
-    protected void doBuild() throws Exception {
-        if (component == null) {
-            component = camelContext.getComponent("kamelet", KameletComponent.class);
-        }
-        if (producer == null) {
-            producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
-        }
-        if (producer != null) {
-            ((RouteIdAware) producer).setRouteId(getRouteId());
-        }
-        ServiceHelper.buildService(processor, producer);
+    protected void doInit() throws Exception {
+        this.component = camelContext.getComponent("kamelet", KameletComponent.class);
+        this.producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
+
+        ServiceHelper.initService(processor, producer);
 
         // we use the kamelet component (producer) to call the kamelet
         // and to receive the reply we register ourselves to the kamelet component
         // with our child processor it should call
         component.addKameletEip(producer.getKey(), processor);
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        ServiceHelper.initService(processor, producer);
     }
 
     @Override

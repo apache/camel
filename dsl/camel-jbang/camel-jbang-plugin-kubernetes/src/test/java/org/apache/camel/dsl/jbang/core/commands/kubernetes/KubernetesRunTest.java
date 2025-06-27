@@ -71,7 +71,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
 
         Assertions.assertEquals(1, exit);
 
-        Assertions.assertTrue(printer.getOutput().contains("Project export failed"));
+        Assertions.assertTrue(printer.getOutput().contains("ERROR: Project export failed!"));
     }
 
     @ParameterizedTest
@@ -101,10 +101,21 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
         Assertions.assertEquals("IfNotPresent", containers.get(0).getImagePullPolicy());
+
+        // verify the container health probes path to /observe accordingly to the camel-observability-services
+        if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("/observe/health/live", containers.get(0).getLivenessProbe().getHttpGet().getPath());
+            Assertions.assertEquals("/observe/health/ready", containers.get(0).getReadinessProbe().getHttpGet().getPath());
+            Assertions.assertEquals("/observe/health/started", containers.get(0).getStartupProbe().getHttpGet().getPath());
+        } else if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
+            // spring-boot doesn't set the startup probe
+            Assertions.assertEquals("/observe/health/liveness", containers.get(0).getLivenessProbe().getHttpGet().getPath());
+            Assertions.assertEquals("/observe/health/readiness", containers.get(0).getReadinessProbe().getHttpGet().getPath());
+        }
     }
 
     @ParameterizedTest
@@ -114,7 +125,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
                 "--output=wrong", "--runtime=" + rt.runtime());
 
         Assertions.assertEquals(1, command.doCall());
-        Assertions.assertTrue(printer.getOutput().endsWith("Unsupported output format 'wrong' (supported: yaml, json)"));
+        Assertions.assertTrue(printer.getOutput().endsWith("ERROR: Unsupported output format 'wrong' (supported: yaml, json)"));
     }
 
     @ParameterizedTest
@@ -145,8 +156,8 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("custom", deployment.getMetadata().getNamespace());
         Assertions.assertEquals(1, containers.size());
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
     }
 

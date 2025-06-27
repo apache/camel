@@ -87,26 +87,36 @@ public class KubernetesHPAProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        HorizontalPodAutoscalerList hpaList
-                = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().list();
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        HorizontalPodAutoscalerList hpaList;
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            hpaList = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inAnyNamespace().list();
+        } else {
+            hpaList = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespace)
+                    .list();
+        }
 
         prepareOutboundMessage(exchange, hpaList.getItems());
     }
 
     protected void doListHPAByLabel(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, Map.class);
+        HorizontalPodAutoscalerList hpaList;
+
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get HPA by labels require specify a labels set");
             throw new IllegalArgumentException("Get HPA by labels require specify a labels set");
         }
 
-        HorizontalPodAutoscalerList hpaList = getEndpoint()
-                .getKubernetesClient()
-                .autoscaling()
-                .v1()
-                .horizontalPodAutoscalers()
-                .withLabels(labels)
-                .list();
+        if (ObjectHelper.isEmpty(namespace)) {
+            hpaList = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inAnyNamespace()
+                    .withLabels(labels).list();
+        } else {
+            hpaList = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespace)
+                    .withLabels(labels).list();
+        }
 
         prepareOutboundMessage(exchange, hpaList.getItems());
     }

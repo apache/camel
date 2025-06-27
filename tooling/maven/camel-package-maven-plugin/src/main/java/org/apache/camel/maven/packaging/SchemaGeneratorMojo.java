@@ -103,7 +103,10 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             "org.apache.camel.model.language.NamespaceAwareExpression" };
     // special for inputs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_INPUTS
-            = new String[] { "org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.rest.VerbDefinition" };
+            = new String[] {
+                    "org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.rest.VerbDefinition",
+                    "org.apache.camel.model.OnFallbackDefinition",
+                    "org.apache.camel.model.WhenDefinition", "org.apache.camel.model.OtherwiseDefinition" };
     // special for outputs (these classes have sub classes, so we use this to
     // find all classes - and not in particular if they support outputs or not)
     private static final String[] ONE_OF_OUTPUTS = new String[] {
@@ -111,6 +114,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             "org.apache.camel.model.OutputDefinition", "org.apache.camel.model.OutputExpressionNode",
             "org.apache.camel.model.NoOutputExpressionNode", "org.apache.camel.model.SendDefinition",
             "org.apache.camel.model.InterceptDefinition", "org.apache.camel.model.WhenDefinition",
+            "org.apache.camel.model.OnFallbackDefinition", "org.apache.camel.model.OtherwiseDefinition",
             "org.apache.camel.model.ToDynamicDefinition" };
     // special for verbs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_VERBS = new String[] { "org.apache.camel.model.rest.VerbDefinition" };
@@ -259,8 +263,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         EipModel eipModel = findEipModelProperties(classElement, name);
         findEipModelExchangeProperties(classElement, name, eipModel);
 
-        // get endpoint information which is divided into paths and options
-        // (though there should really only be one path)
         Set<EipOptionModel> eipOptions = new TreeSet<>(new EipOptionComparator(eipModel));
         findClassProperties(eipOptions, classElement, classElement, "", name);
 
@@ -480,6 +482,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 processIdentified(classElement, eipOptions);
             } else if ("RouteDefinition".equals(classElement.getSimpleName())) {
                 processRoute(classElement, eipOptions);
+            } else if ("TryDefinition".equals(classElement.getSimpleName())) {
+                // special-case for doTry
+                processDoTry(classElement, eipOptions);
             }
 
             // check super classes which may also have fields
@@ -500,13 +505,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         String name = attribute.name();
         if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
             name = fieldName;
-        }
-
-        // we want to skip inheritErrorHandler which is only applicable for
-        // the load-balancer
-        boolean loadBalancer = "LoadBalanceDefinition".equals(originalClassType.getSimpleName());
-        if (!loadBalancer && "inheritErrorHandler".equals(name)) {
-            return true;
         }
 
         Metadata metadata = fieldElement.getAnnotation(Metadata.class);
@@ -758,6 +756,21 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     false, false);
             eipOptions.add(ep);
         }
+    }
+
+    private void processDoTry(Class<?> classElement, Set<EipOptionModel> eipOptions) {
+        // include doCatch and doFinally
+        EipOptionModel ep = createOption("doCatch", "Do Catch", "element",
+                "java.util.List<org.apache.camel.model.CatchDefinition>", false, "",
+                "", "Catches exceptions as part of a try, catch, finally block", false,
+                null, false, null, Set.of("doCatch"), false, false);
+        eipOptions.add(ep);
+
+        ep = createOption("doFinally", "Do Finally", "element", "org.apache.camel.model.FinallyDefinition", false,
+                "",
+                "", "Path traversed when a try, catch, finally block exits", false,
+                null, false, null, null, false, false);
+        eipOptions.add(ep);
     }
 
     private void processRoute(Class<?> classElement, Set<EipOptionModel> eipOptions) {
@@ -1124,6 +1137,43 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             String kind = "element";
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, true, "", label, docComment, deprecated,
                     deprecationNote, false, null, oneOfTypes, false, false);
+            eipOptions.add(ep);
+        }
+
+        if ("params".equals(fieldName) || "responseMsgs".equals(fieldName) || "security".equals(fieldName)) {
+            String name;
+            String docComment;
+            if ("params".equals(fieldName)) {
+                name = "param";
+                docComment = "Information about parameters for this REST operation";
+            } else if ("responseMsgs".equals(fieldName)) {
+                name = "responseMessage";
+                docComment = "Response details for this REST operation";
+            } else {
+                name = "security";
+                docComment = "Security settings for this REST operation";
+            }
+
+            String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
+            String displayName = null;
+            Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+            if (metadata != null) {
+                displayName = metadata.displayName();
+            }
+            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+            String deprecationNote = null;
+            if (metadata != null) {
+                deprecationNote = metadata.deprecationNote();
+            }
+            String label = null;
+            if (metadata != null) {
+                label = metadata.label();
+            }
+
+            String kind = "element";
+            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, false, "", label, docComment, deprecated,
+                    deprecationNote, false, null, null, false, false);
+            // insert before "to"
             eipOptions.add(ep);
         }
     }

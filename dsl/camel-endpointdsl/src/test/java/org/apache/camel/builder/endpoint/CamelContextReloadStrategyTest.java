@@ -82,7 +82,7 @@ public class CamelContextReloadStrategyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to(seda("{{cheese}}").failIfNoConsumers(property("myfail")));
+                        .to(seda("{{cheese}}").advanced().failIfNoConsumers(property("myfail")));
 
                 from(seda("foo1")).to("mock:result");
             }

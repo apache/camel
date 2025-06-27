@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -219,25 +220,203 @@ public class MockValueBuilder implements Expression, Predicate {
     // Expression builders
     // -------------------------------------------------------------------------
 
-    public MockValueBuilder xpath(String xpath) {
-        // work with string as result as xpath otherwise will use DOM types
-        Expression newExp = ExpressionBuilder.languageExpression(expression, "xpath", xpath, String.class);
+    /**
+     * Creates an expression using the custom expression
+     *
+     * @param  function the custom function
+     * @return          a builder with the expression
+     */
+    public MockValueBuilder expression(Function<Object, Object> function) {
+        Expression newExp = ExpressionBuilder.customExpression(this.expression, function);
         return onNewValueBuilder(newExp);
     }
 
+    /**
+     * Creates an expression using the given language
+     *
+     * @param  language the language
+     * @param  value    the expression value
+     * @return          a builder with the expression
+     */
+    public MockValueBuilder language(String language, String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, language, value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the simple language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder simple(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "simple", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the datasonnet language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder datasonnet(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "datasonnet", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the groovy language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder groovy(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "groovy", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the javascript language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder js(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "js", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the jq language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder jq(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "jq", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the jsonpath language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder jsonpath(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "jsonpath", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the mvel language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder mvel(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "mvel", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the ognl language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder ognl(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "ognl", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the python language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder python(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "python", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the spel language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder spel(String value) {
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "spel", value, Object.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the xpath language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder xpath(String value) {
+        // work with string as result as xpath otherwise will use DOM types
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "xpath", value, String.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the xquery language
+     *
+     * @param  value the expression value
+     * @return       a builder with the expression
+     */
+    public MockValueBuilder xquery(String value) {
+        // work with string as result as xquery otherwise will use DOM types
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "xquery", value, String.class);
+        return onNewValueBuilder(newExp);
+    }
+
+    /**
+     * Creates an expression using the tokenize language using new-line as tokenizer
+     *
+     * @return a builder with the expression
+     */
     public MockValueBuilder tokenize() {
         return tokenize("\n");
     }
 
+    /**
+     * Creates an expression using the tokenize language
+     *
+     * @param  token the token to use
+     * @return       a builder with the expression
+     */
     public MockValueBuilder tokenize(String token) {
         Expression newExp = ExpressionBuilder.tokenizeExpression(expression, token);
         return onNewValueBuilder(newExp);
     }
 
+    /**
+     * Creates an expression using the tokenize language
+     *
+     * @param  token     the token to use
+     * @param  group     number of elements to group
+     * @param  skipFirst whether to skip first element
+     * @return           a builder with the expression
+     */
     public MockValueBuilder tokenize(String token, int group, boolean skipFirst) {
         return tokenize(token, Integer.toString(group), skipFirst);
     }
 
+    /**
+     * Creates an expression using the tokenize language
+     *
+     * @param  token     the token to use
+     * @param  group     number of elements to group
+     * @param  skipFirst whether to skip first element
+     * @return           a builder with the expression
+     */
     public MockValueBuilder tokenize(String token, String group, boolean skipFirst) {
         Expression newExp = ExpressionBuilder.tokenizeExpression(expression, token);
         if (group == null && skipFirst) {
@@ -351,8 +530,8 @@ public class MockValueBuilder implements Expression, Predicate {
     }
 
     protected Expression asExpression(Object value) {
-        if (value instanceof Expression expression1) {
-            return expression1;
+        if (value instanceof Expression exp) {
+            return exp;
         } else {
             return ExpressionBuilder.constantExpression(value);
         }

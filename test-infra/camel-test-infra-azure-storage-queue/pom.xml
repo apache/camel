@@ -22,12 +22,16 @@
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <name>Camel :: Test Infra :: Azure Storage Queue</name>
     <artifactId>camel-test-infra-azure-storage-queue</artifactId>
+
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -42,13 +46,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-azure-common</artifactId>

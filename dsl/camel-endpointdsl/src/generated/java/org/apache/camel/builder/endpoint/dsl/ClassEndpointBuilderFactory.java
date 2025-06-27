@@ -174,7 +174,8 @@ public interface ClassEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used for configuring additional properties on the bean.
+         * Used for configuring additional properties on the bean. This is a
+         * multi-value option with prefix: bean.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -193,7 +194,8 @@ public interface ClassEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used for configuring additional properties on the bean.
+         * Used for configuring additional properties on the bean. This is a
+         * multi-value option with prefix: bean.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -213,19 +215,6 @@ public interface ClassEndpointBuilderFactory {
     }
 
     public interface ClassBuilders {
-        /**
-         * Class (camel-bean)
-         * Invoke methods of Java beans specified by class name.
-         * 
-         * Category: core,script
-         * Since: 2.4
-         * Maven coordinates: org.apache.camel:camel-bean
-         * 
-         * @return the dsl builder for the headers' name.
-         */
-        default ClassHeaderNameBuilder clas() {
-            return ClassHeaderNameBuilder.INSTANCE;
-        }
         /**
          * Class (camel-bean)
          * Invoke methods of Java beans specified by class name.
@@ -267,29 +256,6 @@ public interface ClassEndpointBuilderFactory {
             return ClassEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
-    }
-    /**
-     * The builder of headers' name for the Class component.
-     */
-    public static class ClassHeaderNameBuilder {
-        /**
-         * The internal instance of the builder used to access to all the
-         * methods representing the name of headers.
-         */
-        private static final ClassHeaderNameBuilder INSTANCE = new ClassHeaderNameBuilder();
-
-        /**
-         * The name of the method to invoke.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code BeanMethodName}.
-         */
-        public String beanMethodName() {
-            return "CamelBeanMethodName";
-        }
     }
     static ClassEndpointBuilder endpointBuilder(String componentName, String path) {
         class ClassEndpointBuilderImpl extends AbstractEndpointBuilder implements ClassEndpointBuilder, AdvancedClassEndpointBuilder {

@@ -134,6 +134,50 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder jetstreamEnabled(boolean jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder jetstreamEnabled(String jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets the name of the JetStream stream to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param jetstreamName the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder jetstreamName(String jetstreamName) {
+            doSetProperty("jetstreamName", jetstreamName);
+            return this;
+        }
+        /**
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
@@ -784,7 +828,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -799,7 +843,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -811,6 +855,36 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder headerFilterStrategy(String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder jetstreamAsync(boolean jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder jetstreamAsync(String jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
             return this;
         }
         /**
@@ -945,6 +1019,50 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder flushTimeout(String flushTimeout) {
             doSetProperty("flushTimeout", flushTimeout);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointProducerBuilder jetstreamEnabled(boolean jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointProducerBuilder jetstreamEnabled(String jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets the name of the JetStream stream to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param jetstreamName the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointProducerBuilder jetstreamName(String jetstreamName) {
+            doSetProperty("jetstreamName", jetstreamName);
             return this;
         }
         /**
@@ -1481,7 +1599,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -1496,7 +1614,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -1508,6 +1626,36 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointProducerBuilder headerFilterStrategy(String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder jetstreamAsync(boolean jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder jetstreamAsync(String jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
             return this;
         }
         /**
@@ -1643,6 +1791,50 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder flushTimeout(String flushTimeout) {
             doSetProperty("flushTimeout", flushTimeout);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointBuilder jetstreamEnabled(boolean jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointBuilder jetstreamEnabled(String jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+        /**
+         * Sets the name of the JetStream stream to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param jetstreamName the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointBuilder jetstreamName(String jetstreamName) {
+            doSetProperty("jetstreamName", jetstreamName);
             return this;
         }
         /**
@@ -2092,7 +2284,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -2107,7 +2299,7 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the header filtering strategy.
+         * To use a custom header filter strategy.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
@@ -2119,6 +2311,36 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointBuilder headerFilterStrategy(String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder jetstreamAsync(boolean jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder jetstreamAsync(String jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
             return this;
         }
         /**
@@ -2280,6 +2502,30 @@ public interface NatsEndpointBuilderFactory {
          */
         public String natsQueueName() {
             return "CamelNatsQueueName";
+        }
+        /**
+         * Status message code.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code NatsStatusCode}.
+         */
+        public String natsStatusCode() {
+            return "CamelNatsStatusCode";
+        }
+        /**
+         * Status message error message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code NatsStatusError}.
+         */
+        public String natsStatusError() {
+            return "CamelNatsStatusError";
         }
     }
     static NatsEndpointBuilder endpointBuilder(String componentName, String path) {

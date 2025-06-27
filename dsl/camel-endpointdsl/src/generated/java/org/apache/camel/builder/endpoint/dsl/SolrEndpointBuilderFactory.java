@@ -45,8 +45,38 @@ public interface SolrEndpointBuilderFactory {
         }
 
         /**
-         * If true, each producer operation will be automatically followed by a
-         * commit.
+         * Use async request processing (when supported by the solr client).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder async(boolean async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * Use async request processing (when supported by the solr client).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder async(String async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * If true, each producer insert/delete operation will be automatically
+         * performing a commit.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -61,8 +91,8 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
-         * If true, each producer operation will be automatically followed by a
-         * commit.
+         * If true, each producer insert/delete operation will be automatically
+         * performing a commit.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -77,24 +107,37 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the connection timeout on the SolrClient.
+         * The name of the collection to act against.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param collection the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder collection(String collection) {
+            doSetProperty("collection", collection);
+            return this;
+        }
+        /**
+         * The time in ms to wait before connection will time out.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
          * @param connectionTimeout the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder connectionTimeout(Integer connectionTimeout) {
+        default SolrEndpointBuilder connectionTimeout(Long connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
-         * Sets the connection timeout on the SolrClient.
+         * The time in ms to wait before connection will time out.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
@@ -106,133 +149,99 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
-         * maxConnectionsPerHost on the underlying HttpConnectionManager.
+         * For the delete instruction, interprete body as query/queries instead
+         * of id/ids.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param deleteByQuery the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder deleteByQuery(boolean deleteByQuery) {
+            doSetProperty("deleteByQuery", deleteByQuery);
+            return this;
+        }
+        /**
+         * For the delete instruction, interprete body as query/queries instead
+         * of id/ids.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param deleteByQuery the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder deleteByQuery(String deleteByQuery) {
+            doSetProperty("deleteByQuery", deleteByQuery);
+            return this;
+        }
+        /**
+         * Starting index of the response.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
-         * @param defaultMaxConnectionsPerHost the value to set
+         * @param from the value to set
          * @return the dsl builder
          */
-        @Deprecated
-        default SolrEndpointBuilder defaultMaxConnectionsPerHost(Integer defaultMaxConnectionsPerHost) {
-            doSetProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
+        default SolrEndpointBuilder from(Integer from) {
+            doSetProperty("from", from);
             return this;
         }
         /**
-         * maxConnectionsPerHost on the underlying HttpConnectionManager.
+         * Starting index of the response.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
          * Group: producer
          * 
-         * @param defaultMaxConnectionsPerHost the value to set
+         * @param from the value to set
          * @return the dsl builder
          */
-        @Deprecated
-        default SolrEndpointBuilder defaultMaxConnectionsPerHost(String defaultMaxConnectionsPerHost) {
-            doSetProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
+        default SolrEndpointBuilder from(String from) {
+            doSetProperty("from", from);
             return this;
         }
         /**
-         * Sets the http client to be used by the solrClient. This is only
-         * applicable when solrClient is not set.
+         * What operation to perform.
          * 
-         * The option is a: <code>org.apache.http.client.HttpClient</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.solr.SolrOperation</code> type.
          * 
          * Group: producer
          * 
-         * @param httpClient the value to set
+         * @param operation the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder httpClient(org.apache.http.client.HttpClient httpClient) {
-            doSetProperty("httpClient", httpClient);
+        default SolrEndpointBuilder operation(org.apache.camel.component.solr.SolrOperation operation) {
+            doSetProperty("operation", operation);
             return this;
         }
         /**
-         * Sets the http client to be used by the solrClient. This is only
-         * applicable when solrClient is not set.
+         * What operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.client.HttpClient</code> type.
+         * <code>org.apache.camel.component.solr.SolrOperation</code> type.
          * 
          * Group: producer
          * 
-         * @param httpClient the value to set
+         * @param operation the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder httpClient(String httpClient) {
-            doSetProperty("httpClient", httpClient);
+        default SolrEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
             return this;
         }
         /**
-         * Maximum number of retries to attempt in the event of transient
-         * errors.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param maxRetries the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SolrEndpointBuilder maxRetries(Integer maxRetries) {
-            doSetProperty("maxRetries", maxRetries);
-            return this;
-        }
-        /**
-         * Maximum number of retries to attempt in the event of transient
-         * errors.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param maxRetries the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SolrEndpointBuilder maxRetries(String maxRetries) {
-            doSetProperty("maxRetries", maxRetries);
-            return this;
-        }
-        /**
-         * maxTotalConnection on the underlying HttpConnectionManager.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param maxTotalConnections the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SolrEndpointBuilder maxTotalConnections(Integer maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
-            return this;
-        }
-        /**
-         * maxTotalConnection on the underlying HttpConnectionManager.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param maxTotalConnections the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SolrEndpointBuilder maxTotalConnections(String maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
-            return this;
-        }
-        /**
-         * Set the request handler to be used.
+         * The path of the update request handler (use for update requests / set
+         * solr parameter qt for search requests).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -246,255 +255,115 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
-         * Uses the provided solr client to connect to solr. When this parameter
-         * is not specified, camel applies the following rules to determine the
-         * SolrClient: 1) when zkHost or zkChroot (=zookeeper root) parameter is
-         * set, then the CloudSolrClient is used. 2) when multiple hosts are
-         * specified in the uri (separated with a comma), then the
-         * CloudSolrClient (uri scheme is 'solrCloud') or the LBHttpSolrClient
-         * (uri scheme is not 'solrCloud') is used. 3) when the solr operation
-         * is INSERT_STREAMING, then the ConcurrentUpdateSolrClient is used. 4)
-         * otherwise, the HttpSolrClient is used. Note: A CloudSolrClient should
-         * point to zookeeper endpoint(s); other clients point to Solr
-         * endpoint(s). The SolrClient can also be set via the exchange header
-         * 'CamelSolrClient'.
+         * The time in ms to wait before the request will time out (former
+         * soTimeout).
          * 
-         * The option is a: <code>org.apache.solr.client.solrj.SolrClient</code>
-         * type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
-         * @param solrClient the value to set
+         * @param requestTimeout the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder solrClient(org.apache.solr.client.solrj.SolrClient solrClient) {
-            doSetProperty("solrClient", solrClient);
+        default SolrEndpointBuilder requestTimeout(Long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
-         * Uses the provided solr client to connect to solr. When this parameter
-         * is not specified, camel applies the following rules to determine the
-         * SolrClient: 1) when zkHost or zkChroot (=zookeeper root) parameter is
-         * set, then the CloudSolrClient is used. 2) when multiple hosts are
-         * specified in the uri (separated with a comma), then the
-         * CloudSolrClient (uri scheme is 'solrCloud') or the LBHttpSolrClient
-         * (uri scheme is not 'solrCloud') is used. 3) when the solr operation
-         * is INSERT_STREAMING, then the ConcurrentUpdateSolrClient is used. 4)
-         * otherwise, the HttpSolrClient is used. Note: A CloudSolrClient should
-         * point to zookeeper endpoint(s); other clients point to Solr
-         * endpoint(s). The SolrClient can also be set via the exchange header
-         * 'CamelSolrClient'.
+         * The time in ms to wait before the request will time out (former
+         * soTimeout).
          * 
-         * The option will be converted to a
-         * <code>org.apache.solr.client.solrj.SolrClient</code> type.
+         * The option will be converted to a <code>java.lang.Long</code> type.
          * 
          * Group: producer
          * 
-         * @param solrClient the value to set
+         * @param requestTimeout the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder solrClient(String solrClient) {
-            doSetProperty("solrClient", solrClient);
+        default SolrEndpointBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
-         * Sets the socket timeout on the SolrClient.
+         * Size of the response.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          * 
-         * @param soTimeout the value to set
+         * @param size the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder soTimeout(Integer soTimeout) {
-            doSetProperty("soTimeout", soTimeout);
+        default SolrEndpointBuilder size(Integer size) {
+            doSetProperty("size", size);
             return this;
         }
         /**
-         * Sets the socket timeout on the SolrClient.
+         * Size of the response.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
          * Group: producer
          * 
-         * @param soTimeout the value to set
+         * @param size the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder soTimeout(String soTimeout) {
-            doSetProperty("soTimeout", soTimeout);
+        default SolrEndpointBuilder size(String size) {
+            doSetProperty("size", size);
             return this;
         }
         /**
-         * Sets the queue size for the ConcurrentUpdateSolrClient.
+         * The certificate that can be used to access the solr host. It can be
+         * loaded by default from classpath, but you can prefix with classpath:,
+         * file:, or http: to load the resource from different systems.
          * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 10
-         * Group: producer
-         * 
-         * @param streamingQueueSize the value to set
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder streamingQueueSize(int streamingQueueSize) {
-            doSetProperty("streamingQueueSize", streamingQueueSize);
-            return this;
-        }
-        /**
-         * Sets the queue size for the ConcurrentUpdateSolrClient.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 10
-         * Group: producer
-         * 
-         * @param streamingQueueSize the value to set
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder streamingQueueSize(String streamingQueueSize) {
-            doSetProperty("streamingQueueSize", streamingQueueSize);
-            return this;
-        }
-        /**
-         * Sets the number of threads for the ConcurrentUpdateSolrClient.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 2
-         * Group: producer
-         * 
-         * @param streamingThreadCount the value to set
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder streamingThreadCount(int streamingThreadCount) {
-            doSetProperty("streamingThreadCount", streamingThreadCount);
-            return this;
-        }
-        /**
-         * Sets the number of threads for the ConcurrentUpdateSolrClient.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 2
-         * Group: producer
-         * 
-         * @param streamingThreadCount the value to set
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder streamingThreadCount(String streamingThreadCount) {
-            doSetProperty("streamingThreadCount", streamingThreadCount);
-            return this;
-        }
-        /**
-         * Set the default collection for SolrCloud.
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: CloudSolrClient
+         * Group: security
          * 
-         * @param collection the value to set
+         * @param certificatePath the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder collection(String collection) {
-            doSetProperty("collection", collection);
+        default SolrEndpointBuilder certificatePath(String certificatePath) {
+            doSetProperty("certificatePath", certificatePath);
             return this;
         }
         /**
-         * Set the chroot of the zookeeper connection (include the leading
-         * slash; e.g. '/mychroot').
+         * Enable SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: CloudSolrClient
+         * Default: false
+         * Group: security
          * 
-         * @param zkChroot the value to set
+         * @param enableSSL the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder zkChroot(String zkChroot) {
-            doSetProperty("zkChroot", zkChroot);
+        default SolrEndpointBuilder enableSSL(boolean enableSSL) {
+            doSetProperty("enableSSL", enableSSL);
             return this;
         }
         /**
-         * Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g.
-         * zkHost=localhost:2181,localhost:2182. Optionally add the chroot, e.g.
-         * zkHost=localhost:2181,localhost:2182/rootformysolr. In case the first
-         * part of the url path (='contextroot') is set to 'solr' (e.g.
-         * 'localhost:2181/solr' or 'localhost:2181/solr/..'), then that path is
-         * not considered as zookeeper chroot for backward compatibility reasons
-         * (this behaviour can be overridden via zkChroot parameter).
+         * Enable SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
-         * Group: CloudSolrClient
+         * Default: false
+         * Group: security
          * 
-         * @param zkHost the value to set
+         * @param enableSSL the value to set
          * @return the dsl builder
          */
-        default SolrEndpointBuilder zkHost(String zkHost) {
-            doSetProperty("zkHost", zkHost);
+        default SolrEndpointBuilder enableSSL(String enableSSL) {
+            doSetProperty("enableSSL", enableSSL);
             return this;
         }
         /**
-         * Server side must support gzip or deflate for this to have any effect.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: HttpSolrClient
-         * 
-         * @param allowCompression the value to set
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder allowCompression(Boolean allowCompression) {
-            doSetProperty("allowCompression", allowCompression);
-            return this;
-        }
-        /**
-         * Server side must support gzip or deflate for this to have any effect.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Group: HttpSolrClient
-         * 
-         * @param allowCompression the value to set
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder allowCompression(String allowCompression) {
-            doSetProperty("allowCompression", allowCompression);
-            return this;
-        }
-        /**
-         * Indicates whether redirects are used to get to the Solr server.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: HttpSolrClient
-         * 
-         * @param followRedirects the value to set
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder followRedirects(Boolean followRedirects) {
-            doSetProperty("followRedirects", followRedirects);
-            return this;
-        }
-        /**
-         * Indicates whether redirects are used to get to the Solr server.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Group: HttpSolrClient
-         * 
-         * @param followRedirects the value to set
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder followRedirects(String followRedirects) {
-            doSetProperty("followRedirects", followRedirects);
-            return this;
-        }
-        /**
-         * Sets password for basic auth plugin enabled servers.
+         * Password for authenticating.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -508,7 +377,7 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets username for basic auth plugin enabled servers.
+         * Basic authenticate user.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -579,6 +448,44 @@ public interface SolrEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The solr client to connect to solr. When solrClient bean is provided,
+         * all connection properties will be used from that solrClient (host,
+         * port, username, password, connectionTimeout, requestTimeout,
+         * enableSSL, ...). When not explicitly configured, camel uses the
+         * HttpJdkSolrClient.
+         * 
+         * The option is a: <code>org.apache.solr.client.solrj.SolrClient</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param solrClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSolrEndpointBuilder solrClient(org.apache.solr.client.solrj.SolrClient solrClient) {
+            doSetProperty("solrClient", solrClient);
+            return this;
+        }
+        /**
+         * The solr client to connect to solr. When solrClient bean is provided,
+         * all connection properties will be used from that solrClient (host,
+         * port, username, password, connectionTimeout, requestTimeout,
+         * enableSSL, ...). When not explicitly configured, camel uses the
+         * HttpJdkSolrClient.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.solr.client.solrj.SolrClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param solrClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSolrEndpointBuilder solrClient(String solrClient) {
+            doSetProperty("solrClient", solrClient);
+            return this;
+        }
     }
 
     public interface SolrBuilders {
@@ -586,7 +493,7 @@ public interface SolrEndpointBuilderFactory {
          * Solr (camel-solr)
          * Perform operations against Apache Lucene Solr.
          * 
-         * Category: monitoring,search
+         * Category: search,monitoring
          * Since: 4.8
          * Maven coordinates: org.apache.camel:camel-solr
          * 
@@ -599,18 +506,25 @@ public interface SolrEndpointBuilderFactory {
          * Solr (camel-solr)
          * Perform operations against Apache Lucene Solr.
          * 
-         * Category: monitoring,search
+         * Category: search,monitoring
          * Since: 4.8
          * Maven coordinates: org.apache.camel:camel-solr
          * 
-         * Syntax: <code>solr:url</code>
+         * Syntax: <code>solr:host:port/basePath</code>
          * 
-         * Path parameter: url (required)
-         * Hostname and port for the Solr server(s). Multiple hosts can be
-         * specified, separated with a comma. See the solrClient parameter for
-         * more information on the SolrClient used to connect to Solr.
+         * Path parameter: host (required)
+         * The solr instance host name (set to 'default' to use the host name
+         * defined on component level)
          * 
-         * @param path url
+         * Path parameter: port
+         * The solr instance port number
+         * Default value: 8983
+         * 
+         * Path parameter: basePath
+         * The solr instance base path (usually /solr)
+         * Default value: /solr
+         * 
+         * @param path host:port/basePath
          * @return the dsl builder
          */
         default SolrEndpointBuilder solr(String path) {
@@ -620,66 +534,31 @@ public interface SolrEndpointBuilderFactory {
          * Solr (camel-solr)
          * Perform operations against Apache Lucene Solr.
          * 
-         * Category: monitoring,search
+         * Category: search,monitoring
          * Since: 4.8
          * Maven coordinates: org.apache.camel:camel-solr
          * 
-         * Syntax: <code>solr:url</code>
+         * Syntax: <code>solr:host:port/basePath</code>
          * 
-         * Path parameter: url (required)
-         * Hostname and port for the Solr server(s). Multiple hosts can be
-         * specified, separated with a comma. See the solrClient parameter for
-         * more information on the SolrClient used to connect to Solr.
+         * Path parameter: host (required)
+         * The solr instance host name (set to 'default' to use the host name
+         * defined on component level)
+         * 
+         * Path parameter: port
+         * The solr instance port number
+         * Default value: 8983
+         * 
+         * Path parameter: basePath
+         * The solr instance base path (usually /solr)
+         * Default value: /solr
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path url
+         * @param path host:port/basePath
          * @return the dsl builder
          */
         default SolrEndpointBuilder solr(String componentName, String path) {
             return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
-        /**
-         * Solr (Secure) (camel-solr)
-         * Perform operations against Apache Lucene Solr.
-         * 
-         * Category: monitoring,search
-         * Since: 4.8
-         * Maven coordinates: org.apache.camel:camel-solr
-         * 
-         * Syntax: <code>solrs:url</code>
-         * 
-         * Path parameter: url (required)
-         * Hostname and port for the Solr server(s). Multiple hosts can be
-         * specified, separated with a comma. See the solrClient parameter for
-         * more information on the SolrClient used to connect to Solr.
-         * 
-         * @param path url
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder solrs(String path) {
-            return SolrEndpointBuilderFactory.endpointBuilder("solrs", path);
-        }
-        /**
-         * Solr (camel-solr)
-         * Perform operations against Apache Lucene Solr.
-         * 
-         * Category: monitoring,search
-         * Since: 4.8
-         * Maven coordinates: org.apache.camel:camel-solr
-         * 
-         * Syntax: <code>solrCloud:url</code>
-         * 
-         * Path parameter: url (required)
-         * Hostname and port for the Solr server(s). Multiple hosts can be
-         * specified, separated with a comma. See the solrClient parameter for
-         * more information on the SolrClient used to connect to Solr.
-         * 
-         * @param path url
-         * @return the dsl builder
-         */
-        default SolrEndpointBuilder solrCloud(String path) {
-            return SolrEndpointBuilderFactory.endpointBuilder("solrCloud", path);
         }
 
     }
@@ -694,20 +573,19 @@ public interface SolrEndpointBuilderFactory {
         private static final SolrHeaderNameBuilder INSTANCE = new SolrHeaderNameBuilder();
 
         /**
-         * The client.
+         * The operation to perform.
          * 
-         * The option is a: {@code org.apache.solr.client.solrj.SolrClient}
-         * type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code SolrClient}.
+         * @return the name of the header {@code SolrOperation}.
          */
-        public String solrClient() {
-            return "CamelSolrClient";
+        public String solrOperation() {
+            return "CamelSolrOperation";
         }
         /**
-         * The collection to execute the request again.
+         * The collection to execute the request against.
          * 
          * The option is a: {@code String} type.
          * 
@@ -719,16 +597,16 @@ public interface SolrEndpointBuilderFactory {
             return "CamelSolrCollection";
         }
         /**
-         * The operation to perform.
+         * The request handler to execute the solr request against.
          * 
          * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code SolrOperation}.
+         * @return the name of the header {@code SolrRequestHandler}.
          */
-        public String solrOperation() {
-            return "SolrOperation";
+        public String solrRequestHandler() {
+            return "CamelSolrRequestHandler";
         }
         /**
          * The query to execute.
@@ -743,7 +621,58 @@ public interface SolrEndpointBuilderFactory {
             return "CamelSolrQueryString";
         }
         /**
-         * The content type.
+         * The size of the response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrSize}.
+         */
+        public String solrSize() {
+            return "CamelSolrSize";
+        }
+        /**
+         * The starting index of the response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrFrom}.
+         */
+        public String solrFrom() {
+            return "CamelSolrFrom";
+        }
+        /**
+         * The solr parameters to use for the request.
+         * 
+         * The option is a: {@code org.apache.solr.common.params.SolrParams}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrParams}.
+         */
+        public String solrParams() {
+            return "CamelSolrParams";
+        }
+        /**
+         * For the delete instruction, interpret body as query/queries instead
+         * of id/ids.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrDeleteByQuery}.
+         */
+        public String solrDeleteByQuery() {
+            return "CamelSolrDeleteByQuery";
+        }
+        /**
+         * The content type is used to identify the type when inserting files.
          * 
          * The option is a: {@code String} type.
          * 

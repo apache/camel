@@ -18,6 +18,8 @@ package org.apache.camel.component.reactive.streams;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.reactivestreams.Subscriber;
@@ -37,6 +39,7 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
      */
     private static final long UNBOUNDED_REQUESTS = Long.MAX_VALUE;
 
+    private final Lock lock = new ReentrantLock();
     private final String name;
 
     private ReactiveStreamsConsumer consumer;
@@ -52,22 +55,33 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
     }
 
     public void attachConsumer(ReactiveStreamsConsumer consumer) {
-        synchronized (this) {
+        lock.lock();
+        try {
             if (this.consumer != null) {
                 throw new IllegalStateException("A consumer is already attached to the stream '" + name + "'");
             }
             this.consumer = consumer;
+        } finally {
+            lock.unlock();
         }
         refill();
     }
 
-    public synchronized ReactiveStreamsConsumer getConsumer() {
-        return consumer;
+    public ReactiveStreamsConsumer getConsumer() {
+        lock.lock();
+        try {
+            return consumer;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void detachConsumer() {
-        synchronized (this) {
+        lock.lock();
+        try {
             this.consumer = null;
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -78,12 +92,15 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
         }
 
         boolean allowed = true;
-        synchronized (this) {
+        lock.lock();
+        try {
             if (this.subscription != null) {
                 allowed = false;
             } else {
                 this.subscription = subscription;
             }
+        } finally {
+            lock.unlock();
         }
 
         if (!allowed) {
@@ -101,7 +118,8 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
         }
 
         ReactiveStreamsConsumer target;
-        synchronized (this) {
+        lock.lock();
+        try {
             if (requested < UNBOUNDED_REQUESTS) {
                 // When there are UNBOUNDED_REQUESTS, they remain constant
                 requested--;
@@ -110,12 +128,17 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
             if (target != null) {
                 inflightCount++;
             }
+        } finally {
+            lock.unlock();
         }
 
         if (target != null) {
             target.process(exchange, doneSync -> {
-                synchronized (this) {
+                lock.lock();
+                try {
                     inflightCount--;
+                } finally {
+                    lock.unlock();
                 }
 
                 refill();
@@ -129,7 +152,8 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
     protected void refill() {
         Long toBeRequested = null;
         Subscription subs = null;
-        synchronized (this) {
+        lock.lock();
+        try {
             if (consumer != null && this.subscription != null) {
                 Integer consMax = consumer.getEndpoint().getMaxInflightExchanges();
                 long max = (consMax != null && consMax > 0) ? consMax.longValue() : UNBOUNDED_REQUESTS;
@@ -144,6 +168,8 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
                     }
                 }
             }
+        } finally {
+            lock.unlock();
         }
 
         if (toBeRequested != null) {
@@ -160,9 +186,12 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
         LOG.error("Error in reactive stream '{}'", name, throwable);
 
         ReactiveStreamsConsumer consumer;
-        synchronized (this) {
+        lock.lock();
+        try {
             consumer = this.consumer;
             this.subscription = null;
+        } finally {
+            lock.unlock();
         }
 
         if (consumer != null) {
@@ -176,9 +205,12 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
         LOG.info("Reactive stream '{}' completed", name);
 
         ReactiveStreamsConsumer consumer;
-        synchronized (this) {
+        lock.lock();
+        try {
             consumer = this.consumer;
             this.subscription = null;
+        } finally {
+            lock.unlock();
         }
 
         if (consumer != null) {
@@ -189,8 +221,11 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
     @Override
     public void close() throws IOException {
         Subscription subscription;
-        synchronized (this) {
+        lock.lock();
+        try {
             subscription = this.subscription;
+        } finally {
+            lock.unlock();
         }
 
         if (subscription != null) {

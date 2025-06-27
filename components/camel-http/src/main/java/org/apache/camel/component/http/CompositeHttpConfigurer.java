@@ -19,9 +19,11 @@ package org.apache.camel.component.http;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 
-public class CompositeHttpConfigurer implements HttpClientConfigurer {
+public class CompositeHttpConfigurer extends ServiceSupport implements HttpClientConfigurer {
 
     private final List<HttpClientConfigurer> configurers = new ArrayList<>();
 
@@ -51,4 +53,15 @@ public class CompositeHttpConfigurer implements HttpClientConfigurer {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(configurers);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(configurers);
+    }
 }

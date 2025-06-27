@@ -56,7 +56,7 @@ public interface KafkaComponentBuilderFactory {
          * configurations (e.g.: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.., e.g.:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties and the property enclosed in square brackets, like this example: camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -308,7 +308,11 @@ public interface KafkaComponentBuilderFactory {
         
         /**
          * Whether to use batching for processing or streaming. The default is
-         * false, which uses streaming.
+         * false, which uses streaming. In streaming mode, then a single kafka
+         * record is processed per Camel exchange in the message body. In
+         * batching mode, then Camel groups many kafka records together as a
+         * List objects in the message body. The option maxPollRecords is used
+         * to define the number of records to group together in batching mode.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -320,6 +324,28 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder batching(boolean batching) {
             doSetProperty("batching", batching);
+            return this;
+        }
+    
+        /**
+         * In consumer batching mode, then this option is specifying a time in
+         * millis, to trigger batch completion eager when the current batch size
+         * has not reached the maximum size defined by maxPollRecords. Notice
+         * the trigger is not exact at the given interval, as this can only
+         * happen between kafka polls (see pollTimeoutMs option). So for example
+         * setting this to 10000, then the trigger happens in the interval 10000
+         * pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this
+         * would mean a trigger interval at about every 15 seconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param batchingIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder batchingIntervalMs(java.lang.Integer batchingIntervalMs) {
+            doSetProperty("batchingIntervalMs", batchingIntervalMs);
             return this;
         }
     
@@ -1029,6 +1055,30 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
+         * Whether when a Camel Kafka consumer is subscribing to a Kafka broker
+         * then check whether a topic already exist on the broker, and fail if
+         * it does not. Otherwise, the Camel Kafka consumer will keep attempt to
+         * consume from the topic, until it's created on the Kafka broker; and
+         * until then the Camel Kafka consumer will fail and log a WARN about
+         * UNKNOWN_TOPIC_OR_PARTITION. The option
+         * subscribeConsumerBackoffMaxAttempts can be configured to give up
+         * trying to subscribe after a given number of attempts.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param subscribeConsumerTopicMustExists the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder subscribeConsumerTopicMustExists(boolean subscribeConsumerTopicMustExists) {
+            doSetProperty("subscribeConsumerTopicMustExists", subscribeConsumerTopicMustExists);
+            return this;
+        }
+    
+        
+        /**
          * If this feature is enabled and a single element of a batch is an
          * Exchange or Message, the producer will generate individual kafka
          * header values for it by using the batch Message to determine the
@@ -1545,26 +1595,6 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
-         * Whether the producer should store the RecordMetadata results from
-         * sending to Kafka. The results are stored in a List containing the
-         * RecordMetadata metadata's. The list is stored on a header with the
-         * key KafkaConstants#KAFKA_RECORDMETA.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param recordMetadata the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder recordMetadata(boolean recordMetadata) {
-            doSetProperty("recordMetadata", recordMetadata);
-            return this;
-        }
-    
-        
-        /**
          * The number of acknowledgments the producer requires the leader to
          * have received before considering a request complete. This controls
          * the durability of records that are sent. The following settings are
@@ -1760,6 +1790,26 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder workerPoolMaxSize(java.lang.Integer workerPoolMaxSize) {
             doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
+            return this;
+        }
+    
+        
+        /**
+         * Whether the producer should store the RecordMetadata results from
+         * sending to Kafka. The results are stored in a List containing the
+         * RecordMetadata metadata's. The list is stored on a header with the
+         * key KafkaConstants#KAFKA_RECORD_META.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param recordMetadata the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder recordMetadata(boolean recordMetadata) {
+            doSetProperty("recordMetadata", recordMetadata);
             return this;
         }
     
@@ -2404,6 +2454,7 @@ public interface KafkaComponentBuilderFactory {
             case "autoCommitIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitIntervalMs((java.lang.Integer) value); return true;
             case "autoOffsetReset": getOrCreateConfiguration((KafkaComponent) component).setAutoOffsetReset((java.lang.String) value); return true;
             case "batching": getOrCreateConfiguration((KafkaComponent) component).setBatching((boolean) value); return true;
+            case "batchingIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setBatchingIntervalMs((java.lang.Integer) value); return true;
             case "breakOnFirstError": getOrCreateConfiguration((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
             case "bridgeErrorHandler": ((KafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "checkCrcs": getOrCreateConfiguration((KafkaComponent) component).setCheckCrcs((java.lang.Boolean) value); return true;
@@ -2438,6 +2489,7 @@ public interface KafkaComponentBuilderFactory {
             case "pollExceptionStrategy": ((KafkaComponent) component).setPollExceptionStrategy((org.apache.camel.component.kafka.PollExceptionStrategy) value); return true;
             case "subscribeConsumerBackoffInterval": ((KafkaComponent) component).setSubscribeConsumerBackoffInterval((long) value); return true;
             case "subscribeConsumerBackoffMaxAttempts": ((KafkaComponent) component).setSubscribeConsumerBackoffMaxAttempts((int) value); return true;
+            case "subscribeConsumerTopicMustExists": ((KafkaComponent) component).setSubscribeConsumerTopicMustExists((boolean) value); return true;
             case "batchWithIndividualHeaders": getOrCreateConfiguration((KafkaComponent) component).setBatchWithIndividualHeaders((boolean) value); return true;
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
@@ -2463,7 +2515,6 @@ public interface KafkaComponentBuilderFactory {
             case "queueBufferingMaxMessages": getOrCreateConfiguration((KafkaComponent) component).setQueueBufferingMaxMessages((java.lang.Integer) value); return true;
             case "receiveBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setReceiveBufferBytes((java.lang.Integer) value); return true;
             case "reconnectBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setReconnectBackoffMs((java.lang.Integer) value); return true;
-            case "recordMetadata": getOrCreateConfiguration((KafkaComponent) component).setRecordMetadata((boolean) value); return true;
             case "requestRequiredAcks": getOrCreateConfiguration((KafkaComponent) component).setRequestRequiredAcks((java.lang.String) value); return true;
             case "requestTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setRequestTimeoutMs((java.lang.Integer) value); return true;
             case "retries": getOrCreateConfiguration((KafkaComponent) component).setRetries((java.lang.Integer) value); return true;
@@ -2473,6 +2524,7 @@ public interface KafkaComponentBuilderFactory {
             case "workerPool": getOrCreateConfiguration((KafkaComponent) component).setWorkerPool((java.util.concurrent.ExecutorService) value); return true;
             case "workerPoolCoreSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolCoreSize((java.lang.Integer) value); return true;
             case "workerPoolMaxSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolMaxSize((java.lang.Integer) value); return true;
+            case "recordMetadata": getOrCreateConfiguration((KafkaComponent) component).setRecordMetadata((boolean) value); return true;
             case "autowiredEnabled": ((KafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "kafkaClientFactory": ((KafkaComponent) component).setKafkaClientFactory((org.apache.camel.component.kafka.KafkaClientFactory) value); return true;
             case "synchronous": getOrCreateConfiguration((KafkaComponent) component).setSynchronous((boolean) value); return true;

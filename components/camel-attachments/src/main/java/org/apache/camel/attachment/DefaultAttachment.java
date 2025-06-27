@@ -28,8 +28,9 @@ import jakarta.activation.DataSource;
 import org.apache.camel.util.CollectionHelper;
 
 public class DefaultAttachment implements Attachment {
+
+    private final DataHandler dataHandler;
     private Map<String, Object> headers;
-    private DataHandler dataHandler;
 
     public DefaultAttachment(DataHandler dh) {
         dataHandler = dh;
@@ -72,25 +73,25 @@ public class DefaultAttachment implements Attachment {
     }
 
     @Override
-    public void addHeader(String headerName, String headerValue) {
+    public void addHeader(String name, String value) {
         if (headers == null) {
             headers = createHeaders();
         }
-        CollectionHelper.appendValue(headers, headerName, headerValue);
+        CollectionHelper.appendValue(headers, name, value);
     }
 
     @Override
-    public void setHeader(String headerName, String headerValue) {
+    public void setHeader(String headerName, String value) {
         if (headers == null) {
             headers = createHeaders();
         }
-        headers.put(headerName, headerValue);
+        headers.put(headerName, value);
     }
 
     @Override
-    public void removeHeader(String headerName) {
+    public void removeHeader(String name) {
         if (headers != null) {
-            headers.remove(headerName);
+            headers.remove(name);
         }
     }
 

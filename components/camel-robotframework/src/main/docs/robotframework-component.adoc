@@ -18,7 +18,7 @@ The *robotframework:* component allows for processing camel exchanges
 in acceptance test suites which are already implemented with its own DSL. 
 The depending keyword libraries that can be used inside test suites
 implemented in Robot DSL, could have been implemented either via 
-Java or Pyhton.
+Java or Python.
 
 This component will let you execute business logic of acceptance test cases 
 in Robot language on which you can pass parameters to feed data via power 

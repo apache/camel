@@ -16,15 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Properties;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
@@ -35,7 +36,8 @@ import org.apache.camel.util.IOHelper;
 import picocli.CommandLine.Command;
 
 @Command(name = "export",
-         description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)")
+         description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
+         showDefaultValues = true)
 public class Export extends ExportBaseCommand {
 
     public Export(CamelJBangMain main) {
@@ -43,21 +45,46 @@ public class Export extends ExportBaseCommand {
     }
 
     @Override
+    public boolean disarrangeLogging() {
+        return false; // export logs specially to a camel-export.log
+    }
+
+    @Override
     protected Integer export() throws Exception {
+        int answer = doExport();
+        if (answer == 0 && !quiet) {
+            printer().println("Project export successful!");
+        }
+        return answer;
+    }
+
+    protected Integer doExport() throws Exception {
         // application.properties
-        doLoadAndInitProfileProperties(new File("application.properties"));
+        doLoadAndInitProfileProperties(Paths.get("application.properties"));
         if (profile != null) {
             // override from profile specific configuration
-            doLoadAndInitProfileProperties(new File("application-" + profile + ".properties"));
+            doLoadAndInitProfileProperties(Paths.get("application-" + profile + ".properties"));
         }
 
         if (runtime == null) {
-            System.err.println("The runtime option must be specified");
+            printer().printErr("The runtime option must be specified");
             return 1;
         }
 
         if (gav == null) {
-            gav = "org.example.project:%s:%s".formatted(getProjectName(), getVersion());
+            String pn = getProjectName();
+            if (pn == null) {
+                printer().printErr("Failed to resolve project name: Please provide --name, --gav or source file");
+                return 1;
+            }
+            gav = "org.example.project:%s:%s".formatted(pn, getVersion());
+        }
+
+        try {
+            verifyExportFiles();
+        } catch (FileNotFoundException ex) {
+            printer().println(ex.getMessage());
+            return 1;
         }
 
         switch (runtime) {
@@ -71,17 +98,35 @@ public class Export extends ExportBaseCommand {
                 return export(new ExportCamelMain(getMain()));
             }
             default -> {
-                System.err.println("Unknown runtime: " + runtime);
+                printer().printErr("Unknown runtime: " + runtime);
                 return 1;
             }
         }
-
     }
 
-    private void doLoadAndInitProfileProperties(File file) throws Exception {
-        if (file.exists()) {
+    private void verifyExportFiles() throws FileNotFoundException {
+        for (var fn : files) {
+            if (fn.indexOf(':') < 0 || fn.startsWith("file:")) {
+                if (fn.startsWith("file:")) {
+                    fn = fn.substring(5);
+                    if (fn.startsWith("//")) {
+                        fn = fn.substring(2);
+                    }
+                }
+                if (fn.endsWith("/*")) {
+                    fn = fn.substring(0, fn.length() - 2);
+                }
+                if (!Files.exists(Paths.get(fn))) {
+                    throw new FileNotFoundException("Path does not exist: " + fn);
+                }
+            }
+        }
+    }
+
+    private void doLoadAndInitProfileProperties(Path path) throws Exception {
+        if (Files.exists(path)) {
             Properties props = new CamelCaseOrderedProperties();
-            RuntimeUtil.loadProperties(props, file);
+            RuntimeUtil.loadProperties(props, path);
             // read runtime and gav from profile if not configured
             String rt = props.getProperty("camel.jbang.runtime");
             if (rt != null) {
@@ -122,6 +167,9 @@ public class Export extends ExportBaseCommand {
         cmd.repositories = this.repositories;
         cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;
+        cmd.name = this.name;
+        cmd.port = this.port;
+        cmd.managementPort = this.managementPort;
         cmd.gav = this.gav;
         cmd.mavenSettings = this.mavenSettings;
         cmd.mavenSettingsSecurity = this.mavenSettingsSecurity;
@@ -131,6 +179,7 @@ public class Export extends ExportBaseCommand {
         cmd.cleanExportDir = this.cleanExportDir;
         cmd.fresh = this.fresh;
         cmd.download = this.download;
+        cmd.packageScanJars = this.packageScanJars;
         cmd.javaVersion = this.javaVersion;
         cmd.camelVersion = this.camelVersion;
         cmd.kameletsVersion = this.kameletsVersion;
@@ -154,11 +203,17 @@ public class Export extends ExportBaseCommand {
         cmd.excludes = this.excludes;
         cmd.ignoreLoadingError = this.ignoreLoadingError;
         cmd.lazyBean = this.lazyBean;
+        cmd.verbose = this.verbose;
+        cmd.applicationProperties = this.applicationProperties;
         // run export
         return cmd.export();
     }
 
     protected String getProjectName() {
+        if (name != null) {
+            return name;
+        }
+
         if (gav != null) {
             String[] ids = gav.split(":");
             if (ids.length > 1) {
@@ -170,8 +225,7 @@ public class Export extends ExportBaseCommand {
             return FileUtil.onlyName(SourceScheme.onlyName(files.get(0)));
         }
 
-        throw new RuntimeCamelException(
-                "Failed to resolve project name - please provide --gav option or at least one source file");
+        return null;
     }
 
     protected String getVersion() {
@@ -225,8 +279,10 @@ public class Export extends ExportBaseCommand {
                     case "org.apache.camel.springboot" -> {
                         String a1 = o1.getArtifactId();
                         // main/core/engine first
-                        if ("camel-spring-boot-engine-starter".equals(a1)) {
+                        if ("camel-spring-boot-starter".equals(a1)) {
                             return 21;
+                        } else if ("camel-spring-boot-engine-starter".equals(a1)) {
+                            return 22;
                         }
                         return 20;
                     }
@@ -258,8 +314,8 @@ public class Export extends ExportBaseCommand {
 
     // Copy the dockerfile into the same Maven project root directory.
     protected void copyDockerFiles(String buildDir) throws Exception {
-        File docker = new File(buildDir, "src/main/docker");
-        docker.mkdirs();
+        Path docker = Path.of(buildDir).resolve("src/main/docker");
+        Files.createDirectories(docker);
         String[] ids = gav.split(":");
         InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile.tmpl");
         String context = IOHelper.loadText(is);
@@ -267,7 +323,7 @@ public class Export extends ExportBaseCommand {
 
         String appJar = ids[1] + "-" + ids[2] + ".jar";
         context = context.replaceAll("\\{\\{ \\.AppJar }}", appJar);
-        IOHelper.writeText(context, new FileOutputStream(new File(docker, "Dockerfile"), false));
+        Files.writeString(docker.resolve("Dockerfile"), context);
     }
 
     // Copy the readme.md into the same Maven project root directory.
@@ -280,6 +336,6 @@ public class Export extends ExportBaseCommand {
         context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
         context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceAll("\\{\\{ \\.AppRuntimeJar }}", appJar);
-        IOHelper.writeText(context, new FileOutputStream(new File(buildDir, "readme.md"), false));
+        Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
     }
 }

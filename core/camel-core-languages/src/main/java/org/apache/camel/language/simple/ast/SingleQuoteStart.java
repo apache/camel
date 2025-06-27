@@ -64,7 +64,7 @@ public class SingleQuoteStart extends BaseSimpleNode implements BlockStart {
     }
 
     @Override
-    public String createCode(String expression) throws SimpleParserException {
-        return BaseSimpleNode.createCode(expression, block);
+    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
+        return BaseSimpleNode.createCode(camelContext, expression, block);
     }
 }

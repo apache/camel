@@ -35,7 +35,6 @@ public class RouteControllerConfigurationPropertiesConfigurer extends org.apache
         map.put("UnhealthyOnExhausted", boolean.class);
         map.put("UnhealthyOnRestarting", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(RouteControllerConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -72,10 +71,6 @@ public class RouteControllerConfigurationPropertiesConfigurer extends org.apache
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -81,6 +81,15 @@ public class VertxHttpConfiguration {
     private String proxyPassword;
     @UriParam(label = "producer")
     private WebClientOptions webClientOptions;
+    @UriParam(label = "producer",
+              description = "Whether to force using multipart/form-data for easy file uploads. This is only to be used for uploading the message body as a single entity form-data. For uploading multiple entries then use io.vertx.ext.web.multipart.MultipartForm to build the form.")
+    private boolean multipartUpload;
+    @UriParam(label = "producer", defaultValue = "data",
+              description = "The name of the multipart/form-data when multipartUpload is enabled.")
+    private String multipartUploadName = "data";
+    @UriParam(label = "producer",
+              description = "If the option is true, the Exchange.HTTP_URI header will be ignored and the endpoint URI will be used for the HTTP request. You may also set option throwExceptionOnFailure to false to return the fault response back to the client.")
+    private boolean bridgeEndpoint;
 
     /**
      * The HTTP URI to connect to
@@ -354,5 +363,29 @@ public class VertxHttpConfiguration {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isMultipartUpload() {
+        return multipartUpload;
+    }
+
+    public void setMultipartUpload(boolean multipartUpload) {
+        this.multipartUpload = multipartUpload;
+    }
+
+    public String getMultipartUploadName() {
+        return multipartUploadName;
+    }
+
+    public void setMultipartUploadName(String multipartUploadName) {
+        this.multipartUploadName = multipartUploadName;
+    }
+
+    public boolean isBridgeEndpoint() {
+        return bridgeEndpoint;
+    }
+
+    public void setBridgeEndpoint(boolean bridgeEndpoint) {
+        this.bridgeEndpoint = bridgeEndpoint;
     }
 }

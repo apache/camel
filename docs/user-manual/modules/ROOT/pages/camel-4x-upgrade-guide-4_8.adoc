@@ -4,7 +4,29 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
+== Upgrading from 4.8.4 to 4.8.7
+
+=== camel-core
+
+Removed unused `Johnzon` in `org.apache.camel.model.dataformat.JsonLibrary` enum as `camel-johnzon` is not supported
+in Camel v4. This removal also means `johnzon` was removed from XSD and YAML DSL schemas.
+
+== Upgrading from 4.8.2 to 4.8.3
+
+=== camel-mina
+
+If using object codec, then you should configure the `objectCodecPattern` configuration to specify
+which java classes (FQN) to allow for Object serialization. You can use `*` to accept all patterns.
+
 == Upgrading from 4.8.1 to 4.8.2
+
+=== camel-management
+
+==== Using Route Templates
+
+Camel will now ensure the created routes via route templates
+always use unique _nodePrefixId_ to ensure there are no duplicate id clashes, when the template
+is used for creating multiple routes.
 
 === camel-debezium
 
@@ -18,6 +40,61 @@ everything under the root package `org.apache.camel.component.debezium`.
 The `camel-opentelemetry` component has had significant bug fixes to handle span activation/deactivations
 better when Camel route messages synchronously and asynchronously. This component should also work better
 on Spring Boot.
+
+In order to fix the problems reported we had to align the Opentelemetry dependencies to a version which is different from the one used in Spring Boot 3.3.x BOM. 
+If you're using such BOM for your **Camel Spring Boot runtime** application, you will need to make sure to force the usage of the Opentelemetry dependencies below:
+```
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-api</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-context</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-logs</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-metrics</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk-common</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk-metrics</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk-logs</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk-trace</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-api-incubator</artifactId>
+    <version>1.43.0-alpha</version>
+</dependency>
+```
 
 == Upgrading Camel 4.7 to 4.8
 

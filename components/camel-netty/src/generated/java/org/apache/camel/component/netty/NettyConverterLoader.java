@@ -45,27 +45,93 @@ public final class NettyConverterLoader implements TypeConverterLoader, CamelCon
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, byte[].class, io.netty.buffer.ByteBuf.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toByteArray((io.netty.buffer.ByteBuf) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toByteArray((io.netty.buffer.ByteBuf) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, io.netty.buffer.ByteBuf.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toByteBuffer((byte[]) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toByteBuffer((byte[]) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, io.netty.buffer.ByteBuf.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toByteBuffer((java.lang.String) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toByteBuffer((java.lang.String) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.InputStream.class, io.netty.buffer.ByteBuf.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toInputStream((io.netty.buffer.ByteBuf) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toInputStream((io.netty.buffer.ByteBuf) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.ObjectInput.class, io.netty.buffer.ByteBuf.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toObjectInput((io.netty.buffer.ByteBuf) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toObjectInput((io.netty.buffer.ByteBuf) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, io.netty.buffer.ByteBuf.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toString((io.netty.buffer.ByteBuf) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toString((io.netty.buffer.ByteBuf) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.xml.transform.dom.DOMSource.class, io.netty.buffer.ByteBuf.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toDOMSource((io.netty.buffer.ByteBuf) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toDOMSource((io.netty.buffer.ByteBuf) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.xml.transform.sax.SAXSource.class, io.netty.buffer.ByteBuf.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toSAXSource((io.netty.buffer.ByteBuf) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toSAXSource((io.netty.buffer.ByteBuf) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.xml.transform.stax.StAXSource.class, io.netty.buffer.ByteBuf.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toStAXSource((io.netty.buffer.ByteBuf) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toStAXSource((io.netty.buffer.ByteBuf) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.xml.transform.stream.StreamSource.class, io.netty.buffer.ByteBuf.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toStreamSource((io.netty.buffer.ByteBuf) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toStreamSource((io.netty.buffer.ByteBuf) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.Document.class, io.netty.buffer.ByteBuf.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.NettyConverter.toDocument((io.netty.buffer.ByteBuf) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.NettyConverter.toDocument((io.netty.buffer.ByteBuf) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

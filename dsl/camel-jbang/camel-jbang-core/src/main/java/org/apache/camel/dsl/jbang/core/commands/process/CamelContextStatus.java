@@ -39,7 +39,7 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
 
 @Command(name = "context",
          description = "Get status of Camel integrations",
-         sortOptions = false)
+         sortOptions = false, showDefaultValues = true)
 public class CamelContextStatus extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -48,6 +48,10 @@ public class CamelContextStatus extends ProcessWatchCommand {
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
+
+    @CommandLine.Option(names = { "--remote" },
+                        description = "Break down counters into remote/total pairs")
+    boolean remote;
 
     public CamelContextStatus(CamelJBangMain main) {
         super(main);
@@ -104,7 +108,6 @@ public class CamelContextStatus extends ProcessWatchCommand {
                             if (num != null) {
                                 row.inflightRemote = num.toString();
                             }
-                            row.reloaded = stats.get("reloaded").toString();
                             Object last = stats.get("lastProcessingTime");
                             if (last != null) {
                                 row.last = last.toString();
@@ -127,6 +130,16 @@ public class CamelContextStatus extends ProcessWatchCommand {
                             if (last != null) {
                                 long time = Long.parseLong(last.toString());
                                 row.sinceLastFailed = TimeUtils.printSince(time);
+                            }
+                            row.reloaded = (String) stats.get("reloaded"); // backwards compatible
+                            stats = (Map<String, ?>) stats.get("reload");
+                            if (stats != null) {
+                                row.reloaded = stats.get("reloaded").toString();
+                                row.reloadedFailed = stats.get("failed").toString();
+                                stats = (Map<String, ?>) stats.get("lastError");
+                                if (stats != null) {
+                                    row.reloadedError = stats.get("message").toString();
+                                }
                             }
                         }
                         JsonArray array = (JsonArray) root.get("routes");
@@ -163,19 +176,20 @@ public class CamelContextStatus extends ProcessWatchCommand {
                     new Column().header("PROFILE").dataAlign(HorizontalAlign.LEFT).with(this::getProfile),
                     new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                     new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .with(r -> extractState(r.state)),
-                    new Column().header("RELOAD").headerAlign(HorizontalAlign.CENTER)
-                            .with(r -> r.reloaded),
+                            .with(this::getStatus),
+                    new Column().header("RELOAD").with(this::getReloaded),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("ROUTE").with(this::getRoutes),
                     new Column().header("MSG/S").with(this::getThroughput),
                     new Column().header("TOTAL").with(this::getTotal),
-                    new Column().header("REMOTE").with(this::getTotalRemote),
                     new Column().header("FAIL").with(this::getFailed),
                     new Column().header("INFLIGHT").with(this::getInflight),
                     new Column().header("LAST").with(r -> r.last),
-                    new Column().header("DELTA").with(this::getDelta),
-                    new Column().header("SINCE-LAST").with(this::getSinceLast))));
+                    new Column().header("SINCE-LAST").with(this::getSinceLast),
+                    new Column().header("") // empty header as we only show info when there is an error
+                            .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(70, OverflowBehaviour.NEWLINE)
+                            .with(this::getDescription))));
         }
 
         return 0;
@@ -221,26 +235,36 @@ public class CamelContextStatus extends ProcessWatchCommand {
         }
     }
 
+    private String getStatus(Row r) {
+        if (r.reloadedError != null) {
+            return "Error";
+        }
+        return extractState(r.state);
+    }
+
+    private String getDescription(Row r) {
+        if (r.reloadedError != null) {
+            return "Reload failed due to: " + r.reloadedError;
+        }
+        return null;
+    }
+
     private String getTotal(Row r) {
+        if (remote && r.totalRemote != null) {
+            return r.totalRemote + "/" + r.total;
+        }
         return r.total;
     }
 
-    private String getTotalRemote(Row r) {
-        if (r.totalRemote != null) {
-            return r.totalRemote;
-        }
-        return "";
-    }
-
     private String getFailed(Row r) {
-        if (r.failedRemote != null) {
+        if (remote && r.failedRemote != null) {
             return r.failedRemote + "/" + r.failed;
         }
         return r.failed;
     }
 
     private String getInflight(Row r) {
-        if (r.inflightRemote != null) {
+        if (remote && r.inflightRemote != null) {
             return r.inflightRemote + "/" + r.inflight;
         }
         return r.inflight;
@@ -289,6 +313,10 @@ public class CamelContextStatus extends ProcessWatchCommand {
         return s;
     }
 
+    protected String getReloaded(Row row) {
+        return row.reloaded + "/" + row.reloadedFailed;
+    }
+
     protected String getRoutes(Row r) {
         return r.routeStarted + "/" + r.routeTotal;
     }
@@ -305,6 +333,8 @@ public class CamelContextStatus extends ProcessWatchCommand {
         int routeTotal;
         int state;
         String reloaded;
+        String reloadedFailed;
+        String reloadedError;
         String age;
         long uptime;
         String throughput;

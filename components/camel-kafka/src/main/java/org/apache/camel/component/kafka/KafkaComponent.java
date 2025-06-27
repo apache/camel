@@ -54,6 +54,8 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
     private int subscribeConsumerBackoffMaxAttempts;
     @Metadata(label = "consumer,advanced", defaultValue = "5000")
     private long subscribeConsumerBackoffInterval = 5000;
+    @Metadata(label = "consumer,advanced")
+    private boolean subscribeConsumerTopicMustExists;
 
     public KafkaComponent() {
     }
@@ -223,6 +225,23 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
      */
     public void setSubscribeConsumerBackoffInterval(long subscribeConsumerBackoffInterval) {
         this.subscribeConsumerBackoffInterval = subscribeConsumerBackoffInterval;
+    }
+
+    public boolean isSubscribeConsumerTopicMustExists() {
+        return subscribeConsumerTopicMustExists;
+    }
+
+    /**
+     * Whether when a Camel Kafka consumer is subscribing to a Kafka broker then check whether a topic already exist on
+     * the broker, and fail if it does not. Otherwise, the Camel Kafka consumer will keep attempt to consume from the
+     * topic, until it's created on the Kafka broker; and until then the Camel Kafka consumer will fail and log a WARN
+     * about UNKNOWN_TOPIC_OR_PARTITION.
+     *
+     * The option subscribeConsumerBackoffMaxAttempts can be configured to give up trying to subscribe after a given
+     * number of attempts.
+     */
+    public void setSubscribeConsumerTopicMustExists(boolean subscribeConsumerTopicMustExists) {
+        this.subscribeConsumerTopicMustExists = subscribeConsumerTopicMustExists;
     }
 
     @Override

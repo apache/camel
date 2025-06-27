@@ -66,16 +66,19 @@ public class RestOpenApiProcessor extends ServiceSupport implements Processor, C
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
-        StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
-        StartupStep step = recorder.beginStep(RestOpenApiProcessor.class, "openapi", "Generating OpenAPI specification");
-        try {
-            support.renderResourceListing(camelContext, jsonAdapter, openApiConfig, true,
-                    camelContext.getClassResolver(), configuration);
-            yamlAdapter.setOpenApi(jsonAdapter.getOpenApi()); // no need to compute OpenApi again
-            support.renderResourceListing(camelContext, yamlAdapter, openApiConfig, false,
-                    camelContext.getClassResolver(), configuration);
-        } finally {
-            recorder.endStep(step);
+        // optimize if not using forward headers
+        if (!configuration.isUseXForwardHeaders()) {
+            StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
+            StartupStep step = recorder.beginStep(RestOpenApiProcessor.class, "openapi", "Generating OpenAPI specification");
+            try {
+                support.renderResourceListing(camelContext, jsonAdapter, openApiConfig, true,
+                        camelContext.getClassResolver(), configuration, null);
+                yamlAdapter.setOpenApi(jsonAdapter.getOpenApi()); // no need to compute OpenApi again
+                support.renderResourceListing(camelContext, yamlAdapter, openApiConfig, false,
+                        camelContext.getClassResolver(), configuration, null);
+            } finally {
+                recorder.endStep(step);
+            }
         }
     }
 
@@ -105,9 +108,15 @@ public class RestOpenApiProcessor extends ServiceSupport implements Processor, C
             json = true;
         }
 
-        RestApiResponseAdapter adapter = json ? jsonAdapter : yamlAdapter;
+        RestApiResponseAdapter adapter;
         if (configuration.isUseXForwardHeaders()) {
-            support.setupXForwardHeaders(adapter, exchange);
+            // re-create api as using x-forward headers impacts the rendered output
+            adapter = new DefaultRestApiResponseAdapter();
+            support.renderResourceListing(camelContext, adapter, openApiConfig, json,
+                    camelContext.getClassResolver(), configuration, exchange);
+        } else {
+            // use pre-build adapter
+            adapter = json ? jsonAdapter : yamlAdapter;
         }
         adapter.copyResult(exchange);
     }

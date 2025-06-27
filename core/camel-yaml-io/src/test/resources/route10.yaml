@@ -24,5 +24,6 @@
       uri: direct:start
       steps:
         - setBody:
-            simple:
-              expression: "${body}${body}"
+            expression:
+              simple:
+                expression: "${body}${body}"

@@ -34,7 +34,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.hc.core5.http.ContentType;
 
 /**
  * Component configuration for AS2 component.
@@ -67,8 +66,10 @@ public class AS2Configuration {
     private Integer serverPortNumber;
     @UriParam(defaultValue = "/")
     private String requestUri = "/";
-    @UriParam
-    private ContentType ediMessageType;
+    @UriParam(enums = "application/edifact,application/edi-x12,application/edi-consent,application/xml")
+    private String ediMessageType;
+    @UriParam(defaultValue = "us-ascii")
+    private String ediMessageCharset;
     @UriParam
     private String ediMessageTransferEncoding;
     @UriParam
@@ -92,7 +93,7 @@ public class AS2Configuration {
     @UriParam
     private String dispositionNotificationTo;
     @UriParam(label = "security")
-    private String[] signedReceiptMicAlgorithms;
+    private String signedReceiptMicAlgorithms;
     @UriParam(label = "security")
     private AS2EncryptionAlgorithm encryptingAlgorithm;
     @UriParam(label = "security")
@@ -113,15 +114,27 @@ public class AS2Configuration {
     private Duration httpConnectionPoolTtl = Duration.ofMinutes(15);
     @UriParam(label = "security")
     private Certificate[] validateSigningCertificateChain;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContext sslContext;
     // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
-    @UriParam
+    @UriParam(label = "security")
     private HostnameVerifier hostnameVerifier;
     @UriParam
     private Integer asyncMdnPortNumber;
     @UriParam
     private String receiptDeliveryOption;
+    @UriParam(label = "security", secret = true)
+    private String userName;
+    @UriParam(label = "security", secret = true)
+    private String password;
+    @UriParam(label = "security", secret = true)
+    private String accessToken;
+    @UriParam(label = "security", secret = true)
+    private String mdnUserName;
+    @UriParam(label = "security", secret = true)
+    private String mdnPassword;
+    @UriParam(label = "security", secret = true)
+    private String mdnAccessToken;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -258,7 +271,7 @@ public class AS2Configuration {
         this.requestUri = requestUri;
     }
 
-    public ContentType getEdiMessageType() {
+    public String getEdiMessageType() {
         return ediMessageType;
     }
 
@@ -266,8 +279,19 @@ public class AS2Configuration {
      * The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent,
      * application/xml
      */
-    public void setEdiMessageType(ContentType ediMessageType) {
+    public void setEdiMessageType(String ediMessageType) {
         this.ediMessageType = ediMessageType;
+    }
+
+    public String getEdiMessageCharset() {
+        return ediMessageCharset;
+    }
+
+    /**
+     * The charset of the content type of EDI message.
+     */
+    public void setEdiMessageCharset(String ediMessageCharset) {
+        this.ediMessageCharset = ediMessageCharset;
     }
 
     public String getEdiMessageTransferEncoding() {
@@ -394,15 +418,15 @@ public class AS2Configuration {
         this.dispositionNotificationTo = dispositionNotificationTo;
     }
 
-    public String[] getSignedReceiptMicAlgorithms() {
+    public String getSignedReceiptMicAlgorithms() {
         return signedReceiptMicAlgorithms;
     }
 
     /**
      * The list of algorithms, in order of preference, requested to generate a message integrity check (MIC) returned in
-     * message dispostion notification (MDN)
+     * message disposition notification (MDN). Multiple algorithms can be separated by comma.
      */
-    public void setSignedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
+    public void setSignedReceiptMicAlgorithms(String signedReceiptMicAlgorithms) {
         this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
     }
 
@@ -523,8 +547,6 @@ public class AS2Configuration {
 
     /**
      * Set SSL context for connection to remote server.
-     *
-     * @param sslContext
      */
     public void setSslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
@@ -536,8 +558,6 @@ public class AS2Configuration {
 
     /**
      * Set hostname verifier for SSL session.
-     *
-     * @param hostnameVerifier
      */
     public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
@@ -564,5 +584,73 @@ public class AS2Configuration {
      */
     public void setReceiptDeliveryOption(String receiptDeliveryOption) {
         this.receiptDeliveryOption = receiptDeliveryOption;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * The user-name that is used by the client for basic authentication. If options for basic authentication and bearer
+     * authentication are both set then basic authentication takes precedence.
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * The password that is used by the client for basic authentication.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    /**
+     * The access token that is used by the client for bearer authentication.
+     */
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getMdnUserName() {
+        return mdnUserName;
+    }
+
+    /**
+     * The user-name that is used by the server for basic authentication when it sends an async MDN. If options for
+     * basic authentication and bearer authentication are both set then basic authentication takes precedence.
+     */
+    public void setMdnUserName(String mdnUserName) {
+        this.mdnUserName = mdnUserName;
+    }
+
+    public String getMdnPassword() {
+        return mdnPassword;
+    }
+
+    /**
+     * The password that is used by the server for basic authentication when it sends an async MDN.
+     */
+    public void setMdnPassword(String mdnPassword) {
+        this.mdnPassword = mdnPassword;
+    }
+
+    public String getMdnAccessToken() {
+        return mdnAccessToken;
+    }
+
+    /**
+     * The access token that is used by the server when it sends an async MDN.
+     */
+    public void setMdnAccessToken(String accessToken) {
+        this.mdnAccessToken = accessToken;
     }
 }

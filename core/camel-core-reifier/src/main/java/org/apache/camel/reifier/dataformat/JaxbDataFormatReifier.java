@@ -30,9 +30,24 @@ public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("prettyPrint", definition.getPrettyPrint());
-        properties.put("objectFactory", definition.getObjectFactory());
-        properties.put("ignoreJAXBElement", definition.getIgnoreJAXBElement());
+        if (definition.getPrettyPrint() != null) {
+            properties.put("prettyPrint", definition.getPrettyPrint());
+        } else {
+            // is default true
+            properties.put("prettyPrint", "true");
+        }
+        if (definition.getObjectFactory() != null) {
+            properties.put("objectFactory", definition.getObjectFactory());
+        } else {
+            // is default true
+            properties.put("objectFactory", "true");
+        }
+        if (definition.getIgnoreJAXBElement() != null) {
+            properties.put("ignoreJAXBElement", definition.getIgnoreJAXBElement());
+        } else {
+            // is default true
+            properties.put("ignoreJAXBElement", "true");
+        }
         properties.put("mustBeJAXBElement", definition.getMustBeJAXBElement());
         properties.put("filterNonXmlChars", definition.getFilterNonXmlChars());
         properties.put("fragment", definition.getFragment());
@@ -48,6 +63,12 @@ public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
         properties.put("schemaLocation", definition.getSchemaLocation());
         properties.put("noNamespaceSchemaLocation", definition.getNoNamespaceSchemaLocation());
         properties.put("jaxbProviderProperties", definition.getJaxbProviderProperties());
+        if (definition.getContentTypeHeader() != null) {
+            properties.put("contentTypeHeader", definition.getContentTypeHeader());
+        } else {
+            // is default true
+            properties.put("contentTypeHeader", "true");
+        }
         properties.put("accessExternalSchemaProtocols", definition.getAccessExternalSchemaProtocols());
     }
 

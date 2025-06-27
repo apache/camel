@@ -24,7 +24,9 @@ import org.apache.camel.itest.utils.extensions.GreeterServiceExtension;
 import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -32,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Timeout(30)
+@Isolated
 @CamelSpringTest
 @ContextConfiguration
 public class CamelGreeterFileDomTest {

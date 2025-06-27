@@ -85,17 +85,26 @@ This operation returns a List of Deployments from your cluster, using a label se
 
 [source,java]
 --------------------------------------------------------------------------------
-fromF("kubernetes-deployments://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
-    public class KubernertesProcessor implements Processor {
+fromF("kubernetes-deployments://%s?oauthToken=%s", host, authToken)
+    .process(new KubernetesProcessor()).to("mock:result");
+
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Deployment dp = exchange.getIn().getBody(Deployment.class);
-            log.info("Got event with configmap name: " + dp.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with deployment name: " + dp.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 --------------------------------------------------------------------------------
 
-This consumer will return a list of events on the namespace default for the deployment test.
+This consumer returns a message per event received for all Deployments from all namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Deployments with the specified label in any namespace.
+- `namespace` - Watch all Deployments in the specified namespace.
+- `namespace` + `resourceName` - Watch the Deployment with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch Deployments with the specified label in the given namespace.
 
 include::spring-boot:partial$starter.adoc[]

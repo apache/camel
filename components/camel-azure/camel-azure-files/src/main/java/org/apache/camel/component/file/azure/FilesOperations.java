@@ -174,7 +174,6 @@ public class FilesOperations extends NormalizedOperations {
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         // by observation both paths are absolute paths on the share
         log.trace("renameFile({}, {})", from, to);
-
         try {
             return renameRemote(getFileClient(from), FilesPath.ensureRelative(to));
         } catch (RuntimeException e) {
@@ -193,13 +192,10 @@ public class FilesOperations extends NormalizedOperations {
 
     @Override
     public boolean buildDirectory(String directory) throws GenericFileOperationFailedException {
-
         boolean success = existsDirectory(directory);
-
         if (!success) {
             success = buildDirectoryStepByStep(directory);
         }
-
         return success;
     }
 
@@ -215,7 +211,6 @@ public class FilesOperations extends NormalizedOperations {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -248,8 +243,7 @@ public class FilesOperations extends NormalizedOperations {
     @Override
     public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
         log.trace("releaseRetrievedFileResources({})", exchange.getExchangeId());
-        var is = exchange.getIn().getHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, InputStream.class);
-
+        var is = exchange.getIn().getHeader(FilesConstants.REMOTE_FILE_INPUT_STREAM, InputStream.class);
         if (is != null) {
             IOHelper.close(is);
         }
@@ -257,7 +251,7 @@ public class FilesOperations extends NormalizedOperations {
 
     @SuppressWarnings({ "unchecked", "resource" })
     private boolean retrieveFileToBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        boolean success = false;
+        boolean success;
         GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange
                 .getProperty(FileComponent.FILE_EXCHANGE_FILE);
         org.apache.camel.util.ObjectHelper.notNull(target,
@@ -275,7 +269,7 @@ public class FilesOperations extends NormalizedOperations {
             log.trace("Prepared {} for download as opened input stream.", remoteName);
             InputStream is = cwd().getFileClient(remoteName).openInputStream();
             target.setBody(is);
-            exchange.getIn().setHeader(FilesHeaders.REMOTE_FILE_INPUT_STREAM, is);
+            exchange.getIn().setHeader(FilesConstants.REMOTE_FILE_INPUT_STREAM, is);
             success = true;
         } else {
             log.trace("Downloading {} to byte[] body.", remoteName);
@@ -351,7 +345,7 @@ public class FilesOperations extends NormalizedOperations {
             os = new FileOutputStream(inProgress, append);
 
             // set header with the path to the local work file
-            exchange.getIn().setHeader(FilesHeaders.FILE_LOCAL_WORK_PATH, local.getPath());
+            exchange.getIn().setHeader(FilesConstants.FILE_LOCAL_WORK_PATH, local.getPath());
 
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local, e);
@@ -708,7 +702,6 @@ public class FilesOperations extends NormalizedOperations {
     }
 
     private ShareServiceClient createClient() {
-
         var builder = new ShareServiceClientBuilder().endpoint(HTTPS + "://" + configuration.getHost());
         var sharedKey = configuration.getSharedKey();
         if (configuration.getCredentialType().equals(CredentialType.SHARED_ACCOUNT_KEY) && sharedKey != null) {

@@ -59,6 +59,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "objectname":
         case "objectName": getOrCreateConfiguration(target).setObjectName(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class, value)); return true;
+        case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclass":
@@ -108,6 +109,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "objectname":
         case "objectName": return java.lang.String.class;
         case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class;
+        case "prefix": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "storageclass":
@@ -153,6 +155,7 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "objectname":
         case "objectName": return getOrCreateConfiguration(target).getObjectName();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "prefix": return getOrCreateConfiguration(target).getPrefix();
         case "serviceaccountkey":
         case "serviceAccountKey": return getOrCreateConfiguration(target).getServiceAccountKey();
         case "storageclass":

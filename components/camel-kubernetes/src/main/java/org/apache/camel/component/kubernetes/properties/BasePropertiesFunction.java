@@ -69,6 +69,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     private Boolean clientEnabled;
     private String mountPathConfigMaps;
     private String mountPathSecrets;
+    private boolean isAutowiredClient;
 
     @Override
     protected void doInit() {
@@ -98,6 +99,9 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         }
         if (clientEnabled && client == null) {
             client = CamelContextHelper.findSingleByType(camelContext, KubernetesClient.class);
+            if (client != null) {
+                isAutowiredClient = true;
+            }
         }
         if (clientEnabled && client == null) {
             // try to auto-configure via properties
@@ -224,6 +228,10 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         this.mountPathSecrets = mountPathSecrets;
     }
 
+    public boolean isAutowiredClient() {
+        return isAutowiredClient;
+    }
+
     @Override
     public String apply(String remainder) {
         String defaultValue = StringHelper.after(remainder, ":");
@@ -231,6 +239,10 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         String key = StringHelper.after(remainder, "/");
         if (name == null || key == null) {
             return defaultValue;
+        }
+
+        if (key.contains(":")) {
+            key = StringHelper.before(key, ":");
         }
 
         // local-mode will not lookup in kubernetes but as local properties

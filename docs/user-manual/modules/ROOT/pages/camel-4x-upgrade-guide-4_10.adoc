@@ -1,0 +1,409 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading from 4.10.5 to 4.10.7
+
+=== camel-file / camel-ftp / camel-smb / camel-azure-files
+
+The consumers (`camel-ftp`, `camel-smb`, and `camel-azure-files`) will now in case of failure to create starting directory,
+on startup, keep attempting to create the directory on polling, until its successfully created.
+Previously in case of error creating the starting directory then this could cause the consumer to not be able to recover,
+and you would have to restart the route to attempt again.
+
+== Upgrading from 4.10.4 to 4.10.5
+
+=== camel-core
+
+Removed unused `Johnzon` in `org.apache.camel.model.dataformat.JsonLibrary` enum as `camel-johnzon` is not supported
+in Camel v4. This removal also means `johnzon` was removed from XSD and YAML DSL schemas.
+
+== Upgrading from 4.10.3 to 4.10.4
+
+=== Java DSL
+
+When using Choice EIP then in some situations you may need to use `.endChoice()`
+to be able to either continue added more nodes to the current Choice EIP, or that you
+are working with nested Choice EIPs (choice inside choice), then you may also need to use `endChoice`
+to go back to the parent choice to continue from there.
+
+However, there has been some regressions from upgrading older Camel releases to 4.11, and therefore
+we have refactored `endChoice` to work more consistent.
+
+For example the following code
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(header("foo").isGreaterThan(1))
+            .choice()
+                .when(header("foo").isGreaterThan(5))
+                    .to("mock:big")
+                .otherwise()
+                    .to("mock:med")
+            .endChoice()
+        .otherwise()
+            .to("mock:low")
+        .end();
+----
+
+Should now be
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(header("foo").isGreaterThan(1))
+            .choice()
+                .when(header("foo").isGreaterThan(5))
+                    .to("mock:big")
+                .otherwise()
+                    .to("mock:med")
+            .end().endChoice()
+        .otherwise()
+            .to("mock:low")
+        .end();
+----
+
+Notice that the `endChoice` is changed to `end().endChoice()`. This is required to be consistent
+to end the current choice (inner) and then afterwards change the scope to be Choice EIP to be able to
+continue in the outer Choice. Otherwise the Java DSL cannot know the scope is Choice EIP and you would
+not be able to add the `otherwise` block to the outer Choice.
+
+=== Propagating variables in EIPs in seda/kamelet components
+
+The kamelet and seda component and EIPs such as Split, Multicast, Recipient List, Enrich, PollEnrich, Loop (copy mode)
+will now also propagate exchange variables as well into the result (i.e. exchange properties and message headers is already being propagated).
+
+=== camel-micrometer
+
+The `tags` parameter has been _fixed_ to be multivalued and tooling friendly. So
+instead of configuring `tags=a=1&b=2` then this should be configured as `tags.a=1&tags.b=2` and so forth.
+
+== Upgrading from 4.10.2 to 4.10.3
+
+No changes
+
+== Upgrading from 4.10.1 to 4.10.2
+
+=== EIPs
+
+==== Recipient List, Split and Multicast EIP
+
+In parallel processing mode, you can also enable `synchronous=true` to force these EIPs to process
+the sub-tasks using the upper bounds of the thread-pool. If using `synchronous=false` then Camel
+will allow its reactive routing engine to use as many threads as possible, which may be available
+due to sub-tasks using other thread-pools such as `CompletableFuture.runAsync` or others.
+
+Setting `synchronous=true` is the same behaviour is in Camel 2 which did not have the reactive routing engine.
+
+==== WireTap and OnCompletion EIP
+
+When MDC is enabled, then the WireTap and OnCompletion (in parallel mode) will now propagate MDC
+context when creating threads to process the exchanges. This makes these EIPs similar to how
+other EIPs such as Multicast EIP already does this.
+
+=== camel-bean
+
+The header `Exchange.BEAN_METHOD_NAME` with constant value `CamelBeanMethodName` has been deprecated, and support for using this header has been removed.
+Instead, you can specify the `method` option directly as shown, or using any other header of your choosing as follows.
+
+[source,java]
+----
+    toD("bean:myBean?method=${header.myMethodName}");
+----
+
+=== camel-sql
+
+When inserting or updating many rows in `batch=true` mode (producer) then this component
+has been optimized to execute the entire batch operation in a single transaction; by turning off auto-commit
+on the SQL Connection, and doing a manual `commit` or `rollback`. This can dramatically improve performance
+on some databases. The old behaviour can be restored by setting the `batchAutoCommitDisabled=false` on the component or endpoint.
+
+== Upgrading from 4.10.0 to 4.10.1
+
+=== camel-api
+
+Added `removeTraits` method to `org.apache.camel.Message`.
+
+Added `bind` method that accepts `Supplier` for the bean and also accepts init and destroy methods,
+to the `org.apache.camel.spi.Registry` interface.
+
+=== camel-attachments
+
+The attachments have been refactored to be stored internally as a _message trait_,
+and the `org.apache.camel.attachment.AttachmentMessage` is only a facade to provide
+end user access to the fine-grained Attachment APIs. The underlying message implementation
+such as `DefaultMessage` in the `Exchange` is un-affected when converting from `Message` to `AttachmentMessage` via:
+
+[source,java]
+----
+AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
+am.addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
+----
+
+The class `org.apache.camel.attachment.AttachmentMap` has been removed.
+Removed `getDelegateMessage` method from `org.apache.camel.attachment.AttachmentMessage`.
+
+=== camel-ftp
+
+The file name header `Exchange.FILE_NAME` now includes the relative path such as `subdir/hello.txt`
+when using `recursive=true`, to be similar to how `camel-file` component behaves.
+
+=== camel-kafka
+
+The camel-kafka option `recordMetadata` has changed default from `true` to `false`.
+
+=== camel-jbang
+
+The option `lazy-bean` has changed to be default `true` when exporting to make the export
+work in more situations out of the box.
+
+== Upgrading Camel 4.9 to 4.10
+
+=== XML DSL changes
+
+In `<intercept`> and `<interceptSendToEndpoint>` then `<when>` has been
+renamed to `<onWhen>`.
+
+For example:
+
+[source,xml]
+----
+<intercept>
+  <when>...</when>
+  ...
+</intercept>
+----
+
+Should now be:
+
+[source,xml]
+----
+<intercept>
+  <onWhen>...</onWhen>
+  ...
+</intercept>
+----
+
+In `<circuitBreaker` the `<onFallback>` section must be configured last.
+
+For example:
+
+[source,xml]
+----
+  <circuitBreaker>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+    <onFallback>
+      <transform>
+        <constant>Fallback message</constant>
+      </transform>
+    </onFallback>
+    <to uri="direct:foo"/>
+    ...
+  </circuitBreaker>
+----
+
+Should now be:
+
+[source,xml]
+----
+  <circuitBreaker>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+    <to uri="direct:foo"/>
+    ...
+    <onFallback>
+      <transform>
+        <constant>Fallback message</constant>
+      </transform>
+    </onFallback>
+  </circuitBreaker>
+----
+
+And `inheritErrorHandler` has been moved from `<loadBalance>` to `<failoverLoadBalancer` which
+is the only load balancer support this option.
+
+For example:
+
+[source,xml]
+----
+  <loadBalance inheritErrorHandler="true">
+    <failoverLoadBalancer maximumFailoverAttempts="3" roundRobin="true"/>
+    ...
+  </loadBalance>
+----
+
+Should now be:
+
+[source,xml]
+----
+  <loadBalance>
+    <failoverLoadBalancer maximumFailoverAttempts="3" roundRobin="true" inheritErrorHandler="true"/>
+    ...
+  </loadBalance>
+----
+
+=== camel-kamelet
+
+The error handling when using kamelets has been refactored to let Kamelets re-use the same error handling
+that are from the route where the kamelets are being used. Previously Kamelets did not have
+any error handling.
+
+Suppose you have kamelets that would cause an exception during processing, such
+as the source below. Now because the route has been configured with a _dead letter channel_
+as the error handler, then the exception from the kamelet will be handled by the route error handler.
+Which means you will se a WARN being logged.
+
+Previously the exception would **not** be handled by the route error handler, and the kamelet source
+would always fail internally and cause a WARN being logged. Meaning that you did not have
+any power to handle these errors.
+
+Now the kamelets are _first class_ and gives users the full power to handle errors as they see fit.
+
+[source,yaml]
+----
+- route:
+    errorHandler:
+      deadLetterChannel:
+        deadLetterUri: log:dead?level=WARN
+    id: myRoute
+    from:
+      uri: "kamelet:my-error-source/source"
+      steps:
+        - log: "${body}"
+----
+
+This change has most an effect on source Kamelets. For sink or action Kamelets,
+then any error would be propagated back to the route, that could still handle the error.
+However, if the error handler is configured to perform retries, then the retry would be
+starting all over again calling the sink Kamelet. This change will let the error handler
+perform retries at the original of the error (also inside the Kamelet), the same as
+regular Camel routes.
+
+So suppose you have the following route:
+
+[source,yaml]
+----
+- route:
+    errorHandler:
+      deadLetterChannel:
+        deadLetterUri: log:dead?level=WARN
+        redeliveryPolicy:
+          maximumRedeliveries: 5
+          redeliveryDelay: "5000"
+    id: myRoute
+    from:
+      uri: "direct:start"
+      steps:
+        - to:
+            uri: "kamelet:my-error-sink/sink"
+        - log: "${body}"
+----
+
+Then notice the error handler has been configured to do redeliveries up till 5 times with 5 sec delay between.
+Suppose the sink kamelet is throwing an exception, then Camel will now perform the redelivery attempt
+at the point of origin, which means inside the Kamelet. Previously the redelivery will
+only happen at the route level, calling the kamelet all over again.
+
+The option `noErrorHandler` has changed default from `true` to `false`. You should only
+use this option if you want to turn on error handling inside Kamelets all together. However,
+this should only be used in advanced/rare use-cases. This option may in the future be deprecated and removed.
+
+=== camel-azure-files
+
+The class `org.apache.camel.component.file.azure.FilesHeaders` has been renamed to `org.apache.camel.component.file.azure.FilesConstants`.
+
+=== camel-aws2-s3
+
+The header `CamelAwsS3BucketName` for setting a bucket to write to, on the producer side, cannot be used anymore: the header `CamelAwsS3OverrideBucketName` must be used 
+instead. This was done to avoid situation in which you're moving a file from a bucket to a different one, and the header coming from the S3 consumer is used as bucket name for S3 Producer.
+You can find more information on CAMEL-21680. 
+
+=== camel-file
+
+The `camel-file` consumer has been optimized when filtering file names using name matching only,
+to avoid creating an `GenericFile` object that represent the file. This is unnessasary if the file
+is to be excluded due the filtering.
+
+This optimization has changed APIs in the `camel-file` component to let methods that accept
+`GenericFile` as parameter, has been changed to use a `Supplier<GenericFile>` to lazy create the wrapper.
+
+Camel users who have created 3rd party component extending `camel-file` may need to migrate your components.
+
+=== camel-google-storage
+
+The header `CamelGoogleCloudStorageBucketName` for setting a bucket to write to, on the producer side, cannot be used anymore: the header `CamelGoogleCloudStorageOverrideBucketName` must be used 
+instead. This was done to avoid situation in which you're moving a file from a bucket to a different one, and the header coming from the Google Storage consumer is used as bucket name for Google Storage Producer.
+You can find more information on CAMEL-21682. 
+
+=== camel-jgroups
+
+The cluster lock has been removed as it has been removed in JGroups 5.4 onwards, and it was
+not recommended to be used in older JGroups releases. You can use another Camel component such as
+`camel-infinispan` that has cluster locking.
+
+The `camel-jgroups-cluster-service-starter` in Camel Spring Boot has been removed.
+
+=== camel-jbang
+
+The camel-jbang commands for `camel-k` has been removed.
+
+The `camel dependency update` has removed the option `--source` to specify the source file,
+but to refer to the source file directly such as:
+
+`camel dependency update --source=MyRoute.java` to be `camel dependency update MyRoute.java`.
+
+=== camel-micrometer
+
+We have fixed a flawed behavior when using dynamic endpoints which made the generation of endpoint events to grow in an uncontrolled way. From now on the component will generate events for the endpoint base URI as a default behavior. If you still want to collect events for the extended URI (including the parameters), then, you can use the `camel.metrics.baseEndpointURIExchangeEventNotifier=false` configuration. Mind that this is strongly discouraged as it can make your number of events growing out of control.
+
+=== camel-mina
+
+If using object codec, then you should configure the `objectCodecPattern` configuration to specify
+which java classes (FQN) to allow for Object serialization. You can use `*` to accept all patterns.
+
+=== camel-minio
+
+The header `CamelMinioBucketName` for setting a bucket to write to, on the producer side, cannot be used anymore: the header `CamelMinioOverrideBucketName` must be used 
+instead. This was done to avoid situation in which you're moving a file from a bucket to a different one, and the header coming from the Minio consumer is used as bucket name for Minio Producer.
+You can find more information on CAMEL-21678. 
+
+=== camel-google-pubsub-lite
+
+The component `camel-google-pubsub-lite` has been deprecated following the deprecation of the corresponding service by Google Cloud Platform.
+
+Google recommends migrating your Pub/Sub Lite service to either Google Cloud Managed Service for Apache Kafka or Google Cloud Pub/Sub. Depending on your choice, you should use `camel-kafka` or `camel-google-pubsub component`, respectively.
+
+=== camel-tracing
+
+We have deprecated the setting of MDC `trace_id` and `span_id` in favour of implementation specific feature. You need to check the specific tracing/telemetry component configuration to learn how to switch from the deprecated configuration to the new one. Most of the time you will need to remove the `camel.main.use-mdc-logging` Camel property (or set it to `false`) and add dependencies and configuration settings to enable the specific component instrumentation.
+
+=== camel-langchain4j-chat
+
+The function calling feature was removed. Please use the `camel-langchain4j-tools` component for function calling.
+
+=== camel-smb
+
+The `camel-smb` component has been updated to extend `GenericFile` classes and now supports more consumer and producer options.
+The Consumer includes options for filtering, pre and post processing, duplicate handling, directory traversal, polling, and readlocks.
+The Producer includes options for writing to temporary files, writing content, and handling existing files.
+
+=== camel-solr
+
+The `camel-solr` component has been refactored. The `solrs` and `solrCloud` schemes have been deprecated in the uri format (but can still be enabled via the enableSSL and solrClient configuration options).
+The solr operations have been simplified and some solr operations will be no longer be available in the next release. For those operations, a warning message will tell you how to get the same results with the new operations.
+The Solr component exchange headers have been renamed and extended. As a consequence, the user should review the use of the Solr exchange headers and rename them when applicable.
+
+All the solr headers has been renamed to use `CamelSolr` as prefix, such as `operation` -> `CamelSolrOperation`.
+
+=== camel-test-infra
+
+There are some API breaking changes with `org.apache.camel.test.infra.XXX.services..XXXContainerService`, they do not have anymore a constructor accessible, you need to use `org.apache.camel.test.infra.XXX.services.XXXServiceFactory.createLocalService`
+
+== camel-spring-boot
+
+The `camel-k-starter` has been removed.
+

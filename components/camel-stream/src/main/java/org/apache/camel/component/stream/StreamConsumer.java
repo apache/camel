@@ -335,43 +335,53 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     /**
      * Strategy method for processing the line
      */
-    protected synchronized long processLine(String line, boolean last, long index) throws Exception {
-        if (endpoint.getGroupLines() > 0) {
-            // remember line
-            if (line != null) {
-                lines.add(line);
-            }
+    protected long processLine(String line, boolean last, long index) throws Exception {
+        lock.lock();
+        try {
+            if (endpoint.getGroupLines() > 0) {
+                // remember line
+                if (line != null) {
+                    lines.add(line);
+                }
 
-            // should we flush lines?
-            if (!lines.isEmpty() && (lines.size() >= endpoint.getGroupLines() || last)) {
-                // spit out lines as we hit the size, or it was the last
-                List<String> copy = new ArrayList<>(lines);
-                Object body = endpoint.getGroupStrategy().groupLines(copy);
+                // should we flush lines?
+                if (!lines.isEmpty() && (lines.size() >= endpoint.getGroupLines() || last)) {
+                    // spit out lines as we hit the size, or it was the last
+                    List<String> copy = new ArrayList<>(lines);
+                    Object body = endpoint.getGroupStrategy().groupLines(copy);
+                    // remember to inc index when we create an exchange
+                    Exchange exchange = createExchange(body, index++, last);
+
+                    // clear lines
+                    lines.clear();
+
+                    getProcessor().process(exchange);
+                }
+            } else if (line != null) {
+                // single line
                 // remember to inc index when we create an exchange
-                Exchange exchange = createExchange(body, index++, last);
-
-                // clear lines
-                lines.clear();
-
+                Exchange exchange = createExchange(line, index++, last);
                 getProcessor().process(exchange);
             }
-        } else if (line != null) {
-            // single line
-            // remember to inc index when we create an exchange
-            Exchange exchange = createExchange(line, index++, last);
-            getProcessor().process(exchange);
-        }
 
-        return index;
+            return index;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * Strategy method for processing the data
      */
-    protected synchronized long processRaw(byte[] body, long index) throws Exception {
-        Exchange exchange = createExchange(body, index++, true);
-        getProcessor().process(exchange);
-        return index;
+    protected long processRaw(byte[] body, long index) throws Exception {
+        lock.lock();
+        try {
+            Exchange exchange = createExchange(body, index++, true);
+            getProcessor().process(exchange);
+            return index;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**

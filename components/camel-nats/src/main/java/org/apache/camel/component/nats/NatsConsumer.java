@@ -16,14 +16,21 @@
  */
 package org.apache.camel.component.nats;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 
 import io.nats.client.Connection;
 import io.nats.client.Connection.Status;
 import io.nats.client.Dispatcher;
+import io.nats.client.JetStreamApiException;
+import io.nats.client.JetStreamManagement;
+import io.nats.client.JetStreamSubscription;
 import io.nats.client.Message;
 import io.nats.client.MessageHandler;
+import io.nats.client.PushSubscribeOptions;
+import io.nats.client.api.ConsumerConfiguration;
+import io.nats.client.api.StreamConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -41,6 +48,7 @@ public class NatsConsumer extends DefaultConsumer {
     private Connection connection;
     private Dispatcher dispatcher;
     private boolean active;
+    private JetStreamSubscription jetStreamSubscription;
 
     public NatsConsumer(NatsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -123,35 +131,76 @@ public class NatsConsumer extends DefaultConsumer {
         @Override
         public void run() {
             try {
-                NatsConsumer.this.dispatcher = this.connection.createDispatcher(new CamelNatsMessageHandler());
-                if (ObjectHelper.isNotEmpty(this.configuration.getQueueName())) {
-                    NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher.subscribe(
-                            NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
-                            NatsConsumer.this.getEndpoint().getConfiguration().getQueueName());
-                    if (ObjectHelper.isNotEmpty(NatsConsumer.this.getEndpoint().getConfiguration().getMaxMessages())) {
-                        NatsConsumer.this.dispatcher.unsubscribe(
-                                NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
-                                Integer.parseInt(NatsConsumer.this.getEndpoint().getConfiguration().getMaxMessages()));
-                    }
-                    if (NatsConsumer.this.dispatcher.isActive()) {
-                        NatsConsumer.this.setActive(true);
-                    }
+                NatsConfiguration config = getEndpoint().getConfiguration();
+                String topic = config.getTopic();
+                String queueName = config.getQueueName();
+                String maxMessagesStr = config.getMaxMessages();
+                Integer maxMessages = null;
+                if (ObjectHelper.isNotEmpty(maxMessagesStr)) {
+                    maxMessages = Integer.parseInt(maxMessagesStr);
+                }
+
+                if (config.isJetstreamEnabled() && connection.getServerInfo().isJetStreamAvailable()) {
+                    setupJetStreamConsumer(topic, queueName);
                 } else {
-                    NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher
-                            .subscribe(NatsConsumer.this.getEndpoint().getConfiguration().getTopic());
-                    if (ObjectHelper.isNotEmpty(NatsConsumer.this.getEndpoint().getConfiguration().getMaxMessages())) {
-                        NatsConsumer.this.dispatcher.unsubscribe(
-                                NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
-                                Integer.parseInt(NatsConsumer.this.getEndpoint().getConfiguration().getMaxMessages()));
-                    }
-                    if (NatsConsumer.this.dispatcher.isActive()) {
-                        NatsConsumer.this.setActive(true);
-                    }
+                    setupStandardNatsConsumer(topic, queueName, maxMessages);
                 }
             } catch (final Exception e) {
                 NatsConsumer.this.getExceptionHandler().handleException("Error during processing", e);
             }
 
+        }
+
+        private void setupJetStreamConsumer(String topic, String queueName) throws IOException, JetStreamApiException {
+            String streamName = this.configuration.getJetstreamName();
+            String consumerName
+                    = ObjectHelper.isNotEmpty(queueName) ? queueName : "consumer-" + System.currentTimeMillis(); // Generate a default consumer name if queueName is not provided
+            LOG.debug("Setting up JetStream PUSH consumer for stream: '{}', durable: '{}', topic: {} ", streamName,
+                    consumerName, this.configuration.getTopic());
+
+            JetStreamManagement jsm = connection.jetStreamManagement();
+            StreamConfiguration streamConfig = StreamConfiguration.builder()
+                    .name(streamName)
+                    .subjects(topic)
+                    .build();
+            jsm.addStream(streamConfig);
+
+            ConsumerConfiguration.Builder ccBuilder = ConsumerConfiguration.builder()
+                    .durable(consumerName);
+            ccBuilder.deliverSubject(null);
+            ConsumerConfiguration cc = ccBuilder.build();
+
+            PushSubscribeOptions pushOptions = PushSubscribeOptions.builder()
+                    .configuration(cc)
+                    .build();
+
+            NatsConsumer.this.dispatcher = this.connection.createDispatcher(new CamelNatsMessageHandler());
+
+            NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
+                    NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
+                    queueName,
+                    dispatcher,
+                    new CamelNatsMessageHandler(),
+                    true,
+                    pushOptions);
+
+            NatsConsumer.this.setActive(true);
+        }
+
+        private void setupStandardNatsConsumer(String topic, String queueName, Integer maxMessages) {
+            LOG.debug("Setting up standard NATS consumer for topic: {}", topic);
+            NatsConsumer.this.dispatcher = connection.createDispatcher(new CamelNatsMessageHandler());
+            if (ObjectHelper.isNotEmpty(queueName)) {
+                NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher.subscribe(topic, queueName);
+            } else {
+                NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher.subscribe(topic);
+            }
+            if (maxMessages != null) {
+                NatsConsumer.this.dispatcher.unsubscribe(topic, maxMessages);
+            }
+            if (NatsConsumer.this.dispatcher.isActive()) {
+                NatsConsumer.this.setActive(true);
+            }
         }
 
         class CamelNatsMessageHandler implements MessageHandler {
@@ -167,6 +216,10 @@ public class NatsConsumer extends DefaultConsumer {
                     exchange.getIn().setHeader(NatsConstants.NATS_SUBJECT, msg.getSubject());
                     exchange.getIn().setHeader(NatsConstants.NATS_QUEUE_NAME, msg.getSubscription().getQueueName());
                     exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
+                    if (msg.isStatusMessage() && msg.getStatus() != null) {
+                        exchange.getIn().setHeader(NatsConstants.NATS_STATUS_CODE, msg.getStatus().getCode());
+                        exchange.getIn().setHeader(NatsConstants.NATS_STATUS_ERROR, msg.getStatus().getMessage());
+                    }
                     if (msg.getHeaders() != null) {
                         final HeaderFilterStrategy strategy = NatsConsumer.this.getEndpoint()
                                 .getConfiguration()

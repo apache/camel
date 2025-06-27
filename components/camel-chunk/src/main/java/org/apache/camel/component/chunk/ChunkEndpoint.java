@@ -17,6 +17,7 @@
 package org.apache.camel.component.chunk;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -33,6 +34,8 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.io.IOUtils;
 
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_ENDPOINT_URI_PREFIX;
@@ -163,7 +166,13 @@ public class ChunkEndpoint extends ResourceEndpoint {
 
     private Chunk getOrCreateChunk(Theme theme, boolean fromTemplate) throws IOException {
         if (chunk == null) {
-            chunk = createChunk(new StringReader(getResourceUriExtended()), theme, fromTemplate);
+            if (ResourceHelper.hasScheme(getResourceUri())) {
+                InputStream is = getResourceAsInputStream();
+                String text = IOHelper.loadText(is);
+                chunk = createChunk(new StringReader(text), theme, true);
+            } else {
+                chunk = createChunk(new StringReader(getResourceUriExtended()), theme, fromTemplate);
+            }
         }
         return chunk;
     }

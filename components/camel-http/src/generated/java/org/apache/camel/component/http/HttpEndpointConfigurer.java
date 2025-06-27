@@ -23,14 +23,14 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HttpEndpoint target = (HttpEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authbearertoken":
+        case "authBearerToken": target.setAuthBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "authdomain":
         case "authDomain": target.setAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "authhost":
         case "authHost": target.setAuthHost(property(camelContext, java.lang.String.class, value)); return true;
         case "authmethod":
         case "authMethod": target.setAuthMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "authmethodpriority":
-        case "authMethodPriority": target.setAuthMethodPriority(property(camelContext, java.lang.String.class, value)); return true;
         case "authpassword":
         case "authPassword": target.setAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "authusername":
@@ -67,6 +67,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "getWithBody": target.setGetWithBody(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "httpactivitylistener":
+        case "httpActivityListener": target.setHttpActivityListener(property(camelContext, org.apache.camel.component.http.HttpActivityListener.class, value)); return true;
         case "httpclient":
         case "httpClient": target.setHttpClient(property(camelContext, org.apache.hc.client5.http.classic.HttpClient.class, value)); return true;
         case "httpclientconfigurer":
@@ -83,12 +85,26 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": target.setIgnoreResponseBody(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "loghttpactivity":
+        case "logHttpActivity": target.setLogHttpActivity(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
+        case "multipartupload":
+        case "multipartUpload": target.setMultipartUpload(property(camelContext, boolean.class, value)); return true;
+        case "multipartuploadname":
+        case "multipartUploadName": target.setMultipartUploadName(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauth2cachetokens":
+        case "oauth2CacheTokens": target.setOauth2CacheTokens(property(camelContext, boolean.class, value)); return true;
+        case "oauth2cachedtokensdefaultexpiryseconds":
+        case "oauth2CachedTokensDefaultExpirySeconds": target.setOauth2CachedTokensDefaultExpirySeconds(property(camelContext, long.class, value)); return true;
+        case "oauth2cachedtokensexpirationmarginseconds":
+        case "oauth2CachedTokensExpirationMarginSeconds": target.setOauth2CachedTokensExpirationMarginSeconds(property(camelContext, long.class, value)); return true;
         case "oauth2clientid":
         case "oauth2ClientId": target.setOauth2ClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "oauth2clientsecret":
         case "oauth2ClientSecret": target.setOauth2ClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauth2resourceindicator":
+        case "oauth2ResourceIndicator": target.setOauth2ResourceIndicator(property(camelContext, java.lang.String.class, value)); return true;
         case "oauth2scope":
         case "oauth2Scope": target.setOauth2Scope(property(camelContext, java.lang.String.class, value)); return true;
         case "oauth2tokenendpoint":
@@ -117,6 +133,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
         case "proxyPort": target.setProxyPort(property(camelContext, int.class, value)); return true;
+        case "skipcontrolheaders":
+        case "skipControlHeaders": target.setSkipControlHeaders(property(camelContext, boolean.class, value)); return true;
         case "skiprequestheaders":
         case "skipRequestHeaders": target.setSkipRequestHeaders(property(camelContext, boolean.class, value)); return true;
         case "skipresponseheaders":
@@ -138,14 +156,14 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authbearertoken":
+        case "authBearerToken": return java.lang.String.class;
         case "authdomain":
         case "authDomain": return java.lang.String.class;
         case "authhost":
         case "authHost": return java.lang.String.class;
         case "authmethod":
         case "authMethod": return java.lang.String.class;
-        case "authmethodpriority":
-        case "authMethodPriority": return java.lang.String.class;
         case "authpassword":
         case "authPassword": return java.lang.String.class;
         case "authusername":
@@ -182,6 +200,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "getWithBody": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpactivitylistener":
+        case "httpActivityListener": return org.apache.camel.component.http.HttpActivityListener.class;
         case "httpclient":
         case "httpClient": return org.apache.hc.client5.http.classic.HttpClient.class;
         case "httpclientconfigurer":
@@ -198,12 +218,26 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "loghttpactivity":
+        case "logHttpActivity": return boolean.class;
         case "maxtotalconnections":
         case "maxTotalConnections": return int.class;
+        case "multipartupload":
+        case "multipartUpload": return boolean.class;
+        case "multipartuploadname":
+        case "multipartUploadName": return java.lang.String.class;
+        case "oauth2cachetokens":
+        case "oauth2CacheTokens": return boolean.class;
+        case "oauth2cachedtokensdefaultexpiryseconds":
+        case "oauth2CachedTokensDefaultExpirySeconds": return long.class;
+        case "oauth2cachedtokensexpirationmarginseconds":
+        case "oauth2CachedTokensExpirationMarginSeconds": return long.class;
         case "oauth2clientid":
         case "oauth2ClientId": return java.lang.String.class;
         case "oauth2clientsecret":
         case "oauth2ClientSecret": return java.lang.String.class;
+        case "oauth2resourceindicator":
+        case "oauth2ResourceIndicator": return java.lang.String.class;
         case "oauth2scope":
         case "oauth2Scope": return java.lang.String.class;
         case "oauth2tokenendpoint":
@@ -232,6 +266,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
         case "proxyPort": return int.class;
+        case "skipcontrolheaders":
+        case "skipControlHeaders": return boolean.class;
         case "skiprequestheaders":
         case "skipRequestHeaders": return boolean.class;
         case "skipresponseheaders":
@@ -254,14 +290,14 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HttpEndpoint target = (HttpEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authbearertoken":
+        case "authBearerToken": return target.getAuthBearerToken();
         case "authdomain":
         case "authDomain": return target.getAuthDomain();
         case "authhost":
         case "authHost": return target.getAuthHost();
         case "authmethod":
         case "authMethod": return target.getAuthMethod();
-        case "authmethodpriority":
-        case "authMethodPriority": return target.getAuthMethodPriority();
         case "authpassword":
         case "authPassword": return target.getAuthPassword();
         case "authusername":
@@ -298,6 +334,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "getWithBody": return target.isGetWithBody();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "httpactivitylistener":
+        case "httpActivityListener": return target.getHttpActivityListener();
         case "httpclient":
         case "httpClient": return target.getHttpClient();
         case "httpclientconfigurer":
@@ -314,12 +352,26 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": return target.isIgnoreResponseBody();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "loghttpactivity":
+        case "logHttpActivity": return target.isLogHttpActivity();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
+        case "multipartupload":
+        case "multipartUpload": return target.isMultipartUpload();
+        case "multipartuploadname":
+        case "multipartUploadName": return target.getMultipartUploadName();
+        case "oauth2cachetokens":
+        case "oauth2CacheTokens": return target.isOauth2CacheTokens();
+        case "oauth2cachedtokensdefaultexpiryseconds":
+        case "oauth2CachedTokensDefaultExpirySeconds": return target.getOauth2CachedTokensDefaultExpirySeconds();
+        case "oauth2cachedtokensexpirationmarginseconds":
+        case "oauth2CachedTokensExpirationMarginSeconds": return target.getOauth2CachedTokensExpirationMarginSeconds();
         case "oauth2clientid":
         case "oauth2ClientId": return target.getOauth2ClientId();
         case "oauth2clientsecret":
         case "oauth2ClientSecret": return target.getOauth2ClientSecret();
+        case "oauth2resourceindicator":
+        case "oauth2ResourceIndicator": return target.getOauth2ResourceIndicator();
         case "oauth2scope":
         case "oauth2Scope": return target.getOauth2Scope();
         case "oauth2tokenendpoint":
@@ -348,6 +400,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": return target.getProxyHost();
         case "proxyport":
         case "proxyPort": return target.getProxyPort();
+        case "skipcontrolheaders":
+        case "skipControlHeaders": return target.isSkipControlHeaders();
         case "skiprequestheaders":
         case "skipRequestHeaders": return target.isSkipRequestHeaders();
         case "skipresponseheaders":

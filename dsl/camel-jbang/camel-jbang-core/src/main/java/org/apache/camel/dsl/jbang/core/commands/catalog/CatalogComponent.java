@@ -24,7 +24,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "component",
-                     description = "List components from the Camel Catalog", sortOptions = false)
+                     description = "List components from the Camel Catalog", sortOptions = false, showDefaultValues = true)
 public class CatalogComponent extends CatalogBaseCommand {
 
     public CatalogComponent(CamelJBangMain main) {

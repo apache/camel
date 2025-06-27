@@ -16,20 +16,11 @@
  */
 package org.apache.camel.test.infra.postgres.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Postgres
  */
-public interface PostgresService extends TestService {
-
-    String host();
-
-    int port();
-
-    String userName();
-
-    String password();
-
-    String getServiceAddress();
+public interface PostgresService extends TestService, PostgresInfraService, ContainerTestService {
 }

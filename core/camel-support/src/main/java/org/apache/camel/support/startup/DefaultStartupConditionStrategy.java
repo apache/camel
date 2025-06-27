@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StartupStep;
 import org.apache.camel.VetoCamelContextStartException;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link StartupConditionStrategy}.
  */
+@DeferredContextBinding
 public class DefaultStartupConditionStrategy extends ServiceSupport implements StartupConditionStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultStartupConditionStrategy.class);

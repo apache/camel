@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.component.file.AntFilter;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -174,7 +175,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     private static <T> void deleteLockFiles(
             File dir, boolean recursive, int minDepth, int maxDepth, int depth, boolean hiddenFilesEnabled, String endpointPath,
             GenericFileFilter<T> filter,
-            GenericFileFilter<T> antFilter,
+            AntFilter antFilter,
             Pattern excludePattern,
             Pattern includePattern) {
 
@@ -232,7 +233,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     @SuppressWarnings("unchecked")
     private static <T> boolean acceptFile(
-            File file, String endpointPath, GenericFileFilter<T> filter, GenericFileFilter<T> antFilter, Pattern excludePattern,
+            File file, String endpointPath, GenericFileFilter<T> filter, AntFilter antFilter, Pattern excludePattern,
             Pattern includePattern) {
         GenericFile gf = new GenericFile<>();
         gf.setEndpointPath(endpointPath);
@@ -286,7 +287,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         }
 
         if (antFilter != null) {
-            if (!antFilter.accept(gf)) {
+            if (!antFilter.accept(gf.isDirectory(), gf.getRelativeFilePath())) {
                 return false;
             }
         }

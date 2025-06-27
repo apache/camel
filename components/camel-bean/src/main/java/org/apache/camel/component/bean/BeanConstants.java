@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.Metadata;
-
 public final class BeanConstants {
 
-    @Metadata(description = "The name of the method to invoke.", javaType = "String")
-    public static final String BEAN_METHOD_NAME = Exchange.BEAN_METHOD_NAME;
+    public static final String BEAN_METHOD_NAME = "CamelBeanMethodName";
 
     private BeanConstants() {
         // Utility class

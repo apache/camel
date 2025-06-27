@@ -29,4 +29,7 @@ public interface ManagedLoopMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Whether a copy of the input Exchange is used for each iteration")
     Boolean isCopy();
 
+    @ManagedAttribute(description = "Whether to break looping if Camel is being shutdown")
+    Boolean isBreakOnShutdown();
+
 }

@@ -25,7 +25,6 @@ public class JvmDevConsoleConfigurer extends org.apache.camel.support.component.
         map.put("CamelContext", org.apache.camel.CamelContext.class);
         map.put("ShowClasspath", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(JvmDevConsoleConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -43,10 +42,6 @@ public class JvmDevConsoleConfigurer extends org.apache.camel.support.component.
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

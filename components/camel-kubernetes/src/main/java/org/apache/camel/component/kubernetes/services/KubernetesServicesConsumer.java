@@ -23,7 +23,8 @@ import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.WatcherException;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.FilterWatchListDeletable;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ServiceResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -85,22 +86,43 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            MixedOperation<Service, ServiceList, ServiceResource<Service>> w = getEndpoint().getKubernetesClient().services();
+            FilterWatchListDeletable<Service, ServiceList, ServiceResource<Service>> w;
 
-            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace(), w::inNamespace);
+            /*
+                Valid options are (according to how the client can be constructed):
+                - inAnyNamespace
+                - inAnyNamespace + withLabel
+                - inNamespace
+                - inNamespace + withLabel
+                - inNamespace + withName
+             */
+            String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
+            String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
+            String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
+            String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
 
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
-                    && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
-                w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(),
-                        getEndpoint().getKubernetesConfiguration().getLabelValue());
+            if (ObjectHelper.isEmpty(namespace)) {
+                w = getEndpoint().getKubernetesClient().services().inAnyNamespace();
+
+                if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                    w = w.withLabel(labelKey, labelValue);
+                }
+            } else {
+                final NonNamespaceOperation<Service, ServiceList, ServiceResource<Service>> client
+                        = getEndpoint().getKubernetesClient().services().inNamespace(namespace);
+                w = client;
+                if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                    w = client.withLabel(labelKey, labelValue);
+                } else if (ObjectHelper.isNotEmpty(resourceName)) {
+                    w = (FilterWatchListDeletable<Service, ServiceList, ServiceResource<Service>>) client
+                            .withName(resourceName);
+                }
             }
 
-            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName(), w::withName);
-
-            watch = w.watch(new Watcher<Service>() {
+            watch = w.watch(new Watcher<>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Service resource) {
+                public void eventReceived(Action action, Service resource) {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);

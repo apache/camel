@@ -78,7 +78,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         // prefix is only for nodes in the route (not the route id)
         String prefix = null;
         boolean iAmRoute = this instanceof RouteDefinition;
-        boolean allowPrefix = !iAmRoute && this instanceof ProcessorDefinition;
+        boolean allowPrefix = !iAmRoute;
         if (allowPrefix) {
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
             if (route != null) {
@@ -186,7 +186,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
 
         // return with prefix if configured
         boolean iAmRoute = this instanceof RouteDefinition;
-        boolean allowPrefix = !iAmRoute && this instanceof ProcessorDefinition;
+        boolean allowPrefix = !iAmRoute;
         if (allowPrefix) {
             String prefix = getNodePrefixId();
             if (prefix != null) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,15 +29,17 @@ import org.junit.jupiter.api.Test;
  * Unit test for writing done files
  */
 public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME_1 = "hello" + UUID.randomUUID() + ".txt";
+    private static final String TEST_FILE_NAME_2 = "bye" + UUID.randomUUID() + ".txt";
 
     @Test
     public void testTwoDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
         template.sendBodyAndHeader(fileUri("?doneFileName=${file:name}.ready"), "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+                TEST_FILE_NAME_1);
         template.sendBodyAndHeader(fileUri("?doneFileName=${file:name}.ready"), "Bye World", Exchange.FILE_NAME,
-                "bye.txt");
+                TEST_FILE_NAME_2);
 
         assertMockEndpointsSatisfied();
     }
@@ -46,8 +49,8 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader(fileUri("?doneFileName=${file:name}.ready"), "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
-        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
+                TEST_FILE_NAME_1);
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME_2);
 
         // give chance to poll 2nd file but it lacks the done file
         Awaitility.await().pollDelay(250, TimeUnit.MILLISECONDS).untilAsserted(() -> assertMockEndpointsSatisfied());

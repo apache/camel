@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-smooks</artifactId>
@@ -33,6 +33,10 @@
 
     <name>Camel :: Smooks :: Parent</name>
     <description>Camel Smooks Component</description>
+
+    <properties>
+        <supportLevel>Preview</supportLevel>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -55,15 +59,17 @@
             <groupId>org.smooks</groupId>
             <artifactId>smooks-core</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.smooks.cartridges.edi</groupId>
-            <artifactId>smooks-edi-cartridge</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.smooks.cartridges</groupId>
             <artifactId>smooks-javabean-cartridge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.smooks.cartridges.edi</groupId>
+            <artifactId>smooks-edi-cartridge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.smooks</groupId>
+            <artifactId>smooks-test-kit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

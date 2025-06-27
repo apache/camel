@@ -17,6 +17,7 @@
 package org.apache.camel.component.jackson.avro;
 
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import org.apache.avro.NameValidator;
 import org.apache.avro.Schema;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
@@ -65,7 +66,7 @@ public class JacksonAvroLookupResolverTest extends CamelTestSupport {
                             + "\"fields\": [\n"
                             + " {\"name\": \"text\", \"type\": \"string\"}\n"
                             + "]}";
-        Schema raw = new Schema.Parser().setValidate(true).parse(schemaJson);
+        Schema raw = new Schema.Parser(NameValidator.UTF_VALIDATOR).parse(schemaJson);
         AvroSchema schema = new AvroSchema(raw);
         SchemaResolver resolver = ex -> schema;
         registry.bind("schema-resolver-1", SchemaResolver.class, resolver);

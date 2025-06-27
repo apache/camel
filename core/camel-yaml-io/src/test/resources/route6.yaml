@@ -21,22 +21,22 @@
       uri: direct:start6
       steps:
         - choice:
-            steps:
-              - when:
+            when:
+              - expression:
                   simple:
                     expression: "${header.age} < 21"
-                  steps:
-                    - to:
-                        uri: mock:young
-              - when:
+                steps:
+                  - to:
+                      uri: mock:young
+              - expression:
                   simple:
                     expression: "${header.age} > 21 && ${header.age} < 70"
-                  steps:
-                    - to:
-                        uri: mock:work
-              - otherwise:
-                  steps:
-                    - to:
-                        uri: mock:senior
+                steps:
+                  - to:
+                      uri: mock:work
+            otherwise:
+              steps:
+                - to:
+                    uri: mock:senior
         - to:
             uri: mock:result

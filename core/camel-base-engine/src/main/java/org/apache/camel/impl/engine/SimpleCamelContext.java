@@ -34,6 +34,7 @@ import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BackOffTimerFactory;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
@@ -99,6 +100,9 @@ import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
+import org.apache.camel.support.scan.DefaultPackageScanResourceResolver;
+import org.apache.camel.support.scan.WebSpherePackageScanClassResolver;
 import org.apache.camel.support.startup.DefaultStartupConditionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -632,10 +636,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
             tracer = new DefaultTracer();
             tracer.setEnabled(isTracing());
             tracer.setStandby(isTracingStandby());
-            // enable both rest/templates if templates is enabled (we only want 1 public option)
-            boolean restOrTemplates = isTracingTemplates();
-            tracer.setTraceTemplates(restOrTemplates);
-            tracer.setTraceRests(restOrTemplates);
+            tracer.setTraceTemplates(isTracingTemplates());
+            tracer.setTraceRests(isTracingRests());
             getCamelContextExtension().addContextPlugin(Tracer.class, tracer);
         }
         return tracer;
@@ -740,6 +742,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
+    protected BackOffTimerFactory createBackOffTimerFactory() {
+        return new DefaultBackOffTimerFactory(this);
+    }
+
+    @Override
     protected TransformerRegistry createTransformerRegistry() {
         return new DefaultTransformerRegistry(getCamelContextReference());
     }
@@ -769,6 +776,14 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     public String addRouteFromTemplate(
             String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
+            throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String addRouteFromKamelet(
+            String routeId, String routeTemplateId, String prefixId, String parentRouteId, String parentProcessorId,
+            Map<String, Object> parameters)
             throws Exception {
         throw new UnsupportedOperationException();
     }

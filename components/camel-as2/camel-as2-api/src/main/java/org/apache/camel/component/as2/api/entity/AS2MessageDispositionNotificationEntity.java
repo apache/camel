@@ -91,7 +91,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
         this.originalMessageId = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
 
-        // don't include a mic if a error occured processing the message,
+        // don't include a mic if a error occurred processing the message,
         // for instance with decryption or signature validation.
         if (dispositionModifier == null || !dispositionModifier.isError()) {
             this.receivedContentMic

@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -59,11 +60,13 @@ public class OpenApiUtils {
             "date", LocalDate.class,
             "date-time", LocalDateTime.class);
 
+    private static final Pattern CLASS_NAME_PATTERN = Pattern.compile(".*\\/(.*)");
+
     private final AtomicBoolean packageScanInit = new AtomicBoolean();
     private final Set<Class<?>> scannedClasses = new HashSet<>();
-    private CamelContext camelContext;
-    private String bindingPackage;
-    private Components components;
+    private final CamelContext camelContext;
+    private final String bindingPackage;
+    private final Components components;
 
     public OpenApiUtils(CamelContext camelContext, String bindingPackage, Components components) {
         this.camelContext = camelContext;
@@ -72,10 +75,7 @@ public class OpenApiUtils {
     }
 
     public boolean isRequiredBody(Operation operation) {
-        if (operation.getRequestBody() != null) {
-            return Boolean.TRUE == operation.getRequestBody().getRequired();
-        }
-        return false;
+        return operation.getRequestBody() != null && Boolean.TRUE == operation.getRequestBody().getRequired();
     }
 
     public String getConsumes(Operation operation) {
@@ -92,11 +92,16 @@ public class OpenApiUtils {
     public String getProduces(Operation operation) {
         // the operation may have specific information what it can produce
         if (operation.getResponses() != null) {
+            HashSet<String> mediaTypes = new HashSet<>();
             for (var apiResponse : operation.getResponses().values()) {
                 Content content = apiResponse.getContent();
                 if (content != null) {
-                    return content.keySet().stream().sorted().collect(Collectors.joining(","));
+                    mediaTypes.addAll(content.keySet());
                 }
+            }
+
+            if (!mediaTypes.isEmpty()) {
+                return mediaTypes.stream().sorted().collect(Collectors.joining(","));
             }
         }
         return null;
@@ -165,53 +170,77 @@ public class OpenApiUtils {
         Schema<?> schema = mediaType.getValue().getSchema();
 
         if (mediaTypeName.contains("xml") && schema.getXml() != null) {
-            String ref = schema.getXml().getName();
-            // must refer to a class name, so upper case
-            ref = Character.toUpperCase(ref.charAt(0)) + ref.substring(1);
-            // find class via simple name
-            for (Class<?> clazz : scannedClasses) {
-                if (clazz.getSimpleName().equals(ref)) {
-                    return clazz;
-                }
-            }
+            return loadBindingClassForXml(schema);
         } else if (mediaTypeName.contains("json")) {
-            if (schema instanceof ArraySchema) {
-                schema = schema.getItems();
-            }
-            String schemaName = findSchemaName(schema);
-            if (schemaName == null) {
-                Class<?> primitiveType = resolveType(schema);
-                if (primitiveType != null) {
-                    return primitiveType;
-                }
-            }
-            Pattern classNamePattern = Pattern.compile(".*\\/(.*)");
-            schemaName = Optional.ofNullable(schemaName)
-                    .orElse(Optional.ofNullable(schema.get$ref()).orElse(schema.getType()));
-            Matcher classNameMatcher = classNamePattern.matcher(schemaName);
-            String classToFind = classNameMatcher.find()
-                    ? classNameMatcher.group(1)
-                    : schemaName;
-
-            return scannedClasses.stream()
-                    .filter(aClass -> aClass.getSimpleName().equals(classToFind))
-                    .findFirst()
-                    .orElse(null);
+            return loadBindingClassForJson(schema);
         }
 
         // class not found
         return null;
     }
 
+    private Class<?> loadBindingClassForXml(Schema<?> schema) {
+        String ref = schema.getXml().getName();
+        // must refer to a class name, so upper case
+        ref = Character.toUpperCase(ref.charAt(0)) + ref.substring(1);
+        // find class via simple name
+        for (Class<?> clazz : scannedClasses) {
+            if (clazz.getSimpleName().equals(ref)) {
+                return clazz;
+            }
+        }
+        return null;
+    }
+
+    private Class<?> loadBindingClassForJson(Schema<?> schema) {
+        if (isArrayType(schema)) {
+            schema = schema.getItems();
+        }
+        String schemaName = findSchemaName(schema);
+        if (schemaName == null) {
+            Class<?> primitiveType = resolvePrimitiveType(schema);
+            if (primitiveType != null) {
+                return primitiveType;
+            }
+        }
+
+        schemaName = Optional.ofNullable(schemaName)
+                .orElse(Optional.ofNullable(schema.get$ref()).orElse(getSchemaType(schema)));
+        Matcher classNameMatcher = CLASS_NAME_PATTERN.matcher(schemaName);
+        String classToFind = classNameMatcher.find()
+                ? classNameMatcher.group(1)
+                : schemaName;
+
+        String schemaTitle = schema.getTitle();
+        return scannedClasses.stream()
+                .filter(aClass -> aClass.getSimpleName().equals(classToFind) || aClass.getSimpleName().equals(schemaTitle)) //use either the name or title of schema to find the class
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean isArrayType(Schema<?> schema) {
+        if (schema.getSpecVersion() == SpecVersion.V30) {
+            return schema instanceof ArraySchema;
+        }
+        return "array".equals(schema.getTypes().stream().findFirst().orElse(null));
+    }
+
+    private String getSchemaType(Schema<?> schema) {
+        if (schema.getSpecVersion() == SpecVersion.V30) {
+            return schema.getType();
+        }
+        return schema.getTypes() == null ? null : schema.getTypes().stream().findFirst().orElse(null);
+    }
+
     private String resolveClassName(Schema<?> schema, Class<?> clazz) {
-        if (schema instanceof ArraySchema) {
+        if (isArrayType(schema)) {
             return clazz.getName().concat("[]");
         }
         return clazz.getName();
     }
 
-    private Class<?> resolveType(Schema<?> schema) {
-        String type = schema.getType();
+    private Class<?> resolvePrimitiveType(Schema<?> schema) {
+        String type = getSchemaType(schema);
         if (type == null) {
             return null;
         }

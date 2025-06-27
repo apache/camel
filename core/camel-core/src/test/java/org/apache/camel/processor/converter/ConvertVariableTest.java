@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.NoSuchVariableException;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
@@ -126,9 +127,9 @@ public class ConvertVariableTest extends ContextTestSupport {
     @Test
     public void testConvertToIntegerNotMandatory() throws Exception {
         // mandatory should fail
-        Exchange out = fluent.to("direct:start").withVariable("foo", Double.NaN).send();
+        Exchange out = fluent.to("direct:start").withVariable("foo", "xxx").send();
         assertTrue(out.isFailed());
-        assertIsInstanceOf(NoTypeConversionAvailableException.class, out.getException());
+        assertIsInstanceOf(TypeConversionException.class, out.getException());
 
         // optional should cause null body
         getMockEndpoint("mock:result").expectedMessageCount(1);

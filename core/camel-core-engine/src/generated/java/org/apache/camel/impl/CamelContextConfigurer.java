@@ -29,10 +29,14 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "applicationContextClassLoader": target.setApplicationContextClassLoader(property(camelContext, java.lang.ClassLoader.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.setAutoStartup(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": target.setAutoStartupExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "backlogtracing":
         case "backlogTracing": target.setBacklogTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "backlogtracingrests":
+        case "backlogTracingRests": target.setBacklogTracingRests(property(camelContext, boolean.class, value)); return true;
         case "backlogtracingstandby":
         case "backlogTracingStandby": target.setBacklogTracingStandby(property(camelContext, boolean.class, value)); return true;
         case "backlogtracingtemplates":
@@ -112,6 +116,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "tracingLoggingFormat": target.setTracingLoggingFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingpattern":
         case "tracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
+        case "tracingrests":
+        case "tracingRests": target.setTracingRests(property(camelContext, boolean.class, value)); return true;
         case "tracingstandby":
         case "tracingStandby": target.setTracingStandby(property(camelContext, boolean.class, value)); return true;
         case "tracingtemplates":
@@ -143,10 +149,14 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "applicationContextClassLoader": return java.lang.ClassLoader.class;
         case "autostartup":
         case "autoStartup": return java.lang.Boolean.class;
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return java.lang.Boolean.class;
         case "backlogtracing":
         case "backlogTracing": return java.lang.Boolean.class;
+        case "backlogtracingrests":
+        case "backlogTracingRests": return boolean.class;
         case "backlogtracingstandby":
         case "backlogTracingStandby": return boolean.class;
         case "backlogtracingtemplates":
@@ -226,6 +236,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "tracingLoggingFormat": return java.lang.String.class;
         case "tracingpattern":
         case "tracingPattern": return java.lang.String.class;
+        case "tracingrests":
+        case "tracingRests": return boolean.class;
         case "tracingstandby":
         case "tracingStandby": return boolean.class;
         case "tracingtemplates":
@@ -258,10 +270,14 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "applicationContextClassLoader": return target.getApplicationContextClassLoader();
         case "autostartup":
         case "autoStartup": return target.isAutoStartup();
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": return target.getAutoStartupExcludePattern();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "backlogtracing":
         case "backlogTracing": return target.isBacklogTracing();
+        case "backlogtracingrests":
+        case "backlogTracingRests": return target.isBacklogTracingRests();
         case "backlogtracingstandby":
         case "backlogTracingStandby": return target.isBacklogTracingStandby();
         case "backlogtracingtemplates":
@@ -341,6 +357,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "tracingLoggingFormat": return target.getTracingLoggingFormat();
         case "tracingpattern":
         case "tracingPattern": return target.getTracingPattern();
+        case "tracingrests":
+        case "tracingRests": return target.isTracingRests();
         case "tracingstandby":
         case "tracingStandby": return target.isTracingStandby();
         case "tracingtemplates":

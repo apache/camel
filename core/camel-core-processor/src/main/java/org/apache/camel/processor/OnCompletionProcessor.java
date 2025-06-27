@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
@@ -42,6 +41,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.processor.ProcessorHelper.prepareMDCParallelTask;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -162,7 +162,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
      * @param processor the processor
      * @param exchange  the exchange
      */
-    protected static void doProcess(Processor processor, Exchange exchange) {
+    protected void doProcess(Processor processor, Exchange exchange) {
         // must remember some properties which we cannot use during onCompletion processing
         // as otherwise we may cause issues
         // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
@@ -299,13 +299,12 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             final Exchange copy = prepareExchange(exchange);
 
             if (executorService != null) {
-                executorService.submit(new Callable<Exchange>() {
-                    public Exchange call() throws Exception {
-                        LOG.debug("Processing onComplete: {}", copy);
-                        doProcess(processor, copy);
-                        return copy;
-                    }
-                });
+                Runnable task = () -> {
+                    LOG.debug("Processing onComplete: {}", copy);
+                    doProcess(processor, copy);
+                };
+                task = prepareMDCParallelTask(camelContext, task);
+                executorService.submit(task);
             } else {
                 // run without thread-pool
                 LOG.debug("Processing onComplete: {}", copy);
@@ -329,15 +328,14 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             }
 
             if (executorService != null) {
-                executorService.submit(new Callable<Exchange>() {
-                    public Exchange call() throws Exception {
-                        LOG.debug("Processing onFailure: {}", copy);
-                        doProcess(processor, copy);
-                        // restore exception after processing
-                        copy.setException(original);
-                        return null;
-                    }
-                });
+                Runnable task = () -> {
+                    LOG.debug("Processing onFailure: {}", copy);
+                    doProcess(processor, copy);
+                    // restore exception after processing
+                    copy.setException(original);
+                };
+                task = prepareMDCParallelTask(camelContext, task);
+                executorService.submit(task);
             } else {
                 // run without thread-pool
                 LOG.debug("Processing onFailure: {}", copy);
@@ -460,13 +458,12 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                     final Exchange copy = prepareExchange(exchange);
 
                     if (executorService != null) {
-                        executorService.submit(new Callable<Exchange>() {
-                            public Exchange call() throws Exception {
-                                LOG.debug("Processing onAfterRoute: {}", copy);
-                                doProcess(processor, copy);
-                                return copy;
-                            }
-                        });
+                        Runnable task = () -> {
+                            LOG.debug("Processing onAfterRoute: {}", copy);
+                            doProcess(processor, copy);
+                        };
+                        task = prepareMDCParallelTask(camelContext, task);
+                        executorService.submit(task);
                     } else {
                         // run without thread-pool
                         LOG.debug("Processing onAfterRoute: {}", copy);

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -28,6 +27,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -39,6 +41,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mllp.internal.Hl7Util;
 import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +57,6 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     Socket socket;
 
     ScheduledExecutorService idleTimeoutExecutor;
-
     private String cachedLocalAddress;
     private String cachedRemoteAddress;
     private String cachedCombinedAddress;
@@ -343,6 +345,8 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         ioEx);
                 exchange.setException(ioEx);
                 mllpBuffer.resetSocket(socket);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             } finally {
                 mllpBuffer.reset();
             }
@@ -442,17 +446,27 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
      *
      * @return null if the connection is valid, otherwise the Exception encounted checking the connection
      */
-    void checkConnection() throws IOException {
+    void checkConnection() throws Exception {
+
+        SSLContextParameters sslContextParameters = getEndpoint().getSslContextParameters();
+
         if (null == socket || socket.isClosed() || !socket.isConnected()) {
             logCurrentSocketState();
 
+            log.info("checkConnection() - Attempting to establish a new {} connection",
+                    sslContextParameters != null ? "secure (SSL/TLS)" : "plain");
+
             // The socket will be closed by close connection, resetConnection, etc
-            Socket newSocket = createNewSocket();
+            Socket newSocket = createNewSocket(sslContextParameters);
 
             InetSocketAddress socketAddress = configureSocketAddress();
 
+            log.debug("checkConnection() - Connecting to {}", socketAddress);
+
             newSocket.connect(socketAddress, getConfiguration().getConnectTimeout());
-            log.info("checkConnection() - established new connection {}", newSocket);
+            log.info("checkConnection() - Successfully established new {} connection to {}",
+                    sslContextParameters != null ? "secure (SSL/TLS)" : "plain",
+                    newSocket);
             getEndpoint().updateLastConnectionEstablishedTicks();
 
             socket = newSocket;
@@ -501,8 +515,20 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
         return socketAddress;
     }
 
-    private Socket createNewSocket() throws SocketException {
-        Socket newSocket = new Socket();
+    private Socket createNewSocket(final SSLContextParameters sslContextParameters) throws Exception {
+
+        Socket newSocket;
+
+        if (sslContextParameters != null) {
+            log.debug("Creating secure socket with SSLContextParameters");
+            // Create SSLContext from SSLContextParameters
+            SSLContext sslContext = sslContextParameters.createSSLContext(getEndpoint().getCamelContext());
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+            newSocket = sslSocketFactory.createSocket();
+        } else {
+            log.debug("Creating plain socket without SSLContextParameters");
+            newSocket = new Socket();
+        }
 
         if (getConfiguration().hasKeepAlive()) {
             newSocket.setKeepAlive(getConfiguration().getKeepAlive());

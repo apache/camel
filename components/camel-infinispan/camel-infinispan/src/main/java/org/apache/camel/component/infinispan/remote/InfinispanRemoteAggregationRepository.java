@@ -90,8 +90,7 @@ public class InfinispanRemoteAggregationRepository extends InfinispanAggregation
                             .build());
         }
 
-        manager = new InfinispanRemoteManager(conf);
-        manager.setCamelContext(getCamelContext());
+        manager = new InfinispanRemoteManager(getCamelContext(), conf);
 
         this.cache = Suppliers.memorize(
                 // for optimization reason, a remote cache does not return the previous value for operation

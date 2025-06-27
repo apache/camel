@@ -155,7 +155,8 @@ public abstract class MainCommandLineSupport extends MainSupport {
         });
         addOption(new ParameterOption(
                 "pl", "propertiesLocation",
-                "Sets location(s) to load properties, such as from classpath or file system.",
+                "Sets location(s) to load properties, such as from classpath or file system."
+                                            + " You can use comma to separate multiple locations. Camel loads by default from classpath, so use file: as prefix to load from file system.",
                 "propertiesLocation") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setPropertyPlaceholderLocations(parameter);

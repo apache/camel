@@ -47,7 +47,7 @@ public class InterceptFromWhenNoStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                interceptFrom().when(simple("${body} contains 'Goofy'")).to("mock:goofy");
+                interceptFrom().onWhen(simple("${body} contains 'Goofy'")).to("mock:goofy");
 
                 from("direct:start").to("mock:end");
             }

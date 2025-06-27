@@ -19,7 +19,11 @@ ARG FROMIMAGE
 
 FROM $FROMIMAGE
 
+ARG CUSTOM_UID=1000
+ARG CUSTOM_GID=1000
+ARG CAMEL_JBANG_VERSION=default
 ARG CAMEL_REF=main
+ARG CAMEL_REPO=apache/camel
 ARG KEEP_RUNNING=true
 ARG SSH_PASSWORD=jbang
 
@@ -35,7 +39,8 @@ ADD 99-ssh-jbang.conf /etc/ssh/sshd_config.d/
 RUN	sed -i "s|#auth		sufficient	pam_wheel.so trust use_uid|auth		sufficient	pam_wheel.so trust use_uid|g" /etc/pam.d/su
 
 #create new user
-RUN useradd -s /bin/bash jbang
+RUN groupadd -f -g $CUSTOM_GID jbang \
+    && useradd -u $CUSTOM_UID -g $CUSTOM_GID -s /bin/bash jbang
 
 #to avoid prompt su - root password
 RUN usermod -a -G wheel jbang
@@ -49,9 +54,15 @@ ENV JAVA_HOME=/usr/lib/jvm/java
 RUN echo "Installing JBang..."
 RUN curl -Ls https://sh.jbang.dev | bash -s - app setup \
     && source ~/.bashrc \
-    && jbang version --update \
-    && jbang trust add https://github.com/apache/camel/ \
-    && jbang app install camel@apache/camel/$CAMEL_REF
+    && jbang trust add https://github.com/$CAMEL_REPO/ \
+
+RUN echo "Using JBang $CAMEL_JBANG_VERSION version from $CAMEL_REPO/$CAMEL_REF"
+RUN source ~/.bashrc \
+    && if [[ "$CAMEL_JBANG_VERSION" == "default" ]] ; \
+    then jbang app install camel@$CAMEL_REPO/$CAMEL_REF ; \
+    else jbang app install \
+    -Dcamel.jbang.version=$CAMEL_JBANG_VERSION \
+    camel@$CAMEL_REPO/$CAMEL_REF ; fi
 
 LABEL "camel.ref"=$CAMEL_REF
 LABEL "keep.container.running"=$KEEP_RUNNING
@@ -68,10 +79,14 @@ RUN echo "jbang:$SSH_PASSWORD" | chpasswd
 RUN chown jbang /opt/entrypoint.sh \
     && chmod +x /opt/entrypoint.sh
 
-RUN echo "Clearing JBang cache"
-RUN jbang cache clear
-
 EXPOSE 22
 
 USER jbang
+
+RUN echo "Updating jbang" \
+    && jbang version --update
+
+RUN echo "Clearing JBang cache" \
+    && jbang cache clear
+
 ENTRYPOINT ["/opt/entrypoint.sh"]

@@ -219,6 +219,17 @@ public @interface CamelMainTest {
     boolean dumpRouteCoverage() default false;
 
     /**
+     * Whether to dump the routes loaded into Camel for each test (dumped into files in target/camel-route-dump).
+     * <p/>
+     * The routes can either be dumped into XML or YAML format. Set this value to either <tt>xml</tt> or <tt>yaml</tt>.
+     * <p/>
+     * This allows tooling or manual inspection of the routes.
+     * <p/>
+     * You can also turn on route dump globally via setting JVM system property <tt>CamelTestRouteDump=xml</tt>.
+     */
+    String dumpRoute() default "";
+
+    /**
      * Whether JMX should be used during testing.
      *
      * @return <tt>false</tt> by default.

@@ -16,57 +16,103 @@
  */
 package org.apache.camel.component.smb;
 
+import java.util.Arrays;
 import java.util.Map;
 
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import org.apache.camel.Category;
-import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileConfiguration;
+import org.apache.camel.component.file.GenericFileConsumer;
+import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.component.file.GenericFilePollingConsumer;
+import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
+import org.apache.camel.component.smb.strategy.SmbProcessStrategyFactory;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Receive files from SMB (Server Message Block) shares.
+ * Read and write files to Server Message Block (SMB) file shares.
  */
-@UriEndpoint(firstVersion = "4.3.0", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName",
-             category = { Category.FILE })
-public class SmbEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
+@UriEndpoint(firstVersion = "4.3.0", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName/path",
+             headersClass = SmbConstants.class, category = { Category.FILE })
+@Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+                              + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                              + "directoryMustExist,extendedAttributes,probeContentType,"
+                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
+                              + "renameUsingCopy,synchronous")
+public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformation> implements EndpointServiceLocation {
 
-    @UriPath
-    @Metadata(required = true)
-    private String hostname;
-    @UriPath(defaultValue = "445")
-    private int port;
-    @UriPath
-    @Metadata(required = true)
-    private String shareName;
+    private static final Logger LOG = LoggerFactory.getLogger(SmbEndpoint.class);
 
     @UriParam
-    private SmbConfiguration configuration = new SmbConfiguration();
+    private SmbConfiguration configuration;
 
-    public SmbEndpoint() {
-    }
-
-    public SmbEndpoint(String uri, SmbComponent component) {
+    protected SmbEndpoint(String uri, SmbComponent component, SmbConfiguration configuration) {
         super(uri, component);
+        this.configuration = configuration;
     }
 
     @Override
-    public String getServiceUrl() {
-        if (port != 0) {
-            return hostname + ":" + port;
-        } else {
-            return hostname;
+    public boolean isSingletonProducer() {
+        // this producer is stateful because the smb file operations is not
+        // thread safe
+        return false;
+    }
+
+    @Override
+    public String getScheme() {
+        return "smb";
+    }
+
+    @Override
+    public char getFileSeparator() {
+        return '/';
+    }
+
+    @Override
+    public boolean isAbsolute(String name) {
+        return name.startsWith("/");
+    }
+
+    @Override
+    protected GenericFileProcessStrategy<FileIdBothDirectoryInformation> createGenericFileStrategy() {
+        return new SmbProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(), getParamsAsMap());
+    }
+
+    @Override
+    public GenericFileProducer<FileIdBothDirectoryInformation> createProducer() throws Exception {
+        try {
+            if (this.getMoveExistingFileStrategy() == null) {
+                this.setMoveExistingFileStrategy(createDefaultFtpMoveExistingFileStrategy());
+            }
+            return new SmbProducer(this, createOperations());
+        } catch (Exception e) {
+            throw new FailedToCreateProducerException(this, e);
         }
     }
 
     @Override
+    public String getServiceUrl() {
+        return configuration.getProtocol() + ":" + configuration.getHostname() + ":" + configuration.getPort();
+    }
+
+    @Override
     public String getServiceProtocol() {
-        return "smb";
+        return configuration.getProtocol();
     }
 
     @Override
@@ -78,56 +124,97 @@ public class SmbEndpoint extends ScheduledPollEndpoint implements EndpointServic
     }
 
     @Override
-    public Producer createProducer() {
-        return new SmbProducer(this);
-    }
-
-    @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer consumer = new SmbConsumer(this, processor);
-        configureConsumer(consumer);
-        return consumer;
-    }
-
     public SmbConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(SmbConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
     /**
-     * The share hostname or IP address
+     * Default Existing File Move Strategy
+     *
+     * @return the default implementation for SMB components
      */
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    private FileMoveExistingStrategy createDefaultFtpMoveExistingFileStrategy() {
+        return new SmbDefaultMoveExistingFileStrategy();
     }
 
-    public int getPort() {
-        return port;
+    @Override
+    public GenericFileConsumer<FileIdBothDirectoryInformation> createConsumer(Processor processor) throws Exception {
+        // if noop=true then idempotent should also be configured
+        if (isNoop() && !isIdempotentSet()) {
+            LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
+            setIdempotent(true);
+        }
+
+        // if idempotent and no repository set then create a default one
+        if (isIdempotentSet() && Boolean.TRUE.equals(isIdempotent()) && idempotentRepository == null) {
+            LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
+        }
+
+        if (ObjectHelper.isNotEmpty(getReadLock())) {
+            readLockCheck();
+        }
+
+        SmbConsumer consumer = new SmbConsumer(
+                this, processor, createOperations(),
+                processStrategy != null ? processStrategy : createGenericFileStrategy());
+        // set max messages per poll
+        consumer.setMaxMessagesPerPoll(this.getMaxMessagesPerPoll());
+        consumer.setEagerLimitMaxMessagesPerPoll(this.isEagerMaxMessagesPerPoll());
+
+        configureConsumer(consumer);
+        return consumer;
     }
 
-    /**
-     * The share port number
-     */
-    public void setPort(int port) {
-        this.port = port;
+    private void readLockCheck() {
+        // check if it's valid
+        String valid = "none,rename,changed";
+        String[] arr = valid.split(",");
+        boolean matched = Arrays.stream(arr).anyMatch(n -> n.equals(getReadLock()));
+        if (!matched) {
+            throw new IllegalArgumentException("ReadLock invalid: " + getReadLock() + ", must be one of: " + valid);
+        }
     }
 
-    public String getShareName() {
-        return shareName;
+    public GenericFileOperations<FileIdBothDirectoryInformation> createOperations() {
+        SmbOperations operations = new SmbOperations(configuration);
+        operations.setEndpoint(this);
+        return operations;
     }
 
-    /**
-     * The name of the share to connect to.
-     */
-    public void setShareName(String shareName) {
-        this.shareName = shareName;
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        if (maxMessagesPerPoll > 1) {
+            throw new IllegalArgumentException(
+                    "The option maxMessagesPerPoll is not supported for polling consumer (such as when using poll or pollEnrich EIP)");
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(),
+                    getPollingConsumerBlockTimeout());
+        }
+        GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
+        result.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        result.setBlockTimeout(getPollingConsumerBlockTimeout());
+        return result;
     }
 
+    @Override
+    public void setConfiguration(GenericFileConfiguration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("SmbConfiguration expected");
+        }
+        this.configuration = (SmbConfiguration) configuration;
+        super.setConfiguration(configuration);
+    }
+
+    @Override
+    public Exchange createExchange(GenericFile<FileIdBothDirectoryInformation> file) {
+        Exchange answer = super.createExchange();
+        if (file != null) {
+            file.bindToExchange(answer);
+        }
+        return answer;
+    }
 }

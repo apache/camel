@@ -30,13 +30,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.fabric8.knative.duck.v1.DestinationBuilder;
+import io.fabric8.knative.duck.v1.KReference;
+import io.fabric8.knative.duck.v1.KReferenceBuilder;
 import io.fabric8.knative.eventing.v1.TriggerBuilder;
 import io.fabric8.knative.eventing.v1.TriggerFilterBuilder;
-import io.fabric8.knative.internal.pkg.apis.duck.v1.DestinationBuilder;
-import io.fabric8.knative.internal.pkg.apis.duck.v1.KReference;
-import io.fabric8.knative.internal.pkg.apis.duck.v1.KReferenceBuilder;
-import io.fabric8.knative.internal.pkg.tracker.ReferenceBuilder;
 import io.fabric8.knative.messaging.v1.SubscriptionBuilder;
+import io.fabric8.knative.pkg.tracker.ReferenceBuilder;
 import io.fabric8.knative.sources.v1.SinkBindingBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
@@ -64,13 +64,15 @@ public class KnativeTrait extends KnativeBaseTrait {
 
     @Override
     public boolean configure(Traits traitConfig, TraitContext context) {
-        Knative knativeTrait = Optional.ofNullable(traitConfig.getKnative()).orElseGet(Knative::new);
-
-        if (knativeTrait.getEnabled() != null && !knativeTrait.getEnabled()) {
-            // Knative explicitly disabled
+        // Knative trait needs to be explicitly enabled
+        boolean enabled = false;
+        if (traitConfig.getKnative() != null) {
+            enabled = Optional.ofNullable(traitConfig.getKnative().getEnabled()).orElse(false);
+        }
+        if (!enabled) {
             return false;
         }
-
+        Knative knativeTrait = Optional.ofNullable(traitConfig.getKnative()).orElseGet(Knative::new);
         List<SourceMetadata> allSourcesMetadata = context.getSourceMetadata();
 
         if (knativeTrait.getChannelSources() == null) {

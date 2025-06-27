@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-allcomponents</artifactId>
@@ -498,6 +498,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-dapr</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-dataformat</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -549,6 +554,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-debug</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-dfdl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -628,11 +638,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-etcd3</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-exec</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -683,17 +688,17 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-fory</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-freemarker</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ftp</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-fury</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -873,6 +878,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ibm-secrets-manager</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-ical</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -939,6 +949,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jacksonxml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jandex</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1114,6 +1129,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-knative-http</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-kserve</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1308,6 +1328,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-neo4j</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-netty</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1324,6 +1349,16 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-oaipmh</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-oauth</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-observability-services</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1379,6 +1414,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-opentelemetry</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-opentelemetry2</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1444,6 +1484,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-plc4x</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-pqc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1688,6 +1733,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-cloud-config</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-jdbc</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1789,6 +1839,21 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-telegram</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-telemetry</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-telemetry-dev</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tensorflow-serving</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1909,6 +1974,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-weather</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-weaviate</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

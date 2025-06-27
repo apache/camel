@@ -17,6 +17,7 @@
 package org.apache.camel.component.opensearch.integration;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,11 +34,10 @@ import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.apache.camel.test.infra.opensearch.services.OpenSearchService;
 import org.apache.camel.test.infra.opensearch.services.OpenSearchServiceFactory;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.core5.http.HttpHost;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
@@ -72,13 +72,13 @@ public abstract class OpensearchTestSupport implements CamelTestSupportHelper, C
     private String prefix;
 
     @BeforeEach
-    public void beforeEach(TestInfo testInfo) {
+    public void beforeEach(TestInfo testInfo) throws URISyntaxException {
         HttpHost host
-                = new HttpHost(service.getOpenSearchHost(), service.getPort(), "http");
+                = new HttpHost("http", service.getOpenSearchHost(), service.getPort());
         final RestClientBuilder builder = RestClient.builder(host);
-        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials(service.getUsername(), service.getPassword()));
+        final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(new AuthScope(HttpHost.create(service.getOpenSearchHost())),
+                new UsernamePasswordCredentials(service.getUsername(), service.getPassword().toCharArray()));
         builder.setHttpClientConfigCallback(
                 httpClientBuilder -> {
                     httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);

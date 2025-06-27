@@ -30,6 +30,8 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, freemarker.template.Configuration.class, value)); return true;
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "localizedlookup":
@@ -48,6 +50,8 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return freemarker.template.Configuration.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "localizedlookup":
@@ -67,6 +71,8 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "contentcache":
+        case "contentCache": return target.isContentCache();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "localizedlookup":

@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task.budget.backoff;
 
 /**
  * A back-off strategy with constant rate
  */
 public class FixedBackOffStrategy implements BackOffStrategy {
+
     private final long interval;
 
     public FixedBackOffStrategy(long interval) {

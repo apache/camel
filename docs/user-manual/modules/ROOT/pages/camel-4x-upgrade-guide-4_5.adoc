@@ -140,7 +140,7 @@ Camel release versions to ensure the BOM is always correct.
 === camel-main
 
 The options `camel.main.backlogTracing`, `camel.main.backlogTracingStandby`, and `camel.main.backlogTracingTemplates` has been
-moved into a new group `camel.debug` with more options to configure the backlog tracer.
+moved into a new group `camel.trace` with more options to configure the backlog tracer.
 
 To enable backlog tracing you should now set `camel.trace.enabled=true` instead of `camel.main.backlogTracing=true`.
 

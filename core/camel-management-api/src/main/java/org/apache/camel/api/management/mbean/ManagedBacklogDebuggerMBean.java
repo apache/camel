@@ -92,8 +92,11 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedAttribute(description = "Whether currently in step mode")
     boolean isSingleStepMode();
 
-    @ManagedOperation(description = "Steps to next node in step mode")
+    @ManagedOperation(description = "Steps (into) to next node in step mode")
     void step();
+
+    @ManagedOperation(description = "Steps over the next node in step mode")
+    void stepOver();
 
     @ManagedOperation(description = "Return the node ids which has breakpoints")
     Set<String> breakpoints();

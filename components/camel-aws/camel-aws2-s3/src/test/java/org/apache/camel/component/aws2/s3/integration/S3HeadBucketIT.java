@@ -47,7 +47,7 @@ public class S3HeadBucketIT extends Aws2S3Base {
         Exchange res = template.send("direct:headBucket", exchange -> {
             exchange.getIn().setBody("Hello World");
             exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.headBucket);
-            exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "doesnotexist" + UUID.randomUUID().toString());
+            exchange.getIn().setHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, "doesnotexist" + UUID.randomUUID().toString());
         });
         if (res.getException() != null) {
             throw res.getException();

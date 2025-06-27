@@ -18,6 +18,8 @@ package org.apache.camel.component.undertow.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
@@ -26,6 +28,7 @@ import io.undertow.server.handlers.PathHandler;
  * Extended PathHandler to monitor add/remove handlers.
  */
 public class CamelPathHandler extends PathHandler {
+    private final Lock lock = new ReentrantLock();
     private final Map<String, HttpHandler> handlers = new HashMap<>();
     private String handlerString;
 
@@ -34,35 +37,55 @@ public class CamelPathHandler extends PathHandler {
     }
 
     @Override
-    public synchronized PathHandler addPrefixPath(final String path, final HttpHandler handler) {
-        super.addPrefixPath(path, handler);
-        handlers.put(path, handler);
-        handlerString = null;
-        return this;
+    public PathHandler addPrefixPath(final String path, final HttpHandler handler) {
+        lock.lock();
+        try {
+            super.addPrefixPath(path, handler);
+            handlers.put(path, handler);
+            handlerString = null;
+            return this;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized PathHandler addExactPath(final String path, final HttpHandler handler) {
-        super.addExactPath(path, handler);
-        handlers.put(path, handler);
-        handlerString = null;
-        return this;
+    public PathHandler addExactPath(final String path, final HttpHandler handler) {
+        lock.lock();
+        try {
+            super.addExactPath(path, handler);
+            handlers.put(path, handler);
+            handlerString = null;
+            return this;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized PathHandler removePrefixPath(final String path) {
-        super.removePrefixPath(path);
-        handlers.remove(path);
-        handlerString = null;
-        return this;
+    public PathHandler removePrefixPath(final String path) {
+        lock.lock();
+        try {
+            super.removePrefixPath(path);
+            handlers.remove(path);
+            handlerString = null;
+            return this;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized PathHandler removeExactPath(final String path) {
-        super.removeExactPath(path);
-        handlers.remove(path);
-        handlerString = null;
-        return this;
+    public PathHandler removeExactPath(final String path) {
+        lock.lock();
+        try {
+            super.removeExactPath(path);
+            handlers.remove(path);
+            handlerString = null;
+            return this;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public HttpHandler getHandler(String path) {

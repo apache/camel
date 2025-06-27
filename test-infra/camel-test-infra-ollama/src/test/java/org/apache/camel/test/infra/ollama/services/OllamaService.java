@@ -18,9 +18,8 @@ package org.apache.camel.test.infra.ollama.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
 
-public interface OllamaService extends TestService {
-
-    String getEndpoint();
-
-    String getModel();
+/**
+ * Test infra service for Ollama
+ */
+public interface OllamaService extends TestService, OllamaInfraService {
 }

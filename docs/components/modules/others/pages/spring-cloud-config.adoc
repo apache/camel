@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-parent/camel-spring-cloud-config/src/main/docs/spring-cloud-config.adoc

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5.util;
 
 import java.lang.annotation.Annotation;
@@ -28,8 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ExtensionHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(ExtensionHelper.class);
+
     public static final String SEPARATOR = "*".repeat(80);
+
+    private static final Logger LOG = LoggerFactory.getLogger(ExtensionHelper.class);
+
     private static final String SPRING_BOOT_TEST = "org.springframework.boot.test.context.SpringBootTest";
     private static final String QUARKUS_TEST = "io.quarkus.test.junit.QuarkusTest";
     private static final String CAMEL_QUARKUS_TEST = "org.apache.camel.quarkus.test.CamelQuarkusTest";

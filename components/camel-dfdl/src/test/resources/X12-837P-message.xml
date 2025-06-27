@@ -1,0 +1,330 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<X12_837P>
+    <Header>
+        <ISA>
+            <ISA-01>00</ISA-01>
+            <ISA-02>          </ISA-02>
+            <ISA-03>00</ISA-03>
+            <ISA-04>          </ISA-04>
+            <ISA-05>ZZ</ISA-05>
+            <ISA-06>PREMIER BILLING SERVICE    </ISA-06>
+            <ISA-07>ZZ</ISA-07>
+            <ISA-08>KEY INSURANCE COMPANY     </ISA-08>
+            <ISA-09>20061015</ISA-09>
+            <ISA-10>1023</ISA-10>
+            <ISA-11>U</ISA-11>
+            <ISA-12>005010X222</ISA-12>
+            <ISA-13>000000001</ISA-13>
+            <ISA-14>0</ISA-14>
+            <ISA-15>P</ISA-15>
+            <ISA-16>:</ISA-16>
+        </ISA>
+        <GS>
+            <GS-01>HP</GS-01>
+            <GS-02>PREMIER BILLING SERVICE</GS-02>
+            <GS-03>KEY INSURANCE COMPANY</GS-03>
+            <GS-04>20061015</GS-04>
+            <GS-05>1023</GS-05>
+            <GS-06>1</GS-06>
+            <GS-07>X</GS-07>
+            <GS-08>005010X222</GS-08>
+        </GS>
+        <ST>
+            <ST-01>837</ST-01>
+            <ST-02>0021</ST-02>
+            <ST-03>005010X222</ST-03>
+        </ST>
+        <BHT>
+            <BHT-01>0019</BHT-01>
+            <BHT-02>00</BHT-02>
+            <BHT-03>244579</BHT-03>
+            <BHT-04>20061015</BHT-04>
+            <BHT-05>1023</BHT-05>
+            <BHT-06>CH</BHT-06>
+        </BHT>
+        <Loop1000>
+            <NM1>
+                <NM1-01>41</NM1-01>
+                <NM1-02>2</NM1-02>
+                <NM1-03>PREMIER BILLING SERVICE</NM1-03>
+                <NM1-08>46</NM1-08>
+                <NM1-09>TGJ23</NM1-09>
+            </NM1>
+            <PER>
+                <PER-01>IC</PER-01>
+                <PER-02>JERRY</PER-02>
+                <PER-03>TE</PER-03>
+                <PER-04>3055552222</PER-04>
+                <PER-05>EX</PER-05>
+                <PER-06>231</PER-06>
+            </PER>
+        </Loop1000>
+        <Loop1000>
+            <NM1>
+                <NM1-01>40</NM1-01>
+                <NM1-02>2</NM1-02>
+                <NM1-03>KEY INSURANCE COMPANY</NM1-03>
+                <NM1-08>46</NM1-08>
+                <NM1-09>66783JJT</NM1-09>
+            </NM1>
+        </Loop1000>
+    </Header>
+    <Loop2000>
+        <HL>
+            <HL-01>1</HL-01>
+            <HL-03>20</HL-03>
+            <HL-04>1</HL-04>
+        </HL>
+        <PRV>
+            <PRV-01>BI</PRV-01>
+            <PRV-02>PXC</PRV-02>
+            <PRV-03>203BF0100Y</PRV-03>
+        </PRV>
+        <Loop2010>
+            <NM1>
+                <NM1-01>85</NM1-01>
+                <NM1-02>2</NM1-02>
+                <NM1-03>BEN KILDARE SERVICE</NM1-03>
+                <NM1-08>XX</NM1-08>
+                <NM1-09>9876543210</NM1-09>
+            </NM1>
+            <N3>
+                <N3-01>234 SEAWAY ST</N3-01>
+            </N3>
+            <N4>
+                <N4-01>MIAMI</N4-01>
+                <N4-02>FL</N4-02>
+                <N4-03>33111</N4-03>
+            </N4>
+            <REF>
+                <REF-01>EI</REF-01>
+                <REF-02>587654321</REF-02>
+            </REF>
+        </Loop2010>
+        <Loop2010>
+            <NM1>
+                <NM1-01>87</NM1-01>
+                <NM1-02>2</NM1-02>
+            </NM1>
+            <N3>
+                <N3-01>2345 OCEAN BLVD</N3-01>
+            </N3>
+            <N4>
+                <N4-01>MIAMI</N4-01>
+                <N4-02>FL</N4-02>
+                <N4-03>33111</N4-03>
+            </N4>
+        </Loop2010>
+    </Loop2000>
+    <Loop2000>
+        <HL>
+            <HL-01>2</HL-01>
+            <HL-02>1</HL-02>
+            <HL-03>22</HL-03>
+            <HL-04>1</HL-04>
+        </HL>
+        <SBR>
+            <SBR-01>P</SBR-01>
+            <SBR-03>2222-SJ</SBR-03>
+            <SBR-09>CI</SBR-09>
+        </SBR>
+        <Loop2010>
+            <NM1>
+                <NM1-01>IL</NM1-01>
+                <NM1-02>1</NM1-02>
+                <NM1-03>SMITH</NM1-03>
+                <NM1-04>JANE</NM1-04>
+                <NM1-08>MI</NM1-08>
+                <NM1-09>JS00111223333</NM1-09>
+            </NM1>
+            <DMG>
+                <DMG-01>D8</DMG-01>
+                <DMG-02>19430501</DMG-02>
+                <DMG-03>F</DMG-03>
+            </DMG>
+        </Loop2010>
+        <Loop2010>
+            <NM1>
+                <NM1-01>PR</NM1-01>
+                <NM1-02>2</NM1-02>
+                <NM1-03>KEY INSURANCE COMPANY</NM1-03>
+                <NM1-08>PI</NM1-08>
+                <NM1-09>999996666</NM1-09>
+            </NM1>
+            <REF>
+                <REF-01>G2</REF-01>
+                <REF-02>KA6663</REF-02>
+            </REF>
+        </Loop2010>
+    </Loop2000>
+    <Loop2000>
+        <HL>
+            <HL-01>3</HL-01>
+            <HL-02>2</HL-02>
+            <HL-03>23</HL-03>
+            <HL-04>0</HL-04>
+        </HL>
+        <PAT>
+            <PAT-01>19</PAT-01>
+        </PAT>
+        <Loop2010>
+            <NM1>
+                <NM1-01>QC</NM1-01>
+                <NM1-02>1</NM1-02>
+                <NM1-03>SMITH</NM1-03>
+                <NM1-04>TED</NM1-04>
+            </NM1>
+            <N3>
+                <N3-01>236 N MAIN ST</N3-01>
+            </N3>
+            <N4>
+                <N4-01>MIAMI</N4-01>
+                <N4-02>FL</N4-02>
+                <N4-03>33413</N4-03>
+            </N4>
+            <DMG>
+                <DMG-01>D8</DMG-01>
+                <DMG-02>19730501</DMG-02>
+                <DMG-03>M</DMG-03>
+            </DMG>
+        </Loop2010>
+        <Loop2300>
+            <CLM>
+                <CLM-01>26463774</CLM-01>
+                <CLM-02>100</CLM-02>
+                <CLM-05>
+                    <C023-01>11</C023-01>
+                    <C023-02>B</C023-02
+                    ><C023-03>1</C023-03>
+                </CLM-05>
+                <CLM-06>Y</CLM-06>
+                <CLM-07>A</CLM-07>
+                <CLM-08>Y</CLM-08>
+                <CLM-09>I</CLM-09>
+            </CLM>
+            <REF>
+                <REF-01>D9</REF-01>
+                <REF-02>17312345600006351</REF-02>
+            </REF>
+            <HI>
+                <HI-01>
+                    <C022-01>BK</C022-01>
+                    <C022-02>0340</C022-02>
+                </HI-01>
+                <HI-02>
+                    <C022-01>BF</C022-01>
+                    <C022-02>V7389</C022-02>
+                </HI-02>
+            </HI>
+            <Loop2400>
+                <LX>
+                    <LX-01>1</LX-01>
+                </LX>
+                <SV1>
+                    <SV1-01>
+                        <C003-01>HC</C003-01>
+                        <C003-02>99213</C003-02>
+                    </SV1-01>
+                    <SV1-02>40</SV1-02>
+                    <SV1-03>UN</SV1-03>
+                    <SV1-04>1</SV1-04>
+                    <SV1-07>1</SV1-07>
+                </SV1>
+                <DTP>
+                    <DTP-01>472</DTP-01>
+                    <DTP-02>D8</DTP-02>
+                    <DTP-03>20061003</DTP-03>
+                </DTP>
+            </Loop2400>
+            <Loop2400>
+                <LX>
+                    <LX-01>2</LX-01>
+                </LX>
+                <SV1>
+                    <SV1-01>
+                        <C003-01>HC</C003-01>
+                        <C003-02>87070</C003-02>
+                    </SV1-01>
+                    <SV1-02>15</SV1-02>
+                    <SV1-03>UN</SV1-03>
+                    <SV1-04>1</SV1-04>
+                    <SV1-07>1</SV1-07>
+                </SV1>
+                <DTP>
+                    <DTP-01>472</DTP-01>
+                    <DTP-02>D8</DTP-02>
+                    <DTP-03>20061003</DTP-03>
+                </DTP>
+            </Loop2400>
+            <Loop2400>
+                <LX>
+                    <LX-01>3</LX-01>
+                </LX>
+                <SV1>
+                    <SV1-01>
+                        <C003-01>HC</C003-01>
+                        <C003-02>99214</C003-02>
+                    </SV1-01>
+                    <SV1-02>35</SV1-02>
+                    <SV1-03>UN</SV1-03>
+                    <SV1-04>1</SV1-04>
+                    <SV1-07>2</SV1-07>
+                </SV1>
+                <DTP>
+                    <DTP-01>472</DTP-01>
+                    <DTP-02>D8</DTP-02>
+                    <DTP-03>20061010</DTP-03>
+                </DTP>
+            </Loop2400>
+            <Loop2400>
+                <LX>
+                    <LX-01>4</LX-01>
+                </LX>
+                <SV1>
+                    <SV1-01>
+                        <C003-01>HC</C003-01>
+                        <C003-02>86663</C003-02>
+                    </SV1-01>
+                    <SV1-02>10</SV1-02>
+                    <SV1-03>UN</SV1-03>
+                    <SV1-04>1</SV1-04>
+                    <SV1-07>2</SV1-07>
+                </SV1>
+                <DTP>
+                    <DTP-01>472</DTP-01>
+                    <DTP-02>D8</DTP-02>
+                    <DTP-03>20061010</DTP-03
+                ></DTP>
+            </Loop2400>
+        </Loop2300>
+    </Loop2000>
+    <SE>
+        <SE-01>42</SE-01>
+        <SE-02>0021</SE-02>
+    </SE>
+    <GE>
+        <GE-01>1</GE-01>
+        <GE-02>1</GE-02>
+    </GE>
+    <IEA>
+        <IEA-01>1</IEA-01>
+        <IEA-02>000000001</IEA-02>
+    </IEA>
+</X12_837P>

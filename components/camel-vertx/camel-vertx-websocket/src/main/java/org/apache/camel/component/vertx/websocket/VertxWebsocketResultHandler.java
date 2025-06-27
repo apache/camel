@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExecutionException;
@@ -33,7 +35,7 @@ class VertxWebsocketResultHandler {
     private final AsyncCallback callback;
     private final Set<String> connectionKeys;
     private final Map<String, Throwable> errors = new HashMap<>();
-    private final Object lock = new Object();
+    private final Lock lock = new ReentrantLock();
 
     VertxWebsocketResultHandler(Exchange exchange, AsyncCallback callback, Set<String> connectionKeys) {
         this.exchange = exchange;
@@ -42,17 +44,23 @@ class VertxWebsocketResultHandler {
     }
 
     void onResult(String connectionKey) {
-        synchronized (lock) {
+        lock.lock();
+        try {
             connectionKeys.remove(connectionKey);
             if (connectionKeys.isEmpty()) {
                 onComplete();
             }
+        } finally {
+            lock.unlock();
         }
     }
 
     void onError(String connectionKey, Throwable cause) {
-        synchronized (lock) {
+        lock.lock();
+        try {
             errors.put(connectionKey, cause);
+        } finally {
+            lock.unlock();
         }
     }
 

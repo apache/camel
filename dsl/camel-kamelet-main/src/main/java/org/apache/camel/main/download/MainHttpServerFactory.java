@@ -31,13 +31,13 @@ public class MainHttpServerFactory {
         if (server == null) {
             // need to capture that we use a http-server
             HttpServerConfigurationProperties config = new HttpServerConfigurationProperties(null);
-            CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.jbang.platform-http.port",
+            CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.server.port",
                     String.valueOf(config.getPort()));
             if (!silent) {
                 try {
                     // enable http server if not silent
                     org.apache.camel.main.MainHttpServerFactory factory = resolveMainHttpServerFactory(camelContext);
-                    Service httpServer = factory.newHttpServer(config);
+                    Service httpServer = factory.newHttpServer(camelContext, config);
                     camelContext.addService(httpServer, true, true);
                 } catch (Exception e) {
                     throw new RuntimeException(e);

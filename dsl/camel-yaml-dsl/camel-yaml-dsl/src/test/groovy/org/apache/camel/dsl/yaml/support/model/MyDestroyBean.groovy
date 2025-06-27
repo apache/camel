@@ -20,14 +20,14 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class MyDestroyBean {
 
-    public static final AtomicBoolean initCalled = new AtomicBoolean();
-    public static final AtomicBoolean destroyCalled = new AtomicBoolean();
+    public static final AtomicBoolean initCalled = new AtomicBoolean()
+    public static final AtomicBoolean destroyCalled = new AtomicBoolean()
 
     String field1
     String field2
-    int age;
+    int age
 
-    public MyDestroyBean(String field1, String field2) {
+    MyDestroyBean(String field1, String field2) {
         this.field1 = field1
         this.field2 = field2
     }
@@ -49,14 +49,14 @@ class MyDestroyBean {
     }
 
     String hello(String body) {
-        return field1 + " " + body + ". I am " + field2 + " and " + age + " years old!";
+        return field1 + " " + body + ". I am " + field2 + " and " + age + " years old!"
     }
 
     void initMe() {
-        initCalled.set(true);
+        initCalled.set(true)
     }
 
     void destroyMe() {
-        destroyCalled.set(true);
+        destroyCalled.set(true)
     }
 }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import java.lang.reflect.Method;
@@ -31,8 +30,8 @@ import static org.apache.camel.test.junit5.util.ExtensionHelper.testEndFooter;
 import static org.apache.camel.test.junit5.util.ExtensionHelper.testStartHeader;
 
 public class TestLoggerExtension
-        implements BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback,
-        AfterTestExecutionCallback {
+        implements BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback {
+
     private static final String START_TIME = "start time";
     private String currentTestName;
 

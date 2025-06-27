@@ -16,10 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -42,6 +43,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.IOHelper;
@@ -57,11 +59,14 @@ import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "trace",
-                     description = "Tail message traces from running Camel integrations", sortOptions = false)
+                     description = "Tail message traces from running Camel integrations", sortOptions = false,
+                     showDefaultValues = true)
 public class CamelTraceAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
+
+    private CommandHelper.ReadConsoleTask waitUserTask;
 
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
@@ -106,7 +111,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     boolean ago;
 
     @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
-                        description = "Keep following and outputting new traces (use ctrl + c to exit).")
+                        description = "Keep following and outputting new traces (press enter to exit).")
     boolean follow = true;
 
     @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto", completionCandidates = PrefixCompletionCandidates.class,
@@ -202,9 +207,9 @@ public class CamelTraceAction extends ActionBaseCommand {
         List<Long> pids = findPids(name);
         for (long pid : pids) {
             if ("clear".equals(action)) {
-                File f = getTraceFile("" + pid);
-                if (f.exists()) {
-                    IOHelper.writeText("{}", f);
+                Path f = getTraceFile("" + pid);
+                if (Files.exists(f)) {
+                    Files.writeString(f, "{}");
                 }
             } else {
                 JsonObject root = new JsonObject();
@@ -214,8 +219,8 @@ public class CamelTraceAction extends ActionBaseCommand {
                 } else if ("stop".equals(action)) {
                     root.put("enabled", "false");
                 }
-                File f = getActionFile(Long.toString(pid));
-                IOHelper.writeText(root.toJson(), f);
+                Path f = getActionFile(Long.toString(pid));
+                Files.writeString(f, root.toJson());
             }
         }
 
@@ -375,7 +380,13 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         if (follow) {
             boolean waitMessage = true;
+            final AtomicBoolean running = new AtomicBoolean(true);
             StopWatch watch = new StopWatch();
+            Thread t = new Thread(() -> {
+                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
+                waitUserTask.run();
+            }, "WaitForUser");
+            t.start();
             boolean more = true;
             do {
                 if (pids.isEmpty()) {
@@ -401,7 +412,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                         break;
                     }
                 }
-            } while (more);
+            } while (more && running.get());
         }
 
         return 0;
@@ -409,10 +420,10 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private void positionTraceLatest(Map<Long, Pid> pids) throws Exception {
         for (Pid pid : pids.values()) {
-            File file = getTraceFile(pid.pid);
+            Path file = getTraceFile(pid.pid);
             long position = -1;
-            if (file.exists()) {
-                pid.reader = new LineNumberReader(new FileReader(file));
+            if (Files.exists(file)) {
+                pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                 String line;
                 long counter = 0;
                 do {
@@ -432,7 +443,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             if (position != -1) {
                 IOHelper.close(pid.reader);
                 // re-create reader and forward to position
-                pid.reader = new LineNumberReader(new FileReader(file));
+                pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                 while (--position > 0) {
                     pid.reader.readLine();
                 }
@@ -442,9 +453,9 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private void tailTraceFiles(Map<Long, Pid> pids, int tail) throws Exception {
         for (Pid pid : pids.values()) {
-            File file = getTraceFile(pid.pid);
-            if (file.exists()) {
-                pid.reader = new LineNumberReader(new FileReader(file));
+            Path file = getTraceFile(pid.pid);
+            if (Files.exists(file)) {
+                pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                 String line;
                 if (tail <= 0) {
                     pid.fifo = new ArrayDeque<>();
@@ -513,12 +524,12 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         for (Pid pid : pids.values()) {
             if (pid.reader == null) {
-                File file = getTraceFile(pid.pid);
-                if (file.exists()) {
-                    pid.reader = new LineNumberReader(new FileReader(file));
+                Path file = getTraceFile(pid.pid);
+                if (Files.exists(file)) {
+                    pid.reader = new LineNumberReader(Files.newBufferedReader(file));
                     if (tail == 0) {
                         // only read new lines so forward to end of reader
-                        long size = file.length();
+                        long size = Files.size(file);
                         pid.reader.skip(size);
                     }
                 }
@@ -597,6 +608,9 @@ public class CamelTraceAction extends ActionBaseCommand {
                     // we should exchangeId/pattern elsewhere
                     row.message.remove("exchangeId");
                     row.message.remove("exchangePattern");
+                    if (!showExchangeVariables) {
+                        row.message.remove("exchangeVariables");
+                    }
                     if (!showExchangeProperties) {
                         row.message.remove("exchangeProperties");
                     }

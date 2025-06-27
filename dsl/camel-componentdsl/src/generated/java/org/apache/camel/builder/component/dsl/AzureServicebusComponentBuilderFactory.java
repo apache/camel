@@ -313,6 +313,23 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Enable session support.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sessionEnabled the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder sessionEnabled(boolean sessionEnabled) {
+            doSetProperty("sessionEnabled", sessionEnabled);
+            return this;
+        }
+    
         /**
          * Sets the type of the SubQueue to connect to.
          * 
@@ -458,6 +475,21 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Session ID for session-enabled queues or topics.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param sessionId the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder sessionId(java.lang.String sessionId) {
+            doSetProperty("sessionId", sessionId);
+            return this;
+        }
+    
         
         /**
          * Whether autowiring is enabled. This is used for automatic autowiring
@@ -580,6 +612,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;
             case "processorClient": getOrCreateConfiguration((ServiceBusComponent) component).setProcessorClient((com.azure.messaging.servicebus.ServiceBusProcessorClient) value); return true;
             case "serviceBusReceiveMode": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusReceiveMode((com.azure.messaging.servicebus.models.ServiceBusReceiveMode) value); return true;
+            case "sessionEnabled": getOrCreateConfiguration((ServiceBusComponent) component).setSessionEnabled((boolean) value); return true;
             case "subQueue": getOrCreateConfiguration((ServiceBusComponent) component).setSubQueue((com.azure.messaging.servicebus.models.SubQueue) value); return true;
             case "subscriptionName": getOrCreateConfiguration((ServiceBusComponent) component).setSubscriptionName((java.lang.String) value); return true;
             case "binary": getOrCreateConfiguration((ServiceBusComponent) component).setBinary((boolean) value); return true;
@@ -588,6 +621,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "scheduledEnqueueTime": getOrCreateConfiguration((ServiceBusComponent) component).setScheduledEnqueueTime((java.time.OffsetDateTime) value); return true;
             case "senderClient": getOrCreateConfiguration((ServiceBusComponent) component).setSenderClient((com.azure.messaging.servicebus.ServiceBusSenderClient) value); return true;
             case "serviceBusTransactionContext": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusTransactionContext((com.azure.messaging.servicebus.ServiceBusTransactionContext) value); return true;
+            case "sessionId": getOrCreateConfiguration((ServiceBusComponent) component).setSessionId((java.lang.String) value); return true;
             case "autowiredEnabled": ((ServiceBusComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionString": getOrCreateConfiguration((ServiceBusComponent) component).setConnectionString((java.lang.String) value); return true;
             case "credentialType": getOrCreateConfiguration((ServiceBusComponent) component).setCredentialType((org.apache.camel.component.azure.servicebus.CredentialType) value); return true;

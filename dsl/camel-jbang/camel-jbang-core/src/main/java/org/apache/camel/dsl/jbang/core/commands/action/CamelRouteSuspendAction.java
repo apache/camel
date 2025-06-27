@@ -21,7 +21,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "suspend-route",
-                     description = "Suspend Camel routes", sortOptions = false)
+                     description = "Suspend Camel routes", sortOptions = false, showDefaultValues = true)
 public class CamelRouteSuspendAction extends CamelRouteAction {
 
     public CamelRouteSuspendAction(CamelJBangMain main) {

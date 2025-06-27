@@ -29,8 +29,8 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for AtomPollingConsumer
@@ -47,8 +47,8 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
         Exchange exchange = mock.getExchanges().get(0);
         Message in = exchange.getIn();
         assertNotNull(in);
-        assertTrue(in.getBody() instanceof List);
-        assertTrue(in.getHeader(AtomConstants.ATOM_FEED) instanceof List);
+        assertInstanceOf(List.class, in.getBody());
+        assertInstanceOf(List.class, in.getHeader(AtomConstants.ATOM_FEED));
 
         List feed = in.getHeader(AtomConstants.ATOM_FEED, List.class);
         Item item = (Item) feed.get(0);

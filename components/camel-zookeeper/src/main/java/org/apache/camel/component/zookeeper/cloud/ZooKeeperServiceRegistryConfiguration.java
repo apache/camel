@@ -19,6 +19,7 @@ package org.apache.camel.component.zookeeper.cloud;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 
+@Deprecated
 public class ZooKeeperServiceRegistryConfiguration extends ZooKeeperCuratorConfiguration {
     /**
      * Should we remove all the registered services know by this registry on stop?

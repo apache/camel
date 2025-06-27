@@ -106,6 +106,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningArchiveLogOnlyScnPollIntervalMs": getOrCreateConfiguration(target).setLogMiningArchiveLogOnlyScnPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingbatchsizedefault":
         case "logMiningBatchSizeDefault": getOrCreateConfiguration(target).setLogMiningBatchSizeDefault(property(camelContext, long.class, value)); return true;
+        case "logminingbatchsizeincrement":
+        case "logMiningBatchSizeIncrement": getOrCreateConfiguration(target).setLogMiningBatchSizeIncrement(property(camelContext, long.class, value)); return true;
         case "logminingbatchsizemax":
         case "logMiningBatchSizeMax": getOrCreateConfiguration(target).setLogMiningBatchSizeMax(property(camelContext, long.class, value)); return true;
         case "logminingbatchsizemin":
@@ -367,6 +369,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningArchiveLogOnlyScnPollIntervalMs": return long.class;
         case "logminingbatchsizedefault":
         case "logMiningBatchSizeDefault": return long.class;
+        case "logminingbatchsizeincrement":
+        case "logMiningBatchSizeIncrement": return long.class;
         case "logminingbatchsizemax":
         case "logMiningBatchSizeMax": return long.class;
         case "logminingbatchsizemin":
@@ -629,6 +633,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningArchiveLogOnlyScnPollIntervalMs": return getOrCreateConfiguration(target).getLogMiningArchiveLogOnlyScnPollIntervalMs();
         case "logminingbatchsizedefault":
         case "logMiningBatchSizeDefault": return getOrCreateConfiguration(target).getLogMiningBatchSizeDefault();
+        case "logminingbatchsizeincrement":
+        case "logMiningBatchSizeIncrement": return getOrCreateConfiguration(target).getLogMiningBatchSizeIncrement();
         case "logminingbatchsizemax":
         case "logMiningBatchSizeMax": return getOrCreateConfiguration(target).getLogMiningBatchSizeMax();
         case "logminingbatchsizemin":

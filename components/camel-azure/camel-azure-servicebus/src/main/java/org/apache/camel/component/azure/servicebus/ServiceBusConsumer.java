@@ -48,12 +48,29 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceBusUtils.validateConfiguration(getConfiguration(), true);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
         LOG.debug("Creating connection to Azure ServiceBus");
-        client = getEndpoint().getServiceBusClientFactory().createServiceBusProcessorClient(getConfiguration(),
-                this::processMessage, this::processError);
+
+        client = getConfiguration().getProcessorClient();
+        if (client == null) {
+            // create client as per sessions
+            if (Boolean.FALSE.equals(getConfiguration().isSessionEnabled())) {
+                client = getEndpoint().getServiceBusClientFactory().createServiceBusProcessorClient(getConfiguration(),
+                        this::processMessage, this::processError);
+            } else {
+                client = getEndpoint().getServiceBusClientFactory().createServiceBusSessionProcessorClient(getConfiguration(),
+                        this::processMessage, this::processError);
+            }
+        }
+
         client.start();
     }
 
@@ -69,7 +86,13 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     private void processError(ServiceBusErrorContext errorContext) {
-        LOG.error("Error from Service Bus client: {}", errorContext.getErrorSource(), errorContext.getException());
+        final Exchange exchange = createServiceBusExchange(errorContext);
+
+        // log exception if an exception occurred and was not handled
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error from Service Bus: " + errorContext.getErrorSource(), exchange,
+                    exchange.getException());
+        }
     }
 
     @Override
@@ -90,6 +113,12 @@ public class ServiceBusConsumer extends DefaultConsumer {
     @Override
     public ServiceBusEndpoint getEndpoint() {
         return (ServiceBusEndpoint) super.getEndpoint();
+    }
+
+    private Exchange createServiceBusExchange(final ServiceBusErrorContext errorContext) {
+        final Exchange exchange = createExchange(true);
+        exchange.setException(errorContext.getException());
+        return exchange;
     }
 
     private Exchange createServiceBusExchange(final ServiceBusReceivedMessage receivedMessage) {

@@ -93,6 +93,24 @@ public final class LoggerHelper {
         return name;
     }
 
+    public static String getSourceLocationOnly(Object node) {
+        String name = null;
+        if (node instanceof LineNumberAware) {
+            if (node instanceof NamedRoute namedRoute) {
+                // we want the input from a route as it has the source location / line number
+                node = namedRoute.getInput();
+            }
+
+            final LineNumberAware lineNumberAware = (LineNumberAware) node;
+            String loc = lineNumberAware.getLocation();
+            if (loc != null) {
+                // is it a class or file?
+                name = loc;
+            }
+        }
+        return name;
+    }
+
     public static String stripSourceLocationLineNumber(String location) {
         int cnt = StringHelper.countChar(location, ':');
         if (cnt > 1) {

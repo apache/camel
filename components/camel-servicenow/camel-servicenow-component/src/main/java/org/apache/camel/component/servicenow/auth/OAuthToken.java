@@ -17,6 +17,8 @@
 package org.apache.camel.component.servicenow.auth;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.component.servicenow.ServiceNowConfiguration;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -30,6 +32,7 @@ import org.slf4j.LoggerFactory;
 public class OAuthToken {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthToken.class);
 
+    private final Lock lock = new ReentrantLock();
     private final ServiceNowConfiguration configuration;
     private ClientAccessToken token;
     private String authString;
@@ -42,54 +45,59 @@ public class OAuthToken {
         this.expireAt = 0;
     }
 
-    private synchronized void getOrRefreshAccessToken() {
-        if (token == null) {
-            LOGGER.debug("Generate OAuth token");
+    private void getOrRefreshAccessToken() {
+        lock.lock();
+        try {
+            if (token == null) {
+                LOGGER.debug("Generate OAuth token");
 
-            token = OAuthClientUtils.getAccessToken(
-                    WebClient.create(configuration.getOauthTokenUrl()),
-                    new Consumer(
-                            configuration.getOauthClientId(),
-                            configuration.getOauthClientSecret()),
-                    new ResourceOwnerGrant(
-                            configuration.getUserName(),
-                            configuration.getPassword()),
-                    true);
+                token = OAuthClientUtils.getAccessToken(
+                        WebClient.create(configuration.getOauthTokenUrl()),
+                        new Consumer(
+                                configuration.getOauthClientId(),
+                                configuration.getOauthClientSecret()),
+                        new ResourceOwnerGrant(
+                                configuration.getUserName(),
+                                configuration.getPassword()),
+                        true);
 
-            LOGGER.debug("OAuth token expires in {}s", token.getExpiresIn());
+                LOGGER.debug("OAuth token expires in {}s", token.getExpiresIn());
 
-            // Set expiration time related info in milliseconds
-            token.setIssuedAt(System.currentTimeMillis());
-            token.setExpiresIn(TimeUnit.MILLISECONDS.convert(token.getExpiresIn(), TimeUnit.SECONDS));
+                // Set expiration time related info in milliseconds
+                token.setIssuedAt(System.currentTimeMillis());
+                token.setExpiresIn(TimeUnit.MILLISECONDS.convert(token.getExpiresIn(), TimeUnit.SECONDS));
 
-            authString = token.toString();
+                authString = token.toString();
 
-            if (token.getExpiresIn() > 0) {
-                expireAt = token.getIssuedAt() + token.getExpiresIn();
+                if (token.getExpiresIn() > 0) {
+                    expireAt = token.getIssuedAt() + token.getExpiresIn();
+                }
+            } else if (expireAt > 0 && System.currentTimeMillis() >= expireAt) {
+                LOGGER.debug("OAuth token is expired, refresh it");
+
+                token = OAuthClientUtils.refreshAccessToken(
+                        WebClient.create(configuration.getOauthTokenUrl()),
+                        new Consumer(
+                                configuration.getOauthClientId(),
+                                configuration.getOauthClientSecret()),
+                        token,
+                        null,
+                        false);
+
+                LOGGER.debug("Refreshed OAuth token expires in {}s", token.getExpiresIn());
+
+                // Set expiration time related info in milliseconds
+                token.setIssuedAt(System.currentTimeMillis());
+                token.setExpiresIn(TimeUnit.MILLISECONDS.convert(token.getExpiresIn(), TimeUnit.SECONDS));
+
+                authString = token.toString();
+
+                if (token.getExpiresIn() > 0) {
+                    expireAt = token.getIssuedAt() + token.getExpiresIn();
+                }
             }
-        } else if (expireAt > 0 && System.currentTimeMillis() >= expireAt) {
-            LOGGER.debug("OAuth token is expired, refresh it");
-
-            token = OAuthClientUtils.refreshAccessToken(
-                    WebClient.create(configuration.getOauthTokenUrl()),
-                    new Consumer(
-                            configuration.getOauthClientId(),
-                            configuration.getOauthClientSecret()),
-                    token,
-                    null,
-                    false);
-
-            LOGGER.debug("Refreshed OAuth token expires in {}s", token.getExpiresIn());
-
-            // Set expiration time related info in milliseconds
-            token.setIssuedAt(System.currentTimeMillis());
-            token.setExpiresIn(TimeUnit.MILLISECONDS.convert(token.getExpiresIn(), TimeUnit.SECONDS));
-
-            authString = token.toString();
-
-            if (token.getExpiresIn() > 0) {
-                expireAt = token.getIssuedAt() + token.getExpiresIn();
-            }
+        } finally {
+            lock.unlock();
         }
     }
 

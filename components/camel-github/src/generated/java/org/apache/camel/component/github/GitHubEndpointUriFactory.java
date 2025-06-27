@@ -23,12 +23,13 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(31);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
         props.add("branchName");
         props.add("bridgeErrorHandler");
+        props.add("commitMessageAsBody");
         props.add("delay");
         props.add("encoding");
         props.add("eventFetchStrategy");

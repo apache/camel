@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,6 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME_1 = "hello" + UUID.randomUUID() + ".txt";
+    private static final String TEST_FILE_NAME_2 = "gooday" + UUID.randomUUID() + ".txt";
+    private static final String TEST_FILE_NAME_3 = "new" + UUID.randomUUID() + ".txt";
 
     @Test
     public void testDeleteOldLockOnStartup() throws Exception {
@@ -30,13 +35,13 @@ public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextT
         mock.expectedBodiesReceived("New World");
 
         template.sendBodyAndHeader(fileUri(), "locked", Exchange.FILE_NAME,
-                "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+                TEST_FILE_NAME_1 + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME_1);
         template.sendBodyAndHeader(fileUri("foo"), "locked", Exchange.FILE_NAME,
-                "gooday.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
-        template.sendBodyAndHeader(fileUri("foo"), "Goodday World", Exchange.FILE_NAME, "gooday.txt");
+                TEST_FILE_NAME_2 + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader(fileUri("foo"), "Goodday World", Exchange.FILE_NAME, TEST_FILE_NAME_2);
         // and a new file that has no lock
-        template.sendBodyAndHeader(fileUri(), "New World", Exchange.FILE_NAME, "new.txt");
+        template.sendBodyAndHeader(fileUri(), "New World", Exchange.FILE_NAME, TEST_FILE_NAME_3);
 
         // start the route
         context.getRouteController().startRoute("foo");

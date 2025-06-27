@@ -207,20 +207,32 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.vault.azure.";
                 } else if (file.getName().contains("KubernetesVault")) {
                     prefix = "camel.vault.kubernetes.";
+                } else if (file.getName().contains("KubernetesConfigMapVault")) {
+                    prefix = "camel.vault.kubernetescm.";
                 } else if (file.getName().contains("HashicorpVault")) {
                     prefix = "camel.vault.hashicorp.";
+                } else if (file.getName().contains("IBMSecretsManagerVault")) {
+                    prefix = "camel.vault.ibm.";
+                } else if (file.getName().contains("SpringCloudConfig")) {
+                    prefix = "camel.vault.springConfig.";
                 } else if (file.getName().contains("Health")) {
                     prefix = "camel.health.";
                 } else if (file.getName().contains("StartupCondition")) {
                     prefix = "camel.startupcondition.";
                 } else if (file.getName().contains("Lra")) {
                     prefix = "camel.lra.";
-                } else if (file.getName().contains("Otel")) {
+                } else if (file.getName().contains("Otel2")) {
+                    prefix = "camel.opentelemetry2.";
+                } else if (file.getName().contains("Otel") && !file.getName().contains("Otel2")) {
                     prefix = "camel.opentelemetry.";
+                } else if (file.getName().contains("TelemetryDev")) {
+                    prefix = "camel.telemetryDev.";
                 } else if (file.getName().contains("Metrics")) {
                     prefix = "camel.metrics.";
                 } else if (file.getName().contains("HttpServer")) {
                     prefix = "camel.server.";
+                } else if (file.getName().contains("HttpManagementServer")) {
+                    prefix = "camel.management.";
                 } else if (file.getName().contains("ThreadPoolProfileConfigurationProperties")) {
                     // skip this file
                     continue;
@@ -294,6 +306,27 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + kubernetesVaultConfig + " due " + e.getMessage(), e);
         }
 
+        File springCloudConfigConfig
+                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/SpringCloudConfigConfiguration.java");
+        try {
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(springCloudConfigConfig);
+            model.forEach(m -> m.setName("camel.vault.springConfig." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error parsing file " + springCloudConfigConfig + " due " + e.getMessage(), e);
+        }
+
+        File kubernetesConfigmapsVaultConfig
+                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/KubernetesConfigMapVaultConfiguration.java");
+        try {
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(kubernetesConfigmapsVaultConfig);
+            model.forEach(m -> m.setName("camel.vault.kubernetescm." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException(
+                    "Error parsing file " + kubernetesConfigmapsVaultConfig + " due " + e.getMessage(), e);
+        }
+
         File hashicorpVaultConfig
                 = new File(camelApiDir, "src/main/java/org/apache/camel/vault/HashicorpVaultConfiguration.java");
         try {
@@ -302,6 +335,16 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             data.addAll(model);
         } catch (Exception e) {
             throw new MojoFailureException("Error parsing file " + hashicorpVaultConfig + " due " + e.getMessage(), e);
+        }
+
+        File ibmVaultConfig
+                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/IBMSecretsManagerVaultConfiguration.java");
+        try {
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(ibmVaultConfig);
+            model.forEach(m -> m.setName("camel.vault.ibm." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error parsing file " + ibmVaultConfig + " due " + e.getMessage(), e);
         }
 
         // lets sort so they are always ordered (but camel.main in top)
@@ -331,6 +374,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     "camel.server",
                     "Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations",
                     "org.apache.camel.main.HttpServerConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.management",
+                    "Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations",
+                    "org.apache.camel.main.HttpManagementServerConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
                             "camel.debug", "Camel Debugger configurations",
@@ -371,11 +418,25 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                             "org.apache.camel.vault.KubernetesVaultConfiguration"));
             model.getGroups().add(
                     new MainGroupModel(
+                            "camel.vault.kubernetescm", "Camel Kubernetes Configmaps Vault configurations",
+                            "org.apache.camel.vault.KubernetesConfigMapVaultConfiguration"));
+            model.getGroups().add(
+                    new MainGroupModel(
                             "camel.vault.hashicorp", "Camel Hashicorp Vault configurations",
                             "org.apache.camel.vault.HashicorpVaultConfiguration"));
+            model.getGroups().add(
+                    new MainGroupModel(
+                            "camel.vault.ibm", "Camel IBM Secrets Manager Vault configurations",
+                            "org.apache.camel.vault.IBMSecretsManagerVaultConfiguration"));
             model.getGroups().add(new MainGroupModel(
                     "camel.opentelemetry", "Camel OpenTelemetry configurations",
                     "org.apache.camel.main.OtelConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.opentelemetry2", "Camel OpenTelemetry 2 configurations",
+                    "org.apache.camel.main.Otel2ConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.telemetryDev", "Camel Telemetry Dev configurations",
+                    "org.apache.camel.main.TelemetryDevConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
                     "camel.metrics", "Camel Micrometer Metrics configurations",
                     "org.apache.camel.main.MetricsConfigurationProperties"));

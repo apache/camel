@@ -48,7 +48,7 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
         long failed = reg.getStatistics().getFailedCounter();
         assertEquals(0, (int) failed);
         long miss = reg.getStatistics().getMissCounter();
-        assertEquals(4, (int) miss); // stream caching misses
+        assertEquals(0, (int) miss);
 
         assertThrows(Exception.class, () -> template.sendBody("direct:start", "foo"),
                 "Should have thrown exception");
@@ -57,7 +57,7 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
         failed = reg.getStatistics().getFailedCounter();
         assertEquals(1, (int) failed);
         miss = reg.getStatistics().getMissCounter();
-        assertEquals(5, (int) miss); // stream caching misses
+        assertEquals(0, (int) miss);
 
         // reset
         reg.getStatistics().reset();

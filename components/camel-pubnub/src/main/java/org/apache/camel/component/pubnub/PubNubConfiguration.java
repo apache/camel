@@ -34,10 +34,10 @@ public class PubNubConfiguration implements Cloneable {
     private String subscribeKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @Deprecated
+    @UriParam(label = "security", secret = true,
+              defaultValueNote = "This setting is deprecated because it relates to deprecated Access Manager (PAM V2) and will be removed in the future. Please, migrate to new Access Manager (PAM V3) https://www.pubnub.com/docs/general/resources/migration-guides/pam-v3-migration")
     private String authKey;
-    @UriParam(label = "security", secret = true)
-    private String cipherKey;
     @UriParam(label = "security", defaultValue = "true")
     private boolean secure = true;
     @UriParam
@@ -99,17 +99,6 @@ public class PubNubConfiguration implements Cloneable {
 
     public void setAuthKey(String authKey) {
         this.authKey = authKey;
-    }
-
-    /**
-     * If cipher is passed, all communications to/from PubNub will be encrypted.
-     */
-    public String getCipherKey() {
-        return cipherKey;
-    }
-
-    public void setCipherKey(String cipherKey) {
-        this.cipherKey = cipherKey;
     }
 
     /**

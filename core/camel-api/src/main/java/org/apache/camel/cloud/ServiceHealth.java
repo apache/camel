@@ -39,7 +39,7 @@ public interface ServiceHealth {
     }
 
     /**
-     * The health enpoint exposed by the service.
+     * The health endpoint exposed by the service.
      */
     default Optional<URI> getEndpoint() {
         return Optional.empty();

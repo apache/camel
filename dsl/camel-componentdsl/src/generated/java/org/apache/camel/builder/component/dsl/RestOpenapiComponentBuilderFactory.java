@@ -66,7 +66,6 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * Path to the OpenApi specification file. The scheme, host base path
          * are taken from this specification, but these can be overridden with
@@ -79,7 +78,6 @@ public interface RestOpenapiComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: openapi.json
          * Group: common
          * 
          * @param specificationUri the value to set
@@ -148,6 +146,25 @@ public interface RestOpenapiComponentBuilderFactory {
          */
         default RestOpenapiComponentBuilder clientRequestValidation(boolean clientRequestValidation) {
             doSetProperty("clientRequestValidation", clientRequestValidation);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to enable validation of the client request to check if the
+         * outgoing response from Camel is valid according to the OpenAPI
+         * specification.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param clientResponseValidation the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder clientResponseValidation(boolean clientResponseValidation) {
+            doSetProperty("clientResponseValidation", clientResponseValidation);
             return this;
         }
     
@@ -438,6 +455,7 @@ public interface RestOpenapiComponentBuilderFactory {
             case "apiContextPath": ((RestOpenApiComponent) component).setApiContextPath((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((RestOpenApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientRequestValidation": ((RestOpenApiComponent) component).setClientRequestValidation((boolean) value); return true;
+            case "clientResponseValidation": ((RestOpenApiComponent) component).setClientResponseValidation((boolean) value); return true;
             case "missingOperation": ((RestOpenApiComponent) component).setMissingOperation((java.lang.String) value); return true;
             case "bindingPackageScan": ((RestOpenApiComponent) component).setBindingPackageScan((java.lang.String) value); return true;
             case "consumerComponentName": ((RestOpenApiComponent) component).setConsumerComponentName((java.lang.String) value); return true;

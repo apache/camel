@@ -45,11 +45,29 @@ public final class LangChain4jEmbeddingsConverterLoader implements TypeConverter
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, dev.langchain4j.data.embedding.Embedding.class, float[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConverter.toEmbedding((float[]) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConverter.toEmbedding((float[]) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, dev.langchain4j.data.embedding.Embedding.class, java.util.List.class, false,
-            (type, exchange, value) -> org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConverter.toEmbedding((java.util.List) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConverter.toEmbedding((java.util.List) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, dev.langchain4j.data.segment.TextSegment.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConverter.toTextSegment((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConverter.toTextSegment((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

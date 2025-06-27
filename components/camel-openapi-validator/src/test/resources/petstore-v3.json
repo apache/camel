@@ -180,7 +180,7 @@
             "name": "status",
             "in": "query",
             "description": "Status values that need to be considered for filter",
-            "required": false,
+            "required": true,
             "explode": true,
             "schema": {
               "type": "string",
@@ -240,9 +240,9 @@
         "parameters": [
           {
             "name": "tags",
-            "in": "query",
+            "in": "header",
             "description": "Tags to filter by",
-            "required": false,
+            "required": true,
             "explode": true,
             "schema": {
               "type": "array",
@@ -767,13 +767,14 @@
             "headers": {
               "X-Rate-Limit": {
                 "description": "calls per hour allowed by the user",
+                "required": true,
                 "schema": {
                   "type": "integer",
                   "format": "int32"
                 }
               },
               "X-Expires-After": {
-                "description": "date in UTC when toekn expires",
+                "description": "date in UTC when token expires",
                 "schema": {
                   "type": "string",
                   "format": "date-time"

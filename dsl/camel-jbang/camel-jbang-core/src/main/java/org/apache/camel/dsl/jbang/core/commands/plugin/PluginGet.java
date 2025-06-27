@@ -30,7 +30,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get",
-                     description = "Display available plugins.")
+                     description = "Display available plugins.", sortOptions = false, showDefaultValues = true)
 public class PluginGet extends PluginBaseCommand {
 
     @CommandLine.Option(names = { "--all" }, defaultValue = "false", description = "Display all available plugins.")

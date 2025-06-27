@@ -39,7 +39,7 @@ public final class ExchangeHeaders {
     public static final HttpString BATCH_INDEX = new HttpString("CamelBatchIndex");
     public static final HttpString BATCH_SIZE = new HttpString("CamelBatchSize");
     public static final HttpString BATCH_COMPLETE = new HttpString("CamelBatchComplete");
-    public static final HttpString BEAN_METHOD_NAME = new HttpString("CamelBeanMethodName");
+    @Deprecated
     public static final HttpString BEAN_MULTI_PARAMETER_ARRAY = new HttpString("CamelBeanMultiParameterArray");
     public static final HttpString BINDING = new HttpString("CamelBinding");
     // do not prefix with Camel and use lower-case starting letter as its a shared key

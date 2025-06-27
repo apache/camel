@@ -49,165 +49,645 @@ public final class HL721ConverterLoader implements TypeConverterLoader, CamelCon
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ACK.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toACK((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toACK((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ACK.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toACK((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toACK((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADR_A19.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdrA19((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdrA19((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADR_A19.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdrA19((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdrA19((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A01.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA01((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA01((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A01.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA01((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA01((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A02.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA02((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA02((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A02.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA02((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA02((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A03.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA03((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA03((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A03.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA03((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA03((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A04.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA04((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA04((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A04.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA04((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA04((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A05.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA05((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA05((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A05.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA05((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA05((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A06.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA06((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA06((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A06.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA06((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA06((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A07.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA07((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA07((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A07.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA07((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA07((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A08.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA08((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA08((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A08.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA08((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA08((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A09.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA09((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA09((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A09.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA09((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA09((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A10.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA10((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA10((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A10.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA10((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA10((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A11.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA11((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA11((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A11.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA11((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA11((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A12.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA12((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA12((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A12.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA12((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA12((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A13.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA13((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA13((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A13.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA13((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA13((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A14.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA14((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA14((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A14.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA14((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA14((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A15.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA15((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA15((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A15.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA15((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA15((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A16.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA16((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA16((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A16.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA16((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA16((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A17.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA17((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA17((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A17.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA17((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA17((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A18.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA18((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA18((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A18.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA18((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA18((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A20.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA20((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA20((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A20.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA20((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA20((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A21.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA21((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA21((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A21.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA21((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA21((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A22.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA22((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA22((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A22.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA22((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA22((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A23.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA23((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA23((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A23.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA23((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA23((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A24.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA24((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA24((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_A24.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtA24((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtA24((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_AXX.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtAXX((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtAXX((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ADT_AXX.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toAdtAXX((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toAdtAXX((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.BAR_P01.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toBarP01((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toBarP01((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.BAR_P01.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toBarP01((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toBarP01((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.BAR_P02.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toBarP02((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toBarP02((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.BAR_P02.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toBarP02((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toBarP02((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.DFT_P03.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toDftP03((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toDftP03((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.DFT_P03.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toDftP03((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toDftP03((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.DSR_Q01.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toDsrQ01((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toDsrQ01((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.DSR_Q01.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toDsrQ01((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toDsrQ01((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.DSR_Q03.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toDsrQ03((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toDsrQ03((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.DSR_Q03.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toDsrQ03((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toDsrQ03((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.MCF_Q02.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toMcfQ02((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toMcfQ02((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.MCF_Q02.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toMcfQ02((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toMcfQ02((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ORM_O01.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toOrmO01((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toOrmO01((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ORM_O01.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toOrmO01((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toOrmO01((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ORR_O02.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toOrrO02((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toOrrO02((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ORR_O02.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toOrrO02((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toOrrO02((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ORU_R01.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toOruR01((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toOruR01((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ORU_R01.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toOruR01((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toOruR01((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ORU_R03.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toOruR03((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toOruR03((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.ORU_R03.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toOruR03((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toOruR03((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.QRY_A19.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toQryA19((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toQryA19((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.QRY_A19.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toQryA19((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toQryA19((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.QRY_Q01.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toQryQ01((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toQryQ01((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.QRY_Q01.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toQryQ01((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toQryQ01((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.QRY_Q02.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toQryQ02((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toQryQ02((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.QRY_Q02.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toQryQ02((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toQryQ02((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.UDM_Q05.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toUdmQ05((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toUdmQ05((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.v21.message.UDM_Q05.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL721Converter.toUdmQ05((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL721Converter.toUdmQ05((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

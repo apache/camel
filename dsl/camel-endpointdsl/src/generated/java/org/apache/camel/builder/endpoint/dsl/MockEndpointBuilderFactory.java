@@ -45,14 +45,14 @@ public interface MockEndpointBuilderFactory {
         }
 
         /**
-         * Sets a grace period after which the mock endpoint will re-assert to
-         * ensure the preliminary assertion is still valid. This is used, for
-         * example, to assert that exactly a number of messages arrive. For
-         * example, if the expected count was set to 5, then the assertion is
-         * satisfied when five or more messages arrive. To ensure that exactly 5
-         * messages arrive, then you would need to wait a little period to
-         * ensure no further message arrives. This is what you can use this
-         * method for. By default, this period is disabled.
+         * Sets a grace period after which the mock will re-assert to ensure the
+         * preliminary assertion is still valid. This is used, for example, to
+         * assert that exactly a number of messages arrive. For example, if the
+         * expected count was set to 5, then the assertion is satisfied when
+         * five or more messages arrive. To ensure that exactly 5 messages
+         * arrive, then you would need to wait a little period to ensure no
+         * further message arrives. This is what you can use this method for. By
+         * default, this period is disabled.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -66,14 +66,14 @@ public interface MockEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a grace period after which the mock endpoint will re-assert to
-         * ensure the preliminary assertion is still valid. This is used, for
-         * example, to assert that exactly a number of messages arrive. For
-         * example, if the expected count was set to 5, then the assertion is
-         * satisfied when five or more messages arrive. To ensure that exactly 5
-         * messages arrive, then you would need to wait a little period to
-         * ensure no further message arrives. This is what you can use this
-         * method for. By default, this period is disabled.
+         * Sets a grace period after which the mock will re-assert to ensure the
+         * preliminary assertion is still valid. This is used, for example, to
+         * assert that exactly a number of messages arrive. For example, if the
+         * expected count was set to 5, then the assertion is satisfied when
+         * five or more messages arrive. To ensure that exactly 5 messages
+         * arrive, then you would need to wait a little period to ensure no
+         * further message arrives. This is what you can use this method for. By
+         * default, this period is disabled.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -88,16 +88,12 @@ public interface MockEndpointBuilderFactory {
         }
         /**
          * Specifies the expected number of message exchanges that should be
-         * received by this endpoint. Beware: If you want to expect that 0
-         * messages, then take extra care, as 0 matches when the tests starts,
-         * so you need to set a assert period time to let the test run for a
-         * while to make sure there are still no messages arrived; for that use
-         * setAssertPeriod(long). An alternative is to use NotifyBuilder, and
-         * use the notifier to know when Camel is done routing some messages,
-         * before you call the assertIsSatisfied() method on the mocks. This
-         * allows you to not use a fixed assert period, to speedup testing
-         * times. If you want to assert that exactly nth message arrives to this
-         * mock endpoint, then see also the setAssertPeriod(long) method for
+         * received by this mock. Beware: If you want to expect that 0 messages,
+         * then take extra care, as 0 matches when the tests starts, so you need
+         * to set a assert period time to let the test run for a while to make
+         * sure there are still no messages arrived; for that use the
+         * assertPeriod option. If you want to assert that exactly nth message
+         * arrives to this mock, then see also the assertPeriod option for
          * further details.
          * 
          * The option is a: <code>int</code> type.
@@ -114,16 +110,12 @@ public interface MockEndpointBuilderFactory {
         }
         /**
          * Specifies the expected number of message exchanges that should be
-         * received by this endpoint. Beware: If you want to expect that 0
-         * messages, then take extra care, as 0 matches when the tests starts,
-         * so you need to set a assert period time to let the test run for a
-         * while to make sure there are still no messages arrived; for that use
-         * setAssertPeriod(long). An alternative is to use NotifyBuilder, and
-         * use the notifier to know when Camel is done routing some messages,
-         * before you call the assertIsSatisfied() method on the mocks. This
-         * allows you to not use a fixed assert period, to speedup testing
-         * times. If you want to assert that exactly nth message arrives to this
-         * mock endpoint, then see also the setAssertPeriod(long) method for
+         * received by this mock. Beware: If you want to expect that 0 messages,
+         * then take extra care, as 0 matches when the tests starts, so you need
+         * to set a assert period time to let the test run for a while to make
+         * sure there are still no messages arrived; for that use the
+         * assertPeriod option. If you want to assert that exactly nth message
+         * arrives to this mock, then see also the assertPeriod option for
          * further details.
          * 
          * The option will be converted to a <code>int</code> type.
@@ -136,312 +128,6 @@ public interface MockEndpointBuilderFactory {
          */
         default MockEndpointBuilder expectedCount(String expectedCount) {
             doSetProperty("expectedCount", expectedCount);
-            return this;
-        }
-        /**
-         * Sets whether assertIsSatisfied() should fail fast at the first
-         * detected failed expectation while it may otherwise wait for all
-         * expected messages to arrive before performing expectations
-         * verifications. Is by default true. Set to false to use behavior as in
-         * Camel 2.x.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param failFast the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder failFast(boolean failFast) {
-            doSetProperty("failFast", failFast);
-            return this;
-        }
-        /**
-         * Sets whether assertIsSatisfied() should fail fast at the first
-         * detected failed expectation while it may otherwise wait for all
-         * expected messages to arrive before performing expectations
-         * verifications. Is by default true. Set to false to use behavior as in
-         * Camel 2.x.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param failFast the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder failFast(String failFast) {
-            doSetProperty("failFast", failFast);
-            return this;
-        }
-        /**
-         * To turn on logging when the mock receives an incoming message. This
-         * will log only one time at INFO level for the incoming message. For
-         * more detailed logging then set the logger to DEBUG level for the
-         * org.apache.camel.component.mock.MockEndpoint class.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param log the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder log(boolean log) {
-            doSetProperty("log", log);
-            return this;
-        }
-        /**
-         * To turn on logging when the mock receives an incoming message. This
-         * will log only one time at INFO level for the incoming message. For
-         * more detailed logging then set the logger to DEBUG level for the
-         * org.apache.camel.component.mock.MockEndpoint class.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param log the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder log(String log) {
-            doSetProperty("log", log);
-            return this;
-        }
-        /**
-         * A number that is used to turn on throughput logging based on groups
-         * of the size.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param reportGroup the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder reportGroup(int reportGroup) {
-            doSetProperty("reportGroup", reportGroup);
-            return this;
-        }
-        /**
-         * A number that is used to turn on throughput logging based on groups
-         * of the size.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param reportGroup the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder reportGroup(String reportGroup) {
-            doSetProperty("reportGroup", reportGroup);
-            return this;
-        }
-        /**
-         * Sets the minimum expected amount of time (in millis) the
-         * assertIsSatisfied() will wait on a latch until it is satisfied.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param resultMinimumWaitTime the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder resultMinimumWaitTime(long resultMinimumWaitTime) {
-            doSetProperty("resultMinimumWaitTime", resultMinimumWaitTime);
-            return this;
-        }
-        /**
-         * Sets the minimum expected amount of time (in millis) the
-         * assertIsSatisfied() will wait on a latch until it is satisfied.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param resultMinimumWaitTime the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder resultMinimumWaitTime(String resultMinimumWaitTime) {
-            doSetProperty("resultMinimumWaitTime", resultMinimumWaitTime);
-            return this;
-        }
-        /**
-         * Sets the maximum amount of time (in millis) the assertIsSatisfied()
-         * will wait on a latch until it is satisfied.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param resultWaitTime the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder resultWaitTime(long resultWaitTime) {
-            doSetProperty("resultWaitTime", resultWaitTime);
-            return this;
-        }
-        /**
-         * Sets the maximum amount of time (in millis) the assertIsSatisfied()
-         * will wait on a latch until it is satisfied.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param resultWaitTime the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder resultWaitTime(String resultWaitTime) {
-            doSetProperty("resultWaitTime", resultWaitTime);
-            return this;
-        }
-        /**
-         * Specifies to only retain the first nth number of received Exchanges.
-         * This is used when testing with big data, to reduce memory consumption
-         * by not storing copies of every Exchange this mock endpoint receives.
-         * Important: When using this limitation, then the getReceivedCounter()
-         * will still return the actual number of received Exchanges. For
-         * example if we have received 5000 Exchanges, and have configured to
-         * only retain the first 10 Exchanges, then the getReceivedCounter()
-         * will still return 5000 but there is only the first 10 Exchanges in
-         * the getExchanges() and getReceivedExchanges() methods. When using
-         * this method, then some of the other expectation methods is not
-         * supported, for example the expectedBodiesReceived(Object...) sets a
-         * expectation on the first number of bodies received. You can configure
-         * both setRetainFirst(int) and setRetainLast(int) methods, to limit
-         * both the first and last received.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: -1
-         * Group: producer
-         * 
-         * @param retainFirst the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder retainFirst(int retainFirst) {
-            doSetProperty("retainFirst", retainFirst);
-            return this;
-        }
-        /**
-         * Specifies to only retain the first nth number of received Exchanges.
-         * This is used when testing with big data, to reduce memory consumption
-         * by not storing copies of every Exchange this mock endpoint receives.
-         * Important: When using this limitation, then the getReceivedCounter()
-         * will still return the actual number of received Exchanges. For
-         * example if we have received 5000 Exchanges, and have configured to
-         * only retain the first 10 Exchanges, then the getReceivedCounter()
-         * will still return 5000 but there is only the first 10 Exchanges in
-         * the getExchanges() and getReceivedExchanges() methods. When using
-         * this method, then some of the other expectation methods is not
-         * supported, for example the expectedBodiesReceived(Object...) sets a
-         * expectation on the first number of bodies received. You can configure
-         * both setRetainFirst(int) and setRetainLast(int) methods, to limit
-         * both the first and last received.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: -1
-         * Group: producer
-         * 
-         * @param retainFirst the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder retainFirst(String retainFirst) {
-            doSetProperty("retainFirst", retainFirst);
-            return this;
-        }
-        /**
-         * Specifies to only retain the last nth number of received Exchanges.
-         * This is used when testing with big data, to reduce memory consumption
-         * by not storing copies of every Exchange this mock endpoint receives.
-         * Important: When using this limitation, then the getReceivedCounter()
-         * will still return the actual number of received Exchanges. For
-         * example if we have received 5000 Exchanges, and have configured to
-         * only retain the last 20 Exchanges, then the getReceivedCounter() will
-         * still return 5000 but there is only the last 20 Exchanges in the
-         * getExchanges() and getReceivedExchanges() methods. When using this
-         * method, then some of the other expectation methods is not supported,
-         * for example the expectedBodiesReceived(Object...) sets a expectation
-         * on the first number of bodies received. You can configure both
-         * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
-         * first and last received.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: -1
-         * Group: producer
-         * 
-         * @param retainLast the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder retainLast(int retainLast) {
-            doSetProperty("retainLast", retainLast);
-            return this;
-        }
-        /**
-         * Specifies to only retain the last nth number of received Exchanges.
-         * This is used when testing with big data, to reduce memory consumption
-         * by not storing copies of every Exchange this mock endpoint receives.
-         * Important: When using this limitation, then the getReceivedCounter()
-         * will still return the actual number of received Exchanges. For
-         * example if we have received 5000 Exchanges, and have configured to
-         * only retain the last 20 Exchanges, then the getReceivedCounter() will
-         * still return 5000 but there is only the last 20 Exchanges in the
-         * getExchanges() and getReceivedExchanges() methods. When using this
-         * method, then some of the other expectation methods is not supported,
-         * for example the expectedBodiesReceived(Object...) sets a expectation
-         * on the first number of bodies received. You can configure both
-         * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
-         * first and last received.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: -1
-         * Group: producer
-         * 
-         * @param retainLast the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder retainLast(String retainLast) {
-            doSetProperty("retainLast", retainLast);
-            return this;
-        }
-        /**
-         * Allows a sleep to be specified to wait to check that this endpoint
-         * really is empty when expectedMessageCount(int) is called with zero.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param sleepForEmptyTest the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder sleepForEmptyTest(long sleepForEmptyTest) {
-            doSetProperty("sleepForEmptyTest", sleepForEmptyTest);
-            return this;
-        }
-        /**
-         * Allows a sleep to be specified to wait to check that this endpoint
-         * really is empty when expectedMessageCount(int) is called with zero.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param sleepForEmptyTest the value to set
-         * @return the dsl builder
-         */
-        default MockEndpointBuilder sleepForEmptyTest(String sleepForEmptyTest) {
-            doSetProperty("sleepForEmptyTest", sleepForEmptyTest);
             return this;
         }
     }
@@ -458,7 +144,7 @@ public interface MockEndpointBuilderFactory {
 
         /**
          * Sets whether to make a deep copy of the incoming Exchange when
-         * received at this mock endpoint. Is by default true.
+         * received at this mock endpoint.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -474,7 +160,7 @@ public interface MockEndpointBuilderFactory {
         }
         /**
          * Sets whether to make a deep copy of the incoming Exchange when
-         * received at this mock endpoint. Is by default true.
+         * received at this mock endpoint.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -486,6 +172,44 @@ public interface MockEndpointBuilderFactory {
          */
         default AdvancedMockEndpointBuilder copyOnExchange(String copyOnExchange) {
             doSetProperty("copyOnExchange", copyOnExchange);
+            return this;
+        }
+        /**
+         * Sets whether assertIsSatisfied() should fail fast at the first
+         * detected failed expectation while it may otherwise wait for all
+         * expected messages to arrive before performing expectations
+         * verifications. Is by default true. Set to false to use behavior as in
+         * Camel 2.x.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param failFast the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder failFast(boolean failFast) {
+            doSetProperty("failFast", failFast);
+            return this;
+        }
+        /**
+         * Sets whether assertIsSatisfied() should fail fast at the first
+         * detected failed expectation while it may otherwise wait for all
+         * expected messages to arrive before performing expectations
+         * verifications. Is by default true. Set to false to use behavior as in
+         * Camel 2.x.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param failFast the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder failFast(String failFast) {
+            doSetProperty("failFast", failFast);
             return this;
         }
         /**
@@ -532,6 +256,274 @@ public interface MockEndpointBuilderFactory {
          */
         default AdvancedMockEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * To turn on logging when the mock receives an incoming message. This
+         * will log only one time at INFO level for the incoming message. For
+         * more detailed logging, then set the logger to DEBUG level for the
+         * org.apache.camel.component.mock.MockEndpoint class.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param log the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder log(boolean log) {
+            doSetProperty("log", log);
+            return this;
+        }
+        /**
+         * To turn on logging when the mock receives an incoming message. This
+         * will log only one time at INFO level for the incoming message. For
+         * more detailed logging, then set the logger to DEBUG level for the
+         * org.apache.camel.component.mock.MockEndpoint class.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param log the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder log(String log) {
+            doSetProperty("log", log);
+            return this;
+        }
+        /**
+         * A number that is used to turn on throughput logging based on groups
+         * of the size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param reportGroup the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder reportGroup(int reportGroup) {
+            doSetProperty("reportGroup", reportGroup);
+            return this;
+        }
+        /**
+         * A number that is used to turn on throughput logging based on groups
+         * of the size.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param reportGroup the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder reportGroup(String reportGroup) {
+            doSetProperty("reportGroup", reportGroup);
+            return this;
+        }
+        /**
+         * Sets the minimum expected amount of time the assertIsSatisfied() will
+         * wait on a latch until it is satisfied.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param resultMinimumWaitTime the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder resultMinimumWaitTime(long resultMinimumWaitTime) {
+            doSetProperty("resultMinimumWaitTime", resultMinimumWaitTime);
+            return this;
+        }
+        /**
+         * Sets the minimum expected amount of time the assertIsSatisfied() will
+         * wait on a latch until it is satisfied.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param resultMinimumWaitTime the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder resultMinimumWaitTime(String resultMinimumWaitTime) {
+            doSetProperty("resultMinimumWaitTime", resultMinimumWaitTime);
+            return this;
+        }
+        /**
+         * Sets the maximum amount of time the assertIsSatisfied() will wait on
+         * a latch until it is satisfied.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param resultWaitTime the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder resultWaitTime(long resultWaitTime) {
+            doSetProperty("resultWaitTime", resultWaitTime);
+            return this;
+        }
+        /**
+         * Sets the maximum amount of time the assertIsSatisfied() will wait on
+         * a latch until it is satisfied.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param resultWaitTime the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder resultWaitTime(String resultWaitTime) {
+            doSetProperty("resultWaitTime", resultWaitTime);
+            return this;
+        }
+        /**
+         * Specifies to only retain the first nth number of received Exchanges.
+         * This is used when testing with big data, to reduce memory consumption
+         * by not storing copies of every Exchange this mock endpoint receives.
+         * Important: When using this limitation, then the getReceivedCounter()
+         * will still return the actual number of received message. For example
+         * if we have received 5000 messages and have configured to only retain
+         * the first 10 Exchanges, then the getReceivedCounter() will still
+         * return 5000 but there is only the first 10 Exchanges in the
+         * getExchanges() and getReceivedExchanges() methods. When using this
+         * method, then some of the other expectation methods is not supported,
+         * for example the expectedBodiesReceived(Object...) sets a expectation
+         * on the first number of bodies received. You can configure both
+         * retainFirst and retainLast options, to limit both the first and last
+         * received.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param retainFirst the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder retainFirst(int retainFirst) {
+            doSetProperty("retainFirst", retainFirst);
+            return this;
+        }
+        /**
+         * Specifies to only retain the first nth number of received Exchanges.
+         * This is used when testing with big data, to reduce memory consumption
+         * by not storing copies of every Exchange this mock endpoint receives.
+         * Important: When using this limitation, then the getReceivedCounter()
+         * will still return the actual number of received message. For example
+         * if we have received 5000 messages and have configured to only retain
+         * the first 10 Exchanges, then the getReceivedCounter() will still
+         * return 5000 but there is only the first 10 Exchanges in the
+         * getExchanges() and getReceivedExchanges() methods. When using this
+         * method, then some of the other expectation methods is not supported,
+         * for example the expectedBodiesReceived(Object...) sets a expectation
+         * on the first number of bodies received. You can configure both
+         * retainFirst and retainLast options, to limit both the first and last
+         * received.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param retainFirst the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder retainFirst(String retainFirst) {
+            doSetProperty("retainFirst", retainFirst);
+            return this;
+        }
+        /**
+         * Specifies to only retain the last nth number of received Exchanges.
+         * This is used when testing with big data, to reduce memory consumption
+         * by not storing copies of every Exchange this mock endpoint receives.
+         * Important: When using this limitation, then the getReceivedCounter()
+         * will still return the actual number of received message. For example
+         * if we have received 5000 messages and have configured to only retain
+         * the last 20 Exchanges, then the getReceivedCounter() will still
+         * return 5000 but there is only the last 20 Exchanges in the
+         * getExchanges() and getReceivedExchanges() methods. When using this
+         * method, then some of the other expectation methods is not supported,
+         * for example the expectedBodiesReceived(Object...) sets a expectation
+         * on the first number of bodies received. You can configure both
+         * retainFirst and retainLast options, to limit both the first and last
+         * received.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param retainLast the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder retainLast(int retainLast) {
+            doSetProperty("retainLast", retainLast);
+            return this;
+        }
+        /**
+         * Specifies to only retain the last nth number of received Exchanges.
+         * This is used when testing with big data, to reduce memory consumption
+         * by not storing copies of every Exchange this mock endpoint receives.
+         * Important: When using this limitation, then the getReceivedCounter()
+         * will still return the actual number of received message. For example
+         * if we have received 5000 messages and have configured to only retain
+         * the last 20 Exchanges, then the getReceivedCounter() will still
+         * return 5000 but there is only the last 20 Exchanges in the
+         * getExchanges() and getReceivedExchanges() methods. When using this
+         * method, then some of the other expectation methods is not supported,
+         * for example the expectedBodiesReceived(Object...) sets a expectation
+         * on the first number of bodies received. You can configure both
+         * retainFirst and retainLast options, to limit both the first and last
+         * received.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param retainLast the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder retainLast(String retainLast) {
+            doSetProperty("retainLast", retainLast);
+            return this;
+        }
+        /**
+         * Allows a sleep to be specified to wait to check that this mock really
+         * is empty when expectedMessageCount(int) is called with zero value.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param sleepForEmptyTest the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder sleepForEmptyTest(long sleepForEmptyTest) {
+            doSetProperty("sleepForEmptyTest", sleepForEmptyTest);
+            return this;
+        }
+        /**
+         * Allows a sleep to be specified to wait to check that this mock really
+         * is empty when expectedMessageCount(int) is called with zero value.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param sleepForEmptyTest the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMockEndpointBuilder sleepForEmptyTest(String sleepForEmptyTest) {
+            doSetProperty("sleepForEmptyTest", sleepForEmptyTest);
             return this;
         }
         /**

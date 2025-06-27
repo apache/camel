@@ -60,28 +60,31 @@ public class OpenApiITCase extends JBangTestSupport {
                 = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore-v3.json";
         final String openApiConfig
                 = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore.camel.yaml";
+        final String appConfig
+                = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/refs/heads/main/jbang/open-api-contract-first/application.properties";
 
         downloadFile(openApiUrl);
         downloadFile(openApiConfig);
+        downloadFile(appConfig);
         containerService.executeGenericCommand("mkdir -p camel-mock/pet");
         downloadFile(
                 "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/camel-mock/pet/123.json");
         containerService.executeGenericCommand("mv 123.json camel-mock/pet/");
-        executeBackground("run petstore-v3.json petstore.camel.yaml");
+        executeBackground("run petstore-v3.json petstore.camel.yaml application.properties");
         checkLogContains("HTTP endpoints summary");
 
         //verify mock
-        HttpResponse<String> response = executeHttpRequest("/api/v3/pet/123", true);
+        HttpResponse<String> response = executeHttpRequest("/myapi/pet/123", true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
-        Assertions.assertThat(response.body()).contains("donald the dock");
+        Assertions.assertThat(response.body()).contains("Donald the duck");
 
         //verify sample response
-        response = executeHttpRequest("/api/v3/pet/" + new Random().nextInt(124, 500), true);
+        response = executeHttpRequest("/myapi/pet/" + new Random().nextInt(124, 500), true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
-        Assertions.assertThat(response.body()).contains("jack the cat");
+        Assertions.assertThat(response.body()).contains("Jack the cat");
 
         //verify api-doc
-        response = executeHttpRequest("/api-doc", true);
+        response = executeHttpRequest("/myapi/api-doc", true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
         final ObjectMapper objectMapper = new ObjectMapper();
         Map expectedDoc = objectMapper.readValue(new URL(

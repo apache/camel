@@ -17,20 +17,31 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
-import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
+import io.fabric8.kubernetes.client.vertx.VertxHttpClientFactory;
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
+import io.vertx.core.file.FileSystemOptions;
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -40,7 +51,6 @@ import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import picocli.CommandLine;
 
@@ -108,6 +118,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--quiet" }, description = "Quiet output - only show errors for build/deploy.")
     boolean quiet;
 
+    @CommandLine.Option(names = { "--verbose" }, description = "Verbose output of build/deploy progress")
+    boolean verbose;
+
     @CommandLine.Option(names = { "--cleanup" },
                         defaultValue = "true",
                         description = "Automatically removes deployment when process is stopped. Only in combination with --dev, --reload option.")
@@ -131,9 +144,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "The image registry group used to push images to.")
     String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" },
-                        description = "The image builder used to build the container image (e.g. docker, jib, podman, s2i).")
-    String imageBuilder;
+    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
+                        description = "The image builder used to build the container image (e.g. docker, jib, podman).")
+    String imageBuilder = "jib";
 
     @CommandLine.Option(names = { "--cluster-type" },
                         description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
@@ -143,13 +156,21 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Whether to build container image as part of the run.")
     boolean imageBuild = true;
 
-    @CommandLine.Option(names = { "--image-push" }, defaultValue = "false",
+    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
                         description = "Whether to push image to given image registry as part of the run.")
-    boolean imagePush = false;
+    boolean imagePush = true;
 
-    @CommandLine.Option(names = { "--image-platforms" },
-                        description = "List of target platforms. Each platform is defined using the pattern.")
-    String imagePlatforms;
+    @CommandLine.Option(names = { "--image-platform" },
+                        description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
+    String[] imagePlatforms;
+
+    @CommandLine.Option(names = { "--base-image" },
+                        description = "The base image that is used to build the container image from (default is eclipse-temurin:<java-version>).")
+    String baseImage;
+
+    @CommandLine.Option(names = { "--registry-mirror" },
+                        description = "Optional Docker registry mirror where to pull images from when building the container image.")
+    String registryMirror;
 
     // Export base options
 
@@ -173,6 +194,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
+
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    boolean download = true;
+
+    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    boolean packageScanJars;
 
     @CommandLine.Option(names = { "--maven-settings" },
                         description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
@@ -238,20 +267,33 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     List<String> buildProperties = new ArrayList<>();
 
+    @CommandLine.Option(names = { "--disable-auto" },
+                        description = "Disable automatic cluster type detection and automatic settings for cluster.")
+    boolean disableAuto = false;
+
     // DevMode/Reload state
     private CamelContext devModeContext;
     private Thread devModeShutdownTask;
     private int devModeReloadCount;
 
-    private PodLogs reusablePodLogs;
+    private KubernetesPodLogs reusablePodLogs;
+
+    private Printer quietPrinter;
 
     public KubernetesRun(CamelJBangMain main) {
-        super(main);
+        this(main, null);
     }
 
     public KubernetesRun(CamelJBangMain main, String[] files) {
         super(main);
         filePaths = files;
+        projectNameSuppliers.add(() -> projectNameFromImage(() -> image));
+        projectNameSuppliers.add(() -> projectNameFromGav(() -> gav));
+        projectNameSuppliers.add(() -> projectNameFromFilePath(() -> firstFilePath()));
+    }
+
+    private String firstFilePath() {
+        return filePaths != null && filePaths.length > 0 ? filePaths[0] : null;
     }
 
     public Integer doCall() throws Exception {
@@ -261,33 +303,44 @@ public class KubernetesRun extends KubernetesBaseCommand {
         KubernetesExport export = configureExport(workingDir);
         int exit = export.export();
         if (exit != 0) {
-            printer().println("Project export failed!");
+            printer().printErr("Project export failed!");
             return exit;
         }
 
         if (output != null) {
+            Traits ptraits = TraitHelper.parseTraits(traits);
+            boolean ksvcEnabled = ptraits.getKnativeService() != null && ptraits.getKnativeService().getEnabled();
 
-            exit = buildProject(workingDir);
+            exit = buildProjectOutput(workingDir);
             if (exit != 0) {
-                printer().println("Project build failed!");
+                printer().printErr("Project build failed!");
                 return exit;
             }
 
-            File manifest;
+            Path manifestPath;
             switch (output) {
-                case "yaml" ->
-                    manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes");
+                case "yaml" -> {
+                    if (ksvcEnabled) {
+                        // trick the clusterType to be able to read from the jkube source directory
+                        manifestPath = KubernetesHelper.resolveKubernetesManifestPath("service",
+                                Paths.get(workingDir, "src/main/jkube"));
+                    } else {
+                        manifestPath = KubernetesHelper.resolveKubernetesManifestPath(clusterType,
+                                Paths.get(workingDir, "target/kubernetes"));
+                    }
+                }
                 case "json" ->
-                    manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes",
+                    manifestPath = KubernetesHelper.resolveKubernetesManifestPath(clusterType,
+                            Paths.get(workingDir, "target/kubernetes"),
                             "json");
                 default -> {
-                    printer().printf("Unsupported output format '%s' (supported: yaml, json)%n", output);
+                    printer().printErr("Unsupported output format '%s' (supported: yaml, json)".formatted(output));
                     return 1;
                 }
             }
 
-            try (FileInputStream fis = new FileInputStream(manifest)) {
-                printer().println(IOHelper.loadText(fis));
+            try (InputStream is = Files.newInputStream(manifestPath)) {
+                super.printer().println(IOHelper.loadText(is));
             }
 
             return 0;
@@ -295,7 +348,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         exit = deployProject(workingDir, false);
         if (exit != 0) {
-            printer().println("Project deploy failed!");
+            printer().printErr("Project deploy failed!");
             return exit;
         }
 
@@ -323,10 +376,12 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private KubernetesExport configureExport(String workingDir) {
+        detectCluster();
         KubernetesExport.ExportConfigurer configurer = new KubernetesExport.ExportConfigurer(
                 runtime,
                 quarkusVersion,
                 List.of(filePaths),
+                name,
                 gav,
                 repositories,
                 dependencies,
@@ -351,23 +406,29 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 buildProperties,
                 true,
                 false,
-                false,
-                true,
-                false,
                 true,
                 true,
                 false,
-                false,
-                "off");
+                true,
+                download,
+                packageScanJars,
+                (quiet || output != null),
+                true,
+                "info",
+                verbose);
         KubernetesExport export = new KubernetesExport(getMain(), configurer);
 
         export.image = image;
         export.imageRegistry = imageRegistry;
         export.imageGroup = imageGroup;
+        export.imagePush = imagePush;
         export.imageBuilder = imageBuilder;
+        export.imagePlatforms = imagePlatforms;
+        export.baseImage = baseImage;
+        export.registryMirror = registryMirror;
         export.clusterType = clusterType;
         export.serviceAccount = serviceAccount;
-        export.properties = properties;
+        export.setApplicationProperties(properties);
         export.configs = configs;
         export.resources = resources;
         export.envVars = envVars;
@@ -381,11 +442,12 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private void setupDevMode(String projectName, String workingDir) throws Exception {
+        String firstPath = firstFilePath();
 
         String watchDir = ".";
         FileFilter filter = null;
-        if (filePaths != null && filePaths.length > 0) {
-            String filePath = FileUtil.onlyPath(SourceScheme.onlyName(filePaths[0]));
+        if (firstPath != null) {
+            String filePath = FileUtil.onlyPath(SourceScheme.onlyName(firstPath));
             if (filePath != null) {
                 watchDir = filePath;
             }
@@ -401,7 +463,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
                 printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
 
-                String currentWorkingDir = getIndexedWorkingDir(projectName);
                 devModeReloadCount += 1;
 
                 String reloadWorkingDir = getIndexedWorkingDir(projectName);
@@ -412,7 +473,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 KubernetesExport export = configureExport(reloadWorkingDir);
                 int exit = export.export();
                 if (exit != 0) {
-                    printer().printf("Project reexport failed for: %s%n", reloadWorkingDir);
+                    printer().printErr("Project (re)export failed for: %s".formatted(reloadWorkingDir));
                     return;
                 }
 
@@ -422,8 +483,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
                     // Undeploy/Delete current project
                     //
                     KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
-                    deleteCommand.workingDir = currentWorkingDir;
-                    deleteCommand.clusterType = clusterType;
                     deleteCommand.name = projectName;
                     deleteCommand.doCall();
 
@@ -431,7 +490,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                     //
                     exit = deployProject(reloadWorkingDir, true);
                     if (exit != 0) {
-                        printer().printf("Project redeploy failed for: %s%n", reloadWorkingDir);
+                        printer().printErr("Project redeploy failed for: %s".formatted(reloadWorkingDir));
                         return;
                     }
 
@@ -464,14 +523,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private void startPodLogging(String projectName) throws Exception {
         try {
-            reusablePodLogs = new PodLogs(getMain());
+            reusablePodLogs = new KubernetesPodLogs(getMain());
             if (!ObjectHelper.isEmpty(namespace)) {
                 reusablePodLogs.namespace = namespace;
             }
             reusablePodLogs.name = projectName;
             reusablePodLogs.doCall();
         } catch (Exception e) {
-            printer().println("Failed to read pod logs - " + e);
+            printer().printErr("Failed to read pod logs", e);
             throw e;
         }
     }
@@ -479,28 +538,25 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private void waitForRunningPod(String projectName) {
         if (!quiet) {
             String kubectlCmd = "kubectl get pod";
-            kubectlCmd += " -l %s=%s".formatted(BaseTrait.KUBERNETES_NAME_LABEL, projectName);
+            kubectlCmd += " -l %s=%s".formatted(BaseTrait.KUBERNETES_LABEL_NAME, projectName);
             if (!ObjectHelper.isEmpty(namespace)) {
                 kubectlCmd += " -n %s".formatted(namespace);
             }
             printer().println("Run: " + kubectlCmd);
         }
-        var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_NAME_LABEL, projectName)
+        var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_LABEL_NAME, projectName)
                 .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
-        if (!quiet) {
-            printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
-        }
+        printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
     }
 
     private void installShutdownHook(String projectName, String workingDir) {
-        KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
-        deleteCommand.clusterType = clusterType;
-        deleteCommand.workingDir = workingDir;
-        deleteCommand.name = projectName;
-
         devModeShutdownTask = new Thread(() -> {
-            try {
+            KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
+            deleteCommand.name = projectName;
+            try (var client = createKubernetesClientForShutdownHook()) {
+                KubernetesHelper.setKubernetesClient(client);
                 deleteCommand.doCall();
+                CommandHelper.cleanExportDir(workingDir, false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -509,7 +565,23 @@ public class KubernetesRun extends KubernetesBaseCommand {
         Runtime.getRuntime().addShutdownHook(devModeShutdownTask);
     }
 
-    private Integer buildProject(String workingDir) throws IOException, InterruptedException {
+    // KubernetesClientVertx can no longer be used in ShutdownHook
+    // https://issues.apache.org/jira/browse/CAMEL-21621
+    private KubernetesClient createKubernetesClientForShutdownHook() {
+        System.setProperty("vertx.disableDnsResolver", "true");
+        var vertx = Vertx.vertx((new VertxOptions())
+                .setFileSystemOptions((new FileSystemOptions())
+                        .setFileCachingEnabled(false)
+                        .setClassPathResolvingEnabled(false))
+                .setUseDaemonThread(true));
+        var client = new KubernetesClientBuilder()
+                .withHttpClientFactory(new VertxHttpClientFactory(vertx))
+                .build();
+        return client;
+    }
+
+    // build the project locally to generate the artifacts in the target directory, but don't deploy it.
+    private Integer buildProjectOutput(String workingDir) throws IOException, InterruptedException {
         printer().println("Building Camel application ...");
 
         // Run build via Maven
@@ -521,34 +593,49 @@ public class KubernetesRun extends KubernetesBaseCommand {
         List<String> args = new ArrayList<>();
 
         args.add(workingDir + mvnw);
-        if (quiet) {
+        if (quiet || !verbose) {
             args.add("--quiet");
         }
         args.add("--file");
         args.add(workingDir);
 
         if (!ObjectHelper.isEmpty(namespace)) {
-            if (runtime == RuntimeType.quarkus && ClusterType.KUBERNETES.isEqualTo(clusterType)) {
-                args.add("-Dquarkus.kubernetes.namespace=" + namespace);
-            } else {
-                args.add("-Djkube.namespace=%s".formatted(namespace));
-            }
+            args.add("-Djkube.namespace=%s".formatted(namespace));
+        }
+
+        // skip image build and push because we only want to build the Kubernetes manifest
+        args.add("-Djkube.skip.build=true");
+        args.add("-Djkube.skip.push=true");
+        // suppress maven transfer progress
+        args.add("-ntp");
+
+        Traits ptraits = TraitHelper.parseTraits(traits);
+        if (ptraits.getKnativeService() != null && ptraits.getKnativeService().getEnabled()) {
+            // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
+            // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
+            // and there is no need for the regular Deployment as the knative Service manifest, once deployed
+            // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not generate the deployment.yml
+            args.add("-Djkube.skip.resource=true");
         }
 
         args.add("package");
 
-        if (!quiet) {
-            printer().println("Run: " + String.join(" ", args));
-        }
+        printer().println("Run: " + String.join(" ", args));
 
         pb.command(args.toArray(String[]::new));
 
-        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        if (quiet || !verbose) {
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        }
+
         Process p = pb.start();
         // wait for that process to exit as we run in foreground
         int exit = p.waitFor();
         if (exit != 0) {
-            printer().println("Build failed!");
+            printer().printErr("Build failed!");
             return exit;
         }
 
@@ -568,87 +655,100 @@ public class KubernetesRun extends KubernetesBaseCommand {
         List<String> args = new ArrayList<>();
 
         args.add(workingDir + mvnw);
-        if (quiet) {
+        if (quiet || !verbose) {
             args.add("--quiet");
         }
+        // suppress maven transfer progress
+        args.add("-ntp");
         args.add("--file");
         args.add(workingDir);
 
+        if (!imageBuild) {
+            args.add("-Djkube.skip.build=true");
+        }
+
+        if (imagePush) {
+            args.add("-Djkube.%s.push=true".formatted(imageBuilder));
+            args.add("-Djkube.skip.push=false");
+        }
+
+        if (!ObjectHelper.isEmpty(namespace)) {
+            args.add("-Djkube.namespace=%s".formatted(namespace));
+        }
+
         boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
-
-        if (runtime == RuntimeType.quarkus) {
-
-            if (imagePlatforms != null) {
-                args.add("-Dquarkus.jib.platforms=%s".formatted(imagePlatforms));
-            }
-
-            args.add("-Dquarkus.container-image.build=" + imageBuild);
-            args.add("-Dquarkus.container-image.push=" + imagePush);
-
+        var prefix = isOpenshift ? "oc" : "k8s";
+        Traits ptraits = TraitHelper.parseTraits(traits);
+        if (ptraits.getKnativeService() != null && ptraits.getKnativeService().getEnabled()) {
+            // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
+            // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
+            // and there is no need for the regular Deployment as the knative Service manifest, once deployed
+            // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not generate the deployment.yml
+            // apply the knative service manifest and specify the knative service.yml
+            args.add("-Djkube.skip.resource=true");
+            args.add(prefix + ":build");
+            args.add(prefix + ":apply");
             if (isOpenshift) {
-                args.add("-Dquarkus.openshift.deploy=true");
+                args.add("-Djkube.openshiftManifest=src/main/jkube/service.yml");
             } else {
-                args.add("-Dquarkus.kubernetes.deploy=true");
-                if (!ObjectHelper.isEmpty(namespace)) {
-                    args.add("-Dquarkus.kubernetes.namespace=" + namespace);
-                }
+                args.add("-Djkube.kubernetesManifest=src/main/jkube/service.yml");
             }
-
-            args.add("package");
-
+            if (ClusterType.MINIKUBE.isEqualTo(clusterType) && !disableAuto) {
+                KubernetesHelper.skipKnativeImageTagResolutionInMinikube();
+            }
         } else {
-
-            if (!imageBuild) {
-                args.add("-Djkube.skip.build=true");
-            }
-
-            if (imagePush) {
-                args.add("-Djkube.%s.push=true".formatted(imageBuilder));
-            }
-
-            if (!ObjectHelper.isEmpty(namespace)) {
-                args.add("-Djkube.namespace=%s".formatted(namespace));
-            }
-
-            var prefix = isOpenshift ? "oc" : "k8s";
             args.add(prefix + ":deploy");
         }
 
-        if (!quiet) {
-            printer().println("Run: " + String.join(" ", args));
-        }
+        printer().println("Run: " + String.join(" ", args));
 
         pb.command(args.toArray(String[]::new));
 
-        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        if (quiet || !verbose) {
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        }
+
         Process p = pb.start();
         // wait for that process to exit as we run in foreground
         int exit = p.waitFor();
         if (exit != 0) {
-            printer().println("Deployment to %s failed!".formatted(clusterType));
+            printer().printErr("Deployment to %s failed!".formatted(clusterType));
             return exit;
         }
 
         return 0;
     }
 
-    private String getProjectName() {
-        if (image != null) {
-            return KubernetesHelper.sanitize(StringHelper.beforeLast(image, ":"));
-        }
-
-        if (gav != null) {
-            String[] ids = gav.split(":");
-            if (ids.length > 1) {
-                return KubernetesHelper.sanitize(ids[1]); // artifactId
+    private void detectCluster() {
+        if (!disableAuto) {
+            if (verbose) {
+                printer().print("Automatic kubernetes cluster detection... ");
+            }
+            ClusterType cluster = KubernetesHelper.discoverClusterType();
+            this.clusterType = cluster.name();
+            if (ClusterType.MINIKUBE == cluster) {
+                this.imageBuilder = "docker";
+                this.imagePush = false;
+            }
+            if (verbose) {
+                printer().println(this.clusterType);
             }
         }
+    }
 
-        if (filePaths != null && filePaths.length > 0) {
-            return KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePaths[0])));
+    @Override
+    protected Printer printer() {
+        if (quiet || output != null) {
+            if (quietPrinter == null) {
+                quietPrinter = new Printer.QuietPrinter(super.printer());
+            }
+
+            CommandHelper.setPrinter(quietPrinter);
+            return quietPrinter;
         }
-
-        throw new RuntimeCamelException(
-                "Failed to resolve project name - please provide --gav, --image option or at least one source file");
+        return super.printer();
     }
 }

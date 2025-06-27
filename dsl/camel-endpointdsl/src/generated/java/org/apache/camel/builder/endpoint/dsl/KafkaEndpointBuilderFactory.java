@@ -49,7 +49,7 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g.: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.., e.g.:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties and the property enclosed in square brackets, like this example: camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -73,7 +73,7 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g.: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.., e.g.:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties and the property enclosed in square brackets, like this example: camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -439,7 +439,11 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * Whether to use batching for processing or streaming. The default is
-         * false, which uses streaming.
+         * false, which uses streaming. In streaming mode, then a single kafka
+         * record is processed per Camel exchange in the message body. In
+         * batching mode, then Camel groups many kafka records together as a
+         * List objects in the message body. The option maxPollRecords is used
+         * to define the number of records to group together in batching mode.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -455,7 +459,11 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * Whether to use batching for processing or streaming. The default is
-         * false, which uses streaming.
+         * false, which uses streaming. In streaming mode, then a single kafka
+         * record is processed per Camel exchange in the message body. In
+         * batching mode, then Camel groups many kafka records together as a
+         * List objects in the message body. The option maxPollRecords is used
+         * to define the number of records to group together in batching mode.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -467,6 +475,49 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder batching(String batching) {
             doSetProperty("batching", batching);
+            return this;
+        }
+        /**
+         * In consumer batching mode, then this option is specifying a time in
+         * millis, to trigger batch completion eager when the current batch size
+         * has not reached the maximum size defined by maxPollRecords. Notice
+         * the trigger is not exact at the given interval, as this can only
+         * happen between kafka polls (see pollTimeoutMs option). So for example
+         * setting this to 10000, then the trigger happens in the interval 10000
+         * pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this
+         * would mean a trigger interval at about every 15 seconds.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param batchingIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder batchingIntervalMs(Integer batchingIntervalMs) {
+            doSetProperty("batchingIntervalMs", batchingIntervalMs);
+            return this;
+        }
+        /**
+         * In consumer batching mode, then this option is specifying a time in
+         * millis, to trigger batch completion eager when the current batch size
+         * has not reached the maximum size defined by maxPollRecords. Notice
+         * the trigger is not exact at the given interval, as this can only
+         * happen between kafka polls (see pollTimeoutMs option). So for example
+         * setting this to 10000, then the trigger happens in the interval 10000
+         * pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this
+         * would mean a trigger interval at about every 15 seconds.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @param batchingIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder batchingIntervalMs(String batchingIntervalMs) {
+            doSetProperty("batchingIntervalMs", batchingIntervalMs);
             return this;
         }
         /**
@@ -2148,7 +2199,7 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g.: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.., e.g.:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties and the property enclosed in square brackets, like this example: camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2172,7 +2223,7 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g.: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.., e.g.:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties and the property enclosed in square brackets, like this example: camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -3244,42 +3295,6 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the producer should store the RecordMetadata results from
-         * sending to Kafka. The results are stored in a List containing the
-         * RecordMetadata metadata's. The list is stored on a header with the
-         * key KafkaConstants#KAFKA_RECORDMETA.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param recordMetadata the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointProducerBuilder recordMetadata(boolean recordMetadata) {
-            doSetProperty("recordMetadata", recordMetadata);
-            return this;
-        }
-        /**
-         * Whether the producer should store the RecordMetadata results from
-         * sending to Kafka. The results are stored in a List containing the
-         * RecordMetadata metadata's. The list is stored on a header with the
-         * key KafkaConstants#KAFKA_RECORDMETA.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param recordMetadata the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointProducerBuilder recordMetadata(String recordMetadata) {
-            doSetProperty("recordMetadata", recordMetadata);
-            return this;
-        }
-        /**
          * The number of acknowledgments the producer requires the leader to
          * have received before considering a request complete. This controls
          * the durability of records that are sent. The following settings are
@@ -4179,6 +4194,42 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the producer should store the RecordMetadata results from
+         * sending to Kafka. The results are stored in a List containing the
+         * RecordMetadata metadata's. The list is stored on a header with the
+         * key KafkaConstants#KAFKA_RECORD_META.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param recordMetadata the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointProducerBuilder recordMetadata(boolean recordMetadata) {
+            doSetProperty("recordMetadata", recordMetadata);
+            return this;
+        }
+        /**
+         * Whether the producer should store the RecordMetadata results from
+         * sending to Kafka. The results are stored in a List containing the
+         * RecordMetadata metadata's. The list is stored on a header with the
+         * key KafkaConstants#KAFKA_RECORD_META.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param recordMetadata the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointProducerBuilder recordMetadata(String recordMetadata) {
+            doSetProperty("recordMetadata", recordMetadata);
+            return this;
+        }
+        /**
          * Factory to use for creating
          * org.apache.kafka.clients.consumer.KafkaConsumer and
          * org.apache.kafka.clients.producer.KafkaProducer instances. This
@@ -4267,7 +4318,7 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g.: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.., e.g.:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties and the property enclosed in square brackets, like this example: camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4291,7 +4342,7 @@ public interface KafkaEndpointBuilderFactory {
          * configurations (e.g.: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.., e.g.:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties and the property enclosed in square brackets, like this example: camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

@@ -161,29 +161,34 @@ public class ReactiveStreamsComponent extends DefaultComponent {
      *
      * @return the reactive streams service
      */
-    public synchronized CamelReactiveStreamsService getReactiveStreamsService() {
-        if (reactiveStreamsEngineConfiguration == null) {
-            reactiveStreamsEngineConfiguration = new ReactiveStreamsEngineConfiguration();
-            reactiveStreamsEngineConfiguration.setThreadPoolMaxSize(threadPoolMaxSize);
-            reactiveStreamsEngineConfiguration.setThreadPoolMinSize(threadPoolMinSize);
-            reactiveStreamsEngineConfiguration.setThreadPoolName(threadPoolName);
-        }
-
-        if (service == null) {
-            this.service = ReactiveStreamsHelper.resolveReactiveStreamsService(
-                    getCamelContext(),
-                    this.serviceType,
-                    this.reactiveStreamsEngineConfiguration);
-
-            try {
-                // Start the service and add it to the Camel context to expose managed attributes
-                getCamelContext().addService(service, true, true);
-            } catch (Exception e) {
-                throw new RuntimeCamelException(e);
+    public CamelReactiveStreamsService getReactiveStreamsService() {
+        lock.lock();
+        try {
+            if (reactiveStreamsEngineConfiguration == null) {
+                reactiveStreamsEngineConfiguration = new ReactiveStreamsEngineConfiguration();
+                reactiveStreamsEngineConfiguration.setThreadPoolMaxSize(threadPoolMaxSize);
+                reactiveStreamsEngineConfiguration.setThreadPoolMinSize(threadPoolMinSize);
+                reactiveStreamsEngineConfiguration.setThreadPoolName(threadPoolName);
             }
-        }
 
-        return service;
+            if (service == null) {
+                this.service = ReactiveStreamsHelper.resolveReactiveStreamsService(
+                        getCamelContext(),
+                        this.serviceType,
+                        this.reactiveStreamsEngineConfiguration);
+
+                try {
+                    // Start the service and add it to the Camel context to expose managed attributes
+                    getCamelContext().addService(service, true, true);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException(e);
+                }
+            }
+
+            return service;
+        } finally {
+            lock.unlock();
+        }
     }
 
     // ****************************************

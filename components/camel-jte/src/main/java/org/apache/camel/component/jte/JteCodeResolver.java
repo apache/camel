@@ -23,15 +23,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import gg.jte.CodeResolver;
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 
 /**
- * To load JTE templates from classpath
+ * To load JTE templates from Camel resources such as classpath
  */
 public class JteCodeResolver implements CodeResolver {
 
     private final CamelContext camelContext;
     private final Map<String, String> headerTemplates = new ConcurrentHashMap<>();
+    private final Map<String, String> pathMappings = new ConcurrentHashMap<>();
 
     public JteCodeResolver(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -43,17 +45,29 @@ public class JteCodeResolver implements CodeResolver {
         }
     }
 
+    public void addPathMapping(String name, String uri) {
+        if (name != null && uri != null) {
+            pathMappings.put(name, uri);
+        }
+    }
+
     @Override
     public String resolve(String name) {
         String answer = headerTemplates.remove(name);
         if (answer == null) {
-            InputStream is = camelContext.getClassResolver().loadResourceAsStream(name);
-            if (is != null) {
-                try {
+            String key = pathMappings.remove(name);
+            if (key != null) {
+                key = name + ":" + key;
+            } else {
+                key = name;
+            }
+            try {
+                InputStream is = ResourceHelper.resolveResourceAsInputStream(camelContext, key);
+                if (is != null) {
                     answer = IOHelper.loadText(is);
-                } catch (IOException e) {
-                    // ignore
                 }
+            } catch (IOException e) {
+                // ignore
             }
         }
         return answer;

@@ -35,7 +35,7 @@ public interface SolrComponentBuilderFactory {
      * Solr (camel-solr)
      * Perform operations against Apache Lucene Solr.
      * 
-     * Category: monitoring,search
+     * Category: search,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-solr
      * 
@@ -49,6 +49,53 @@ public interface SolrComponentBuilderFactory {
      * Builder for the Solr component.
      */
     interface SolrComponentBuilder extends ComponentBuilder<SolrComponent> {
+    
+        
+        /**
+         * The time in ms to wait before connection will time out.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder connectionTimeout(long connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+    
+        /**
+         * Solr default collection name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param defaultCollection the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder defaultCollection(java.lang.String defaultCollection) {
+            doSetProperty("defaultCollection", defaultCollection);
+            return this;
+        }
+    
+        /**
+         * The solr instance host name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder host(java.lang.String host) {
+            doSetProperty("host", host);
+            return this;
+        }
     
         
         /**
@@ -75,6 +122,38 @@ public interface SolrComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The solr instance port number.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param port the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder port(int port) {
+            doSetProperty("port", port);
+            return this;
+        }
+    
+        
+        /**
+         * The timeout in ms to wait before the socket will time out.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 600000
+         * Group: producer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+    
         
         /**
          * Whether autowiring is enabled. This is used for automatic autowiring
@@ -96,6 +175,72 @@ public interface SolrComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * To use an existing configured solr client, instead of creating a
+         * client per endpoint. This allows customizing the client with specific
+         * advanced settings.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.solr.client.solrj.SolrClient&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param solrClient the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder solrClient(org.apache.solr.client.solrj.SolrClient solrClient) {
+            doSetProperty("solrClient", solrClient);
+            return this;
+        }
+    
+        
+        /**
+         * Enable SSL.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param enableSSL the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder enableSSL(boolean enableSSL) {
+            doSetProperty("enableSSL", enableSSL);
+            return this;
+        }
+    
+        /**
+         * Password for authenticating.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+    
+        /**
+         * Basic authenticate user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default SolrComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     class SolrComponentBuilderImpl
@@ -111,8 +256,17 @@ public interface SolrComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "connectionTimeout": ((SolrComponent) component).setConnectionTimeout((long) value); return true;
+            case "defaultCollection": ((SolrComponent) component).setDefaultCollection((java.lang.String) value); return true;
+            case "host": ((SolrComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((SolrComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "port": ((SolrComponent) component).setPort((int) value); return true;
+            case "requestTimeout": ((SolrComponent) component).setRequestTimeout((long) value); return true;
             case "autowiredEnabled": ((SolrComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "solrClient": ((SolrComponent) component).setSolrClient((org.apache.solr.client.solrj.SolrClient) value); return true;
+            case "enableSSL": ((SolrComponent) component).setEnableSSL((boolean) value); return true;
+            case "password": ((SolrComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": ((SolrComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

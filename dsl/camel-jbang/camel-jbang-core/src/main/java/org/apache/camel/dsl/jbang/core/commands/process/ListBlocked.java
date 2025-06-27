@@ -34,7 +34,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "blocked",
-         description = "Get blocked messages of Camel integrations", sortOptions = false)
+         description = "Get blocked messages of Camel integrations", sortOptions = false, showDefaultValues = true)
 public class ListBlocked extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

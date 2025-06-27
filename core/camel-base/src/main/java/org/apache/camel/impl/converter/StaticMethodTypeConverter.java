@@ -50,9 +50,13 @@ public class StaticMethodTypeConverter extends TypeConverterSupport {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return useExchange
+        Object answer = useExchange
                 ? (T) ObjectHelper.invokeMethod(method, null, value, exchange)
                 : (T) ObjectHelper.invokeMethod(method, null, value);
+        if (answer == null && allowNull) {
+            answer = Void.class;
+        }
+        return (T) answer;
     }
 
 }

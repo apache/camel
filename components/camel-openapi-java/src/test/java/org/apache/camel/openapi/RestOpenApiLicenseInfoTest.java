@@ -43,7 +43,9 @@ public class RestOpenApiLicenseInfoTest {
                         .apiProperty("api.contact.email", "camel@apache.org")
                         .apiProperty("api.contact.url", "https://camel.apache.org")
                         .apiProperty("api.license.name", "Apache V2")
-                        .apiProperty("api.license.url", "https://www.apache.org/licenses/LICENSE-2.0");
+                        .apiProperty("api.license.url", "https://www.apache.org/licenses/LICENSE-2.0")
+                        .apiProperty("externalDocs.url", "https://openweathermap.org/api")
+                        .apiProperty("externalDocs.description", "API Documentation");
 
                 rest("/api")
                         .get("/api").to("direct:api");
@@ -68,5 +70,7 @@ public class RestOpenApiLicenseInfoTest {
         assertTrue(json.contains("\"name\" : \"Mr Camel\""));
         assertTrue(json.contains("\"email\" : \"camel@apache.org\""));
         assertTrue(json.contains("\"url\" : \"https://camel.apache.org\""));
+        assertTrue(json.contains("\"externalDocs\" :"));
+        assertTrue(json.contains("\"description\" : \"API Documentation\""));
     }
 }

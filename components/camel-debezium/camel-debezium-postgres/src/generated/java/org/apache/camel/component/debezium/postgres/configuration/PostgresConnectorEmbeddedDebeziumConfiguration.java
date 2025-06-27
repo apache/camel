@@ -54,6 +54,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String snapshotSelectStatementOverrides;
     @UriParam(label = LABEL_NAME)
     private String databaseSslpassword;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean slotFailover = false;
     @UriParam(label = LABEL_NAME)
     private String tableExcludeList;
     @UriParam(label = LABEL_NAME)
@@ -503,6 +505,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseSslpassword() {
         return databaseSslpassword;
+    }
+
+    /**
+     * Whether or not to create a failover slot. This is only supported when
+     * connecting to a primary server of a Postgres cluster, version 17 or
+     * newer. When not specified, or when not connecting to a Postgres 17+
+     * primary, no failover slot will be created.
+     */
+    public void setSlotFailover(boolean slotFailover) {
+        this.slotFailover = slotFailover;
+    }
+
+    public boolean isSlotFailover() {
+        return slotFailover;
     }
 
     /**
@@ -1570,6 +1586,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.tables.order.by.row.count", snapshotTablesOrderByRowCount);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
         addPropertyIfNotNull(configBuilder, "database.sslpassword", databaseSslpassword);
+        addPropertyIfNotNull(configBuilder, "slot.failover", slotFailover);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
         addPropertyIfNotNull(configBuilder, "database.sslrootcert", databaseSslrootcert);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);

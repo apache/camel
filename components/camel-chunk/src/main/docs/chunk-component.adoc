@@ -15,7 +15,7 @@
 *{component-header}*
 
 The Chunk component allows for processing a message using a
-http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
+https://github.com/tomj74/chunk-templates[Chunk] template.
 This can be ideal when using Templating to
 generate responses for requests.
 

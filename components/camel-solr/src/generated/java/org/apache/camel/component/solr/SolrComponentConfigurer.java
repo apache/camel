@@ -25,10 +25,29 @@ public class SolrComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.setConnectionTimeout(property(camelContext, long.class, value)); return true;
+        case "defaultcollection":
+        case "defaultCollection": target.setDefaultCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "enablessl":
+        case "enableSSL": target.setEnableSSL(property(camelContext, boolean.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "solrclient":
+        case "solrClient": target.setSolrClient(property(camelContext, org.apache.solr.client.solrj.SolrClient.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"solrClient"};
     }
 
     @Override
@@ -36,8 +55,22 @@ public class SolrComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return long.class;
+        case "defaultcollection":
+        case "defaultCollection": return java.lang.String.class;
+        case "enablessl":
+        case "enableSSL": return boolean.class;
+        case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "port": return int.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
+        case "solrclient":
+        case "solrClient": return org.apache.solr.client.solrj.SolrClient.class;
+        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -48,8 +81,22 @@ public class SolrComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "connectiontimeout":
+        case "connectionTimeout": return target.getConnectionTimeout();
+        case "defaultcollection":
+        case "defaultCollection": return target.getDefaultCollection();
+        case "enablessl":
+        case "enableSSL": return target.isEnableSSL();
+        case "host": return target.getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return target.getPassword();
+        case "port": return target.getPort();
+        case "requesttimeout":
+        case "requestTimeout": return target.getRequestTimeout();
+        case "solrclient":
+        case "solrClient": return target.getSolrClient();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

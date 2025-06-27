@@ -33,7 +33,6 @@ import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingConfiguration;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,42 +94,42 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // use HTTP_URI as this works for all runtimes
-        String uri = exchange.getMessage().getHeader(Exchange.HTTP_URI, String.class);
-        if (uri != null) {
-            uri = URISupport.stripQuery(uri);
-        }
-        if (uri != null && uri.startsWith(basePath)) {
-            uri = uri.substring(basePath.length());
+        String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
+        //        if (path != null) {
+        //            path = URISupport.stripQuery(path);
+        //        }
+        if (path != null && path.startsWith(basePath)) {
+            path = path.substring(basePath.length());
         }
         String verb = exchange.getMessage().getHeader(Exchange.HTTP_METHOD, String.class);
 
         RestConsumerContextPathMatcher.ConsumerPath<Operation> m
-                = RestConsumerContextPathMatcher.matchBestPath(verb, uri, paths);
+                = RestConsumerContextPathMatcher.matchBestPath(verb, path, paths);
         if (m instanceof RestOpenApiConsumerPath rcp) {
             Operation o = rcp.getConsumer();
 
             String consumerPath = rcp.getConsumerPath();
 
             //if uri is not starting with slash then remove the slash in the consumerPath from the openApi spec
-            if (consumerPath.startsWith("/") && uri != null && !uri.startsWith("/")) {
+            if (consumerPath.startsWith("/") && path != null && !path.startsWith("/")) {
                 consumerPath = consumerPath.substring(1);
             }
 
             // map path-parameters from operation to camel headers
-            HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), uri, consumerPath);
+            HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), path, consumerPath);
 
             // process the incoming request
-            return restOpenapiProcessorStrategy.process(openAPI, o, verb, uri, rcp.getBinding(), exchange, callback);
+            return restOpenapiProcessorStrategy.process(openAPI, o, verb, path, rcp.getBinding(), exchange, callback);
         }
 
         // is it the api-context path
-        if (uri != null && uri.equals(apiContextPath)) {
+        if (path != null && path.equals(apiContextPath)) {
             return restOpenapiProcessorStrategy.processApiSpecification(endpoint.getSpecificationUri(), exchange, callback);
         }
 
         // okay we cannot process this requires so return either 404 or 405.
         // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
-        final String contextPath = uri;
+        final String contextPath = path;
         List<String> allow = METHODS.stream()
                 .filter(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null).toList();
         if (allow.isEmpty()) {
@@ -189,7 +188,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         ServiceHelper.initService(restOpenapiProcessorStrategy);
 
         // validate openapi contract
-        restOpenapiProcessorStrategy.validateOpenApi(openAPI, platformHttpConsumer);
+        restOpenapiProcessorStrategy.validateOpenApi(openAPI, basePath, platformHttpConsumer);
     }
 
     private RestBindingConfiguration createRestBindingConfiguration(Operation o) throws Exception {
@@ -201,6 +200,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         bc.setEnableCORS(config.isEnableCORS());
         bc.setCorsHeaders(config.getCorsHeaders());
         bc.setClientRequestValidation(config.isClientRequestValidation() || endpoint.isClientRequestValidation());
+        bc.setClientResponseValidation(config.isClientResponseValidation() || endpoint.isClientResponseValidation());
         bc.setEnableNoContentResponse(config.isEnableNoContentResponse());
         bc.setSkipBindingOnErrorCode(config.isSkipBindingOnErrorCode());
 

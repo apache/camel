@@ -1,1 +1,1 @@
-../../../../../components/camel-spring-ldap/src/main/docs/spring-ldap-component.adoc
+../../../../../components/camel-spring-parent/camel-spring-ldap/src/main/docs/spring-ldap-component.adoc

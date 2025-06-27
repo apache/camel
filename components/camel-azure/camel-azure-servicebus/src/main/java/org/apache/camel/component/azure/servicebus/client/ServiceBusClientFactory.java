@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.servicebus.*;
+import org.apache.camel.component.azure.servicebus.CredentialType;
 import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
 import org.apache.camel.component.azure.servicebus.ServiceBusType;
 
@@ -36,7 +37,11 @@ public final class ServiceBusClientFactory {
         String fullyQualifiedNamespace = configuration.getFullyQualifiedNamespace();
         TokenCredential credential = configuration.getTokenCredential();
 
-        switch (configuration.getCredentialType()) {
+        CredentialType type = configuration.getCredentialType();
+        if (type == null) {
+            type = CredentialType.CONNECTION_STRING;
+        }
+        switch (type) {
             case CONNECTION_STRING -> builder.connectionString(configuration.getConnectionString());
             case TOKEN_CREDENTIAL -> builder.credential(fullyQualifiedNamespace, credential);
             case AZURE_IDENTITY -> builder.credential(fullyQualifiedNamespace, new DefaultAzureCredentialBuilder().build());
@@ -73,6 +78,24 @@ public final class ServiceBusClientFactory {
         return processorClientBuilder;
     }
 
+    private static ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder createBaseServiceBusSessionProcessorClient(
+            final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
+        final ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder processorClientBuilder
+                = busClientBuilder.sessionProcessor();
+
+        // We handle auto-complete in the consumer, since we have no way to propagate errors back to the reactive
+        // pipeline messages are published on so the message would be completed even if an error occurs during Exchange
+        // processing.
+        processorClientBuilder.disableAutoComplete();
+
+        switch (configuration.getServiceBusType()) {
+            case queue -> processorClientBuilder.queueName(configuration.getTopicOrQueueName());
+            case topic -> processorClientBuilder.topicName(configuration.getTopicOrQueueName());
+        }
+
+        return processorClientBuilder;
+    }
+
     public ServiceBusSenderClient createServiceBusSenderClient(final ServiceBusConfiguration configuration) {
         return createBaseServiceBusSenderClient(createBaseServiceBusClient(configuration), configuration)
                 .buildClient();
@@ -83,6 +106,26 @@ public final class ServiceBusClientFactory {
             Consumer<ServiceBusErrorContext> processError) {
         ServiceBusClientBuilder.ServiceBusProcessorClientBuilder clientBuilder
                 = createBaseServiceBusProcessorClient(createBaseServiceBusClient(configuration), configuration);
+
+        clientBuilder
+                .subscriptionName(configuration.getSubscriptionName())
+                .receiveMode(configuration.getServiceBusReceiveMode())
+                .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
+                .prefetchCount(configuration.getPrefetchCount())
+                .subQueue(configuration.getSubQueue())
+                .maxConcurrentCalls(configuration.getMaxConcurrentCalls())
+                .processMessage(processMessage)
+                .processError(processError);
+
+        return clientBuilder.buildProcessorClient();
+    }
+
+    public ServiceBusProcessorClient createServiceBusSessionProcessorClient(
+            ServiceBusConfiguration configuration, Consumer<ServiceBusReceivedMessageContext> processMessage,
+            Consumer<ServiceBusErrorContext> processError) {
+
+        ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder clientBuilder
+                = createBaseServiceBusSessionProcessorClient(createBaseServiceBusClient(configuration), configuration);
 
         clientBuilder
                 .subscriptionName(configuration.getSubscriptionName())

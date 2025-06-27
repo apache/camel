@@ -53,7 +53,7 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
 
         // the eviction is async so force cleanup
         template.cleanUp();
-        await().atMost(1, TimeUnit.SECONDS).until(() -> template.getCurrentCacheSize() == 200);
+        await().atMost(5, TimeUnit.SECONDS).until(() -> template.getCurrentCacheSize() == 200);
         assertEquals(200, template.getCurrentCacheSize(), "Size should be 200");
         template.stop();
 

@@ -55,7 +55,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Elasticsearch Low level Rest Client Operations
 
-The following operations are currently supported.
+Set an endpoint URI option or exchange header with a name of `operation` and a value of one of the following supported options.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===

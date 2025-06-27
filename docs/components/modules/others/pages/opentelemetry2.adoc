@@ -1,0 +1,1 @@
+../../../../../components/camel-opentelemetry2/src/main/docs/opentelemetry2.adoc

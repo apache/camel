@@ -14,8 +14,12 @@ The plugin configuration has the following properties.
 
 * clientId - Salesforce client Id for Remote API access
 * clientSecret - Salesforce client secret for Remote API access
-* userName - Salesforce account user name
+* userName - Salesforce account username
 * password - Salesforce account password (including secret token)
+* jwtAudience - Salesforce JWT audience (defaults to "https://login.salesforce.com")
+* keystoreResource - Path to keystore file for JWT authentication
+* keystorePassword - Password for keystore file
+* keystoreType - Type of keystore file (defaults to "JKS")
 * loginUrl - Salesforce loginUrl (defaults to "https://login.salesforce.com")
 * version - Salesforce Rest API version, defaults to 25.0
 * outputDirectory - Directory where to place generated DTOs, defaults to ${project.build.directory}/generated-sources/camel-salesforce
@@ -41,7 +45,7 @@ Property name format: `SObject.FieldName.PicklistValue`. Property value is the d
     </enumerationOverrideProperties>
     ```
 
-Additonal properties to provide proxy information, if behind a firewall.
+Additional properties to provide proxy information, if behind a firewall.
 
 * httpProxyHost
 * httpProxyPort
@@ -53,7 +57,10 @@ Additonal properties to provide proxy information, if behind a firewall.
 * httpProxyIncludedAddresses
 * httpProxyExcludedAddresses
 
-Sample pom.xml
+There are two authentication methods supported by the plugin: Username-Password and JWT.
+The plugin will use the Username-Password method if the `clientSecret` is specified and will use the JWT method if the `keystoreResource` is specified.
+
+Sample pom.xml using Username-Password authentication:
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -104,12 +111,74 @@ Sample pom.xml
 	</build>
 
 </project>
-
 ```
 For obvious security reasons it is recommended that the clientId, clientSecret, userName and password fields be not set in the pom.xml. 
 The plugin should be configured for the rest of the properties, and can be executed using the following command:
 
 	mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
+
+Sample pom.xml using JWT authentication:
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<properties>
+	    
+		<camelSalesforce.clientId>5MVG9uudbyLbNPZOFutIHJpIb2nchnCiNE_NqeYcewMCPPT8_6VV_LQF_CJ813456GxzhxZdxlGwbYI_yzHmz</camelSalesforce.clientId>
+		<camelSalesforce.userName>foo@bar.com</camelSalesforce.userName>
+		<camelSalesforce.keystore.resource>src/main/resources/salesforce.jks</camelSalesforce.keystore.resource>
+		<camelSalesforce.keystore.password>foopasswordCbe5V27JxD0JXYFGJIdIEWB7p</camelSalesforce.keystore.password>
+		<camelSalesforce.keystore.type>JKS</camelSalesforce.keystore.type>
+		
+		<camelSalesforce.jwtAudience>https://login.salesforce.com</camelSalesforce.jwtAudience>
+		
+		<camelSalesforce.loginUrl>https://myDomain.my.salesforce.com</camelSalesforce.loginUrl> 
+		
+		<camelSalesforce.httpProxyHost>foo.bar.com</camelSalesforce.httpProxyHost>
+		<camelSalesforce.httpProxyPort>8090</camelSalesforce.httpProxyPort>
+		
+	</properties>
+
+	...
+	
+	<build>
+		...
+		<plugins>
+			...
+			
+			<!-- camel maven saleforce for creating salesforce objects -->
+			<plugin>
+				<groupId>org.apache.camel.maven</groupId>
+				<artifactId>camel-salesforce-maven-plugin</artifactId>
+				<version>2.17.1</version>
+				<configuration>
+					<clientId>${camelSalesforce.clientId}</clientId>
+					<userName>${camelSalesforce.userName}</userName>
+					<keystoreResource>${camelSalesforce.keystore.resource}</keystoreResource>
+					<keystorePassword>${camelSalesforce.keystore.password}</keystorePassword>
+					<keystoreType default-value="JKS">${camelSalesforce.keystore.type}</keystoreType>
+					<jwtAudience default-value="https://login.salesforce.com">${camelSalesforce.jwtAudience}</jwtAudience>
+					<loginUrl default-value="https://login.salesforce.com">${camelSalesforce.loginUrl}</loginUrl> 
+					<includes>
+						<include>Account</include>
+						<include>Contacts</include>
+					</includes>
+					<httpProxyHost>${camelSalesforce.httpProxyHost}</httpProxyHost>
+					<httpProxyPort>${camelSalesforce.httpProxyPort}</httpProxyPort>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
+```
+For obvious security reasons it is recommended that the clientId, userName, keystoreResource, keystorePassword, keystoreType and jwtAudience fields be not set in the pom.xml. 
+The plugin should be configured for the rest of the properties, and can be executed using the following command:
+
+	mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.userName=<username> -DcamelSalesforce.keystore.resource=<keystoreResource> -DcamelSalesforce.keystore.password=<keystorePassword> -DcamelSalesforce.keystore.type=<keystoreType> -DcamelSalesforce.jwtAudience=<jwtAudience>
+
 
 The generated DTOs use Jackson. All Salesforce field types are supported. Date and time fields are mapped to java.time.ZonedDateTime, and picklist fields are mapped to generated Java Enumerations.
 

@@ -17,9 +17,11 @@
 package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,8 +39,8 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.start();
         });
 
-        assertTrue(e.getMessage().startsWith(
-                "Failed to create route route1: Route(route1)[From[direct:start?foo=bar] -> [To[mock:result]... because of"));
+        FailedToCreateRouteException fe = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        assertEquals("route1", fe.getRouteId());
     }
 
     @Test
@@ -54,7 +56,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         });
 
         assertTrue(
-                e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
+                e.getMessage().startsWith("Failed to create route: route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
     }
 
     @Test
@@ -70,7 +72,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         });
 
         assertTrue(
-                e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
+                e.getMessage().startsWith("Failed to create route: route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
     }
 
     @Test
@@ -85,7 +87,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.start();
         }, "Should have thrown exception");
 
-        assertTrue(e.getMessage().startsWith("Failed to create route route3 at: >>> Bean[ref:] <<< in route:"));
+        assertTrue(e.getMessage().startsWith("Failed to create route: route3 at: >>> Bean[ref:] <<< in route:"));
     }
 
     @Test

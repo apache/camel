@@ -33,14 +33,16 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         map.put("EventhubConnectionString", java.lang.String.class);
         map.put("GcpVaultConfiguration", org.apache.camel.vault.GcpVaultConfiguration.class);
         map.put("HashicorpVaultConfiguration", org.apache.camel.vault.HashicorpVaultConfiguration.class);
+        map.put("IBMSecretsManagerVaultConfiguration", org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class);
+        map.put("KubernetesConfigMapVaultConfiguration", org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class);
         map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
         map.put("RefreshEnabled", boolean.class);
         map.put("RefreshPeriod", long.class);
         map.put("Secrets", java.lang.String.class);
+        map.put("SpringCloudConfigConfiguration", org.apache.camel.vault.SpringCloudConfigConfiguration.class);
         map.put("TenantId", java.lang.String.class);
         map.put("VaultName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(AzureVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -69,6 +71,10 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": target.setIBMSecretsManagerVaultConfiguration(property(camelContext, org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class, value)); return true;
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": target.setKubernetesConfigMapVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class, value)); return true;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
         case "refreshenabled":
@@ -76,6 +82,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "refreshperiod":
         case "refreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "tenantid":
         case "tenantId": target.setTenantId(property(camelContext, java.lang.String.class, value)); return true;
         case "vaultname":
@@ -87,10 +95,6 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override
@@ -118,6 +122,10 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": return org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class;
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": return org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
         case "refreshenabled":
@@ -125,6 +133,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "refreshperiod":
         case "refreshPeriod": return long.class;
         case "secrets": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "tenantid":
         case "tenantId": return java.lang.String.class;
         case "vaultname":
@@ -159,6 +169,10 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": return target.getIBMSecretsManagerVaultConfiguration();
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": return target.getKubernetesConfigMapVaultConfiguration();
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
         case "refreshenabled":
@@ -166,6 +180,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "refreshperiod":
         case "refreshPeriod": return target.getRefreshPeriod();
         case "secrets": return target.getSecrets();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "tenantid":
         case "tenantId": return target.getTenantId();
         case "vaultname":

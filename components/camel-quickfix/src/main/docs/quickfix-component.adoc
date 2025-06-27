@@ -244,7 +244,7 @@ OrderStatusRequest message and UserRequest.
 
 ==== Implementing InOut Exchanges for Consumers
 
-Add `exchangePattern=InOut` to the QuickFIX/J enpoint URI. The
+Add `exchangePattern=InOut` to the QuickFIX/J endpoint URI. The
 `MessageOrderStatusService` in
 the example below is a bean with a synchronous service method. The
 method returns the response
@@ -412,7 +412,7 @@ more details about FIX sequence number management.
 === Route Examples
 
 Several examples are included in the QuickFIX/J component source code
-(test subdirectories). One of these examples implements a trival trade
+(test subdirectories). One of these examples implements a trivial trade
 execution simulation. The example defines an application component that
 uses the URI scheme "trade-executor".
 

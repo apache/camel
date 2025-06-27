@@ -33,7 +33,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "transformer", description = "Get list of data type transformers", sortOptions = false)
+@Command(name = "transformer", description = "Get list of data type transformers", sortOptions = false,
+         showDefaultValues = true)
 public class ListTransformer extends ProcessBaseCommand {
 
     public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {

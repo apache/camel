@@ -45,7 +45,13 @@ public final class LangChain4jConverterLoader implements TypeConverterLoader, Ca
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, dev.langchain4j.data.document.Document.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.langchain4j.core.LangChain4jConverter.toDocument((java.lang.String) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.langchain4j.core.LangChain4jConverter.toDocument((java.lang.String) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

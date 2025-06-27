@@ -30,6 +30,7 @@ public class SpanTestData {
     private String uri;
     private String operation;
     private SpanKind kind = SpanKind.INTERNAL;
+    private String traceId;
     private int parentId = -1;
     private final List<String> logMessages = new ArrayList<>();
     private final Map<String, String> tags = new HashMap<>();
@@ -69,6 +70,15 @@ public class SpanTestData {
 
     public SpanTestData setKind(SpanKind kind) {
         this.kind = kind;
+        return this;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public SpanTestData setTraceId(String traceId) {
+        this.traceId = traceId;
         return this;
     }
 

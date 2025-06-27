@@ -180,10 +180,7 @@ public class Dhis2GetTestCase {
         Dhis2Response dhis2Response = new Dhis2Response() {
             @Override
             public <T> T returnAs(Class<T> responseType) {
-                Page page = new Page(1, 50);
-                page.setAdditionalProperty("bunnies", new ArrayList<>());
-
-                return (T) page;
+                return (T) new Page(1, 50, Map.of("bunnies", new ArrayList<>()));
             }
 
             @Override

@@ -852,7 +852,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * different prefix is required for each element: arg.consumer.
          * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
-         * message ttl argument: args=arg.queue.x-message-ttl=60000.
+         * message ttl argument: args=arg.queue.x-message-ttl=60000. This is a
+         * multi-value option with prefix: arg.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -875,7 +876,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * different prefix is required for each element: arg.consumer.
          * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
-         * message ttl argument: args=arg.queue.x-message-ttl=60000.
+         * message ttl argument: args=arg.queue.x-message-ttl=60000. This is a
+         * multi-value option with prefix: arg.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1546,7 +1548,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * different prefix is required for each element: arg.consumer.
          * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
-         * message ttl argument: args=arg.queue.x-message-ttl=60000.
+         * message ttl argument: args=arg.queue.x-message-ttl=60000. This is a
+         * multi-value option with prefix: arg.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1569,7 +1572,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * different prefix is required for each element: arg.consumer.
          * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
-         * message ttl argument: args=arg.queue.x-message-ttl=60000.
+         * message ttl argument: args=arg.queue.x-message-ttl=60000. This is a
+         * multi-value option with prefix: arg.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1914,7 +1918,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * different prefix is required for each element: arg.consumer.
          * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
-         * message ttl argument: args=arg.queue.x-message-ttl=60000.
+         * message ttl argument: args=arg.queue.x-message-ttl=60000. This is a
+         * multi-value option with prefix: arg.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1937,7 +1942,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * different prefix is required for each element: arg.consumer.
          * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
          * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
-         * message ttl argument: args=arg.queue.x-message-ttl=60000.
+         * message ttl argument: args=arg.queue.x-message-ttl=60000. This is a
+         * multi-value option with prefix: arg.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

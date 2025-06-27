@@ -17,6 +17,7 @@
 package org.apache.camel.component.langchain4j.embeddings;
 
 import java.util.Collection;
+import java.util.List;
 
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import io.qdrant.client.PointIdFactory;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -104,6 +106,20 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
         assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
     }
 
+    @Test
+    @Order(4)
+    public void rag_similarity_search() {
+        Exchange result = fluentTemplate.to("direct:search")
+                .withBody("hi")
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+
+        assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
+        assertTrue(result.getIn().getBody(List.class).contains("hi"));
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -112,9 +128,23 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
                         .to("langchain4j-embeddings:test")
                         .setHeader(Qdrant.Headers.ACTION).constant(QdrantAction.UPSERT)
                         .setHeader(Qdrant.Headers.POINT_ID).constant(POINT_ID)
+                        // transform data to embed to a vecto embeddings
                         .transform(
                                 new DataType("qdrant:embeddings"))
                         .to(QDRANT_URI);
+
+                from("direct:search")
+                        .to("langchain4j-embeddings:test")
+                        // transform prompt into embeddings for search
+                        .transform(
+                                new DataType("qdrant:embeddings"))
+                        .setHeader(Qdrant.Headers.ACTION, constant(QdrantAction.SIMILARITY_SEARCH))
+                        .setHeader(Qdrant.Headers.INCLUDE_VECTORS, constant(true))
+                        .setHeader(Qdrant.Headers.INCLUDE_PAYLOAD, constant(true))
+                        .to(QDRANT_URI)
+                        // decode retrieved embeddings for RAG
+                        .transform(
+                                new DataType("qdrant:rag"));
             }
         };
     }

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Marshal and unmarshal HL7 (Health Care) model objects using the HL7 MLLP codec.
  */
-@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,hl7", title = "HL7")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,health", title = "HL7")
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {

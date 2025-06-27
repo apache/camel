@@ -17,16 +17,17 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -37,17 +38,16 @@ abstract class ActionBaseCommand extends CamelCommand {
         super(main);
     }
 
-    protected static JsonObject getJsonObject(File outputFile) {
+    protected static JsonObject getJsonObject(Path outputFile) {
         StopWatch watch = new StopWatch();
         while (watch.taken() < 5000) {
+            File f = outputFile.toFile();
             try {
                 // give time for response to be ready
                 Thread.sleep(100);
 
-                if (outputFile.exists()) {
-                    FileInputStream fis = new FileInputStream(outputFile);
-                    String text = IOHelper.loadText(fis);
-                    IOHelper.close(fis);
+                if (Files.exists(outputFile) && f.length() > 0) {
+                    String text = Files.readString(outputFile);
                     return (JsonObject) Jsoner.deserialize(text);
                 }
             } catch (InterruptedException e) {
@@ -66,8 +66,11 @@ abstract class ActionBaseCommand extends CamelCommand {
         if (name.matches("\\d+")) {
             return List.of(Long.parseLong(name));
         } else {
-            // lets be open and match all that starts with this pattern
-            if (!name.endsWith("*")) {
+            if (name.endsWith("!")) {
+                // exclusive this name only
+                name = name.substring(0, name.length() - 1);
+            } else if (!name.endsWith("*")) {
+                // lets be open and match all that starts with this pattern
                 name = name + "*";
             }
         }
@@ -85,6 +88,18 @@ abstract class ActionBaseCommand extends CamelCommand {
                         pName = FileUtil.onlyName(pName);
                         if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
                             pids.add(ph.pid());
+                        } else {
+                            // try camel context name
+                            JsonObject context = (JsonObject) root.get("context");
+                            if (context != null) {
+                                pName = context.getString("name");
+                                if ("CamelJBang".equals(pName)) {
+                                    pName = null;
+                                }
+                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
+                                    pids.add(ph.pid());
+                                }
+                            }
                         }
                     }
                 });
@@ -102,16 +117,41 @@ abstract class ActionBaseCommand extends CamelCommand {
 
     JsonObject loadStatus(long pid) {
         try {
-            File f = getStatusFile(Long.toString(pid));
-            if (f != null) {
-                FileInputStream fis = new FileInputStream(f);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
+            Path f = getStatusFile(Long.toString(pid));
+            if (f != null && Files.exists(f)) {
+                String text = Files.readString(f);
                 return (JsonObject) Jsoner.deserialize(text);
             }
         } catch (Exception e) {
             // ignore
         }
         return null;
+    }
+
+    /**
+     * Prepares and writes an action to the action file.
+     *
+     * @param  pid             the process ID
+     * @param  action          the action name
+     * @param  configureAction a function to configure the action JSON object
+     * @return                 the output file path
+     */
+    protected Path prepareAction(String pid, String action, java.util.function.Consumer<JsonObject> configureAction) {
+        // ensure output file is deleted before executing action
+        Path outputFile = getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", action);
+
+        // Allow caller to configure the action
+        if (configureAction != null) {
+            configureAction.accept(root);
+        }
+
+        Path file = getActionFile(pid);
+        PathUtils.writeTextSafely(root.toJson(), file);
+
+        return outputFile;
     }
 }

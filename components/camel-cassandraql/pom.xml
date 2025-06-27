@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cassandraql</artifactId>
@@ -49,7 +49,7 @@
 
         <!-- cassandra -->
         <dependency>
-            <groupId>com.datastax.oss</groupId>
+            <groupId>org.apache.cassandra</groupId>
             <artifactId>java-driver-core</artifactId>
             <version>${cassandra-driver-version}</version>
             <exclusions>
@@ -60,7 +60,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.datastax.oss</groupId>
+            <groupId>org.apache.cassandra</groupId>
             <artifactId>java-driver-query-builder</artifactId>
             <version>${cassandra-driver-version}</version>
         </dependency>
@@ -78,8 +78,16 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- test infra -->
+        <!-- Provided scope in java-driver-core but required due to compiler annotation processing throwing CNFE -->
         <dependency>
+            <groupId>com.github.stephenc.jcip</groupId>
+            <artifactId>jcip-annotations</artifactId>
+            <version>${jcip-annotations-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- test infra -->
+       <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-core</artifactId>
             <version>${project.version}</version>
@@ -87,7 +95,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
+       <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-cassandra</artifactId>
             <version>${project.version}</version>

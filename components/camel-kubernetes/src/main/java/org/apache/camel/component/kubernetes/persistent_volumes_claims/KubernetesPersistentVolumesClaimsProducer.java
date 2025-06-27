@@ -87,29 +87,33 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        PersistentVolumeClaimList persistentVolumeClaimList
-                = getEndpoint().getKubernetesClient().persistentVolumeClaims().list();
-        prepareOutboundMessage(exchange, persistentVolumeClaimList.getItems());
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        PersistentVolumeClaimList pvcList;
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            pvcList = getEndpoint().getKubernetesClient().persistentVolumeClaims().inAnyNamespace().list();
+        } else {
+            pvcList = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespace).list();
+        }
+
+        prepareOutboundMessage(exchange, pvcList.getItems());
     }
 
     protected void doListPersistentVolumesClaimsByLabels(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, Map.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         PersistentVolumeClaimList pvcList;
-        if (!ObjectHelper.isEmpty(namespaceName)) {
-            pvcList = getEndpoint()
-                    .getKubernetesClient()
-                    .persistentVolumeClaims()
-                    .inNamespace(namespaceName)
-                    .withLabels(labels)
-                    .list();
+
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Listing PersistentVolumeClaims by labels requires specifying labels");
+            throw new IllegalArgumentException("Listing PersistentVolumeClaims by labels requires specifying labels");
+        }
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            pvcList = getEndpoint().getKubernetesClient().persistentVolumeClaims().inAnyNamespace().withLabels(labels).list();
         } else {
-            pvcList = getEndpoint()
-                    .getKubernetesClient()
-                    .persistentVolumeClaims()
-                    .inAnyNamespace()
-                    .withLabels(labels)
+            pvcList = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespace).withLabels(labels)
                     .list();
         }
 

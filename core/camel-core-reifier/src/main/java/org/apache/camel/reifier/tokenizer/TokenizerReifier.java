@@ -69,8 +69,9 @@ public class TokenizerReifier<T extends TokenizerDefinition> extends ProcessorRe
 
             if (tokenizerImplementation instanceof LangChain4jTokenizerDefinition ltd) {
                 configuration.setMaxOverlap(Integer.valueOf(ltd.getMaxOverlap()));
-                configuration.setMaxTokens(Integer.valueOf(ltd.getMaxTokens()));
+                configuration.setMaxSegmentSize(Integer.valueOf(ltd.getMaxTokens()));
                 configuration.setType(ltd.getTokenizerType());
+                configuration.setModelName(ltd.getModelName());
             }
         }
 

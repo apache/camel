@@ -13,7 +13,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(160);
+        Map<String, String> map = new HashMap<>(158);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -25,18 +25,17 @@ public class ExchangeConstantProvider {
         map.put("AGGREGATION_COMPLETE_CURRENT_GROUP", "CamelAggregationCompleteCurrentGroup");
         map.put("AGGREGATION_STRATEGY", "CamelAggregationStrategy");
         map.put("ASYNC_WAIT", "CamelAsyncWait");
+        map.put("ATTACHMENTS_SIZE", "CamelAttachmentsSize");
         map.put("AUTHENTICATION", "CamelAuthentication");
         map.put("AUTHENTICATION_FAILURE_POLICY_ID", "CamelAuthenticationFailurePolicyId");
         map.put("BATCH_COMPLETE", "CamelBatchComplete");
         map.put("BATCH_INDEX", "CamelBatchIndex");
         map.put("BATCH_SIZE", "CamelBatchSize");
-        map.put("BEAN_METHOD_NAME", "CamelBeanMethodName");
         map.put("BINDING", "CamelBinding");
         map.put("BREADCRUMB_ID", "breadcrumbId");
         map.put("CHARSET_NAME", "CamelCharsetName");
         map.put("CIRCUIT_BREAKER_STATE", "CamelCircuitBreakerState");
         map.put("CLAIM_CHECK_REPOSITORY", "CamelClaimCheckRepository");
-        map.put("COMPILE_SCRIPT", "CamelCompileScript");
         map.put("CONTENT_ENCODING", "Content-Encoding");
         map.put("CONTENT_LENGTH", "Content-Length");
         map.put("CONTENT_SCHEMA", "CamelContentSchema");
@@ -137,7 +136,6 @@ public class ExchangeConstantProvider {
         map.put("REST_HTTP_QUERY", "CamelRestHttpQuery");
         map.put("REST_HTTP_URI", "CamelRestHttpUri");
         map.put("REST_OPENAPI", "CamelRestOpenAPI");
-        map.put("REUSE_SCRIPT_ENGINE", "CamelReuseScripteEngine");
         map.put("ROLLBACK_ONLY", "CamelRollbackOnly");
         map.put("ROLLBACK_ONLY_LAST", "CamelRollbackOnlyLast");
         map.put("ROUTE_STOP", "CamelRouteStop");

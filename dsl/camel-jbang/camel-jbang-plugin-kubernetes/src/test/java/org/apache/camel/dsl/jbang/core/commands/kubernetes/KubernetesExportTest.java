@@ -17,10 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -31,22 +28,18 @@ import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.openshift.api.model.Route;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
-@EnabledIf("isDockerAvailable")
 class KubernetesExportTest extends KubernetesExportBaseTest {
 
     private static Stream<Arguments> runtimeProvider() {
@@ -68,6 +61,58 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("examples", model.getGroupId());
         Assertions.assertEquals("route", model.getArtifactId());
         Assertions.assertEquals("1.0.0", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("eclipse-temurin:17", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
+        Assertions.assertNull(props.get("jkube.docker.push.registry"));
+        Assertions.assertNull(props.get("jkube.container-image.registry"));
+        Assertions.assertNull(props.get("jkube.container-image.platforms"));
+
+        if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("/observe/health", props.get("quarkus.smallrye-health.root-path"));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateNamedProject(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--name=projName", "--runtime=" + rt.runtime());
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("proj-name", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldConfigureContainerImage(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--image-registry=quay.io", "--image-group=camel-riders", "--base-image=my-base-image:latest",
+                "--registry-mirror=mirror.gcr.io", "--image-builder=docker",
+                "--image-platform=linux/amd64", "--image-platform=linux/arm64", "--runtime=" + rt.runtime());
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("quay.io/camel-riders/route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("quay.io/camel-riders/route:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("mirror.gcr.io/my-base-image:latest", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("docker", props.get("jkube.build.strategy"));
+        Assertions.assertEquals("quay.io", props.get("jkube.docker.push.registry"));
+        Assertions.assertEquals("quay.io", props.get("jkube.container-image.registry"));
+        Assertions.assertEquals("linux/amd64,linux/arm64", props.get("jkube.container-image.platforms"));
     }
 
     @ParameterizedTest
@@ -78,19 +123,28 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         var labels = deployment.getMetadata().getLabels();
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
+        Assertions.assertNull(containers.get(0).getImage());
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
     }
 
     @ParameterizedTest
@@ -103,24 +157,38 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         var labels = deployment.getMetadata().getLabels();
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
-        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
+        Assertions.assertNull(containers.get(0).getImage());
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
         Properties applicationProperties = getApplicationProperties(workingDir);
 
         Assertions.assertEquals("bar", applicationProperties.get("foo"));
         Assertions.assertEquals("baz", applicationProperties.get("bar"));
+
+        if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("/observe", applicationProperties.get("management.endpoints.web.base-path"));
+            Assertions.assertEquals("true", applicationProperties.get("management.health.probes.enabled"));
+        }
     }
 
     @ParameterizedTest
@@ -132,19 +200,28 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertNull(container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
 
-        Service service = getService(rt, ClusterType.KUBERNETES);
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+
+        Service service = getService(rt);
         List<ServicePort> ports = service.getSpec().getPorts();
         Assertions.assertEquals("route", service.getMetadata().getName());
         Assertions.assertEquals("NodePort", service.getSpec().getType());
@@ -163,19 +240,28 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertNull(container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
 
-        Service service = getService(rt, ClusterType.KUBERNETES);
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+
+        Service service = getService(rt);
         List<ServicePort> ports = service.getSpec().getPorts();
         Assertions.assertEquals("route-service", service.getMetadata().getName());
         Assertions.assertEquals("NodePort", service.getSpec().getType());
@@ -196,24 +282,35 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
                 "--trait", "ingress.pathType=ImplementationSpecific",
                 "--trait", "ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/$2",
                 "--trait", "ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true",
+                "--trait", "ingress.tls-hosts=acme.com,acme2.com",
+                "--trait", "ingress.tls-secret-name=acme-tls-secret",
                 "--runtime=" + rt.runtime());
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasRoute(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertFalse(hasRoute(rt));
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertNull(container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
 
-        Ingress ingress = getIngress(rt, ClusterType.KUBERNETES);
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+
+        Ingress ingress = getIngress(rt);
         Assertions.assertEquals("route-service", ingress.getMetadata().getName());
         Assertions.assertEquals("example.com", ingress.getSpec().getRules().get(0).getHost());
         Assertions.assertEquals("/something(/|$)(.*)",
@@ -227,6 +324,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("/$2",
                 ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/rewrite-target"));
         Assertions.assertEquals("true", ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/use-regex"));
+        Assertions.assertTrue(ingress.getSpec().getTls().get(0).getHosts().contains("acme.com"));
+        Assertions.assertTrue(ingress.getSpec().getTls().get(0).getHosts().contains("acme2.com"));
+        Assertions.assertEquals("acme-tls-secret", ingress.getSpec().getTls().get(0).getSecretName());
 
     }
 
@@ -246,40 +346,50 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt, ClusterType.OPENSHIFT));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.OPENSHIFT));
-        Assertions.assertFalse(hasIngress(rt, ClusterType.OPENSHIFT));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertFalse(hasIngress(rt));
 
-        Deployment deployment = getDeployment(rt, ClusterType.OPENSHIFT);
+        Deployment deployment = getDeployment(rt);
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertNull(container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
 
-        Route route = getRoute(rt, ClusterType.OPENSHIFT);
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+
+        Route route = getRoute(rt);
         Assertions.assertEquals("route-service", route.getMetadata().getName());
         Assertions.assertEquals("example.com", route.getSpec().getHost());
         Assertions.assertEquals("edge", route.getSpec().getTls().getTermination());
         Assertions.assertEquals("route-service", route.getSpec().getTo().getName());
         Assertions.assertTrue(certificate.startsWith(route.getSpec().getTls().getCertificate()));
         Assertions.assertTrue(key.startsWith(route.getSpec().getTls().getKey()));
+    }
 
-        if (RuntimeType.quarkus.equals(rt)) {
-            Properties applicationProperties = getApplicationProperties(workingDir);
-            Assertions.assertEquals("true", applicationProperties.get("quarkus.openshift.route.expose"));
-            Assertions.assertEquals("example.com",
-                    applicationProperties.get("quarkus.openshift.route.host"));
-            Assertions.assertEquals("http",
-                    applicationProperties.get("quarkus.openshift.route.target-port"));
-            Assertions.assertEquals("edge",
-                    applicationProperties.get("quarkus.openshift.route.tls.termination"));
-            Assertions.assertTrue(certificate.startsWith(
-                    applicationProperties.get("quarkus.openshift.route.tls.certificate").toString()));
-            Assertions.assertTrue(key.startsWith(applicationProperties.get("quarkus.openshift.route.tls.key").toString()));
-        }
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddJkubeOpenshiftDeploymentProperty(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--cluster-type", "openshift",
+                "--runtime=" + rt.runtime());
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Properties props = model.getProperties();
+        Assertions.assertEquals("true", props.get("jkube.build.switchToDeployment"),
+                "property jkube.build.switchToDeployment=true not set in pom.xml");
     }
 
     @ParameterizedTest
@@ -300,13 +410,12 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasService(rt));
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("camel-test/route-service:1.0.0",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertNull(deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("IfNotPresent",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().size());
@@ -327,7 +436,16 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getResources().getLimits().get("memory")
                         .toString());
 
-        Service service = getService(rt, ClusterType.KUBERNETES);
+        Model model = readMavenModel();
+        Assertions.assertEquals("camel-test", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("camel-test/route-service:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("camel-test/route-service:1.0.0", props.get("jkube.container-image.name"));
+
+        Service service = getService(rt);
         Assertions.assertEquals("route-service", service.getMetadata().getName());
         Assertions.assertEquals(1, service.getSpec().getPorts().size());
         Assertions.assertEquals("custom-port", service.getSpec().getPorts().get(0).getName());
@@ -343,7 +461,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(2,
@@ -373,7 +491,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(2, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());
@@ -395,7 +513,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getMetadata().getAnnotations().size());
         Assertions.assertEquals("bar", deployment.getMetadata().getAnnotations().get("foo"));
@@ -409,12 +527,12 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         var labels = deployment.getMetadata().getLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(3, labels.size());
         Assertions.assertEquals("camel", labels.get("app.kubernetes.io/runtime"));
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("bar", labels.get("foo"));
     }
 
@@ -426,7 +544,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(2,
@@ -453,7 +571,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(1,
@@ -475,7 +593,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(1,
@@ -496,47 +614,63 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
+        Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("demo-app", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("quay.io/camel/demo-app:1.0",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertNull(deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("demo-app", model.getArtifactId());
+        Assertions.assertEquals("1.0", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("quay.io/camel/demo-app:1.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("quay.io/camel/demo-app:1.0", props.get("jkube.container-image.name"));
     }
 
-    private Deployment getDeployment(RuntimeType rt, ClusterType ct) throws IOException {
-        return getResource(rt, ct, Deployment.class)
-                .orElseThrow(() -> new RuntimeCamelException("Cannot find deployment for: %s".formatted(rt.runtime())));
-    }
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddJolokiaSpec(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--trait", "jolokia.enabled=true",
+                "--trait", "jolokia.expose=true",
+                "--trait", "jolokia.service-port=8779",
+                "--trait", "jolokia.service-port-name=jolokia-port",
+                "--runtime=" + rt.runtime());
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
-    private Service getService(RuntimeType rt, ClusterType ct) throws IOException {
-        return getResource(rt, ct, Service.class)
-                .orElseThrow(() -> new RuntimeCamelException("Cannot find service for: %s".formatted(rt.runtime())));
-    }
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
-    private Ingress getIngress(RuntimeType rt, ClusterType ct) throws IOException {
-        return getResource(rt, ct, Ingress.class)
-                .orElseThrow(() -> new RuntimeCamelException("Cannot find ingress for: %s".formatted(rt.runtime())));
-    }
+        Deployment deployment = getDeployment(rt);
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertEquals("route-service", deployment.getMetadata().getName());
+        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Assertions.assertNull(container.getImage());
+        Assertions.assertEquals(2, container.getPorts().size());
+        Assertions.assertEquals("jolokia", container.getPorts().get(1).getName());
+        Assertions.assertEquals(8778, container.getPorts().get(1).getContainerPort());
 
-    private boolean hasIngress(RuntimeType rt, ClusterType ct) throws IOException {
-        return getResource(rt, ct, Ingress.class).isPresent();
-    }
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
 
-    private Route getRoute(RuntimeType rt, ClusterType ct) throws IOException {
-        return getResource(rt, ct, Route.class)
-                .orElseThrow(() -> new RuntimeCamelException("Cannot find route for: %s".formatted(rt.runtime())));
-    }
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
 
-    private boolean hasRoute(RuntimeType rt, ClusterType ct) throws IOException {
-        return getResource(rt, ct, Route.class).isPresent();
-    }
-
-    private Model readMavenModel() throws Exception {
-        File f = workingDir.toPath().resolve("pom.xml").toFile();
-        Assertions.assertTrue(f.isFile(), "Not a pom.xml file: " + f);
-        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-        Model model = mavenReader.read(new FileReader(f));
-        model.setPomFile(f);
-        return model;
+        Service service = getService(rt);
+        List<ServicePort> ports = service.getSpec().getPorts();
+        Assertions.assertEquals("route-service", service.getMetadata().getName());
+        Assertions.assertEquals(2, ports.size());
+        Assertions.assertEquals("http", ports.get(0).getName());
+        Assertions.assertEquals(80, ports.get(0).getPort());
+        Assertions.assertEquals("http", ports.get(0).getTargetPort().getStrVal());
+        Assertions.assertEquals("jolokia-port", ports.get(1).getName());
+        Assertions.assertEquals(8779, ports.get(1).getPort());
+        Assertions.assertEquals("jolokia", ports.get(1).getTargetPort().getStrVal());
     }
 }

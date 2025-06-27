@@ -24,7 +24,6 @@ public class ThreadDevConsoleConfigurer extends org.apache.camel.support.compone
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("CamelContext", org.apache.camel.CamelContext.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(ThreadDevConsoleConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -40,10 +39,6 @@ public class ThreadDevConsoleConfigurer extends org.apache.camel.support.compone
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

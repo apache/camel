@@ -31,6 +31,7 @@ import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.resume.AdapterHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.backoff.BackOff;
@@ -53,6 +54,7 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     private volatile Consumer delegatedConsumer;
     private volatile CamelClusterView view;
     private ResumeStrategy resumeStrategy;
+    private BackOffTimer timer;
 
     public MasterConsumer(MasterEndpoint masterEndpoint, Processor processor, CamelClusterService clusterService) {
         super(masterEndpoint, processor);
@@ -75,8 +77,17 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        this.timer = PluginHelper.getBackOffTimerFactory(masterEndpoint.getCamelContext().getCamelContextExtension())
+                .newBackOffTimer("MasterConsumer", masterEndpoint.getComponent().getBackOffThreadPool());
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        ServiceHelper.startService(timer);
 
         LOG.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(),
                 clusterService.getClass().getName());
@@ -92,12 +103,10 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
         if (view != null) {
             view.removeEventListener(leadershipListener);
             clusterService.releaseView(view);
-
             view = null;
         }
 
-        ServiceHelper.stopAndShutdownServices(delegatedConsumer, delegatedEndpoint);
-
+        ServiceHelper.stopAndShutdownServices(delegatedConsumer, delegatedEndpoint, timer);
         delegatedConsumer = null;
     }
 
@@ -141,7 +150,6 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             long delay = masterEndpoint.getComponent().getBackOffDelay();
             long max = masterEndpoint.getComponent().getBackOffMaxAttempts();
 
-            BackOffTimer timer = new BackOffTimer(masterEndpoint.getComponent().getBackOffThreadPool());
             timer.schedule(BackOff.builder().delay(delay).maxAttempts(max).build(), task -> {
                 LOG.info("Leadership taken. Attempt #{} to start consumer: {}", task.getCurrentAttempts(),
                         delegatedEndpoint);

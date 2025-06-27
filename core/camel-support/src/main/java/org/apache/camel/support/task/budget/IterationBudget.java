@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task.budget;
 
 /**
@@ -29,10 +28,4 @@ public interface IterationBudget extends Budget {
      */
     int maxIterations();
 
-    /**
-     * The current number of iterations
-     *
-     * @return the current number of iterations
-     */
-    int iteration();
 }

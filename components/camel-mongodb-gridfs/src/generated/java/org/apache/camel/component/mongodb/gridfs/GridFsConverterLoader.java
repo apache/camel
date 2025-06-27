@@ -45,9 +45,21 @@ public final class GridFsConverterLoader implements TypeConverterLoader, CamelCo
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, com.mongodb.ReadPreference.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.gridfs.GridFsConverter.toReadPreference((java.lang.String) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.gridfs.GridFsConverter.toReadPreference((java.lang.String) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.mongodb.WriteConcern.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.gridfs.GridFsConverter.toWriteConcern((java.lang.String) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.gridfs.GridFsConverter.toWriteConcern((java.lang.String) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

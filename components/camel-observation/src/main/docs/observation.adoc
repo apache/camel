@@ -86,4 +86,6 @@ include::spring-boot:partial$starter.adoc[]
 
 == MDC Logging
 
-When MDC Logging is enabled for the active Camel context the Trace ID and Span ID will be added and removed from the MDC for each route, the keys are `trace_id` and `span_id`, respectively.
+You can add [Micrometer Observability Mapped Diagnostic Context tracing information](https://docs.micrometer.io/tracing/reference/index.html) (ie, `traceId` and `spanId`) adding some instrumentation bridge to your application. You may add the `io.micrometer:micrometer-tracing-bridge-otel` dependency and you will be able to get those MDC information automatically.
+
+NOTE: mind that MDC variables `traceId` and `spanId` are different from other tracing implementations (eg, `camel-opentelemetry`) which use `trace_id` and `span_id`.

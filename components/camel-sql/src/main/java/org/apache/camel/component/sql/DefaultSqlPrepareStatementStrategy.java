@@ -185,6 +185,11 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         while (iterator != null && iterator.hasNext()) {
             Object value = iterator.next();
 
+            if (value instanceof Map.Entry<?, ?> entry) {
+                // if we iterate a map then we want the value and not the key
+                value = entry.getValue();
+            }
+
             // special for SQL IN where we need to set dynamic number of values
             if (value instanceof CompositeIterator<?> it) {
                 while (it.hasNext()) {

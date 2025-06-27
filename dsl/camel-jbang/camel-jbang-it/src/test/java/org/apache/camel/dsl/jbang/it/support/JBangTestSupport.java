@@ -80,11 +80,13 @@ public abstract class JBangTestSupport {
     }
 
     @AfterEach
-    protected void afterEach(TestInfo testInfo) throws IOException {
+    protected void afterEach(TestInfo testInfo) {
         logger.debug("ending {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
         assertNoErrors();
         logger.debug("clean up data folder");
-        FileUtils.deleteQuietly(new File(containerDataFolder));
+        if (containerDataFolder != null) {
+            FileUtils.deleteQuietly(new File(containerDataFolder));
+        }
     }
 
     protected void stopAllRoutes() {
@@ -100,7 +102,14 @@ public abstract class JBangTestSupport {
         BUILD_GRADLE("build.gradle", "/jbang/it/maven-gradle/build.gradle"),
         DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java"),
         SERVER_ROUTE("server.yaml", "/jbang/it/server.yaml"),
-        CIRCUIT_BREAKER("CircuitBreakerRoute.java", "/jbang/it/CircuitBreakerRoute.java");
+        CIRCUIT_BREAKER("CircuitBreakerRoute.java", "/jbang/it/CircuitBreakerRoute.java"),
+        SRC_MAPPING_DATA("data.json", "/jbang/it/data-mapping/src/data.json"),
+        SRC_MAPPING_TEMPLATE("transform.yaml", "/jbang/it/data-mapping/src/transform.yaml"),
+        COMP_MAPPING_DATA("data.xml", "/jbang/it/data-mapping/components/data.xml"),
+        COMP_MAPPING_TEMPLATE("transform.xml", "/jbang/it/data-mapping/components/transform.xml"),
+        FORMATS_MAPPING_DATA("data.csv", "/jbang/it/data-mapping/data-formats/data.csv"),
+        STUB_ROUTE("StubRoute.java", "/jbang/it/StubRoute.java"),
+        USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml");
 
         private String name;
         private String resPath;
@@ -153,21 +162,40 @@ public abstract class JBangTestSupport {
                 .isReadable();
     }
 
+    protected void assertFileInDataFolderContains(String file, String contains) throws IOException {
+        final Path toVerify = Path.of(containerDataFolder, file);
+        Assertions.assertThat(new String(Files.readAllBytes(toVerify)))
+                .as("file" + toVerify + " should contain" + contains)
+                .contains(contains);
+    }
+
+    protected void checkCommandOutputs(String command, String contains, int waitForSeconds) {
+        Assertions.assertThatNoException().isThrownBy(() -> Awaitility.await()
+                .atMost(waitForSeconds, TimeUnit.SECONDS)
+                .untilAsserted(() -> checkCommandOutputs(command, contains)));
+    }
+
     protected void checkCommandOutputs(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel" + command + "should output" + contains)
+                .as("command camel " + command + " should output " + contains)
                 .contains(contains);
     }
 
     protected void checkCommandOutputsPattern(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel" + command + "should output pattern" + contains)
+                .as("command camel " + command + " should output pattern " + contains)
                 .containsPattern(contains);
+    }
+
+    protected void checkCommandOutputsPattern(String command, String contains, int waitForSeconds) {
+        Assertions.assertThatNoException().isThrownBy(() -> Awaitility.await()
+                .atMost(waitForSeconds, TimeUnit.SECONDS)
+                .untilAsserted(() -> checkCommandOutputsPattern(command, contains)));
     }
 
     protected void checkCommandDoesNotOutput(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel" + command + "should not output" + contains)
+                .as("command camel " + command + " should not output " + contains)
                 .doesNotContain(contains);
     }
 
@@ -300,18 +328,14 @@ public abstract class JBangTestSupport {
                     .atMost(Duration.ofMinutes(2))
                     .pollInterval(Duration.ofSeconds(1))
                     .until(() -> !process.isAlive());
+            final String out = new String(process.getInputStream().readAllBytes());
             if (process.exitValue() != 0) {
-                logger.error(String.valueOf(process.getErrorStream()));
-                logger.info(String.valueOf(process.getOutputStream()));
+                logger.error(out);
             }
-            return new String(process.getInputStream().readAllBytes());
+            return out;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    protected String makeTheFileWriteable(String containerPath) {
-        return containerService.executeGenericCommand("chmod 777 " + containerPath);
     }
 
     protected String downloadNewFileInDataFolder(String downloadUrl) {

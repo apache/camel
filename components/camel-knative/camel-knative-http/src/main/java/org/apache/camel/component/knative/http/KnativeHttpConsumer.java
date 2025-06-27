@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -36,6 +37,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -59,6 +61,7 @@ public class KnativeHttpConsumer extends DefaultConsumer {
     private final KnativeTransportConfiguration configuration;
     private final Predicate<HttpServerRequest> filter;
     private final KnativeResource resource;
+    private final KnativeHttpServiceOptions serviceOptions;
     private final Supplier<Router> router;
     private final HeaderFilterStrategy headerFilterStrategy;
     private volatile String path;
@@ -72,11 +75,13 @@ public class KnativeHttpConsumer extends DefaultConsumer {
                                Endpoint endpoint,
                                KnativeResource resource,
                                Supplier<Router> router,
+                               KnativeHttpServiceOptions serviceOptions,
                                Processor processor) {
         super(endpoint, processor);
         this.configuration = configuration;
         this.resource = resource;
         this.router = router;
+        this.serviceOptions = serviceOptions;
         this.headerFilterStrategy = new KnativeHttpHeaderFilterStrategy();
         this.filter = KnativeHttpSupport.createFilter(this.configuration.getCloudEvent(), resource);
         this.preallocateBodyBuffer = true;
@@ -140,6 +145,26 @@ public class KnativeHttpConsumer extends DefaultConsumer {
             bodyHandler.setPreallocateBodyBuffer(this.preallocateBodyBuffer);
             if (this.maxBodySize != null) {
                 bodyHandler.setBodyLimit(this.maxBodySize.longValueExact());
+            }
+
+            // add OIDC token verification handler
+            if (serviceOptions instanceof KnativeOidcServiceOptions oidcServiceOptions &&
+                    oidcServiceOptions.isOidcEnabled()) {
+                route.handler(routingContext -> {
+                    if (routingContext.request().headers().contains(HttpHeaders.AUTHORIZATION)) {
+                        String auth = routingContext.request().getHeader(HttpHeaders.AUTHORIZATION);
+                        String token = oidcServiceOptions.retrieveOidcToken();
+                        if (("Bearer " + token).equals(auth)) {
+                            routingContext.next();
+                        } else {
+                            routingContext.fail(401, new RuntimeCamelException("OIDC request verification failed - forbidden"));
+                        }
+                    } else {
+                        routingContext.fail(401, new RuntimeCamelException(
+                                "OIDC request verification failed - " +
+                                                                           "missing proper authorization token"));
+                    }
+                });
             }
 
             // add body handler

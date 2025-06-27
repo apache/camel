@@ -82,7 +82,7 @@ public final class MockOaipmhServer {
                 responseCache = Collections.unmodifiableMap(cache);
             }
         } catch (IOException ioex) {
-            throw new RuntimeCamelException("An issue occured while initializing the OAI-PMH mock server reponse cache", ioex);
+            throw new RuntimeCamelException("An issue occurred while initializing the OAI-PMH mock server reponse cache", ioex);
         }
         return responseCache;
     }

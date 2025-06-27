@@ -52,30 +52,39 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        cacheContainer = new RemoteCacheManager(getConfiguration().build());
+        cacheContainer = getCacheContainer();
+        if (cacheContainer != null) {
+            final IterationBoundedBudget budget
+                    = Budgets.iterationBudget().withInterval(Duration.ofSeconds(1)).withMaxIterations(10).build();
+            final ForegroundTask task = Tasks.foregroundTask()
+                    .withBudget(budget).build();
 
-        final IterationBoundedBudget budget
-                = Budgets.iterationBudget().withInterval(Duration.ofSeconds(1)).withMaxIterations(10).build();
-        final ForegroundTask task = Tasks.foregroundTask()
-                .withBudget(budget).build();
-
-        final boolean cacheCreated = task.run(this::createCache);
-        Assumptions.assumeTrue(cacheCreated, "The container cache is not running healthily");
+            final boolean cacheCreated = task.run(this::createCache);
+            Assumptions.assumeTrue(cacheCreated, "The container cache is not running healthily");
+        }
     }
 
-    private boolean createCache() {
+    protected RemoteCacheManager getCacheContainer() {
+        return new RemoteCacheManager(getConfiguration().build());
+    }
+
+    protected boolean createCache() {
         try {
-            cacheContainer.administration()
-                    .getOrCreateCache(
-                            getCacheName(),
-                            new org.infinispan.configuration.cache.ConfigurationBuilder()
-                                    .clustering()
-                                    .cacheMode(CacheMode.DIST_SYNC).build());
+            getOrCreateCache();
             return true;
         } catch (Exception e) {
             LOG.warn("Unable to create cache: {}", e.getMessage(), e);
             return false;
         }
+    }
+
+    protected void getOrCreateCache() {
+        cacheContainer.administration()
+                .getOrCreateCache(
+                        getCacheName(),
+                        new org.infinispan.configuration.cache.ConfigurationBuilder()
+                                .clustering()
+                                .cacheMode(CacheMode.DIST_SYNC).build());
     }
 
     @Override

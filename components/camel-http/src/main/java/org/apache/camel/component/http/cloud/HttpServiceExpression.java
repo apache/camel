@@ -21,6 +21,7 @@ import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
 /**
  * The default is based on camel-http, this class is added to allow further customizations.
  */
+@Deprecated
 public final class HttpServiceExpression extends DefaultServiceCallExpression {
     public HttpServiceExpression() {
     }

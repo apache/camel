@@ -41,6 +41,11 @@ public class HashicorpVaultConfiguration implements Cloneable {
     private String secretPath;
     @UriParam(label = "security", secret = true)
     private String token;
+    @UriParam
+    private boolean cloud;
+    @UriParam
+    private String namespace;
+
     @UriParam(label = "producer")
     private HashicorpVaultOperation operation = HashicorpVaultOperation.createSecret;
 
@@ -108,6 +113,28 @@ public class HashicorpVaultConfiguration implements Cloneable {
 
     public void setScheme(String scheme) {
         this.scheme = scheme;
+    }
+
+    /**
+     * Determine if the Hashicorp Vault is deployed on Hashicorp Cloud or not
+     */
+    public boolean isCloud() {
+        return cloud;
+    }
+
+    public void setCloud(boolean cloud) {
+        this.cloud = cloud;
+    }
+
+    /**
+     * If the Hashicorp Vault instance is deployed on Hashicorp Cloud, this field will determine the namespace
+     */
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     /**

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,9 +25,8 @@ import java.util.List;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -40,7 +39,7 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "message",
                      description = "Transform message from one format to another via an existing running Camel integration",
-                     sortOptions = false)
+                     sortOptions = false, showDefaultValues = true)
 public class TransformMessageAction extends ActionWatchCommand {
 
     @CommandLine.Option(names = { "--camel-version" },
@@ -116,6 +115,10 @@ public class TransformMessageAction extends ActionWatchCommand {
                         description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    String repositories;
+
     private volatile long pid;
 
     private MessageTableHelper tableHelper;
@@ -129,11 +132,11 @@ public class TransformMessageAction extends ActionWatchCommand {
         if (dataformat == null) {
             // either source or language/template is required
             if (source == null && template == null && language == null && component == null) {
-                System.err.println("Either source or template and one of language/component must be configured");
+                printer().printErr("Either source or template and one of language/component must be configured");
                 return -1;
             }
             if (source == null && (template == null || language == null && component == null)) {
-                System.err.println("Both template and one of language/component must be configured");
+                printer().printErr("Both template and one of language/component must be configured");
                 return -1;
             }
         }
@@ -142,16 +145,16 @@ public class TransformMessageAction extends ActionWatchCommand {
         if (source != null && source.startsWith("file:")) {
             String s = source.substring(5);
             s = StringHelper.beforeLast(s, ":", s); // remove line number
-            File f = new File(s);
-            if (!f.exists()) {
-                System.err.println("Source file does not exist: " + f);
+            Path f = Path.of(s);
+            if (!Files.exists(f)) {
+                printer().printErr("Source file does not exist: " + f);
                 return -1;
             }
         }
         if (template != null && template.startsWith("file:")) {
-            File f = new File(template.substring(5));
-            if (!f.exists()) {
-                System.err.println("Template file does not exist: " + f);
+            Path f = Path.of(template.substring(5));
+            if (!Files.exists(f)) {
+                printer().printErr("Template file does not exist: " + f);
                 return -1;
             }
         }
@@ -162,10 +165,10 @@ public class TransformMessageAction extends ActionWatchCommand {
             Run run = new Run(getMain());
             // requires camel 4.3 onwards
             if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.2.0")) {
-                System.err.println("This requires Camel version 4.3 or newer");
+                printer().printErr("This requires Camel version 4.3 or newer");
                 return -1;
             }
-            exit = run.runTransformMessage(camelVersion);
+            exit = run.runTransformMessage(camelVersion, repositories);
             this.pid = run.spawnPid;
             if (exit == 0) {
                 exit = super.doCall();
@@ -173,12 +176,13 @@ public class TransformMessageAction extends ActionWatchCommand {
         } finally {
             if (pid > 0) {
                 // cleanup output file
-                File outputFile = getOutputFile(Long.toString(pid));
-                FileUtil.deleteFile(outputFile);
+                Path outputFile = getOutputFile(Long.toString(pid));
+                PathUtils.deleteFile(outputFile);
                 // stop running camel as we are done
-                File pidFile = new File(CommandLineHelper.getCamelDir(), Long.toString(pid));
-                if (pidFile.exists()) {
-                    FileUtil.deleteFile(pidFile);
+                Path parent = CommandLineHelper.getCamelDir();
+                Path pidFile = parent.resolve(Long.toString(pid));
+                if (Files.exists(pidFile)) {
+                    PathUtils.deleteFile(pidFile);
                 }
             }
         }
@@ -189,8 +193,8 @@ public class TransformMessageAction extends ActionWatchCommand {
     @Override
     protected Integer doWatchCall() throws Exception {
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "transform");
@@ -238,9 +242,9 @@ public class TransformMessageAction extends ActionWatchCommand {
             }
             root.put("options", arr);
         }
-        File f = getActionFile(Long.toString(pid));
+        Path f = getActionFile(Long.toString(pid));
         try {
-            IOHelper.writeText(root.toJson(), f);
+            PathUtils.writeTextSafely(root.toJson(), f);
         } catch (Exception e) {
             // ignore
         }
@@ -253,12 +257,12 @@ public class TransformMessageAction extends ActionWatchCommand {
             JsonObject cause = jo.getMap("exception");
             if (message != null || cause != null) {
                 if (output != null) {
-                    File target = new File(output);
+                    Path target = Path.of(output);
                     String json = jo.toJson();
                     if (pretty) {
                         json = Jsoner.prettyPrint(json, 2);
                     }
-                    IOHelper.writeText(json, target);
+                    Files.writeString(target, json);
                 }
                 if (!showExchangeProperties && message != null) {
                     message.remove("exchangeProperties");
@@ -287,7 +291,7 @@ public class TransformMessageAction extends ActionWatchCommand {
         }
 
         // delete output file after use
-        FileUtil.deleteFile(outputFile);
+        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -324,7 +328,7 @@ public class TransformMessageAction extends ActionWatchCommand {
     }
 
     private String getStatus(JsonObject r) {
-        boolean failed = "failed".equals(r.getString("status"));
+        boolean failed = "failed".equals(r.getString("status")) || "error".equals(r.getString("status"));
         String status;
         if (failed) {
             status = "Failed (exception)";
@@ -340,17 +344,15 @@ public class TransformMessageAction extends ActionWatchCommand {
         }
     }
 
-    protected JsonObject waitForOutputFile(File outputFile) {
+    protected JsonObject waitForOutputFile(Path outputFile) {
         StopWatch watch = new StopWatch();
         while (watch.taken() < timeout) {
             try {
                 // give time for response to be ready
                 Thread.sleep(20);
 
-                if (outputFile.exists()) {
-                    FileInputStream fis = new FileInputStream(outputFile);
-                    String text = IOHelper.loadText(fis);
-                    IOHelper.close(fis);
+                if (Files.exists(outputFile)) {
+                    String text = Files.readString(outputFile);
                     return (JsonObject) Jsoner.deserialize(text);
                 }
             } catch (InterruptedException e) {

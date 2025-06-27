@@ -72,6 +72,8 @@ public class GitHubEndpoint extends ScheduledPollEndpoint implements EndpointSer
     private String branchName;
     @UriParam(label = "consumer", defaultValue = "last")
     private String startingSha = "last";
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean commitMessageAsBody = true;
     @UriParam(label = "security", secret = true)
     private String oauthToken;
     @UriParam
@@ -165,6 +167,18 @@ public class GitHubEndpoint extends ScheduledPollEndpoint implements EndpointSer
      */
     public void setBranchName(String branchName) {
         this.branchName = branchName;
+    }
+
+    public boolean isCommitMessageAsBody() {
+        return commitMessageAsBody;
+    }
+
+    /**
+     * Whether the commit consumer should store the commit message or the raw
+     * org.eclipse.egit.github.core.RepositoryCommit object as the message body.
+     */
+    public void setCommitMessageAsBody(boolean commitMessageAsBody) {
+        this.commitMessageAsBody = commitMessageAsBody;
     }
 
     public String getStartingSha() {

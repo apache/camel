@@ -61,6 +61,7 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "prefix": target.getConfiguration().setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -136,6 +137,7 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "operation": return org.apache.camel.component.google.storage.GoogleCloudStorageOperations.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "prefix": return java.lang.String.class;
         case "repeatcount":
         case "repeatCount": return long.class;
         case "runlogginglevel":
@@ -207,6 +209,7 @@ public class GoogleCloudStorageEndpointConfigurer extends PropertyConfigurerSupp
         case "operation": return target.getConfiguration().getOperation();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
+        case "prefix": return target.getConfiguration().getPrefix();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":

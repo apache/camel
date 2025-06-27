@@ -64,6 +64,7 @@ public final class BeanModelHelper {
 
         // script bean
         if (def.getScriptLanguage() != null && def.getScript() != null) {
+            String script = resolveScript(context, def);
             // create bean via the script
             final Language lan = context.resolveLanguage(def.getScriptLanguage());
             final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
@@ -76,10 +77,10 @@ public final class BeanModelHelper {
                 // scripting language should be evaluated with context as binding
                 Map<String, Object> bindings = new HashMap<>();
                 bindings.put("context", context);
-                target = slan.evaluate(def.getScript(), bindings, clazz);
+                target = slan.evaluate(script, bindings, clazz);
             } else {
                 Exchange dummy = ExchangeHelper.getDummy(context);
-                String text = ScriptHelper.resolveOptionalExternalScript(context, dummy, def.getScript());
+                String text = ScriptHelper.resolveOptionalExternalScript(context, dummy, script);
                 Expression exp = lan.createExpression(text);
                 target = exp.evaluate(dummy, clazz);
             }
@@ -176,7 +177,7 @@ public final class BeanModelHelper {
             } else {
                 clazz = Object.class;
             }
-            final String script = def.getScript();
+            final String script = resolveScript(camelContext, def);
             final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
             if (slan != null) {
                 // scripting language should be evaluated with route template context as binding
@@ -299,5 +300,13 @@ public final class BeanModelHelper {
                     "Route template local bean: " + def.getName() + " has invalid type syntax: " + def.getType()
                                                + ". To refer to a class then prefix the value with #class such as: #class:fullyQualifiedClassName");
         }
+    }
+
+    private static String resolveScript(CamelContext camelContext, BeanFactoryDefinition<?> def) {
+        String answer = def.getScript();
+        if (answer != null && !"false".equals(def.getScriptPropertyPlaceholders())) {
+            answer = camelContext.resolvePropertyPlaceholders(answer);
+        }
+        return answer;
     }
 }

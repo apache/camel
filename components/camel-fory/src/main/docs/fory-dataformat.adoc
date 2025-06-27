@@ -1,0 +1,47 @@
+= Fory DataFormat
+:doctitle: Fory
+:shortname: fory
+:artifactid: camel-fory
+:description: Serialize and deserialize messages using Apache Fory
+:since: 4.9
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: fory 
+
+*Since Camel {since}*
+
+Fory is a Data Format that uses the
+https://fory.apache.org/[Fory Library]
+
+[NOTE]
+Apache Fory is not supporting architecture using Big Endian (s390x, for instance).
+
+== Fory Options
+
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+
+== Dependencies
+
+To use Fory in your camel routes, you need to add the dependency
+on *camel-fory* which implements this data format.
+
+If you use maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest and greatest release.
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-fory</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+
+include::spring-boot:partial$starter.adoc[]

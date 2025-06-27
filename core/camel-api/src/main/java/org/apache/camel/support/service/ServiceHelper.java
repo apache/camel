@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
  * A collection of helper methods for working with {@link Service} objects.
  */
 public final class ServiceHelper {
+
     private static final Logger LOG = LoggerFactory.getLogger(ServiceHelper.class);
 
     /**
@@ -125,7 +126,6 @@ public final class ServiceHelper {
         if (service != null) {
             service.start();
         }
-
     }
 
     /**

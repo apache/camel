@@ -17,5 +17,5 @@
     limitations under the License.
 
 -->
-<beans xmlns="http://camel.apache.org/schema/spring">
+<beans xmlns="http://camel.apache.org/schema/xml-io">
 </beans>

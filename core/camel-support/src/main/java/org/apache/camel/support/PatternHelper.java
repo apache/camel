@@ -33,6 +33,8 @@ public final class PatternHelper {
     /**
      * Matches the name with the given pattern (case insensitive).
      * <p/>
+     * Only a single pattern is supported, use {@link #matchPatterns(String, String[])} to match multiple patterns.
+     * <p/>
      * The match rules are applied in this order:
      * <ul>
      * <li>exact match, returns true</li>
@@ -44,6 +46,7 @@ public final class PatternHelper {
      * @param  name    the name
      * @param  pattern a pattern to match
      * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @see            #matchPatterns(String, String[])
      */
     public static boolean matchPattern(String name, String pattern) {
         if (name == null || pattern == null) {

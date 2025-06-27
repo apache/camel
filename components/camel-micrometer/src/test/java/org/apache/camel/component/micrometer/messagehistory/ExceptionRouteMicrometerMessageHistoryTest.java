@@ -65,7 +65,7 @@ public class ExceptionRouteMicrometerMessageHistoryTest extends CamelTestSupport
         MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 names
-        assertEquals(3, registry.getMeters().size());
+        assertEquals(4, registry.getMeters().size());
 
         // get the message history service
         MicrometerMessageHistoryService service = context.hasService(MicrometerMessageHistoryService.class);

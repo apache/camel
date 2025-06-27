@@ -182,7 +182,8 @@ public class RouteCoverageMojo extends AbstractMojo {
         int totalNumberOfNodes = 0;
 
         List<CamelNodeDetails> routeIdTrees = routeTrees.stream().filter(t -> t.getRouteId() != null).toList();
-        List<CamelNodeDetails> anonymousRouteTrees = routeTrees.stream().filter(t -> t.getRouteId() == null).toList();
+        List<CamelNodeDetails> anonymousRouteTrees
+                = new ArrayList<>(routeTrees.stream().filter(t -> t.getRouteId() == null).toList());
         Document document = null;
         File file = null;
         Element report = null;
@@ -220,18 +221,48 @@ public class RouteCoverageMojo extends AbstractMojo {
 
             // grab dump data for the route
             totalNumberOfNodes
-                    = grabDumpData(t, routeId, totalNumberOfNodes, fileName, notCovered, coveredNodes, report, document,
+                    += grabDumpData(t, routeId, totalNumberOfNodes, fileName, notCovered, coveredNodes, report, document,
                             sourceFileName, pack);
+        }
+        List<CamelNodeDetails> anonymousHandled = new ArrayList<>();
+        for (CamelNodeDetails t : anonymousRouteTrees) {
+            String fileName = stripRootPath(asRelativeFile(t.getFileName(), project), project);
+            String sourceFileName = new File(fileName).getName();
+            String packageName = new File(fileName).getParent();
+            String loc = sourceFileName + ":" + t.getLineNumber();
+            Element pack = null;
+
+            if (report != null) {
+                // package tag
+                pack = document.createElement("package");
+                createAttrString(document, pack, "name", packageName);
+                report.appendChild(pack);
+            }
+
+            // grab dump data for the route
+            int extra = grabDumpDataBySourceLocation(t, loc, totalNumberOfNodes, fileName, notCovered, coveredNodes, report,
+                    document,
+                    sourceFileName, pack);
+            if (extra > 0) {
+                anonymousHandled.add(t);
+            }
+            totalNumberOfNodes += extra;
+        }
+        anonymousRouteTrees.removeAll(anonymousHandled);
+
+        if (!anonymousRouteTrees.isEmpty()) {
+            if (anonymousRoutes) {
+                totalNumberOfNodes = handleAnonymousRoutes(anonymousRouteTrees, totalNumberOfNodes, notCovered, coveredNodes);
+            } else {
+                getLog().warn(
+                        "Discovered " + anonymousRouteTrees.size()
+                              + " anonymous routes. Add route ids to these routes for route coverage support.");
+            }
         }
 
         if (report != null) {
             doGenerateJacocoReport(file, document);
         }
-
-        if (anonymousRoutes && !anonymousRouteTrees.isEmpty()) {
-            totalNumberOfNodes = handleAnonymousRoutes(anonymousRouteTrees, totalNumberOfNodes, notCovered, coveredNodes);
-        }
-
         if (generateHtmlReport) {
             doGenerateHtmlReport();
         }
@@ -279,14 +310,6 @@ public class RouteCoverageMojo extends AbstractMojo {
 
         getLog().info("Discovered " + routeTrees.size() + " routes");
 
-        // skip any routes which has no route id assigned
-
-        long anonymous = routeTrees.stream().filter(t -> t.getRouteId() == null).count();
-        if (!anonymousRoutes && anonymous > 0) {
-            getLog().warn(
-                    "Discovered " + anonymous + " anonymous routes. Add route ids to these routes for route coverage support.");
-        }
-
         return routeTrees;
     }
 
@@ -314,6 +337,35 @@ public class RouteCoverageMojo extends AbstractMojo {
 
         } catch (Exception e) {
             throw new MojoExecutionException("Error during gathering route coverage data for route: " + routeId, e);
+        }
+        return totalNumberOfNodes;
+    }
+
+    private int grabDumpDataBySourceLocation(
+            CamelNodeDetails t, String sourceLocation, int totalNumberOfNodes, String fileName, AtomicInteger notCovered,
+            AtomicInteger coveredNodes, Element report, Document document, String sourceFileName, Element pack)
+            throws MojoExecutionException {
+        try {
+            List<CoverageData> coverageData = RouteCoverageHelper
+                    .parseDumpRouteCoverageByLineNumber(project.getBasedir() + DESTINATION_DIR, sourceLocation);
+            if (coverageData.isEmpty()) {
+                getLog().warn("No route coverage data found for route: " + sourceLocation
+                              + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
+            } else {
+                List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(List.of(t), coverageData);
+                totalNumberOfNodes += coverage.size();
+                String routeId = coverageData.get(0).getRouteId();
+                String out = templateCoverageData(fileName, routeId, coverage, notCovered, coveredNodes);
+                getLog().info("Route coverage summary:\n\n" + out);
+                getLog().info("");
+
+                if (report != null) {
+                    appendSourcefileNode(document, sourceFileName, pack, coverage);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error during gathering route coverage data for route: " + sourceFileName, e);
         }
         return totalNumberOfNodes;
     }

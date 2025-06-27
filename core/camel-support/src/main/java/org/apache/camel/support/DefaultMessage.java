@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeadersMapFactory;
+import org.apache.camel.trait.message.MessageTrait;
 
 /**
  * The default implementation of {@link org.apache.camel.Message}
@@ -55,6 +56,7 @@ public class DefaultMessage extends MessageSupport {
         if (headers != null) {
             headers.clear();
         }
+        removeTrait(MessageTrait.ATTACHMENTS);
     }
 
     @Override

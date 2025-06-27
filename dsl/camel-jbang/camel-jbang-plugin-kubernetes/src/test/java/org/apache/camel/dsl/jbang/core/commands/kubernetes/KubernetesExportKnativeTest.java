@@ -30,14 +30,12 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
-@EnabledIf("isDockerAvailable")
 public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
 
     private static Stream<Arguments> runtimeProvider() {
@@ -61,35 +59,37 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
                 "knative-service.min-scale=1",
                 "knative-service.max-scale=10",
                 "knative-service.rollout-duration=60",
-                "knative-service.visibility=cluster-local" };
+                "knative-service.visibility=cluster-local",
+                "knative-service.timeout-seconds=300" };
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertFalse(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertTrue(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasService(rt));
+        Assertions.assertTrue(hasKnativeService(rt));
 
         io.fabric8.knative.serving.v1.Service service
-                = getResource(rt, ClusterType.KUBERNETES, io.fabric8.knative.serving.v1.Service.class)
+                = getResource(rt, io.fabric8.knative.serving.v1.Service.class)
                         .orElseThrow(() -> new RuntimeCamelException("Missing Knative service in Kubernetes manifest"));
 
         Map<String, String> labelsA = service.getMetadata().getLabels();
         var labelsB = service.getSpec().getTemplate().getMetadata().getLabels();
         Map<String, String> annotations = service.getSpec().getTemplate().getMetadata().getAnnotations();
         Assertions.assertEquals("route-service", service.getMetadata().getName());
-        Assertions.assertEquals(3, labelsA.size());
-        Assertions.assertEquals("route-service", labelsA.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals(8, labelsA.size());
+        Assertions.assertEquals("route-service", labelsA.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("true", labelsA.get("bindings.knative.dev/include"));
         Assertions.assertEquals("cluster-local", labelsA.get("networking.knative.dev/visibility"));
         Assertions.assertEquals(1, service.getMetadata().getAnnotations().size());
         Assertions.assertEquals("60", service.getMetadata().getAnnotations().get("serving.knative.dev/rolloutDuration"));
         Assertions.assertEquals(1, labelsB.size());
-        Assertions.assertEquals("route-service", labelsB.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route-service", labelsB.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals(5, annotations.size());
         Assertions.assertEquals("cpu", annotations.get("autoscaling.knative.dev/metric"));
         Assertions.assertEquals("hpa.autoscaling.knative.dev", annotations.get("autoscaling.knative.dev/class"));
         Assertions.assertEquals("80", annotations.get("autoscaling.knative.dev/target"));
         Assertions.assertEquals("1", annotations.get("autoscaling.knative.dev/minScale"));
         Assertions.assertEquals("10", annotations.get("autoscaling.knative.dev/maxScale"));
+        Assertions.assertEquals(300, service.getSpec().getTemplate().getSpec().getTimeoutSeconds());
     }
 
     @ParameterizedTest
@@ -98,14 +98,15 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-event-source.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.traits = new String[] {
+                "knative.enabled=true",
                 "knative.filters=source=my-source" };
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
-        Trigger trigger = getResource(rt, ClusterType.KUBERNETES, Trigger.class)
+        Trigger trigger = getResource(rt, Trigger.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative trigger in Kubernetes manifest"));
 
         Assertions.assertEquals("my-broker-knative-event-source-camel-event", trigger.getMetadata().getName());
@@ -142,12 +143,14 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
     public void shouldAddKnativeSubscription(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-channel-source.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.traits = new String[] {
+                "knative.enabled=true" };
         command.doCall();
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
-        Subscription subscription = getResource(rt, ClusterType.KUBERNETES, Subscription.class)
+        Subscription subscription = getResource(rt, Subscription.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative subscription in Kubernetes manifest"));
 
         Assertions.assertEquals("my-channel-knative-channel-source", subscription.getMetadata().getName());
@@ -181,12 +184,15 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
     public void shouldAddKnativeBrokerSinkBinding(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-event-sink.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
+
+        command.traits = new String[] {
+                "knative.enabled=true" };
         command.doCall();
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
-        SinkBinding sinkBinding = getResource(rt, ClusterType.KUBERNETES, SinkBinding.class)
+        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
 
         Assertions.assertEquals("knative-event-sink", sinkBinding.getMetadata().getName());
@@ -221,12 +227,15 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
     public void shouldAddKnativeChannelSinkBinding(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-channel-sink.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
+
+        command.traits = new String[] {
+                "knative.enabled=true" };
         command.doCall();
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
-        SinkBinding sinkBinding = getResource(rt, ClusterType.KUBERNETES, SinkBinding.class)
+        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
 
         Assertions.assertEquals("knative-channel-sink", sinkBinding.getMetadata().getName());
@@ -261,12 +270,14 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
     public void shouldAddKnativeEndpointSinkBinding(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-endpoint-sink.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.traits = new String[] {
+                "knative.enabled=true" };
         command.doCall();
 
-        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
-        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
 
-        SinkBinding sinkBinding = getResource(rt, ClusterType.KUBERNETES, SinkBinding.class)
+        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
 
         Assertions.assertEquals("knative-endpoint-sink", sinkBinding.getMetadata().getName());

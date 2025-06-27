@@ -46,13 +46,37 @@ public final class NettyHttpConverterLoader implements TypeConverterLoader, Came
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, byte[].class, io.netty.handler.codec.http.FullHttpResponse.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.http.NettyHttpConverter.toBytes((io.netty.handler.codec.http.FullHttpResponse) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.http.NettyHttpConverter.toBytes((io.netty.handler.codec.http.FullHttpResponse) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, io.netty.buffer.ByteBuf.class, org.apache.camel.component.netty.http.NettyChannelBufferStreamCache.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.http.NettyHttpConverter.toByteBuf((org.apache.camel.component.netty.http.NettyChannelBufferStreamCache) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.http.NettyHttpConverter.toByteBuf((org.apache.camel.component.netty.http.NettyChannelBufferStreamCache) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.InputStream.class, io.netty.handler.codec.http.FullHttpResponse.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.http.NettyHttpConverter.toInputStream((io.netty.handler.codec.http.FullHttpResponse) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.http.NettyHttpConverter.toInputStream((io.netty.handler.codec.http.FullHttpResponse) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, io.netty.handler.codec.http.FullHttpResponse.class, false,
-            (type, exchange, value) -> org.apache.camel.component.netty.http.NettyHttpConverter.toString((io.netty.handler.codec.http.FullHttpResponse) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.netty.http.NettyHttpConverter.toString((io.netty.handler.codec.http.FullHttpResponse) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

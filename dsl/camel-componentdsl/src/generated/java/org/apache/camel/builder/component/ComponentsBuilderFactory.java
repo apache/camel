@@ -810,7 +810,7 @@ public interface ComponentsBuilderFactory {
      * Receives events from ClickUp
      * 
      * Category: cloud
-     * Since: 4.9.0-SNAPSHOT
+     * Since: 4.9
      * Maven coordinates: org.apache.camel:camel-clickup
      * 
      * @return the dsl builder
@@ -1041,6 +1041,19 @@ public interface ComponentsBuilderFactory {
         return CxfrsComponentBuilderFactory.cxfrs();
     }
     /**
+     * Dapr (camel-dapr)
+     * Dapr component which interfaces with Dapr Building Blocks.
+     * 
+     * Category: cloud,saas
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-dapr
+     * 
+     * @return the dsl builder
+     */
+    static DaprComponentBuilderFactory.DaprComponentBuilder dapr() {
+        return DaprComponentBuilderFactory.dapr();
+    }
+    /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
      * 
@@ -1157,6 +1170,20 @@ public interface ComponentsBuilderFactory {
      */
     static DebeziumSqlserverComponentBuilderFactory.DebeziumSqlserverComponentBuilder debeziumSqlserver() {
         return DebeziumSqlserverComponentBuilderFactory.debeziumSqlserver();
+    }
+    /**
+     * DFDL (camel-dfdl)
+     * Transforms fixed format data such as EDI message from/to XML using a Data
+     * Format Description Language (DFDL).
+     * 
+     * Category: transformation
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-dfdl
+     * 
+     * @return the dsl builder
+     */
+    static DfdlComponentBuilderFactory.DfdlComponentBuilder dfdl() {
+        return DfdlComponentBuilderFactory.dfdl();
     }
     /**
      * DHIS2 (camel-dhis2)
@@ -1361,19 +1388,6 @@ public interface ComponentsBuilderFactory {
         return ElasticsearchRestClientComponentBuilderFactory.elasticsearchRestClient();
     }
     /**
-     * Etcd v3 (camel-etcd3)
-     * Get, set, delete or watch keys in etcd key-value store.
-     * 
-     * Category: clustering,database
-     * Since: 3.19
-     * Maven coordinates: org.apache.camel:camel-etcd3
-     * 
-     * @return the dsl builder
-     */
-    static Etcd3ComponentBuilderFactory.Etcd3ComponentBuilder etcd3() {
-        return Etcd3ComponentBuilderFactory.etcd3();
-    }
-    /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
      * 
@@ -1458,7 +1472,7 @@ public interface ComponentsBuilderFactory {
      * Send and receive messages from the Flowable BPMN and CMMN engines.
      * 
      * Category: workflow
-     * Since: 4.19
+     * Since: 4.9
      * Maven coordinates: org.apache.camel:camel-flowable
      * 
      * @return the dsl builder
@@ -2078,6 +2092,19 @@ public interface ComponentsBuilderFactory {
         return HwcloudSmnComponentBuilderFactory.hwcloudSmn();
     }
     /**
+     * IBM Secrets Manager (camel-ibm-secrets-manager)
+     * Manage secrets in IBM Secrets Manager Service
+     * 
+     * Category: cloud,cloud
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-ibm-secrets-manager
+     * 
+     * @return the dsl builder
+     */
+    static IbmSecretsManagerComponentBuilderFactory.IbmSecretsManagerComponentBuilder ibmSecretsManager() {
+        return IbmSecretsManagerComponentBuilderFactory.ibmSecretsManager();
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
@@ -2581,6 +2608,20 @@ public interface ComponentsBuilderFactory {
         return KnativeComponentBuilderFactory.knative();
     }
     /**
+     * KServe (camel-kserve)
+     * Provide access to AI model servers with the KServe standard to run
+     * inference with remote models
+     * 
+     * Category: ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-kserve
+     * 
+     * @return the dsl builder
+     */
+    static KserveComponentBuilderFactory.KserveComponentBuilder kserve() {
+        return KserveComponentBuilderFactory.kserve();
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
@@ -3067,7 +3108,7 @@ public interface ComponentsBuilderFactory {
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
      * 
-     * Category: HEALTH
+     * Category: health
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-mllp
      * 
@@ -3181,6 +3222,19 @@ public interface ComponentsBuilderFactory {
      */
     static NatsComponentBuilderFactory.NatsComponentBuilder nats() {
         return NatsComponentBuilderFactory.nats();
+    }
+    /**
+     * Neo4j (camel-neo4j)
+     * Perform operations on the Neo4j Graph Database
+     * 
+     * Category: database,ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-neo4j
+     * 
+     * @return the dsl builder
+     */
+    static Neo4jComponentBuilderFactory.Neo4jComponentBuilder neo4j() {
+        return Neo4jComponentBuilderFactory.neo4j();
     }
     /**
      * Netty (camel-netty)
@@ -3536,6 +3590,19 @@ public interface ComponentsBuilderFactory {
      */
     static Pop3sComponentBuilderFactory.Pop3sComponentBuilder pop3s() {
         return Pop3sComponentBuilderFactory.pop3s();
+    }
+    /**
+     * PQC Algorithms (camel-pqc)
+     * Post Quantum Cryptography Signature and Verification component.
+     * 
+     * Category: security
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-pqc
+     * 
+     * @return the dsl builder
+     */
+    static PqcComponentBuilderFactory.PqcComponentBuilder pqc() {
+        return PqcComponentBuilderFactory.pqc();
     }
     /**
      * PubNub (camel-pubnub)
@@ -3900,7 +3967,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SMB (camel-smb)
-     * Receive files from SMB (Server Message Block) shares.
+     * Read and write files to Server Message Block (SMB) file shares.
      * 
      * Category: file
      * Since: 4.3
@@ -3997,7 +4064,7 @@ public interface ComponentsBuilderFactory {
      * Solr (camel-solr)
      * Perform operations against Apache Lucene Solr.
      * 
-     * Category: monitoring,search
+     * Category: search,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-solr
      * 
@@ -4005,32 +4072,6 @@ public interface ComponentsBuilderFactory {
      */
     static SolrComponentBuilderFactory.SolrComponentBuilder solr() {
         return SolrComponentBuilderFactory.solr();
-    }
-    /**
-     * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 4.8
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * @return the dsl builder
-     */
-    static SolrcloudComponentBuilderFactory.SolrcloudComponentBuilder solrcloud() {
-        return SolrcloudComponentBuilderFactory.solrcloud();
-    }
-    /**
-     * Solr (Secure) (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 4.8
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * @return the dsl builder
-     */
-    static SolrsComponentBuilderFactory.SolrsComponentBuilder solrs() {
-        return SolrsComponentBuilderFactory.solrs();
     }
     /**
      * Splunk (camel-splunk)
@@ -4309,6 +4350,20 @@ public interface ComponentsBuilderFactory {
         return TelegramComponentBuilderFactory.telegram();
     }
     /**
+     * TensorFlow Serving (camel-tensorflow-serving)
+     * Provide access to TensorFlow Serving model servers to run inference with
+     * TensorFlow saved models remotely
+     * 
+     * Category: ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-tensorflow-serving
+     * 
+     * @return the dsl builder
+     */
+    static TensorflowServingComponentBuilderFactory.TensorflowServingComponentBuilder tensorflowServing() {
+        return TensorflowServingComponentBuilderFactory.tensorflowServing();
+    }
+    /**
      * Thrift (camel-thrift)
      * Call and expose remote procedures (RPC) with Apache Thrift data format
      * and serialization mechanism.
@@ -4360,6 +4415,20 @@ public interface ComponentsBuilderFactory {
      */
     static TimerComponentBuilderFactory.TimerComponentBuilder timer() {
         return TimerComponentBuilderFactory.timer();
+    }
+    /**
+     * TorchServe (camel-torchserve)
+     * Provide access to PyTorch TorchServe servers to run inference with
+     * PyTorch models remotely
+     * 
+     * Category: ai
+     * Since: 4.9
+     * Maven coordinates: org.apache.camel:camel-torchserve
+     * 
+     * @return the dsl builder
+     */
+    static TorchserveComponentBuilderFactory.TorchserveComponentBuilder torchserve() {
+        return TorchserveComponentBuilderFactory.torchserve();
     }
     /**
      * Twilio (camel-twilio)
@@ -4518,6 +4587,19 @@ public interface ComponentsBuilderFactory {
      */
     static WeatherComponentBuilderFactory.WeatherComponentBuilder weather() {
         return WeatherComponentBuilderFactory.weather();
+    }
+    /**
+     * weaviate (camel-weaviate)
+     * Perform operations on the Weaviate Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-weaviate
+     * 
+     * @return the dsl builder
+     */
+    static WeaviateComponentBuilderFactory.WeaviateComponentBuilder weaviate() {
+        return WeaviateComponentBuilderFactory.weaviate();
     }
     /**
      * Web3j Ethereum Blockchain (camel-web3j)

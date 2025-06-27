@@ -23,8 +23,9 @@ public class JsonPatchEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(4);
+        Set<String> props = new HashSet<>(5);
         props.add("allowContextMapAll");
+        props.add("allowTemplateFromHeader");
         props.add("contentCache");
         props.add("lazyStartProducer");
         props.add("resourceUri");

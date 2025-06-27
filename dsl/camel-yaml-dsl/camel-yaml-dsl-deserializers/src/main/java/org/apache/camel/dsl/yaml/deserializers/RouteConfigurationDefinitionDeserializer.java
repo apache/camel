@@ -39,7 +39,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           inline = false,
           types = org.apache.camel.model.RouteConfigurationDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
-          nodes = { "route-configuration", "routeConfiguration" },
+          nodes = { "routeConfiguration" },
           properties = {
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),

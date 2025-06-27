@@ -42,7 +42,8 @@ public class AWSConfigProducerIT extends AWSConfigBase {
             public void process(Exchange exchange) {
 
                 exchange.getMessage().setHeader(AWSConfigConstants.SOURCE, "AWS");
-                exchange.getMessage().setHeader(AWSConfigConstants.RULE_SOURCE_IDENTIFIER, "S3_LIFECYCLE_POLICY_CHECK");
+                exchange.getMessage().setHeader(AWSConfigConstants.RULE_SOURCE_IDENTIFIER,
+                        "S3_ACCESS_POINT_PUBLIC_ACCESS_BLOCKS");
                 exchange.getMessage().setHeader(AWSConfigConstants.RULE_NAME, "Test");
             }
         });

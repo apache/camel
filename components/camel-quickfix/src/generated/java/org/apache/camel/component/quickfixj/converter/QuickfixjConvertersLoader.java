@@ -45,13 +45,37 @@ public final class QuickfixjConvertersLoader implements TypeConverterLoader, Cam
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.InputStream.class, quickfix.Message.class, false,
-            (type, exchange, value) -> org.apache.camel.component.quickfixj.converter.QuickfixjConverters.toInputStream((quickfix.Message) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.quickfixj.converter.QuickfixjConverters.toInputStream((quickfix.Message) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, quickfix.Message.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.quickfixj.converter.QuickfixjConverters.toMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.quickfixj.converter.QuickfixjConverters.toMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, quickfix.Message.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.quickfixj.converter.QuickfixjConverters.toMessage((java.lang.String) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.quickfixj.converter.QuickfixjConverters.toMessage((java.lang.String) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, quickfix.SessionID.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.quickfixj.converter.QuickfixjConverters.toSessionID((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.quickfixj.converter.QuickfixjConverters.toSessionID((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

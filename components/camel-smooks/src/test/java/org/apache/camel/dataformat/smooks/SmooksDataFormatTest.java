@@ -84,7 +84,7 @@ public class SmooksDataFormatTest extends CamelTestSupport {
         customer.setLastName("Cocktolstol");
         customer.setGender(Gender.Male);
         customer.setAge(35);
-        customer.setCountry("USA");
+        customer.setCountry("Wonderland");
 
         exchange.getIn().setBody(customer, JavaSource.class);
 

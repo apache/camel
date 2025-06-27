@@ -24,6 +24,8 @@ public class Sns2HeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
+        setLowerCase(true);
+
         // filter headers begin with "Camel" or "org.apache.camel"
         setOutFilterPattern("(breadcrumbId|Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
     }

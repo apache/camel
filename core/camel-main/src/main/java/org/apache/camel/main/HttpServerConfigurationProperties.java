@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Configuration for embedded HTTP server for standalone Camel applications (not Spring Boot / Quarkus).
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
@@ -38,14 +38,23 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private String path = "/";
     private Long maxBodySize;
     private boolean useGlobalSslContextParameters;
-
+    @Metadata(defaultValue = "true")
+    private boolean fileUploadEnabled = true;
+    @Metadata
+    private String fileUploadDirectory;
+    @Deprecated
     private boolean infoEnabled;
     private boolean staticEnabled;
+    private String staticSourceDir;
     @Metadata(defaultValue = "/")
     private String staticContextPath = "/";
+    @Deprecated
     private boolean devConsoleEnabled;
+    @Deprecated
     private boolean healthCheckEnabled;
+    @Deprecated
     private boolean jolokiaEnabled;
+    @Deprecated
     private boolean metricsEnabled;
     private boolean uploadEnabled;
     private String uploadSourceDir;
@@ -64,6 +73,13 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private String jwtKeystorePath;
     @Metadata(label = "security", secret = true)
     private String jwtKeystorePassword;
+
+    @Deprecated
+    @Metadata(defaultValue = "/q/health")
+    private String healthPath = "/q/health";
+    @Deprecated
+    @Metadata(defaultValue = "/q/jolokia")
+    private String jolokiaPath = "/q/jolokia";
 
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -144,12 +160,40 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
+    public boolean isFileUploadEnabled() {
+        return fileUploadEnabled;
+    }
+
+    /**
+     * Whether to enable file uploads being supported (such as POST multipart/form-data) and stored into a temporary
+     * directory.
+     */
+    public void setFileUploadEnabled(boolean fileUploadEnabled) {
+        this.fileUploadEnabled = fileUploadEnabled;
+    }
+
+    public String getFileUploadDirectory() {
+        return fileUploadDirectory;
+    }
+
+    /**
+     * Directory to temporary store file uploads while Camel routes the incoming request.
+     *
+     * If no directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir
+     * directory.
+     */
+    public void setFileUploadDirectory(String fileUploadDirectory) {
+        this.fileUploadDirectory = fileUploadDirectory;
+    }
+
+    @Deprecated(since = "4.12.0")
     public boolean isInfoEnabled() {
         return infoEnabled;
     }
 
     /**
-     * Whether to enable info console. If enabled then you can see some basic Camel information at /q/info
+     * Whether to enable info console. If enabled then you can see some basic Camel information at /q/info. Deprecated
+     * since 4.12.0, use HTTP management server instead.
      */
     public void setInfoEnabled(boolean infoEnabled) {
         this.infoEnabled = infoEnabled;
@@ -165,6 +209,17 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setStaticEnabled(boolean staticEnabled) {
         this.staticEnabled = staticEnabled;
+    }
+
+    public String getStaticSourceDir() {
+        return staticSourceDir;
+    }
+
+    /**
+     * Additional directory that holds static content when static is enabled.
+     */
+    public void setStaticSourceDir(String staticSourceDir) {
+        this.staticSourceDir = staticSourceDir;
     }
 
     public String getStaticContextPath() {
@@ -187,44 +242,73 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      * Whether to enable developer console (not intended for production use). Dev console must also be enabled on
      * CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code
      * <tt>camelContext.setDevConsole(true);</tt> If enabled then you can access a basic developer console on
-     * context-path: /q/dev.
+     * context-path: /q/dev. Deprecated since 4.12.0, use HTTP management server instead.
      */
     public void setDevConsoleEnabled(boolean devConsoleEnabled) {
         this.devConsoleEnabled = devConsoleEnabled;
     }
 
+    @Deprecated(since = "4.12.0")
     public boolean isHealthCheckEnabled() {
         return healthCheckEnabled;
     }
 
     /**
      * Whether to enable health-check console. If enabled then you can access health-check status on context-path:
-     * /q/health
+     * /q/health (default). Deprecated since 4.12.0, use HTTP management server instead.
      */
     public void setHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
     }
 
+    @Deprecated(since = "4.12.0")
     public boolean isJolokiaEnabled() {
         return jolokiaEnabled;
     }
 
     /**
-     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia
+     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia. Deprecated
+     * since 4.12.0, use HTTP management server instead.
      */
     public void setJolokiaEnabled(boolean jolokiaEnabled) {
         this.jolokiaEnabled = jolokiaEnabled;
     }
 
+    @Deprecated(since = "4.12.0")
     public boolean isMetricsEnabled() {
         return metricsEnabled;
     }
 
     /**
-     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics
+     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics (default).
+     * Deprecated since 4.12.0, use HTTP management server instead.
      */
     public void setMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
+    }
+
+    @Deprecated(since = "4.12.0")
+    public String getHealthPath() {
+        return healthPath;
+    }
+
+    /**
+     * The path endpoint used to expose the health status. Deprecated since 4.12.0, use HTTP management server instead.
+     */
+    public void setHealthPath(String healthPath) {
+        this.healthPath = healthPath;
+    }
+
+    @Deprecated(since = "4.12.0")
+    public String getJolokiaPath() {
+        return jolokiaPath;
+    }
+
+    /**
+     * The path endpoint used to expose the jolokia data. Deprecated since 4.12.0, use HTTP management server instead.
+     */
+    public void setJolokiaPath(String jolokiaPath) {
+        this.jolokiaPath = jolokiaPath;
     }
 
     public boolean isUploadEnabled() {
@@ -393,6 +477,26 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
+     * Whether to enable file uploads being supported (such as POST multipart/form-data) and stored into a temporary
+     * directory.
+     */
+    public HttpServerConfigurationProperties withFileUploadEnabled(boolean fileUploadEnabled) {
+        this.fileUploadEnabled = fileUploadEnabled;
+        return this;
+    }
+
+    /**
+     * Directory to temporary store file uploads while Camel routes the incoming request.
+     *
+     * If no directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir
+     * directory.
+     */
+    public HttpServerConfigurationProperties withFileUploadDirectory(String fileUploadDirectory) {
+        this.fileUploadDirectory = fileUploadDirectory;
+        return this;
+    }
+
+    /**
      * Whether to enable info console. If enabled then you can see some basic Camel information at /q/info
      */
     public HttpServerConfigurationProperties withInfoEnabled(boolean infoEnabled) {
@@ -410,6 +514,14 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
+     * Additional directory that holds static content when static is enabled.
+     */
+    public HttpServerConfigurationProperties withStaticSourceDir(String staticSourceDir) {
+        this.staticSourceDir = staticSourceDir;
+        return this;
+    }
+
+    /**
      * The context-path to use for serving static content. By default, the root path is used. And if there is an
      * index.html page then this is automatically loaded.
      */
@@ -419,10 +531,11 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
+     *
      * Whether to enable developer console (not intended for production use). Dev console must also be enabled on
      * CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code
      * <tt>camelContext.setDevConsole(true);</tt> If enabled then you can access a basic developer console on
-     * context-path: /q/dev.
+     * context-path: /q/dev. Deprecated since 4.12.0, use HTTP management server instead.
      */
     public HttpServerConfigurationProperties withDevConsoleEnabled(boolean devConsoleEnabled) {
         this.devConsoleEnabled = devConsoleEnabled;
@@ -431,7 +544,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * Whether to enable health-check console. If enabled then you can access health-check status on context-path:
-     * /q/health
+     * /q/health (default). Deprecated since 4.12.0, use HTTP management server instead.
      */
     public HttpServerConfigurationProperties withHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
@@ -439,7 +552,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia
+     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia. Deprecated
+     * since 4.12.0, use HTTP management server instead.
      */
     public HttpServerConfigurationProperties withJolokiaEnabled(boolean jolokiaEnabled) {
         this.jolokiaEnabled = jolokiaEnabled;
@@ -447,7 +561,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics
+     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics (default).
+     * Deprecated since 4.12.0, use HTTP management server instead.
      */
     public HttpServerConfigurationProperties withMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
@@ -538,6 +653,22 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withJwtKeystorePassword(String jwtKeystorePassword) {
         this.jwtKeystorePassword = jwtKeystorePassword;
+        return this;
+    }
+
+    /**
+     * The path endpoint used to expose the health status
+     */
+    public HttpServerConfigurationProperties withHealthPath(String healthPath) {
+        this.healthPath = healthPath;
+        return this;
+    }
+
+    /**
+     * The path endpoint used to expose the jolokia data. Deprecated since 4.12.0, use HTTP management server instead.
+     */
+    public HttpServerConfigurationProperties withJolokiaPath(String jolokiaPath) {
+        this.jolokiaPath = jolokiaPath;
         return this;
     }
 

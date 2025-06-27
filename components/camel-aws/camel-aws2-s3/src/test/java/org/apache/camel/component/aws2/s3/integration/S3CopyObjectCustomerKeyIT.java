@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static software.amazon.awssdk.services.s3.model.ServerSideEncryption.AES256;
 
-@Disabled(value = "Broken test CAMEL-21417")
+@Disabled("Broken test")
 public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
 
     byte[] secretKey = generateSecretKey();

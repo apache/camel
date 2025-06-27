@@ -27,6 +27,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
+import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.IdempotentRepository;
@@ -85,7 +86,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         }
 
         // check if we can begin on this file
-        String key = asKey(file);
+        String key = asKey(exchange, file);
         boolean answer = false;
         try {
             answer = idempotentRepository.add(exchange, key);
@@ -121,7 +122,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     public void releaseExclusiveReadLockOnRollback(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        String key = asKey(file);
+        String key = asKey(exchange, file);
         Runnable r = () -> {
             if (removeOnRollback) {
                 idempotentRepository.remove(exchange, key);
@@ -158,7 +159,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     public void releaseExclusiveReadLockOnCommit(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        String key = asKey(file);
+        String key = asKey(exchange, file);
         Runnable r = () -> {
             if (removeOnCommit) {
                 idempotentRepository.remove(exchange, key);
@@ -311,12 +312,12 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         this.readLockIdempotentReleaseExecutorService = readLockIdempotentReleaseExecutorService;
     }
 
-    protected String asKey(GenericFile<File> file) {
+    protected String asKey(Exchange exchange, GenericFile<File> file) {
         // use absolute file path as default key, but evaluate if an expression
         // key was configured
         String key = file.getAbsoluteFilePath();
         if (endpoint.getIdempotentKey() != null) {
-            Exchange dummy = endpoint.createExchange(file);
+            Exchange dummy = GenericFileHelper.createDummy(endpoint, exchange, () -> file);
             key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
         }
         return key;

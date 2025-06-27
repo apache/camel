@@ -82,6 +82,12 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
         assertNotNull(e, "Should have thrown an exception");
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e);
         assertEquals(501, cause.getStatusCode());
+
+        Message out = reply.getMessage();
+        assertNotNull(out);
+        Map<String, Object> headers = out.getHeaders();
+        assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, headers.get(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("Not Implemented", headers.get(Exchange.HTTP_RESPONSE_TEXT));
     }
 
     @Test

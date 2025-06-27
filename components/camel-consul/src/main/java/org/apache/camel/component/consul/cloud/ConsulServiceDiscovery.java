@@ -38,6 +38,7 @@ import org.kiwiproject.consul.option.QueryOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulServiceDiscovery.class);
 

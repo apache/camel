@@ -87,45 +87,4 @@ class SetHeaderTest extends YamlTestSupport {
         }
     }
 
-    def "Error: kebab-case: set-header"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - set-header:
-                          name: test
-                          simple: "${body}"
-                      - to: "mock:result"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (Exception e) {
-            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
-        }
-    }
-
-    def "Error: kebab-case: result-type"() {
-        when:
-        var route = '''
-                - from:
-                    uri: "direct:start"
-                    steps:    
-                      - setHeader:
-                          name: test
-                          simple:
-                            expression: "${body}"
-                            result-type: "long" 
-                      - to: "mock:result"
-            '''
-        then:
-        try {
-            loadRoutes(route)
-            Assertions.fail("Should have thrown exception")
-        } catch (Exception e) {
-            Assertions.assertTrue(e.message.contains("additional properties"), e.getMessage())
-        }
-    }
 }

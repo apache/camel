@@ -24,7 +24,7 @@ public class LangChain4jChatConfigurationConfigurer extends org.apache.camel.sup
         org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration target = (org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "chatmodel":
-        case "chatModel": target.setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
+        case "chatModel": target.setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatModel.class, value)); return true;
         case "chatoperation":
         case "chatOperation": target.setChatOperation(property(camelContext, org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class, value)); return true;
         default: return false;
@@ -35,7 +35,7 @@ public class LangChain4jChatConfigurationConfigurer extends org.apache.camel.sup
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "chatmodel":
-        case "chatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
+        case "chatModel": return dev.langchain4j.model.chat.ChatModel.class;
         case "chatoperation":
         case "chatOperation": return org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class;
         default: return null;

@@ -110,6 +110,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "includeDetails": getOrCreateConfig(target).setIncludeDetails(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "initialreplayidmap":
         case "initialReplayIdMap": getOrCreateConfig(target).setInitialReplayIdMap(property(camelContext, java.util.Map.class, value)); return true;
+        case "initialreplyidtimeout":
+        case "initialReplyIdTimeout": target.setInitialReplyIdTimeout(property(camelContext, int.class, value)); return true;
         case "instanceid":
         case "instanceId": getOrCreateConfig(target).setInstanceId(property(camelContext, java.lang.String.class, value)); return true;
         case "instanceurl":
@@ -314,6 +316,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "includeDetails": return java.lang.Boolean.class;
         case "initialreplayidmap":
         case "initialReplayIdMap": return java.util.Map.class;
+        case "initialreplyidtimeout":
+        case "initialReplyIdTimeout": return int.class;
         case "instanceid":
         case "instanceId": return java.lang.String.class;
         case "instanceurl":
@@ -519,6 +523,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "includeDetails": return getOrCreateConfig(target).getIncludeDetails();
         case "initialreplayidmap":
         case "initialReplayIdMap": return getOrCreateConfig(target).getInitialReplayIdMap();
+        case "initialreplyidtimeout":
+        case "initialReplyIdTimeout": return target.getInitialReplyIdTimeout();
         case "instanceid":
         case "instanceId": return getOrCreateConfig(target).getInstanceId();
         case "instanceurl":

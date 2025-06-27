@@ -1,0 +1,127 @@
+= Observability Services Component
+:doctitle: Observability Services
+:shortname: observability-services
+:artifactid: camel-observability-services
+:description: Camel Observability Services
+:since: 4.9
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Camel Observability Services provide services for observing the state of Camel. Examples are health and metrics services. Each service configuration is opinionated and abstracts away from implementations, such as OpenTelemetry, Prometheus, or Micrometer. Although the services are primarily intended for the cloud, they can be used in any environment.
+
+== What is observability?
+
+Modern systems (especially distributed ones like Camel) are complex. When something breaks or slows down, you need visibility into what's happening inside without manually digging into every part. Observability gives you that visibility. 
+
+There are 4 different types of observability:
+
+1. Health (Is the system up and running?)
+2. Metrics (Numeric measurements over time.)
+3. Tracing (Follows the path of a message as it moves through routes.)
+4. Logging (Records of events happening in Camel.)
+
+Camel Observability services unifies all the different types of observability, and provides standardized endpoints for each. 
+
+== Usage
+
+=== Installation
+
+All you need to do is to add the `camel-observability-services` dependency:
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.apache.camel/camel-observability-services -->
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-observability-services</artifactId>
+    <version>x.x.x</version>
+</dependency>
+```
+
+The presence of this dependency will provide the following components:
+
+* camel-health
+* camel-management
+* camel-micrometer-prometheus
+* camel-opentelemetry2
+
+NOTE: mind that we're using the `camel-opentelemetry2` implementation which has slight differences from `camel-opentelemetry`.
+
+There's no need to add any further configuration.
+Each component will be configured using each own default setting,
+except the endpoint which will be exposed in `/observe/<service>` by default.
+
+=== Endpoints
+
+The presence of this dependency will expose the following endpoints:
+
+|====
+|Endpoint | Description
+
+| `/observe/health` | startup probe endpoint
+| `/observe/health/live` | liveness probe endpoint
+| `/observe/health/ready` | readiness probe endpoint
+| `/observe/metrics` | metrics exposed as in Micrometer Prometheus Registry
+
+|====
+
+The endpoints are exposed in the management port (default `9876`) in order to avoid interfering with the regular business running on any other port.
+
+NOTE: the management port is available since version 4.12.0. In previous version the endpoints were exposed in the regular business port (default `8080`).
+
+== Configuration
+
+If you need to customize each of the different components provided within this service, then, you can specify in the `application.properties` each of the configuration as it would be done normally when you provide the individual component.
+
+WARNING: The customization of the configuration for this component is not available for Spring Boot runtime due to a https://github.com/spring-projects/spring-boot/issues/24688[known limitation]. You can use this component in Spring Boot runtime with the default settings only. If you need to provide any customization, you'll need to configure each component separately.
+
+=== OpenTelemetry configuration
+
+The presence of this component will provide the required instrumentation to easily enable the collection of OpenTelemetry metrics.
+
+=== Testing OpenTelemetry collector
+
+If you need a quick way to verify the configuration of OpenTelemetry traces, you can start a local collector by running a Docker service:
+
+```bash
+docker run -p 4318:4318 otel/opentelemetry-collector-contrib:0.113.0
+```
+
+This service will expose the port `4318` to `localhost` which is the default setting expected by the agent. You can change this configuration accordingly.
+
+==== OpenTelemetry Agent configuration
+
+To collect the metrics exposed by the application, and, depending on the runtime of choice,
+you will need to start your Camel application with a Java agent.
+The Java agent goal is to push those metrics to the OpenTelemetry compatible collector server.
+Follow the instructions
+provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[OpenTelemetry Java Agent configuration].
+
+=== JMX configuration
+
+The presence of this component implies the presence of `camel-management` component. This is in charge to include information about Camel application status in JMX format.
+
+NOTE: The presence of this component automatically enables the collection of the JMX metrics. This should be negligible from performance point of view.
+However, you may want to disable that running the application with `-Dorg.apache.camel.jmx.disabled=true` JVM option.
+
+==== Testing JMX
+
+An easy way to test the JMX configuration is to run a JMX client such as `jconsole`.
+Execute it from the same machine where the Camel application you want to monitor is running,
+and you can quickly verify the status of the application (selecting the local process).
+There is the possibility to https://docs.oracle.com/javase/tutorial/jmx/remote/jconsole.html[expose the JMX remotely as well].
+
+Exposing remote JMX would require some security setting in place to avoid disclosing sensitive information.
+Also mind that it may not be suitable for cloud development, i.e.,
+Kubernetes, due to possible limitations within the binary protocols used by the JMX technology.
+In this case, it is recommended the usage of a JSR 160 compatible Java agent.
+
+==== JMX Agent configuration
+
+When dealing with JMX,
+you may want
+to expose the information available via HTTP(S) protocol which would make JMX more suitable to cloud-based development.
+A possible way to expose the information is to use a JSR 160 compatible Java agent,
+whose goal is to interact as an adapter interface towards JMX, exposing an HTTP-based service instead.
+Follow the instructions provided in xref:manual::jmx.adoc#_how_to_use_a_java_agent[JMX Java Agent configuration].

@@ -16,7 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +30,8 @@ import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "sbom",
-                     description = "Generate a CycloneDX or SPDX SBOM for a specific project")
+                     description = "Generate a CycloneDX or SPDX SBOM for a specific project", sortOptions = false,
+                     showDefaultValues = true)
 public class SBOMGenerator extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
@@ -48,12 +50,12 @@ public class SBOMGenerator extends Export {
     protected String outputName = "sbom";
 
     @CommandLine.Option(names = { "--cyclonedx-plugin-version" }, description = "The CycloneDX Maven Plugin version",
-                        defaultValue = "2.7.9")
-    protected String cyclonedxPluginVersion = "2.7.9";
+                        defaultValue = "2.9.1")
+    protected String cyclonedxPluginVersion = "2.9.1";
 
     @CommandLine.Option(names = { "--spdx-plugin-version" }, description = "The SPDX Maven Plugin version",
-                        defaultValue = "0.7.0")
-    protected String spdxPluginVersion = "0.7.0";
+                        defaultValue = "0.7.4")
+    protected String spdxPluginVersion = "0.7.4";
 
     @CommandLine.Option(names = { "--sbom-format" }, description = "The SBOM format, possible values are cyclonedx or spdx",
                         defaultValue = CYCLONEDX_FORMAT)
@@ -78,7 +80,7 @@ public class SBOMGenerator extends Export {
     protected Integer export() throws Exception {
         Integer answer = doExport();
         if (answer == 0) {
-            File buildDir = new File(EXPORT_DIR);
+            Path buildDir = Paths.get(EXPORT_DIR);
             String mvnProgramCall;
             if (FileUtil.isWindows()) {
                 mvnProgramCall = "cmd /c mvn";
@@ -102,7 +104,7 @@ public class SBOMGenerator extends Export {
                               + " -DoutputFormat="
                               + sbomOutputFormat,
                                 null,
-                                buildDir);
+                                buildDir.toFile());
                 done = p.waitFor(60, TimeUnit.SECONDS);
                 if (!done) {
                     answer = 1;
@@ -126,10 +128,10 @@ public class SBOMGenerator extends Export {
                 Process p = Runtime.getRuntime()
                         .exec(mvnProgramCall + " org.spdx:spdx-maven-plugin:" + spdxPluginVersion
                               + ":createSPDX -DspdxFileName="
-                              + outputDirectoryParameter + File.separator + outputName + "." + sbomOutputFormat
+                              + Paths.get(outputDirectoryParameter, outputName + "." + sbomOutputFormat).toString()
                               + " -DoutputFormat=" + outputFormat,
                                 null,
-                                buildDir);
+                                buildDir.toFile());
                 done = p.waitFor(60, TimeUnit.SECONDS);
                 if (!done) {
                     answer = 1;
@@ -139,15 +141,15 @@ public class SBOMGenerator extends Export {
                 }
             }
             // cleanup dir after complete
-            FileUtil.removeDir(buildDir);
+            org.apache.camel.dsl.jbang.core.common.PathUtils.deleteDirectory(buildDir);
         }
         return answer;
     }
 
     protected Integer doExport() throws Exception {
         // read runtime and gav from properties if not configured
-        File profile = new File("application.properties");
-        if (profile.exists()) {
+        Path profile = Paths.get("application.properties");
+        if (Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
             if (this.runtime == null && prop.containsKey("camel.jbang.runtime")) {
@@ -187,7 +189,7 @@ public class SBOMGenerator extends Export {
                 return export(new ExportCamelMain(getMain()));
             }
             default -> {
-                System.err.println("Unknown runtime: " + runtime);
+                printer().printErr("Unknown runtime: " + runtime);
                 return 1;
             }
         }

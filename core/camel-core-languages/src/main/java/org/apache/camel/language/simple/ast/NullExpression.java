@@ -49,7 +49,7 @@ public class NullExpression extends BaseSimpleNode {
     }
 
     @Override
-    public String createCode(String expression) throws SimpleParserException {
+    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
         return "null";
     }
 }

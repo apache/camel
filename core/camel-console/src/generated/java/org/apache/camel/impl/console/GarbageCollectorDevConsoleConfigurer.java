@@ -24,7 +24,6 @@ public class GarbageCollectorDevConsoleConfigurer extends org.apache.camel.suppo
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("CamelContext", org.apache.camel.CamelContext.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(GarbageCollectorDevConsoleConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -40,10 +39,6 @@ public class GarbageCollectorDevConsoleConfigurer extends org.apache.camel.suppo
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

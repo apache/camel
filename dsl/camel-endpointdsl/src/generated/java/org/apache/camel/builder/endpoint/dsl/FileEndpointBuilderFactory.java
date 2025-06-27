@@ -563,14 +563,12 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
-         * already processed files. Will by default use a memory based LRUCache
-         * that holds 1000 entries. If noop=true then idempotent will be enabled
-         * as well to avoid consuming the same files over and over again.
+         * Sets whether to eagerly add the filename to the idempotent repository
+         * or wait until the exchange is complete.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: filter
          * 
          * @param idempotentEager the value to set
@@ -581,15 +579,13 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
-         * already processed files. Will by default use a memory based LRUCache
-         * that holds 1000 entries. If noop=true then idempotent will be enabled
-         * as well to avoid consuming the same files over and over again.
+         * Sets whether to eagerly add the filename to the idempotent repository
+         * or wait until the exchange is complete.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
+         * Default: true
          * Group: filter
          * 
          * @param idempotentEager the value to set
@@ -1756,7 +1752,8 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1776,7 +1773,8 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4025,7 +4023,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @return the name of the header {@code FileNameOnly}.
          */
@@ -4034,13 +4032,11 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * (producer) Specifies the name of the file to write (relative to the
-         * endpoint directory). This name can be a String; a String with a
-         * xref:languages:file-language.adocFile Language or
-         * xref:languages:simple-language.adocSimple expression; or an
-         * Expression object. If it's null then Camel will auto-generate a
-         * filename based on the message unique ID. (consumer) Name of the
-         * consumed file as a relative file path with offset from the starting
-         * directory configured on the endpoint.
+         * endpoint directory). This name can be a String; a String with a file
+         * or simple Language expression; or an Expression object. If it's null
+         * then Camel will auto-generate a filename based on the message unique
+         * ID. (consumer) Name of the consumed file as a relative file path with
+         * offset from the starting directory configured on the endpoint.
          * 
          * The option is a: {@code String} type.
          * 
@@ -4117,8 +4113,8 @@ public interface FileEndpointBuilderFactory {
             return "CamelFileContentType";
         }
         /**
-         * The file path. For relative files this is the starting directory the
-         * relative filename. For absolute files this is the absolute path.
+         * The file path. For relative files this is the starting directory. For
+         * absolute files this is the absolute path.
          * 
          * The option is a: {@code String} type.
          * 

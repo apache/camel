@@ -27,6 +27,9 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     private AzureVaultConfigurationProperties azure;
     private HashicorpVaultConfigurationProperties hashicorp;
     private KubernetesVaultConfigurationProperties kubernetes;
+    private KubernetesConfigmapsVaultConfigurationProperties kubernetesConfigmaps;
+    private IBMSecretsManagerVaultConfigurationProperties ibmSecretsManager;
+    private SpringCloudConfigConfigurationProperties springConfig;
 
     public VaultConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -53,6 +56,15 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
         }
         if (kubernetes != null) {
             kubernetes.close();
+        }
+        if (kubernetesConfigmaps != null) {
+            kubernetesConfigmaps.close();
+        }
+        if (ibmSecretsManager != null) {
+            ibmSecretsManager.close();
+        }
+        if (springConfig != null) {
+            springConfig.close();
         }
     }
 
@@ -102,5 +114,29 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
             kubernetes = new KubernetesVaultConfigurationProperties(parent);
         }
         return kubernetes;
+    }
+
+    @Override
+    public KubernetesConfigmapsVaultConfigurationProperties kubernetesConfigmaps() {
+        if (kubernetesConfigmaps == null) {
+            kubernetesConfigmaps = new KubernetesConfigmapsVaultConfigurationProperties(parent);
+        }
+        return kubernetesConfigmaps;
+    }
+
+    @Override
+    public IBMSecretsManagerVaultConfigurationProperties ibmSecretsManager() {
+        if (ibmSecretsManager == null) {
+            ibmSecretsManager = new IBMSecretsManagerVaultConfigurationProperties(parent);
+        }
+        return ibmSecretsManager;
+    }
+
+    @Override
+    public SpringCloudConfigConfigurationProperties springConfig() {
+        if (springConfig == null) {
+            springConfig = new SpringCloudConfigConfigurationProperties(parent);
+        }
+        return springConfig;
     }
 }

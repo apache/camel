@@ -205,10 +205,132 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to skip mapping all the Camel headers as HTTP request
-         * headers. If there are no data from Camel headers needed to be
-         * included in the HTTP request then this can avoid parsing overhead
-         * with many object allocations for the JVM garbage collector.
+         * To enable logging HTTP request and response. You can use a custom
+         * LoggingHttpActivityListener as httpActivityListener to control
+         * logging options.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param logHttpActivity the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder logHttpActivity(boolean logHttpActivity) {
+            doSetProperty("logHttpActivity", logHttpActivity);
+            return this;
+        }
+        /**
+         * To enable logging HTTP request and response. You can use a custom
+         * LoggingHttpActivityListener as httpActivityListener to control
+         * logging options.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param logHttpActivity the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder logHttpActivity(String logHttpActivity) {
+            doSetProperty("logHttpActivity", logHttpActivity);
+            return this;
+        }
+        /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder to
+         * build the form.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder multipartUpload(boolean multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder to
+         * build the form.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder multipartUpload(String multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * The name of the multipart/form-data when multipartUpload is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: data
+         * Group: producer
+         * 
+         * @param multipartUploadName the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder multipartUploadName(String multipartUploadName) {
+            doSetProperty("multipartUploadName", multipartUploadName);
+            return this;
+        }
+        /**
+         * Whether to skip Camel control headers (CamelHttp... headers) to
+         * influence this endpoint. Control headers from previous HTTP
+         * components can influence how this Camel component behaves such as
+         * CamelHttpPath, CamelHttpQuery, etc.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param skipControlHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder skipControlHeaders(boolean skipControlHeaders) {
+            doSetProperty("skipControlHeaders", skipControlHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip Camel control headers (CamelHttp... headers) to
+         * influence this endpoint. Control headers from previous HTTP
+         * components can influence how this Camel component behaves such as
+         * CamelHttpPath, CamelHttpQuery, etc.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param skipControlHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder skipControlHeaders(String skipControlHeaders) {
+            doSetProperty("skipControlHeaders", skipControlHeaders);
+            return this;
+        }
+        /**
+         * Whether to skip mapping the Camel headers as HTTP request headers.
+         * This is useful when you know that calling the HTTP service should not
+         * include any custom headers.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -223,10 +345,9 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to skip mapping all the Camel headers as HTTP request
-         * headers. If there are no data from Camel headers needed to be
-         * included in the HTTP request then this can avoid parsing overhead
-         * with many object allocations for the JVM garbage collector.
+         * Whether to skip mapping the Camel headers as HTTP request headers.
+         * This is useful when you know that calling the HTTP service should not
+         * include any custom headers.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -242,9 +363,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Whether to skip mapping all the HTTP response headers to Camel
-         * headers. If there are no data needed from HTTP headers then this can
-         * avoid parsing overhead with many object allocations for the JVM
-         * garbage collector.
+         * headers.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -260,9 +379,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Whether to skip mapping all the HTTP response headers to Camel
-         * headers. If there are no data needed from HTTP headers then this can
-         * avoid parsing overhead with many object allocations for the JVM
-         * garbage collector.
+         * headers.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -311,7 +428,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication domain to use with NTML.
+         * Proxy authentication domain to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -320,6 +437,7 @@ public interface HttpEndpointBuilderFactory {
          * @param proxyAuthDomain the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
             doSetProperty("proxyAuthDomain", proxyAuthDomain);
             return this;
@@ -353,7 +471,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication domain (workstation name) to use with NTML.
+         * Proxy authentication domain (workstation name) to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -362,6 +480,7 @@ public interface HttpEndpointBuilderFactory {
          * @param proxyAuthNtHost the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder proxyAuthNtHost(String proxyAuthNtHost) {
             doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
             return this;
@@ -479,7 +598,21 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Authentication domain to use with NTML.
+         * Authentication bearer token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authBearerToken the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder authBearerToken(String authBearerToken) {
+            doSetProperty("authBearerToken", authBearerToken);
+            return this;
+        }
+        /**
+         * Authentication domain to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -488,6 +621,7 @@ public interface HttpEndpointBuilderFactory {
          * @param authDomain the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder authDomain(String authDomain) {
             doSetProperty("authDomain", authDomain);
             return this;
@@ -525,7 +659,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Authentication host to use with NTML.
+         * Authentication host to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -534,13 +668,14 @@ public interface HttpEndpointBuilderFactory {
          * @param authHost the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder authHost(String authHost) {
             doSetProperty("authHost", authHost);
             return this;
         }
         /**
          * Authentication methods allowed to use as a comma separated list of
-         * values Basic, Digest or NTLM.
+         * values Basic, Bearer, or NTLM. (NTLM is deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -551,21 +686,6 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder authMethod(String authMethod) {
             doSetProperty("authMethod", authMethod);
-            return this;
-        }
-        /**
-         * Which authentication method to prioritize to use, either as Basic,
-         * Digest or NTLM.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param authMethodPriority the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder authMethodPriority(String authMethodPriority) {
-            doSetProperty("authMethodPriority", authMethodPriority);
             return this;
         }
         /**
@@ -597,6 +717,112 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Default expiration time for cached OAuth2 tokens, in seconds. Used if
+         * token response does not contain 'expires_in' field.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 3600
+         * Group: security
+         * 
+         * @param oauth2CachedTokensDefaultExpirySeconds the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensDefaultExpirySeconds(long oauth2CachedTokensDefaultExpirySeconds) {
+            doSetProperty("oauth2CachedTokensDefaultExpirySeconds", oauth2CachedTokensDefaultExpirySeconds);
+            return this;
+        }
+        /**
+         * Default expiration time for cached OAuth2 tokens, in seconds. Used if
+         * token response does not contain 'expires_in' field.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 3600
+         * Group: security
+         * 
+         * @param oauth2CachedTokensDefaultExpirySeconds the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensDefaultExpirySeconds(String oauth2CachedTokensDefaultExpirySeconds) {
+            doSetProperty("oauth2CachedTokensDefaultExpirySeconds", oauth2CachedTokensDefaultExpirySeconds);
+            return this;
+        }
+        /**
+         * Amount of time which is deducted from OAuth2 tokens expiry time to
+         * compensate for the time it takes OAuth2 Token Endpoint to send the
+         * token over http, in seconds. Set this parameter to high value if you
+         * OAuth2 Token Endpoint answers slowly or you tokens expire quickly. If
+         * you set this parameter to too small value, you can get 4xx http
+         * errors because camel will think that the received token is still
+         * valid, while in reality the token is expired for the Authentication
+         * server.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 5
+         * Group: security
+         * 
+         * @param oauth2CachedTokensExpirationMarginSeconds the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensExpirationMarginSeconds(long oauth2CachedTokensExpirationMarginSeconds) {
+            doSetProperty("oauth2CachedTokensExpirationMarginSeconds", oauth2CachedTokensExpirationMarginSeconds);
+            return this;
+        }
+        /**
+         * Amount of time which is deducted from OAuth2 tokens expiry time to
+         * compensate for the time it takes OAuth2 Token Endpoint to send the
+         * token over http, in seconds. Set this parameter to high value if you
+         * OAuth2 Token Endpoint answers slowly or you tokens expire quickly. If
+         * you set this parameter to too small value, you can get 4xx http
+         * errors because camel will think that the received token is still
+         * valid, while in reality the token is expired for the Authentication
+         * server.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 5
+         * Group: security
+         * 
+         * @param oauth2CachedTokensExpirationMarginSeconds the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensExpirationMarginSeconds(String oauth2CachedTokensExpirationMarginSeconds) {
+            doSetProperty("oauth2CachedTokensExpirationMarginSeconds", oauth2CachedTokensExpirationMarginSeconds);
+            return this;
+        }
+        /**
+         * Whether to cache OAuth2 client tokens.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param oauth2CacheTokens the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CacheTokens(boolean oauth2CacheTokens) {
+            doSetProperty("oauth2CacheTokens", oauth2CacheTokens);
+            return this;
+        }
+        /**
+         * Whether to cache OAuth2 client tokens.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param oauth2CacheTokens the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CacheTokens(String oauth2CacheTokens) {
+            doSetProperty("oauth2CacheTokens", oauth2CacheTokens);
+            return this;
+        }
+        /**
          * OAuth2 client id.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -625,6 +851,20 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth2 Token endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauth2ResourceIndicator the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2ResourceIndicator(String oauth2ResourceIndicator) {
+            doSetProperty("oauth2ResourceIndicator", oauth2ResourceIndicator);
+            return this;
+        }
+        /**
          * OAuth2 scope.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -639,7 +879,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * OAuth2 Token endpoint.
+         * OAuth2 Resource Indicator.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1027,6 +1267,38 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom activity listener.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.http.HttpActivityListener</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param httpActivityListener the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder httpActivityListener(org.apache.camel.component.http.HttpActivityListener httpActivityListener) {
+            doSetProperty("httpActivityListener", httpActivityListener);
+            return this;
+        }
+        /**
+         * To use a custom activity listener.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.http.HttpActivityListener</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param httpActivityListener the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder httpActivityListener(String httpActivityListener) {
+            doSetProperty("httpActivityListener", httpActivityListener);
+            return this;
+        }
+        /**
          * If this option is true, The http producer won't read response body
          * and cache the input stream.
          * 
@@ -1337,7 +1609,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure the HttpClient using the key/values from the Map.
+         * To configure the HttpClient using the key/values from the Map. This
+         * is a multi-value option with prefix: httpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1356,7 +1629,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure the HttpClient using the key/values from the Map.
+         * To configure the HttpClient using the key/values from the Map. This
+         * is a multi-value option with prefix: httpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1375,7 +1649,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To configure the connection and the socket using the key/values from
-         * the Map.
+         * the Map. This is a multi-value option with prefix: httpConnection.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1395,7 +1669,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To configure the connection and the socket using the key/values from
-         * the Map.
+         * the Map. This is a multi-value option with prefix: httpConnection.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1473,7 +1747,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use System Properties as fallback for configuration.
+         * To use System Properties as fallback for configuration for
+         * configuring HTTP Client.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1488,7 +1763,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use System Properties as fallback for configuration.
+         * To use System Properties as fallback for configuration for
+         * configuring HTTP Client.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

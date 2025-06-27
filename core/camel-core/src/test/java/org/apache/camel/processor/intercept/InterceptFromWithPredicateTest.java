@@ -25,7 +25,7 @@ public class InterceptFromWithPredicateTest extends InterceptFromRouteTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 // intercept with a predicate test
-                interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b").stop();
+                interceptFrom().onWhen(header("foo").isEqualTo("bar")).to("mock:b").stop();
 
                 from("direct:start").to("mock:a");
             }

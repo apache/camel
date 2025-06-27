@@ -21,6 +21,7 @@ import org.apache.camel.test.infra.postgres.services.PostgresLocalContainerServi
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 public class PgReplicationITSupport extends CamelTestSupport {
 
@@ -28,7 +29,9 @@ public class PgReplicationITSupport extends CamelTestSupport {
     static PostgresLocalContainerService service;
 
     static {
-        PostgreSQLContainer container = new PostgreSQLContainer<>(PostgresLocalContainerService.DEFAULT_POSTGRES_CONTAINER)
+        PostgreSQLContainer container = new PostgreSQLContainer<>(
+                DockerImageName.parse(PostgresLocalContainerService.DEFAULT_POSTGRES_CONTAINER)
+                        .asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("camel")
                 .withCommand("postgres -c wal_level=logical");
 

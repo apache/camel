@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Iterator;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -25,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
 
@@ -34,10 +34,14 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,error")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "resilience4jConfiguration", "faultToleranceConfiguration", "outputs", "onFallback" })
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlAttribute
     private String configuration;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private Boolean inheritErrorHandler;
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlElement
@@ -51,6 +55,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     protected CircuitBreakerDefinition(CircuitBreakerDefinition source) {
         super(source);
         this.configuration = source.configuration;
+        this.inheritErrorHandler = source.inheritErrorHandler;
         this.resilience4jConfiguration
                 = source.resilience4jConfiguration != null ? source.resilience4jConfiguration.copyDefinition() : null;
         this.faultToleranceConfiguration
@@ -91,37 +96,10 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (output instanceof OnFallbackDefinition onFallbackDefinition) {
-            onFallback = onFallbackDefinition;
-        } else {
-            if (onFallback != null) {
-                onFallback.addOutput(output);
-            } else {
-                super.addOutput(output);
-            }
-        }
-    }
-
-    @Override
-    public ProcessorDefinition<?> end() {
         if (onFallback != null) {
-            // end fallback as well
-            onFallback.end();
-        }
-        return super.end();
-    }
-
-    @Override
-    public void preCreateProcessor() {
-        // move the fallback from outputs to fallback which we need to ensure
-        // such as when using the XML DSL
-        Iterator<ProcessorDefinition<?>> it = outputs.iterator();
-        while (it.hasNext()) {
-            ProcessorDefinition<?> out = it.next();
-            if (out instanceof OnFallbackDefinition onFallbackDefinition) {
-                onFallback = onFallbackDefinition;
-                it.remove();
-            }
+            onFallback.addOutput(output);
+        } else {
+            super.addOutput(output);
         }
     }
 
@@ -151,6 +129,16 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      */
     public void setConfiguration(String configuration) {
         this.configuration = configuration;
+    }
+
+    @Override
+    public Boolean getInheritErrorHandler() {
+        return inheritErrorHandler;
+    }
+
+    @Override
+    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
     }
 
     public OnFallbackDefinition getOnFallback() {
@@ -206,6 +194,20 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      */
     public CircuitBreakerDefinition configuration(String ref) {
         configuration = ref;
+        return this;
+    }
+
+    /**
+     * To turn on or off Camel error handling during circuit breaker.
+     *
+     * If this is enabled then Camel error handler will first trigger if there is an error in the circuit breaker, which
+     * allows to let Camel handle redeliveries. If all attempts is failed, then after the circuit breaker is finished,
+     * then Camel error handler can handle the error as well such as the dead letter channel.
+     *
+     * By default, Camel error handler is turned off.
+     */
+    public CircuitBreakerDefinition inheritErrorHandler(boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
         return this;
     }
 

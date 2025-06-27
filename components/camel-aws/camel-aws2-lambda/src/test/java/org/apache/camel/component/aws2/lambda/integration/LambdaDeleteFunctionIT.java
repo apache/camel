@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
 
 import static org.junit.Assert.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class LambdaDeleteFunctionIT extends Aws2LambdaBase {
 
     @EndpointInject

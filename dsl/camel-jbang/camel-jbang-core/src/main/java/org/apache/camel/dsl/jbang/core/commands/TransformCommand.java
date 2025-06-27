@@ -19,7 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "transform",
-                     description = "Transform message or Camel routes (use transform --help to see sub commands)")
+                     description = "Transform message or Camel routes (use transform --help to see sub commands)",
+                     sortOptions = false, showDefaultValues = true)
 public class TransformCommand extends CamelCommand {
 
     public TransformCommand(CamelJBangMain main) {

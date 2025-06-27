@@ -185,6 +185,11 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     }
 
     @Override
+    public String getDescription() {
+        return definition.getDescription();
+    }
+
+    @Override
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");

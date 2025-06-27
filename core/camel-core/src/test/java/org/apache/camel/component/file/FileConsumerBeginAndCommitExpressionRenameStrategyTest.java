@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit test for the FileRenameStrategy using preMoveExpression and expression options
  */
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends ContextTestSupport {
 
     @Test
@@ -44,12 +47,13 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
 
         template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
+        context.getRouteController().startAllRoutes();
+
         mock.assertIsSatisfied();
     }
 
     @Test
     public void testIllegalOptions() {
-
         Endpoint ep = context.getEndpoint(fileUri("?move=../done/${file:name}&delete=true"));
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> ep.createConsumer(exchange -> {
@@ -62,6 +66,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
             public void configure() {
                 from(fileUri(
                         "reports?preMove=../inprogress/${file:name.noext}.bak&move=../done/${file:name}&initialDelay=0&delay=10"))
+                        .autoStartup(false)
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) {

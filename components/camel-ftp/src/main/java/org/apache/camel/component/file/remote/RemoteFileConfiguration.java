@@ -73,10 +73,10 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
                                                                          + "option is set as timeout on the JSCH Session instance.",
               javaType = "java.time.Duration")
     private int soTimeout = 300000;
-    @UriParam(label = "advanced", description = "Should an exception be thrown if connection failed (exhausted)"
-                                                + "By default exception is not thrown and a <tt>WARN</tt> is logged. You can use this to enable exception "
-                                                + "being thrown and handle the thrown exception from the {@link "
-                                                + "org.apache.camel.spi.PollingConsumerPollStrategy} rollback method.")
+    @UriParam(label = "consumer,advanced", description = "Should an exception be thrown if connection failed (exhausted)"
+                                                         + "By default exception is not thrown and a <tt>WARN</tt> is logged. You can use this to enable exception "
+                                                         + "being thrown and handle the thrown exception from the {@link "
+                                                         + "org.apache.camel.spi.PollingConsumerPollStrategy} rollback method.")
     private boolean throwExceptionOnConnectFailed;
     @UriParam(label = "advanced", description = "Sets optional site command(s) to be executed after successful "
                                                 + "login. <p/> Multiple site commands can be separated using a new line character.")

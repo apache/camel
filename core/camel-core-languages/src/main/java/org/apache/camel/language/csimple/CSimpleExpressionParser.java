@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.csimple;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.language.simple.SimpleExpressionParser;
 
 /**
@@ -24,8 +25,12 @@ import org.apache.camel.language.simple.SimpleExpressionParser;
 public class CSimpleExpressionParser {
 
     public String parseExpression(String expression) {
+        return parseExpression(null, expression);
+    }
+
+    public String parseExpression(CamelContext camelContext, String expression) {
         // reuse simple language parser but output the result as java code
-        SimpleExpressionParser parser = new SimpleExpressionParser(null, expression, true, null);
+        SimpleExpressionParser parser = new SimpleExpressionParser(camelContext, expression, true, null);
         return parser.parseCode();
     }
 

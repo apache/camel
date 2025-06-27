@@ -31,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
+import org.apache.camel.model.BasicExpressionNode;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
@@ -48,6 +49,7 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.KeyValueHolder;
+import org.apache.camel.xml.out.BaseWriter;
 import org.apache.camel.xml.out.ModelWriter;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
@@ -86,7 +88,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         };
 
         StringWriter buffer = new StringWriter();
-        ModelWriter writer = new ModelWriter(buffer, "http://camel.apache.org/schema/spring") {
+        ModelWriter writer = new ModelWriter(buffer, BaseWriter.DEFAULT_NAMESPACE) {
             @Override
             protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def)
                     throws IOException {
@@ -230,8 +232,16 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
      * @param namespaces the map of namespaces to add discovered XML namespaces into
      */
     private static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
-        Collection<ExpressionNode> col = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
-        for (ExpressionNode en : col) {
+        for (ExpressionNode en : filterTypeInOutputs(route.getOutputs(), ExpressionNode.class)) {
+            NamespaceAware na = getNamespaceAwareFromExpression(en);
+            if (na != null) {
+                Map<String, String> map = na.getNamespaces();
+                if (map != null && !map.isEmpty()) {
+                    namespaces.putAll(map);
+                }
+            }
+        }
+        for (BasicExpressionNode<?> en : filterTypeInOutputs(route.getOutputs(), BasicExpressionNode.class)) {
             NamespaceAware na = getNamespaceAwareFromExpression(en);
             if (na != null) {
                 Map<String, String> map = na.getNamespaces();
@@ -295,6 +305,20 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
     }
 
     private static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {
+        ExpressionDefinition ed = expressionNode.getExpression();
+
+        NamespaceAware na = null;
+        Expression exp = ed.getExpressionValue();
+        if (exp instanceof NamespaceAware namespaceAware) {
+            na = namespaceAware;
+        } else if (ed instanceof NamespaceAware namespaceAware) {
+            na = namespaceAware;
+        }
+
+        return na;
+    }
+
+    private static NamespaceAware getNamespaceAwareFromExpression(BasicExpressionNode expressionNode) {
         ExpressionDefinition ed = expressionNode.getExpression();
 
         NamespaceAware na = null;
@@ -436,7 +460,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             def.setDataFormats(new ArrayList<>(dataFormats.values()));
 
             StringWriter tmp = new StringWriter();
-            ModelWriter writer = new ModelWriter(tmp, null);
+            ModelWriter writer = new ModelWriter(tmp, BaseWriter.DEFAULT_NAMESPACE);
             writer.writeDataFormatsDefinition(def);
 
             // output with 4 space indent

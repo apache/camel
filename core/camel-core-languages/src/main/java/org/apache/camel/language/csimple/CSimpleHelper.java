@@ -205,6 +205,10 @@ public final class CSimpleHelper {
         return exchange.getVariables();
     }
 
+    public static int variablesSize(Exchange exchange) {
+        return exchange.getVariables().size();
+    }
+
     public static String bodyOneLine(Exchange exchange) {
         String body = exchange.getIn().getBody(String.class);
         if (body == null) {
@@ -498,6 +502,25 @@ public final class CSimpleHelper {
             return new ArrayList<>();
         }
         throw new IllegalArgumentException("function empty(%s) has unknown type".formatted(type));
+    }
+
+    public static List<Object> list(Exchange exchange, Object... args) {
+        List<Object> answer = new ArrayList<>();
+        for (int i = 0; args != null && i < args.length; i++) {
+            answer.add(args[i]);
+        }
+        return answer;
+    }
+
+    public static Map<String, Object> map(Exchange exchange, Object... args) {
+        Map<String, Object> answer = new LinkedHashMap<>();
+        for (int i = 0, j = 0; args != null && i < args.length - 1; j++) {
+            String key = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, args[i]);
+            Object value = args[i + 1];
+            answer.put(key, value);
+            i = i + 2;
+        }
+        return answer;
     }
 
     public static String substring(Exchange exchange, Object num1, Object num2) {

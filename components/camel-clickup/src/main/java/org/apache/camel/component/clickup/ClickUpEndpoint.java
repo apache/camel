@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Receives events from ClickUp
  */
-@UriEndpoint(firstVersion = "4.9.0-SNAPSHOT",
+@UriEndpoint(firstVersion = "4.9.0",
              scheme = "clickup",
              title = "ClickUp",
              syntax = "clickup:workspaceId",

@@ -16,36 +16,75 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.Printer;
-import org.apache.camel.util.FileUtil;
 
 public final class CommandHelper {
 
-    private static ThreadLocal<Printer> printerAssociation = new ThreadLocal<>();
+    private static final ThreadLocal<Printer> printerAssociation = new ThreadLocal<>();
 
     private CommandHelper() {
     }
 
-    public static Printer GetPrinter() {
+    public static Printer getPrinter() {
         return printerAssociation.get();
     }
 
-    public static void SetPrinter(Printer out) {
+    public static void setPrinter(Printer out) {
         printerAssociation.set(out);
     }
 
     public static void cleanExportDir(String dir) {
-        File target = new File(dir);
-        File[] files = target.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                if (!f.isHidden() && f.isDirectory()) {
-                    FileUtil.removeDir(f);
-                } else if (!f.isHidden() && f.isFile()) {
-                    FileUtil.deleteFile(f);
+        CommandHelper.cleanExportDir(dir, true);
+    }
+
+    public static void cleanExportDir(String dir, boolean keepHidden) {
+        Path targetPath = Paths.get(dir);
+        if (!Files.exists(targetPath)) {
+            return;
+        }
+
+        try (Stream<Path> paths = Files.list(targetPath)) {
+            paths.forEach(path -> {
+                try {
+                    boolean isHidden = Files.isHidden(path);
+                    if (Files.isDirectory(path) && (!keepHidden || !isHidden)) {
+                        PathUtils.deleteDirectory(path);
+                    } else if (Files.isRegularFile(path) && (!keepHidden || !isHidden)) {
+                        Files.deleteIfExists(path);
+                    }
+                } catch (IOException e) {
+                    // Ignore
                 }
+            });
+        } catch (IOException e) {
+            // Ignore
+        }
+    }
+
+    /**
+     * A background task that reads from console, and can be used to signal when user has entered or pressed ctrl + c /
+     * ctrl + d
+     */
+    public static class ReadConsoleTask implements Runnable {
+
+        private final Runnable listener;
+
+        public ReadConsoleTask(Runnable listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void run() {
+            if (System.console() != null) {
+                System.console().readLine();
+                listener.run();
             }
         }
     }

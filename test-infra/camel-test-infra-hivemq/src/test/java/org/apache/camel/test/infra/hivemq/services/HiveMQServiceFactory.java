@@ -91,4 +91,13 @@ public final class HiveMQServiceFactory {
             INSTANCE = builder.build();
         }
     }
+
+    public static class LocalHiveMQService extends LocalHiveMQInfraService implements HiveMQService {
+    }
+
+    public static class RemoteHiveMQService extends RemoteHiveMQInfraService implements HiveMQService {
+    }
+
+    public static class LocalHiveMQSparkplugTCKService extends LocalHiveMQSparkplugTCKInfraService implements HiveMQService {
+    }
 }

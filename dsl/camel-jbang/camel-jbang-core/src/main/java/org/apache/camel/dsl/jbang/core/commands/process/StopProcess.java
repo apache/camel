@@ -16,16 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.util.FileUtil;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "stop", description = "Shuts down running Camel integrations", sortOptions = false)
+@Command(name = "stop", description = "Shuts down running Camel integrations", sortOptions = false, showDefaultValues = true)
 public class StopProcess extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration(s)", arity = "0..1")
@@ -46,10 +47,10 @@ public class StopProcess extends ProcessBaseCommand {
 
         // stop by deleting the pid file
         for (Long pid : pids) {
-            File pidFile = new File(CommandLineHelper.getCamelDir(), Long.toString(pid));
-            if (pidFile.exists()) {
+            Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(pid));
+            if (Files.exists(pidFile)) {
                 printer().println("Shutting down Camel integration (PID: " + pid + ")");
-                FileUtil.deleteFile(pidFile);
+                PathUtils.deleteFile(pidFile);
             }
         }
         for (Long pid : pids) {

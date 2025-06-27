@@ -58,7 +58,7 @@ include::partial$component-endpoint-options.adoc[]
 
 |CamelSchematronValidationStatus |The schematron validation status: SUCCESS / FAILED |String |IN
 
-|CamelSchematronValidationReport |The schematrion report body in XML format. See an example below |String |IN
+|CamelSchematronValidationReport |The schematron report body in XML format. See an example below |String |IN
 |=======================================================================
 
 == Examples

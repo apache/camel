@@ -26,9 +26,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
+@Disabled("Doesn't work with Localstack v4")
 public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
 
     @EndpointInject

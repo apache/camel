@@ -1252,7 +1252,8 @@ public interface MinioEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1272,7 +1273,8 @@ public interface MinioEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2575,9 +2577,7 @@ public interface MinioEndpointBuilderFactory {
         private static final MinioHeaderNameBuilder INSTANCE = new MinioHeaderNameBuilder();
 
         /**
-         * Producer: The bucket Name which this object will be stored or which
-         * will be used for the current operation. Consumer: The name of the
-         * bucket in which this object is contained.
+         * Consumer: The name of the bucket in which this object is contained.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2875,6 +2875,20 @@ public interface MinioEndpointBuilderFactory {
          */
         public String minioPresignedURLExpirationTime() {
             return "CamelMinioPresignedURLExpirationTime";
+        }
+        /**
+         * The bucket Name to override which this object will be stored or which
+         * will be used for the current operation or in which this object is
+         * contained.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioOverrideBucketName}.
+         */
+        public String minioOverrideBucketName() {
+            return "CamelMinioOverrideBucketName";
         }
     }
     static MinioEndpointBuilder endpointBuilder(String componentName, String path) {

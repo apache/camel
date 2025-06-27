@@ -19,12 +19,25 @@ package org.apache.camel.component.kafka.consumer.support.subcription;
 import org.apache.camel.component.kafka.consumer.support.TopicHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultSubscribeAdapter implements SubscribeAdapter {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSubscribeAdapter.class);
+
+    private final String topic;
+    private final boolean topicMustExists;
+
+    public DefaultSubscribeAdapter() {
+        this(null, false);
+    }
+
+    public DefaultSubscribeAdapter(String topic, boolean topicMustExists) {
+        this.topic = topic;
+        this.topicMustExists = topicMustExists;
+    }
 
     @Override
     public void subscribe(Consumer<?, ?> consumer, ConsumerRebalanceListener reBalanceListener, TopicInfo topicInfo) {
@@ -36,6 +49,22 @@ public class DefaultSubscribeAdapter implements SubscribeAdapter {
             consumer.subscribe(topicInfo.getPattern(), reBalanceListener);
         } else {
             consumer.subscribe(topicInfo.getTopics(), reBalanceListener);
+        }
+
+        if (topicMustExists) {
+            boolean found = false;
+            var it = consumer.listTopics().keySet().iterator();
+            while (!found && it.hasNext()) {
+                String id = it.next();
+                if (topicInfo.isPattern()) {
+                    found = topicInfo.getPattern().matcher(id).matches();
+                } else {
+                    found = topicInfo.getTopics().contains(id);
+                }
+            }
+            if (!found) {
+                throw new UnknownTopicOrPartitionException("Topic " + topic + " does not exists");
+            }
         }
     }
 }

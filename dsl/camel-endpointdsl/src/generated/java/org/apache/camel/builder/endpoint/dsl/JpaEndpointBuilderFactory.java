@@ -45,6 +45,36 @@ public interface JpaEndpointBuilderFactory {
             return (AdvancedJpaEndpointConsumerBuilder) this;
         }
         /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option is a:
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder entityManagerFactory(jakarta.persistence.EntityManagerFactory entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
+        /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option will be converted to a
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder entityManagerFactory(String entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
+        /**
          * The camel-jpa component will join transaction by default. You can use
          * this option to turn this off, for example, if you use LOCAL_RESOURCE
          * and join transaction doesn't work with your JPA provider. This option
@@ -829,7 +859,8 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -849,7 +880,8 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1094,7 +1126,8 @@ public interface JpaEndpointBuilderFactory {
          * their corresponding effective values you want to select for. When
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
+         * body, header and etc. . This is a multi-value option with prefix:
+         * parameters.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1119,7 +1152,8 @@ public interface JpaEndpointBuilderFactory {
          * their corresponding effective values you want to select for. When
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
-         * body, header and etc.
+         * body, header and etc. . This is a multi-value option with prefix:
+         * parameters.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1173,7 +1207,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1192,7 +1227,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1255,6 +1291,36 @@ public interface JpaEndpointBuilderFactory {
             return (AdvancedJpaEndpointProducerBuilder) this;
         }
 
+        /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option is a:
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointProducerBuilder entityManagerFactory(jakarta.persistence.EntityManagerFactory entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
+        /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option will be converted to a
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointProducerBuilder entityManagerFactory(String entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
         /**
          * The camel-jpa component will join transaction by default. You can use
          * this option to turn this off, for example, if you use LOCAL_RESOURCE
@@ -1754,7 +1820,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1773,7 +1840,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1837,6 +1905,36 @@ public interface JpaEndpointBuilderFactory {
             return (AdvancedJpaEndpointBuilder) this;
         }
 
+        /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option is a:
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointBuilder entityManagerFactory(jakarta.persistence.EntityManagerFactory entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
+        /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option will be converted to a
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointBuilder entityManagerFactory(String entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
         /**
          * The camel-jpa component will join transaction by default. You can use
          * this option to turn this off, for example, if you use LOCAL_RESOURCE
@@ -2016,7 +2114,8 @@ public interface JpaEndpointBuilderFactory {
         }
 
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2035,7 +2134,8 @@ public interface JpaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Additional properties for the entity manager to use.
+         * Additional properties for the entity manager to use. This is a
+         * multi-value option with prefix: emf.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

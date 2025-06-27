@@ -88,6 +88,8 @@ public class PahoMqtt5Configuration implements Cloneable {
     private int executorServiceTimeout = 1;
     @UriParam(defaultValue = "-1")
     private long sessionExpiryInterval = -1;
+    @UriParam(label = "consumer")
+    private boolean manualAcksEnabled;
 
     public String getClientId() {
         return clientId;
@@ -546,6 +548,22 @@ public class PahoMqtt5Configuration implements Cloneable {
      */
     public void setSessionExpiryInterval(long sessionExpiryInterval) {
         this.sessionExpiryInterval = sessionExpiryInterval;
+    }
+
+    /**
+     * Sets whether to use manual acknowledgements for the client.
+     *
+     * By default, this is false and message will be automatically acknowledged upon received by Camel. If set to true,
+     * the acknowledgement is deferred to be acknowledged by Camel at the end of processing the message. This ensures
+     * that only successfully processed messages is acknowledged, and allows to rollback and retry the message in case
+     * of an error during routing in Camel.
+     */
+    public boolean isManualAcksEnabled() {
+        return this.manualAcksEnabled;
+    }
+
+    public void setManualAcksEnabled(boolean manualAcksEnabled) {
+        this.manualAcksEnabled = manualAcksEnabled;
     }
 
     public PahoMqtt5Configuration copy() {

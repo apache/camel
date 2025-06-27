@@ -27,7 +27,7 @@ And in Spring Boot
 
 [source,text]
 ----
-camel.springboot.tracing = true
+camel.main.tracing = true
 ----
 
 === Setting Tracing in Standby mode
@@ -55,7 +55,7 @@ And in Spring Boot
 
 [source,text]
 ----
-camel.springboot.tracing-standby = true
+camel.main.tracing-standby = true
 ----
 
 If tracer is in standby mode, then tracing is made available, and can be enabled during runtime.
@@ -105,7 +105,7 @@ And in Spring Boot
 
 [source,properties]
 ----
-camel.springboot.tracing-logging-format = %-4.4s [%-30.30s] [%-50.50s]
+camel.main.tracing-logging-format = %-4.4s [%-30.30s] [%-50.50s]
 ----
 
 And in Camel Main / Quarkus

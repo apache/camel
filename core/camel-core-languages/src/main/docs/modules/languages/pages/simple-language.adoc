@@ -128,6 +128,7 @@ Camel OGNL expression.
 classname
 
 |headers |Map |refer to the headers
+|headers.size |int |The number of headers
 
 |variable.foo |Object |refer to the foo variable
 
@@ -140,6 +141,7 @@ value using a Camel OGNL expression.
 classname
 
 |variables |Map |refer to the variables
+|variables.size |int |The number of variables
 
 |exchangeProperty.foo |Object |refer to the foo property on the exchange
 
@@ -232,7 +234,11 @@ constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`
 
 `string` -> empty String +
 `list`   -> empty ArrayList +
-`map`    -> empty HashMap +
+`map`    -> empty LinkedHashMap +
+
+|list(val1,val2,...) | java.util.ArrayList | The list function creates an ArrayList with the given set of values.
+
+|map(key1,value1,...) | java.util.LinkedHashMap | The map function creates a LinkedHashMap with the given set of pairs.
 
 |null |null |represents a *null*
 
@@ -321,6 +327,29 @@ true, otherwise the value of `falseExp` is returned. This function is similar to
 
 |=======================================================================
 
+== Attachment functions
+
+From *Camel 4.10* onwards then Camel has built-in attachment functions making it easy to obtain
+details from attachments stored on the Camel Message such as from HTTP file uploads, email with file attachments etc.
+
+This requires having `camel-attachments` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Function |Type |Description
+
+|attachments |Map | All the attachments as a `Map<String,DataHandler>`.
+|attachments.size | int | The number of attachments. Is 0 if there are no attachments.
+|attachmentContentAsText(key) | String | The content of the attachment as text (ie `String`).
+|attachmentContent(key) | Object | The content of the attachment.
+|attachmentContentAs(key,_type_) | Object | The content of the attachment, converted to the given type.
+|attachmentHeader(key,name) | Object | The attachment header with the given name.
+|attachmentHeaderAs(key,name,_type_) | Object | The attachment header with the given name, converted to the given type.
+|attachment[key] | DataHandler | The `DataHandler` for the given attachment.
+|attachment.*OGNL* | Object | refer to the foo attachment on the exchange and invoke its value using a Camel OGNL expression.
+|=======================================================================
+
+
 == OGNL expression support
 
 The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] languages support a Camel xref:ognl-language.adoc[OGNL] notation for invoking beans in a chain like fashion.
@@ -361,7 +390,7 @@ The following variables support OGNL:
 |bodyAs(type)
 |messageAs(type)
 |header.foo
-|exchangePropety.foo
+|exchangeProperty.foo
 |variable.foo
 |=======================================================================
 

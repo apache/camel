@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.tooling.model.Strings;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -37,7 +38,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route", description = "Get status of Camel routes",
-         sortOptions = false)
+         sortOptions = false, showDefaultValues = true)
 public class CamelRouteStatus extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -71,6 +72,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         description = "Shows detailed information for routes that has error status")
     boolean error;
 
+    @CommandLine.Option(names = { "--description" },
+                        description = "Include description in the ID column (if available)")
+    boolean description;
+
     public CamelRouteStatus(CamelJBangMain main) {
         super(main);
     }
@@ -100,6 +105,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             }
                             row.pid = Long.toString(ph.pid());
                             row.routeId = o.getString("routeId");
+                            row.description = o.getString("description");
                             row.from = o.getString("from");
                             Boolean bool = o.getBoolean("remote");
                             if (bool != null) {
@@ -212,8 +218,12 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
-                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("ID").visible(!description).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
+                new Column().header("ID").visible(description).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(45, OverflowBehaviour.NEWLINE)
+                        .with(this::getIdAndDescription),
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
@@ -228,9 +238,9 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                 new Column().header("COVER").with(this::getCoverage),
                 new Column().header("MSG/S").with(this::getThroughput),
-                new Column().header("TOTAL").with(r -> r.total),
-                new Column().header("FAIL").with(r -> r.failed),
-                new Column().header("INFLIGHT").with(r -> r.inflight),
+                new Column().header("TOTAL").with(this::getTotal),
+                new Column().header("FAIL").with(this::getFailed),
+                new Column().header("INFLIGHT").with(this::getInflight),
                 new Column().header("MEAN").with(r -> r.mean),
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),
@@ -244,8 +254,12 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
-                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("ID").visible(!description).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
+                new Column().header("ID").visible(description).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(45, OverflowBehaviour.NEWLINE)
+                        .with(this::getIdAndDescription),
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
@@ -354,6 +368,18 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         }
     }
 
+    protected String getIdAndDescription(Row r) {
+        String id = getId(r);
+        if (description && r.description != null) {
+            if (id != null) {
+                id = id + "\n  " + Strings.wrapWords(r.description, " ", "\n  ", 40, true);
+            } else {
+                id = r.description;
+            }
+        }
+        return id;
+    }
+
     protected String getDelta(Row r) {
         if (r.delta != null) {
             if (r.delta.startsWith("-")) {
@@ -366,11 +392,24 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         return r.delta;
     }
 
+    protected String getTotal(Row r) {
+        return r.total;
+    }
+
+    protected String getFailed(Row r) {
+        return r.failed;
+    }
+
+    protected String getInflight(Row r) {
+        return r.inflight;
+    }
+
     static class Row {
         String pid;
         String name;
         long uptime;
         String routeId;
+        String description;
         String from;
         boolean remote;
         String source;

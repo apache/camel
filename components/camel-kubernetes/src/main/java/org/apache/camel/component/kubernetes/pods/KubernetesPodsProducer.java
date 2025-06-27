@@ -87,28 +87,33 @@ public class KubernetesPodsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         PodList podList;
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        if (ObjectHelper.isNotEmpty(namespaceName)) {
-            podList = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).list();
-        } else {
+
+        if (ObjectHelper.isEmpty(namespace)) {
             podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().list();
+        } else {
+            podList = getEndpoint().getKubernetesClient().pods().inNamespace(namespace).list();
         }
+
         prepareOutboundMessage(exchange, podList.getItems());
     }
 
     protected void doListPodsByLabel(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
+        PodList podList;
+
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get pods by labels require specify a labels set");
             throw new IllegalArgumentException("Get pods by labels require specify a labels set");
         }
 
-        PodList podList = getEndpoint().getKubernetesClient()
-                .pods()
-                .inAnyNamespace()
-                .withLabels(labels)
-                .list();
+        if (ObjectHelper.isEmpty(namespace)) {
+            podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().withLabels(labels).list();
+        } else {
+            podList = getEndpoint().getKubernetesClient().pods().inNamespace(namespace).withLabels(labels).list();
+        }
 
         prepareOutboundMessage(exchange, podList.getItems());
     }

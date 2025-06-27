@@ -34,9 +34,13 @@ import org.apache.camel.support.processor.ThroughputLogger;
 @org.apache.camel.spi.annotations.Component("mock")
 public class MockComponent extends DefaultComponent {
 
-    @Metadata(label = "producer")
+    @Metadata(label = "producer",
+              description = "To turn on logging when the mock receives an incoming message."
+                            + " This will log only one time at INFO level for the incoming message. For more detailed logging, then set the"
+                            + " logger to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class.")
     private boolean log;
-    @Metadata(label = "advanced", autowired = true)
+    @Metadata(label = "advanced", autowired = true,
+              description = "To use a custom ExchangeFormatter to format the Exchange into a String suitable for logging.")
     private ExchangeFormatter exchangeFormatter;
 
     public MockComponent() {
@@ -81,12 +85,6 @@ public class MockComponent extends DefaultComponent {
         return log;
     }
 
-    /**
-     * To turn on logging when the mock receives an incoming message.
-     * <p/>
-     * This will log only one time at INFO level for the incoming message. For more detailed logging, then set the
-     * logger to DEBUG level for the org.apache.camel.component.mock.MockEndpoint class.
-     */
     public void setLog(boolean log) {
         this.log = log;
     }
@@ -95,10 +93,6 @@ public class MockComponent extends DefaultComponent {
         return exchangeFormatter;
     }
 
-    /**
-     * Sets a custom {@link ExchangeFormatter} to convert the Exchange to a String suitable for logging. If not
-     * specified, we default to {@link DefaultExchangeFormatter}.
-     */
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
     }

@@ -27,5 +27,5 @@ And if you want to add an attachment, to a Camel `Message` you can do as shown:
 [source,java]
 ----
 AttachmentMessage attMsg = exchange.getIn(AttachmentMessage.class);
-attMsg.addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("myMessage1.xml"))));
+attMsg.addAttachment("message1.xml", new DataHandler(new CamelFileDataSource(new File("myMessage1.xml"))));
 ----

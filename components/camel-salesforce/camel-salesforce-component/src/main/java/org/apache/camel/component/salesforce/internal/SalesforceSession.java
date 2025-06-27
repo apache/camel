@@ -157,40 +157,44 @@ public class SalesforceSession extends ServiceSupport {
         }
     }
 
-    public synchronized String login(String oldToken) throws SalesforceException {
+    public String login(String oldToken) throws SalesforceException {
+        lock.lock();
+        try {
+            // check if we need a new session
+            // this way there's always a single valid session
+            if (accessToken == null || accessToken.equals(oldToken)) {
 
-        // check if we need a new session
-        // this way there's always a single valid session
-        if (accessToken == null || accessToken.equals(oldToken)) {
-
-            // try revoking the old access token before creating a new one
-            accessToken = oldToken;
-            if (accessToken != null) {
-                try {
-                    logout();
-                } catch (SalesforceException e) {
-                    LOG.warn("Error revoking old access token: {}", e.getMessage(), e);
+                // try revoking the old access token before creating a new one
+                accessToken = oldToken;
+                if (accessToken != null) {
+                    try {
+                        logout();
+                    } catch (SalesforceException e) {
+                        LOG.warn("Error revoking old access token: {}", e.getMessage(), e);
+                    }
+                    accessToken = null;
                 }
-                accessToken = null;
+
+                // login to Salesforce and get session id
+                final Request loginPost = getLoginRequest(null);
+                try {
+
+                    final ContentResponse loginResponse = loginPost.send();
+                    parseLoginResponse(loginResponse, loginResponse.getContentAsString());
+
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new SalesforceException("Login error: interrupted", e);
+                } catch (TimeoutException e) {
+                    throw new SalesforceException("Login request timeout: " + e.getMessage(), e);
+                } catch (ExecutionException e) {
+                    throw new SalesforceException("Unexpected login error: " + e.getCause().getMessage(), e.getCause());
+                }
             }
-
-            // login to Salesforce and get session id
-            final Request loginPost = getLoginRequest(null);
-            try {
-
-                final ContentResponse loginResponse = loginPost.send();
-                parseLoginResponse(loginResponse, loginResponse.getContentAsString());
-
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new SalesforceException("Login error: interrupted", e);
-            } catch (TimeoutException e) {
-                throw new SalesforceException("Login request timeout: " + e.getMessage(), e);
-            } catch (ExecutionException e) {
-                throw new SalesforceException("Unexpected login error: " + e.getCause().getMessage(), e.getCause());
-            }
+            return accessToken;
+        } finally {
+            lock.unlock();
         }
-        return accessToken;
     }
 
     /**
@@ -301,11 +305,11 @@ public class SalesforceSession extends ServiceSupport {
      * Parses login response, allows SalesforceSecurityHandler to parse a login request for a failed authentication
      * conversation.
      */
-    public synchronized void parseLoginResponse(ContentResponse loginResponse, String responseContent)
+    public void parseLoginResponse(ContentResponse loginResponse, String responseContent)
             throws SalesforceException {
-        final int responseStatus = loginResponse.getStatus();
-
+        lock.lock();
         try {
+            final int responseStatus = loginResponse.getStatus();
             switch (responseStatus) {
                 case HttpStatus.OK_200:
                     // parse the response to get token
@@ -352,47 +356,55 @@ public class SalesforceSession extends ServiceSupport {
         } catch (IOException e) {
             String msg = "Login error: response parse exception " + e.getMessage();
             throw new SalesforceException(msg, e);
+        } finally {
+            lock.unlock();
         }
     }
 
-    public synchronized void logout() throws SalesforceException {
-        if (accessToken == null) {
-            return;
-        }
-
+    public void logout() throws SalesforceException {
+        lock.lock();
         try {
-            String logoutUrl = (instanceUrl == null ? config.getLoginUrl() : instanceUrl) + OAUTH2_REVOKE_PATH + accessToken;
-            final Request logoutGet = httpClient.newRequest(logoutUrl).timeout(timeout, TimeUnit.MILLISECONDS);
-            final ContentResponse logoutResponse = logoutGet.send();
-
-            final int statusCode = logoutResponse.getStatus();
-
-            if (statusCode == HttpStatus.OK_200) {
-                LOG.debug("Logout successful");
-            } else {
-                LOG.debug("Failed to revoke OAuth token. This is expected if the token is invalid or already expired");
+            if (accessToken == null) {
+                return;
             }
 
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new SalesforceException("Interrupted while logging out", e);
-        } catch (ExecutionException e) {
-            final Throwable ex = e.getCause();
-            throw new SalesforceException("Unexpected logout exception: " + ex.getMessage(), ex);
-        } catch (TimeoutException e) {
-            throw new SalesforceException("Logout request TIMEOUT!", e);
-        } finally {
-            // reset session
-            accessToken = null;
-            instanceUrl = null;
-            // notify all session listeners about logout
-            for (SalesforceSessionListener listener : listeners) {
-                try {
-                    listener.onLogout();
-                } catch (Exception t) {
-                    LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
+            try {
+                String logoutUrl
+                        = (instanceUrl == null ? config.getLoginUrl() : instanceUrl) + OAUTH2_REVOKE_PATH + accessToken;
+                final Request logoutGet = httpClient.newRequest(logoutUrl).timeout(timeout, TimeUnit.MILLISECONDS);
+                final ContentResponse logoutResponse = logoutGet.send();
+
+                final int statusCode = logoutResponse.getStatus();
+
+                if (statusCode == HttpStatus.OK_200) {
+                    LOG.debug("Logout successful");
+                } else {
+                    LOG.debug("Failed to revoke OAuth token. This is expected if the token is invalid or already expired");
+                }
+
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new SalesforceException("Interrupted while logging out", e);
+            } catch (ExecutionException e) {
+                final Throwable ex = e.getCause();
+                throw new SalesforceException("Unexpected logout exception: " + ex.getMessage(), ex);
+            } catch (TimeoutException e) {
+                throw new SalesforceException("Logout request TIMEOUT!", e);
+            } finally {
+                // reset session
+                accessToken = null;
+                instanceUrl = null;
+                // notify all session listeners about logout
+                for (SalesforceSessionListener listener : listeners) {
+                    try {
+                        listener.onLogout();
+                    } catch (Exception t) {
+                        LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
+                    }
                 }
             }
+        } finally {
+            lock.unlock();
         }
     }
 

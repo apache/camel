@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -36,6 +37,9 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
     @UriPath(description = "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")
     @Metadata(required = true, supportFileReference = true, largeInput = true, inputLanguage = "sql")
     private String query;
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Whether to optimize batch by turning off auto-commit which can dramatic improve performance, and instead execute as a manual commit after the entire batch operation is complete")
+    private boolean batchAutoCommitDisabled = true;
 
     public SqlEndpoint() {
     }
@@ -94,4 +98,15 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
         this.query = query;
     }
 
+    public boolean isBatchAutoCommitDisabled() {
+        return batchAutoCommitDisabled;
+    }
+
+    /**
+     * Whether to optimize batch by turning off auto-commit which can dramatic improve performance, and instead execute
+     * as a manual commit after the entire batch operation is complete
+     */
+    public void setBatchAutoCommitDisabled(boolean batchAutoCommitDisabled) {
+        this.batchAutoCommitDisabled = batchAutoCommitDisabled;
+    }
 }

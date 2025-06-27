@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-pgevent</artifactId>
@@ -52,15 +52,15 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockito-version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- test infra -->
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-jdbc</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+       </dependency>
+       <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-jdbc</artifactId>
             <version>${project.version}</version>

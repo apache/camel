@@ -34,9 +34,10 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
+import org.apache.camel.model.dataformat.DfdlDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
-import org.apache.camel.model.dataformat.FuryDataFormat;
+import org.apache.camel.model.dataformat.ForyDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -307,18 +308,25 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Use the Fury data format
+     * Uses the DFDL data format
      */
-    public T fury() {
-        return dataFormat(new FuryDataFormat());
+    public T dfdl(String schemaUri) {
+        return dataFormat(new DfdlDataFormat(schemaUri));
     }
 
     /**
-     * Use the Fury data format with the given unmarshalType
+     * Use the Fory data format
+     */
+    public T fory() {
+        return dataFormat(new ForyDataFormat());
+    }
+
+    /**
+     * Use the Fory data format with the given unmarshalType
      */
 
-    public T fury(Class type) {
-        FuryDataFormat format = new FuryDataFormat();
+    public T fory(Class type) {
+        ForyDataFormat format = new ForyDataFormat();
         format.setUnmarshalType(type);
         return dataFormat(format);
     }

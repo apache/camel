@@ -23,7 +23,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.infinispan.commons.api.BasicCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Extremely unreliable on virtual machines")
 public class InfinispanRemoteConsumerIT extends InfinispanRemoteTestSupport implements InfinispanConsumerTestSupport {
     @Test
     public void consumerReceivedEventNotifications() throws Exception {

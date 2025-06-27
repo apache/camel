@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<routes xmlns="http://camel.apache.org/schema/spring"
+<routes xmlns="http://camel.apache.org/schema/xml-io"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:routes-ns-def="http://www.example.com/schema"
         xsi:schemaLocation="http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">

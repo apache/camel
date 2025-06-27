@@ -35,17 +35,20 @@ public final class BackOff {
     private Duration maxElapsedTime;
     private Long maxAttempts;
     private Double multiplier;
+    private boolean removeOnComplete;
 
     public BackOff() {
-        this(DEFAULT_DELAY, MAX_DURATION, MAX_DURATION, Long.MAX_VALUE, DEFAULT_MULTIPLIER);
+        this(DEFAULT_DELAY, MAX_DURATION, MAX_DURATION, Long.MAX_VALUE, DEFAULT_MULTIPLIER, true);
     }
 
-    public BackOff(Duration delay, Duration maxDelay, Duration maxElapsedTime, Long maxAttempts, Double multiplier) {
+    public BackOff(Duration delay, Duration maxDelay, Duration maxElapsedTime, Long maxAttempts, Double multiplier,
+                   boolean removeOnComplete) {
         this.delay = ObjectHelper.supplyIfEmpty(delay, () -> DEFAULT_DELAY);
         this.maxDelay = ObjectHelper.supplyIfEmpty(maxDelay, () -> MAX_DURATION);
         this.maxElapsedTime = ObjectHelper.supplyIfEmpty(maxElapsedTime, () -> MAX_DURATION);
         this.maxAttempts = ObjectHelper.supplyIfEmpty(maxAttempts, () -> Long.MAX_VALUE);
         this.multiplier = ObjectHelper.supplyIfEmpty(multiplier, () -> DEFAULT_MULTIPLIER);
+        this.removeOnComplete = removeOnComplete;
     }
 
     // *************************************
@@ -109,6 +112,17 @@ public final class BackOff {
         this.multiplier = multiplier;
     }
 
+    public boolean isRemoveOnComplete() {
+        return removeOnComplete;
+    }
+
+    /**
+     * Should the task be removed from the timer when its complete successfully.
+     */
+    public void setRemoveOnComplete(boolean removeOnComplete) {
+        this.removeOnComplete = removeOnComplete;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(256);
@@ -126,6 +140,7 @@ public final class BackOff {
         if (multiplier != DEFAULT_MULTIPLIER) {
             sb.append(", multiplier=").append(multiplier);
         }
+        sb.append(", remove=").append(removeOnComplete);
         sb.append("]");
         return sb.toString();
     }
@@ -151,6 +166,7 @@ public final class BackOff {
         private Duration maxElapsedTime = BackOff.MAX_DURATION;
         private Long maxAttempts = Long.MAX_VALUE;
         private Double multiplier = BackOff.DEFAULT_MULTIPLIER;
+        private boolean removeOnComplete = true;
 
         /**
          * Read values from the given {@link BackOff}
@@ -161,7 +177,7 @@ public final class BackOff {
             maxElapsedTime = template.maxElapsedTime;
             maxAttempts = template.maxAttempts;
             multiplier = template.multiplier;
-
+            removeOnComplete = template.removeOnComplete;
             return this;
         }
 
@@ -214,11 +230,16 @@ public final class BackOff {
             return this;
         }
 
+        public Builder removeOnComplete(boolean removeOnComplete) {
+            this.removeOnComplete = removeOnComplete;
+            return this;
+        }
+
         /**
          * Build a new instance of {@link BackOff}
          */
         public BackOff build() {
-            return new BackOff(delay, maxDelay, maxElapsedTime, maxAttempts, multiplier);
+            return new BackOff(delay, maxDelay, maxElapsedTime, maxAttempts, multiplier, removeOnComplete);
         }
     }
 }

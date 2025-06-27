@@ -28,7 +28,7 @@ class KameletLoaderDependenciesTest extends YamlTestSupport {
         context.registry.bind("myDep", new DependencyStrategy() {
             @Override
             void onDependency(String dependency) {
-                deps.add(dependency);
+                deps.add(dependency)
             }
         })
 
@@ -57,7 +57,7 @@ class KameletLoaderDependenciesTest extends YamlTestSupport {
                     from:
                       uri: "kamelet:source"
                       steps:
-                        - set-body:
+                        - setBody:
                             constant: "{{payload}}"
           ''')
         then:

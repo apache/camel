@@ -74,6 +74,40 @@ public interface GitHubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the commit consumer should store the commit message or the
+         * raw org.eclipse.egit.github.core.RepositoryCommit object as the
+         * message body.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param commitMessageAsBody the value to set
+         * @return the dsl builder
+         */
+        default GitHubEndpointConsumerBuilder commitMessageAsBody(boolean commitMessageAsBody) {
+            doSetProperty("commitMessageAsBody", commitMessageAsBody);
+            return this;
+        }
+        /**
+         * Whether the commit consumer should store the commit message or the
+         * raw org.eclipse.egit.github.core.RepositoryCommit object as the
+         * message body.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param commitMessageAsBody the value to set
+         * @return the dsl builder
+         */
+        default GitHubEndpointConsumerBuilder commitMessageAsBody(String commitMessageAsBody) {
+            doSetProperty("commitMessageAsBody", commitMessageAsBody);
+            return this;
+        }
+        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
@@ -448,7 +482,8 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -468,7 +503,8 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

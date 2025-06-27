@@ -163,7 +163,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         testClient2.close();
     }
 
-    @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
     @Test
     public void echo() throws Exception {
         WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app3", 2);

@@ -16,10 +16,16 @@
  */
 package org.apache.camel.component.langchain4j.tools;
 
+import java.util.List;
 import java.util.Map;
 
-import dev.langchain4j.agent.tool.JsonSchemaProperty;
 import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.model.chat.request.json.JsonBooleanSchema;
+import dev.langchain4j.model.chat.request.json.JsonIntegerSchema;
+import dev.langchain4j.model.chat.request.json.JsonNumberSchema;
+import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
+import dev.langchain4j.model.chat.request.json.JsonSchemaElement;
+import dev.langchain4j.model.chat.request.json.JsonStringSchema;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -87,15 +93,28 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
         if (camelToolParameter != null) {
             toolSpecificationBuilder.description(camelToolParameter.getDescription());
 
-            for (NamedJsonSchemaProperty namedJsonSchemaProperty : camelToolParameter.getProperties()) {
-                toolSpecificationBuilder.addParameter(namedJsonSchemaProperty.getName(),
-                        namedJsonSchemaProperty.getProperties());
+            JsonObjectSchema.Builder parametersBuilder = JsonObjectSchema.builder();
+
+            List<NamedJsonSchemaProperty> properties = camelToolParameter.getProperties();
+
+            for (NamedJsonSchemaProperty namedProperty : properties) {
+                parametersBuilder.addProperty(
+                        namedProperty.getName(),
+                        namedProperty.getProperties());
             }
+
+            toolSpecificationBuilder.parameters(parametersBuilder.build());
+
         } else if (description != null) {
             toolSpecificationBuilder.description(description);
 
             if (parameters != null) {
-                parameters.forEach((name, type) -> toolSpecificationBuilder.addParameter(name, JsonSchemaProperty.type(type)));
+
+                JsonObjectSchema.Builder parametersBuilder = JsonObjectSchema.builder();
+
+                parameters.forEach((name, type) -> parametersBuilder.addProperty(name, createJsonSchema(type)));
+
+                toolSpecificationBuilder.parameters(parametersBuilder.build());
             }
         } else {
             // Consumer without toolParameter or description
@@ -198,4 +217,21 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
         CamelToolExecutorCache.getInstance().getTools().clear();
     }
+
+    /**
+     * Creates a JsonScheùaElement based on a String type
+     *
+     * @param  type
+     * @return
+     */
+    private JsonSchemaElement createJsonSchema(String type) {
+        return switch (type.toLowerCase()) {
+            case "string" -> JsonStringSchema.builder().build();
+            case "integer" -> JsonIntegerSchema.builder().build();
+            case "number" -> JsonNumberSchema.builder().build();
+            case "boolean" -> JsonBooleanSchema.builder().build();
+            default -> JsonStringSchema.builder().build(); // fallback for unkown types
+        };
+    }
+
 }

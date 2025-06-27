@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-protobuf</artifactId>
@@ -121,7 +121,7 @@
                 <configuration>
                     <protocVersion>${protobuf-version}</protocVersion>
                     <sourceDirectories>
-                        <sourceDirectory>src/test/proto</sourceDirectory>
+                        <sourceDirectory>${project.basedir}/src/test/proto</sourceDirectory>
                     </sourceDirectories>
                     <binaryMavenPlugins>
                         <binaryMavenPlugin>

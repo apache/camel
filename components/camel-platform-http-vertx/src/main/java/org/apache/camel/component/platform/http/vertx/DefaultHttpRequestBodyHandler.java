@@ -27,7 +27,8 @@ import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSu
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
 
 /**
- * Default {@link HttpRequestBodyHandler} that will read to read the entire HTTP request body into memory.
+ * Default {@link HttpRequestBodyHandler} that will read the entire HTTP request body into memory if useBodyHandler is
+ * enabled.
  */
 class DefaultHttpRequestBodyHandler extends HttpRequestBodyHandler {
     DefaultHttpRequestBodyHandler(Handler<RoutingContext> delegate) {

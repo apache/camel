@@ -45,7 +45,13 @@ public final class DebeziumTypeConverterLoader implements TypeConverterLoader, C
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.util.Map.class, org.apache.kafka.connect.data.Struct.class, false,
-            (type, exchange, value) -> org.apache.camel.component.debezium.DebeziumTypeConverter.toMap((org.apache.kafka.connect.data.Struct) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.debezium.DebeziumTypeConverter.toMap((org.apache.kafka.connect.data.Struct) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

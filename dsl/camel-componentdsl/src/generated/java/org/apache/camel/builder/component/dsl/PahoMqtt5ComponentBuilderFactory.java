@@ -494,6 +494,29 @@ public interface PahoMqtt5ComponentBuilderFactory {
     
         
         /**
+         * Sets whether to use manual acknowledgements for the client. By
+         * default, this is false and message will be automatically acknowledged
+         * upon received by Camel. If set to true, the acknowledgement is
+         * deferred to be acknowledged by Camel at the end of processing the
+         * message. This ensures that only successfully processed messages is
+         * acknowledged, and allows to rollback and retry the message in case of
+         * an error during routing in Camel.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAcksEnabled the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5ComponentBuilder manualAcksEnabled(boolean manualAcksEnabled) {
+            doSetProperty("manualAcksEnabled", manualAcksEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -771,6 +794,7 @@ public interface PahoMqtt5ComponentBuilderFactory {
             case "willRetained": getOrCreateConfiguration((PahoMqtt5Component) component).setWillRetained((boolean) value); return true;
             case "willTopic": getOrCreateConfiguration((PahoMqtt5Component) component).setWillTopic((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((PahoMqtt5Component) component).setBridgeErrorHandler((boolean) value); return true;
+            case "manualAcksEnabled": getOrCreateConfiguration((PahoMqtt5Component) component).setManualAcksEnabled((boolean) value); return true;
             case "lazyStartProducer": ((PahoMqtt5Component) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((PahoMqtt5Component) component).setAutowiredEnabled((boolean) value); return true;
             case "client": ((PahoMqtt5Component) component).setClient((org.eclipse.paho.mqttv5.client.MqttClient) value); return true;

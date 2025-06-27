@@ -70,7 +70,7 @@ public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint impleme
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (client != null) {
+        if (client != null && configuration.getKubernetesClient() == null) {
             client.close();
         }
     }

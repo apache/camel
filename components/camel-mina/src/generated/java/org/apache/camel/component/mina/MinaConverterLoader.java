@@ -45,17 +45,53 @@ public final class MinaConverterLoader implements TypeConverterLoader, CamelCont
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, byte[].class, org.apache.mina.core.buffer.IoBuffer.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mina.MinaConverter.toByteArray((org.apache.mina.core.buffer.IoBuffer) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mina.MinaConverter.toByteArray((org.apache.mina.core.buffer.IoBuffer) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.InputStream.class, org.apache.mina.core.buffer.IoBuffer.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mina.MinaConverter.toInputStream((org.apache.mina.core.buffer.IoBuffer) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mina.MinaConverter.toInputStream((org.apache.mina.core.buffer.IoBuffer) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.ObjectInput.class, org.apache.mina.core.buffer.IoBuffer.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mina.MinaConverter.toObjectInput((org.apache.mina.core.buffer.IoBuffer) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mina.MinaConverter.toObjectInput((org.apache.mina.core.buffer.IoBuffer) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, org.apache.mina.core.buffer.IoBuffer.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mina.MinaConverter.toString((org.apache.mina.core.buffer.IoBuffer) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mina.MinaConverter.toString((org.apache.mina.core.buffer.IoBuffer) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.mina.core.buffer.IoBuffer.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.mina.MinaConverter.toIoBuffer((byte[]) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mina.MinaConverter.toIoBuffer((byte[]) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.mina.core.buffer.IoBuffer.class, org.apache.camel.StreamCache.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mina.MinaConverter.toIoBuffer((org.apache.camel.StreamCache) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mina.MinaConverter.toIoBuffer((org.apache.camel.StreamCache) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

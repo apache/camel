@@ -49,7 +49,10 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         String msg = parseString(definition.getMessage());
 
         // use a custom language
-        String lan = camelContext.getGlobalOption(Exchange.LOG_EIP_LANGUAGE);
+        String lan = parseString(definition.getLogLanguage());
+        if (lan == null) {
+            lan = camelContext.getGlobalOption(Exchange.LOG_EIP_LANGUAGE);
+        }
 
         // use simple language for the message string to give it more power
         Expression exp = null;

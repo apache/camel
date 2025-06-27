@@ -29,6 +29,7 @@ import org.apache.camel.spi.UnitOfWork;
  * Camel.
  */
 public interface ExchangeExtension {
+
     /**
      * If there is an existing inbound message of the given type then return it as-is, otherwise return null.
      *
@@ -45,7 +46,7 @@ public interface ExchangeExtension {
 
     /**
      * Returns the endpoint which originated this message exchange. See {@link Exchange#getFromEndpoint()} for details.
-     **/
+     */
     Endpoint getFromEndpoint();
 
     /**
@@ -195,6 +196,38 @@ public interface ExchangeExtension {
     void setNotifyEvent(boolean notifyEvent);
 
     /**
+     * Returns true if this exchange is marked for rollback
+     */
+    boolean isRollbackOnly();
+
+    /**
+     * Sets whether to mark this exchange for rollback
+     */
+    void setRollbackOnly(boolean rollbackOnly);
+
+    /**
+     * Returns true if this exchange is marked for rollback (only last transaction section)
+     */
+    boolean isRollbackOnlyLast();
+
+    /**
+     * Sets whether to mark this exchange for rollback (only last transaction section)
+     */
+    void setRollbackOnlyLast(boolean rollbackOnlyLast);
+
+    /**
+     * Returns true if this exchange is marked to stop and not continue routing.
+     */
+    boolean isRouteStop();
+
+    /**
+     * Sets whether this exchange is marked to stop and not continue routing.
+     *
+     * @param routeStop <tt>true</tt> to stop routing
+     */
+    void setRouteStop(boolean routeStop);
+
+    /**
      * To copy the internal properties from this exchange to the target exchange
      * <p/>
      * This method is only intended for Camel internally.
@@ -272,5 +305,17 @@ public interface ExchangeExtension {
      * @return         A new Exchange instance
      */
     Exchange createCopyWithProperties(CamelContext context);
+
+    /**
+     * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).
+     * <p/>
+     * <b>Important: </b> It is not always possible to determine if the message is a redelivery or not, and therefore
+     * <tt>false</tt> is returned. Such an example would be a JDBC message. However JMS brokers provides details if a
+     * message is redelivered.
+     *
+     * @param  message the camel message
+     * @return         <tt>true</tt> if redelivered, <tt>false</tt> if not or not able to determine
+     */
+    boolean isExternalRedelivered(Message message);
 
 }

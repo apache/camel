@@ -22,6 +22,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultExchange;
@@ -33,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DependencyDownloaderPropertiesComponent extends ServiceSupport {
+public class DependencyDownloaderPropertiesComponent extends ServiceSupport implements StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DependencyDownloaderPropertiesComponent.class);
 

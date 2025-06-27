@@ -33,10 +33,10 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("ClientFqdn", java.lang.String.class);
         map.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
         map.put("DispositionNotificationTo", java.lang.String.class);
+        map.put("EdiMessageCharset", java.lang.String.class);
         map.put("EdiMessageTransferEncoding", java.lang.String.class);
-        map.put("EdiMessageType", org.apache.hc.core5.http.ContentType.class);
+        map.put("EdiMessageType", java.lang.String.class);
         map.put("From", java.lang.String.class);
-        map.put("HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("HttpConnectionPoolSize", java.lang.Integer.class);
         map.put("HttpConnectionPoolTtl", java.time.Duration.class);
         map.put("HttpConnectionTimeout", java.time.Duration.class);
@@ -48,7 +48,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("Server", java.lang.String.class);
         map.put("ServerFqdn", java.lang.String.class);
         map.put("ServerPortNumber", java.lang.Integer.class);
-        map.put("SslContext", javax.net.ssl.SSLContext.class);
         map.put("Subject", java.lang.String.class);
         map.put("TargetHostname", java.lang.String.class);
         map.put("TargetPortNumber", java.lang.Integer.class);
@@ -56,13 +55,21 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("ExceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("ExchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("LazyStartProducer", boolean.class);
+        map.put("AccessToken", java.lang.String.class);
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
         map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
-        map.put("SignedReceiptMicAlgorithms", java.lang.String[].class);
+        map.put("HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
+        map.put("MdnAccessToken", java.lang.String.class);
+        map.put("MdnPassword", java.lang.String.class);
+        map.put("MdnUserName", java.lang.String.class);
+        map.put("Password", java.lang.String.class);
+        map.put("SignedReceiptMicAlgorithms", java.lang.String.class);
         map.put("SigningAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
         map.put("SigningCertificateChain", java.security.cert.Certificate[].class);
         map.put("SigningPrivateKey", java.security.PrivateKey.class);
+        map.put("SslContext", javax.net.ssl.SSLContext.class);
+        map.put("UserName", java.lang.String.class);
         map.put("ValidateSigningCertificateChain", java.security.cert.Certificate[].class);
         ALL_OPTIONS = map;
     }
@@ -71,6 +78,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AS2Endpoint target = (AS2Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "as2from":
         case "as2From": target.getConfiguration().setAs2From(property(camelContext, java.lang.String.class, value)); return true;
         case "as2messagestructure":
@@ -91,10 +100,12 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "decryptingPrivateKey": target.getConfiguration().setDecryptingPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
         case "dispositionnotificationto":
         case "dispositionNotificationTo": target.getConfiguration().setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "edimessagecharset":
+        case "ediMessageCharset": target.getConfiguration().setEdiMessageCharset(property(camelContext, java.lang.String.class, value)); return true;
         case "edimessagetransferencoding":
         case "ediMessageTransferEncoding": target.getConfiguration().setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "edimessagetype":
-        case "ediMessageType": target.getConfiguration().setEdiMessageType(property(camelContext, org.apache.hc.core5.http.ContentType.class, value)); return true;
+        case "ediMessageType": target.getConfiguration().setEdiMessageType(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptingalgorithm":
         case "encryptingAlgorithm": target.getConfiguration().setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
         case "encryptingcertificatechain":
@@ -118,8 +129,15 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "mdnaccesstoken":
+        case "mdnAccessToken": target.getConfiguration().setMdnAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "mdnmessagetemplate":
         case "mdnMessageTemplate": target.getConfiguration().setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
+        case "mdnpassword":
+        case "mdnPassword": target.getConfiguration().setMdnPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "mdnusername":
+        case "mdnUserName": target.getConfiguration().setMdnUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": target.getConfiguration().setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
@@ -130,7 +148,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverportnumber":
         case "serverPortNumber": target.getConfiguration().setServerPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "signedreceiptmicalgorithms":
-        case "signedReceiptMicAlgorithms": target.getConfiguration().setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String[].class, value)); return true;
+        case "signedReceiptMicAlgorithms": target.getConfiguration().setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String.class, value)); return true;
         case "signingalgorithm":
         case "signingAlgorithm": target.getConfiguration().setSigningAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class, value)); return true;
         case "signingcertificatechain":
@@ -146,6 +164,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetPortNumber": target.getConfiguration().setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "useragent":
         case "userAgent": target.getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
+        case "username":
+        case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "validatesigningcertificatechain":
         case "validateSigningCertificateChain": target.getConfiguration().setValidateSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         default: return false;
@@ -160,6 +180,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
         case "as2from":
         case "as2From": return java.lang.String.class;
         case "as2messagestructure":
@@ -180,10 +202,12 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "decryptingPrivateKey": return java.security.PrivateKey.class;
         case "dispositionnotificationto":
         case "dispositionNotificationTo": return java.lang.String.class;
+        case "edimessagecharset":
+        case "ediMessageCharset": return java.lang.String.class;
         case "edimessagetransferencoding":
         case "ediMessageTransferEncoding": return java.lang.String.class;
         case "edimessagetype":
-        case "ediMessageType": return org.apache.hc.core5.http.ContentType.class;
+        case "ediMessageType": return java.lang.String.class;
         case "encryptingalgorithm":
         case "encryptingAlgorithm": return org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class;
         case "encryptingcertificatechain":
@@ -207,8 +231,15 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "inBody": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "mdnaccesstoken":
+        case "mdnAccessToken": return java.lang.String.class;
         case "mdnmessagetemplate":
         case "mdnMessageTemplate": return java.lang.String.class;
+        case "mdnpassword":
+        case "mdnPassword": return java.lang.String.class;
+        case "mdnusername":
+        case "mdnUserName": return java.lang.String.class;
+        case "password": return java.lang.String.class;
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return java.lang.String.class;
         case "requesturi":
@@ -219,7 +250,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverportnumber":
         case "serverPortNumber": return java.lang.Integer.class;
         case "signedreceiptmicalgorithms":
-        case "signedReceiptMicAlgorithms": return java.lang.String[].class;
+        case "signedReceiptMicAlgorithms": return java.lang.String.class;
         case "signingalgorithm":
         case "signingAlgorithm": return org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class;
         case "signingcertificatechain":
@@ -235,6 +266,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetPortNumber": return java.lang.Integer.class;
         case "useragent":
         case "userAgent": return java.lang.String.class;
+        case "username":
+        case "userName": return java.lang.String.class;
         case "validatesigningcertificatechain":
         case "validateSigningCertificateChain": return java.security.cert.Certificate[].class;
         default: return null;
@@ -245,6 +278,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AS2Endpoint target = (AS2Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return target.getConfiguration().getAccessToken();
         case "as2from":
         case "as2From": return target.getConfiguration().getAs2From();
         case "as2messagestructure":
@@ -265,6 +300,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "decryptingPrivateKey": return target.getConfiguration().getDecryptingPrivateKey();
         case "dispositionnotificationto":
         case "dispositionNotificationTo": return target.getConfiguration().getDispositionNotificationTo();
+        case "edimessagecharset":
+        case "ediMessageCharset": return target.getConfiguration().getEdiMessageCharset();
         case "edimessagetransferencoding":
         case "ediMessageTransferEncoding": return target.getConfiguration().getEdiMessageTransferEncoding();
         case "edimessagetype":
@@ -292,8 +329,15 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "inBody": return target.getInBody();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "mdnaccesstoken":
+        case "mdnAccessToken": return target.getConfiguration().getMdnAccessToken();
         case "mdnmessagetemplate":
         case "mdnMessageTemplate": return target.getConfiguration().getMdnMessageTemplate();
+        case "mdnpassword":
+        case "mdnPassword": return target.getConfiguration().getMdnPassword();
+        case "mdnusername":
+        case "mdnUserName": return target.getConfiguration().getMdnUserName();
+        case "password": return target.getConfiguration().getPassword();
         case "receiptdeliveryoption":
         case "receiptDeliveryOption": return target.getConfiguration().getReceiptDeliveryOption();
         case "requesturi":
@@ -320,6 +364,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetPortNumber": return target.getConfiguration().getTargetPortNumber();
         case "useragent":
         case "userAgent": return target.getConfiguration().getUserAgent();
+        case "username":
+        case "userName": return target.getConfiguration().getUserName();
         case "validatesigningcertificatechain":
         case "validateSigningCertificateChain": return target.getConfiguration().getValidateSigningCertificateChain();
         default: return null;

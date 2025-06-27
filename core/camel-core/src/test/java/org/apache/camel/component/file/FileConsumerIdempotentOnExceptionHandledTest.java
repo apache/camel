@@ -16,18 +16,21 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
 
     @Test
     public void testIdempotent() throws Exception {
         getMockEndpoint("mock:invalid").expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         oneExchangeDone.matchesWaitTime();
 
@@ -35,8 +38,8 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
 
         // the error is handled and the file is regarded as success and
         // therefore moved to .camel
-        assertFileNotExists(testFile("hello.txt"));
-        assertFileExists(testFile(".camel/hello.txt"));
+        assertFileNotExists(testFile(TEST_FILE_NAME));
+        assertFileExists(testFile(".camel/" + TEST_FILE_NAME));
     }
 
     @Override

@@ -91,7 +91,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         assertTrue(onCompeletedCalled, "UnitOfWork done should be called");
-        assertNull(bindingException, "exception occured: " + bindingException);
+        assertNull(bindingException, "exception occurred: " + bindingException);
     }
 
     public static class TestProcessor implements Processor {

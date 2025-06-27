@@ -101,6 +101,22 @@ public interface PlatformHttpComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The period in milliseconds after which the request should be timed
+         * out.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpComponentBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+    
         
         /**
          * Whether autowiring is enabled. This is used for automatic autowiring
@@ -173,6 +189,7 @@ public interface PlatformHttpComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((PlatformHttpComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "handleWriteResponseError": ((PlatformHttpComponent) component).setHandleWriteResponseError((boolean) value); return true;
+            case "requestTimeout": ((PlatformHttpComponent) component).setRequestTimeout((long) value); return true;
             case "autowiredEnabled": ((PlatformHttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "engine": ((PlatformHttpComponent) component).setEngine((org.apache.camel.component.platform.http.spi.PlatformHttpEngine) value); return true;
             case "headerFilterStrategy": ((PlatformHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;

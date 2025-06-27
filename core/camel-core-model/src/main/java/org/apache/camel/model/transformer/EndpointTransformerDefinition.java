@@ -19,19 +19,15 @@ package org.apache.camel.model.transformer;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * Represents an endpoint {@link org.apache.camel.spi.Transformer} which leverages camel
- * {@link org.apache.camel.Endpoint} to perform transformation. A
- * {@link org.apache.camel.processor.transformer.ProcessorTransformer} will be created internally with a
- * {@link org.apache.camel.processor.SendProcessor} which forwards the message to the specified Endpoint. One of the
- * Endpoint 'ref' or 'uri' needs to be specified.
+ * To use a Camel endpoint to perform transformation on the route level.
  */
 @Metadata(label = "transformation")
-@XmlType(name = "endpointTransformer")
+@XmlRootElement(name = "endpointTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EndpointTransformerDefinition extends TransformerDefinition {
 

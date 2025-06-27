@@ -11,13 +11,10 @@ NOTE: This requires to include `camel-bean` as dependency on the classpath.
 The binding of a Camel xref:components:eips:message.adoc[Message] to a bean method call
 can occur in different ways, in the following order of importance:
 
-* if the message contains the header `Exchange.BEAN_METHOD_NAME` / `CamelBeanMethodName` then that
-method is invoked, converting the message to the type of the method's
-parameter.
-** You can qualify parameter types to select
+* You can qualify parameter types to select
 exactly which method to use among overloads with the same name (see
 below for more details).
-** You can specify parameter values directly in
+* You can specify parameter values directly in
 the method option (see below for more details).
 * you can explicitly specify the method name in the xref:dsl.adoc[DSL]
 or when using xref:pojo-consuming.adoc[POJO Consuming] or

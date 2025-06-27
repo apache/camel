@@ -30,6 +30,7 @@ public enum ExchangePropertyKey {
     AGGREGATION_COMPLETE_ALL_GROUPS(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS),
     AGGREGATION_COMPLETE_CURRENT_GROUP(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP),
     AGGREGATION_STRATEGY(Exchange.AGGREGATION_STRATEGY),
+    ATTACHMENTS_SIZE(Exchange.ATTACHMENTS_SIZE),
     BATCH_COMPLETE(Exchange.BATCH_COMPLETE),
     BATCH_INDEX(Exchange.BATCH_INDEX),
     BATCH_SIZE(Exchange.BATCH_SIZE),
@@ -39,6 +40,8 @@ public enum ExchangePropertyKey {
     CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED(CircuitBreakerConstants.RESPONSE_SHORT_CIRCUITED),
     CIRCUIT_BREAKER_RESPONSE_TIMED_OUT(CircuitBreakerConstants.RESPONSE_TIMED_OUT),
     CIRCUIT_BREAKER_RESPONSE_REJECTED(CircuitBreakerConstants.RESPONSE_REJECTED),
+    CIRCUIT_BREAKER_RESPONSE_IGNORED(CircuitBreakerConstants.RESPONSE_IGNORED),
+    CIRCUIT_BREAKER_RESPONSE_STATE(CircuitBreakerConstants.RESPONSE_STATE),
     CLAIM_CHECK_REPOSITORY(Exchange.CLAIM_CHECK_REPOSITORY),
     CORRELATION_ID(Exchange.CORRELATION_ID),
     DUPLICATE_MESSAGE(Exchange.DUPLICATE_MESSAGE),
@@ -105,6 +108,8 @@ public enum ExchangePropertyKey {
                 return AGGREGATION_COMPLETE_CURRENT_GROUP;
             case Exchange.AGGREGATION_STRATEGY:
                 return AGGREGATION_STRATEGY;
+            case Exchange.ATTACHMENTS_SIZE:
+                return ATTACHMENTS_SIZE;
             case Exchange.BATCH_COMPLETE:
                 return BATCH_COMPLETE;
             case Exchange.BATCH_INDEX:
@@ -123,6 +128,10 @@ public enum ExchangePropertyKey {
                 return CIRCUIT_BREAKER_RESPONSE_TIMED_OUT;
             case CircuitBreakerConstants.RESPONSE_REJECTED:
                 return CIRCUIT_BREAKER_RESPONSE_REJECTED;
+            case CircuitBreakerConstants.RESPONSE_IGNORED:
+                return CIRCUIT_BREAKER_RESPONSE_IGNORED;
+            case CircuitBreakerConstants.RESPONSE_STATE:
+                return CIRCUIT_BREAKER_RESPONSE_STATE;
             case Exchange.CLAIM_CHECK_REPOSITORY:
                 return CLAIM_CHECK_REPOSITORY;
             case Exchange.CORRELATION_ID:

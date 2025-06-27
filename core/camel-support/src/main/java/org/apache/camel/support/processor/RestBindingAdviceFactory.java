@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestClientRequestValidator;
+import org.apache.camel.spi.RestClientResponseValidator;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
@@ -118,18 +119,21 @@ public class RestBindingAdviceFactory {
             }
         }
 
-        RestClientRequestValidator validator = null;
+        RestClientRequestValidator requestValidator = null;
         if (bc.isClientRequestValidation()) {
-            validator = lookupRestClientRequestValidator(camelContext);
+            requestValidator = lookupRestClientRequestValidator(camelContext);
+        }
+        RestClientResponseValidator responseValidator = null;
+        if (bc.isClientResponseValidation()) {
+            responseValidator = lookupRestClientResponseValidator(camelContext);
         }
 
         return new RestBindingAdvice(
                 camelContext, json, jaxb, outJson, outJaxb,
                 bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
-                bc.isEnableCORS(),
-                bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
+                bc.isClientResponseValidation(), bc.isEnableCORS(), bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
                 bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(), bc.getRequiredQueryParameters(),
-                bc.getRequiredHeaders(), validator);
+                bc.getRequiredHeaders(), bc.getResponseCodes(), bc.getResponseHeaders(), requestValidator, responseValidator);
     }
 
     protected static void setupJson(
@@ -189,6 +193,22 @@ public class RestBindingAdviceFactory {
                     RestClientRequestValidator.class);
             // else use a default implementation
             answer = result.orElseGet(DefaultRestClientRequestValidator::new);
+        }
+        return answer;
+    }
+
+    protected static RestClientResponseValidator lookupRestClientResponseValidator(CamelContext camelContext) {
+        RestClientResponseValidator answer
+                = CamelContextHelper.findSingleByType(camelContext, RestClientResponseValidator.class);
+        if (answer == null) {
+            // lookup via classpath to find custom factory
+            Optional<RestClientResponseValidator> result = ResolverHelper.resolveService(
+                    camelContext,
+                    camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                    RestClientResponseValidator.FACTORY,
+                    RestClientResponseValidator.class);
+            // else use a default implementation
+            answer = result.orElseGet(DefaultRestClientResponseValidator::new);
         }
         return answer;
     }

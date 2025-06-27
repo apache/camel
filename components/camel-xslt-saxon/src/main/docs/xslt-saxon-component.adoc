@@ -84,13 +84,23 @@ from("activemq:My.Queue").
 
 === Getting Usable Parameters into the XSLT
 
-By default, all headers are added as parameters which are then available in
+By default, all headers and variables are added as parameters which are then available in
 the XSLT. +
 To make the parameters usable, you will need to declare them.
+
+- Header
 
 [source,xml]
 ----
 <setHeader name="myParam"><constant>42</constant></setHeader>
+<to uri="xslt-saxon:MyTransform.xsl"/>
+----
+
+- Variable
+
+[source,xml]
+----
+<setVariable name="myParam"><constant>42</constant></setVariable>
 <to uri="xslt-saxon:MyTransform.xsl"/>
 ----
 

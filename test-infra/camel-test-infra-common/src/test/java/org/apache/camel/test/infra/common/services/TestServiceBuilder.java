@@ -17,7 +17,7 @@
 
 package org.apache.camel.test.infra.common.services;
 
-public interface TestServiceBuilder<T extends TestService> {
+public interface TestServiceBuilder<T extends InfrastructureService> {
 
     T build();
 }

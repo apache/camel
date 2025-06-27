@@ -26,7 +26,8 @@ import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class ElasticSearchServiceFactory {
 
-    static class SingletonElasticSearchService extends SingletonService<ElasticSearchService> implements ElasticSearchService {
+    static class SingletonElasticSearchService extends SingletonService<ElasticSearchService>
+            implements ElasticSearchService {
         public SingletonElasticSearchService(ElasticSearchService service, String name) {
             super(service, name);
         }
@@ -77,8 +78,8 @@ public final class ElasticSearchServiceFactory {
 
     public static ElasticSearchService createService() {
         return builder()
-                .addLocalMapping(ElasticSearchLocalContainerService::new)
-                .addRemoteMapping(RemoteElasticSearchService::new)
+                .addLocalMapping(ElasticSearchLocalContainerTestService::new)
+                .addRemoteMapping(RemoteElasticSearchTestService::new)
                 .build();
     }
 
@@ -91,9 +92,16 @@ public final class ElasticSearchServiceFactory {
         static {
             SimpleTestServiceBuilder<ElasticSearchService> instance = builder();
             instance.addLocalMapping(
-                    () -> new SingletonElasticSearchService(new ElasticSearchLocalContainerService(), "elastic"))
-                    .addRemoteMapping(RemoteElasticSearchService::new);
+                    () -> new SingletonElasticSearchService(new ElasticSearchLocalContainerTestService(), "elastic"))
+                    .addRemoteMapping(RemoteElasticSearchTestService::new);
             INSTANCE = instance.build();
         }
+    }
+
+    public static class ElasticSearchLocalContainerTestService extends ElasticSearchLocalContainerInfraService
+            implements ElasticSearchService {
+    }
+
+    public static class RemoteElasticSearchTestService extends RemoteElasticSearchInfraService implements ElasticSearchService {
     }
 }

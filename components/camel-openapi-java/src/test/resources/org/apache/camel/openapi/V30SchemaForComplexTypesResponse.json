@@ -12,7 +12,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/SampleComplexRequestType_InnerClass"
+                "$ref" : "#/components/schemas/InnerClass"
               }
             }
           },
@@ -36,7 +36,20 @@
   },
   "components" : {
     "schemas" : {
-      "SampleComplexResponseType_InnerClass" : {
+      "InnerClass" : {
+        "type" : "object",
+        "properties" : {
+          "longField" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
+          "type" : "string"
+        }
+      },
+      "org.apache.camel.openapi.model.SampleComplexResponseType.InnerClass" : {
         "type" : "object",
         "properties" : {
           "doubleField" : {
@@ -70,24 +83,11 @@
             "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ]
           },
           "innerClass" : {
-            "$ref" : "#/components/schemas/SampleComplexResponseType_InnerClass"
+            "$ref" : "org.apache.camel.openapi.model.SampleComplexResponseType.InnerClass"
           }
         },
         "x-className" : {
           "format" : "org.apache.camel.openapi.model.SampleComplexResponseType",
-          "type" : "string"
-        }
-      },
-      "SampleComplexRequestType_InnerClass" : {
-        "type" : "object",
-        "properties" : {
-          "longField" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        },
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
           "type" : "string"
         }
       }

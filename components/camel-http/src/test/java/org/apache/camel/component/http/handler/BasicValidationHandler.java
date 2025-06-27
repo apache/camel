@@ -17,6 +17,7 @@
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
@@ -76,6 +77,12 @@ public class BasicValidationHandler implements HttpRequestHandler {
             return;
         }
 
+        if (!validateRequestEncoding(request)) {
+            response.setCode(HttpStatus.SC_BAD_REQUEST);
+            response.setReasonPhrase("Request URI not encoded correctly!");
+            return;
+        }
+
         if (expectedContent != null) {
             HttpEntity entity = request.getEntity();
             String content = EntityUtils.toString(entity);
@@ -103,6 +110,15 @@ public class BasicValidationHandler implements HttpRequestHandler {
             throw new IOException(e);
         }
         return true;
+    }
+
+    protected boolean validateRequestEncoding(ClassicHttpRequest request) throws IOException {
+        try {
+            String encodedRequestPath = new URI(request.getPath()).toASCIIString();
+            return request.getPath().equals(encodedRequestPath); // Did request.path contain un-encoded characters?
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
     }
 
     protected String buildResponse(ClassicHttpRequest request) {

@@ -53,15 +53,15 @@ public abstract class CsvMarshaller {
     public static CsvMarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
         org.apache.camel.util.ObjectHelper.notNull(format, "CSV format");
         org.apache.camel.util.ObjectHelper.notNull(dataFormat, "CSV data format");
+        // Get header columns before potential clearing
+        String[] headers = format.getHeader();
         // If we don't want the header record, clear it
         if (format.getSkipHeaderRecord()) {
             format = format.withHeader((String[]) null);
         }
 
-        String header = dataFormat.getHeader();
-        if (header != null && !header.isEmpty()) {
-            String[] columns = header.split(",");
-            return new FixedColumnsMarshaller(format, columns);
+        if (headers != null && headers.length != 0) {
+            return new FixedColumnsMarshaller(format, headers);
         }
         return new DynamicColumnsMarshaller(format);
     }

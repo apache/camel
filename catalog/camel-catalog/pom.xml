@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-catalog</artifactId>
@@ -104,6 +104,12 @@
             <artifactId>camel-jsonpath</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- for testing groovy language -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-groovy</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- for testing activemq component -->
         <dependency>
@@ -126,6 +132,12 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
 
             <!-- generate and include all components in the catalog -->
@@ -139,8 +151,12 @@
                             <goal>prepare-catalog</goal>
                             <!-- update secrets in camel-util -->
                             <goal>update-sensitive-helper</goal>
+                            <!-- update mime-types in camel-util -->
+                            <goal>update-mime-type-helper</goal>
                             <!-- update names in camel-main -->
                             <goal>update-main-helper</goal>
+                            <!-- update test-infra metadata -->
+                            <goal>update-test-infra-metadata</goal>
                         </goals>
                         <phase>generate-resources</phase>
                     </execution>
@@ -168,6 +184,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <delimiters>
+                        <delimiter>@</delimiter>
+                    </delimiters>
+                </configuration>
             </plugin>
         </plugins>
     </build>

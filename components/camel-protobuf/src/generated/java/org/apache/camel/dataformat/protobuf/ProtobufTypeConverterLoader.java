@@ -45,7 +45,13 @@ public final class ProtobufTypeConverterLoader implements TypeConverterLoader, C
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.util.Map.class, com.google.protobuf.Message.class, false,
-            (type, exchange, value) -> org.apache.camel.dataformat.protobuf.ProtobufTypeConverter.toMap((com.google.protobuf.Message) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.dataformat.protobuf.ProtobufTypeConverter.toMap((com.google.protobuf.Message) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

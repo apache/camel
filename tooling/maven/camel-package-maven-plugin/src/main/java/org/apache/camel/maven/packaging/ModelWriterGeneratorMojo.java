@@ -62,6 +62,7 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.maven.packaging.generics.JandexStore;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -513,6 +514,26 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                 an = getName();
             }
             return an;
+        }
+
+        public String getDefaultValue() {
+            String answer = null;
+            Metadata m = getAnnotation(Metadata.class);
+            if (m != null) {
+                answer = m.defaultValue();
+            }
+            if (answer == null || answer.isBlank()) {
+                answer = "null";
+            } else {
+                if (answer.equals("\"")) {
+                    answer = "\\\"";
+                }
+                if (answer.equals("\\")) {
+                    answer = "\\\\";
+                }
+                answer = "\"" + answer + "\"";
+            }
+            return answer;
         }
 
     }

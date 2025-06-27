@@ -16,7 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,9 +31,8 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -40,7 +40,7 @@ import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "stub", description = "Browse stub endpoints", sortOptions = false)
+@Command(name = "stub", description = "Browse stub endpoints", sortOptions = false, showDefaultValues = true)
 public class CamelStubAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -149,8 +149,8 @@ public class CamelStubAction extends ActionWatchCommand {
         }
 
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "stub");
@@ -158,9 +158,9 @@ public class CamelStubAction extends ActionWatchCommand {
         root.put("browse", browse);
         root.put("filter", "*");
         root.put("limit", limit);
-        File file = getActionFile(Long.toString(pid));
+        Path file = getActionFile(Long.toString(pid));
         try {
-            IOHelper.writeText(root.toJson(), file);
+            Files.writeString(file, root.toJson());
         } catch (Exception e) {
             // ignore
         }
@@ -231,7 +231,7 @@ public class CamelStubAction extends ActionWatchCommand {
         }
 
         // delete output file after use
-        FileUtil.deleteFile(outputFile);
+        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -341,7 +341,7 @@ public class CamelStubAction extends ActionWatchCommand {
         }
     }
 
-    protected JsonObject waitForOutputFile(File outputFile) {
+    protected JsonObject waitForOutputFile(Path outputFile) {
         return getJsonObject(outputFile);
     }
 

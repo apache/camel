@@ -75,29 +75,13 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
-    /**
-     * Test that when multiple conditions are chained together in Java DSL, only the first one will determine whether
-     * the endpoint is skipped or not
-     */
-    @Test
-    public void testInterceptSendToEndpointSkipMultipleConditions() throws Exception {
-        getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:skippableMultipleConditions").expectedMessageCount(0);
-        getMockEndpoint("mock:detour").expectedMessageCount(1);
-        getMockEndpoint("mock:c").expectedMessageCount(1);
-
-        template.sendBody("direct:startMultipleConditions", "skip");
-
-        assertMockEndpointsSatisfied();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 // only skip if the body equals 'skip'
-                interceptSendToEndpoint("mock:skippable").skipSendToOriginalEndpoint().when(body().isEqualTo("skip"))
+                interceptSendToEndpoint("mock:skippable").skipSendToOriginalEndpoint().onWhen(body().isEqualTo("skip"))
                         .to("mock:detour");
 
                 // always skip with a normal with a normal choice inside
@@ -105,12 +89,6 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
                 interceptSendToEndpoint("mock:skippableNoEffect").skipSendToOriginalEndpoint().choice()
                         .when(body().isEqualTo("skipNoEffectWhen")).to("mock:noSkipWhen").otherwise()
                         .to("mock:noSkipOW");
-
-                // in this case, the original endpoint will be skipped but no
-                // message will be sent to mock:detour
-                interceptSendToEndpoint("mock:skippableMultipleConditions").skipSendToOriginalEndpoint()
-                        .when(body().isEqualTo("skip")).when(body().isNotEqualTo("skip"))
-                        .to("mock:detour");
 
                 from("direct:start").to("mock:a").to("mock:skippable").to("mock:c");
 

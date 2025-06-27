@@ -86,18 +86,21 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
         @Override
         public void run() {
             NonNamespaceOperation<Node, NodeList, Resource<Node>> w = getEndpoint().getKubernetesClient().nodes();
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
-                    && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
-                w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(),
-                        getEndpoint().getKubernetesConfiguration().getLabelValue());
+
+            String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
+            String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
+            String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
+
+            if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                w = (NonNamespaceOperation<Node, NodeList, Resource<Node>>) w.withLabel(labelKey, labelValue);
+            } else if (ObjectHelper.isNotEmpty(resourceName)) {
+                w = (NonNamespaceOperation<Node, NodeList, Resource<Node>>) w.withName(resourceName);
             }
 
-            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName(), w::withName);
-
-            watch = w.watch(new Watcher<Node>() {
+            watch = w.watch(new Watcher<>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Node resource) {
+                public void eventReceived(Action action, Node resource) {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);

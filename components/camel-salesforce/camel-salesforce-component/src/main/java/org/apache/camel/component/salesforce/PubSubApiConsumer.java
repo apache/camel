@@ -28,13 +28,16 @@ import org.apache.camel.component.salesforce.internal.client.PubSubApiClient;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_EVENT_ID;
 import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_REPLAY_ID;
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_RPC_ID;
 
 public class PubSubApiConsumer extends DefaultConsumer {
 
     private final String topic;
     private final ReplayPreset initialReplayPreset;
     private String initialReplayId;
+    private int initialReplayIdTimeout;
     private final SalesforceEndpoint endpoint;
 
     private final int batchSize;
@@ -51,6 +54,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.topic = endpoint.getTopicName();
         this.initialReplayPreset = endpoint.getConfiguration().getReplayPreset();
         this.initialReplayId = endpoint.getPubSubReplayId();
+        this.initialReplayIdTimeout = endpoint.getComponent().getInitialReplyIdTimeout();
         if (initialReplayPreset == ReplayPreset.CUSTOM && initialReplayId == null) {
             throw new IllegalArgumentException("pubSubReplayId option is required if ReplayPreset is CUSTOM.");
         }
@@ -62,11 +66,13 @@ public class PubSubApiConsumer extends DefaultConsumer {
         }
     }
 
-    public void processEvent(Object recordObj, String replayId) {
+    public void processEvent(Object recordObj, String eventId, String replayId, String rpcId) {
         final Exchange exchange = createExchange(true);
         final Message in = exchange.getIn();
         in.setBody(recordObj);
+        in.setHeader(HEADER_SALESFORCE_PUBSUB_EVENT_ID, eventId);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
+        in.setHeader(HEADER_SALESFORCE_PUBSUB_RPC_ID, rpcId);
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);
     }
@@ -88,7 +94,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.pubSubClient.setUsePlainTextConnection(this.usePlainTextConnection);
 
         ServiceHelper.startService(pubSubClient);
-        pubSubClient.subscribe(this, initialReplayPreset, initialReplayId);
+        pubSubClient.subscribe(this, initialReplayPreset, initialReplayId, initialReplayIdTimeout, true);
     }
 
     @Override

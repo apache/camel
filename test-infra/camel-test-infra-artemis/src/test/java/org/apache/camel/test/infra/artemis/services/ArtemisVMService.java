@@ -16,20 +16,12 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
-import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ArtemisVMService extends AbstractArtemisEmbeddedService {
-    private static final Logger LOG = LoggerFactory.getLogger(ArtemisVMService.class);
-
-    private String brokerURL;
-
+public class ArtemisVMService extends ArtemisVMInfraService implements ArtemisService {
     public ArtemisVMService() {
     }
 
@@ -55,36 +47,13 @@ public class ArtemisVMService extends AbstractArtemisEmbeddedService {
 
     @Override
     protected Configuration configure(Configuration configuration, int port, int brokerId) {
-        brokerURL = "vm://" + brokerId;
-
-        LOG.info("Creating a new Artemis VM-based broker");
-        configuration.setPersistenceEnabled(false);
-        configuration.setJournalMinFiles(10);
-        configuration.setSecurityEnabled(false);
-
+        Configuration config = null;
         try {
-            configuration.addAcceptorConfiguration("in-vm", "vm://" + brokerId);
-        } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
-            fail("vm acceptor cannot be configured");
+            config = super.configure(configuration, port, brokerId);
+        } catch (ArtemisRunException e) {
+            fail(e.getMessage());
         }
-        configuration.addAddressSetting("#",
-                new AddressSettings()
-                        .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
-                        .setAutoDeleteQueues(false)
-                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
-                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
 
-        return configuration;
-    }
-
-    @Override
-    public String serviceAddress() {
-        return brokerURL;
-    }
-
-    @Override
-    public int brokerPort() {
-        return 0;
+        return config;
     }
 }

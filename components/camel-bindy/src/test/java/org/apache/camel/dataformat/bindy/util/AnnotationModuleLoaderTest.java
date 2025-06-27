@@ -21,7 +21,7 @@ import java.util.Set;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Client;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Security;
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

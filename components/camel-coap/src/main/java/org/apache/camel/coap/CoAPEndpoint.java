@@ -437,15 +437,9 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         return uri.getScheme().endsWith("+tcp");
     }
 
-    public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client) throws IOException {
-        Configuration cfg;
-        try {
-            cfg = Configuration.getStandard();
-        } catch (Exception e) {
-            // in case error loading standard file
-            cfg = new Configuration();
-        }
-        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder(cfg);
+    public DTLSConnector createDTLSConnector(InetSocketAddress address, boolean client, Configuration config)
+            throws IOException {
+        DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder(config);
         if (client) {
             setupCreateDTLSConnectorClient(builder);
         } else {
@@ -557,16 +551,16 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     public CoapClient createCoapClient(URI uri) throws IOException, GeneralSecurityException {
         CoapClient client = new CoapClient(uri);
 
+        CoapEndpoint.Builder builder = new CoapEndpoint.Builder();
+        Configuration config = component.loadConfiguration();
+        builder.setConfiguration(config);
+
         // Configure TLS and / or TCP
         if (CoAPEndpoint.enableDTLS(uri)) {
-            DTLSConnector connector = createDTLSConnector(null, true);
-            CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
-            coapBuilder.setConnector(connector);
-
-            client.setEndpoint(coapBuilder.build());
+            DTLSConnector connector = createDTLSConnector(null, true, config);
+            builder.setConnector(connector);
         } else if (CoAPEndpoint.enableTCP(getUri())) {
             TcpClientConnector tcpConnector;
-
             // TLS + TCP
             if (getUri().getScheme().startsWith("coaps")) {
                 SSLContextParameters params = getSslContextParameters();
@@ -574,16 +568,13 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
                     params = new SSLContextParameters();
                 }
                 SSLContext sslContext = params.createSSLContext(getCamelContext());
-                tcpConnector = new TlsClientConnector(sslContext, Configuration.createStandardWithoutFile());
+                tcpConnector = new TlsClientConnector(sslContext, config);
             } else {
-                tcpConnector = new TcpClientConnector(Configuration.createStandardWithoutFile());
+                tcpConnector = new TcpClientConnector(config);
             }
-
-            CoapEndpoint.Builder tcpBuilder = new CoapEndpoint.Builder();
-            tcpBuilder.setConnector(tcpConnector);
-
-            client.setEndpoint(tcpBuilder.build());
+            builder.setConnector(tcpConnector);
         }
+        client.setEndpoint(builder.build());
         return client;
     }
 }

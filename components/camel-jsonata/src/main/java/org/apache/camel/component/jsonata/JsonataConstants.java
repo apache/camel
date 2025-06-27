@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.jsonata;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Jsonata Constants.
  */
 public final class JsonataConstants {
 
+    @Metadata(description = "A URI for the template resource to load and use instead of the endpoint configured.",
+              javaType = "String")
     public static final String JSONATA_RESOURCE_URI = "CamelJsonataResourceUri";
 
     public static final String JSONATA_CONTEXT = "CamelJsonataContext";

@@ -22,12 +22,16 @@
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <name>Camel :: Test Infra :: Azure Common</name>
     <artifactId>camel-test-infra-azure-common</artifactId>
+
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -35,6 +39,11 @@
             <artifactId>camel-test-infra-common</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers-version}</version>
         </dependency>
     </dependencies>
 

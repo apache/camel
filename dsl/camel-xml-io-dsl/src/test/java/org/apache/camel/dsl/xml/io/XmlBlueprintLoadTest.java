@@ -40,4 +40,20 @@ public class XmlBlueprintLoadTest {
         }
     }
 
+    @Test
+    public void testLoadRestsBuilderFromXml() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            // load OSGi blueprint XML <blueprint> with embedded <camelContext>
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/blueprintRests.xml");
+
+            Assertions.assertDoesNotThrow(() -> {
+                // should be able to parse the file and not fail (camel-jbang supports creating spring beans)
+                PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+            });
+
+            Assertions.assertEquals(2, context.getRestDefinitions().size());
+        }
+    }
+
 }

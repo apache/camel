@@ -24,6 +24,7 @@ import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
+import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
@@ -58,6 +59,9 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(label = "consumer",
               description = "The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER")
     private String sequenceNumber = "";
+    @UriParam(label = "consumer",
+              description = "The message timestamp to start polling from. Required if iteratorType is set to AT_TIMESTAMP")
+    private String messageTimestamp = "";
     @UriParam(label = "consumer", defaultValue = "ignore",
               description = "Define what will be the behavior in case of shard closed. Possible value are ignore, silent and fail."
                             + " In case of ignore a WARN message will be logged once and the consumer will not process new messages until restarted,"
@@ -119,6 +123,20 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(label = "advanced",
               description = "If we want to use a KCL Consumer and disable the CloudWatch Metrics Export")
     private boolean kclDisableCloudwatchMetricsExport;
+    @UriParam(description = "Supply a pre-constructed Amazon Kinesis async client to use for the KCL Consumer")
+    @Metadata(label = "advanced", autowired = true)
+    private KinesisAsyncClient amazonKinesisAsyncClient;
+    @UriParam(description = "Name of the KCL application. This defaults to the stream name.")
+    @Metadata(label = "advanced")
+    private String applicationName;
+
+    public KinesisAsyncClient getAmazonKinesisAsyncClient() {
+        return amazonKinesisAsyncClient;
+    }
+
+    public void setAmazonKinesisAsyncClient(KinesisAsyncClient amazonKinesisAsyncClient) {
+        this.amazonKinesisAsyncClient = amazonKinesisAsyncClient;
+    }
 
     public KinesisClient getAmazonKinesisClient() {
         return amazonKinesisClient;
@@ -144,6 +162,14 @@ public class Kinesis2Configuration implements Cloneable {
         this.streamName = streamName;
     }
 
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
     public ShardIteratorType getIteratorType() {
         return iteratorType;
     }
@@ -166,6 +192,14 @@ public class Kinesis2Configuration implements Cloneable {
 
     public void setSequenceNumber(String sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
+    }
+
+    public String getMessageTimestamp() {
+        return messageTimestamp;
+    }
+
+    public void setMessageTimestamp(String messageTimestamp) {
+        this.messageTimestamp = messageTimestamp;
     }
 
     public Kinesis2ShardClosedStrategyEnum getShardClosed() {

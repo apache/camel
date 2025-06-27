@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.junit5.params;
 
-import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -27,20 +26,18 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 import org.junit.jupiter.api.extension.TestInstantiationException;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 import org.junit.jupiter.params.converter.DefaultArgumentConverter;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.platform.commons.util.ClassLoaderUtils;
 import org.junit.platform.commons.util.CollectionUtils;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.junit.platform.commons.util.AnnotationUtils.isAnnotated;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ParameterizedExtension implements TestTemplateInvocationContextProvider {
 
@@ -77,7 +74,7 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
                 .filter(m -> Modifier.isStatic(m.getModifiers()))
                 .filter(m -> m.getAnnotation(Parameters.class) != null)
                 .collect(Collectors.toList());
-        if (parameters.isEmpty() && testClass != null) {
+        if (parameters.isEmpty()) {
             return getParametersMethods(testClass.getSuperclass());
         } else {
             return parameters;
@@ -136,18 +133,15 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
                         "Expected " + fields.size() + " parameters bug got " + params.length + " when instantiating "
                                                      + clazz.getName());
             }
-            for (int i = 0; i < fields.size(); i++) {
-                Field f = fields.get(i);
-                f.setAccessible(true);
-                f.set(testInstance, DefaultArgumentConverter.INSTANCE.convert(params[i], f.getType(), getContext()));
+            if (!fields.isEmpty()) {
+                ClassLoader classLoader = ClassLoaderUtils.getClassLoader(context.getExecutionMode().getDeclaringClass());
+                DefaultArgumentConverter converter = new DefaultArgumentConverter(context);
+                for (int i = 0; i < fields.size(); i++) {
+                    Field f = fields.get(i);
+                    f.setAccessible(true);
+                    f.set(testInstance, converter.convert(params[i], f.getType(), classLoader));
+                }
             }
-        }
-
-        private ParameterContext getContext() throws NoSuchMethodException {
-            Executable executable = this.getClass().getConstructor(Object[].class).getParameters()[0].getDeclaringExecutable();
-            ParameterContext parameterContext = mock(ParameterContext.class);
-            when(parameterContext.getDeclaringExecutable()).thenReturn(executable);
-            return parameterContext;
         }
 
         protected Stream<Class<?>> hierarchy(Class<?> clazz) {

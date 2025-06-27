@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -37,10 +38,11 @@ import java.util.Map.Entry;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.http.helper.HttpMethodHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.http.base.cookie.CookieHandler;
@@ -56,10 +58,12 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.utils.URIUtils;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -82,12 +86,11 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpProducer extends DefaultProducer {
+public class HttpProducer extends DefaultProducer implements LineNumberAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
 
     private static final Integer OK_RESPONSE_CODE = 200;
-    private static final int BUFFER_SIZE = 1024 * 2;
 
     private HttpClient httpClient;
     private final HttpContext httpContext;
@@ -102,7 +105,6 @@ public class HttpProducer extends DefaultProducer {
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
-        this.httpClient = endpoint.getHttpClient();
         this.httpContext = endpoint.getHttpContext();
         this.throwException = endpoint.isThrowExceptionOnFailure();
         this.transferException = endpoint.isTransferException();
@@ -111,6 +113,8 @@ public class HttpProducer extends DefaultProducer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        this.httpClient = getEndpoint().getHttpClient();
 
         String range = getEndpoint().getOkStatusCodeRange();
         parseStatusRange(range);
@@ -151,7 +155,7 @@ public class HttpProducer extends DefaultProducer {
         boolean cookies = !getEndpoint().getComponent().isCookieManagementDisabled();
         if (cookies && getEndpoint().isClearExpiredCookies() && !getEndpoint().isBridgeEndpoint()) {
             // create the cookies before the invocation
-            getEndpoint().getCookieStore().clearExpired(new Date());
+            getEndpoint().getCookieStore().clearExpired(Instant.now());
         }
 
         // if we bridge endpoint then we need to skip matching headers with the HTTP_QUERY to avoid sending
@@ -170,7 +174,10 @@ public class HttpProducer extends DefaultProducer {
         HttpHost httpHost = createHost(httpRequest);
 
         Message in = exchange.getIn();
-        String httpProtocolVersion = in.getHeader(HttpConstants.HTTP_PROTOCOL_VERSION, String.class);
+        String httpProtocolVersion = null;
+        if (!getEndpoint().isSkipControlHeaders()) {
+            httpProtocolVersion = in.getHeader(HttpConstants.HTTP_PROTOCOL_VERSION, String.class);
+        }
         if (httpProtocolVersion != null) {
             // set the HTTP protocol version
             int[] version = HttpHelper.parserHttpVersion(httpProtocolVersion);
@@ -178,7 +185,6 @@ public class HttpProducer extends DefaultProducer {
         }
 
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
-
         if (!getEndpoint().isSkipRequestHeaders()) {
             // propagate headers as HTTP headers
             if (strategy != null) {
@@ -244,7 +250,7 @@ public class HttpProducer extends DefaultProducer {
 
         // lets store the result in the output message.
         try {
-            executeMethod(
+            executeMethod(exchange,
                     httpHost, httpRequest,
                     httpResponse -> {
                         try {
@@ -255,6 +261,7 @@ public class HttpProducer extends DefaultProducer {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Http responseCode: {}", responseCode);
                             }
+                            populateResponseCode(exchange.getOut(), httpResponse, responseCode);
 
                             if (!throwException) {
                                 // if we do not use failed exception then populate response for all response codes
@@ -349,7 +356,7 @@ public class HttpProducer extends DefaultProducer {
             throws IOException, ClassNotFoundException {
         // We just make the out message is not create when extractResponseBody throws exception
         Object response = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
-        final Message answer = createResponseMessage(exchange, httpResponse, responseCode);
+        Message answer = exchange.getOut();
         answer.setBody(response);
 
         if (!getEndpoint().isSkipResponseHeaders()) {
@@ -400,19 +407,16 @@ public class HttpProducer extends DefaultProducer {
         }
     }
 
-    private static Message createResponseMessage(Exchange exchange, ClassicHttpResponse httpResponse, int responseCode) {
-        Message answer = exchange.getOut();
-
+    private static void populateResponseCode(Message message, ClassicHttpResponse httpResponse, int responseCode) {
         // optimize for 200 response code as the boxing is outside the cached integers
         if (responseCode == 200) {
-            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
+            message.setHeader(HttpConstants.HTTP_RESPONSE_CODE, OK_RESPONSE_CODE);
         } else {
-            answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
+            message.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
         }
         if (httpResponse.getReasonPhrase() != null) {
-            answer.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, httpResponse.getReasonPhrase());
+            message.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, httpResponse.getReasonPhrase());
         }
-        return answer;
     }
 
     protected Exception populateHttpOperationFailedException(
@@ -473,13 +477,19 @@ public class HttpProducer extends DefaultProducer {
      * @return             the response
      * @throws IOException can be thrown
      */
-    protected <T> T executeMethod(HttpHost httpHost, HttpUriRequest httpRequest, HttpClientResponseHandler<T> handler)
+    protected <T> T executeMethod(
+            Exchange exchange, HttpHost httpHost, HttpUriRequest httpRequest, HttpClientResponseHandler<T> handler)
             throws IOException, HttpException {
+        // use a local context per execution
         HttpContext localContext;
         if (httpContext != null) {
             localContext = new BasicHttpContext(httpContext);
         } else {
             localContext = HttpClientContext.create();
+        }
+        if (getEndpoint().getHttpActivityListener() != null) {
+            localContext.setAttribute("org.apache.camel.Exchange", exchange);
+            localContext.setAttribute("org.apache.hc.core5.http.HttpHost", httpHost);
         }
         // execute open that does not automatic close response input-stream (this is done in exchange on-completion by Camel)
         ClassicHttpResponse res = httpClient.executeOpen(httpHost, httpRequest, localContext);
@@ -626,7 +636,7 @@ public class HttpProducer extends DefaultProducer {
         // the exchange can have some headers that override the default url and forces to create
         // a new url that is dynamic based on header values
         // these checks are checks that is done in HttpHelper.createURL and HttpHelper.createURI methods
-        final boolean create = isCreateNewURL(exchange);
+        final boolean create = !getEndpoint().isSkipControlHeaders() && isCreateNewURL(exchange);
 
         if (create) {
             // creating the url to use takes 2-steps
@@ -638,7 +648,7 @@ public class HttpProducer extends DefaultProducer {
 
         // create http holder objects for the request
         HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint());
-        HttpUriRequest method = methodToUse.createMethod(uri);
+        HttpUriRequest method = methodToUse.createMethod(url);
 
         // special for HTTP DELETE/GET if the message body should be included
         if (getEndpoint().isDeleteWithBody() && "DELETE".equals(method.getMethod())
@@ -698,17 +708,19 @@ public class HttpProducer extends DefaultProducer {
 
         Message in = exchange.getIn();
         Object body = in.getBody();
+        boolean multipart = getEndpoint().isMultipartUpload();
+        String multipartName = getEndpoint().getMultipartUploadName();
         try {
             if (body == null) {
                 return NullEntity.INSTANCE;
             } else if (body instanceof HttpEntity entity) {
                 answer = entity;
                 // special optimized for using these 3 type converters for common message payload types
-            } else if (body instanceof byte[] bytes) {
+            } else if (!multipart && body instanceof byte[] bytes) {
                 answer = HttpEntityConverter.toHttpEntity(bytes, exchange);
-            } else if (body instanceof InputStream is) {
+            } else if (!multipart && body instanceof InputStream is) {
                 answer = HttpEntityConverter.toHttpEntity(is, exchange);
-            } else if (body instanceof String content) {
+            } else if (!multipart && body instanceof String content) {
                 answer = HttpEntityConverter.toHttpEntity(content, exchange);
             }
         } catch (Exception e) {
@@ -749,11 +761,25 @@ public class HttpProducer extends DefaultProducer {
                             HttpHelper.writeObjectToStream(bos, obj);
                             answer = new ByteArrayEntity(bos.toByteArray(), HttpConstants.JAVA_SERIALIZED_OBJECT);
                         }
-                    } else if (data instanceof File || data instanceof GenericFile) {
+                    } else if (data instanceof File || data instanceof WrappedFile<?>) {
                         // file based (could potentially also be a FTP file etc)
                         File file = in.getBody(File.class);
                         if (file != null) {
-                            answer = new FileEntity(file, contentType);
+                            if (contentType == null) {
+                                String type = MimeTypeHelper.probeMimeType(file.getName());
+                                if (type != null) {
+                                    contentType = ContentType.parseLenient(type);
+                                }
+                                if (contentType == null) {
+                                    contentType = ContentType.DEFAULT_BINARY;
+                                }
+                            }
+                            if (multipart) {
+                                answer = MultipartEntityBuilder.create()
+                                        .addBinaryBody(multipartName, file, contentType, file.getName()).build();
+                            } else {
+                                answer = new FileEntity(file, contentType);
+                            }
                         }
                     } else if (data instanceof String content) {
                         // be a bit careful with String as any type can most likely be converted to String
@@ -774,15 +800,27 @@ public class HttpProducer extends DefaultProducer {
                             contentType = ContentType.parse(contentType + ";charset=" + charset);
                         }
 
-                        answer = new StringEntity(content, contentType, false);
+                        if (multipart) {
+                            if (contentType != null) {
+                                answer = MultipartEntityBuilder.create().addTextBody(multipartName, content, contentType)
+                                        .build();
+                            } else {
+                                answer = MultipartEntityBuilder.create().addTextBody(multipartName, content).build();
+                            }
+                        } else {
+                            answer = new StringEntity(content, contentType, false);
+                        }
                     }
 
                     // fallback as input stream
                     if (answer == null) {
                         // force the body as an input stream since this is the fallback
                         InputStream is = in.getMandatoryBody(InputStream.class);
-
-                        answer = new InputStreamEntity(is, -1, contentType);
+                        if (multipart) {
+                            answer = MultipartEntityBuilder.create().addBinaryBody(multipartName, is).build();
+                        } else {
+                            answer = new InputStreamEntity(is, -1, contentType);
+                        }
                     }
                 }
             } catch (UnsupportedEncodingException e) {
@@ -802,4 +840,23 @@ public class HttpProducer extends DefaultProducer {
         this.httpClient = httpClient;
     }
 
+    @Override
+    public int getLineNumber() {
+        return getEndpoint().getLineNumber();
+    }
+
+    @Override
+    public void setLineNumber(int lineNumber) {
+        // noop
+    }
+
+    @Override
+    public String getLocation() {
+        return getEndpoint().getLocation();
+    }
+
+    @Override
+    public void setLocation(String location) {
+        // noop
+    }
 }

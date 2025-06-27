@@ -37,6 +37,9 @@ public class NatsComponent extends HeaderFilterStrategyComponent implements SSLC
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         NatsConfiguration config = new NatsConfiguration();
+        if (getHeaderFilterStrategy() != null) {
+            config.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
         config.setTopic(remaining);
         config.setServers(servers);
         config.setVerbose(verbose);

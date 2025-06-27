@@ -37,11 +37,21 @@ import org.apache.camel.dsl.jbang.core.commands.config.ConfigList;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigSet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigUnset;
 import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.MissingPluginParameterExceptionHandler;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraCommand;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraGet;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraList;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraLog;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraPs;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraRun;
+import org.apache.camel.dsl.jbang.core.commands.infra.InfraStop;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginAdd;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginGet;
 import org.apache.camel.dsl.jbang.core.commands.process.*;
+import org.apache.camel.dsl.jbang.core.commands.update.UpdateCommand;
+import org.apache.camel.dsl.jbang.core.commands.update.UpdateList;
+import org.apache.camel.dsl.jbang.core.commands.update.UpdateRun;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionCommand;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionGet;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
@@ -72,6 +82,8 @@ public class CamelJBangMain implements Callable<Integer> {
         }
 
         commandLine = new CommandLine(main)
+                .addSubcommand("nano", new CommandLine(new Nano(main)))
+                .addSubcommand("shell", new CommandLine(new Shell(main)))
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("run", new CommandLine(new Run(main)))
                 .addSubcommand("debug", new CommandLine(new Debug(main)))
@@ -96,6 +108,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("event", new CommandLine(new ListEvent(main)))
                         .addSubcommand("inflight", new CommandLine(new ListInflight(main)))
                         .addSubcommand("blocked", new CommandLine(new ListBlocked(main)))
+                        .addSubcommand("backoff", new CommandLine(new ListBackOff(main)))
                         .addSubcommand("bean", new CommandLine(new CamelBeanDump(main)))
                         .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(main)))
                         .addSubcommand("transformer", new CommandLine(new ListTransformer(main)))
@@ -131,7 +144,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("dependency", new CommandLine(new DependencyCommand(main))
                         .addSubcommand("list", new CommandLine(new DependencyList(main)))
                         .addSubcommand("copy", new CommandLine(new DependencyCopy(main)))
-                        .addSubcommand("update", new CommandLine(new DependencyUpdate(main))))
+                        .addSubcommand("update", new CommandLine(new DependencyUpdate(main)))
+                        .addSubcommand("runtime", new CommandLine(new DependencyRuntime(main))))
                 .addSubcommand("catalog", new CommandLine(new CatalogCommand(main))
                         .addSubcommand("component", new CommandLine(new CatalogComponent(main)))
                         .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(main)))
@@ -160,6 +174,16 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("get", new CommandLine(new VersionGet(main)))
                         .addSubcommand("set", new CommandLine(new VersionSet(main)))
                         .addSubcommand("list", new CommandLine(new VersionList(main))))
+                .addSubcommand("infra", new CommandLine(new InfraCommand(main))
+                        .addSubcommand("list", new CommandLine(new InfraList(main)))
+                        .addSubcommand("run", new CommandLine(new InfraRun(main)))
+                        .addSubcommand("stop", new CommandLine(new InfraStop(main)))
+                        .addSubcommand("get", new CommandLine(new InfraGet(main)))
+                        .addSubcommand("ps", new CommandLine(new InfraPs(main)))
+                        .addSubcommand("log", new CommandLine(new InfraLog(main))))
+                .addSubcommand("update", new CommandLine(new UpdateCommand(main))
+                        .addSubcommand("list", new CommandLine(new UpdateList(main)))
+                        .addSubcommand("run", new CommandLine(new UpdateRun(main))))
                 .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
 
         PluginHelper.addPlugins(commandLine, main, args);
@@ -170,7 +194,7 @@ public class CamelJBangMain implements Callable<Integer> {
             return new String[] { v };
         });
 
-        CommandLineHelper.augmentWithUserConfiguration(commandLine, args);
+        CommandLineHelper.augmentWithUserConfiguration(commandLine);
         int exitCode = commandLine.execute(args);
         main.quit(exitCode);
     }
@@ -219,4 +243,7 @@ public class CamelJBangMain implements Callable<Integer> {
         return this;
     }
 
+    public static CommandLine getCommandLine() {
+        return commandLine;
+    }
 }

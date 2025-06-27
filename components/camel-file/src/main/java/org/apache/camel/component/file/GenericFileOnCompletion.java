@@ -116,7 +116,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             // expression key was configured
             String key = absoluteFileName;
             if (endpoint.getIdempotentKey() != null) {
-                Exchange dummy = endpoint.createExchange(file);
+                Exchange dummy = GenericFileHelper.createDummy(endpoint, exchange, () -> file);
                 key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
             }
             // only add to idempotent repository if we could process the file
@@ -159,7 +159,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             // expression key was configured
             String key = absoluteFileName;
             if (endpoint.getIdempotentKey() != null) {
-                Exchange dummy = endpoint.createExchange(file);
+                Exchange dummy = GenericFileHelper.createDummy(endpoint, exchange, () -> file);
                 key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
             }
             if (key != null) {

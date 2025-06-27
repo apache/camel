@@ -17,6 +17,8 @@ outgoing Camel messages using https://opentelemetry.io/[OpenTelemetry].
 Events (spans) are captured for incoming and outgoing messages being sent
 to/from Camel.
 
+NOTE: a new OpenTelemetry component `camel-opentelemetry2` is available. Learn more by looking the paragraph at the bottom of this document.
+
 == Configuration
 
 The configuration properties for the OpenTelemetry tracer are:
@@ -68,23 +70,67 @@ camel.opentelemetry.enabled = true
 # camel.opentelemetry.instrumentationName = myApp
 ----
 
-NOTE: You would still need OpenTelemetry to instrument your code, which can be done via a <<OpenTelemetry-JavaAgent,Java agent>>.
+The configuration alone provide a NOOP default implementation, which is only useful for testing purposes as it will always create the same trace and span. In order to leverage an easy configuration you can also use the https://opentelemetry.io/docs/languages/java/configuration/#zero-code-sdk-autoconfigure[OpenTelemetry zero code SDK autoconfiguration]. With this approach you will need to add the `io.opentelemetry:opentelemetry-sdk-extension-autoconfigure` to your Camel main application, and start the application with the following system properties:
+
+```bash
+$ java -Dotel.java.global-autoconfigure.enabled=true -Dotel.metrics.exporter=none -Dotel.traces.exporter=none -Dotel.logs.exporter=none -jar my-app.jar
+```
+
+NOTE: you will need to check the SDK manual to configure according to your specific needs.
 
 == Spring Boot
 
-If you are using Spring Boot, just add
-the `camel-opentelemetry-starter` dependency to get started.
+When running on Spring Boot, add the `camel-opentelemetry-starter` dependency to get started.
 
-OpenTelemetry's `Tracer` will be
+There are several ways to configure instrumentation of your Camel application running on Spring Boot with OpenTelemetry.
+The first and easiest one is by using the https://opentelemetry.io/docs/zero-code/java/agent/[OpenTelemetry Java agent].
+The other one is through Spring Boot's Actuator. We'll cover both.
+
+[[OpenTelemetry-JavaAgent]]
+=== Java Agent
+
+Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
+
+This package includes the instrumentation agent as well as instrumentation for all supported libraries and all available data exporters.
+The package provides a completely automatic, out-of-the-box experience.
+
+Enable the instrumentation agent using the `-javaagent` flag to the JVM.
+
+[source,bash]
+----
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -jar myapp.jar
+----
+
+By default, the OpenTelemetry Java agent uses https://github.com/open-telemetry/opentelemetry-java/tree/main/exporters/otlp[OTLP exporter] configured to send data to https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/otlpreceiver/README.md[OpenTelemetry collector] at `http://localhost:4318`.
+
+Configuration parameters are passed as Java system properties (`-D` flags) or as environment variables. See https://opentelemetry.io/docs/zero-code/java/agent/configuration/[the configuration documentation] for the full list of configuration items. For example:
+
+[source,bash]
+----
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -Dotel.service.name=your-service-name \
+     -Dotel.traces.exporter=otlp \
+     -jar myapp.jar
+----
+
+include::spring-boot:partial$starter.adoc[]
+
+
+=== Spring Boot's Actuator
+
+To have Spring Boot's Actuator configure OpenTelemetry, you need to add
+`org.springframework.boot:spring-boot-starter-actuator` and `io.micrometer:micrometer-tracing-bridge-otel` to your project.
+OpenTelemetry's `Tracer` will then be
 https://docs.spring.io/spring-boot/reference/actuator/tracing.html[configured] through `spring-boot-starter-actuator` unless a `Tracer` is already defined.
 
-*Noteworthy*: by default, Spring Boot samples only 10% of requests to prevent overwhelming the trace backend.
+*Noteworthy*: by default, this will sample only 10% of requests to prevent overwhelming the trace backend.
 Set the property `management.tracing.sampling.probability` to `1.0` if you want to see all traces.
 
 === SpanExporters
 
 You'll probably want to configure at least one https://opentelemetry.io/docs/languages/java/sdk/#spanexporter[SpanExporter]
-as they allow you to export your traces to various backends (e.g Zipkin and Jaeger) or log them. For example, to export your traces to Jaeger using OTLP via gRPC,
+as they allow you to export your traces to various backends (e.g., Zipkin and Jaeger), or log them. For example, to export your traces to Jaeger using OTLP via gRPC,
 add `io.opentelemetry:opentelemetry-exporter-otlp` as a dependency to your project. To configure it, you can
 use the `management.otlp.tracing` properties or register a new `SpanExporter` bean yourself:
 
@@ -111,36 +157,41 @@ public SpanExporter logTraces() {
 
 Multiple `SpanExporters` can be used at the same time.
 
-[[OpenTelemetry-JavaAgent]]
-== Java Agent
-
-Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
-
-This package includes the instrumentation agent as well as instrumentation for all supported libraries and all available data exporters.
-The package provides a completely automatic, out-of-the-box experience.
-
-Enable the instrumentation agent using the `-javaagent` flag to the JVM.
-
-[source,bash]
-----
-java -javaagent:path/to/opentelemetry-javaagent.jar \
-     -jar myapp.jar
-----
-
-By default, the OpenTelemetry Java agent uses https://github.com/open-telemetry/opentelemetry-java/tree/main/exporters/otlp[OTLP exporter] configured to send data to https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/otlpreceiver/README.md[OpenTelemetry collector] at `http://localhost:4318`.
-
-Configuration parameters are passed as Java system properties (`-D` flags) or as environment variables. See https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/agent-config.md[the configuration documentation] for the full list of configuration items. For example:
-
-[source,bash]
-----
-java -javaagent:path/to/opentelemetry-javaagent.jar \
-     -Dotel.service.name=your-service-name \
-     -Dotel.traces.exporter=otlp \
-     -jar myapp.jar
-----
-
-include::spring-boot:partial$starter.adoc[]
-
 == MDC Logging
 
-When MDC Logging is enabled for the active Camel context the Trace ID and Span ID will be added and removed from the MDC for each route, the keys are `trace_id` and `span_id`, respectively.
+You can add Mapped Diagnostic Context tracing information (ie, `trace_id` and `span_id`) adding the specific https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[Opentelemetry Logger MDC auto instrumentation]. The configuration depends on the logging framework you're using.
+
+== Customizing OpenTelemetry spans
+
+In _rare_ circumstances, it may be desirable to apply advanced customizations to the OpenTelemetry Span generated by the Camel `OpenTelemetryTracer`.
+
+To do this, you can provide a custom implementation of `SpanCustomizer` and either set it explicitly on the `OpenTelemetryTracer`,
+or bind it to the Camel registry, where it will be automatically resolved by the tracer upon initialization.
+
+Note that care should be taken when configuring parents & links to avoid breaking the relationship between spans & traces.
+
+[source,java]
+----
+public class MySpanCustomizer implements SpanCustomizer {
+    @Override
+    public void customize(SpanBuilder spanBuilder, String operationName, Exchange exchange) {
+        spanBuilder.setAttribute("foo", "bar");
+        spanBuilder.setParent(myCustomParentContext);
+        spanBuilder.addLink(linkedSpanContext);
+        // other customizations...
+    }
+
+    // By default, all spans will have customizations applied. You can restrict this by overriding isEnabled
+    @Override
+    public boolean isEnabled(String operationName, Exchange exchange) {
+        String header = exchange.getMessage().getHeader("foo", String.class);
+        return operationName.equals("my-message-queue") && header.equals("bar");
+    }
+}
+----
+
+== Camel OpenTelemetry2 component
+
+In version 4.11 we have introduced a new OpenTelemetry component whose goal is to replace `camel-opentelemetry`. While we don't plan to drop the support for `camel-opentelemetry` in the short term, it is plausible that this component will be replaced with the new `camel-opentelemetry2` component when moving to the next major version (ie, Camel 5).
+
+The new component is based on a more consistent design. There may be slight differences on the traces produced and the available features. We suggest to adopt the new component as soon as possible to benefit the new design and to report any new requirement.

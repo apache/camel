@@ -256,14 +256,14 @@ class MarshalVariableTest extends YamlTestSupport {
 
         @Override
         void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-            String line = "Bye " + graph.toString();
-            stream.write(line.getBytes());
+            String line = "Bye " + graph.toString()
+            stream.write(line.getBytes())
         }
 
         @Override
         Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
             // noop
-            return null;
+            return null
         }
     }
 

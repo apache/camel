@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.api.model.LabelSelector;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
@@ -55,28 +55,46 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
 
     @Test
     void listTest() {
-        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs")
+        server.expect().withPath("/apis/batch/v1/jobs")
                 .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
+        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs")
+                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().build())
+                .once();
         List<?> result = template.requestBody("direct:list", "", List.class);
-
         assertEquals(3, result.size());
+
+        Exchange ex = template.request("direct:list",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+        assertEquals(2, ex.getMessage().getBody(List.class).size());
     }
 
     @Test
     void listByLabelsTest() throws Exception {
-        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        Exchange ex = template.request("direct:listByLabels", exchange -> {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
+        Map<String, String> labels = Map.of(
+                "key1", "value1",
+                "key2", "value2");
+
+        String urlEncodedLabels = toUrlEncoded(labels.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining(",")));
+
+        server.expect().withPath("/apis/batch/v1/jobs?labelSelector=" + urlEncodedLabels)
+                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
+        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs?labelSelector=" + urlEncodedLabels)
+                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().build())
+                .once();
+        Exchange ex = template.request("direct:listByLabels",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, labels));
+
+        assertEquals(3, ex.getMessage().getBody(List.class).size());
+
+        ex = template.request("direct:listByLabels", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
         });
 
-        List<?> result = ex.getMessage().getBody(List.class);
-
-        assertEquals(3, result.size());
+        assertEquals(2, ex.getMessage().getBody(List.class).size());
     }
 
     @Test

@@ -39,6 +39,7 @@ OnCompletionDefinition
 OnCompletionMode
 OnExceptionDefinition
 OnFallbackDefinition
+OnWhenDefinition
 OptimisticLockRetryPolicyDefinition
 OptionalIdentifiedDefinition
 OtherwiseDefinition

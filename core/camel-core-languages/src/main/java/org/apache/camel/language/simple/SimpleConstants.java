@@ -206,10 +206,37 @@ public final class SimpleConstants {
     @Metadata(description = "Returns a hashed value (string in hex decimal) of the message body/expression using JDK MessageDigest. The algorithm can be SHA-256 (default) or SHA3-256.",
               label = "function", javaType = "String", displayName = "Compute Hash Value")
     public static final String HASH = "hash(exp,algorithm)";
-    @Metadata(description = "Creates a new empty object (decided by type). Use `string` to create an empty String. Use `list` to create an empty `java.util.ArrayList`. Use `map` to create an empty `java.util.HashMap`.",
+    @Metadata(description = "Creates a new empty object (decided by type). Use `string` to create an empty String. Use `list` to create an empty `java.util.ArrayList`. Use `map` to create an empty `java.util.LinkedHashMap`.",
               label = "function", javaType = "Object", displayName = "Create Empty Object")
     public static final String EMPTY = "empty(type)";
     @Metadata(description = "Evaluates the predicate and returns the value of trueExp or falseExp. This function is similar to the ternary operator in Java.",
               label = "function", javaType = "Object", displayName = "If Then Else")
     public static final String IIF = "iif(predicate,trueExp,falseExp)";
+    @Metadata(description = "The list function creates an ArrayList with the given set of values.",
+              label = "function", javaType = "java.util.ArrayList", displayName = "Create List of values")
+    public static final String LIST = "list(val...)";
+    @Metadata(description = "The map function creates a LinkedHashMap with the given set of pairs.",
+              label = "function", javaType = "java.util.LinkedHashMap", displayName = "Create Map of pairs")
+    public static final String MAP = "map(key1,value1,...)";
+    @Metadata(description = "All the attachments as a Map<String,DataHandler.", javaType = "java.util.Map", label = "function")
+    public static final String ATTACHMENTS = "attachments";
+    @Metadata(description = "The number of attachments. Is 0 if there are no attachments.", javaType = "int",
+              label = "function")
+    public static final String ATTACHMENTS_SIZE = "attachments.size";
+    @Metadata(description = "The content of the attachment as text (ie String).", javaType = "String", label = "function")
+    public static final String ATTACHMENTS_CONTENT_AS_TEXT = "attachmentContentAsText";
+    @Metadata(description = "The content of the attachment", javaType = "Object", label = "function")
+    public static final String ATTACHMENTS_CONTENT = "attachmentContent";
+    @Metadata(description = "The content of the attachment, converted to the given type.", javaType = "Object",
+              label = "function")
+    public static final String ATTACHMENTS_CONTENT_AS = "attachmentContentAs(type)";
+    @Metadata(description = "The attachment header with the given name.", javaType = "String", label = "function")
+    public static final String ATTACHMENTS_HEADER = "attachmentHeader(key,name)";
+    @Metadata(description = "The attachment header with the given name, converted to the given type.", javaType = "Object",
+              label = "function")
+    public static final String ATTACHMENTS_HEADER_AS = "attachmentHeader(key,name,type)";
+    @Metadata(description = "The DataHandler for the given attachment.", javaType = "jakarta.activation.DataHandler",
+              label = "function,ognl")
+    public static final String ATTACHMENT = "attachment(key)";
+
 }

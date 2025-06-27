@@ -17,6 +17,7 @@
 package org.apache.camel.component.jsonata;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -33,6 +34,7 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static com.dashjoin.jsonata.Jsonata.jsonata;
@@ -49,12 +51,14 @@ public class JsonataEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "Jackson")
     private JsonataInputOutputType outputType;
-
     @UriParam(defaultValue = "Jackson")
     private JsonataInputOutputType inputType;
-
     @UriParam(label = "advanced", description = "To configure the Jsonata frame binding. Allows custom functions to be added.")
     private JsonataFrameBinding frameBinding;
+    @UriParam
+    private boolean allowTemplateFromHeader;
+    @UriParam
+    private boolean prettyPrint;
 
     public JsonataEndpoint() {
     }
@@ -112,6 +116,31 @@ public class JsonataEndpoint extends ResourceEndpoint {
         return frameBinding;
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    /**
+     * Whether to pretty print JSon output when using string as output type.
+     */
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
+
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         String path = getResourceUri();
@@ -127,10 +156,21 @@ public class JsonataEndpoint extends ResourceEndpoint {
             });
         }
 
-        Object output = null;
-        Jsonata expression = null;
+        InputStream is = getResourceAsInputStream();
+        if (allowTemplateFromHeader) {
+            String newResourceUri = exchange.getIn().getHeader(JsonataConstants.JSONATA_RESOURCE_URI, String.class);
+            if (newResourceUri != null) {
+                exchange.getIn().removeHeader(JsonataConstants.JSONATA_RESOURCE_URI);
+                if (ResourceHelper.hasScheme(newResourceUri)) {
+                    is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), newResourceUri);
+                } else {
+                    is = new ByteArrayInputStream(newResourceUri.getBytes());
+                }
+            }
+        }
+        Jsonata expression;
         try (InputStreamReader inputStreamReader
-                = new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8);
+                = new InputStreamReader(is, StandardCharsets.UTF_8);
              BufferedReader bufferedReader = new BufferedReader(inputStreamReader);) {
             String spec = bufferedReader
                     .lines()
@@ -139,15 +179,21 @@ public class JsonataEndpoint extends ResourceEndpoint {
         }
 
         Jsonata.Frame frame = expression.createFrame();
-        if (frameBinding != null)
+        if (frameBinding != null) {
             frameBinding.bindToFrame(frame);
-        output = expression.evaluate(input, frame);
+        }
+        Object outputLib = expression.evaluate(input, frame);
+        String bodyAsString = prettyPrint
+                ? mapper.writerWithDefaultPrettyPrinter().writeValueAsString(outputLib) : mapper.writeValueAsString(outputLib);
 
         // now lets output the results to the exchange
-        Object body = output;
+        final Object output;
         if (getOutputType() == JsonataInputOutputType.JsonString) {
-            body = mapper.writeValueAsString(output);
+            output = bodyAsString;
+        } else {
+            output = mapper.readTree(bodyAsString);
         }
-        ExchangeHelper.setInOutBodyPatternAware(exchange, body);
+        ExchangeHelper.setInOutBodyPatternAware(exchange, output);
     }
+
 }

@@ -16,16 +16,11 @@
  */
 package org.apache.camel.test.infra.hashicorp.vault.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
- * Test infra service for Infinispan
+ * Test infra service for HashicorpVault
  */
-public interface HashicorpVaultService extends TestService {
-
-    String token();
-
-    int port();
-
-    String host();
+public interface HashicorpVaultService extends TestService, HashicorpVaultInfraService, ContainerTestService {
 }

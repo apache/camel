@@ -36,7 +36,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "rest",
-         description = "Get REST services of Camel integrations", sortOptions = false)
+         description = "Get REST services of Camel integrations", sortOptions = false, showDefaultValues = true)
 public class ListRest extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

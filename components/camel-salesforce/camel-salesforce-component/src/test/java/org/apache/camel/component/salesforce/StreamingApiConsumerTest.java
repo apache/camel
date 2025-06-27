@@ -36,7 +36,6 @@ import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.common.HashMapMessage;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -178,7 +177,6 @@ public class StreamingApiConsumerTest {
         verify(processor).process(same(exchange), any());
     }
 
-    @Disabled(value = "Broken test CAMEL-21417")
     @Test
     public void shouldProcessPlatformEvents() throws Exception {
         when(endpoint.getTopicName()).thenReturn("/event/TestEvent__e");

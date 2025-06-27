@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.trait.message;
 
 /**
@@ -22,6 +21,7 @@ package org.apache.camel.trait.message;
  * implementations to assign a payload that determines the redelivery state for the message.
  */
 public enum RedeliveryTraitPayload {
+
     /**
      * The default redelivery payload, as most messages don't support redeliveries
      **/
@@ -34,5 +34,5 @@ public enum RedeliveryTraitPayload {
     /**
      * When a message supports redelivery, this indicates that this message is in a redelivery state
      */
-    IS_REDELIVERY,
+    IS_REDELIVERY
 }

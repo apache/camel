@@ -78,6 +78,13 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     }
 
     private void handleHangup() {
+        // only hangup if we are not yet shutting down
+        if (isRunAllowed()) {
+            doHandleHangup();
+        }
+    }
+
+    private void doHandleHangup() {
         LOG.info("JVM shutdown hook triggered by SIGTERM (PID {}). Shutting down {} {}", getPid(), getAppName(),
                 getAppVersion());
         // and shutdown listener to allow camel context to graceful shutdown if JVM shutdown hook is triggered
@@ -130,6 +137,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
             }
             LOG.info("{} {} is shutdown", getAppName(), getAppVersion());
         });
+
         shutdown();
     }
 

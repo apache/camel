@@ -26,7 +26,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.util.ObjectHelper;
 import org.elasticsearch.client.RestClient;
 
 /**
@@ -42,7 +41,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements 
     @Metadata(required = true)
     private String clusterName;
     @UriParam
-    @Metadata(required = true)
     ElasticsearchRestClientOperation operation;
 
     @UriParam(label = "advanced")
@@ -81,7 +79,6 @@ public class ElasticsearchRestClientEndpoint extends DefaultEndpoint implements 
     @Override
     public void doInit() throws Exception {
         super.doInit();
-        ObjectHelper.notNull(operation, "operation");
     }
 
     public Producer createProducer() throws Exception {

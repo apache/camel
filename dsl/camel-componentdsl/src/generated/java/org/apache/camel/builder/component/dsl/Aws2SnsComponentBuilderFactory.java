@@ -67,6 +67,23 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Define if we are publishing a single message or a batch.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param batchEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder batchEnabled(boolean batchEnabled) {
+            doSetProperty("batchEnabled", batchEnabled);
+            return this;
+        }
+    
         /**
          * Component configuration.
          * 
@@ -596,6 +613,7 @@ public interface Aws2SnsComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "autoCreateTopic": getOrCreateConfiguration((Sns2Component) component).setAutoCreateTopic((boolean) value); return true;
+            case "batchEnabled": getOrCreateConfiguration((Sns2Component) component).setBatchEnabled((boolean) value); return true;
             case "configuration": ((Sns2Component) component).setConfiguration((org.apache.camel.component.aws2.sns.Sns2Configuration) value); return true;
             case "kmsMasterKeyId": getOrCreateConfiguration((Sns2Component) component).setKmsMasterKeyId((java.lang.String) value); return true;
             case "lazyStartProducer": ((Sns2Component) component).setLazyStartProducer((boolean) value); return true;

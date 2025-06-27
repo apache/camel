@@ -98,7 +98,13 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         } else {
             LOG.trace("Queueing objects in bucket [{}]...", bucketName);
 
-            Page<Blob> page = getStorageClient().list(bucketName);
+            Page<Blob> page;
+            if (ObjectHelper.isEmpty(getConfiguration().getPrefix())) {
+                page = getStorageClient().list(bucketName);
+            } else {
+                Storage.BlobListOption option = Storage.BlobListOption.prefix(getConfiguration().getPrefix());
+                page = getStorageClient().list(bucketName, option);
+            }
 
             // okay we have some response from Google so lets mark the consumer as ready
             forceConsumerAsReady();

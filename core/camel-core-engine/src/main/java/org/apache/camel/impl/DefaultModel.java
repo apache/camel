@@ -104,6 +104,11 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    public void removeModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
+        this.modelLifecycleStrategies.remove(modelLifecycleStrategy);
+    }
+
+    @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
         return modelLifecycleStrategies;
     }
@@ -205,7 +210,8 @@ public class DefaultModel implements Model {
             for (RouteDefinition r : allRoutes) {
                 // loop all rest routes
                 FromDefinition from = r.getInput();
-                if (from != null) {
+                if (from != null && !r.isInlined()) {
+                    // only attempt to inline if not already inlined
                     String uri = from.getEndpointUri();
                     if (uri != null && uri.startsWith("rest:")) {
                         // find first EIP in the outputs (skip abstract which are onException/intercept etc)
@@ -242,6 +248,8 @@ public class DefaultModel implements Model {
                                 }
                                 r.getOutputs().removeAll(toBeRemovedOut);
                                 r.getOutputs().addAll(toBeInlined.getOutputs());
+                                // inlined outputs should have re-assigned parent to this route
+                                r.getOutputs().forEach(o -> o.setParent(r));
                                 // and copy over various configurations
                                 if (toBeInlined.getRouteId() != null) {
                                     r.setId(toBeInlined.getRouteId());
@@ -267,6 +275,7 @@ public class DefaultModel implements Model {
                                 if (toBeInlined.isErrorHandlerFactorySet()) {
                                     r.setErrorHandler(toBeInlined.getErrorHandler());
                                 }
+                                r.markInlined();
                             }
                         }
                     }
@@ -426,6 +435,26 @@ public class DefaultModel implements Model {
             String routeId, String routeTemplateId, String prefixId,
             RouteTemplateContext routeTemplateContext)
             throws Exception {
+        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, null, null, routeTemplateContext);
+    }
+
+    @Override
+    public String addRouteFromKamelet(
+            String routeId, String routeTemplateId, String prefixId,
+            String parentRouteId, String parentProcessorId, Map<String, Object> parameters)
+            throws Exception {
+        RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext);
+        if (parameters != null) {
+            parameters.forEach(rtc::setParameter);
+        }
+        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, parentRouteId, parentProcessorId, rtc);
+    }
+
+    protected String doAddRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId,
+            String parentRouteId, String parentProcessorId,
+            RouteTemplateContext routeTemplateContext)
+            throws Exception {
 
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
@@ -463,12 +492,12 @@ public class DefaultModel implements Model {
             StringJoiner missingParameters = new StringJoiner(", ");
 
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
-                if (temp.getDefaultValue() != null) {
-                    addProperty(prop, temp.getName(), temp.getDefaultValue());
-                    addProperty(propDefaultValues, temp.getName(), temp.getDefaultValue());
-                } else if (routeTemplateContext.hasEnvironmentVariable(temp.getName())) {
+                if (routeTemplateContext.hasEnvironmentVariable(temp.getName())) {
                     // property is configured via environment variables
                     addProperty(prop, temp.getName(), routeTemplateContext.getEnvironmentVariable(temp.getName()));
+                } else if (temp.getDefaultValue() != null) {
+                    addProperty(prop, temp.getName(), temp.getDefaultValue());
+                    addProperty(propDefaultValues, temp.getName(), temp.getDefaultValue());
                 } else if (temp.isRequired() && !routeTemplateContext.hasParameter(temp.getName())) {
                     // this is a required parameter which is missing
                     missingParameters.add(temp.getName());
@@ -513,6 +542,12 @@ public class DefaultModel implements Model {
             }
         }
 
+        if (parentRouteId != null) {
+            addProperty(prop, "parentRouteId", parentRouteId);
+        }
+        if (parentProcessorId != null) {
+            addProperty(prop, "parentProcessorId", parentProcessorId);
+        }
         RouteDefinition def = converter.apply(target, prop);
         if (routeId != null) {
             def.setId(routeId);
@@ -534,11 +569,14 @@ public class DefaultModel implements Model {
         }
 
         // assign ids to the routes and validate that the id's are all unique
+        if (prefixId == null) {
+            prefixId = def.getNodePrefixId();
+        }
         String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions, prefixId);
         if (duplicate != null) {
             throw new FailedToCreateRouteFromTemplateException(
                     routeId, routeTemplateId,
-                    "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+                    "Duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
         }
 
         // must use route collection to prepare the created route to
@@ -566,6 +604,9 @@ public class DefaultModel implements Model {
     private static void addTemplateBeans(RouteTemplateContext routeTemplateContext, RouteTemplateDefinition target)
             throws Exception {
         for (BeanFactoryDefinition b : target.getTemplateBeans()) {
+            // route template beans do not directly support property placeholders
+            // but need to use rtc.property API calls
+            b.setScriptPropertyPlaceholders("false");
             BeanModelHelper.bind(b, routeTemplateContext);
         }
     }

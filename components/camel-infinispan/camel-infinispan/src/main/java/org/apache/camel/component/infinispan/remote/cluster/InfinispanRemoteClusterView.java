@@ -60,7 +60,7 @@ public class InfinispanRemoteClusterView extends InfinispanClusterView {
         super(cluster, namespace);
 
         this.configuration = configuration;
-        this.manager = new InfinispanRemoteManager(this.configuration.getConfiguration());
+        this.manager = new InfinispanRemoteManager(cluster.getCamelContext(), this.configuration.getConfiguration());
         this.leadership = new LeadershipService();
         this.localMember = new LocalMember(cluster.getId());
     }

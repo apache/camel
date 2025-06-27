@@ -20,13 +20,13 @@ import java.util.function.Predicate;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ENDPOINT_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
@@ -43,38 +43,34 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
     /**
      * Default naming strategy that uses micrometer naming convention.
      */
-    MicrometerExchangeEventNotifierNamingStrategy DEFAULT = (event, endpoint) -> DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME;
+    MicrometerExchangeEventNotifierNamingStrategy DEFAULT = new MicrometerExchangeEventNotifierNamingStrategyDefault();
 
     /**
      * Naming strategy that uses the classic/legacy naming style (camelCase)
      */
-    MicrometerExchangeEventNotifierNamingStrategy LEGACY = new MicrometerExchangeEventNotifierNamingStrategy() {
-        @Override
-        public String getName(Exchange exchange, Endpoint endpoint) {
-            return formatName(DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME);
-        }
-
-        @Override
-        public String formatName(String name) {
-            return MicrometerUtils.legacyName(name);
-        }
-    };
+    MicrometerExchangeEventNotifierNamingStrategy LEGACY = new MicrometerExchangeEventNotifierNamingStrategyLegacy();
 
     String getName(Exchange exchange, Endpoint endpoint);
+
+    // Use the base endpoint to avoid increasing the number
+    // of separate events on dynamic endpoints (ie, toD).
+    boolean isBaseEndpointURI();
 
     default String formatName(String name) {
         return name;
     }
 
-    default String getInflightExchangesName(Exchange exchange, Endpoint endpoint) {
+    default String getInflightExchangesName() {
         return formatName(DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT);
     }
 
     default Tags getTags(ExchangeEvent event, Endpoint endpoint) {
         String uri = "";
         if (endpoint != null) {
-            // use sanitized uri to not reveal sensitive information
             uri = endpoint.toString();
+            if (isBaseEndpointURI()) {
+                uri = StringHelper.before(uri, "?", uri);
+            }
         }
         String routeId = event.getExchange().getFromRouteId();
         if (routeId != null) {
@@ -95,16 +91,10 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
         }
     }
 
-    default Tags getInflightExchangesTags(ExchangeEvent event, Endpoint endpoint) {
-        if (event.getExchange().getFromRouteId() != null) {
-            return Tags.of(
-                    CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
-                    KIND, KIND_EXCHANGE,
-                    ROUTE_ID_TAG, event.getExchange().getFromRouteId());
-        } else {
-            return Tags.of(
-                    CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
-                    KIND, KIND_EXCHANGE);
-        }
+    default Tags getInflightExchangesTags(CamelContext camelContext, String routeId) {
+        return Tags.of(
+                CAMEL_CONTEXT_TAG, camelContext.getName(),
+                KIND, KIND_EXCHANGE,
+                ROUTE_ID_TAG, routeId);
     }
 }

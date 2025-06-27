@@ -662,6 +662,48 @@ public interface PahoMqtt5EndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether to use manual acknowledgements for the client. By
+         * default, this is false and message will be automatically acknowledged
+         * upon received by Camel. If set to true, the acknowledgement is
+         * deferred to be acknowledged by Camel at the end of processing the
+         * message. This ensures that only successfully processed messages is
+         * acknowledged, and allows to rollback and retry the message in case of
+         * an error during routing in Camel.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAcksEnabled the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5EndpointConsumerBuilder manualAcksEnabled(boolean manualAcksEnabled) {
+            doSetProperty("manualAcksEnabled", manualAcksEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to use manual acknowledgements for the client. By
+         * default, this is false and message will be automatically acknowledged
+         * upon received by Camel. If set to true, the acknowledgement is
+         * deferred to be acknowledged by Camel at the end of processing the
+         * message. This ensures that only successfully processed messages is
+         * acknowledged, and allows to rollback and retry the message in case of
+         * an error during routing in Camel.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAcksEnabled the value to set
+         * @return the dsl builder
+         */
+        default PahoMqtt5EndpointConsumerBuilder manualAcksEnabled(String manualAcksEnabled) {
+            doSetProperty("manualAcksEnabled", manualAcksEnabled);
+            return this;
+        }
+        /**
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 

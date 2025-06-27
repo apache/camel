@@ -21,11 +21,11 @@ inputs:
   version:
     description: 'The version of the maven daemon to install'
     required: true
-    default: '1.0-m6'
+    default: '1.0.2'
   distribution:
     description: 'The maven distribution to use'
     required: true
-    default: 'm39-linux-amd64'
+    default: 'linux-amd64'
   dry-run:
     description: 'Flag to enable to the dry-run mode'
     required: true
@@ -37,10 +37,10 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: curl -fsSL -o mvnd.zip https://archive.apache.org/dist/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip
+    - run: curl -fsSL -o mvnd.zip https://downloads.apache.org/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip
       if: inputs.dry-run == 'false'
       shell: bash
-    - run: curl -fsSL -o mvnd.zip.sha256 https://archive.apache.org/dist/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip.sha256
+    - run: curl -fsSL -o mvnd.zip.sha256 https://downloads.apache.org/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip.sha256
       if: inputs.dry-run == 'false'
       shell: bash
     - id: integrity-check
@@ -54,5 +54,5 @@ runs:
       run: echo "mvnd-dir=/tmp/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}/bin" >> $GITHUB_OUTPUT
       shell: bash
     - id: mvnd-opts
-      run: echo "MVND_OPTS=-V -e -ntp -Dmvnd.threads=2 -Daether.connector.http.connectionMaxTtl=120 -Daether.connector.requestTimeout=300000 -Daether.dependencyCollector.impl=bf -Dmaven.artifact.threads=25 -Dci.env.name=github.com -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2" >> $GITHUB_ENV
+      run: echo "MVND_OPTS=-P apache-snapshots -V -e -ntp -Dmvnd.threads=2 -Daether.connector.http.connectionMaxTtl=120 -Daether.connector.requestTimeout=300000 -Daether.dependencyCollector.impl=bf -Dmaven.artifact.threads=25 -Dci.env.name=github.com -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2" >> $GITHUB_ENV
       shell: bash

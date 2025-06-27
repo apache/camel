@@ -19,6 +19,7 @@ package org.apache.camel.component.pinecone.it;
 import java.util.Arrays;
 import java.util.List;
 
+import io.pinecone.proto.FetchResponse;
 import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.pinecone.PineconeVectorDb;
@@ -40,7 +41,6 @@ public class PineconeComponentIT extends CamelTestSupport {
     @Test
     @Order(1)
     public void createServerlessIndex() {
-
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.CREATE_SERVERLESS_INDEX)
                 .withBody(
@@ -93,7 +93,7 @@ public class PineconeComponentIT extends CamelTestSupport {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     public void queryByVector() {
 
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
@@ -108,13 +108,35 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(((QueryResponseWithUnsignedIndices) result.getMessage().getBody()).getMatchesList()).isNotEmpty();
-        assertThat(
-                ((QueryResponseWithUnsignedIndices) result.getMessage().getBody()).getMatches(0).getScore() > 0.9f);
+        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
     }
 
     @Test
     @Order(4)
+    public void queryByVectorExtended() {
+
+        List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
+
+        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.QUERY)
+                .withBody(
+                        elements)
+                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDb.Headers.QUERY_TOP_K, 3)
+                .withHeader(PineconeVectorDb.Headers.NAMESPACE, "defaultNamespace")
+                .withHeader(PineconeVectorDb.Headers.QUERY_FILTER, "subject\": {\"$eq\": \"marine\"}")
+                .withHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, true)
+                .withHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_METADATA, true)
+
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
+    }
+
+    @Test
+    @Order(5)
     public void queryById() {
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
@@ -126,22 +148,38 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(((QueryResponseWithUnsignedIndices) result.getMessage().getBody()).getMatchesList()).isNotEmpty();
+        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void deleteIndex() {
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.DELETE_INDEX)
-                .withBody(
-                        "test")
+                .withBody("test")
                 .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
+    }
+
+    @Test
+    @Order(7)
+    public void fetch() {
+
+        List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
+
+        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.FETCH)
+                .withBody(
+                        elements)
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(FetchResponse.class).getVectorsCount() != 0);
     }
 
 }

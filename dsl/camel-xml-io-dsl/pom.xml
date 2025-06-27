@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xml-io-dsl</artifactId>
@@ -117,6 +117,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-base64</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-kamelet</artifactId>
             <scope>test</scope>
         </dependency>
 

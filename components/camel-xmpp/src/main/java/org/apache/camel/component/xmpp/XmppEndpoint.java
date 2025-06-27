@@ -178,59 +178,65 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return "xmpp://" + host + ":" + port + "/" + getParticipant() + "?serviceName=" + serviceName;
     }
 
-    public synchronized XMPPTCPConnection createConnection()
+    public XMPPTCPConnection createConnection()
             throws InterruptedException, IOException, SmackException, XMPPException {
-        if (connection != null && connection.isConnected()) {
-            // use existing working connection
-            return connection;
-        }
-
-        // prepare for creating new connection
-        connection = null;
-
-        LOG.trace("Creating new connection ...");
-        XMPPTCPConnection newConnection = createConnectionInternal();
-
-        newConnection.connect();
-
-        newConnection.addSyncStanzaListener(new XmppLogger("INBOUND"), stanza -> true);
-        newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), stanza -> true);
-
-        if (!newConnection.isAuthenticated()) {
-            if (user != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(newConnection));
-                }
-                if (password == null) {
-                    LOG.warn("No password configured for user: {} on connection: {}", user,
-                            getConnectionMessage(newConnection));
-                }
-
-                if (createAccount) {
-                    AccountManager accountManager = AccountManager.getInstance(newConnection);
-                    accountManager.createAccount(Localpart.from(user), password);
-                }
-                if (login) {
-                    if (resource != null) {
-                        newConnection.login(user, password, Resourcepart.from(resource));
-                    } else {
-                        newConnection.login(user, password);
-                    }
-                }
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(newConnection));
-                }
-                newConnection.login();
+        lock.lock();
+        try {
+            if (connection != null && connection.isConnected()) {
+                // use existing working connection
+                return connection;
             }
 
-            // presence is not needed to be sent after login
-        }
+            // prepare for creating new connection
+            connection = null;
 
-        // okay new connection was created successfully so assign it as the connection
-        LOG.debug("Created new connection successfully: {}", newConnection);
-        connection = newConnection;
-        return connection;
+            LOG.trace("Creating new connection ...");
+            XMPPTCPConnection newConnection = createConnectionInternal();
+
+            newConnection.connect();
+
+            newConnection.addSyncStanzaListener(new XmppLogger("INBOUND"), stanza -> true);
+            newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), stanza -> true);
+
+            if (!newConnection.isAuthenticated()) {
+                if (user != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Logging in to XMPP as user: {} on connection: {}", user,
+                                getConnectionMessage(newConnection));
+                    }
+                    if (password == null) {
+                        LOG.warn("No password configured for user: {} on connection: {}", user,
+                                getConnectionMessage(newConnection));
+                    }
+
+                    if (createAccount) {
+                        AccountManager accountManager = AccountManager.getInstance(newConnection);
+                        accountManager.createAccount(Localpart.from(user), password);
+                    }
+                    if (login) {
+                        if (resource != null) {
+                            newConnection.login(user, password, Resourcepart.from(resource));
+                        } else {
+                            newConnection.login(user, password);
+                        }
+                    }
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(newConnection));
+                    }
+                    newConnection.login();
+                }
+
+                // presence is not needed to be sent after login
+            }
+
+            // okay new connection was created successfully so assign it as the connection
+            LOG.debug("Created new connection successfully: {}", newConnection);
+            connection = newConnection;
+            return connection;
+        } finally {
+            lock.unlock();
+        }
     }
 
     private XMPPTCPConnection createConnectionInternal() throws UnknownHostException, XmppStringprepException {

@@ -24,10 +24,10 @@ import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.WatcherException;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListDeletable;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
@@ -86,27 +86,42 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
+            FilterWatchListDeletable<ConfigMap, ConfigMapList, Resource<ConfigMap>> w;
 
-            FilterWatchListDeletable<ConfigMap, ConfigMapList, Resource<ConfigMap>> w = null;
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
-                    && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
-                w = getEndpoint().getKubernetesClient().configMaps().withLabel(
-                        getEndpoint().getKubernetesConfiguration().getLabelKey(),
-                        getEndpoint().getKubernetesConfiguration().getLabelValue());
+            /*
+                Valid options are (according to how the client can be constructed):
+                - inAnyNamespace
+                - inAnyNamespace + withLabel
+                - inNamespace
+                - inNamespace + withLabel
+                - inNamespace + withName
+             */
+            String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
+            String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
+            String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
+            String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
+
+            if (ObjectHelper.isEmpty(namespace)) {
+                w = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace();
+
+                if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                    w = w.withLabel(labelKey, labelValue);
+                }
+            } else {
+                final NonNamespaceOperation<ConfigMap, ConfigMapList, Resource<ConfigMap>> client
+                        = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespace);
+                w = client;
+                if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                    w = client.withLabel(labelKey, labelValue);
+                } else if (ObjectHelper.isNotEmpty(resourceName)) {
+                    w = (FilterWatchListDeletable<ConfigMap, ConfigMapList, Resource<ConfigMap>>) client.withName(resourceName);
+                }
             }
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
-                Resource<ConfigMap> configMapResource = getEndpoint()
-                        .getKubernetesClient().configMaps()
-                        .withName(getEndpoint().getKubernetesConfiguration().getResourceName());
-                w = (FilterWatchListDeletable<ConfigMap, ConfigMapList, Resource<ConfigMap>>) configMapResource;
-            }
-            if (w == null) {
-                throw new RuntimeCamelException("Consumer label key or consumer resource name need to be set.");
-            }
-            watch = w.watch(new Watcher<ConfigMap>() {
+
+            watch = w.watch(new Watcher<>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, ConfigMap resource) {
+                public void eventReceived(Action action, ConfigMap resource) {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);

@@ -1762,6 +1762,19 @@ public interface PulsarEndpointBuilderFactory {
         public String pulsarRedeliveryCount() {
             return "CamelPulsarRedeliveryCount";
         }
+        /**
+         * Deliver the message after a given delayed time (millis).
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * PulsarProducerMessageDeliverAfter}.
+         */
+        public String pulsarProducerMessageDeliverAfter() {
+            return "CamelPulsarProducerMessageDeliverAfter";
+        }
     }
     static PulsarEndpointBuilder endpointBuilder(String componentName, String path) {
         class PulsarEndpointBuilderImpl extends AbstractEndpointBuilder implements PulsarEndpointBuilder, AdvancedPulsarEndpointBuilder {

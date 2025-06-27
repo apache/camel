@@ -43,17 +43,25 @@ public @interface InVersion {
 
     String to() default "";
 
+    boolean includeSnapshot() default true;
+
     class InVersionCondition implements ExecutionCondition {
         @Override
         public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
-            final JBangTestSupport currTestClass = (JBangTestSupport) context.getTestInstance().get();
-            if (currTestClass == null) {
+            if (context.getTestInstance().isEmpty()) {
                 return ConditionEvaluationResult.enabled("unable to verify version");
             }
+            final JBangTestSupport currTestClass = (JBangTestSupport) context.getTestInstance().get();
             return context.getTestMethod()
                     .filter(method -> method.isAnnotationPresent(InVersion.class))
                     .map(method -> method.getAnnotation(InVersion.class))
                     .map(annotation -> {
+                        if (!annotation.includeSnapshot() && currTestClass.version().contains("SNAPSHOT")) {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("snapshot version {} is skipped", currTestClass.version());
+                                return Boolean.FALSE;
+                            }
+                        }
                         if (StringUtils.isNotBlank(annotation.from()) && StringUtils.isNotBlank(annotation.to())) {
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("from={},to={},{}", sanitize(annotation.from()), annotation.to(),

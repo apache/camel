@@ -46,7 +46,6 @@ public class GoogleMailStreamComponent extends HealthCheckComponent {
 
     public GoogleMailStreamComponent(CamelContext context) {
         super(context);
-        registerExtension(new GoogleMailStreamComponentVerifierExtension());
         this.configuration = new GoogleMailStreamConfiguration();
     }
 

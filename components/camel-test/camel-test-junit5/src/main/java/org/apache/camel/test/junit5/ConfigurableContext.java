@@ -14,24 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 /**
  * Indicates that the context used by the test is configurable
  */
 public interface ConfigurableContext {
+
     /**
      * Configures the context used for the test execution
-     *
-     * @param camelContextConfiguration
      */
     void configureContext(CamelContextConfiguration camelContextConfiguration);
 
     /**
      * Gets the {@link CamelContextConfiguration} for the test
-     *
-     * @return the camel context configuration
      */
     CamelContextConfiguration camelContextConfiguration();
 }

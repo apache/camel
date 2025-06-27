@@ -149,36 +149,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to use resource content cache or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param contentCache the value to set
-         * @return the dsl builder
-         */
-        default RobotFrameworkEndpointConsumerBuilder contentCache(boolean contentCache) {
-            doSetProperty("contentCache", contentCache);
-            return this;
-        }
-        /**
-         * Sets whether to use resource content cache or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param contentCache the value to set
-         * @return the dsl builder
-         */
-        default RobotFrameworkEndpointConsumerBuilder contentCache(String contentCache) {
-            doSetProperty("contentCache", contentCache);
-            return this;
-        }
-        /**
          * Tests that have the given tags are considered critical. List.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1277,7 +1247,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1297,7 +1268,8 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1686,36 +1658,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          */
         default RobotFrameworkEndpointProducerBuilder combinedTagStats(String combinedTagStats) {
             doSetProperty("combinedTagStats", combinedTagStats);
-            return this;
-        }
-        /**
-         * Sets whether to use resource content cache or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param contentCache the value to set
-         * @return the dsl builder
-         */
-        default RobotFrameworkEndpointProducerBuilder contentCache(boolean contentCache) {
-            doSetProperty("contentCache", contentCache);
-            return this;
-        }
-        /**
-         * Sets whether to use resource content cache or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param contentCache the value to set
-         * @return the dsl builder
-         */
-        default RobotFrameworkEndpointProducerBuilder contentCache(String contentCache) {
-            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -2632,36 +2574,6 @@ public interface RobotFrameworkEndpointBuilderFactory {
          */
         default RobotFrameworkEndpointBuilder combinedTagStats(String combinedTagStats) {
             doSetProperty("combinedTagStats", combinedTagStats);
-            return this;
-        }
-        /**
-         * Sets whether to use resource content cache or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param contentCache the value to set
-         * @return the dsl builder
-         */
-        default RobotFrameworkEndpointBuilder contentCache(boolean contentCache) {
-            doSetProperty("contentCache", contentCache);
-            return this;
-        }
-        /**
-         * Sets whether to use resource content cache or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param contentCache the value to set
-         * @return the dsl builder
-         */
-        default RobotFrameworkEndpointBuilder contentCache(String contentCache) {
-            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**

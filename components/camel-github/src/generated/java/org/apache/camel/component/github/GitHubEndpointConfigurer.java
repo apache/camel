@@ -31,6 +31,8 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "commitmessageasbody":
+        case "commitMessageAsBody": target.setCommitMessageAsBody(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "eventfetchstrategy":
@@ -89,6 +91,8 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "commitmessageasbody":
+        case "commitMessageAsBody": return boolean.class;
         case "delay": return long.class;
         case "encoding": return java.lang.String.class;
         case "eventfetchstrategy":
@@ -148,6 +152,8 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "commitmessageasbody":
+        case "commitMessageAsBody": return target.isCommitMessageAsBody();
         case "delay": return target.getDelay();
         case "encoding": return target.getEncoding();
         case "eventfetchstrategy":

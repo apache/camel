@@ -26,6 +26,9 @@ public class VaultConfiguration {
     private AzureVaultConfiguration azure;
     private HashicorpVaultConfiguration hashicorp;
     private KubernetesVaultConfiguration kubernetes;
+    private KubernetesConfigMapVaultConfiguration kubernetesConfigmaps;
+    private IBMSecretsManagerVaultConfiguration ibmSecretsManager;
+    private SpringCloudConfigConfiguration springConfig;
 
     /**
      * AWS Vault Configuration
@@ -77,6 +80,33 @@ public class VaultConfiguration {
         return kubernetes;
     }
 
+    /**
+     * Kubernetes Configmaps Vault Configuration
+     */
+    public KubernetesConfigMapVaultConfiguration kubernetesConfigmaps() {
+        if (kubernetesConfigmaps == null) {
+            kubernetesConfigmaps = new KubernetesConfigMapVaultConfiguration();
+        }
+        return kubernetesConfigmaps;
+    }
+
+    /**
+     * IBM Secrets Manager Vault Configuration
+     */
+    public IBMSecretsManagerVaultConfiguration ibmSecretsManager() {
+        if (ibmSecretsManager == null) {
+            ibmSecretsManager = new IBMSecretsManagerVaultConfiguration();
+        }
+        return ibmSecretsManager;
+    }
+
+    public SpringCloudConfigConfiguration springConfig() {
+        if (springConfig == null) {
+            springConfig = new SpringCloudConfigConfiguration();
+        }
+        return springConfig;
+    }
+
     public AwsVaultConfiguration getAwsVaultConfiguration() {
         return aws;
     }
@@ -115,5 +145,29 @@ public class VaultConfiguration {
 
     public void setKubernetesVaultConfiguration(KubernetesVaultConfiguration kubernetes) {
         this.kubernetes = kubernetes;
+    }
+
+    public KubernetesConfigMapVaultConfiguration getKubernetesConfigMapVaultConfiguration() {
+        return kubernetesConfigmaps;
+    }
+
+    public void setKubernetesConfigMapVaultConfiguration(KubernetesConfigMapVaultConfiguration kubernetesConfigmaps) {
+        this.kubernetesConfigmaps = kubernetesConfigmaps;
+    }
+
+    public IBMSecretsManagerVaultConfiguration getIBMSecretsManagerVaultConfiguration() {
+        return ibmSecretsManager;
+    }
+
+    public void setIBMSecretsManagerVaultConfiguration(IBMSecretsManagerVaultConfiguration ibmSecretsManager) {
+        this.ibmSecretsManager = ibmSecretsManager;
+    }
+
+    public SpringCloudConfigConfiguration getSpringCloudConfigConfiguration() {
+        return springConfig;
+    }
+
+    public void setSpringCloudConfigConfiguration(SpringCloudConfigConfiguration springCloudConfigConfiguration) {
+        this.springConfig = springCloudConfigConfiguration;
     }
 }

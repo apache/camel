@@ -233,8 +233,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            // must use the original message in case we need to workaround a charset issue when extracting mail content
-            final Message mail = exchange.getIn(MailMessage.class).getOriginalMessage();
+            // must use the original message in case we need to work around a charset issue when extracting mail content
+            var msg = exchange.getIn();
+            final Message mail = ((MailMessage) msg).getOriginalMessage();
 
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
@@ -450,8 +451,10 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processExchange(Exchange exchange) throws Exception {
         if (LOG.isDebugEnabled()) {
-            MailMessage msg = (MailMessage) exchange.getIn();
-            LOG.debug("Processing message: {}", MailUtils.dumpMessage(msg.getMessage()));
+            var msg = exchange.getIn();
+            if (msg instanceof MailMessage mm) {
+                LOG.debug("Processing message: {}", MailUtils.dumpMessage(mm.getMessage()));
+            }
         }
         getProcessor().process(exchange);
     }

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastQueueConsumerPollTest.class);
 

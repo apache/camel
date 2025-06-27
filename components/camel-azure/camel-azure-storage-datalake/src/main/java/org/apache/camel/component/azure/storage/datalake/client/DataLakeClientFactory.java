@@ -41,24 +41,26 @@ public final class DataLakeClientFactory {
 
     public static DataLakeServiceClient createDataLakeServiceClient(final DataLakeConfiguration configuration) {
         DataLakeServiceClient client = null;
+        CredentialType type = configuration.getCredentialType();
+        if (type == null) {
+            type = CredentialType.CLIENT_SECRET;
+        }
         if (configuration.getServiceClient() != null
-                && configuration.getCredentialType().equals(CredentialType.SERVICE_CLIENT_INSTANCE)) {
+                && CredentialType.SERVICE_CLIENT_INSTANCE.equals(type)) {
             LOG.trace("Using configured service client instance");
             client = configuration.getServiceClient();
-        } else if (configuration.getCredentialType().equals(CredentialType.AZURE_IDENTITY)) {
+        } else if (CredentialType.AZURE_IDENTITY.equals(type)) {
             client = createDataLakeServiceClientWithDefaultIdentity(configuration);
-        } else if (configuration.getCredentialType().equals(CredentialType.SHARED_KEY_CREDENTIAL)) {
+        } else if (CredentialType.SHARED_KEY_CREDENTIAL.equals(type)) {
             if (configuration.getAccountKey() != null || configuration.getSharedKeyCredential() != null) {
                 client = createDataLakeServiceClientWithSharedKey(configuration);
             }
-        } else if (configuration.getCredentialType().equals(CredentialType.AZURE_SAS)) {
+        } else if (CredentialType.AZURE_SAS.equals(type)) {
             if (configuration.getSasSignature() != null || configuration.getSasCredential() != null) {
                 client = createDataLakeServiceClientWithSas(configuration);
             }
-        } else {
-            if (configuration.getCredentialType().equals(CredentialType.CLIENT_SECRET)) {
-                client = createDataLakeServiceClientWithClientSecret(configuration);
-            }
+        } else if (CredentialType.CLIENT_SECRET.equals(type)) {
+            client = createDataLakeServiceClientWithClientSecret(configuration);
         }
 
         return client;

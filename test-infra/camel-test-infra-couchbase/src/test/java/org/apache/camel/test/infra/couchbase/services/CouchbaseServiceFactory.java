@@ -50,6 +50,46 @@ public final class CouchbaseServiceFactory {
         public int getPort() {
             return getService().getPort();
         }
+
+        @Override
+        public String protocol() {
+            return getService().protocol();
+        }
+
+        @Override
+        public String hostname() {
+            return getService().hostname();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String username() {
+            return getService().username();
+        }
+
+        @Override
+        public String password() {
+            return getService().password();
+        }
+
+        @Override
+        public String bucket() {
+            return getService().bucket();
+        }
+
+        @Override
+        public String viewName() {
+            return getService().viewName();
+        }
+
+        @Override
+        public String designDocumentName() {
+            return getService().designDocumentName();
+        }
     }
 
     private CouchbaseServiceFactory() {
@@ -62,8 +102,8 @@ public final class CouchbaseServiceFactory {
 
     public static CouchbaseService createService() {
         return builder()
-                .addLocalMapping(CouchbaseLocalContainerService::new)
-                .addRemoteMapping(CouchbaseRemoteService::new)
+                .addLocalMapping(CouchbaseLocalContainerTestService::new)
+                .addRemoteMapping(CouchbaseRemoteTestService::new)
                 .build();
     }
 
@@ -81,10 +121,17 @@ public final class CouchbaseServiceFactory {
         static {
             SimpleTestServiceBuilder<CouchbaseService> instance = builder();
 
-            instance.addLocalMapping(() -> new SingletonCouchbaseService(new CouchbaseLocalContainerService(), "couchbase"))
-                    .addRemoteMapping(CouchbaseRemoteService::new);
+            instance.addLocalMapping(() -> new SingletonCouchbaseService(new CouchbaseLocalContainerTestService(), "couchbase"))
+                    .addRemoteMapping(CouchbaseRemoteTestService::new);
 
             INSTANCE = instance.build();
         }
+    }
+
+    public static class CouchbaseLocalContainerTestService extends CouchbaseLocalContainerInfraService
+            implements CouchbaseService {
+    }
+
+    public static class CouchbaseRemoteTestService extends CouchbaseRemoteInfraService implements CouchbaseService {
     }
 }

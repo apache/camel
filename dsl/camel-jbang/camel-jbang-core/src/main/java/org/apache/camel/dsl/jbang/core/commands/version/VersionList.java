@@ -55,7 +55,7 @@ import picocli.CommandLine;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
 
 @CommandLine.Command(name = "list", description = "Displays available Camel versions",
-                     sortOptions = false)
+                     sortOptions = false, showDefaultValues = true)
 public class VersionList extends CamelCommand {
 
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
@@ -66,35 +66,45 @@ public class VersionList extends CamelCommand {
             = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/q/release-%s.md";
 
     @CommandLine.Option(names = { "--runtime" },
+                        defaultValue = "camel-main",
                         completionCandidates = RuntimeCompletionCandidates.class,
                         converter = RuntimeTypeConverter.class,
                         description = "Runtime (${COMPLETION-CANDIDATES})")
-    RuntimeType runtime;
+    RuntimeType runtime = RuntimeType.main;
 
     @CommandLine.Option(names = { "--from-version" },
-                        description = "Filter by Camel version (inclusive)", defaultValue = "4.0.0")
-    String fromVersion = "4.0.0";
+                        description = "Filter by Camel version (inclusive). Will start from 4.0 if no version ranges provided.")
+    String fromVersion;
 
     @CommandLine.Option(names = { "--to-version" },
                         description = "Filter by Camel version (exclusive)")
     String toVersion;
 
-    @CommandLine.Option(names = { "--repo" }, description = "Maven repository for downloading available versions")
-    String repo;
-
-    @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases")
-    boolean lts;
-
-    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
-    boolean fresh;
-
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
-    boolean jsonOutput;
-
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by (version, or date)", defaultValue = "version")
     String sort;
+
+    @CommandLine.Option(names = { "--repo" }, description = "Maven repository for downloading available versions")
+    String repo;
+
+    @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
+    boolean lts;
+
+    @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true")
+    boolean eol = true;
+
+    @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true")
+    boolean patch = true;
+
+    @CommandLine.Option(names = { "--rc" }, description = "Include also milestone or RC releases", defaultValue = "false")
+    boolean rc;
+
+    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources",
+                        defaultValue = "false")
+    boolean fresh;
+
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format", defaultValue = "false")
+    boolean jsonOutput;
 
     public VersionList(CamelJBangMain main) {
         super(main);
@@ -102,89 +112,66 @@ public class VersionList extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        KameletMain main = new KameletMain(CAMEL_INSTANCE_TYPE);
-
-        List<String[]> versions;
-        try {
-            main.setFresh(fresh);
-            main.setRepositories(repo);
-            main.start();
-
-            // use kamelet-main to download from maven
-            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
-
-            String g = "org.apache.camel";
-            String a = "camel-catalog";
-            if (RuntimeType.springBoot == runtime) {
-                g = "org.apache.camel.springboot";
-                a = "camel-spring-boot";
-            } else if (RuntimeType.quarkus == runtime) {
-                g = "org.apache.camel.quarkus";
-                a = "camel-quarkus-catalog";
+        // ensure from and to-version have major.minor
+        if (fromVersion != null) {
+            if (!(fromVersion.contains(".") || fromVersion.contains(","))) {
+                fromVersion = fromVersion + ".0";
             }
-
-            RepositoryResolver rr = downloader.getRepositoryResolver();
-            if (rr != null) {
-                repo = rr.resolveRepository(repo);
+        }
+        if (toVersion != null) {
+            if (!(toVersion.contains(".") || toVersion.contains(","))) {
+                toVersion = toVersion + ".0";
             }
+        }
+        // only show latest by default
+        if (fromVersion == null && toVersion == null) {
+            fromVersion = "4.0";
+        }
 
-            // ensure from and to-version have major.minor
-            if (fromVersion != null) {
-                if (!(fromVersion.contains(".") || fromVersion.contains(","))) {
-                    fromVersion = fromVersion + ".0";
-                }
-            }
-            if (toVersion != null) {
-                if (!(toVersion.contains(".") || toVersion.contains(","))) {
-                    toVersion = toVersion + ".0";
-                }
-            }
-
-            versions = downloader.resolveAvailableVersions(g, a, fromVersion, repo);
-            versions = versions.stream().filter(v -> acceptVersion(v[0])).collect(Collectors.toList());
-
-            main.stop();
-        } catch (Exception e) {
-            printer().println("Error downloading available Camel versions due to: " + e.getMessage());
-            return 1;
+        // only download if fresh, using a custom repo, or special runtime based
+        List<String[]> versions = new ArrayList<>();
+        if (fresh || repo != null || runtime != RuntimeType.main) {
+            downloadReleases(versions);
         }
 
         CamelCatalog catalog = new DefaultCamelCatalog();
         List<ReleaseModel> releases = RuntimeType.quarkus == runtime ? catalog.camelQuarkusReleases() : catalog.camelReleases();
 
         List<Row> rows = new ArrayList<>();
-        for (String[] v : versions) {
-            Row row = new Row();
-            rows.add(row);
-            row.coreVersion = v[0];
-            row.runtimeVersion = v[1];
-
-            // enrich with details from catalog (if we can find any)
-            String catalogVersion = RuntimeType.quarkus == runtime ? v[1] : v[0];
-            ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
-            if (rm == null) {
-                // unknown release but if it's an Apache Camel release we can grab from online
-                int dots = StringHelper.countChar(v[0], '.');
-                if (dots == 2) {
-                    rm = onlineRelease(runtime, row.coreVersion);
-                }
-            }
-            if (rm != null) {
-                row.releaseDate = rm.getDate();
-                row.eolDate = rm.getEol();
-                row.jdks = rm.getJdk();
-                row.kind = rm.getKind();
-            }
-        }
+        filterVersions(versions, rows, releases);
 
         if (lts) {
             rows.removeIf(r -> !"lts".equalsIgnoreCase(r.kind));
+        }
+        if (!rc) {
+            rows.removeIf(r -> "rc".equalsIgnoreCase(r.kind));
+        }
+        if (!patch) {
+            rows.removeIf(r -> {
+                String last = StringHelper.afterLast(r.coreVersion, ".");
+                return !"0".equals(last);
+            });
+        }
+        if (!eol) {
+            SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD);
+            Date now = new Date();
+            rows.removeIf(r -> {
+                String eol = r.eolDate;
+                if (eol != null) {
+                    try {
+                        Date d = sdf.parse(r.eolDate);
+                        return d.before(now);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+                return false;
+            });
         }
 
         // sort rows
         rows.sort(this::sortRow);
 
-        // camel-quarkus is not LTS and have its own release schedule
         if (jsonOutput) {
             printer().println(
                     Jsoner.serialize(
@@ -208,6 +195,94 @@ public class VersionList extends CamelCommand {
         }
 
         return 0;
+    }
+
+    protected Integer downloadReleases(List<String[]> answer) {
+        KameletMain main = new KameletMain(CAMEL_INSTANCE_TYPE);
+
+        try {
+            main.setFresh(fresh);
+            main.setRepositories(repo);
+            main.start();
+
+            // use kamelet-main to download from maven
+            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
+
+            String g = "org.apache.camel";
+            String a = "camel-core";
+            if (RuntimeType.springBoot == runtime) {
+                g = "org.apache.camel.springboot";
+                a = "camel-spring-boot";
+            } else if (RuntimeType.quarkus == runtime) {
+                g = "org.apache.camel.quarkus";
+                a = "camel-quarkus-catalog";
+            }
+
+            RepositoryResolver rr = downloader.getRepositoryResolver();
+            if (rr != null) {
+                repo = rr.resolveRepository(repo);
+            }
+
+            var versions = downloader.resolveAvailableVersions(g, a, fromVersion, repo);
+            versions = versions.stream().filter(v -> acceptVersion(v[0])).toList();
+            answer.addAll(versions);
+
+            main.stop();
+        } catch (Exception e) {
+            printer().println("Error downloading available Camel versions due to: " + e.getMessage());
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private void filterVersions(List<String[]> versions, List<Row> rows, List<ReleaseModel> releases) throws Exception {
+        if (versions.isEmpty()) {
+            for (ReleaseModel rm : releases) {
+                boolean accept = true;
+                if (fromVersion != null || toVersion != null) {
+                    if (fromVersion == null) {
+                        fromVersion = "1.0";
+                    }
+                    if (toVersion == null) {
+                        toVersion = "99.0";
+                    }
+                    accept = VersionHelper.isBetween(rm.getVersion(), fromVersion, toVersion);
+                }
+                if (accept) {
+                    Row row = new Row();
+                    rows.add(row);
+                    row.coreVersion = rm.getVersion();
+                    row.releaseDate = rm.getDate();
+                    row.eolDate = rm.getEol();
+                    row.jdks = rm.getJdk();
+                    row.kind = rm.getKind();
+                }
+            }
+        } else
+            for (String[] v : versions) {
+                Row row = new Row();
+                rows.add(row);
+                row.coreVersion = v[0];
+                row.runtimeVersion = v[1];
+
+                // enrich with details from catalog (if we can find any)
+                String catalogVersion = RuntimeType.quarkus == runtime ? v[1] : v[0];
+                ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
+                if (rm == null) {
+                    // unknown release but if it's an Apache Camel release we can grab from online
+                    int dots = StringHelper.countChar(v[0], '.');
+                    if (dots == 2) {
+                        rm = onlineRelease(runtime, row.coreVersion);
+                    }
+                }
+                if (rm != null) {
+                    row.releaseDate = rm.getDate();
+                    row.eolDate = rm.getEol();
+                    row.jdks = rm.getJdk();
+                    row.kind = rm.getKind();
+                }
+            }
     }
 
     private static Map<String, Object> mapOf(Row r) {
@@ -245,7 +320,7 @@ public class VersionList extends CamelCommand {
     }
 
     private String kind(Row r) {
-        if (r.kind != null) {
+        if (r.kind != null && !"legacy".equalsIgnoreCase(r.kind)) {
             return r.kind.toUpperCase(Locale.ROOT);
         }
         return "";

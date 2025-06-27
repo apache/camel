@@ -50,7 +50,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -74,7 +74,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1295,9 +1295,9 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         }
         /**
          * Controls what DDL will Debezium store in database schema history. By
-         * default (true) only DDL that manipulates a table from captured
-         * schema/database will be stored. If set to false, then Debezium will
-         * store all incoming DDL statements.
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a table from captured
+         * schema/database will be stored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1314,9 +1314,9 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         }
         /**
          * Controls what DDL will Debezium store in database schema history. By
-         * default (true) only DDL that manipulates a table from captured
-         * schema/database will be stored. If set to false, then Debezium will
-         * store all incoming DDL statements.
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a table from captured
+         * schema/database will be stored.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1951,6 +1951,42 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          */
         default DebeziumSqlserverEndpointBuilder streamingDelayMs(String streamingDelayMs) {
             doSetProperty("streamingDelayMs", streamingDelayMs);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of rows that should be read in one go
+         * from each table while streaming. The connector will read the table
+         * contents in multiple batches of this size. Defaults to 0 which means
+         * no limit.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         * 
+         * @param streamingFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder streamingFetchSize(int streamingFetchSize) {
+            doSetProperty("streamingFetchSize", streamingFetchSize);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of rows that should be read in one go
+         * from each table while streaming. The connector will read the table
+         * contents in multiple batches of this size. Defaults to 0 which means
+         * no limit.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         * 
+         * @param streamingFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder streamingFetchSize(String streamingFetchSize) {
+            doSetProperty("streamingFetchSize", streamingFetchSize);
             return this;
         }
         /**

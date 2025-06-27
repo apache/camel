@@ -14,58 +14,92 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.smb;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import com.hierynomus.smbj.share.File;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import org.apache.camel.Exchange;
-import org.apache.camel.WrappedFile;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileMessage;
 
-public class SmbFile implements WrappedFile<File> {
+public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
 
-    private final File file;
+    private final SmbOperations operations;
+    private final boolean download;
+    private final boolean streamDownload;
+    private Exchange exchange;
+    private String hostname;
 
-    public SmbFile(File file) {
-        this.file = file;
-    }
-
-    void populateHeaders(Exchange exchange) {
-        exchange.getMessage().setHeader(SmbConstants.SMB_FILE_PATH, file.getPath());
-        exchange.getMessage().setHeader(SmbConstants.SMB_UNC_PATH, file.getUncPath());
-
-        exchange.getMessage().setHeader(Exchange.FILE_NAME, file.getFileInformation().getNameInformation().toString());
+    public SmbFile(SmbOperations operations, boolean download, boolean streamDownload) {
+        this.operations = operations;
+        this.download = download;
+        this.streamDownload = streamDownload;
     }
 
     @Override
-    public File getFile() {
-        return file;
+    public void bindToExchange(Exchange exchange) {
+        this.exchange = exchange;
+        super.bindToExchange(exchange);
     }
 
-    public String getPath() {
-        return getFile().getPath();
+    /**
+     * Populates the {@link GenericFileMessage} relevant headers
+     *
+     * @param message the message to populate with headers
+     */
+    public void populateHeaders(GenericFileMessage<FileIdBothDirectoryInformation> message) {
+        if (message != null) {
+            // because there is not probeContentType option
+            // in other file based components, false may be passed
+            // as the second argument.
+            super.populateHeaders(message, false);
+            message.setHeader(SmbConstants.FILE_HOST, getHostname());
+        }
     }
 
-    public String getUncPath() {
-        return getFile().getUncPath();
+    @Override
+    public void populateHeaders(
+            GenericFileMessage<FileIdBothDirectoryInformation> message, boolean isProbeContentTypeFromEndpoint) {
+        populateHeaders(message);
     }
 
-    public InputStream getInputStream() {
-        return getFile().getInputStream();
+    public String getHostname() {
+        return hostname;
     }
 
-    public long getSize() {
-        return file.getFileInformation().getStandardInformation().getEndOfFile();
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    @Override
+    public char getFileSeparator() {
+        // always use '/' as separator for SMB
+        return '/';
+    }
+
+    @Override
+    public void copyFromPopulateAdditional(
+            GenericFile<FileIdBothDirectoryInformation> source, GenericFile<FileIdBothDirectoryInformation> result) {
+        SmbFile remoteSource = (SmbFile) source;
+        SmbFile remoteResult = (SmbFile) result;
+        remoteResult.setHostname(remoteSource.getHostname());
     }
 
     @Override
     public Object getBody() {
-        try (InputStream is = file.getInputStream()) {
-            return is.readAllBytes();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!download) {
+            return null;
+        }
+        if (streamDownload) {
+            return operations.getBodyAsInputStream(exchange, this.getAbsoluteFilePath());
+        } else {
+            // use operations so smb file can be closed
+            return operations.getBody(this.getAbsoluteFilePath());
         }
     }
+
+    @Override
+    public String toString() {
+        return "SmbFile[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + "]";
+    }
+
 }

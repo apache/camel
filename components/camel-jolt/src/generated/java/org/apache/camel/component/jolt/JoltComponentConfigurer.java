@@ -27,6 +27,8 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
         case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "transform": target.setTransform(property(camelContext, com.bazaarvoice.jolt.Transform.class, value)); return true;
@@ -41,6 +43,8 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
         case "allowTemplateFromHeader": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "transform": return com.bazaarvoice.jolt.Transform.class;
@@ -56,6 +60,8 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
         case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "contentcache":
+        case "contentCache": return target.isContentCache();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "transform": return target.getTransform();

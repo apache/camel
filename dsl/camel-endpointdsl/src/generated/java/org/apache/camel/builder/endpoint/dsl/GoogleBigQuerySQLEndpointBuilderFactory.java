@@ -77,6 +77,21 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
             return this;
         }
         /**
+         * Page token, returned by a previous call, to request the next page of
+         * results.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param pageToken the value to set
+         * @return the dsl builder
+         */
+        default GoogleBigQuerySQLEndpointBuilder pageToken(String pageToken) {
+            doSetProperty("pageToken", pageToken);
+            return this;
+        }
+        /**
          * Service account key in json format to authenticate an application as
          * a service account to google cloud platform.
          * 
@@ -250,6 +265,33 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         public String googleBigQueryJobId() {
             return "CamelGoogleBigQueryJobId";
+        }
+        /**
+         * The page token to retrieve a specific page of results from BigQuery.
+         * If not set, the first page is returned.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleBigQueryPageToken}.
+         */
+        public String googleBigQueryPageToken() {
+            return "CamelGoogleBigQueryPageToken";
+        }
+        /**
+         * The next page token returned by BigQuery. Use this token in the
+         * CamelGoogleBigQueryPageToken header of a subsequent request to
+         * retrieve the next page of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleBigQueryNextPageToken}.
+         */
+        public String googleBigQueryNextPageToken() {
+            return "CamelGoogleBigQueryNextPageToken";
         }
     }
     static GoogleBigQuerySQLEndpointBuilder endpointBuilder(String componentName, String path) {

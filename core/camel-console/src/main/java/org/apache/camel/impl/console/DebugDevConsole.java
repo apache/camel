@@ -93,7 +93,7 @@ public class DebugDevConsole extends AbstractDevConsole {
                 BacklogTracerEventMessage trace = backlog.getSuspendedBreakpointMessage(n);
                 if (trace != null) {
                     sb.append("\n");
-                    sb.append(trace.toXml(8));
+                    sb.append(trace.toXml(4));
                     sb.append("\n");
                 }
             }
@@ -124,6 +124,8 @@ public class DebugDevConsole extends AbstractDevConsole {
             } else {
                 backlog.stepBreakpoint();
             }
+        } else if ("stepover".equalsIgnoreCase(command)) {
+            backlog.stepOver();
         } else if ("add".equalsIgnoreCase(command) && ObjectHelper.isNotEmpty(breakpoint)) {
             backlog.addBreakpoint(breakpoint);
         } else if ("remove".equalsIgnoreCase(command)) {

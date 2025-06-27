@@ -37,7 +37,7 @@ import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "kamelet",
-                     description = "List Kamelets from the Kamelet Catalog", sortOptions = false)
+                     description = "List Kamelets from the Kamelet Catalog", sortOptions = false, showDefaultValues = true)
 public class CatalogKamelet extends CamelCommand {
 
     @CommandLine.Option(names = { "--sort" },
@@ -83,7 +83,7 @@ public class CatalogKamelet extends CamelCommand {
             Method m = clazz.getMethod("getKamelets");
             kamelets = (Map<String, Object>) ObjectHelper.invokeMethod(m, catalog);
         } catch (Exception e) {
-            System.err.println("Cannot download camel-kamelets-catalog due to " + e.getMessage());
+            printer().printErr("Cannot download camel-kamelets-catalog due to " + e.getMessage());
             return 1;
         } finally {
             Thread.currentThread().setContextClassLoader(tccLoader);

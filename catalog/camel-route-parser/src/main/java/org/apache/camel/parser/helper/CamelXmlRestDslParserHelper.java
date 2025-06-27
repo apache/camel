@@ -76,6 +76,7 @@ public final class CamelXmlRestDslParserHelper {
             detail.setBindingMode(extractAttribute(map, "bindingMode"));
             detail.setSkipBindingOnErrorCode(extractAttribute(map, "skipBindingOnErrorCode"));
             detail.setClientRequestValidation(extractAttribute(map, "clientRequestValidation"));
+            detail.setClientResponseValidation(extractAttribute(map, "clientResponseValidation"));
             detail.setEnableCORS(extractAttribute(map, "enableCORS"));
             detail.setJsonDataFormat(extractAttribute(map, "jsonDataFormat"));
             detail.setXmlDataFormat(extractAttribute(map, "xmlDataFormat"));
@@ -218,6 +219,7 @@ public final class CamelXmlRestDslParserHelper {
         detail.setApiDocs(extractAttribute(map, "apiDocs"));
         detail.setBindingMode(extractAttribute(map, "bindingMode"));
         detail.setClientRequestValidation(extractAttribute(map, "clientRequestValidation"));
+        detail.setClientResponseValidation(extractAttribute(map, "clientResponseValidation"));
         detail.setEnableCORS(extractAttribute(map, "enableCORS"));
         detail.setPath(extractAttribute(map, "path"));
         detail.setSkipBindingOnErrorCode(extractAttribute(map, "skipBindingOnErrorCode"));
@@ -232,6 +234,7 @@ public final class CamelXmlRestDslParserHelper {
         detail.setApiDocs(extractAttribute(map, "apiDocs"));
         detail.setBindingMode(extractAttribute(map, "bindingMode"));
         detail.setClientRequestValidation(extractAttribute(map, "clientRequestValidation"));
+        detail.setClientResponseValidation(extractAttribute(map, "clientResponseValidation"));
         detail.setSkipBindingOnErrorCode(extractAttribute(map, "skipBindingOnErrorCode"));
         detail.setType(extractAttribute(map, "type"));
         detail.setOutType(extractAttribute(map, "outType"));

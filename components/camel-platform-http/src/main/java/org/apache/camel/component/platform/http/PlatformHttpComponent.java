@@ -61,8 +61,12 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
                             + " should catch any failure during writing response and store this on the Exchange, which allows onCompletion/UnitOfWork to"
                             + " regard the Exchange as failed and have access to the caused exception from the HTTP server.")
     private boolean handleWriteResponseError;
+    @Metadata(label = "advanced,consumer",
+              description = "The period in milliseconds after which the request should be timed out.")
+    private long requestTimeout;
 
     private final Set<HttpEndpointModel> httpEndpoints = new TreeSet<>();
+    private final Set<HttpEndpointModel> httpManagementEndpoints = new TreeSet<>();
     private final List<PlatformHttpListener> listeners = new ArrayList<>();
     private volatile boolean localEngine;
 
@@ -79,6 +83,7 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
         PlatformHttpEndpoint endpoint = new PlatformHttpEndpoint(uri, remaining, this);
         endpoint.setPlatformHttpEngine(engine);
         endpoint.setHandleWriteResponseError(handleWriteResponseError);
+        endpoint.setRequestTimeout(requestTimeout);
         setEndpointHeaderFilterStrategy(endpoint);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -119,8 +124,20 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
      * Adds a known http endpoint managed by this component.
      */
     public void addHttpEndpoint(String uri, String verbs, String consumes, String produces, Consumer consumer) {
+        this.addHttpEndpoint(this.httpEndpoints, uri, verbs, consumes, produces, consumer);
+    }
+
+    /**
+     * Adds a known http management endpoint managed by this component.
+     */
+    public void addHttpManagementEndpoint(String uri, String verbs, String consumes, String produces, Consumer consumer) {
+        this.addHttpEndpoint(this.httpManagementEndpoints, uri, verbs, consumes, produces, consumer);
+    }
+
+    private void addHttpEndpoint(
+            Set<HttpEndpointModel> endpoints, String uri, String verbs, String consumes, String produces, Consumer consumer) {
         HttpEndpointModel model = new HttpEndpointModel(uri, verbs, consumes, produces, consumer);
-        httpEndpoints.add(model);
+        endpoints.add(model);
         for (PlatformHttpListener listener : listeners) {
             try {
                 listener.registerHttpEndpoint(model);
@@ -134,8 +151,19 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
      * Removes a known http endpoint managed by this component.
      */
     public void removeHttpEndpoint(String uri) {
+        this.removeHttpEndpoint(this.httpEndpoints, uri);
+    }
+
+    /**
+     * Removes a known http endpoint managed by this component.
+     */
+    public void removeHttpManagementEndpoint(String uri) {
+        this.removeHttpEndpoint(this.httpManagementEndpoints, uri);
+    }
+
+    private void removeHttpEndpoint(Set<HttpEndpointModel> endpoints, String uri) {
         List<HttpEndpointModel> toRemove = new ArrayList<>();
-        httpEndpoints.stream().filter(e -> e.getUri().equals(uri)).forEach(model -> {
+        endpoints.stream().filter(e -> e.getUri().equals(uri)).forEach(model -> {
             toRemove.add(model);
             for (PlatformHttpListener listener : listeners) {
                 try {
@@ -145,7 +173,7 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
                 }
             }
         });
-        toRemove.forEach(httpEndpoints::remove);
+        toRemove.forEach(endpoints::remove);
     }
 
     /**
@@ -167,6 +195,14 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
      */
     public Set<HttpEndpointModel> getHttpEndpoints() {
         return Collections.unmodifiableSet(httpEndpoints);
+    }
+
+    /**
+     * Lists the known http management endpoints managed by this component. The endpoints are without
+     * host:port/[context-path]
+     */
+    public Set<HttpEndpointModel> getHttpManagementEndpoints() {
+        return Collections.unmodifiableSet(httpManagementEndpoints);
     }
 
     @Override
@@ -202,6 +238,14 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
 
     public void setHandleWriteResponseError(boolean handleWriteResponseError) {
         this.handleWriteResponseError = handleWriteResponseError;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 
     private Consumer doCreateConsumer(

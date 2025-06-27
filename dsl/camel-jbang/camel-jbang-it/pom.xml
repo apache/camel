@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -225,6 +225,11 @@
             <properties>
                 <maven.test.skip>false</maven.test.skip>
                 <shared.data.folder>target/data</shared.data.folder>
+                <cli.jbang.version>${project.version}</cli.jbang.version>
+                <cli.jbang.repo>apache/camel</cli.jbang.repo>
+                <cli.jbang.branch>main</cli.jbang.branch>
+                <cli.jbang.docker.file/>
+                <shared.maven.local.repo>${settings.localRepository}</shared.maven.local.repo>
                 <x11.display>:0</x11.display>
             </properties>
             <build>
@@ -239,6 +244,7 @@
                                 <configuration>
                                     <target>
                                         <mkdir dir="${shared.data.folder}"/>
+                                        <mkdir dir="${shared.maven.local.repo}"/>
                                     </target>
                                 </configuration>
                                 <goals>
@@ -258,19 +264,20 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <rerunFailingTestsCount>0</rerunFailingTestsCount>
-                            <forkCount>2C</forkCount>
+                            <rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</rerunFailingTestsCount>
+                            <forkCount>1C</forkCount>
                             <argLine>-DforkNumber=${surefire.forkNumber}</argLine>
-                            <systemProperties>
-                                <property>
-                                    <name>cli.service.data.folder</name>
-                                    <value>${shared.data.folder}</value>
-                                </property>
-                                <property>
-                                    <name>DISPLAY</name>
-                                    <value>${x11.display}</value>
-                                </property>
-                            </systemProperties>
+                            <threadCountClasses>1</threadCountClasses>
+                            <systemPropertyVariables>
+                                <cli.service.data.folder>${shared.data.folder}</cli.service.data.folder>
+                                <cli.service.version>${cli.jbang.version}</cli.service.version>
+                                <cli.service.mvn.local>${shared.maven.local.repo}</cli.service.mvn.local>
+                                <cli.service.repo>${cli.jbang.repo}</cli.service.repo>
+                                <cli.service.branch>${cli.jbang.branch}</cli.service.branch>
+                                <cli.service.docker.file>${cli.jbang.docker.file}</cli.service.docker.file>
+                                <jbang.it.assert.wait.timeout>300</jbang.it.assert.wait.timeout>
+                                <DISPLAY>${x11.display}</DISPLAY>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>

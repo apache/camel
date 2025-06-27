@@ -18,10 +18,12 @@ package org.apache.camel.language;
 
 import org.apache.camel.builder.LanguageBuilderFactory;
 import org.apache.camel.model.language.JavaScriptExpression;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 /**
  * Ensures that the "js" language is compliant with the typed language expectations.
  */
+@DisabledIfSystemProperty(named = "os.arch", matches = "(?i)(s390x|ppc64le)")
 class JavaScriptLanguageTest extends AbstractTypedLanguageTest<JavaScriptExpression.Builder, JavaScriptExpression> {
 
     JavaScriptLanguageTest() {

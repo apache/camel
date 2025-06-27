@@ -84,7 +84,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                             + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
                             + " port in the URI syntax (i.e. `https://api.example.com:8080`). Can be overridden in endpoint"
                             + " configuration.",
-              defaultValue = DEFAULT_SPECIFICATION_URI, label = "common")
+              label = "common")
     private String specificationUri;
     @Metadata(description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in OpenApi specification.",
               label = "common")
@@ -126,6 +126,9 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     @Metadata(label = "consumer",
               description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
     private boolean clientRequestValidation;
+    @Metadata(label = "consumer",
+              description = "Whether to enable validation of the client request to check if the outgoing response from Camel is valid according to the OpenAPI specification")
+    private boolean clientResponseValidation;
     @Metadata(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
     @Metadata(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
@@ -157,12 +160,25 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
             throws Exception {
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
         endpoint.setApiContextPath(getApiContextPath());
+        endpoint.setBasePath(getBasePath());
         endpoint.setBindingPackageScan(getBindingPackageScan());
         endpoint.setClientRequestValidation(isClientRequestValidation());
+        endpoint.setClientResponseValidation(isClientResponseValidation());
+        endpoint.setComponentName(getComponentName());
+        endpoint.setConsumerComponentName(getConsumerComponentName());
+        endpoint.setConsumes(getConsumes());
+        if (getHost() != null) {
+            endpoint.setHost(getHost());
+        }
+        endpoint.setProduces(getProduces());
         endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
+        if (getSpecificationUri() != null) {
+            endpoint.setSpecificationUri(getSpecificationUri());
+        }
         endpoint.setMissingOperation(getMissingOperation());
         endpoint.setMockIncludePattern(getMockIncludePattern());
+        endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -302,6 +318,14 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     public void setClientRequestValidation(boolean clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
+    }
+
+    public boolean isClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
+    public void setClientResponseValidation(boolean clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
     }
 
     public String getBindingPackageScan() {

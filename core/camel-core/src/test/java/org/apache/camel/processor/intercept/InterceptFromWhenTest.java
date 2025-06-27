@@ -49,7 +49,7 @@ public class InterceptFromWhenTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                interceptFrom().when(simple("${body} contains 'Goofy'")).to("mock:goofy").stop();
+                interceptFrom().onWhen(simple("${body} contains 'Goofy'")).to("mock:goofy").stop();
 
                 from("direct:start").to("mock:end");
             }

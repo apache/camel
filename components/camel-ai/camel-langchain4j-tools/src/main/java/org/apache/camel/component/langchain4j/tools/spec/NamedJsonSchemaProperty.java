@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.langchain4j.tools.spec;
 
-import java.util.List;
-
-import dev.langchain4j.agent.tool.JsonSchemaProperty;
+import dev.langchain4j.model.chat.request.json.JsonSchemaElement;
 
 public class NamedJsonSchemaProperty {
 
     private final String name;
-    private final List<JsonSchemaProperty> properties;
+    private final JsonSchemaElement properties;
 
-    public NamedJsonSchemaProperty(String name, List<JsonSchemaProperty> properties) {
+    public NamedJsonSchemaProperty(String name, JsonSchemaElement properties) {
         this.name = name;
         this.properties = properties;
     }
@@ -34,7 +32,7 @@ public class NamedJsonSchemaProperty {
         return name;
     }
 
-    public List<JsonSchemaProperty> getProperties() {
+    public JsonSchemaElement getProperties() {
         return properties;
     }
 }

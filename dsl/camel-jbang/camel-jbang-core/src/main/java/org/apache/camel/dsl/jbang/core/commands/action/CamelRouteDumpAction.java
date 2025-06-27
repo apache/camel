@@ -16,16 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -34,7 +35,8 @@ import picocli.CommandLine.Command;
 
 import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
-@Command(name = "route-dump", description = "Dump Camel route in XML or YAML format", sortOptions = false)
+@Command(name = "route-dump", description = "Dump Camel route in XML or YAML format", sortOptions = false,
+         showDefaultValues = true)
 public class CamelRouteDumpAction extends ActionBaseCommand {
 
     public static class NameIdCompletionCandidates implements Iterable<String> {
@@ -94,17 +96,17 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         this.pid = pids.get(0);
 
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "route-dump");
         root.put("filter", "*");
         root.put("format", format);
         root.put("uriAsParameters", uriAsParameters);
-        File file = getActionFile(Long.toString(pid));
+        Path file = getActionFile(Long.toString(pid));
         try {
-            IOHelper.writeText(root.toJson(), file);
+            Files.writeString(file, root.toJson());
         } catch (Exception e) {
             // ignore
         }
@@ -164,7 +166,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         }
 
         // delete output file after use
-        FileUtil.deleteFile(outputFile);
+        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -206,7 +208,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         }
     }
 
-    protected JsonObject waitForOutputFile(File outputFile) {
+    protected JsonObject waitForOutputFile(Path outputFile) {
         return getJsonObject(outputFile);
     }
 

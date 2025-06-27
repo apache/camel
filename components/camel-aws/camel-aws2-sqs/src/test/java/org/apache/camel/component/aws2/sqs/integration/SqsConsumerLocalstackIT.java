@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.await;
 
 class SqsConsumerLocalstackIT extends Aws2SQSBaseTest {
     private static final int MAX_MESSAGES_PER_POLL = 50;

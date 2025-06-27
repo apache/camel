@@ -26,6 +26,8 @@ import org.apache.camel.support.component.AbstractApiComponent;
 import org.hisp.dhis.integration.sdk.Dhis2ClientBuilder;
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 @org.apache.camel.spi.annotations.Component("dhis2")
 public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Configuration, Dhis2ApiCollection> {
     @Metadata(label = "advanced")
@@ -82,18 +84,19 @@ public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Conf
                 if (endpointConfiguration.getBaseApiUrl() != null || endpointConfiguration.getPersonalAccessToken() != null
                         || endpointConfiguration.getUsername() != null || endpointConfiguration.getPassword() != null) {
                     throw new RuntimeCamelException(
-                            "Bad DHIS2 endpoint configuration: client option is mutually exclusive to baseApiUrl, username, password, and personalAccessToken. Either set `client`, or `baseApiUrl` and `username` and `password`, or `baseApiUrl` and `personalAccessToken`");
+                            "Bad DHIS2 endpoint configuration: client option is mutually exclusive to baseApiUrl, username, password, and personalAccessToken. Either set (1) `client`, or (2) `baseApiUrl` and `username` and `password`, or (3) `baseApiUrl` and `personalAccessToken`");
                 }
 
                 return endpointConfiguration.getClient();
             } else {
-                if (endpointConfiguration.getPersonalAccessToken() != null
-                        && (endpointConfiguration.getUsername() != null || endpointConfiguration.getPassword() != null)) {
+                if (isNotEmpty(endpointConfiguration.getPersonalAccessToken())
+                        && (isNotEmpty(endpointConfiguration.getUsername())
+                                || isNotEmpty(endpointConfiguration.getPassword()))) {
                     throw new RuntimeCamelException(
                             "Bad DHIS2 authentication configuration: Personal access token authentication and basic authentication are mutually exclusive. Either set `personalAccessToken` or both `username` and `password`");
                 }
 
-                if (endpointConfiguration.getPersonalAccessToken() != null) {
+                if (isNotEmpty(endpointConfiguration.getPersonalAccessToken())) {
                     return Dhis2ClientBuilder.newClient(endpointConfiguration.getBaseApiUrl(),
                             endpointConfiguration.getPersonalAccessToken()).build();
                 } else {

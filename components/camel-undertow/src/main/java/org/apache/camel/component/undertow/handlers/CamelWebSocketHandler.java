@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -69,7 +71,7 @@ public class CamelWebSocketHandler implements HttpHandler {
 
     private UndertowConsumer consumer;
 
-    private final Object consumerLock = new Object();
+    private final Lock consumerLock = new ReentrantLock();
 
     private final WebSocketProtocolHandshakeHandler delegate;
 
@@ -167,28 +169,32 @@ public class CamelWebSocketHandler implements HttpHandler {
      * @param consumer the {@link UndertowConsumer} to set
      */
     public void setConsumer(UndertowConsumer consumer) {
-        synchronized (consumerLock) {
+        consumerLock.lock();
+        try {
             if (consumer != null && this.consumer != null) {
                 throw new IllegalStateException(
                         "Cannot call " + getClass().getName()
                                                 + ".setConsumer(UndertowConsumer) with a non-null consumer before unsetting it via setConsumer(null)");
             }
             this.consumer = consumer;
+        } finally {
+            consumerLock.unlock();
         }
     }
 
     void sendEventNotificationIfNeeded(
             String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
-        synchronized (consumerLock) {
-            synchronized (consumerLock) {
-                if (consumer != null) {
-                    if (consumer.getEndpoint().isFireWebSocketChannelEvents()) {
-                        consumer.sendEventNotification(connectionKey, transportExchange, channel, eventType);
-                    }
-                } else {
-                    LOG.debug("No consumer to handle a peer {} event type {}", connectionKey, eventType);
+        consumerLock.lock();
+        try {
+            if (consumer != null) {
+                if (consumer.getEndpoint().isFireWebSocketChannelEvents()) {
+                    consumer.sendEventNotification(connectionKey, transportExchange, channel, eventType);
                 }
+            } else {
+                LOG.debug("No consumer to handle a peer {} event type {}", connectionKey, eventType);
             }
+        } finally {
+            consumerLock.unlock();
         }
     }
 
@@ -200,7 +206,7 @@ public class CamelWebSocketHandler implements HttpHandler {
         private final Exchange camelExchange;
 
         private Map<String, Throwable> errors;
-        private final Object lock = new Object();
+        private final Lock lock = new ReentrantLock();
         /**
          * Initially, this set contains all peers where we plan to send the message. Then the peers are removed one by
          * one as we are notified via {@link #complete(WebSocketChannel, Void)} or
@@ -212,28 +218,32 @@ public class CamelWebSocketHandler implements HttpHandler {
         public MultiCallback(Collection<WebSocketChannel> peers, AsyncCallback camelCallback, Exchange camelExchange) {
             this.camelCallback = camelCallback;
             this.camelExchange = camelExchange;
-            synchronized (lock) {
-                this.peers = new HashSet<>(peers);
-            }
+            this.peers = new HashSet<>(peers);
         }
 
         @Override
         public void closedBeforeSent(WebSocketChannel channel) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 peers.remove(channel);
                 if (peers.isEmpty()) {
                     finish();
                 }
+            } finally {
+                lock.unlock();
             }
         }
 
         @Override
         public void complete(WebSocketChannel channel, Void context) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 peers.remove(channel);
                 if (peers.isEmpty()) {
                     finish();
                 }
+            } finally {
+                lock.unlock();
             }
         }
 
@@ -261,7 +271,8 @@ public class CamelWebSocketHandler implements HttpHandler {
 
         @Override
         public void onError(WebSocketChannel channel, Void context, Throwable throwable) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 peers.remove(channel);
                 final String connectionKey = (String) channel.getAttribute(UndertowConstants.CONNECTION_KEY);
                 if (connectionKey == null) {
@@ -276,6 +287,8 @@ public class CamelWebSocketHandler implements HttpHandler {
                 if (peers.isEmpty()) {
                     finish();
                 }
+            } finally {
+                lock.unlock();
             }
         }
 
@@ -310,13 +323,16 @@ public class CamelWebSocketHandler implements HttpHandler {
                     buffer.get(bytes, offset, increment);
                     offset += increment;
                 }
-                synchronized (consumerLock) {
+                consumerLock.lock();
+                try {
                     if (consumer != null) {
                         final Object outMsg = consumer.getEndpoint().isUseStreaming() ? new ByteArrayInputStream(bytes) : bytes;
                         consumer.sendMessage(connectionKey, channel, outMsg);
                     } else {
                         LOG.debug("No consumer to handle message received: {}", message);
                     }
+                } finally {
+                    consumerLock.unlock();
                 }
             } finally {
                 data.free();
@@ -333,13 +349,16 @@ public class CamelWebSocketHandler implements HttpHandler {
                         UndertowConstants.CONNECTION_KEY + " attribute not found on "
                                                 + WebSocketChannel.class.getSimpleName() + " " + channel);
             }
-            synchronized (consumerLock) {
+            consumerLock.lock();
+            try {
                 if (consumer != null) {
                     final Object outMsg = consumer.getEndpoint().isUseStreaming() ? new StringReader(text) : text;
                     consumer.sendMessage(connectionKey, channel, outMsg);
                 } else {
                     LOG.debug("No consumer to handle message received: {}", message);
                 }
+            } finally {
+                consumerLock.unlock();
             }
         }
 

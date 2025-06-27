@@ -273,7 +273,7 @@ public interface FlowableEndpointBuilderFactory {
          * Send and receive messages from the Flowable BPMN and CMMN engines.
          * 
          * Category: workflow
-         * Since: 4.19
+         * Since: 4.9
          * Maven coordinates: org.apache.camel:camel-flowable
          * 
          * Syntax: <code>flowable:channelKey</code>
@@ -292,7 +292,7 @@ public interface FlowableEndpointBuilderFactory {
          * Send and receive messages from the Flowable BPMN and CMMN engines.
          * 
          * Category: workflow
-         * Since: 4.19
+         * Since: 4.9
          * Maven coordinates: org.apache.camel:camel-flowable
          * 
          * Syntax: <code>flowable:channelKey</code>

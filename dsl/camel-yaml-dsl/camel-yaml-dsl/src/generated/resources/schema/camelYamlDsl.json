@@ -73,12 +73,6 @@
           "multicast" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.MulticastDefinition"
           },
-          "onFallback" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.OnFallbackDefinition"
-          },
-          "otherwise" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
-          },
           "pausable" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.PausableDefinition"
           },
@@ -201,12 +195,6 @@
           },
           "validate" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ValidateDefinition"
-          },
-          "when" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
-          },
-          "whenSkipSendToEndpoint" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.WhenSkipSendToEndpointDefinition"
           },
           "wireTap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.WireTapDefinition"
@@ -647,6 +635,11 @@
             "title" : "Script Language",
             "description" : "The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc."
           },
+          "scriptPropertyPlaceholders" : {
+            "type" : "boolean",
+            "title" : "Script Property Placeholders",
+            "description" : "Whether the script should support using Camel property placeholder syntax {{ }}."
+          },
           "type" : {
             "type" : "string",
             "title" : "Type",
@@ -686,8 +679,8 @@
           },
           "onWhen" : {
             "title" : "On When",
-            "description" : "Sets an additional predicate that should be true before the onCatch is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not.",
-            "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
+            "description" : "Used for triggering doCatch in specific situations",
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "steps" : {
             "type" : "array",
@@ -1394,7 +1387,7 @@
           "allowOptimisedComponents" : {
             "type" : "boolean",
             "title" : "Allow Optimised Components",
-            "description" : "Whether to allow components to optimise enricher if they are org.apache.camel.spi.SendDynamicAware ."
+            "description" : "Whether to allow components to optimise enricher if they are org.apache.camel.spi.SendDynamicAware"
           },
           "autoStartComponents" : {
             "type" : "boolean",
@@ -1866,11 +1859,6 @@
             "title" : "Bulkhead Enabled",
             "description" : "Whether bulkhead is enabled or not on the circuit breaker. Default is false."
           },
-          "bulkheadExecutorService" : {
-            "type" : "string",
-            "title" : "Bulkhead Executor Service",
-            "description" : "References to a custom thread pool to use when bulkhead is enabled."
-          },
           "bulkheadMaxConcurrentCalls" : {
             "type" : "number",
             "title" : "Bulkhead Max Concurrent Calls",
@@ -1882,11 +1870,6 @@
             "title" : "Bulkhead Waiting Task Queue",
             "description" : "Configures the task queue size for holding waiting tasks to be processed by the bulkhead.",
             "default" : "10"
-          },
-          "circuitBreaker" : {
-            "type" : "string",
-            "title" : "Circuit Breaker",
-            "description" : "Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use."
           },
           "delay" : {
             "type" : "string",
@@ -1917,6 +1900,11 @@
             "description" : "Controls the number of trial calls which are allowed when the circuit breaker is half-open",
             "default" : "1"
           },
+          "threadOffloadExecutorService" : {
+            "type" : "string",
+            "title" : "Thread Offload Executor Service",
+            "description" : "References a custom thread pool to use when offloading a guarded action to another thread."
+          },
           "timeoutDuration" : {
             "type" : "string",
             "title" : "Timeout Duration",
@@ -1934,10 +1922,10 @@
             "description" : "Configures the pool size of the thread pool when timeout is enabled. Default value is 10.",
             "default" : "10"
           },
-          "timeoutScheduledExecutorService" : {
+          "typedGuard" : {
             "type" : "string",
-            "title" : "Timeout Scheduled Executor Service",
-            "description" : "References to a custom thread pool to use when timeout is enabled"
+            "title" : "Typed Guard",
+            "description" : "Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry. When using this, then any other TypedGuard circuit breaker options are not in use."
           }
         }
       },
@@ -2372,6 +2360,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "onWhen" : {
+            "title" : "On When",
+            "description" : "To use an expression to only trigger intercepting in specific situations",
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -2403,6 +2396,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "onWhen" : {
+              "title" : "On When",
+              "description" : "To use an expression to only trigger intercepting in specific situations",
+              "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
             },
             "steps" : {
               "type" : "array",
@@ -2446,6 +2444,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "onWhen" : {
+              "title" : "On When",
+              "description" : "To use an expression to only trigger intercepting sending to an endpoint in specific situations",
+              "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
             },
             "skipSendToOriginalEndpoint" : {
               "type" : "string",
@@ -2588,11 +2591,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean",
-            "title" : "Inherit Error Handler",
-            "description" : "Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy."
-          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -2631,6 +2629,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "logLanguage" : {
+              "type" : "string",
+              "title" : "Log Language",
+              "description" : "To configure the language to use. By default, the simple language is used. However, Camel also supports other languages such as groovy."
             },
             "logName" : {
               "type" : "string",
@@ -2772,6 +2775,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "onPrepare" : {
+            "type" : "string",
+            "title" : "On Prepare",
+            "description" : "Uses the Processor when preparing the org.apache.camel.Exchange for each loop iteration. This can be used to deep-clone messages, or any custom logic needed before the looping executes."
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -2844,11 +2852,15 @@
               }, {
                 "required" : [ "custom" ]
               }, {
+                "required" : [ "dfdl" ]
+              }, {
                 "required" : [ "fhirJson" ]
               }, {
                 "required" : [ "fhirXml" ]
               }, {
                 "required" : [ "flatpack" ]
+              }, {
+                "required" : [ "fory" ]
               }, {
                 "required" : [ "grok" ]
               }, {
@@ -2983,6 +2995,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "dfdl" ],
+            "properties" : {
+              "dfdl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.DfdlDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "fhirJson" ],
             "properties" : {
               "fhirJson" : {
@@ -3003,6 +3023,14 @@
             "properties" : {
               "flatpack" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FlatpackDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "fory" ],
+            "properties" : {
+              "fory" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ForyDataFormat"
               }
             }
           }, {
@@ -3275,9 +3303,11 @@
           "crypto" : { },
           "csv" : { },
           "custom" : { },
+          "dfdl" : { },
           "fhirJson" : { },
           "fhirXml" : { },
           "flatpack" : { },
+          "fory" : { },
           "grok" : { },
           "gzipDeflater" : { },
           "hl7" : { },
@@ -3364,7 +3394,7 @@
           "parallelProcessing" : {
             "type" : "boolean",
             "title" : "Parallel Processing",
-            "description" : "If enabled then sending messages to the multicasts occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. Its only the sending and processing the replies from the multicasts which happens concurrently. When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread from the parallel thread pool. However, if you want to use the original thread that called the multicast, then make sure to enable the synchronous option as well."
+            "description" : "If enabled then sending messages to the multicasts occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. Its only the sending and processing the replies from the multicasts which happens concurrently. When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread from the parallel thread pool. However, if you want to use the original thread that called the multicast, then make sure to enable the synchronous option as well. In parallel processing mode, you may want to also synchronous = true to force this EIP to process the sub-tasks using the upper bounds of the thread-pool. If using synchronous = false then Camel will allow its reactive routing engine to use as many threads as possible, which may be available due to sub-tasks using other thread-pools such as CompletableFuture.runAsync or others."
           },
           "shareUnitOfWork" : {
             "type" : "boolean",
@@ -3445,8 +3475,8 @@
           },
           "onWhen" : {
             "title" : "On When",
-            "description" : "Sets an additional predicate that should be true before the onCompletion is triggered. To be used for fine grained controlling whether a completion callback should be invoked or not",
-            "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
+            "description" : "To use an expression to only trigger routing this completion steps in specific situations",
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "parallelProcessing" : {
             "type" : "boolean",
@@ -3517,8 +3547,8 @@
           },
           "onWhen" : {
             "title" : "On When",
-            "description" : "Sets an additional predicate that should be true before the onException is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not.",
-            "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
+            "description" : "To use an expression to only trigger this in specific situations",
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "redeliveryPolicy" : {
             "title" : "Redelivery Policy",
@@ -3564,11 +3594,6 @@
             "title" : "Description",
             "description" : "Sets the description of this node"
           },
-          "disabled" : {
-            "type" : "boolean",
-            "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
-          },
           "fallbackViaNetwork" : {
             "type" : "boolean",
             "title" : "Fallback Via Network",
@@ -3585,6 +3610,123 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
           }
+        }
+      },
+      "org.apache.camel.model.OnWhenDefinition" : {
+        "title" : "On When",
+        "description" : "To use a predicate to determine when to trigger this.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          }, {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "expression" ]
+              }, {
+                "required" : [ "constant" ]
+              }, {
+                "required" : [ "csimple" ]
+              }, {
+                "required" : [ "datasonnet" ]
+              }, {
+                "required" : [ "exchangeProperty" ]
+              }, {
+                "required" : [ "groovy" ]
+              }, {
+                "required" : [ "header" ]
+              }, {
+                "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
+              }, {
+                "required" : [ "joor" ]
+              }, {
+                "required" : [ "jq" ]
+              }, {
+                "required" : [ "js" ]
+              }, {
+                "required" : [ "jsonpath" ]
+              }, {
+                "required" : [ "language" ]
+              }, {
+                "required" : [ "method" ]
+              }, {
+                "required" : [ "mvel" ]
+              }, {
+                "required" : [ "ognl" ]
+              }, {
+                "required" : [ "python" ]
+              }, {
+                "required" : [ "ref" ]
+              }, {
+                "required" : [ "simple" ]
+              }, {
+                "required" : [ "spel" ]
+              }, {
+                "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
+              }, {
+                "required" : [ "wasm" ]
+              }, {
+                "required" : [ "xpath" ]
+              }, {
+                "required" : [ "xquery" ]
+              }, {
+                "required" : [ "xtokenize" ]
+              } ]
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "expression" ],
+            "properties" : {
+              "expression" : {
+                "title" : "Expression",
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+              }
+            }
+          } ]
+        } ],
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "constant" : { },
+          "csimple" : { },
+          "datasonnet" : { },
+          "exchangeProperty" : { },
+          "groovy" : { },
+          "header" : { },
+          "hl7terser" : { },
+          "java" : { },
+          "joor" : { },
+          "jq" : { },
+          "js" : { },
+          "jsonpath" : { },
+          "language" : { },
+          "method" : { },
+          "mvel" : { },
+          "ognl" : { },
+          "python" : { },
+          "ref" : { },
+          "simple" : { },
+          "spel" : { },
+          "tokenize" : { },
+          "variable" : { },
+          "wasm" : { },
+          "xpath" : { },
+          "xquery" : { },
+          "xtokenize" : { },
+          "expression" : { }
         }
       },
       "org.apache.camel.model.OptimisticLockRetryPolicyDefinition" : {
@@ -3636,7 +3778,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime."
           },
           "id" : {
             "type" : "string",
@@ -3977,6 +4119,11 @@
             "title" : "Aggregation Strategy Method Name",
             "description" : "This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy."
           },
+          "allowOptimisedComponents" : {
+            "type" : "boolean",
+            "title" : "Allow Optimised Components",
+            "description" : "Whether to allow components to optimise if they are org.apache.camel.spi.PollDynamicAware"
+          },
           "autoStartComponents" : {
             "type" : "boolean",
             "title" : "Auto Start Components",
@@ -3985,7 +4132,7 @@
           "cacheSize" : {
             "type" : "number",
             "title" : "Cache Size",
-            "description" : "Sets the maximum size used by the org.apache.camel.spi.ConsumerCache which is used to cache and reuse consumers when uris are reused. Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches. However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on the default size (1000). If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help reduce memory usage to avoid storing too many non frequent used producers."
+            "description" : "Sets the maximum size used by the org.apache.camel.spi.ConsumerCache which is used to cache and reuse consumers when uris are reused. Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic endpoint is unique then its best to turn off caching by setting this to -1, which allows Camel to not cache both the consumers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use. This reduces memory usage as otherwise consumers/endpoints are stored in memory in the caches. However, if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use the cache to reuse both consumers and endpoints and therefore the cache size can be set accordingly or rely on the default size (1000). If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help reduce memory usage to avoid storing too many non-frequent used consumers."
           },
           "description" : {
             "type" : "string",
@@ -4005,7 +4152,7 @@
           "ignoreInvalidEndpoint" : {
             "type" : "boolean",
             "title" : "Ignore Invalid Endpoint",
-            "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint"
+            "description" : "Ignore the invalidate endpoint exception when try to create a consumer with that endpoint"
           },
           "timeout" : {
             "type" : "string",
@@ -4353,7 +4500,7 @@
           "parallelProcessing" : {
             "type" : "boolean",
             "title" : "Parallel Processing",
-            "description" : "If enabled then sending messages to the recipients occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. Its only the sending and processing the replies from the recipients which happens concurrently. When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread from the parallel thread pool. However, if you want to use the original thread that called the recipient list, then make sure to enable the synchronous option as well."
+            "description" : "If enabled then sending messages to the recipients occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. Its only the sending and processing the replies from the recipients which happens concurrently. When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread from the parallel thread pool. However, if you want to use the original thread that called the recipient list, then make sure to enable the synchronous option as well. In parallel processing mode, you may want to also synchronous = true to force this EIP to process the sub-tasks using the upper bounds of the thread-pool. If using synchronous = false then Camel will allow its reactive routing engine to use as many threads as possible, which may be available due to sub-tasks using other thread-pools such as CompletableFuture.runAsync or others."
           },
           "shareUnitOfWork" : {
             "type" : "boolean",
@@ -4989,7 +5136,7 @@
           "throwExceptionWhenHalfOpenOrOpenState" : {
             "type" : "boolean",
             "title" : "Throw Exception When Half Open Or Open State",
-            "description" : "Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due circuit breaker is half open or open."
+            "description" : "Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due circuit breaker is half open (and was not attempted but rejected immediately) or open (always rejected). This option is only in use when there is NOT a fallback configured on the circuit breaker. When there is a fallback then the fallback is always executed and CallNotPermittedException is not thrown."
           },
           "timeoutCancelRunningFuture" : {
             "type" : "boolean",
@@ -5072,6 +5219,7 @@
           "loggingLevel" : {
             "type" : "string",
             "title" : "Logging Level",
+            "description" : "The logging level to use in case of failures.",
             "default" : "ERROR",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
@@ -5745,7 +5893,7 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
-                "description" : "Expression to return the transformed message body (the new message body to use)",
+                "description" : "Script to be executed.",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
@@ -6663,7 +6811,7 @@
           "parallelProcessing" : {
             "type" : "boolean",
             "title" : "Parallel Processing",
-            "description" : "If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. It's only processing the sub messages from the splitter which happens concurrently. When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread from the parallel thread pool. However, if you want to use the original thread that called the splitter, then make sure to enable the synchronous option as well."
+            "description" : "If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. It's only processing the sub messages from the splitter which happens concurrently. When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread from the parallel thread pool. However, if you want to use the original thread that called the splitter, then make sure to enable the synchronous option as well. In parallel processing mode, you may want to also synchronous = true to force this EIP to process the sub-tasks using the upper bounds of the thread-pool. If using synchronous = false then Camel will allow its reactive routing engine to use as many threads as possible, which may be available due to sub-tasks using other thread-pools such as CompletableFuture.runAsync or others."
           },
           "shareUnitOfWork" : {
             "type" : "boolean",
@@ -7340,7 +7488,7 @@
             "required" : [ "langChain4jLineTokenizer" ],
             "properties" : {
               "langChain4jLineTokenizer" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition"
+                "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition"
               }
             }
           }, {
@@ -7564,11 +7712,15 @@
           },
           "doCatch" : {
             "type" : "array",
+            "title" : "Do Catch",
+            "description" : "Catches exceptions as part of a try, catch, finally block",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.CatchDefinition"
             }
           },
           "doFinally" : {
+            "title" : "Do Finally",
+            "description" : "Path traversed when a try, catch, finally block exits",
             "$ref" : "#/items/definitions/org.apache.camel.model.FinallyDefinition"
           },
           "id" : {
@@ -7630,9 +7782,11 @@
           "crypto" : { },
           "csv" : { },
           "custom" : { },
+          "dfdl" : { },
           "fhirJson" : { },
           "fhirXml" : { },
           "flatpack" : { },
+          "fory" : { },
           "grok" : { },
           "gzipDeflater" : { },
           "hl7" : { },
@@ -7695,11 +7849,15 @@
               }, {
                 "required" : [ "custom" ]
               }, {
+                "required" : [ "dfdl" ]
+              }, {
                 "required" : [ "fhirJson" ]
               }, {
                 "required" : [ "fhirXml" ]
               }, {
                 "required" : [ "flatpack" ]
+              }, {
+                "required" : [ "fory" ]
               }, {
                 "required" : [ "grok" ]
               }, {
@@ -7834,6 +7992,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "dfdl" ],
+            "properties" : {
+              "dfdl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.DfdlDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "fhirJson" ],
             "properties" : {
               "fhirJson" : {
@@ -7854,6 +8020,14 @@
             "properties" : {
               "flatpack" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FlatpackDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "fory" ],
+            "properties" : {
+              "fory" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ForyDataFormat"
               }
             }
           }, {
@@ -8323,136 +8497,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "Sets the id of this node"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
-          "constant" : { },
-          "csimple" : { },
-          "datasonnet" : { },
-          "exchangeProperty" : { },
-          "groovy" : { },
-          "header" : { },
-          "hl7terser" : { },
-          "java" : { },
-          "joor" : { },
-          "jq" : { },
-          "js" : { },
-          "jsonpath" : { },
-          "language" : { },
-          "method" : { },
-          "mvel" : { },
-          "ognl" : { },
-          "python" : { },
-          "ref" : { },
-          "simple" : { },
-          "spel" : { },
-          "tokenize" : { },
-          "variable" : { },
-          "wasm" : { },
-          "xpath" : { },
-          "xquery" : { },
-          "xtokenize" : { },
-          "expression" : { }
-        }
-      },
-      "org.apache.camel.model.WhenSkipSendToEndpointDefinition" : {
-        "title" : "When Skip Send To Endpoint",
-        "description" : "Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.",
-        "type" : "object",
-        "additionalProperties" : false,
-        "anyOf" : [ {
-          "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
-            "type" : "object",
-            "required" : [ "expression" ],
-            "properties" : {
-              "expression" : {
-                "title" : "Expression",
-                "description" : "Expression used as the predicate to evaluate whether the message should be sent or not to the endpoint",
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-              }
-            }
-          } ]
-        } ],
-        "properties" : {
-          "description" : {
-            "type" : "string",
-            "title" : "Description",
-            "description" : "Sets the description of this node"
-          },
-          "disabled" : {
-            "type" : "boolean",
-            "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime."
           },
           "id" : {
             "type" : "string",
@@ -10589,6 +10634,9 @@
           "flatpack" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FlatpackDataFormat"
           },
+          "fory" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ForyDataFormat"
+          },
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
@@ -10677,6 +10725,39 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }
+      },
+      "org.apache.camel.model.dataformat.DfdlDataFormat" : {
+        "title" : "DFDL",
+        "description" : "Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).",
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "The id of this node"
+            },
+            "rootElement" : {
+              "type" : "string",
+              "title" : "Root Element",
+              "description" : "The root element name of the schema to use. If not specified, the first root element in the schema will be used."
+            },
+            "rootNamespace" : {
+              "type" : "string",
+              "title" : "Root Namespace",
+              "description" : "The root namespace of the schema to use."
+            },
+            "schemaUri" : {
+              "type" : "string",
+              "title" : "Schema Uri",
+              "description" : "The path to the DFDL schema file."
+            }
+          }
+        } ],
+        "required" : [ "schemaUri" ]
       },
       "org.apache.camel.model.dataformat.FhirJsonDataFormat" : {
         "title" : "FHIR JSon",
@@ -10942,16 +11023,31 @@
           }
         }
       },
-      "org.apache.camel.model.dataformat.FuryDataFormat" : {
-        "title" : "Fury",
-        "description" : "Serialize and deserialize messages using Apache Fury",
+      "org.apache.camel.model.dataformat.ForyDataFormat" : {
+        "title" : "Fory",
+        "description" : "Serialize and deserialize messages using Apache Fory",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "allowAutoWiredFory" : {
+            "type" : "boolean",
+            "title" : "Allow Auto Wired Fory",
+            "description" : "Whether to auto-discover Fory from the registry"
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "requireClassRegistration" : {
+            "type" : "boolean",
+            "title" : "Require Class Registration",
+            "description" : "Whether to require register classes"
+          },
+          "threadSafe" : {
+            "type" : "boolean",
+            "title" : "Thread Safe",
+            "description" : "Whether to use the threadsafe fory"
           },
           "unmarshalType" : {
             "type" : "string",
@@ -11352,7 +11448,7 @@
             "title" : "Library",
             "description" : "Which json library to use.",
             "default" : "Jackson",
-            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb" ]
+            "enum" : [ "Fastjson", "Gson", "Jackson", "Jsonb" ]
           },
           "moduleClassNames" : {
             "type" : "string",
@@ -14453,6 +14549,11 @@
             "title" : "Client Request Validation",
             "description" : "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error."
           },
+          "clientResponseValidation" : {
+            "type" : "boolean",
+            "title" : "Client Response Validation",
+            "description" : "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected."
+          },
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
@@ -14495,6 +14596,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -14511,6 +14614,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -14522,6 +14627,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -14571,6 +14678,11 @@
             "title" : "Client Request Validation",
             "description" : "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error."
           },
+          "clientResponseValidation" : {
+            "type" : "boolean",
+            "title" : "Client Response Validation",
+            "description" : "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected."
+          },
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
@@ -14613,6 +14725,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -14629,6 +14743,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -14640,6 +14756,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -14689,6 +14807,11 @@
             "title" : "Client Request Validation",
             "description" : "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error."
           },
+          "clientResponseValidation" : {
+            "type" : "boolean",
+            "title" : "Client Response Validation",
+            "description" : "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected."
+          },
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
@@ -14731,6 +14854,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -14747,6 +14872,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -14758,6 +14885,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -14857,6 +14986,11 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "apiContextPath" : {
+            "type" : "string",
+            "title" : "Api Context Path",
+            "description" : "Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to obtain the specification from the running Camel application."
+          },
           "description" : {
             "type" : "string",
             "title" : "Description",
@@ -15021,6 +15155,11 @@
             "title" : "Client Request Validation",
             "description" : "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error."
           },
+          "clientResponseValidation" : {
+            "type" : "boolean",
+            "title" : "Client Response Validation",
+            "description" : "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected."
+          },
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
@@ -15063,6 +15202,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -15079,6 +15220,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -15090,6 +15233,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -15139,6 +15284,11 @@
             "title" : "Client Request Validation",
             "description" : "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error."
           },
+          "clientResponseValidation" : {
+            "type" : "boolean",
+            "title" : "Client Response Validation",
+            "description" : "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected."
+          },
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
@@ -15181,6 +15331,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -15197,6 +15349,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -15208,6 +15362,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -15257,6 +15413,11 @@
             "title" : "Client Request Validation",
             "description" : "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error."
           },
+          "clientResponseValidation" : {
+            "type" : "boolean",
+            "title" : "Client Response Validation",
+            "description" : "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected."
+          },
           "consumes" : {
             "type" : "string",
             "title" : "Consumes",
@@ -15299,6 +15460,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -15315,6 +15478,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -15326,6 +15491,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -15420,6 +15587,11 @@
             "description" : "The response code such as a HTTP status code",
             "default" : "200"
           },
+          "contentType" : {
+            "type" : "string",
+            "title" : "Content Type",
+            "description" : "The response content-type such as application/json."
+          },
           "examples" : {
             "type" : "array",
             "title" : "Examples",
@@ -15466,6 +15638,11 @@
             "type" : "boolean",
             "title" : "Client Request Validation",
             "description" : "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error."
+          },
+          "clientResponseValidation" : {
+            "type" : "boolean",
+            "title" : "Client Response Validation",
+            "description" : "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected."
           },
           "component" : {
             "type" : "string",
@@ -15575,6 +15752,11 @@
             "type" : "boolean",
             "title" : "Client Request Validation",
             "description" : "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error."
+          },
+          "clientResponseValidation" : {
+            "type" : "boolean",
+            "title" : "Client Response Validation",
+            "description" : "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected."
           },
           "component" : {
             "type" : "string",
@@ -15690,6 +15872,14 @@
             "title" : "Use XForward Headers",
             "description" : "Whether to use X-Forward headers to set host etc. for OpenApi. This may be needed in special cases involving reverse-proxy and networking going from HTTP to HTTPS etc. Then the proxy can send X-Forward headers (X-Forwarded-Proto) that influences the host names in the OpenAPI schema that camel-openapi-java generates from Rest DSL routes."
           },
+          "validationLevels" : {
+            "type" : "array",
+            "title" : "Validation Levels",
+            "description" : "Allows to configure custom validation levels when using camel-openapi-validator with client request/response validator.",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
+            }
+          },
           "xmlDataFormat" : {
             "type" : "string",
             "title" : "Xml Data Format",
@@ -15719,6 +15909,11 @@
             "type" : "boolean",
             "title" : "Client Request Validation",
             "description" : "Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error."
+          },
+          "clientResponseValidation" : {
+            "type" : "boolean",
+            "title" : "Client Response Validation",
+            "description" : "Whether to check what Camel is returning as response to the client: 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid JSon. Returns 500 if validation error detected."
           },
           "consumes" : {
             "type" : "string",
@@ -15857,7 +16052,7 @@
           "basicAuth" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.BasicAuthDefinition"
           },
-          "bearer" : {
+          "bearerToken" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.BearerTokenDefinition"
           },
           "mutualTLS" : {
@@ -15916,6 +16111,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with character splitter",
+        "description" : "Camel AI: Tokenizer for splitting by character.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -15933,6 +16129,11 @@
             "type" : "number",
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
           },
           "tokenizerType" : {
             "type" : "string",
@@ -15945,6 +16146,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with line splitter",
+        "description" : "Camel AI: Tokenizer for splitting line by line.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -15962,6 +16164,11 @@
             "type" : "number",
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
           },
           "tokenizerType" : {
             "type" : "string",
@@ -15974,6 +16181,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with paragraph splitter",
+        "description" : "Camel AI: Tokenizer for splitting by paragraphs.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -15991,6 +16199,11 @@
             "type" : "number",
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
           },
           "tokenizerType" : {
             "type" : "string",
@@ -16003,6 +16216,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with sentence splitter",
+        "description" : "Camel AI: Tokenizer for splitting by sentences.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -16020,6 +16234,11 @@
             "type" : "number",
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
           },
           "tokenizerType" : {
             "type" : "string",
@@ -16043,6 +16262,9 @@
           "maxTokens" : {
             "type" : "number"
           },
+          "modelName" : {
+            "type" : "string"
+          },
           "tokenizerType" : {
             "type" : "string",
             "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
@@ -16052,6 +16274,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with word splitter",
+        "description" : "Camel AI: Tokenizer for splitting by word.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -16070,6 +16293,11 @@
             "title" : "Max Tokens",
             "description" : "Sets the maximum number of tokens on each segment"
           },
+          "modelName" : {
+            "type" : "string",
+            "title" : "Model Name",
+            "description" : "Sets the model name"
+          },
           "tokenizerType" : {
             "type" : "string",
             "title" : "Tokenizer Type",
@@ -16080,30 +16308,46 @@
         "required" : [ "maxOverlap", "maxTokens" ]
       },
       "org.apache.camel.model.transformer.CustomTransformerDefinition" : {
+        "title" : "Custom Transformer",
+        "description" : "To use a custom transformer on a route level.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "className" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Class Name",
+            "description" : "Set a class name of the Transformer"
           },
           "fromType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "ref" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Ref",
+            "description" : "Set a bean reference of the Transformer"
           },
           "scheme" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Scheme",
+            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
           }
         }
       },
       "org.apache.camel.model.transformer.DataFormatTransformerDefinition" : {
+        "title" : "Data Format Transformer",
+        "description" : "Represents a org.apache.camel.processor.transformer.DataFormatTransformer which leverages org.apache.camel.spi.DataFormat to perform transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be specified.",
         "type" : "object",
         "additionalProperties" : false,
         "anyOf" : [ {
@@ -16143,6 +16387,8 @@
                 "required" : [ "fhirXml" ]
               }, {
                 "required" : [ "flatpack" ]
+              }, {
+                "required" : [ "fory" ]
               }, {
                 "required" : [ "grok" ]
               }, {
@@ -16297,6 +16543,14 @@
             "properties" : {
               "flatpack" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FlatpackDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "fory" ],
+            "properties" : {
+              "fory" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ForyDataFormat"
               }
             }
           }, {
@@ -16535,16 +16789,24 @@
         } ],
         "properties" : {
           "fromType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "scheme" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Scheme",
+            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
           },
           "asn1" : { },
           "avro" : { },
@@ -16559,6 +16821,7 @@
           "fhirJson" : { },
           "fhirXml" : { },
           "flatpack" : { },
+          "fory" : { },
           "grok" : { },
           "gzipDeflater" : { },
           "hl7" : { },
@@ -16591,50 +16854,78 @@
         }
       },
       "org.apache.camel.model.transformer.EndpointTransformerDefinition" : {
+        "title" : "Endpoint Transformer",
+        "description" : "To use a Camel endpoint to perform transformation on the route level.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "fromType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "ref" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Ref",
+            "description" : "Set the reference of the Endpoint."
           },
           "scheme" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Scheme",
+            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
           },
           "uri" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Uri",
+            "description" : "Set the URI of the Endpoint."
           }
         }
       },
       "org.apache.camel.model.transformer.LoadTransformerDefinition" : {
+        "title" : "Load Transformer",
+        "description" : "To load custom transformers from classpath scanning to be used for route level transformations.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "defaults" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "title" : "Defaults",
+            "description" : "Enable loading of default transformers."
           },
           "fromType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'."
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Name",
+            "description" : "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "packageScan" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Package Scan",
+            "description" : "Set the classpath location to scan for annotated transformers."
           },
           "scheme" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Scheme",
+            "description" : "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists."
           },
           "toType" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'."
           }
         }
       },
@@ -16659,36 +16950,54 @@
         }
       },
       "org.apache.camel.model.validator.CustomValidatorDefinition" : {
+        "title" : "Custom Validator",
+        "description" : "To use a custom validator on the route level.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "className" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Class Name",
+            "description" : "Set a class name of the Validator"
           },
           "ref" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Ref",
+            "description" : "Set a bean reference of the Validator"
           },
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Type",
+            "description" : "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'."
           }
         }
       },
       "org.apache.camel.model.validator.EndpointValidatorDefinition" : {
+        "title" : "Endpoint Validator",
+        "description" : "To use a Camel endpoint to perform validation on the route level.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
           "ref" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Ref",
+            "description" : "Set the reference of the Endpoint."
           },
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Type",
+            "description" : "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'."
           },
           "uri" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Uri",
+            "description" : "Set the URI of the Endpoint."
           }
         }
       },
       "org.apache.camel.model.validator.PredicateValidatorDefinition" : {
+        "title" : "Predicate Validator",
+        "description" : "To use a predicate to perform validation on the route level.",
         "type" : "object",
         "additionalProperties" : false,
         "anyOf" : [ {
@@ -16697,6 +17006,7 @@
             "required" : [ "expression" ],
             "properties" : {
               "expression" : {
+                "title" : "Expression",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
@@ -16710,7 +17020,9 @@
         } ],
         "properties" : {
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "title" : "Type",
+            "description" : "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'."
           },
           "expression" : { }
         }

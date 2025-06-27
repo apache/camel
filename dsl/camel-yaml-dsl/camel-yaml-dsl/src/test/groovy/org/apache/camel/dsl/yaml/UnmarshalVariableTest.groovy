@@ -261,7 +261,7 @@ class UnmarshalVariableTest extends YamlTestSupport {
 
         @Override
         Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-            return "Bye " + exchange.getContext().getTypeConverter().convertTo(String.class, exchange, stream);
+            return "Bye " + exchange.getContext().getTypeConverter().convertTo(String.class, exchange, stream)
         }
     }
 

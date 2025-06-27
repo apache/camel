@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.FileNotFoundException;
 import java.nio.file.Files;
 
 import org.apache.camel.Consumer;
@@ -106,14 +105,15 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
     public void testStartingDirectoryMustExistDirectory() {
         Endpoint endpoint = context.getEndpoint(fileUri("foo?autoCreate=false&startingDirectoryMustExist=true"));
 
-        FileNotFoundException e = assertThrows(FileNotFoundException.class,
+        Exception e = assertThrows(Exception.class,
                 () -> {
-                    endpoint.createConsumer(exchange -> {
+                    Consumer c = endpoint.createConsumer(exchange -> {
                         // noop
                     });
+                    c.start();
                 }, "Should have thrown an exception");
 
-        assertTrue(e.getMessage().startsWith("Starting directory does not exist"));
+        assertTrue(e.getCause().getMessage().startsWith("Starting directory does not exist"));
 
         // the directory should NOT exists
         assertFalse(Files.exists(testDirectory("foo")), "Directory should NOT be created");

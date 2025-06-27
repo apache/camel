@@ -25,10 +25,10 @@ public class ThymeleafEndpointUriFactory extends org.apache.camel.support.compon
     static {
         Set<String> props = new HashSet<>(13);
         props.add("allowContextMapAll");
+        props.add("allowTemplateFromHeader");
         props.add("cacheTimeToLive");
         props.add("cacheable");
         props.add("checkExistence");
-        props.add("contentCache");
         props.add("encoding");
         props.add("lazyStartProducer");
         props.add("order");

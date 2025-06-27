@@ -18,6 +18,13 @@
 package org.apache.camel.test.infra.cli.common;
 
 public final class CliProperties {
+
+    public static final String DOCKERFILE = "cli.service.docker.file";
+
+    public static final String REPO = "cli.service.repo";
+
+    public static final String BRANCH = "cli.service.branch";
+
     public static final String VERSION = "cli.service.version";
 
     public static final String DATA_FOLDER = "cli.service.data.folder";
@@ -27,6 +34,8 @@ public final class CliProperties {
     public static final String FORCE_RUN_VERSION = "cli.service.execute.version";
 
     public static final String MVN_REPOS = "cli.service.mvn.repos";
+
+    public static final String MVN_LOCAL_REPO = "cli.service.mvn.local";
 
     public static final String EXTRA_HOSTS = "cli.service.extra.hosts";
 

@@ -75,7 +75,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private final List<String> uris = new ArrayList<>();
 
     @Override
-    public void validateOpenApi(OpenAPI openAPI, PlatformHttpConsumerAware platformHttpConsumer) throws Exception {
+    public void validateOpenApi(OpenAPI openAPI, String basePath, PlatformHttpConsumerAware platformHttpConsumer)
+            throws Exception {
         List<String> ids = new ArrayList<>();
         for (var e : openAPI.getPaths().entrySet()) {
             for (var o : e.getValue().readOperationsMap().entrySet()) {
@@ -115,7 +116,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         // enlist open-api rest services
         PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
         if (phc != null) {
-            String path = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
+            String path = basePath;
             if (path == null || path.isEmpty() || path.equals("/")) {
                 path = "";
             }
@@ -193,13 +194,31 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
             RestBindingAdvice binding,
             Exchange exchange, AsyncCallback callback) {
 
+        exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
+
         if ("mock".equalsIgnoreCase(missingOperation) || "ignore".equalsIgnoreCase(missingOperation)) {
             // check if there is a route
             Endpoint e = camelContext.hasEndpoint(component + ":" + operation.getOperationId());
             if (e == null) {
-                if ("mock".equalsIgnoreCase(missingOperation)) {
-                    // no route then try to load mock data as the answer
-                    loadMockData(operation, verb, path, exchange);
+                try {
+                    var requestError = binding.doClientRequestValidation(exchange);
+                    if (requestError != null) {
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, requestError.statusCode());
+                        exchange.getMessage().setBody(requestError.body());
+                        exchange.setRouteStop(true);
+                    } else if ("mock".equalsIgnoreCase(missingOperation)) {
+                        // no route then try to load mock data as the answer
+                        loadMockData(operation, verb, path, exchange);
+                    }
+                    if (requestError == null) {
+                        var responseError = binding.doClientResponseValidation(exchange);
+                        if (responseError != null) {
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, responseError.statusCode());
+                            exchange.getMessage().setBody(responseError.body());
+                        }
+                    }
+                } catch (Exception ex) {
+                    exchange.setException(ex);
                 }
                 callback.done(true);
                 return true;
@@ -209,7 +228,6 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         // there is a route so process
         Map<String, Object> state;
         try {
-            exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
             state = binding.before(exchange);
         } catch (Exception e) {
             exchange.setException(e);

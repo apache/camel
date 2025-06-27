@@ -31,6 +31,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
+import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
@@ -75,7 +76,7 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
                             attachment.addHeader(headerName, headerValue);
                         }
                     }
-                    AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
+                    AttachmentMessage am = new DefaultAttachmentMessage(message);
                     am.addAttachmentObject(part.getName(), attachment);
                 } else {
                     LOG.debug(

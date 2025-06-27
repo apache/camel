@@ -737,7 +737,8 @@ public interface JMXEndpointBuilderFactory {
         }
         /**
          * Properties for the object name. These values will be used if the
-         * objectName param is not set.
+         * objectName param is not set. This is a multi-value option with
+         * prefix: key.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
@@ -757,7 +758,8 @@ public interface JMXEndpointBuilderFactory {
         }
         /**
          * Properties for the object name. These values will be used if the
-         * objectName param is not set.
+         * objectName param is not set. This is a multi-value option with
+         * prefix: key.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.

@@ -56,49 +56,4 @@ class LoadBalanceTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "Error: kebab-case: load-balance"() {
-        when:
-        var route = '''
-                - from:
-                   uri: "direct:start"
-                   steps:
-                     - load-balance:
-                         weightedLoadBalancer:
-                           distributionRatio: "2,1"
-                           roundRobin: false
-                         steps:
-                           - to: "mock:x"
-                           - to: "mock:y"
-            '''
-        then:
-        try {
-            loadRoutes route
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            assert e.message.contains("additional properties")
-        }
-    }
-
-    def "Error: kebab-case: distribution-ratio"() {
-        when:
-        var route = '''
-                - from:
-                   uri: "direct:start"
-                   steps:
-                     - loadBalance:
-                         weightedLoadBalancer:
-                           distribution-ratio: "2,1"
-                           roundRobin: false
-                         steps:
-                           - to: "mock:x"
-                           - to: "mock:y"
-            '''
-        then:
-        try {
-            loadRoutes route
-            Assertions.fail("Should have thrown exception")
-        } catch (e) {
-            assert e.message.contains("additional properties")
-        }
-    }
 }

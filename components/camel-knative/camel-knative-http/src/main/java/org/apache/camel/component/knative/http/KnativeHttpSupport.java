@@ -156,4 +156,20 @@ public final class KnativeHttpSupport {
 
         return Optional.empty();
     }
+
+    /**
+     * Retrieve service options from given CamelContext.
+     *
+     * @param  camelContext the current context.
+     * @return              service options or empty
+     */
+    public static Optional<KnativeHttpServiceOptions> lookupServiceOptions(CamelContext camelContext) {
+        KnativeHttpServiceOptions serviceOptions
+                = CamelContextHelper.findSingleByType(camelContext, KnativeHttpServiceOptions.class);
+        if (serviceOptions != null) {
+            return Optional.of(serviceOptions);
+        }
+
+        return Optional.empty();
+    }
 }

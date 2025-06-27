@@ -21,4 +21,5 @@ package org.apache.camel.ai;
  */
 public interface CamelLangchain4jAttributes {
     String CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR = "CamelLangChain4jEmbeddingsVector";
+    String CAMEL_LANGCHAIN4J_TEXT_SEGMENT = "CamelLangChain4jEmbeddingsTextSegment";
 }

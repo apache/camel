@@ -16,35 +16,11 @@
  */
 package org.apache.camel.test.infra.mosquitto.services;
 
-import org.apache.camel.test.infra.mosquitto.common.MosquittoProperties;
-
-public class MosquittoRemoteService implements MosquittoService {
-
+public class MosquittoRemoteService extends MosquittoRemoteInfraService implements MosquittoService {
     public MosquittoRemoteService() {
     }
 
     public MosquittoRemoteService(int port) {
-        System.setProperty(MosquittoProperties.PORT, String.valueOf(port));
-    }
-
-    @Override
-    public void registerProperties() {
-        // NO-OP
-    }
-
-    @Override
-    public void initialize() {
-        registerProperties();
-    }
-
-    @Override
-    public void shutdown() {
-        // NO-OP
-    }
-
-    @Override
-    public Integer getPort() {
-        String value = System.getProperty(MosquittoProperties.PORT);
-        return Integer.valueOf(value);
+        super(port);
     }
 }

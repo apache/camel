@@ -64,7 +64,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
         mock.assertIsSatisfied();
         SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
 
-        Assert.assertEquals("Hello World", new String(file.getInputStream().readAllBytes(), "UTF-8"));
+        Assert.assertEquals("Hello World", new String((byte[]) file.getBody(), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -74,11 +74,12 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         template.sendBodyAndHeader("seda:send", "Hello World", Exchange.FILE_NAME, "file_ignore.doc");
-        template.sendBodyAndHeader("seda:send", "Good Bye", Exchange.FILE_NAME, "file_ignore.doc");
+        template.sendBodyAndHeaders("seda:send", "Good Bye", Map.of(Exchange.FILE_NAME, "file_ignore.doc",
+                SmbConstants.SMB_FILE_EXISTS, GenericFileExist.Ignore.name()));
 
         mock.assertIsSatisfied();
         SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
-        Assert.assertEquals("Hello World", new String(file.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
+        Assert.assertEquals("Hello World", new String((byte[]) file.getBody(), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -92,7 +93,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
 
         mock.assertIsSatisfied();
         SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
-        Assert.assertEquals("Good Bye", new String(file.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
+        Assert.assertEquals("Good Bye", new String((byte[]) file.getBody(), StandardCharsets.UTF_8));
     }
 
     @Override
@@ -100,12 +101,10 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
         return new RouteBuilder() {
             private void process(Exchange exchange) throws IOException {
                 final SmbFile data = exchange.getMessage().getBody(SmbFile.class);
-                final String filePath = exchange.getMessage().getHeader(SmbConstants.SMB_FILE_PATH, String.class);
-                final String uncPath = exchange.getMessage().getHeader(SmbConstants.SMB_UNC_PATH, String.class);
                 final String name = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
-
-                LOG.debug("Read exchange name {} at {} ({}) with contents: {} (bytes {})", name, filePath, uncPath,
-                        new String(data.getInputStream().readAllBytes(), StandardCharsets.UTF_8), data.getSize());
+                new String((byte[]) data.getBody(), StandardCharsets.UTF_8);
+                LOG.debug("Read exchange name {} at {} with contents: {} (bytes {})", name, data.getAbsoluteFilePath(),
+                        new String((byte[]) data.getBody(), StandardCharsets.UTF_8), data.getFileLength());
             }
 
             public void configure() {
@@ -115,7 +114,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
                         .build();
                 context.getRegistry().bind("smbConfig", config);
 
-                fromF("smb:%s/%s?username=%s&password=%s&path=/&smbConfig=#smbConfig", service.address(), service.shareName(),
+                fromF("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig", service.address(), service.shareName(),
                         service.userName(), service.password())
                         .to("seda:intermediate");
 
@@ -124,18 +123,18 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
                         .to("mock:result");
 
                 from("seda:send")
-                        .toF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(),
+                        .toF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(),
                                 service.userName(), service.password());
 
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_override.doc&path=/", service.address(),
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_override.doc", service.address(),
                         service.shareName(),
                         service.userName(), service.password())
                         .to("mock:received_override");
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_ignore.doc&path=/", service.address(),
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_ignore.doc", service.address(),
                         service.shareName(),
                         service.userName(), service.password())
                         .to("mock:received_ignore");
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_send.doc&path=/", service.address(),
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_send.doc", service.address(),
                         service.shareName(),
                         service.userName(), service.password())
                         .to("mock:received_send");

@@ -33,6 +33,7 @@ import javax.inject.Inject;
 
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -90,7 +91,15 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         getLog().info("Found " + releases.size() + " " + kind + " releases");
 
         JsonArray arr = new JsonArray();
+        if ("Camel".equals(kind)) {
+            // include old releases
+            arr.addAll(processOldReleases());
+        }
         for (ReleaseModel r : releases) {
+            // kind: legacy should be kind: lts
+            if ("legacy".equals(r.getKind())) {
+                r.setKind("lts");
+            }
             JsonObject jo = JsonMapper.asJsonObject(r);
             arr.add(jo);
         }
@@ -100,6 +109,12 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         Path path = outDir.toPath();
         updateResource(path, fileName, json);
         addResourceDirectory(path);
+    }
+
+    private JsonArray processOldReleases() throws Exception {
+        File f = new File("src/main/resources/org/apache/camel/catalog/releases/old-camel-releases.json");
+        String json = PackageHelper.loadText(f);
+        return Jsoner.deserialize(json, new JsonArray());
     }
 
     private List<ReleaseModel> processReleases(List<String> urls) throws Exception {

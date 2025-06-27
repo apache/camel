@@ -24,7 +24,7 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-pinecone</artifactId>
@@ -37,10 +37,11 @@
         <camel.surefire.parallel.factor>4</camel.surefire.parallel.factor>
 
         <!-- Milvus is not available on these platforms -->
-        <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
-        <skipTests.ppc64le>true</skipTests.ppc64le>
         <skipTests.s390x>true</skipTests.s390x>
+
+        <!-- Pinecone Docker image is not available for this architecture -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
     </properties>
 
     <dependencies>
@@ -58,7 +59,16 @@
         <dependency>
             <groupId>io.pinecone</groupId>
             <artifactId>pinecone-client</artifactId>
-	    <version>${pinecone-client-version}</version>
+            <version>${pinecone-client-version}</version>
+        </dependency>
+
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-pinecone</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
 
         <!-- test dependencies -->

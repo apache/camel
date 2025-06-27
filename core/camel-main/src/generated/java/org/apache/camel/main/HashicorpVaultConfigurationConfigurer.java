@@ -27,15 +27,23 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
+        case "cloud": target.setCloud(property(camelContext, boolean.class, value)); return true;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": target.setIBMSecretsManagerVaultConfiguration(property(camelContext, org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class, value)); return true;
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": target.setKubernetesConfigMapVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class, value)); return true;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
+        case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, java.lang.String.class, value)); return true;
         case "scheme": target.setScheme(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -48,15 +56,23 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
+        case "cloud": return boolean.class;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
         case "host": return java.lang.String.class;
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": return org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class;
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": return org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
+        case "namespace": return java.lang.String.class;
         case "port": return java.lang.String.class;
         case "scheme": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "token": return java.lang.String.class;
         default: return null;
         }
@@ -70,15 +86,23 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
+        case "cloud": return target.isCloud();
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
         case "host": return target.getHost();
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": return target.getIBMSecretsManagerVaultConfiguration();
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": return target.getKubernetesConfigMapVaultConfiguration();
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
+        case "namespace": return target.getNamespace();
         case "port": return target.getPort();
         case "scheme": return target.getScheme();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "token": return target.getToken();
         default: return null;
         }

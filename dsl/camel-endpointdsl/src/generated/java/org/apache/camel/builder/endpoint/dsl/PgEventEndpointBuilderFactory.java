@@ -201,6 +201,136 @@ public interface PgEventEndpointBuilderFactory {
             return this;
         }
         /**
+         * When the consumer unexpected lose connection to the database, then
+         * this specifies the interval (millis) between re-connection attempts
+         * to establish a new connection.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer (advanced)
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder reconnectDelay(int reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
+         * When the consumer unexpected lose connection to the database, then
+         * this specifies the interval (millis) between re-connection attempts
+         * to establish a new connection.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer (advanced)
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder reconnectDelay(String reconnectDelay) {
+            doSetProperty("reconnectDelay", reconnectDelay);
+            return this;
+        }
+        /**
+         * To use a custom worker pool for processing the events from the
+         * database.
+         * 
+         * The option is a: <code>java.util.concurrent.ExecutorService</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param workerPool the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder workerPool(ExecutorService workerPool) {
+            doSetProperty("workerPool", workerPool);
+            return this;
+        }
+        /**
+         * To use a custom worker pool for processing the events from the
+         * database.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ExecutorService</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param workerPool the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder workerPool(String workerPool) {
+            doSetProperty("workerPool", workerPool);
+            return this;
+        }
+        /**
+         * Number of core threads in the worker pool for processing the events
+         * from the database.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: consumer (advanced)
+         * 
+         * @param workerPoolCoreSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder workerPoolCoreSize(int workerPoolCoreSize) {
+            doSetProperty("workerPoolCoreSize", workerPoolCoreSize);
+            return this;
+        }
+        /**
+         * Number of core threads in the worker pool for processing the events
+         * from the database.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: consumer (advanced)
+         * 
+         * @param workerPoolCoreSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder workerPoolCoreSize(String workerPoolCoreSize) {
+            doSetProperty("workerPoolCoreSize", workerPoolCoreSize);
+            return this;
+        }
+        /**
+         * Maximum number of threads in the worker pool for processing the
+         * events from the database.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer (advanced)
+         * 
+         * @param workerPoolMaxSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder workerPoolMaxSize(int workerPoolMaxSize) {
+            doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
+            return this;
+        }
+        /**
+         * Maximum number of threads in the worker pool for processing the
+         * events from the database.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer (advanced)
+         * 
+         * @param workerPoolMaxSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPgEventEndpointConsumerBuilder workerPoolMaxSize(String workerPoolMaxSize) {
+            doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
+            return this;
+        }
+        /**
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
          * 

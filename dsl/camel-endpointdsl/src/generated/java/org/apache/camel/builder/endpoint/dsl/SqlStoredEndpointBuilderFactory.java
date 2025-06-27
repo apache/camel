@@ -280,6 +280,7 @@ public interface SqlStoredEndpointBuilderFactory {
         }
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * This is a multi-value option with prefix: template.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -299,6 +300,7 @@ public interface SqlStoredEndpointBuilderFactory {
         }
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * This is a multi-value option with prefix: template.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

@@ -16,59 +16,156 @@
  */
 package org.apache.camel.component.smb;
 
+import java.net.URI;
+
 import com.hierynomus.smbj.SmbConfig;
-import org.apache.camel.component.file.GenericFileExist;
-import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StringHelper;
 
 @UriParams
-public class SmbConfiguration {
+public class SmbConfiguration extends GenericFileConfiguration {
 
-    protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
+    // component name is implied as the protocol
+    private String protocol;
 
-    @Metadata(required = false)
-    @UriParam(label = "producer", description = "What action to take if the SMB file already exists",
-              defaultValue = "Ignore", enums = "Override,Append,Fail,Ignore,Move,TryRename")
-    private GenericFileExist fileExist;
-
-    @Metadata(required = false, defaultValue = "false")
-    @UriParam(label = "producer", description = "Whether to create parent directory if it does not exist",
-              defaultValue = "false")
-    private boolean autoCreate;
-
-    @Metadata(required = false, defaultValue = "2048")
-    @UriParam(label = "producer", description = "Read buffer size when for file being produced", defaultValue = "2048")
-    private int readBufferSize;
-
+    @UriPath
     @Metadata(required = true)
-    @UriParam(description = "The path, within the share, to consume the files from")
+    private String hostname;
+    @UriPath(defaultValue = "445")
+    private int port = 445;
+    @UriPath(description = "The name of the share directory")
+    @Metadata(required = true)
+    private String shareName;
+    @UriPath(description = "The base directory within the share")
     private String path;
-    @UriParam(defaultValue = "*.txt", description = "The search pattern used to list the files")
-    private String searchPattern;
     @UriParam(label = "security", description = "The username required to access the share", secret = true)
     private String username;
     @UriParam(label = "security", description = "The password to access the share", secret = true)
     private String password;
     @UriParam(label = "security", description = "The user domain")
     private String domain;
-    @UriParam(label = "advanced",
-              description = "An optional SMB I/O bean to use to setup the file access attributes when reading/writing a file")
-    private SmbIOBean smbIoBean = new SmbReadBean();
-    @UriParam(label = "advanced", description = "A pluggable repository org.apache.camel.spi.IdempotentRepository "
-                                                + "which by default use MemoryIdempotentRepository if none is specified.")
-    protected IdempotentRepository idempotentRepository
-            = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
+    @UriParam(label = "consumer",
+              description = "The search pattern used to list the files (server side on SMB). This parameter can contain the name of a file (or multiple files, if wildcards are used) within this directory. When it is null all files are included."
+                            + " Two wild card characters are supported in the search pattern. The ? (question mark) character matches a single character. If a search pattern contains one or more ? characters, then exactly that number of characters is matched by the wildcards."
+                            + " For example, the criterion ??x matches abx but not abcx or ax, because the two file names do not have enough characters preceding the literal. When a file name criterion has ? characters trailing a literal, then the match is made with specified number of characters or less."
+                            + " For example, the criterion x?? matches xab, xa, and x, but not xabc. If only ? characters are present in the file name selection criterion, then the match is made as if the criterion contained ? characters trailing a literal."
+                            + " The * (asterisk) character matches an entire file name. A null or empty specification criterion also selects all file names. For example, *.abc or .abc match any file with an extension of abc. *.*, *, or empty string match all files in a directory.")
+    private String searchPattern;
+    @UriParam(label = "consumer", description = "Sets the download method to use when not using a local working directory."
+                                                + " If set to true, the remote files are streamed to the route as they are read. When set to"
+                                                + " false, the remote files are loaded into memory before being sent into the route.")
+    @Metadata
+    private boolean streamDownload;
+    @UriParam(label = "consumer,advanced", description = "Whether the SMB consumer should download the file. If this "
+                                                         + "option is set to false, then the message body will be null, but the consumer will still trigger a Camel "
+                                                         + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
+                                                         + "not be downloaded.")
+    private boolean download = true;
+    @UriParam(label = "common", description = "Whether or not to disconnect from remote SMB share right after use. "
+                                              + "Disconnect will only disconnect the current connection to the SMB share. If you have a consumer which "
+                                              + "you want to stop, then you need to stop the consumer/route instead.")
+    private boolean disconnect;
+    @UriParam(label = "producer,advanced", description = "Whether or not to disconnect from remote SMB share right "
+                                                         + "after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection "
+                                                         + "to the SMB share.")
+    private boolean disconnectOnBatchComplete;
+    @UriParam(label = "consumer,advanced", description = "Should an exception be thrown if connection failed (exhausted). "
+                                                         + "By default exception is not thrown and a <tt>WARN</tt> is logged. You can use this to enable exception "
+                                                         + "being thrown and handle the thrown exception from the PollingConsumerPollStrategy rollback method.")
+    private boolean throwExceptionOnConnectFailed;
+    @UriParam(label = "consumer,advanced",
+              description = "Whether the starting directory must exist. Mind that the autoCreate option is default enabled, which means the "
+                            + "starting directory is normally auto created if it doesn't exist. You can disable autoCreate and enable this to "
+                            + "ensure the starting directory must exist. Will throw an exception if the directory doesn't exist.")
+    private boolean startingDirectoryMustExist;
     @Metadata(autowired = true)
     @UriParam(label = "advanced",
               description = "An optional SMB client configuration, can be used to configure client specific "
                             + " configurations, like timeouts")
     private SmbConfig smbConfig;
-    @UriParam(label = "consumer", defaultValue = "false",
-              description = "If a directory, will look for files in all the sub-directories as well.")
-    protected boolean recursive;
+
+    public SmbConfiguration() {
+        setProtocol("smb");
+    }
+
+    public SmbConfiguration(URI uri) {
+        super.setDirectory("");
+        setProtocol(uri.getScheme());
+        setHostname(uri.getHost());
+        if (uri.getPort() > 0) {
+            setPort(uri.getPort());
+        }
+        String path = FileUtil.stripLeadingSeparator(uri.getPath());
+        String share = StringHelper.before(path, "/", path);
+        setShareName(share);
+        String dir = StringHelper.after(path, "/");
+        if (dir != null) {
+            setPath(dir);
+        }
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * The smb protocol to use
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+        super.setDirectory(path);
+    }
+
+    @Override
+    public String getDirectory() {
+        return super.getDirectory() == null ? "" : super.getDirectory();
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    /**
+     * The share hostname or IP address
+     */
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * The share port number
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getShareName() {
+        return shareName;
+    }
+
+    /**
+     * The name of the share to connect to.
+     */
+    public void setShareName(String shareName) {
+        this.shareName = shareName;
+    }
 
     public String getUsername() {
         return username;
@@ -90,36 +187,8 @@ public class SmbConfiguration {
         return domain;
     }
 
-    public boolean isRecursive() {
-        return recursive;
-    }
-
-    public void setRecursive(boolean recursive) {
-        this.recursive = recursive;
-    }
-
-    public void setRecursive(String recursiveString) {
-        this.recursive = Boolean.valueOf(recursiveString);
-    }
-
     public void setDomain(String domain) {
         this.domain = domain;
-    }
-
-    public SmbIOBean getSmbIoBean() {
-        return smbIoBean;
-    }
-
-    public void setSmbIoBean(SmbIOBean smbIoBean) {
-        this.smbIoBean = smbIoBean;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     public String getSearchPattern() {
@@ -130,12 +199,52 @@ public class SmbConfiguration {
         this.searchPattern = searchPattern;
     }
 
-    public IdempotentRepository getIdempotentRepository() {
-        return idempotentRepository;
+    public boolean isStreamDownload() {
+        return streamDownload;
     }
 
-    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
-        this.idempotentRepository = idempotentRepository;
+    public void setStreamDownload(boolean streamDownload) {
+        this.streamDownload = streamDownload;
+    }
+
+    public boolean isDownload() {
+        return download;
+    }
+
+    public void setDownload(boolean download) {
+        this.download = download;
+    }
+
+    public boolean isDisconnect() {
+        return disconnect;
+    }
+
+    public void setDisconnect(boolean disconnect) {
+        this.disconnect = disconnect;
+    }
+
+    public boolean isDisconnectOnBatchComplete() {
+        return disconnectOnBatchComplete;
+    }
+
+    public void setDisconnectOnBatchComplete(boolean disconnectOnBatchComplete) {
+        this.disconnectOnBatchComplete = disconnectOnBatchComplete;
+    }
+
+    public boolean isThrowExceptionOnConnectFailed() {
+        return throwExceptionOnConnectFailed;
+    }
+
+    public void setThrowExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
+        this.throwExceptionOnConnectFailed = throwExceptionOnConnectFailed;
+    }
+
+    public boolean isStartingDirectoryMustExist() {
+        return startingDirectoryMustExist;
+    }
+
+    public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
+        this.startingDirectoryMustExist = startingDirectoryMustExist;
     }
 
     public SmbConfig getSmbConfig() {
@@ -146,31 +255,11 @@ public class SmbConfiguration {
         this.smbConfig = smbConfig;
     }
 
-    public GenericFileExist getFileExist() {
-        return fileExist;
+    /**
+     * Returns human-readable server information for logging purpose
+     */
+    public String remoteServerInformation() {
+        return protocol + "://" + (username != null ? username : "anonymous") + "@" + hostname + ":" + getPort();
     }
 
-    public void setFileExist(GenericFileExist fileExist) {
-        this.fileExist = fileExist;
-    }
-
-    public boolean isAutoCreate() {
-        return autoCreate;
-    }
-
-    public void setAutoCreate(String autoCreate) {
-        this.autoCreate = Boolean.valueOf(autoCreate);
-    }
-
-    public void setAutoCreate(boolean autoCreate) {
-        this.autoCreate = autoCreate;
-    }
-
-    public void setReadBufferSize(int readBufferSize) {
-        this.readBufferSize = readBufferSize;
-    }
-
-    public int getReadBufferSize() {
-        return readBufferSize;
-    }
 }

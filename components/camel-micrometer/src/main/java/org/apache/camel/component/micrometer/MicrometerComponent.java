@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.micrometer;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
@@ -62,12 +60,36 @@ public class MicrometerComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String metricsName = getMetricsName(remaining);
         Meter.Type metricsType = getMetricsType(remaining);
-        Iterable<Tag> tags = getMetricsTag(parameters);
 
-        LOG.debug("Metrics type: {}; name: {}; tags: {}", metricsType, metricsName, tags);
-        Endpoint endpoint = new MicrometerEndpoint(uri, this, metricsRegistry, metricsType, metricsName, tags);
+        // backwards compatible
+        Map<String, String> map = getTags(parameters);
+        if (map != null && !map.isEmpty()) {
+            LOG.warn(
+                    "Deprecated tags=key1=value&key2=value2 parameter in use. Migrate to use multi-valued tags.key1=value1&tags.key2=value2 syntax");
+        }
+
+        LOG.debug("Metrics type: {}; name: {}", metricsType, metricsName);
+        MicrometerEndpoint endpoint = new MicrometerEndpoint(uri, this, metricsRegistry, metricsType, metricsName);
+        if (map != null) {
+            endpoint.setTags(map);
+        }
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    Map<String, String> getTags(Map<String, Object> parameters) {
+        String tagsString = getAndRemoveParameter(parameters, "tags", String.class, "");
+        if (tagsString != null && !tagsString.isEmpty()) {
+            Map<String, String> answer = new HashMap<>();
+            for (String tag : tagsString.split("\\s*,\\s*")) {
+                String[] e = tag.split("\\s*=\\s*");
+                if (e.length == 2) {
+                    answer.put(e[0], e[1]);
+                }
+            }
+            return answer;
+        }
+        return null;
     }
 
     String getMetricsName(String remaining) {
@@ -80,17 +102,6 @@ public class MicrometerComponent extends DefaultComponent {
         return type == null
                 ? DEFAULT_METER_TYPE
                 : MicrometerUtils.getByName(type);
-    }
-
-    Iterable<Tag> getMetricsTag(Map<String, Object> parameters) {
-        String tagsString = getAndRemoveParameter(parameters, "tags", String.class, "");
-        if (tagsString != null && !tagsString.isEmpty()) {
-            String[] tagStrings = tagsString.split("\\s*,\\s*");
-            return Stream.of(tagStrings)
-                    .map(s -> Tags.of(s.split("\\s*=\\s*")))
-                    .reduce(Tags.empty(), Tags::and);
-        }
-        return Tags.empty();
     }
 
     public MeterRegistry getMetricsRegistry() {

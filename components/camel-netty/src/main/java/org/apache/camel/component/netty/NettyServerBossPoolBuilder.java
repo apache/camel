@@ -77,15 +77,21 @@ public final class NettyServerBossPoolBuilder {
     public EventLoopGroup build() {
         if (nativeTransport) {
             if (KQueue.isAvailable()) {
-                return new KQueueEventLoopGroup(bossCount, new CamelThreadFactory(pattern, name, false));
+                return new KQueueEventLoopGroup(
+                        bossCount,
+                        new CamelThreadFactory(pattern, name, false));
             } else if (Epoll.isAvailable()) {
-                return new EpollEventLoopGroup(bossCount, new CamelThreadFactory(pattern, name, false));
+                return new EpollEventLoopGroup(
+                        bossCount,
+                        new CamelThreadFactory(pattern, name, false));
             } else {
                 throw new IllegalStateException(
                         "Unable to use native transport - both Epoll and KQueue are not available");
             }
         } else {
-            return new NioEventLoopGroup(bossCount, new CamelThreadFactory(pattern, name, false));
+            return new NioEventLoopGroup(
+                    bossCount,
+                    new CamelThreadFactory(pattern, name, false));
         }
     }
 }

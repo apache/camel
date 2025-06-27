@@ -27,7 +27,7 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 /**
  * Global configuration for thread pools
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class ThreadPoolConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

@@ -1,1 +1,1 @@
-../../../../../components/camel-spring-rabbitmq/src/main/docs/spring-rabbitmq-component.adoc
+../../../../../components/camel-spring-parent/camel-spring-rabbitmq/src/main/docs/spring-rabbitmq-component.adoc

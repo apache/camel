@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContextAware;
@@ -106,11 +108,16 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      */
     protected abstract Exchange createExchange(GenericFile<T> file);
 
+    @Override
+    protected int poll() throws Exception {
+        return poll(null);
+    }
+
     /**
      * Poll for files
      */
     @Override
-    public int poll() throws Exception {
+    protected int poll(Exchange dynamic) throws Exception {
         // must prepare on startup the very first time
         if (!prepareOnStartup) {
             // prepare on startup
@@ -137,7 +144,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         StopWatch stop = new StopWatch();
         boolean limitHit;
         try {
-            limitHit = !pollDirectory(name, files, 0);
+            limitHit = !pollDirectory(dynamic, name, files, 0);
         } catch (Exception e) {
             // during poll directory we add files to the in progress repository,
             // in case of any exception thrown after this work
@@ -221,6 +228,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             total = maxMessagesPerPoll;
         }
 
+        Queue<Object> notStarted = new ArrayDeque<>();
+
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             // use poll to remove the head so it does not consume memory even
@@ -247,10 +256,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // if we did not start process the file then decrement the counter
             if (!started) {
                 answer--;
+                // this exchange was not started processing so remember to release it afterward
+                notStarted.add(exchange);
             }
         }
 
         // drain any in progress files as we are done with this batch
+        removeExcessiveInProgressFiles(CastUtils.cast((Deque<?>) notStarted, Exchange.class), 0);
         removeExcessiveInProgressFiles(CastUtils.cast((Deque<?>) exchanges, Exchange.class), 0);
 
         return answer;
@@ -268,10 +280,25 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         while (exchanges.size() > limit) {
             // must remove last
             Exchange exchange = exchanges.removeLast();
-            GenericFile<?> file = exchange.getProperty(ExchangePropertyKey.FILE_EXCHANGE_FILE, GenericFile.class);
+            GenericFile file = exchange.getProperty(ExchangePropertyKey.FILE_EXCHANGE_FILE, GenericFile.class);
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
+            // if we added eager to idempotent then we need to remove this
+            if (endpoint.isIdempotentEager() && endpoint.getIdempotentRepository() != null) {
+                removeExcessiveIdempotentFile(file, null);
+            }
             releaseExchange(exchange, true);
+        }
+    }
+
+    void removeExcessiveIdempotentFile(GenericFile file, Exchange dynamic) {
+        String key = file.getAbsoluteFilePath();
+        if (endpoint.getIdempotentKey() != null) {
+            Exchange dummy = GenericFileHelper.createDummy(endpoint, dynamic, () -> file);
+            key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+        }
+        if (key != null) {
+            endpoint.getIdempotentRepository().remove(key);
         }
     }
 
@@ -335,7 +362,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @return          whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been
      *                  hit
      */
-    protected abstract boolean pollDirectory(String fileName, List<GenericFile<T>> fileList, int depth);
+    protected abstract boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<T>> fileList, int depth);
 
     /**
      * Sets the operations to be used.
@@ -428,7 +455,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // must use full name when downloading so we have the correct path
         final String name = target.getAbsoluteFilePath();
         try {
-
             if (isRetrieveFile()) {
                 if (!tryRetrievingFile(exchange, name, target, absoluteFileName, file)) {
                     return false;
@@ -580,15 +606,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * Strategy for validating if the given remote file should be included or not
      *
      * @param  file        the file
+     * @param  name        the file name
      * @param  isDirectory whether the file is a directory or a file
      * @param  files       files in the directory
      * @return             <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
-    protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, T[] files) {
-        String absoluteFilePath = file.getAbsoluteFilePath();
-
-        if (!isMatched(file, isDirectory, files)) {
-            LOG.trace("File did not match. Will skip this file: {}", file);
+    protected boolean isValidFile(
+            Exchange dynamic,
+            Supplier<GenericFile<T>> file, String name, String absoluteFilePath,
+            Supplier<String> relativeFilePath, boolean isDirectory, T[] files) {
+        if (!isMatched(dynamic, file, name, absoluteFilePath, relativeFilePath, isDirectory, files)) {
+            LOG.trace("File did not match. Will skip this file: {}", name);
             return false;
         }
 
@@ -600,7 +628,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // check if file is already in progress
         if (endpoint.getInProgressRepository().contains(absoluteFilePath)) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Skipping as file is already in progress: {}", file.getFileName());
+                LOG.trace("Skipping as file is already in progress: {}", name);
             }
             return false;
         }
@@ -608,7 +636,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // if it is a file then check we have the file in the idempotent registry
         // already
         if (Boolean.TRUE.equals(endpoint.isIdempotent())) {
-            if (notUnique(file)) {
+            if (notUnique(dynamic, file, absoluteFilePath)) {
                 return false;
             }
         }
@@ -619,13 +647,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return endpoint.getInProgressRepository().add(absoluteFilePath);
     }
 
-    private boolean notUnique(GenericFile<T> file) {
+    private boolean notUnique(Exchange dynamic, Supplier<GenericFile<T>> file, String absoluteFilePath) {
         boolean answer = false;
         // use absolute file path as default key, but evaluate if an
         // expression key was configured
-        String key = file.getAbsoluteFilePath();
+        String key = absoluteFilePath;
         if (endpoint.getIdempotentKey() != null) {
-            Exchange dummy = endpoint.createExchange(file);
+            Exchange dummy = GenericFileHelper.createDummy(endpoint, dynamic, file);
             key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
             LOG.trace("Evaluated idempotentKey: {} for file: {}", key, file);
         }
@@ -649,9 +677,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * <li>Starting with a dot (hidden)</li>
      * </ul>
      */
-    protected boolean isMatchedHiddenFile(GenericFile<T> file, boolean isDirectory) {
-        String name = file.getFileNameOnly();
-
+    protected boolean isMatchedHiddenFile(Supplier<GenericFile<T>> file, String name, boolean isDirectory) {
         // folders/names starting with dot is always skipped (eg. ".", ".camel",
         // ".camelLock")
         if (name.startsWith(".")) {
@@ -660,6 +686,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         return true;
     }
+
+    /**
+     * Geta the relative path from the given file, calculated from the starting path, current path, and current absolute
+     * path
+     */
+    protected abstract Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, T file);
 
     /**
      * Strategy to perform file matching based on endpoint configuration.
@@ -671,15 +703,20 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * </ul>
      * And then <tt>true</tt> for directories.
      *
-     * @param  file        the file
-     * @param  isDirectory whether the file is a directory or a file
-     * @param  files       files in the directory
-     * @return             <tt>true</tt> if the file is matched, <tt>false</tt> if not
+     * @param  file             the file
+     * @param  name             the file name
+     * @param  absoluteFilePath the absolute file name
+     * @param  relativeFilePath the relative file name
+     * @param  isDirectory      whether the file is a directory or a file
+     * @param  files            files in the directory
+     * @return                  <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
-    protected boolean isMatched(GenericFile<T> file, boolean isDirectory, T[] files) {
-        String name = file.getFileNameOnly();
+    protected boolean isMatched(
+            Exchange dynamic,
+            Supplier<GenericFile<T>> file, String name, String absoluteFilePath,
+            Supplier<String> relativeFilePath, boolean isDirectory, T[] files) {
 
-        if (!isMatchedHiddenFile(file, isDirectory)) {
+        if (!isMatchedHiddenFile(file, name, isDirectory)) {
             // folders/names starting with dot is always skipped (eg. ".", ".camel",
             // ".camelLock")
             return false;
@@ -691,21 +728,29 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         if (endpoint.getFilter() != null) {
-            if (!endpoint.getFilter().accept(file)) {
+            Boolean accepted = null;
+            if (endpoint.getFilter() instanceof OptimizedFileFilter off) {
+                // use optimized test using file name only
+                accepted = off.accept(name);
+            }
+            if (accepted == null) {
+                // use default test using generic file
+                accepted = endpoint.getFilter().accept(file.get());
+            }
+            if (!accepted) {
                 return false;
             }
         }
 
         if (endpoint.getAntFilter() != null) {
-            if (!endpoint.getAntFilter().accept(file)) {
+            if (!endpoint.getAntFilter().accept(isDirectory, relativeFilePath.get())) {
                 return false;
             }
         }
 
         if (isDirectory && endpoint.getFilterDirectory() != null) {
-            // create a dummy exchange as Exchange is needed for expression
-            // evaluation
-            Exchange dummy = endpoint.createExchange(file);
+            // create a dummy exchange as Exchange is needed for expression evaluation
+            Exchange dummy = GenericFileHelper.createDummy(endpoint, dynamic, file);
             boolean matches = endpoint.getFilterDirectory().matches(dummy);
             if (!matches) {
                 return false;
@@ -717,13 +762,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return true;
         }
 
-        if (hasInclusionsOrExclusions(file, name)) {
+        if (hasInclusionsOrExclusions(name)) {
             return false;
         }
 
         if (endpoint.getFileName() != null) {
             // create a dummy exchange as Exchange is needed for expression evaluation
-            Exchange dummy = endpoint.createExchange(file);
+            Exchange dummy = GenericFileHelper.createDummy(endpoint, dynamic, file);
             String result = evaluateFileExpression(dummy);
             if (result != null) {
                 if (!name.equals(result)) {
@@ -734,7 +779,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         if (endpoint.getFilterFile() != null) {
             // create a dummy exchange as Exchange is needed for expression evaluation
-            Exchange dummy = endpoint.createExchange(file);
+            Exchange dummy = GenericFileHelper.createDummy(endpoint, dynamic, file);
             boolean matches = endpoint.getFilterFile().matches(dummy);
             if (!matches) {
                 return false;
@@ -745,11 +790,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // file exists
         if (endpoint.getDoneFileName() != null) {
             // done file must be in same path as the file
-            String doneFileName = endpoint.createDoneFileName(file.getAbsoluteFilePath());
+            String doneFileName = endpoint.createDoneFileName(absoluteFilePath);
             StringHelper.notEmpty(doneFileName, "doneFileName", endpoint);
 
             // is it a done file name?
-            if (endpoint.isDoneFile(file.getFileNameOnly())) {
+            if (endpoint.isDoneFile(name)) {
                 LOG.trace("Skipping done file: {}", file);
                 return false;
             }
@@ -762,15 +807,16 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return true;
     }
 
-    private boolean hasInclusionsOrExclusions(GenericFile<T> file, String name) {
+    private boolean hasInclusionsOrExclusions(String name) {
         // exclude take precedence over include
         if (excludePattern != null) {
             if (excludePattern.matcher(name).matches()) {
                 return true;
             }
         }
+        String fname = null;
         if (excludeExt != null) {
-            String fname = file.getFileName().toLowerCase();
+            fname = name.toLowerCase();
             if (hasExtExlusions(fname)) {
                 return true;
             }
@@ -781,7 +827,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
         if (includeExt != null) {
-            String fname = file.getFileName().toLowerCase();
+            if (fname == null) {
+                fname = name.toLowerCase();
+            }
             if (hasExtInclusions(fname)) {
                 return true;
             }
@@ -789,7 +837,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return false;
     }
 
-    private boolean hasExtInclusions(String fname) {
+    protected boolean hasExtInclusions(String fname) {
         boolean any = false;
         for (String include : includeExt) {
             any |= fname.endsWith("." + include);
@@ -800,7 +848,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return false;
     }
 
-    private boolean hasExtExlusions(String fname) {
+    protected boolean hasExtExlusions(String fname) {
         for (String exclude : excludeExt) {
             if (fname.endsWith("." + exclude)) {
                 return true;
@@ -817,7 +865,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @param  files        files in the directory
      * @return              <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
-    protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, T[] files);
+    protected abstract boolean isMatched(Supplier<GenericFile<T>> file, String doneFileName, T[] files);
 
     protected String evaluateFileExpression(Exchange exchange) {
         String result = endpoint.getFileName().evaluate(exchange, String.class);

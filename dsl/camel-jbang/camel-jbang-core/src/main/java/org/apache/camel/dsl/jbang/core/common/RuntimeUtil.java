@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -47,6 +46,8 @@ public final class RuntimeUtil {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
             System.setProperty("pid", Long.toString(pid));
+            // make it possible to manage log4j via JMX and camel-cli
+            System.setProperty("log4j2.disable.jmx", "false");
 
             if (loggingConfigPath != null) {
                 // ust custom logging configuration as-is
@@ -87,7 +88,7 @@ public final class RuntimeUtil {
                 name = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/log4j2.properties";
                 Files.writeString(Paths.get(name), content);
 
-                Configurator.initialize("CamelJBang", "file://" + Path.of(name).toAbsolutePath());
+                Configurator.initialize("CamelJBang", Path.of(name).toAbsolutePath().toUri().toString());
             } else {
                 // use out of the box logging configuration
                 if (export) {
@@ -140,21 +141,25 @@ public final class RuntimeUtil {
         }
     }
 
-    public static void loadProperties(Properties properties, File file) throws IOException {
-        if (file.exists()) {
-            try (final FileInputStream fileInputStream = new FileInputStream(file)) {
-                properties.load(fileInputStream);
+    public static void loadProperties(Properties properties, Path path) throws IOException {
+        if (Files.exists(path)) {
+            try (final var inputStream = Files.newInputStream(path)) {
+                properties.load(inputStream);
             }
         }
     }
 
-    public static List<String> loadPropertiesLines(File file) throws IOException {
-        if (!file.exists()) {
+    public static void loadProperties(Properties properties, File file) throws IOException {
+        loadProperties(properties, file.toPath());
+    }
+
+    public static List<String> loadPropertiesLines(Path path) throws IOException {
+        if (!Files.exists(path)) {
             return new ArrayList<>();
         }
 
         List<String> lines = new ArrayList<>();
-        for (String line : Files.readAllLines(file.toPath())) {
+        for (String line : Files.readAllLines(path)) {
             // need to use java.util.Properties to read raw value and un-escape
             Properties prop = new OrderedProperties();
             prop.load(new StringReader(line));
@@ -167,6 +172,10 @@ public final class RuntimeUtil {
             }
         }
         return lines;
+    }
+
+    public static List<String> loadPropertiesLines(File file) throws IOException {
+        return loadPropertiesLines(file.toPath());
     }
 
     public static List<String> getCommaSeparatedPropertyAsList(Properties props, String key, List<String> defaultValue) {

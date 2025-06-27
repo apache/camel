@@ -16,19 +16,13 @@
  */
 package org.apache.camel.component.microprofile.config;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.function.Predicate;
 
-import io.smallrye.config.SmallRyeConfig;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.annotations.JdkService;
-import org.eclipse.microprofile.config.Config;
+import org.apache.camel.util.OrderedProperties;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with the Properties Component.
@@ -36,22 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 @JdkService("properties-source-factory")
 public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSource {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CamelMicroProfilePropertiesSource.class);
-    private List<String> profiles = Collections.emptyList();
-
-    public CamelMicroProfilePropertiesSource() {
-        try {
-            this.profiles = ConfigProvider.getConfig()
-                    .unwrap(SmallRyeConfig.class)
-                    .getProfiles();
-        } catch (IllegalArgumentException e) {
-            // Handle unlikely event that the config could not be unwrapped
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to discover active configuration profiles", e);
-            }
-        }
-    }
 
     @Override
     public String getName() {
@@ -65,36 +43,18 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
 
     @Override
     public Properties loadProperties() {
-        final Properties answer = new Properties();
-        final Config config = ConfigProvider.getConfig();
-        for (String name : config.getPropertyNames()) {
-            try {
-                if (isValidForActiveProfiles(name)) {
-                    answer.put(name, config.getValue(name, String.class));
-                }
-            } catch (NoSuchElementException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Failed to resolve property {} due to {}", name, e.getMessage());
-                }
-            }
-        }
-
-        return answer;
+        return loadProperties(s -> true);
     }
 
     @Override
     public Properties loadProperties(Predicate<String> filter) {
-        final Properties answer = new Properties();
-        final Config config = ConfigProvider.getConfig();
+        Properties answer = new OrderedProperties();
 
-        for (String name : config.getPropertyNames()) {
-            if (isValidForActiveProfiles(name) && filter.test(name)) {
-                try {
-                    config.getOptionalValue(name, String.class).ifPresent(value -> answer.put(name, value));
-                } catch (NoSuchElementException e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Failed to resolve property {} due to {}", name, e.getMessage());
-                    }
+        for (String name : ConfigProvider.getConfig().getPropertyNames()) {
+            if (filter.test(name)) {
+                var value = getProperty(name);
+                if (value != null) {
+                    answer.put(name, getProperty(name));
                 }
             }
         }
@@ -112,15 +72,4 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
         return "camel-microprofile-config";
     }
 
-    private boolean isValidForActiveProfiles(String name) {
-        if (!profiles.isEmpty() && name.startsWith("%")) {
-            for (String profile : profiles) {
-                if (name.startsWith(profile + ".", 1)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return true;
-    }
 }

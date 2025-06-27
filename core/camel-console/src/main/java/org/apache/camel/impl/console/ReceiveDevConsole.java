@@ -47,7 +47,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "receive", displayName = "Camel Receive", description = "Consume messages from endpoints")
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class ReceiveDevConsole extends AbstractDevConsole {
 
     @Metadata(defaultValue = "100",
@@ -262,7 +262,7 @@ public class ReceiveDevConsole extends AbstractDevConsole {
 
     private void addMessage(Exchange exchange) {
         JsonObject json
-                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, false, true, true, true, true, bodyMaxChars);
+                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), true, true, true, true, true, true, bodyMaxChars);
         json.put("uid", uuid.incrementAndGet());
         json.put("endpointUri", exchange.getFromEndpoint().toString());
         json.put("remoteEndpoint", exchange.getFromEndpoint().isRemote());

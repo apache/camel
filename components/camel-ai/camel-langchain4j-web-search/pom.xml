@@ -25,7 +25,7 @@
   <parent>
     <artifactId>camel-ai-parent</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>4.9.0-SNAPSHOT</version>
+    <version>4.13.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-langchain4j-web-search</artifactId>
@@ -68,14 +68,14 @@
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-web-search-engine-tavily</artifactId>
-      <version>${langchain4j-version}</version>
+      <version>${langchain4j-beta-version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-web-search-engine-google-custom</artifactId>
-      <version>${langchain4j-version}</version>
+      <version>${langchain4j-beta-version}</version>
       <scope>test</scope>
     </dependency>
 

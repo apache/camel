@@ -105,7 +105,7 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                interceptSendToEndpoint("direct:start").when(simple("${body} contains 'World'")).to("mock:detour")
+                interceptSendToEndpoint("direct:start").onWhen(simple("${body} contains 'World'")).to("mock:detour")
                         .afterUri("mock:after");
 
                 from("direct:start").to("mock:foo").transform().constant("Bye World");

@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-parent</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-pubsub-lite</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Google :: PubSub Lite</name>
+    <name>Camel :: Google :: PubSub Lite (deprecated)</name>
     <description>Camel Component for Google Cloud Platform PubSub Lite</description>
 
     <properties>
@@ -37,18 +37,6 @@
         <componentName>GooglePubSubLite</componentName>
         <componentPackage>org.apache.camel.component.google.pubsublite</componentPackage>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>${google-cloud-bom-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -58,6 +46,7 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-pubsub</artifactId>
+            <version>${google-cloud-pubsub-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
@@ -68,6 +57,7 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-pubsublite</artifactId>
+            <version>${google-cloud-pubsublite-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -28,7 +28,7 @@ import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+        @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                                   disabledReason = "Apache CI nodes are too resource constrained for this test"),
         @DisabledIfSystemProperty(named = "arangodb.tests.disable", matches = "true",
                                   disabledReason = "Manually disabled tests")

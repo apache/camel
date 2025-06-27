@@ -226,8 +226,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // send.buffer.bytes
     @UriParam(label = "producer", defaultValue = "131072")
     private Integer sendBufferBytes = 131072;
-    @UriParam(label = "producer", defaultValue = "true")
-    private boolean recordMetadata = true;
+    @UriParam(label = "producer,advanced")
+    private boolean recordMetadata;
     // max.in.flight.requests.per.connection
     @UriParam(label = "producer", defaultValue = "5")
     private Integer maxInFlightRequest = 5;
@@ -355,8 +355,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common,security")
     private String kerberosConfigLocation;
 
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean batching;
+    @UriParam(label = "consumer")
+    private Integer batchingIntervalMs;
 
     public KafkaConfiguration() {
     }
@@ -1813,7 +1815,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * Whether the producer should store the {@link RecordMetadata} results from sending to Kafka. The results are
      * stored in a {@link List} containing the {@link RecordMetadata} metadata's. The list is stored on a header with
-     * the key {@link KafkaConstants#KAFKA_RECORDMETA}
+     * the key {@link KafkaConstants#KAFKA_RECORD_META}
      */
     public void setRecordMetadata(boolean recordMetadata) {
         this.recordMetadata = recordMetadata;
@@ -1909,7 +1911,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * Sets additional properties for either kafka consumer or kafka producer in case they can't be set directly on the
      * camel configurations (e.g.: new Kafka properties that are not reflected yet in Camel configurations), the
      * properties have to be prefixed with `additionalProperties.`., e.g.:
-     * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
+     * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`.
+     * If the properties are set in the `application.properties` file, they must be prefixed with
+     * `camel.component.kafka.additional-properties` and the property enclosed in square brackets, like this example:
+     * `camel.component.kafka.additional-properties[delivery.timeout.ms]=15000`.
      */
     public void setAdditionalProperties(Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;
@@ -1993,9 +1998,31 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Whether to use batching for processing or streaming. The default is false, which uses streaming
+     * Whether to use batching for processing or streaming. The default is false, which uses streaming.
+     *
+     * In streaming mode, then a single kafka record is processed per Camel exchange in the message body.
+     *
+     * In batching mode, then Camel groups many kafka records together as a List<Exchange> objects in the message body.
+     * The option maxPollRecords is used to define the number of records to group together in batching mode.
      */
     public void setBatching(boolean batching) {
         this.batching = batching;
+    }
+
+    public Integer getBatchingIntervalMs() {
+        return batchingIntervalMs;
+    }
+
+    /**
+     * In consumer batching mode, then this option is specifying a time in millis, to trigger batch completion eager
+     * when the current batch size has not reached the maximum size defined by maxPollRecords.
+     *
+     * Notice the trigger is not exact at the given interval, as this can only happen between kafka polls (see
+     * pollTimeoutMs option). So for example setting this to 10000, then the trigger happens in the interval 10000 +
+     * pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this would mean a trigger interval at about every
+     * 15 seconds.
+     */
+    public void setBatchingIntervalMs(Integer batchingIntervalMs) {
+        this.batchingIntervalMs = batchingIntervalMs;
     }
 }

@@ -115,6 +115,10 @@ public final class RouteCoverageXmlParser {
                         ManagedRouteMBean route = camelContext.getCamelContextExtension()
                                 .getContextPlugin(ManagedCamelContext.class).getManagedRoute(id);
                         if (route != null) {
+                            String loc = route.getSourceLocationShort();
+                            if (loc != null) {
+                                el.setAttribute("sourceLocation", loc);
+                            }
                             long total = route.getExchangesTotal();
                             el.setAttribute("exchangesTotal", Long.toString(total));
                             long totalTime = route.getTotalProcessingTime();

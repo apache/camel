@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,8 @@ import org.apache.camel.util.StopWatch;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "route", description = "Transform Camel routes to XML or YAML format", sortOptions = false)
+@Command(name = "route", description = "Transform Camel routes to XML or YAML format", sortOptions = false,
+         showDefaultValues = true)
 public class TransformRoute extends CamelCommand {
 
     @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
@@ -52,10 +53,9 @@ public class TransformRoute extends CamelCommand {
                         description = "Whether to resolve property placeholders in the dumped output")
     boolean resolvePlaceholders;
 
-    @CommandLine.Option(names = { "--uri-as-parameters" },
-                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format "
-                                      + "and recommended to enable when using Apache Camel Karavan)")
-    boolean uriAsParameters;
+    @CommandLine.Option(names = { "--uri-as-parameters" }, defaultValue = "true",
+                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
+    boolean uriAsParameters = true;
 
     @CommandLine.Option(names = { "--ignore-loading-error" },
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
@@ -109,7 +109,7 @@ public class TransformRoute extends CamelCommand {
 
         if (output == null) {
             // load target file and print to console
-            dump = waitForDumpFile(new File(target));
+            dump = waitForDumpFile(Path.of(target));
             if (dump != null) {
                 printer().println(dump);
             }
@@ -118,18 +118,17 @@ public class TransformRoute extends CamelCommand {
         return 0;
     }
 
-    protected String waitForDumpFile(File dumpFile) {
+    protected String waitForDumpFile(Path dumpFile) {
         StopWatch watch = new StopWatch();
         while (watch.taken() < 5000) {
             try {
                 // give time for response to be ready
                 Thread.sleep(100);
 
-                if (dumpFile.exists()) {
-                    FileInputStream fis = new FileInputStream(dumpFile);
-                    String text = IOHelper.loadText(fis);
-                    IOHelper.close(fis);
-                    return text;
+                if (Files.exists(dumpFile)) {
+                    try (InputStream is = Files.newInputStream(dumpFile)) {
+                        return IOHelper.loadText(is);
+                    }
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

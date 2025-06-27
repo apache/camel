@@ -99,6 +99,13 @@ Jane,Doe,Architect,80000,01152008
 Jon,Anderson,Manager,85000,03182007
 ----
 
+== Configuring beanio
+
+The beanio mapper can be configured in `beanio.properties` file which can be loaded in the root classpath (in `src/main/resources` in your source projects).
+See the https://beanio.github.io/docs/reference-guide#80-configuration[beanio documentation] for what can be configured.
+
+NOTE: This configuration is global for beanio
+
 == Dependencies
 
 To use BeanIO in your Camel routes, you need to add a dependency on

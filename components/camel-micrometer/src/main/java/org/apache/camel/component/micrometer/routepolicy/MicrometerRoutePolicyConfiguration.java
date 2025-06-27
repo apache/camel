@@ -25,6 +25,7 @@ public class MicrometerRoutePolicyConfiguration {
     public static final MicrometerRoutePolicyConfiguration DEFAULT = new MicrometerRoutePolicyConfiguration();
     private boolean contextEnabled = true;
     private boolean routeEnabled = true;
+    private String excludePattern;
     private boolean additionalCounters = true;
     private boolean exchangesSucceeded = true;
     private boolean exchangesFailed = true;
@@ -49,6 +50,14 @@ public class MicrometerRoutePolicyConfiguration {
 
     public void setRouteEnabled(boolean routeEnabled) {
         this.routeEnabled = routeEnabled;
+    }
+
+    public String getExcludePattern() {
+        return excludePattern;
+    }
+
+    public void setExcludePattern(String excludePattern) {
+        this.excludePattern = excludePattern;
     }
 
     public boolean isAdditionalCounters() {

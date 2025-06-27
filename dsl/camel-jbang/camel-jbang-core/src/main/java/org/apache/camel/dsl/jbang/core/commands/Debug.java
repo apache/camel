@@ -18,12 +18,12 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.BufferedReader;
 import java.io.Console;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,11 +34,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
@@ -53,7 +53,7 @@ import picocli.CommandLine.Command;
 
 import static org.apache.camel.util.IOHelper.buffered;
 
-@Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
+@Command(name = "debug", description = "Debug local Camel integration", sortOptions = false, showDefaultValues = true)
 public class Debug extends Run {
 
     @CommandLine.Option(names = { "--breakpoint" },
@@ -89,19 +89,19 @@ public class Debug extends Run {
     boolean source;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in traced messages")
+                        description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
     @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
-                        description = "Show exchange variables in traced messages")
+                        description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers in traced messages")
+                        description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
     @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body in traced messages")
+                        description = "Show message body in debug messages")
     boolean showBody = true;
 
     @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
@@ -209,7 +209,7 @@ public class Debug extends Run {
             String line = c.readLine();
             if (line != null) {
                 line = line.trim();
-                if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
+                if ("q".equalsIgnoreCase(line) || "quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                     quit.set(true);
                 } else {
                     // continue breakpoint
@@ -220,7 +220,11 @@ public class Debug extends Run {
                             logUpdated.set(true);
                         }
                     }
-                    sendDebugCommand(spawnPid, "step", null);
+                    String cmd = "step";
+                    if (line.equalsIgnoreCase("o") || line.equalsIgnoreCase("over")) {
+                        cmd = "stepover";
+                    }
+                    sendDebugCommand(spawnPid, cmd, null);
                 }
                 // user have pressed ENTER so continue
                 waitForUser.set(false);
@@ -238,6 +242,9 @@ public class Debug extends Run {
 
         cmds.remove("--background=true");
         cmds.remove("--background");
+        cmds.remove("--background-wait=true");
+        cmds.remove("--background-wait=false");
+        cmds.remove("--background-wait");
 
         // remove args from debug that are not supported by run
         removeDebugOnlyOptions(cmds);
@@ -266,7 +273,8 @@ public class Debug extends Run {
     }
 
     private void removeDebugOnlyOptions(List<String> cmds) {
-        ReflectionHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
+        // only check Debug.class (not super classes)
+        RunHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
             String n1 = "--" + fc.getName();
             String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
             return c.startsWith(n1) || c.startsWith(n2);
@@ -311,8 +319,8 @@ public class Debug extends Run {
 
     private void sendDebugCommand(long pid, String command, String breakpoint) {
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "debug");
@@ -322,12 +330,21 @@ public class Debug extends Run {
         if (breakpoint != null) {
             root.put("breakpoint", breakpoint);
         }
-        File f = getActionFile(Long.toString(pid));
+        Path f = getActionFile(Long.toString(pid));
         try {
-            IOHelper.writeText(root.toJson(), f);
+            String text = root.toJson();
+            Files.writeString(f, text);
         } catch (Exception e) {
             // ignore
         }
+    }
+
+    private static boolean isStepOverSupported(String version) {
+        // step-over is Camel 4.8.3 or 4.10 or better (not in 4.9)
+        if ("4.9.0".equals(version)) {
+            return false;
+        }
+        return version == null || VersionHelper.isGE(version, "4.8.3");
     }
 
     private void printDebugStatus(long pid, StringWriter buffer) {
@@ -386,6 +403,9 @@ public class Debug extends Run {
                         // we should exchangeId/pattern elsewhere
                         row.message.remove("exchangeId");
                         row.message.remove("exchangePattern");
+                        if (!showExchangeVariables) {
+                            row.message.remove("exchangeVariables");
+                        }
                         if (!showExchangeProperties) {
                             row.message.remove("exchangeProperties");
                         }
@@ -461,8 +481,8 @@ public class Debug extends Run {
                             if (b != null) {
                                 b = CamelCommandHelper.valueAsStringPretty(b, false);
                                 try {
-                                    File f = new File(output);
-                                    IOHelper.writeText(b, f);
+                                    Path f = Path.of(output);
+                                    Files.writeString(f, b);
                                 } catch (IOException e) {
                                     // ignore
                                 }
@@ -471,7 +491,12 @@ public class Debug extends Run {
                     }
                 }
 
-                String msg = "    Breakpoint suspended. Press ENTER to continue.";
+                String msg;
+                if (isStepOverSupported(version)) {
+                    msg = "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue.";
+                } else {
+                    msg = "    Breakpoint suspended. Press ENTER to continue.";
+                }
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
                 } else {
@@ -712,10 +737,10 @@ public class Debug extends Run {
 
     private void handleHangup() {
         if (spawnPid > 0) {
-            File pidFile = new File(CommandLineHelper.getCamelDir(), Long.toString(spawnPid));
-            if (pidFile.exists()) {
+            Path pidPath = CommandLineHelper.getCamelDir().resolve(Long.toString(spawnPid));
+            if (Files.exists(pidPath)) {
                 printer().println("Shutting down Camel integration (PID: " + spawnPid + ")");
-                FileUtil.deleteFile(pidFile);
+                PathUtils.deleteFile(pidPath);
             }
         }
     }
@@ -728,11 +753,9 @@ public class Debug extends Run {
 
     JsonObject loadDebug(long pid) {
         try {
-            File f = getDebugFile(Long.toString(pid));
-            if (f != null && f.exists()) {
-                FileInputStream fis = new FileInputStream(f);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
+            Path p = getDebugFile(Long.toString(pid));
+            if (p != null && Files.exists(p)) {
+                String text = Files.readString(p);
                 return (JsonObject) Jsoner.deserialize(text);
             }
         } catch (Exception e) {

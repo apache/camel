@@ -50,7 +50,8 @@ import picocli.CommandLine;
 import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
 
 @CommandLine.Command(name = "doc",
-                     description = "Shows documentation for kamelet, component, and other Camel resources", sortOptions = false)
+                     description = "Shows documentation for kamelet, component, and other Camel resources", sortOptions = false,
+                     showDefaultValues = true)
 public class CatalogDoc extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
@@ -66,6 +67,10 @@ public class CatalogDoc extends CamelCommand {
                         converter = RuntimeTypeConverter.class,
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime;
+
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    boolean download = true;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
                         defaultValue = RuntimeType.QUARKUS_VERSION)
@@ -98,7 +103,7 @@ public class CatalogDoc extends CamelCommand {
     boolean headers;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "4.8.0")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "4.12.0")
     String kameletsVersion;
 
     CamelCatalog catalog;
@@ -109,14 +114,14 @@ public class CatalogDoc extends CamelCommand {
 
     CamelCatalog loadCatalog() throws Exception {
         if (RuntimeType.springBoot == runtime) {
-            return CatalogLoader.loadSpringBootCatalog(repos, camelVersion);
+            return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, download);
         } else if (RuntimeType.quarkus == runtime) {
-            return CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId);
+            return CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId, download);
         }
         if (camelVersion == null) {
             return new DefaultCamelCatalog(true);
         } else {
-            return CatalogLoader.loadCatalog(repos, camelVersion);
+            return CatalogLoader.loadCatalog(repos, camelVersion, download);
         }
     }
 

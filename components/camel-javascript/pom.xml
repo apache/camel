@@ -23,8 +23,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
+
+    <properties>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+    </properties>
 
     <artifactId>camel-javascript</artifactId>
     <packaging>jar</packaging>

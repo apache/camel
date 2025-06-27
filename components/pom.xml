@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -39,6 +39,7 @@
         <module>camel-browse</module>
         <module>camel-controlbus</module>
         <module>camel-cron</module>
+        <module>camel-dfdl</module>
         <module>camel-dataformat</module>
         <module>camel-dataset</module>
         <module>camel-direct</module>
@@ -57,9 +58,7 @@
 
         <!-- we want to test these modules first to catch any errors early as possible -->
         <module>camel-test</module>
-        <module>camel-spring</module>
-        <module>camel-spring-main</module>
-        <module>camel-spring-xml</module>
+        <module>camel-spring-parent</module>
         <module>camel-groovy</module>
         <module>camel-attachments</module>
         <module>camel-http-base</module>
@@ -72,6 +71,10 @@
         <module>camel-jms</module>
         <module>camel-master</module>
         <module>camel-service</module>
+
+        <!-- Abstract components -->
+        <module>camel-tracing</module>
+        <module>camel-telemetry</module>
 
         <!-- regular modules in alphabetic order -->
         <module>camel-activemq</module>
@@ -112,6 +115,7 @@
         <module>camel-crypto-pgp</module>
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
+        <module>camel-dapr</module>
         <module>camel-datasonnet</module>
         <module>camel-debug</module>
         <module>camel-debezium</module>
@@ -127,7 +131,6 @@
         <module>camel-elasticsearch</module>
         <module>camel-elasticsearch-rest-client</module>
         <module>camel-elytron</module>
-        <module>camel-etcd3</module>
         <module>camel-exec</module>
         <module>camel-fastjson</module>
         <module>camel-fhir</module>
@@ -138,7 +141,7 @@
         <module>camel-fop</module>
         <module>camel-freemarker</module>
         <module>camel-ftp</module>
-        <module>camel-fury</module>
+        <module>camel-fory</module>
         <module>camel-geocoder</module>
         <module>camel-git</module>
         <module>camel-github</module>
@@ -154,6 +157,7 @@
         <module>camel-headersmap</module>
         <module>camel-hl7</module>
         <module>camel-huawei</module>
+        <module>camel-ibm-secrets-manager</module>
         <module>camel-ical</module>
         <module>camel-iec60870</module>
         <module>camel-ignite</module>
@@ -166,11 +170,11 @@
         <module>camel-jackson-avro</module>
         <module>camel-jackson-protobuf</module>
         <module>camel-jacksonxml</module>
+        <module>camel-jandex</module>
         <module>camel-jasypt</module>
         <module>camel-javascript</module>
         <module>camel-jaxb</module>
         <module>camel-jcache</module>
-        <module>camel-tracing</module>
         <module>camel-jcr</module>
         <module>camel-jdbc</module>
         <module>camel-jfr</module>
@@ -225,12 +229,14 @@
         <module>camel-netty</module>
         <module>camel-nitrite</module>
         <module>camel-oaipmh</module>
+        <module>camel-oauth</module>
         <module>camel-observation</module>
         <module>camel-ognl</module>
         <module>camel-olingo2</module>
         <module>camel-olingo4</module>
         <module>camel-openstack</module>
         <module>camel-opentelemetry</module>
+        <module>camel-opentelemetry2</module>
         <module>camel-paho</module>
         <module>camel-paho-mqtt5</module>
         <module>camel-parquet-avro</module>
@@ -245,7 +251,8 @@
         <module>camel-printer</module>
         <module>camel-protobuf</module>
         <module>camel-pubnub</module>
-        <module>camel-pulsar</module>
+	<module>camel-pulsar</module>
+	<module>camel-pqc</module>
         <module>camel-python</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
@@ -278,16 +285,9 @@
         <module>camel-snakeyaml</module>
         <module>camel-snmp</module>
         <module>camel-soap</module>
-        <module>camel-solr</module>        
+        <module>camel-solr</module>
         <module>camel-splunk</module>
         <module>camel-splunk-hec</module>
-        <module>camel-spring-batch</module>
-        <module>camel-spring-jdbc</module>
-        <module>camel-spring-ldap</module>
-        <module>camel-spring-rabbitmq</module>
-        <module>camel-spring-redis</module>
-        <module>camel-spring-security</module>
-        <module>camel-spring-ws</module>
         <module>camel-sql</module>
         <module>camel-ssh</module>
         <module>camel-stax</module>
@@ -304,13 +304,13 @@
         <module>camel-tahu</module>
         <module>camel-tarfile</module>
         <module>camel-telegram</module>
+        <module>camel-telemetry-dev</module>
         <module>camel-threadpoolfactory-vertx</module>
         <module>camel-thrift</module>
         <module>camel-thymeleaf</module>
         <module>camel-tika</module>
         <module>camel-twilio</module>
         <module>camel-twitter</module>
-        <module>camel-undertow-spring-security</module>
         <module>camel-univocity-parsers</module>
         <module>camel-velocity</module>
         <module>camel-vertx</module>
@@ -337,6 +337,8 @@
         <module>camel-rest-openapi</module>
         <!-- build jooq last as it cause component builds to be slower afterwards -->
         <module>camel-jooq</module>
+        <!-- observability-services requires the availability of other components -->
+        <module>camel-observability-services</module>
     </modules>
 
     <properties>
@@ -359,6 +361,13 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- to help avoiding sleep calls and other testings anti-patterns -->
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

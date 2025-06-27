@@ -17,9 +17,10 @@
 
 package org.apache.camel.dsl.jbang.core.common;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +39,7 @@ import org.apache.camel.util.IOHelper;
 public class SourceHelper {
 
     private static final String[] ACCEPTED_FILE_EXT
-            = new String[] { "java", "groovy", "js", "xml", "yaml" };
+            = new String[] { "java", "xml", "yaml" };
 
     public static Source resolveSource(String source) {
         List<Source> resolved = resolveSources(Collections.singletonList(source));
@@ -131,18 +132,18 @@ public class SourceHelper {
                     }
                     case UNKNOWN -> {
                         if (isAcceptedSourceFile(fileExtension)) {
-                            File sourceFile = new File(source);
-                            if (!sourceFile.exists()) {
+                            Path sourcePath = Paths.get(source);
+                            if (!Files.exists(sourcePath)) {
                                 throw new FileNotFoundException("Source file '%s' does not exist".formatted(source));
                             }
 
-                            if (!sourceFile.isDirectory()) {
-                                try (FileInputStream fis = new FileInputStream(sourceFile)) {
+                            if (!Files.isDirectory(sourcePath)) {
+                                try (var is = Files.newInputStream(sourcePath)) {
                                     resolved.add(
                                             new Source(
                                                     sourceScheme,
                                                     fileName,
-                                                    IOHelper.loadText(fis),
+                                                    IOHelper.loadText(is),
                                                     fileExtension, compression));
                                 }
                             }

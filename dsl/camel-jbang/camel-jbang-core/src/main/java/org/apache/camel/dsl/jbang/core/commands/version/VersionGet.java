@@ -24,8 +24,12 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "get", description = "Displays current Camel version")
+@CommandLine.Command(name = "get", description = "Displays current Camel version", sortOptions = false,
+                     showDefaultValues = true)
 public class VersionGet extends CamelCommand {
+
+    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    boolean global = true;
 
     public VersionGet(CamelJBangMain main) {
         super(main);
@@ -62,7 +66,7 @@ public class VersionGet extends CamelCommand {
                     printer().println("    repos = " + repos);
                 }
             }
-        });
+        }, !global);
 
         return 0;
     }

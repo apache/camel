@@ -173,10 +173,10 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME, defaultValue = "select_all")
     private String snapshotQueryMode = "select_all";
-    @UriParam(label = LABEL_NAME, defaultValue = "true")
-    private boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = true;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = false;
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String topicPrefix;
@@ -1303,21 +1303,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Controls what DDL will Debezium store in database schema history. By
-     * default (true) only DDL that manipulates a table from captured
-     * schema/database will be stored. If set to false, then Debezium will store
-     * all incoming DDL statements.
-     */
-    public void setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl(
-            boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl) {
-        this.schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
-    }
-
-    public boolean isSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl() {
-        return schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
-    }
-
-    /**
-     * Controls what DDL will Debezium store in database schema history. By
      * default (false) Debezium will store all incoming DDL statements. If set
      * to true, then only DDL that manipulates a captured table will be stored.
      */
@@ -1328,6 +1313,21 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public boolean isSchemaHistoryInternalStoreOnlyCapturedTablesDdl() {
         return schemaHistoryInternalStoreOnlyCapturedTablesDdl;
+    }
+
+    /**
+     * Controls what DDL will Debezium store in database schema history. By
+     * default (false) Debezium will store all incoming DDL statements. If set
+     * to true, then only DDL that manipulates a table from captured
+     * schema/database will be stored.
+     */
+    public void setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl(
+            boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl) {
+        this.schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
+    }
+
+    public boolean isSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl() {
+        return schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
     }
 
     /**
@@ -1614,8 +1614,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "snapshot.query.mode", snapshotQueryMode);
-        addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.databases.ddl", schemaHistoryInternalStoreOnlyCapturedDatabasesDdl);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
+        addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.databases.ddl", schemaHistoryInternalStoreOnlyCapturedDatabasesDdl);
         addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);

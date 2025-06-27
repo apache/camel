@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
 import org.infinispan.client.hotrod.RemoteCache;
@@ -42,7 +44,8 @@ public class InfinispanRemoteConfigurationIT {
                     "infinispan.client.hotrod.client_intelligence", "BASIC");
         }
 
-        try (InfinispanRemoteManager manager = new InfinispanRemoteManager(configuration)) {
+        try (CamelContext context = new DefaultCamelContext();
+             InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
             manager.getCacheContainer().administration()
                     .getOrCreateCache(
@@ -82,7 +85,8 @@ public class InfinispanRemoteConfigurationIT {
             configuration.setConfigurationUri("infinispan/client.properties");
         }
 
-        try (InfinispanRemoteManager manager = new InfinispanRemoteManager(configuration)) {
+        try (CamelContext context = new DefaultCamelContext();
+             InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
             manager.getCacheContainer().administration()
                     .getOrCreateCache(

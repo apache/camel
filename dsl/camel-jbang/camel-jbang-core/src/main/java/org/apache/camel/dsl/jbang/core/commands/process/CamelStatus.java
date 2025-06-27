@@ -22,7 +22,7 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "get",
                      description = "Get status of Camel integrations (use get --help to see sub commands)",
-                     sortOptions = false)
+                     sortOptions = false, showDefaultValues = true)
 public class CamelStatus extends CamelCommand {
 
     @CommandLine.Option(names = { "--watch" },

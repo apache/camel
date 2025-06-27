@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-drill</artifactId>
@@ -39,12 +39,16 @@
         </dependency>
         <dependency>
             <groupId>org.apache.drill.exec</groupId>
-            <artifactId>drill-jdbc-all</artifactId>
+            <artifactId>drill-jdbc</artifactId>
             <version>${apache-drill-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

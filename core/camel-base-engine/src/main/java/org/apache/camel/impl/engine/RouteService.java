@@ -36,7 +36,6 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.StartupStep;
 import org.apache.camel.spi.IdAware;
@@ -47,6 +46,7 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.MDC;
 
@@ -76,6 +76,10 @@ public class RouteService extends ChildServiceSupport {
 
     public String getId() {
         return route.getId();
+    }
+
+    public String getLocation() {
+        return route.getSourceLocationShort();
     }
 
     public CamelContext getCamelContext() {
@@ -122,7 +126,7 @@ public class RouteService extends ChildServiceSupport {
         try {
             doWarmUp();
         } catch (Exception e) {
-            throw new FailedToStartRouteException(getId(), e.getLocalizedMessage(), e);
+            throw new FailedToStartRouteException(getId(), getLocation(), e.getLocalizedMessage(), e);
         }
     }
 
@@ -131,7 +135,7 @@ public class RouteService extends ChildServiceSupport {
             try {
                 doSetup();
             } catch (Exception e) {
-                throw new FailedToStartRouteException(getId(), e.getLocalizedMessage(), e);
+                throw new FailedToStartRouteException(getId(), getLocation(), e.getLocalizedMessage(), e);
             }
         }
     }
@@ -140,7 +144,18 @@ public class RouteService extends ChildServiceSupport {
         if (!getCamelContext().isAutoStartup()) {
             return false;
         }
-        return getRoute().isAutoStartup();
+        if (!getRoute().isAutoStartup()) {
+            return false;
+        }
+        if (getCamelContext().getAutoStartupExcludePattern() != null) {
+            String[] patterns = getCamelContext().getAutoStartupExcludePattern().split(",");
+            String id = getRoute().getRouteId();
+            String url = getRoute().getEndpoint().getEndpointUri();
+            if (PatternHelper.matchPatterns(id, patterns) || PatternHelper.matchPatterns(url, patterns)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected void doSetup() throws Exception {
@@ -228,12 +243,8 @@ public class RouteService extends ChildServiceSupport {
             EventHelper.notifyRouteStarting(camelContext, route);
         }
 
-        try {
-            // ensure we are warmed up
-            warmUp();
-        } catch (FailedToStartRouteException e) {
-            throw RuntimeCamelException.wrapRuntimeException(e);
-        }
+        // ensure we are warmed up
+        warmUp();
 
         try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
             // start the route itself

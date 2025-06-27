@@ -50,7 +50,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    protected void doProcess(Exchange exchange) throws Exception {
         // store any existing file header which we want to keep and propagate
         final String existing = exchange.getIn().getHeader(FtpConstants.FILE_NAME, String.class);
 
@@ -154,7 +154,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
             }
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            LOG.warn("Exception occurred during disconnecting from: {} {}", getEndpoint(), e.getMessage());
+            LOG.warn("Exception occurred during disconnecting from: {} {}. This exception is ignored.", getEndpoint(),
+                    e.getMessage());
         }
     }
 

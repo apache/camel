@@ -16,49 +16,22 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.server.JournalType;
-import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
-import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ArtemisPersistentVMService extends AbstractArtemisEmbeddedService {
-
-    private String brokerURL;
+public class ArtemisPersistentVMService extends ArtemisPersistentVMInfraService implements ArtemisService {
 
     @Override
     protected Configuration configure(Configuration configuration, int port, int brokerId) {
-        brokerURL = "vm://" + brokerId;
-
-        configuration.setPersistenceEnabled(true);
-        configuration.setJournalType(JournalType.NIO);
-        configuration.setMaxDiskUsage(98);
-
+        Configuration config = null;
         try {
-            configuration.addAcceptorConfiguration("in-vm", brokerURL);
-        } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
-            fail("vm acceptor cannot be configured");
+            config = super.configure(configuration, port, brokerId);
+        } catch (ArtemisRunException e) {
+            fail(e.getMessage());
         }
-        configuration.addAddressSetting("#",
-                new AddressSettings()
-                        .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
-                        .setAutoDeleteQueues(false)
-                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
-                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
 
-        return configuration;
-    }
-
-    @Override
-    public String serviceAddress() {
-        return brokerURL;
-    }
-
-    @Override
-    public int brokerPort() {
-        return 0;
+        return config;
     }
 }

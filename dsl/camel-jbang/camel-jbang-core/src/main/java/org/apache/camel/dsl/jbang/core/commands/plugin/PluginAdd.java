@@ -26,7 +26,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "add",
-                     description = "Add new plugin.")
+                     description = "Add new plugin.", sortOptions = false, showDefaultValues = true)
 public class PluginAdd extends PluginBaseCommand {
 
     @CommandLine.Parameters(description = "The Camel plugin to add.",

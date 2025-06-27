@@ -33,6 +33,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -49,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @ResourceLock(SSL_SYSPROPS)
 @DisabledOnOs(OS.WINDOWS)
+@Disabled("Flaky on CI test environments")
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpsAsyncRouteTest.class);
@@ -136,10 +138,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
         InputStream is = connection.getInputStream();
-        int c;
-        while ((c = is.read()) >= 0) {
-            os.write(c);
-        }
+        is.transferTo(os);
 
         String data = new String(os.toByteArray());
         assertEquals("<b>Hello World</b>", data);

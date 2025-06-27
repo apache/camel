@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.RefDataFormatTest;
@@ -66,6 +68,14 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals("my-camel-context", client.getCamelId());
         assertEquals("My special Camel description", client.getCamelDescription());
         assertEquals("Started", client.getState());
+
+        List<ManagedRouteMBean> routes
+                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoutes();
+        assertEquals(3, routes.size());
+
+        routes = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                .getManagedRoutesByGroup("cheese");
+        assertEquals(2, routes.size());
     }
 
     @Test
@@ -100,10 +110,10 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals(Boolean.FALSE, logMask);
 
         Integer total = (Integer) mbeanServer.getAttribute(on, "TotalRoutes");
-        assertEquals(2, total.intValue());
+        assertEquals(3, total.intValue());
 
         Integer started = (Integer) mbeanServer.getAttribute(on, "StartedRoutes");
-        assertEquals(2, started.intValue());
+        assertEquals(3, started.intValue());
 
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -262,11 +272,13 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
+                from("direct:start").group("cheese")
                         .delay(10)
                         .to("mock:result");
 
-                from("direct:foo")
+                from("direct:bar").to("mock:bar");
+
+                from("direct:foo").group("cheese")
                         .delay(10)
                         .transform(constant("Bye World")).id("myTransform");
             }

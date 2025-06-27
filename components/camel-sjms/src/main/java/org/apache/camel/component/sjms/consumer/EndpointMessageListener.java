@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import jakarta.jms.Connection;
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
@@ -66,6 +69,7 @@ public class EndpointMessageListener implements SessionMessageListener {
     private boolean eagerLoadingOfProperties;
     private String eagerPoisonBody;
     private volatile SjmsTemplate template;
+    private final Lock lock = new ReentrantLock();
 
     public EndpointMessageListener(SjmsConsumer consumer, SjmsEndpoint endpoint, Processor processor) {
         this.consumer = consumer;
@@ -73,11 +77,16 @@ public class EndpointMessageListener implements SessionMessageListener {
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
-    public synchronized SjmsTemplate getTemplate() {
-        if (template == null) {
-            template = endpoint.createInOnlyTemplate();
+    public SjmsTemplate getTemplate() {
+        lock.lock();
+        try {
+            if (template == null) {
+                template = endpoint.createInOnlyTemplate();
+            }
+            return template;
+        } finally {
+            lock.unlock();
         }
-        return template;
     }
 
     public void setTemplate(SjmsTemplate template) {

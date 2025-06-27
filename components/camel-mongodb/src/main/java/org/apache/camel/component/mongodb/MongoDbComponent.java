@@ -24,8 +24,6 @@ import java.util.Set;
 import com.mongodb.client.MongoClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.mongodb.meta.MongoDBMetaExtension;
-import org.apache.camel.component.mongodb.verifier.MongoComponentVerifierExtension;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -49,17 +47,13 @@ public class MongoDbComponent extends DefaultComponent {
 
     public MongoDbComponent(CamelContext context) {
         super(context);
-        registerExtension(MongoComponentVerifierExtension::new);
-        registerExtension(MongoDBMetaExtension::new);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MongoDbEndpoint endpoint = new MongoDbEndpoint(uri, this);
         endpoint.setConnectionBean(remaining);
-        endpoint.setMongoConnection(mongoConnection);
         setProperties(endpoint, parameters);
-
         return endpoint;
     }
 

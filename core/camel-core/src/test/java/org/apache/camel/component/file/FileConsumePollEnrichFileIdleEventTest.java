@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
 
     @Test
-    public void testNonEmptyAfterEmpty() {
+    public void testNonEmptyAfterEmpty() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Event1", "Event2");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -39,6 +39,8 @@ public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri("enrich"), "Event1", Exchange.FILE_NAME,
                 "Event1.txt");
+
+        context.getRouteController().startAllRoutes();
 
         log.info("Sleeping for 1 sec before writing enrichdata file");
 
@@ -55,14 +57,16 @@ public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
 
     @Test
     public void testPollEmptyEnrich() throws Exception {
-        getMockEndpoint("mock:start").expectedBodiesReceived("Event1");
+        getMockEndpoint("mock:start").expectedBodiesReceived("Event3");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Event1");
-        mock.expectedFileExists(testFile("enrich/.done/Event1.txt"));
+        mock.expectedBodiesReceived("Event3");
+        mock.expectedFileExists(testFile("enrich/.done/Event3.txt"));
 
-        template.sendBodyAndHeader(fileUri("enrich"), "Event1", Exchange.FILE_NAME,
-                "Event1.txt");
+        template.sendBodyAndHeader(fileUri("enrich"), "Event3", Exchange.FILE_NAME,
+                "Event3.txt");
+
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }
@@ -72,7 +76,7 @@ public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("enrich?initialDelay=0&delay=10&move=.done"))
+                from(fileUri("enrich?initialDelay=0&delay=10&move=.done")).autoStartup(false)
                         .to("mock:start")
                         .pollEnrich(
                                 fileUri("enrichdata?initialDelay=0&delay=10&move=.done&sendEmptyMessageWhenIdle=true"), 1000)

@@ -138,4 +138,16 @@ public interface Ddb2Constants {
     @Metadata(label = "UpdateTable DescribeTable", description = "WriteCapacityUnits property of this table.",
               javaType = "Long")
     String WRITE_CAPACITY = "CamelAwsDdbWriteCapacity";
+    @Metadata(label = "Query Scan", description = "The Filter Expression.",
+              javaType = "String")
+    String FILTER_EXPRESSION = "CamelAwsDdbFilterExpression";
+    @Metadata(label = "Query Scan", description = "The Filter Expression Attribute Names.",
+              javaType = "Map<String, String>")
+    String FILTER_EXPRESSION_ATTRIBUTE_NAMES = "CamelAwsDdbFilterExpressionAttributeNames";
+    @Metadata(label = "Query Scan", description = "The Filter Expression Attribute Values.",
+              javaType = "Map<String, String>")
+    String FILTER_EXPRESSION_ATTRIBUTE_VALUES = "CamelAwsDdbFilterExpressionAttributeValues";
+    @Metadata(label = "Query Scan", description = "The Project Expression.",
+              javaType = "String")
+    String PROJECT_EXPRESSION = "CamelAwsDdbProjectExpression";
 }

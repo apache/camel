@@ -23,11 +23,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DurationRoutePolicy;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
 
     @Test

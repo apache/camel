@@ -23,11 +23,30 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext id="SampleCamel" xmlns="http://camel.apache.org/schema/spring">
+    <!-- spring beans -->
+    <bean id="orderService" class="com.foo.OrderService">
+        <argument index="0" value="true"/>
+        <argument index="1" ref="office"/>
+    </bean>
+    <!-- uses property placeholder ${xxx} syntax -->
+    <bean id="office" class="com.foo.Address">
+        <property name="zip" value="${zipCode}"/>
+        <property name="street" value="${streetName}"/>
+    </bean>
 
-        <route id="hello">
-            <from uri="direct:hello"/>
-            <to uri="mock:result"/>
+    <camelContext id="SpringCamel" xmlns="http://camel.apache.org/schema/spring">
+
+        <!-- anything inside here such as this should be skipped during parsing -->
+        <propertyPlaceholder id="placeholder" location="classpath:sql.properties"/>
+
+        <!-- we only parse (currently) embedded routes etc. -->
+        <route>
+            <from uri="timer:xml?period={{time:1000}}"/>
+            <setBody>
+                <simple>${random(1000)}</simple>
+            </setBody>
+            <bean ref="orderService"/>
+            <log message="${body}"/>
         </route>
 
     </camelContext>

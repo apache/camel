@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.freemarker;
 
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -30,6 +31,7 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -166,13 +168,18 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         if (dataModel == null) {
             dataModel = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
         }
+
         // let freemarker parse and generate the result in buffer
         Template template;
+        if (reader == null && ResourceHelper.hasScheme(path)) {
+            // favour to use Camel to load via resource loader
+            reader = new InputStreamReader(getResourceAsInputStream());
+        }
 
         if (reader != null) {
             log.debug("Freemarker is evaluating template read from header {} using context: {}",
                     FreemarkerConstants.FREEMARKER_TEMPLATE, dataModel);
-            template = new Template("temp", reader, new Configuration(Configuration.VERSION_2_3_32));
+            template = new Template("temp", reader, new Configuration(Configuration.VERSION_2_3_34));
         } else {
             log.debug("Freemarker is evaluating {} using context: {}", path, dataModel);
             if (getEncoding() != null) {

@@ -92,10 +92,7 @@ public class HttpRouteTest extends BaseJettyTest {
     public void testHelloEndpoint() throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         InputStream is = new URL("http://localhost:" + port2 + "/hello").openStream();
-        int c;
-        while ((c = is.read()) >= 0) {
-            os.write(c);
-        }
+        is.transferTo(os);
 
         String data = new String(os.toByteArray());
         assertEquals("<b>Hello World</b>", data);

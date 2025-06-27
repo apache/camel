@@ -40,6 +40,12 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "flushTimeout": target.getConfiguration().setFlushTimeout(property(camelContext, int.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "jetstreamasync":
+        case "jetstreamAsync": target.getConfiguration().setJetstreamAsync(property(camelContext, boolean.class, value)); return true;
+        case "jetstreamenabled":
+        case "jetstreamEnabled": target.getConfiguration().setJetstreamEnabled(property(camelContext, boolean.class, value)); return true;
+        case "jetstreamname":
+        case "jetstreamName": target.getConfiguration().setJetstreamName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxmessages":
@@ -101,6 +107,12 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "flushTimeout": return int.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "jetstreamasync":
+        case "jetstreamAsync": return boolean.class;
+        case "jetstreamenabled":
+        case "jetstreamEnabled": return boolean.class;
+        case "jetstreamname":
+        case "jetstreamName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxmessages":
@@ -163,6 +175,12 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "flushTimeout": return target.getConfiguration().getFlushTimeout();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getConfiguration().getHeaderFilterStrategy();
+        case "jetstreamasync":
+        case "jetstreamAsync": return target.getConfiguration().isJetstreamAsync();
+        case "jetstreamenabled":
+        case "jetstreamEnabled": return target.getConfiguration().isJetstreamEnabled();
+        case "jetstreamname":
+        case "jetstreamName": return target.getConfiguration().getJetstreamName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxmessages":

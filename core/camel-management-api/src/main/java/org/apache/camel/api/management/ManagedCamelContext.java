@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management;
 
+import java.util.List;
+
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
@@ -78,6 +80,21 @@ public interface ManagedCamelContext {
      * @throws IllegalArgumentException if the type is not compliant
      */
     <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type);
+
+    /**
+     * Gets all the managed routes
+     *
+     * @return the routes or an empty list if no routes exists
+     */
+    List<ManagedRouteMBean> getManagedRoutes();
+
+    /**
+     * Gets all the managed routes for the given group
+     *
+     * @param  groupId the group id
+     * @return         the routes or an empty list if no routes exists for the group
+     */
+    List<ManagedRouteMBean> getManagedRoutesByGroup(String groupId);
 
     /**
      * Gets the managed consumer client api from any of the routes which with the given route id

@@ -60,9 +60,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     @XmlElement(name = "exception", required = true)
     private List<String> exceptions = new ArrayList<>();
-    @XmlElement(name = "onWhen")
+    @Metadata(description = "To use an expression to only trigger this in specific situations")
+    @XmlElement
     @AsPredicate
-    private WhenDefinition onWhen;
+    private OnWhenDefinition onWhen;
     @XmlElement(name = "retryWhile")
     @AsPredicate
     @Metadata(label = "advanced")
@@ -174,10 +175,6 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     public void validateConfiguration() {
-        if (isInheritErrorHandler() != null && isInheritErrorHandler()) {
-            throw new IllegalArgumentException(this + " cannot have the inheritErrorHandler option set to true");
-        }
-
         if (exceptions == null || exceptions.isEmpty()) {
             throw new IllegalArgumentException("At least one exception must be configured on " + this);
         }
@@ -296,7 +293,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @return           the builder
      */
     public OnExceptionDefinition onWhen(@AsPredicate Predicate predicate) {
-        setOnWhen(new WhenDefinition(predicate));
+        setOnWhen(new OnWhenDefinition(predicate));
         return this;
     }
 
@@ -886,11 +883,11 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         this.continuedPolicy = continuedPolicy;
     }
 
-    public WhenDefinition getOnWhen() {
+    public OnWhenDefinition getOnWhen() {
         return onWhen;
     }
 
-    public void setOnWhen(WhenDefinition onWhen) {
+    public void setOnWhen(OnWhenDefinition onWhen) {
         this.onWhen = onWhen;
     }
 

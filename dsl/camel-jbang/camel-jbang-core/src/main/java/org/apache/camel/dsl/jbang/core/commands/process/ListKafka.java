@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,10 +28,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -42,7 +41,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "kafka",
-         description = "List Kafka consumers of Camel integrations", sortOptions = false)
+         description = "List Kafka consumers of Camel integrations", sortOptions = false, showDefaultValues = true)
 public class ListKafka extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -102,14 +101,14 @@ public class ListKafka extends ProcessWatchCommand {
                             if (committed) {
                                 // we ask for committed so need to do an action on-demand to get data
                                 // ensure output file is deleted before executing action
-                                File outputFile = getOutputFile(Long.toString(ph.pid()));
-                                FileUtil.deleteFile(outputFile);
+                                Path outputFile = getOutputFile(Long.toString(ph.pid()));
+                                PathUtils.deleteFile(outputFile);
 
                                 JsonObject root2 = new JsonObject();
                                 root2.put("action", "kafka");
-                                File file = getActionFile(Long.toString(ph.pid()));
+                                Path file = getActionFile(Long.toString(ph.pid()));
                                 try {
-                                    IOHelper.writeText(root2.toJson(), file);
+                                    PathUtils.writeTextSafely(root2.toJson(), file);
                                 } catch (Exception e) {
                                     // ignore
                                 }
@@ -296,7 +295,7 @@ public class ListKafka extends ProcessWatchCommand {
         }
     }
 
-    private JsonObject waitForOutputFile(File outputFile) {
+    private JsonObject waitForOutputFile(Path outputFile) {
         JsonObject answer = null;
 
         StopWatch watch = new StopWatch();
@@ -305,10 +304,8 @@ public class ListKafka extends ProcessWatchCommand {
                 // give time for response to be ready
                 Thread.sleep(100);
 
-                if (outputFile.exists()) {
-                    FileInputStream fis = new FileInputStream(outputFile);
-                    String text = IOHelper.loadText(fis);
-                    IOHelper.close(fis);
+                if (Files.exists(outputFile)) {
+                    String text = Files.readString(outputFile);
                     answer = (JsonObject) Jsoner.deserialize(text);
                 }
             } catch (Exception e) {

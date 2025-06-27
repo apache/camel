@@ -45,20 +45,62 @@ public final class CxfConverterLoader implements TypeConverterLoader, CamelConte
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, java.io.InputStream.class, jakarta.ws.rs.core.Response.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.toInputStream((jakarta.ws.rs.core.Response) value, exchange));
+        addTypeConverter(registry, java.io.InputStream.class, jakarta.ws.rs.core.Response.class, true,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.jaxrs.CxfConverter.toInputStream((jakarta.ws.rs.core.Response) value, exchange);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.InputStream.class, jakarta.xml.soap.SOAPMessage.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.soapMessageToInputStream((jakarta.xml.soap.SOAPMessage) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.jaxrs.CxfConverter.soapMessageToInputStream((jakarta.xml.soap.SOAPMessage) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.Object[].class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.toArray(value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.jaxrs.CxfConverter.toArray(value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, jakarta.xml.soap.SOAPMessage.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.soapMessageToString((jakarta.xml.soap.SOAPMessage) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.jaxrs.CxfConverter.soapMessageToString((jakarta.xml.soap.SOAPMessage) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.xml.namespace.QName.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.toQName((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.jaxrs.CxfConverter.toQName((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.cxf.common.DataFormat.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.toDataFormat((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.jaxrs.CxfConverter.toDataFormat((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.cxf.message.MessageContentsList.class, java.lang.Object[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.toMessageContentsList((java.lang.Object[]) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.jaxrs.CxfConverter.toMessageContentsList((java.lang.Object[]) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

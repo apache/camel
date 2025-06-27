@@ -16,92 +16,12 @@
  */
 package org.apache.camel.test.infra.mosquitto.services;
 
-import org.apache.camel.test.infra.common.LocalPropertyResolver;
-import org.apache.camel.test.infra.common.services.ContainerService;
-import org.apache.camel.test.infra.mosquitto.common.MosquittoProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.BindMode;
-import org.testcontainers.containers.FixedHostPortGenericContainer;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-
-public class MosquittoLocalContainerService implements MosquittoService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_NAME = "mosquitto";
-    public static final int CONTAINER_PORT = 1883;
-
-    private static final Logger LOG = LoggerFactory.getLogger(MosquittoLocalContainerService.class);
-
-    private final GenericContainer container;
-
+public class MosquittoLocalContainerService extends MosquittoLocalContainerInfraService implements MosquittoService {
     public MosquittoLocalContainerService() {
-        this(LocalPropertyResolver.getProperty(MosquittoLocalContainerService.class, MosquittoProperties.MOSQUITTO_CONTAINER));
+        super();
     }
 
     public MosquittoLocalContainerService(int port) {
-        String imageName = LocalPropertyResolver.getProperty(
-                MosquittoLocalContainerService.class,
-                MosquittoProperties.MOSQUITTO_CONTAINER);
-
-        container = initContainer(imageName, port);
-    }
-
-    public MosquittoLocalContainerService(String imageName) {
-        container = initContainer(imageName, null);
-    }
-
-    public MosquittoLocalContainerService(GenericContainer container) {
-        this.container = container;
-    }
-
-    protected GenericContainer initContainer(String imageName, Integer port) {
-        GenericContainer ret;
-
-        if (port == null) {
-            ret = new GenericContainer(imageName)
-                    .withExposedPorts(CONTAINER_PORT);
-        } else {
-            @SuppressWarnings("deprecation")
-            GenericContainer fixedPortContainer = new FixedHostPortGenericContainer(imageName)
-                    .withFixedExposedPort(port, CONTAINER_PORT);
-            ret = fixedPortContainer;
-        }
-
-        ret.withNetworkAliases(CONTAINER_NAME)
-                .withClasspathResourceMapping("mosquitto.conf", "/mosquitto/config/mosquitto.conf", BindMode.READ_ONLY)
-                .waitingFor(Wait.forLogMessage(".* mosquitto version .* running", 1))
-                .waitingFor(Wait.forListeningPort());
-
-        return ret;
-    }
-
-    @Override
-    public void registerProperties() {
-        System.setProperty(MosquittoProperties.PORT, String.valueOf(getPort()));
-    }
-
-    @Override
-    public void initialize() {
-        LOG.info("Trying to start the Mosquitto container");
-        container.start();
-
-        registerProperties();
-        LOG.info("Mosquitto instance running at {}", getPort());
-    }
-
-    @Override
-    public void shutdown() {
-        LOG.info("Stopping the Mosquitto container");
-        container.stop();
-    }
-
-    @Override
-    public GenericContainer getContainer() {
-        return container;
-    }
-
-    @Override
-    public Integer getPort() {
-        return container.getMappedPort(CONTAINER_PORT);
+        super(port);
     }
 }

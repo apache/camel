@@ -241,7 +241,9 @@ public class DefaultHttpBinding implements HttpBinding {
             String name = (String) names.nextElement();
             // there may be multiple values for the same name
             String[] values = request.getParameterValues(name);
-            LOG.trace("HTTP parameter {} = {}", name, values);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("HTTP parameter {} = {}", name, HttpHelper.sanitizeLog(values));
+            }
 
             if (values != null) {
                 for (String value : values) {
@@ -304,7 +306,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
-    private String getRawPath(HttpServletRequest request) {
+    protected String getRawPath(HttpServletRequest request) {
         String uri = request.getRequestURI();
         /**
          * In async case, it seems that request.getContextPath() can return null

@@ -27,9 +27,11 @@ import org.apache.camel.support.ResourceHelper;
 @Component("string-template")
 public class StringTemplateComponent extends DefaultComponent {
 
-    @Metadata(defaultValue = "false")
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache = true;
+    @Metadata
     private boolean allowTemplateFromHeader;
-    @Metadata(defaultValue = "false")
+    @Metadata
     private boolean allowContextMapAll;
 
     public StringTemplateComponent() {
@@ -38,6 +40,7 @@ public class StringTemplateComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         StringTemplateEndpoint answer = new StringTemplateEndpoint(uri, this, remaining);
+        answer.setContentCache(contentCache);
         answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
         answer.setAllowContextMapAll(allowContextMapAll);
         setProperties(answer, parameters);
@@ -49,6 +52,17 @@ public class StringTemplateComponent extends DefaultComponent {
         }
 
         return answer;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
     }
 
     public boolean isAllowTemplateFromHeader() {

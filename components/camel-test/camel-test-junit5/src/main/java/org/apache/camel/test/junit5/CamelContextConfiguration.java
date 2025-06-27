@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import java.util.HashMap;
@@ -60,6 +59,8 @@ public class CamelContextConfiguration {
     private Breakpoint breakpoint;
     private String mockEndpoints;
     private String mockEndpointsAndSkip;
+    private String stubEndpoints;
+    private String autoStartupExcludePatterns;
     private Properties useOverridePropertiesWithPropertiesComponent;
     private Boolean ignoreMissingLocationWithPropertiesComponent;
 
@@ -186,6 +187,39 @@ public class CamelContextConfiguration {
         return this;
     }
 
+    public String stubEndpoints() {
+        return stubEndpoints;
+    }
+
+    /**
+     * Enables auto stub endpoints based on the pattern.
+     * <p/>
+     * Use <tt>*</tt> to stub all endpoints.
+     *
+     * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
+     */
+    public CamelContextConfiguration withStubEndpoints(String pattern) {
+        this.stubEndpoints = pattern;
+        return this;
+    }
+
+    public String autoStartupExcludePatterns() {
+        return autoStartupExcludePatterns;
+    }
+
+    /**
+     * Used for exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     */
+    public CamelContextConfiguration withAutoStartupExcludePatterns(String pattern) {
+        this.autoStartupExcludePatterns = pattern;
+        return this;
+    }
+
     public Properties useOverridePropertiesWithPropertiesComponent() {
         return useOverridePropertiesWithPropertiesComponent;
     }
@@ -228,7 +262,7 @@ public class CamelContextConfiguration {
      *
      * @param camelContextSupplier A supplier for the Camel context
      */
-    protected CamelContextConfiguration withCamelContextSupplier(
+    public CamelContextConfiguration withCamelContextSupplier(
             CamelContextSupplier camelContextSupplier) {
         this.camelContextSupplier = camelContextSupplier;
         return this;
@@ -301,7 +335,7 @@ public class CamelContextConfiguration {
      * @param routeId
      * @param fromEndpoint
      */
-    void replaceRouteFromWith(String routeId, String fromEndpoint) {
+    public void replaceRouteFromWith(String routeId, String fromEndpoint) {
         fromEndpoints.put(routeId, fromEndpoint);
     }
 
@@ -310,7 +344,7 @@ public class CamelContextConfiguration {
     }
 
     /**
-     * Set set a custom post-test processor
+     * Set a custom post-test processor
      *
      * @param postProcessor the post-test processor to use
      */

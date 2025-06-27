@@ -19,6 +19,7 @@ package org.apache.camel.component.qdrant;
 import java.time.Duration;
 
 import io.qdrant.client.QdrantClient;
+import io.qdrant.client.grpc.Points;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -50,6 +51,13 @@ public class QdrantConfiguration implements Cloneable {
 
     @Metadata(autowired = true)
     private QdrantClient client;
+
+    @UriParam(defaultValue = "3")
+    private int maxResults = 3;
+
+    @UriParam(label = "advanced")
+    @Metadata(autowired = true)
+    private Points.Filter filter;
 
     public String getHost() {
         return host;
@@ -115,6 +123,32 @@ public class QdrantConfiguration implements Cloneable {
      */
     public void setClient(QdrantClient client) {
         this.client = client;
+    }
+
+    public int getMaxResults() {
+        return maxResults;
+    }
+
+    /**
+     * Max results for similarity search
+     *
+     * @param maxResults
+     */
+    public void setMaxResults(int maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public Points.Filter getFilter() {
+        return filter;
+    }
+
+    /**
+     * Filter of type io.qdrant.client.grpc.Points.Points.Filter for similarity search. This is for advanced usage.
+     *
+     * @param filter
+     */
+    public void setFilter(Points.Filter filter) {
+        this.filter = filter;
     }
 
     // ************************

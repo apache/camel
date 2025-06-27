@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-tensorflow-serving/src/main/docs/tensorflow-serving-component.adoc

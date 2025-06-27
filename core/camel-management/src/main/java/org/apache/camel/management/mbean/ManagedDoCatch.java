@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedDoCatchMBean;
 import org.apache.camel.model.CatchDefinition;
-import org.apache.camel.model.WhenDefinition;
+import org.apache.camel.model.OnWhenDefinition;
 import org.apache.camel.processor.CatchProcessor;
 
 @ManagedResource(description = "Managed DoCatch")
@@ -40,7 +40,7 @@ public class ManagedDoCatch extends ManagedProcessor implements ManagedDoCatchMB
 
     @Override
     public String getOnWhen() {
-        WhenDefinition when = getDefinition().getOnWhen();
+        OnWhenDefinition when = getDefinition().getOnWhen();
         if (when != null) {
             return when.getExpression().getExpression();
         }
@@ -49,7 +49,7 @@ public class ManagedDoCatch extends ManagedProcessor implements ManagedDoCatchMB
 
     @Override
     public String getOnWhenLanguage() {
-        WhenDefinition when = getDefinition().getOnWhen();
+        OnWhenDefinition when = getDefinition().getOnWhen();
         if (when != null) {
             return when.getExpression().getLanguage();
         }

@@ -72,6 +72,8 @@ public class MllpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "reuseAddress": target.getConfiguration().setReuseAddress(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "sendbuffersize":
         case "sendBufferSize": target.getConfiguration().setSendBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "stringpayload":
         case "stringPayload": target.getConfiguration().setStringPayload(property(camelContext, boolean.class, value)); return true;
         case "tcpnodelay":
@@ -134,6 +136,8 @@ public class MllpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "reuseAddress": return java.lang.Boolean.class;
         case "sendbuffersize":
         case "sendBufferSize": return java.lang.Integer.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "stringpayload":
         case "stringPayload": return boolean.class;
         case "tcpnodelay":
@@ -197,6 +201,8 @@ public class MllpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "reuseAddress": return target.getConfiguration().getReuseAddress();
         case "sendbuffersize":
         case "sendBufferSize": return target.getConfiguration().getSendBufferSize();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "stringpayload":
         case "stringPayload": return target.getConfiguration().isStringPayload();
         case "tcpnodelay":

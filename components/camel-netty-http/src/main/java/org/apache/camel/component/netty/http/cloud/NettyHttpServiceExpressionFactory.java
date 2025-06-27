@@ -24,6 +24,7 @@ import org.apache.camel.spi.annotations.CloudServiceFactory;
 
 @CloudServiceFactory("netty-http-service-expression")
 @Configurer
+@Deprecated
 public class NettyHttpServiceExpressionFactory implements ServiceExpressionFactory {
     @Override
     public Expression newInstance(CamelContext camelContext) throws Exception {

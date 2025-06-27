@@ -34,6 +34,6 @@ class MockRestConsumerFactory implements RestConsumerFactory {
             String produces,
             RestConfiguration configuration,
             Map<String, Object> parameters) {
-        return null;
+        return null
     }
 }

@@ -302,7 +302,7 @@ then the header is stored as a variable with the full name `header:myVar.Content
 === Example using Variable Receive
 
 When the EIP is using *VariableReceive*, then the `Message` on the `Exchange` is not in use, but the body and headers will be from the variable.
-For example given the following `Message` containing:
+For example, given the following `Message` containing:
 
 [source,properties]
 ----
@@ -311,7 +311,7 @@ header.bar=456
 body=Hello World
 ----
 
-And a remote service is called via the route below, and this service returns a new header (`level`) and body:
+And a remote service is called via the route below, and this service returns a new header (`level`) and body: 'Bye World'
 
 [tabs]
 ====
@@ -345,7 +345,7 @@ from:
 ----
 ====
 
-Then calling this route, then the `Message` is updated:
+Calling this route, the `Message` is updated to following:
 
 [source,properties]
 ----
@@ -355,8 +355,8 @@ header.level=gold
 body=Bye World
 ----
 
-However, if you use *VariableReceive=myVar* to store the returned data from calling the remote service, into a variable, then
-the dynamics changes as follows:
+However, if you use *VariableReceive=myVar* to store the returned data from calling the remote service into a variable, then
+the result changes as follows:
 
 [tabs]
 ====
@@ -392,7 +392,7 @@ from:
 ----
 ====
 
-Then the `Message` on the current `Exchange` is not changed:
+The `Message` on the current `Exchange` is not changed:
 
 [source,properties]
 ----
@@ -466,5 +466,5 @@ from:
 ----
 ====
 
-NOTE: In the examples above the transform `Bye $\{body}` will result as `Bye ` because the `Message` has no message body, as the incoming
+NOTE: In the examples above the transform `Bye $\{body}` will result as `Bye&#160;` because the `Message` has no message body, as the incoming
 message body is stored in the variable `myKey` instead.

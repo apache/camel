@@ -1,0 +1,252 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.11 to 4.12
+
+=== camel-core
+
+The package scan classes has moved from `camel-base-engine` to `camel-support` JAR and moved to a new package:
+
+- `org.apache.camel.impl.engine.DefaultPackageScanClassResolver` is moved to `org.apache.camel.support.scan.DefaultPackageScanClassResolver`
+- `org.apache.camel.impl.engine.DefaultPackageScanResourceResolver` is moved to `org.apache.camel.support.scan.DefaultPackageScanResourceResolver`
+- `org.apache.camel.impl.engine.WebSpherePackageScanClassResolver` is moved to `org.apache.camel.support.scan.WebSpherePackageScanClassResolver`
+- `org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter` is moved to `org.apache.camel.support.scan.AnnotatedWithAnyPackageScanFilter`
+- `org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter` is moved to `org.apache.camel.support.scan.AnnotatedWithPackageScanFilter`
+- `org.apache.camel.impl.scan.AssignableToPackageScanFilter` is moved to `org.apache.camel.support.scan.AssignableToPackageScanFilter`
+- `org.apache.camel.impl.scan.CompositePackageScanFilter` is moved to `org.apache.camel.support.scan.CompositePackageScanFilter`
+- `org.apache.camel.impl.scan.InvertingPackageScanFilter` is moved to `org.apache.camel.support.scan.InvertingPackageScanFilter`
+
+The `ExchangeHelper.copyResults` has been improved to also copy over exchange variables from the source to the target.
+
+Removed unused `Johnzon` in `org.apache.camel.model.dataformat.JsonLibrary` enum as `camel-johnzon` is not supported
+in Camel v4. This removal also means `johnzon` was removed from XSD and YAML DSL schemas.
+
+Removed the `Exchange.BEAN_METHOD_NAME` constant as it has been deprecated and are not in use.
+
+==== Header Filter Strategy
+
+The default `HeaderFilterStrategy` has changed to be case-insensitive by default. This ensures that headers sent over transports
+will be filtered also if they use different cases such as `camelKey` and `CAMELKEY`, `camelkey` would all be considered
+the same key and filtered.
+
+The default `HeaderFilterStrategy` has also removed filtering of keys starting with the legacy Camel v1 syntax `org.apache.camel.`.
+Camel v2 onwards are using the `Camel...` key standard.
+
+==== Propagating variables in EIPs in seda/kamelet components
+
+The kamelet and seda component and EIPs such as Split, Multicast, Recipient List, Enrich, PollEnrich, Loop (copy mode)
+will now also propagate exchange variables as well into the result (i.e. exchange properties and message headers is already being propagated).
+
+==== Type Converters
+
+Using type converters that has been marked to allow null via (`@Converter(allow-null = true)`) has been improved
+to allow returning `null` as a positive answer when using `convertBodyTo` EIP and `mandatoryConvertTo` or `getMandatoryBody` etc.
+
+This behavior was present in Camel v2 and some internal optimization in Camel v3 had changed
+this to not be the case. Using type converters that can return `null` is a rare use-case, and it's not a good practice.
+
+=== Java DSL
+
+When using Choice EIP then in some situations you may need to use `.endChoice()`
+to be able to either continue added more nodes to the current Choice EIP, or that you
+are working with nested Choice EIPs (choice inside choice), then you may also need to use `endChoice`
+to go back to the parent choice to continue from there.
+
+However, there has been some regressions from upgrading older Camel releases to 4.11, and therefore
+we have refactored `endChoice` to work more consistent.
+
+For example the following code
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(header("foo").isGreaterThan(1))
+            .choice()
+                .when(header("foo").isGreaterThan(5))
+                    .to("mock:big")
+                .otherwise()
+                    .to("mock:med")
+            .endChoice()
+        .otherwise()
+            .to("mock:low")
+        .end();
+----
+
+Should now be
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(header("foo").isGreaterThan(1))
+            .choice()
+                .when(header("foo").isGreaterThan(5))
+                    .to("mock:big")
+                .otherwise()
+                    .to("mock:med")
+            .end().endChoice()
+        .otherwise()
+            .to("mock:low")
+        .end();
+----
+
+Notice that the `endChoice` is changed to `end().endChoice()`. This is required to be consistent
+to end the current choice (inner) and then afterwards change the scope to be Choice EIP to be able to
+continue in the outer Choice. Otherwise the Java DSL cannot know the scope is Choice EIP and you would
+not be able to add the `otherwise` block to the outer Choice.
+
+==== Rest DSL
+
+When setting the context-path in _rest configuration_ then this now takes precedence over
+the base-path defined in an openapi specification when using _rest dsl contract-first_.
+
+For example
+
+[source,yaml]
+----
+- restConfiguration:
+    clientRequestValidation: true
+    contextPath: /cheese
+- rest:
+    openApi:
+      specification: petstore-v3.json
+----
+
+Then Camel will now use `/cheese` as the base-path for the Rest DSL API endpoints
+from the `petstore-v3.json` openapi specification file.
+
+When using code-first with Rest DSL and are specifying security constraints, then `bearer` in YAML and XML DSL has been renamed to `bearerToken`
+to be aligned with Java DSL.
+
+For example:
+
+[source,xml]
+----
+    <rest path="/user" description="User rest service" consumes="application/json" produces="application/json">
+      <securityDefinitions>
+        <bearer key="myBearerKey" description="Bearer token for security"/>
+      </securityDefinitions>
+      ...
+    </rest>
+----
+
+Should be changed as follows:
+
+[source,xml]
+----
+    <rest path="/user" description="User rest service" consumes="application/json" produces="application/json">
+      <securityDefinitions>
+        <bearerToken key="myBearerKey" description="Bearer token for security"/>
+      </securityDefinitions>
+      ...
+    </rest>
+----
+
+==== XML-IO DSL
+
+The `camel-xml-io` now has its own XSD Schema using the namespace: `http://camel.apache.org/schema/xml-io`.
+This means that when using `camel-xml-io` to dump route models, then they now use `http://camel.apache.org/schema/xml-io` instead of `http://camel.apache.org/schema/spring`.
+
+It is also recommended to migrate your XML-IO XML files to use the new namespace instead of the legacy Spring XSD.
+
+=== camel-as2
+
+Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and
+asynchronous MDN requests.
+
+=== camel-dsl-modeline
+
+Removed deprecated `camel-k:` specific modelines.
+
+=== camel-jackson / camel-jacksonxml
+
+The default unmarshalType has been changed from `HashMap` to `LinkedHashMap` that keeps ordering of the elements
+so they have similar order as the input document.
+
+=== camel-jbang
+
+The `camel cmd send` command now sends the message without the need for any existing running Camel integration.
+To use any existing integration then specify the integration name or PID.
+
+=== camel-micrometer
+
+The `tags` parameter has been _fixed_ to be multivalued and tooling friendly. So
+instead of configuring `tags=a=1&b=2` then this should be configured as `tags.a=1&tags.b=2` and so forth.
+
+=== camel-main
+
+We have introduced the possibility to use a management server where to expose management endpoints (such as health, metrics, etcetera). The new server will be available by default on port `9876`. This and other several configuration can be changed using `camel.management` application properties group. In order to avoid breaking compatibility, the previous services running on business port (default `8080`) will be still running on the old port AND on the new port for a few future releases. However, you're invited to move your configuration and adopt the new `camel.management` embedded server for management services as soon as possible.
+
+=== camel-observability-services
+
+As seen in `camel-main` change, the component is now adopting the new management port to expose its services. However, it will be still possible to use also the old port to avoid introducing any breaking compatibility. Mind that this possibility will be removed in future versions.
+
+=== camel-microprofile-fault-tolerance
+
+Some options on the `faultToleranceConfiguration` DSL have been removed:
+
+* `bulkheadExecutorService`
+* `timeoutScheduledExecutorService`
+
+They are replaced with a new option `threadOffloadExecutorService` as a general purpose custom `ExecutorService` for fault tolerance thread offloading.
+
+Similarly, there is now only a single `camel-main` configuration option for the fault tolerance `ExecutorService` named `camel.faulttolerance.threadOffloadExecutorService`.
+
+`faultToleranceConfiguration` option  `circuitBreaker` is replaced by `typedGuard` and it's `camel-main` configuration option is `camel.main.faulttolerance.typedGuard`.
+
+=== camel-smb
+
+The `path` option is now configured in the context-path instead of query parameter.
+This makes the endpoint more similar to other file based components.
+
+Before:
+[source,text]
+----
+smb://mysmbserver/myshare/?path=mypath
+----
+
+After:
+
+[source,text]
+----
+smb://mysmbserver/myshare/mypath
+----
+
+TIP: The `path` can still be specified in the URI as backwards compatible.
+
+=== Component Verifier Extensions and Metadata Extension
+
+All the component verifier extensions and metadata extensions have been removed from components.
+
+There is one single exception for ServiceNow Metadata Extension since it is used in a MOJO.
+
+More details could be found in CAMEL-22013.
+
+== camel-spring-boot
+
+Upgraded to Spring Boot 3.5.0.
+
+The `camel-servetl-starter` has a minor code change for the Spring Boot 3.5 upgrade.
+
+The `camel-jetty-starter` has been deprecated in favor of `camel-platform-http-starter` to use the HTTP server from Spring Boot.
+
+The `camel-undertow-starter` has been deprecated in favor of `camel-platform-http-starter` to use the HTTP server from Spring Boot.
+
+== camel-langchain4j-tokenizer
+
+The code was upgraded to LangChain4j version 1.0.0, which brings a few breaking changes:
+
+- By default, tokenization now uses segment sizes
+- To tokenize by tokens, the model used in the system must be provided
+
+== Known regressions
+
+On Windows, Camel Jbang export is no more working out of the box. A workaround consists in providing `--maven-wrapper=false`.
+
+On Windows, when using an URL starting with `classpath:` with Camel JBang, most of the actions are not working.
+
+Both are fixed in Camel 4.13.

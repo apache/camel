@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -56,6 +57,8 @@ import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.sniff.Sniffer;
+
+import static org.apache.camel.component.elasticsearch.rest.client.ElasticSearchRestClientConstant.OPERATION;
 
 public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     public static final String PUT = "PUT";
@@ -129,7 +132,8 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
      * Generate REST Request depending on content of Exchange
      */
     private Request generateRequest(Exchange exchange, String indexName) throws Exception {
-        return switch (this.endpoint.getOperation()) {
+        ElasticsearchRestClientOperation operation = resolveOperation(endpoint, exchange);
+        return switch (operation) {
             case CREATE_INDEX -> createIndexRequest(indexName, exchange);
             case DELETE_INDEX -> deleteIndexRequest(indexName);
             case INDEX_OR_UPDATE -> indexRequest(indexName, exchange);
@@ -177,7 +181,8 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
                      * Generate response Body of the Exchange, depending on operation Type
                      */
                     private void populateExchange(JsonObject doc) {
-                        switch (endpoint.getOperation()) {
+                        ElasticsearchRestClientOperation operation = resolveOperation(endpoint, exchange);
+                        switch (operation) {
                             case INDEX_OR_UPDATE -> exchange.getMessage().setBody(extractID(doc));
                             case CREATE_INDEX, DELETE_INDEX -> exchange.getMessage().setBody(extractAck(doc));
                             case DELETE -> exchange.getMessage().setBody(extractDeleted(doc));
@@ -439,5 +444,14 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private ElasticsearchRestClientOperation resolveOperation(ElasticsearchRestClientEndpoint endpoint, Exchange exchange) {
+        ElasticsearchRestClientOperation operation
+                = exchange.getMessage().getHeader(OPERATION, endpoint.getOperation(), ElasticsearchRestClientOperation.class);
+        if (operation == null) {
+            throw new IllegalArgumentException("operation value is mandatory");
+        }
+        return operation;
     }
 }

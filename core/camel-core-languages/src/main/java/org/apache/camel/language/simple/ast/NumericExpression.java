@@ -72,7 +72,7 @@ public class NumericExpression extends BaseSimpleNode {
     }
 
     @Override
-    public String createCode(String expression) throws SimpleParserException {
+    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
         // Double, Long or Integer
         if (number instanceof Double) {
             return number + "d";

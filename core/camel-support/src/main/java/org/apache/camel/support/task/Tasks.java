@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task;
 
 import java.util.function.Supplier;
@@ -25,7 +24,6 @@ import java.util.function.Supplier;
 public final class Tasks {
 
     private Tasks() {
-
     }
 
     /**

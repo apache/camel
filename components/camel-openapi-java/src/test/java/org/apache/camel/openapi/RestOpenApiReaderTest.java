@@ -16,6 +16,14 @@
  */
 package org.apache.camel.openapi;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.apache.camel.BindToRegistry;
@@ -232,7 +240,7 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
                 new DefaultClassResolver());
         assertNotNull(openApi);
 
-        String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
+        String json = getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
@@ -268,6 +276,26 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains(
                 "\"tags\" : [ { \"name\" : \"/hello\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"Group B\" } ]"));
         context.stop();
+    }
+
+    /*
+     * set TimeZone as default GMT to eusure this test pass everywhere
+     */
+    private String getJsonFromOpenAPIAsString(OpenAPI openApi, BeanConfig config) {
+        ObjectMapper mapper = config.isOpenApi31() ? Json31.mapper() : Json.mapper();
+        DateFormat origin = mapper.getDateFormat();
+        String result = null;
+        try {
+            DateFormat testDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            testDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            mapper.setDateFormat(testDateFormat);
+            result = mapper.writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        } catch (Exception e) {
+            return null;
+        } finally {
+            mapper.setDateFormat(origin);
+        }
+        return result;
     }
 
 }

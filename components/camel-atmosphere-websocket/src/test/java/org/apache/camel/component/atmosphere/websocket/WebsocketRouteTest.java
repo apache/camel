@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
+import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -204,34 +205,19 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
     }
 
     private static String readAll(Reader reader) {
-        StringBuilder builder = new StringBuilder();
         try {
-            char[] buf = new char[4024];
-            int n;
-            while ((n = reader.read(buf, 0, buf.length)) > 0) {
-                builder.append(buf, 0, n);
-            }
+            return IOHelper.toString(reader);
         } catch (IOException e) {
-            // ignore
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                // ignore
-            }
         }
 
-        return builder.toString();
+        return "";
     }
 
     private static byte[] readAll(InputStream is) {
-        ByteArrayOutputStream bytebuf = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteBuf = new ByteArrayOutputStream();
+
         try {
-            byte[] buf = new byte[4024];
-            int n;
-            while ((n = is.read(buf, 0, buf.length)) > 0) {
-                bytebuf.write(buf, 0, n);
-            }
+            is.transferTo(byteBuf);
         } catch (IOException e) {
             // ignore
         } finally {
@@ -242,7 +228,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
             }
         }
 
-        return bytebuf.toByteArray();
+        return byteBuf.toByteArray();
     }
     // END SNIPPET: payload
 }

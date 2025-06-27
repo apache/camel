@@ -51,7 +51,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
                            + " For bean you can specify the method name after dot, eg bean:myBean.myMethod.")
     @Metadata(required = true, supportFileReference = true)
     private String resourceUri;
-    @UriParam(defaultValue = "false", description = "Sets whether to use resource content cache or not")
+    @UriParam(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache;
     @UriParam(defaultValue = "false", description = "Sets whether the context map should allow access to all details."
                                                     + " By default only the message body and headers can be accessed."

@@ -50,6 +50,7 @@ class MainHttpServerTest {
         server.setPath("/");
 
         server.setHealthCheckEnabled(true);
+        server.setHealthPath("/q/health");
         server.start();
 
         HttpRequest request = HttpRequest.newBuilder()

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.langchain4j.rag.content.Content;
+import dev.langchain4j.rag.content.DefaultContent;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.langchain4j.chat.rag.LangChain4jRagAggregatorStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -85,7 +86,7 @@ public class LangChain4jRagAggregatorTest {
         oldExchange.getIn().setBody("Prompt Test");
 
         // setting a content in the old exchange
-        Content oldContent = new Content("Old data");
+        Content oldContent = new DefaultContent("Old data");
         List<Content> contents = new ArrayList<>();
         contents.add(oldContent);
         oldExchange.getIn().setHeader(AUGMENTED_DATA, contents);

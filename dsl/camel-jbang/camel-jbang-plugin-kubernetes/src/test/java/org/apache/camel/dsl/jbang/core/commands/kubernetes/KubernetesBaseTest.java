@@ -26,7 +26,7 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesCrudDispatcher;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.mockwebserver.Context;
-import okhttp3.mockwebserver.MockWebServer;
+import io.fabric8.mockwebserver.MockWebServer;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
@@ -42,9 +42,7 @@ import org.junit.jupiter.api.TestInstance;
 public class KubernetesBaseTest {
 
     private KubernetesMockServer k8sServer;
-
     protected KubernetesClient kubernetesClient;
-
     protected StringPrinter printer;
 
     public static boolean isDockerAvailable() {
@@ -74,13 +72,17 @@ public class KubernetesBaseTest {
         k8sServer.destroy();
     }
 
-    protected InputStream getKubernetesManifestAsStream(String printerOutput) {
+    protected static InputStream getKubernetesManifestAsStream(String printerOutput) {
         return getKubernetesManifestAsStream(printerOutput, "yaml");
     }
 
-    protected InputStream getKubernetesManifestAsStream(String printerOutput, String output) {
+    protected static InputStream getKubernetesManifestAsStream(String printerOutput, String output) {
         if (output.equals("yaml")) {
-            return new ByteArrayInputStream(StringHelper.after(printerOutput, "---").getBytes(StandardCharsets.UTF_8));
+            String manifest = StringHelper.after(printerOutput, "---");
+            if (manifest == null) {
+                throw new RuntimeException("Failed to find Kubernetes manifest in output: %n%s%n".formatted(printerOutput));
+            }
+            return new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8));
         }
         throw new RuntimeException("Unsupported output format: " + output);
     }

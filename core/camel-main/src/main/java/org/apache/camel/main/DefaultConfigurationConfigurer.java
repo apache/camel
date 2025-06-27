@@ -253,6 +253,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setAutoStartup(config.isAutoStartup());
+        camelContext.setAutoStartupExcludePattern(config.getAutoStartupExcludePattern());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
         camelContext.setCaseInsensitiveHeaders(config.isCaseInsensitiveHeaders());
         camelContext.setAutowiredEnabled(config.isAutowiredEnabled());
@@ -623,7 +624,20 @@ public final class DefaultConfigurationConfigurer {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setKubernetesVaultConfiguration(kubernetes);
         }
-        configureVault(camelContext);
+        KubernetesConfigMapVaultConfiguration kubernetesConfigmaps
+                = getSingleBeanOfType(registry, KubernetesConfigMapVaultConfiguration.class);
+        if (kubernetesConfigmaps != null) {
+            VaultConfiguration vault = camelContext.getVaultConfiguration();
+            vault.setKubernetesConfigMapVaultConfiguration(kubernetesConfigmaps);
+        }
+
+        IBMSecretsManagerVaultConfiguration ibmSecretsManager
+                = getSingleBeanOfType(registry, IBMSecretsManagerVaultConfiguration.class);
+        if (ibmSecretsManager != null) {
+            VaultConfiguration vault = camelContext.getVaultConfiguration();
+            vault.setIBMSecretsManagerVaultConfiguration(ibmSecretsManager);
+        }
+        configureVaultRefresh(camelContext);
 
         // apply custom configurations if any
         Set<CamelContextCustomizer> customizers = registry.findByType(CamelContextCustomizer.class);
@@ -635,9 +649,9 @@ public final class DefaultConfigurationConfigurer {
     }
 
     /**
-     * Configures security vaults such as AWS, Azure, Google and Hashicorp.
+     * Configures security vaults refresh such as AWS, Azure, Google.
      */
-    static void configureVault(CamelContext camelContext) throws Exception {
+    static void configureVaultRefresh(CamelContext camelContext) throws Exception {
         VaultConfiguration vc = camelContext.getVaultConfiguration();
         if (vc == null) {
             return;
@@ -715,6 +729,61 @@ public final class DefaultConfigurationConfigurer {
                 }
                 PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
                 scheduler.scheduledTask(r);
+            }
+        }
+
+        if (vc.kubernetesConfigmaps().isRefreshEnabled()) {
+            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                    .newInstance("kubernetes-configmaps-refresh", Runnable.class);
+            if (task.isPresent()) {
+                Runnable r = task.get();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling: {} ", r);
+                }
+                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
+                    // refresh is enabled then we need to automatically enable context-reload as well
+                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
+                    camelContext.addService(reloader);
+                }
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
+                scheduler.scheduledTask(r);
+            }
+        }
+
+        if (vc.ibmSecretsManager().isRefreshEnabled()) {
+            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                    .newInstance("ibm-secret-refresh", Runnable.class);
+            if (task.isPresent()) {
+                Runnable r = task.get();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling: {} ", r);
+                }
+                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
+                    // refresh is enabled then we need to automatically enable context-reload as well
+                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
+                    camelContext.addService(reloader);
+                }
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
+                scheduler.scheduledTask(r);
+            }
+        }
+
+        if (vc.springConfig().isRefreshEnabled()) {
+            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                    .newInstance("spring-config-refresh", Runnable.class);
+            if (task.isPresent()) {
+                long period = vc.springConfig().getRefreshPeriod();
+                Runnable r = task.get();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
+                }
+                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
+                    // refresh is enabled then we need to automatically enable context-reload as well
+                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
+                    camelContext.addService(reloader);
+                }
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
+                scheduler.schedulePeriodTask(r, period);
             }
         }
     }

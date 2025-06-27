@@ -1,0 +1,146 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+{{- with .Values.deployments.keycloak }}
+
+---
+# Keycloak Realm ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-realm-import
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/release: {{ $.Release.Name }}
+    app.kubernetes.io/revision: '{{ $.Release.Revision }}'
+data:
+  camel-realm.json: |-
+    {{- $.Files.Get "etc/camel-realm.json" | nindent 4 }}
+
+---
+# Keycloak Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/release: {{ $.Release.Name }}
+    app.kubernetes.io/revision: '{{ $.Release.Revision }}'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: keycloak
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/release: {{ $.Release.Name }}
+        app.kubernetes.io/revision: '{{ $.Release.Revision }}'
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:{{ .version }}
+          args:
+            - "start-dev"
+            - "--import-realm"
+            - "--http-enabled=true"
+            - "--proxy-headers=xforwarded"
+            - "--proxy-protocol-enabled=false"{{- if eq $.Values.environment "k8s" }}
+            - "--http-relative-path=/kc"{{- end }}
+          env:
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: admin
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              value: admin
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: keycloak-realm-import
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
+      volumes:
+        - name: keycloak-realm-import
+          configMap:
+            name: keycloak-realm-import
+
+---
+# Keycloak Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+spec:
+  ports:
+    - name: http
+      port: 8080
+  selector:
+    app.kubernetes.io/name: keycloak
+---
+
+{{- if eq $.Values.environment "k8s" }}
+---
+# Keycloak Ingress Https
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: PathPrefix(`/kc`)
+      kind: Rule
+      services:
+        - name: keycloak
+          port: 8080
+  tls:
+    secretName: traefik-tls
+---
+{{- end }} # environment == 'k8s'
+
+{{- if eq $.Values.environment "openshift" }}
+# Keycloak Route
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+spec:
+  host: keycloak.{{ $.Values.openshift.hostName }}
+  to:
+    kind: Service
+    name: keycloak
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+{{- end }} # environment == 'openshift'
+
+{{- end }}

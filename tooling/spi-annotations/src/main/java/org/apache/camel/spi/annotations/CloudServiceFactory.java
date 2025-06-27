@@ -26,6 +26,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ ElementType.TYPE })
 @ServiceFactory("cloud")
+@Deprecated
 public @interface CloudServiceFactory {
 
     String value();

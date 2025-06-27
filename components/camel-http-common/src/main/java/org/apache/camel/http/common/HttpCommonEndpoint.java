@@ -34,7 +34,8 @@ import org.apache.camel.util.CollectionHelper;
 public abstract class HttpCommonEndpoint extends DefaultEndpoint
         implements HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
 
-    // Note: all options must be documented with description in annotations so extended components can access the documentation
+    // Note: all options must be documented with description in annotations so
+    // extended components can access the documentation
 
     HttpCommonComponent component;
 
@@ -66,17 +67,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "true",
               description = "If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response")
     boolean chunked = true;
-    @UriParam(label = "common",
-              description = "Determines whether or not the raw input stream is cached or not."
-                            + " The Camel consumer (camel-servlet, camel-jetty etc.) will by default cache the input stream to support reading it multiple times to ensure it Camel"
-                            + " can retrieve all data from the stream. However you can set this option to true when you for example need"
-                            + " to access the raw stream, such as streaming it directly to a file or other persistent store."
-                            + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
-                            + " if this option is false to support reading the stream multiple times."
-                            + " If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,"
-                            + " in case you do not need to read the message payload multiple times."
-                            + " The producer (camel-http) will by default cache the response body stream. If setting this option to true,"
-                            + " then the producers will not cache the response body stream but use the response stream as-is (the stream can only be read once) as the message body.")
+    @UriParam(label = "common", description = "Determines whether or not the raw input stream is cached or not."
+                                              + " The Camel consumer (camel-servlet, camel-jetty etc.) will by default cache the input stream to support reading it multiple times to ensure it Camel"
+                                              + " can retrieve all data from the stream. However you can set this option to true when you for example need"
+                                              + " to access the raw stream, such as streaming it directly to a file or other persistent store."
+                                              + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
+                                              + " if this option is false to support reading the stream multiple times."
+                                              + " If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,"
+                                              + " in case you do not need to read the message payload multiple times."
+                                              + " The producer (camel-http) will by default cache the response body stream. If setting this option to true,"
+                                              + " then the producers will not cache the response body stream but use the response stream as-is (the stream can only be read once) as the message body.")
     boolean disableStreamCache;
     @UriParam(label = "common",
               description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
@@ -105,8 +105,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @UriParam(label = "consumer",
               description = "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
     String httpMethodRestrict;
-    @UriParam(label = "consumer",
-              description = "To use a custom buffer size on the jakarta.servlet.ServletResponse.")
+    @UriParam(label = "consumer", description = "To use a custom buffer size on the jakarta.servlet.ServletResponse.")
     Integer responseBufferSize;
     @UriParam(label = "producer,advanced",
               description = "If this option is true, The http producer won't read response body and cache the input stream")
@@ -135,8 +134,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
               description = "The status codes which are considered a success response. The values are inclusive. Multiple ranges can be"
                             + " defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
-    @UriParam(label = "consumer", defaultValue = "false",
-              description = "Configure the consumer to work in async mode")
+    @UriParam(label = "consumer", defaultValue = "false", description = "Configure the consumer to work in async mode")
     private boolean async;
     @UriParam(label = "producer,advanced", description = "Configure a cookie handler to maintain a HTTP session")
     private CookieHandler cookieHandler;
@@ -144,14 +142,13 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
               description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
     private HttpMethods httpMethod;
 
-    @UriParam(label = "producer,security",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.")
+    @UriParam(label = "producer,security", enums = "Basic,Bearer,NTLM",
+              description = "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM. (NTLM is deprecated)")
     private String authMethod;
-    @UriParam(label = "producer,security", enums = "Basic,Digest,NTLM",
-              description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM.")
-    private String authMethodPriority;
     @UriParam(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
+    @UriParam(label = "producer,security", secret = true, description = "Authentication bearer token")
+    private String authBearerToken;
     @UriParam(label = "producer,security", secret = true, description = "Authentication password")
     private String authPassword;
     @UriParam(label = "producer,security", secret = true, description = "OAuth2 client id")
@@ -159,12 +156,28 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @UriParam(label = "producer,security", secret = true, description = "OAuth2 client secret")
     private String oauth2ClientSecret;
     @UriParam(label = "producer,security", description = "OAuth2 Token endpoint")
+    private String oauth2ResourceIndicator;
+    @UriParam(label = "producer,security", description = "OAuth2 Resource Indicator")
     private String oauth2TokenEndpoint;
     @UriParam(label = "producer,security", description = "OAuth2 scope")
     private String oauth2Scope;
-    @UriParam(label = "producer,security", description = "Authentication domain to use with NTML")
+    @UriParam(label = "producer,security", defaultValue = "false", description = "Whether to cache OAuth2 client tokens.")
+    private boolean oauth2CacheTokens = false;
+    @UriParam(label = "producer,security", defaultValue = "3600",
+              description = "Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain 'expires_in' field.")
+    private long oauth2CachedTokensDefaultExpirySeconds = 3600L;
+    @UriParam(label = "producer,security", defaultValue = "5",
+              description = "Amount of time which is deducted from OAuth2 tokens expiry time to compensate for the time it takes OAuth2 Token Endpoint to send the token over http, in seconds. "
+                            +
+                            "Set this parameter to high value if you OAuth2 Token Endpoint answers slowly or you tokens expire quickly. "
+                            +
+                            "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
+    private long oauth2CachedTokensExpirationMarginSeconds = 5L;
+    @Deprecated
+    @UriParam(label = "producer,security", description = "Authentication domain to use with NTLM")
     private String authDomain;
-    @UriParam(label = "producer,security", description = "Authentication host to use with NTML")
+    @Deprecated
+    @UriParam(label = "producer,security", description = "Authentication host to use with NTLM")
     private String authHost;
     @UriParam(label = "producer,proxy", description = "Proxy hostname to use")
     private String proxyHost;
@@ -172,7 +185,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     private int proxyPort;
     @UriParam(label = "producer,proxy", enums = "http,https", description = "Proxy authentication scheme to use")
     private String proxyAuthScheme;
-    @UriParam(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    @UriParam(label = "producer,proxy", enums = "Basic,Bearer,NTLM", description = "Proxy authentication method to use")
     private String proxyAuthMethod;
     @UriParam(label = "producer,proxy", secret = true, description = "Proxy authentication username")
     private String proxyAuthUsername;
@@ -182,9 +195,11 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     private String proxyAuthHost;
     @UriParam(label = "producer,proxy", description = "Proxy authentication port")
     private int proxyAuthPort;
-    @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTML")
+    @Deprecated
+    @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTLM")
     private String proxyAuthDomain;
-    @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
+    @Deprecated
+    @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTLM")
     private String proxyAuthNtHost;
 
     protected HttpCommonEndpoint() {
@@ -231,12 +246,13 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
 
     @Override
     public boolean isLenientProperties() {
-        // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
+        // true to allow dynamic URI options to be configured and passed to external
+        // system for eg. the HttpProducer
         return true;
     }
 
     // Service Registration
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     public Map<String, String> getServiceProperties() {
@@ -247,7 +263,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * @deprecated use {@link #getHttpBinding()}
@@ -283,7 +299,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     public String getPath() {
-        //if the path is empty, we just return the default path here
+        // if the path is empty, we just return the default path here
         return httpUri.getPath().isEmpty() ? "/" : httpUri.getPath();
     }
 
@@ -629,21 +645,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.
+     * Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM (deprecated).
      */
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;
-    }
-
-    public String getAuthMethodPriority() {
-        return authMethodPriority;
-    }
-
-    /**
-     * Which authentication method to prioritize to use, either as Basic, Digest or NTLM.
-     */
-    public void setAuthMethodPriority(String authMethodPriority) {
-        this.authMethodPriority = authMethodPriority;
     }
 
     public String getAuthUsername() {
@@ -668,12 +673,23 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
         this.authPassword = authPassword;
     }
 
+    public String getAuthBearerToken() {
+        return authBearerToken;
+    }
+
+    /**
+     * Authentication bearer token
+     */
+    public void setAuthBearerToken(String authBearerToken) {
+        this.authBearerToken = authBearerToken;
+    }
+
     public String getAuthDomain() {
         return authDomain;
     }
 
     /**
-     * Authentication domain to use with NTML
+     * Authentication domain to use with NTLM
      */
     public void setAuthDomain(String authDomain) {
         this.authDomain = authDomain;
@@ -684,7 +700,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Authentication host to use with NTML
+     * Authentication host to use with NTLM
      */
     public void setAuthHost(String authHost) {
         this.authHost = authHost;
@@ -739,7 +755,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Proxy authentication domain to use with NTML
+     * Proxy authentication domain to use with NTLM
      */
     public void setProxyAuthDomain(String proxyAuthDomain) {
         this.proxyAuthDomain = proxyAuthDomain;
@@ -750,7 +766,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Proxy authentication host to use with NTML
+     * Proxy authentication host to use with NTLM
      */
     public void setProxyAuthHost(String proxyAuthHost) {
         this.proxyAuthHost = proxyAuthHost;
@@ -794,7 +810,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Proxy authentication domain (workstation name) to use with NTML
+     * Proxy authentication domain (workstation name) to use with NTLM
      */
     public void setProxyAuthNtHost(String proxyAuthNtHost) {
         this.proxyAuthNtHost = proxyAuthNtHost;
@@ -838,9 +854,58 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
+     * OAuth2 Resource Indicator
+     */
+    public void setOauth2ResourceIndicator(String oauth2ResourceIndicator) {
+        this.oauth2ResourceIndicator = oauth2ResourceIndicator;
+    }
+
+    public String getOauth2ResourceIndicator() {
+        return this.oauth2ResourceIndicator;
+    }
+
+    /**
      * OAuth2 scope
      */
     public void setOauth2Scope(String oauth2Scope) {
         this.oauth2Scope = oauth2Scope;
+    }
+
+    public boolean isOauth2CacheTokens() {
+        return oauth2CacheTokens;
+    }
+
+    /**
+     * Whether to cache OAuth2 client tokens.
+     */
+    public void setOauth2CacheTokens(boolean oauth2CacheTokens) {
+        this.oauth2CacheTokens = oauth2CacheTokens;
+    }
+
+    public long getOauth2CachedTokensDefaultExpirySeconds() {
+        return oauth2CachedTokensDefaultExpirySeconds;
+    }
+
+    /**
+     * Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain
+     * 'expires_in' field.
+     */
+    public void setOauth2CachedTokensDefaultExpirySeconds(long oauth2CachedTokensDefaultExpirySeconds) {
+        this.oauth2CachedTokensDefaultExpirySeconds = oauth2CachedTokensDefaultExpirySeconds;
+    }
+
+    public long getOauth2CachedTokensExpirationMarginSeconds() {
+        return oauth2CachedTokensExpirationMarginSeconds;
+    }
+
+    /**
+     * Amount of time which is deducted from OAuth2 tokens expiry time to compensate for the time it takes OAuth2 Token
+     * Endpoint to send the token over http, in seconds. Set this parameter to high value if you OAuth2 Token Endpoint
+     * answers slowly or you tokens expire quickly. If you set this parameter to too small value, you can get 4xx http
+     * errors because camel will think that the received token is still valid, while in reality the token is expired for
+     * the Authentication server.
+     */
+    public void setOauth2CachedTokensExpirationMarginSeconds(long cachedTokensExpirationMarginSeconds) {
+        this.oauth2CachedTokensExpirationMarginSeconds = cachedTokensExpirationMarginSeconds;
     }
 }

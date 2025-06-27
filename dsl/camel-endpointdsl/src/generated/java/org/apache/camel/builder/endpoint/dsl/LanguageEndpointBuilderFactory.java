@@ -83,69 +83,41 @@ public interface LanguageEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the script is binary content or text content. By default the
-         * script is read as text content (eg java.lang.String).
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
          * 
-         * @param binary the value to set
+         * @param allowTemplateFromHeader the value to set
          * @return the dsl builder
          */
-        default LanguageEndpointBuilder binary(boolean binary) {
-            doSetProperty("binary", binary);
+        default LanguageEndpointBuilder allowTemplateFromHeader(boolean allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
             return this;
         }
         /**
-         * Whether the script is binary content or text content. By default the
-         * script is read as text content (eg java.lang.String).
+         * Whether to allow to use resource template from header or not (default
+         * false). Enabling this allows to specify dynamic templates via message
+         * header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: producer
          * 
-         * @param binary the value to set
+         * @param allowTemplateFromHeader the value to set
          * @return the dsl builder
          */
-        default LanguageEndpointBuilder binary(String binary) {
-            doSetProperty("binary", binary);
-            return this;
-        }
-        /**
-         * Whether to cache the compiled script and reuse Notice reusing the
-         * script can cause side effects from processing one Camel
-         * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param cacheScript the value to set
-         * @return the dsl builder
-         */
-        default LanguageEndpointBuilder cacheScript(boolean cacheScript) {
-            doSetProperty("cacheScript", cacheScript);
-            return this;
-        }
-        /**
-         * Whether to cache the compiled script and reuse Notice reusing the
-         * script can cause side effects from processing one Camel
-         * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param cacheScript the value to set
-         * @return the dsl builder
-         */
-        default LanguageEndpointBuilder cacheScript(String cacheScript) {
-            doSetProperty("cacheScript", cacheScript);
+        default LanguageEndpointBuilder allowTemplateFromHeader(String allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
             return this;
         }
         /**
@@ -296,6 +268,72 @@ public interface LanguageEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the script is binary content or text content. By default the
+         * script is read as text content (eg java.lang.String).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
+         */
+        default AdvancedLanguageEndpointBuilder binary(boolean binary) {
+            doSetProperty("binary", binary);
+            return this;
+        }
+        /**
+         * Whether the script is binary content or text content. By default the
+         * script is read as text content (eg java.lang.String).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
+         */
+        default AdvancedLanguageEndpointBuilder binary(String binary) {
+            doSetProperty("binary", binary);
+            return this;
+        }
+        /**
+         * Whether to cache the compiled script and reuse Notice reusing the
+         * script can cause side effects from processing one Camel
+         * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param cacheScript the value to set
+         * @return the dsl builder
+         */
+        default AdvancedLanguageEndpointBuilder cacheScript(boolean cacheScript) {
+            doSetProperty("cacheScript", cacheScript);
+            return this;
+        }
+        /**
+         * Whether to cache the compiled script and reuse Notice reusing the
+         * script can cause side effects from processing one Camel
+         * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param cacheScript the value to set
+         * @return the dsl builder
+         */
+        default AdvancedLanguageEndpointBuilder cacheScript(String cacheScript) {
+            doSetProperty("cacheScript", cacheScript);
+            return this;
+        }
     }
 
     public interface LanguageBuilders {
@@ -324,10 +362,10 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * Path parameter: languageName (required)
          * Sets the name of the language to use
-         * There are 23 enums and the value can be one of: bean, constant,
+         * There are 26 enums and the value can be one of: bean, constant,
          * csimple, datasonnet, exchangeProperty, file, groovy, header,
-         * hl7terser, java, joor, jq, jsonpath, mvel, ognl, ref, simple, spel,
-         * sql, tokenize, xpath, xquery, xtokenize
+         * hl7terser, java, joor, jq, js, jsonpath, mvel, ognl, python, ref,
+         * simple, spel, tokenize, variable, wasm, xpath, xquery, xtokenize
          * 
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry
@@ -353,10 +391,10 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * Path parameter: languageName (required)
          * Sets the name of the language to use
-         * There are 23 enums and the value can be one of: bean, constant,
+         * There are 26 enums and the value can be one of: bean, constant,
          * csimple, datasonnet, exchangeProperty, file, groovy, header,
-         * hl7terser, java, joor, jq, jsonpath, mvel, ognl, ref, simple, spel,
-         * sql, tokenize, xpath, xquery, xtokenize
+         * hl7terser, java, joor, jq, js, jsonpath, mvel, ognl, python, ref,
+         * simple, spel, tokenize, variable, wasm, xpath, xquery, xtokenize
          * 
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry

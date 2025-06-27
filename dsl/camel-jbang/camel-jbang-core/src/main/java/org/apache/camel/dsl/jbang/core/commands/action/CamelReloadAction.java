@@ -16,16 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "reload",
-                     description = "Trigger reloading Camel", sortOptions = false)
+                     description = "Trigger reloading Camel", sortOptions = false, showDefaultValues = true)
 public class CamelReloadAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
@@ -41,8 +41,8 @@ public class CamelReloadAction extends ActionBaseCommand {
         for (long pid : pids) {
             JsonObject root = new JsonObject();
             root.put("action", "reload");
-            File f = getActionFile(Long.toString(pid));
-            IOHelper.writeText(root.toJson(), f);
+            Path f = getActionFile(Long.toString(pid));
+            Files.writeString(f, root.toJson());
         }
 
         return 0;

@@ -627,6 +627,12 @@ public enum ZendeskApiMethod implements ApiMethod {
         "deleteUsers",
         arg("ids", long[].class)),
 
+    EXECUTE_VIEW(
+        java.util.Optional.class,
+        "executeView",
+        arg("id", long.class),
+        arg("clazz", Class.class)),
+
     GET_ACTIVE_TRIGGERS(
         Iterable.class,
         "getActiveTriggers"),
@@ -1758,6 +1764,12 @@ public enum ZendeskApiMethod implements ApiMethod {
         "trustTicketAudit",
         arg("ticketId", long.class),
         arg("auditId", long.class)),
+
+    UNASSIGN_ORGANIZATION_MEMBERSHIP(
+        void.class,
+        "unassignOrganizationMembership",
+        arg("user_id", long.class),
+        arg("organization_id", long.class)),
 
     UNSUSPEND_USER(
         org.zendesk.client.v2.model.User.class,

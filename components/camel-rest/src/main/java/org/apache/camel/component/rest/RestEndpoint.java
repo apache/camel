@@ -39,6 +39,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.HostUtils;
+import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,7 +161,7 @@ public class RestEndpoint extends DefaultEndpoint {
      * of types.
      */
     public void setConsumes(String consumes) {
-        this.consumes = consumes;
+        this.consumes = MimeTypeHelper.sanitizeMimeType(consumes);
     }
 
     public String getProduces() {
@@ -171,7 +172,7 @@ public class RestEndpoint extends DefaultEndpoint {
      * Media type such as: 'text/xml', or 'application/json' this REST service returns.
      */
     public void setProduces(String produces) {
-        this.produces = produces;
+        this.produces = MimeTypeHelper.sanitizeMimeType(produces);
     }
 
     public String getProducerComponentName() {

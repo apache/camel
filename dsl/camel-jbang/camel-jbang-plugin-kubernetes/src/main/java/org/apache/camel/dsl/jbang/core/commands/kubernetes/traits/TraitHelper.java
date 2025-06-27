@@ -34,7 +34,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.MetadataHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Addons;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.AddonsBuilder;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Camel;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Environment;
@@ -140,7 +140,7 @@ public final class TraitHelper {
             for (Map.Entry<String, Map<String, Object>> traitConfig : traitConfigMap.entrySet()) {
                 if (!knownTraits.contains(traitConfig.getKey())) {
                     traitModel.getAddons().put(traitConfig.getKey(),
-                            new Addons(traitConfig.getValue()));
+                            new AddonsBuilder().withAdditionalProperties(traitConfig.getValue()).build());
                 }
             }
         }
@@ -275,12 +275,12 @@ public final class TraitHelper {
     }
 
     public static void configureContainerImage(
-            Traits traitsSpec, String image, String imageRegistry, String imageGroup, String imageName, String version) {
-        Container containerTrait = Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
+            Traits traitsSpec, String image, String imageRegistry, String imageGroup,
+            String imageName, String version, List<String> buildProperties) {
+        String imageToUse;
         if (image != null) {
-            containerTrait.setImage(image);
-            traitsSpec.setContainer(containerTrait);
-        } else if (containerTrait.getImage() == null) {
+            imageToUse = image;
+        } else {
             String registryPrefix = "";
             if ("minikube".equals(imageRegistry) || "minikube-registry".equals(imageRegistry)) {
                 registryPrefix = "localhost:5000/";
@@ -290,18 +290,27 @@ public final class TraitHelper {
                 registryPrefix = imageRegistry + "/";
             }
 
-            var resolvedImageName = getResolvedImageName(imageGroup, imageName, version);
-            containerTrait.setImage("%s%s".formatted(registryPrefix, resolvedImageName));
-
-            // Plain export command always exposes a health endpoint on 8080.
-            // Skip this, when we decide that the health endpoint can be disabled.
-            if (containerTrait.getPort() == null) {
-                containerTrait.setPortName(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME);
-                containerTrait.setPort((long) ContainerTrait.DEFAULT_CONTAINER_PORT);
-            }
-
-            traitsSpec.setContainer(containerTrait);
+            imageToUse = "%s%s".formatted(registryPrefix, getResolvedImageName(imageGroup, imageName, version));
         }
+
+        buildProperties.add("jkube.image.name=%s".formatted(imageToUse));
+        buildProperties.add("jkube.container-image.name=%s".formatted(imageToUse));
+
+        Container containerTrait = Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
+
+        if (containerTrait.getImagePullPolicy() != null) {
+            var imagePullPolicy = containerTrait.getImagePullPolicy().getValue();
+            buildProperties.add("jkube.container-image.imagePullPolicy=%s".formatted(imagePullPolicy));
+        }
+
+        // Plain export command always exposes a health endpoint on 8080.
+        // Skip this, when we decide that the health endpoint can be disabled.
+        if (containerTrait.getPort() == null) {
+            containerTrait.setPortName(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME);
+            containerTrait.setPort((long) ContainerTrait.DEFAULT_CONTAINER_PORT);
+        }
+
+        traitsSpec.setContainer(containerTrait);
     }
 
     public static String getResolvedImageName(String imageGroup, String imageName, String version) {
@@ -319,10 +328,10 @@ public final class TraitHelper {
      * @param  context the trait context holding all route sources.
      * @return         true when routes expose a Http service, false otherwise.
      */
-    public static boolean exposesHttpService(TraitContext context) {
+    public static boolean exposesHttpService(TraitContext context, boolean download) {
         try {
             boolean exposesHttpServices = false;
-            CamelCatalog catalog = context.getCatalog();
+            CamelCatalog catalog = context.getCatalog(download);
             if (context.getSources() != null) {
                 for (Source source : context.getSources()) {
                     SourceMetadata metadata = context.inspectMetaData(source);

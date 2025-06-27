@@ -21,9 +21,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -32,16 +30,20 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -59,7 +61,10 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
 import picocli.CommandLine;
@@ -68,13 +73,17 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.asGistSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
-@Command(name = "run", description = "Run as local Camel integration")
+@Command(name = "run", description = "Run as local Camel integration", sortOptions = false, showDefaultValues = true)
 public class Run extends CamelCommand {
+
+    // special template for running camel-jbang in docker containers
+    public static final String RUN_JAVA_SH = "classpath:templates/run-java.sh";
 
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
     private static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
@@ -106,8 +115,10 @@ public class Run extends CamelCommand {
     boolean transformMessageRun;
     boolean debugRun;
 
-    private File logFile;
+    private Path logFile;
     public long spawnPid;
+
+    private Printer quietPrinter;
 
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -129,11 +140,19 @@ public class Run extends CamelCommand {
     @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
     public boolean background;
 
+    @Option(names = { "--background-wait" }, defaultValue = "true",
+            description = "To wait for run in background to startup successfully, before returning")
+    public boolean backgroundWait = true;
+
     @Option(names = { "--empty" }, defaultValue = "false", description = "Run an empty Camel without loading source files")
     public boolean empty;
 
     @Option(names = { "--camel-version" }, description = "To run using a different Camel version than the default version.")
     String camelVersion;
+
+    @Option(names = { "--camel-spring-boot-version" },
+            description = "To run using a different Camel Spring Boot version than the default version.")
+    String camelSpringBootVersion;
 
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
@@ -178,20 +197,24 @@ public class Run extends CamelCommand {
             description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
-    @Option(names = { "--maven-central-enabled" },
+    @Option(names = { "--maven-central-enabled" }, defaultValue = "true",
             description = "Whether downloading JARs from Maven Central repository is enabled")
     boolean mavenCentralEnabled = true;
 
-    @Option(names = { "--maven-apache-snapshot-enabled" },
+    @Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true",
             description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     boolean mavenApacheSnapshotEnabled = true;
 
-    @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
+    @Option(names = { "--fresh" }, defaultValue = "false", description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
 
     @Option(names = { "--download" }, defaultValue = "true",
             description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
+
+    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    boolean packageScanJars;
 
     @Option(names = { "--jvm-debug" }, parameterConsumer = DebugConsumer.class, paramLabel = "<true|false|port>",
             description = "To enable JVM remote debugging on port 4004 by default. The supported values are true to " +
@@ -214,7 +237,7 @@ public class Run extends CamelCommand {
     @Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
-    @Option(names = { "--logging-json" }, description = "Use JSON logging (ECS Layout)")
+    @Option(names = { "--logging-json" }, defaultValue = "false", description = "Use JSON logging (ECS Layout)")
     boolean loggingJson;
 
     @Option(names = { "--logging-config-path" }, description = "Path to file with custom logging configuration")
@@ -237,7 +260,8 @@ public class Run extends CamelCommand {
             description = "Enables dev mode (live reload when source files are updated and saved)")
     boolean dev;
 
-    @Option(names = { "--trace" }, description = "Enables trace logging of the routed messages")
+    @Option(names = { "--trace" }, defaultValue = "false",
+            description = "Enables trace logging of the routed messages")
     boolean trace;
 
     @Option(names = { "--properties" },
@@ -252,7 +276,7 @@ public class Run extends CamelCommand {
                                                 + " Multiple names can be separated by comma. (all = everything).")
     String stub;
 
-    @Option(names = { "--jfr" },
+    @Option(names = { "--jfr" }, defaultValue = "false",
             description = "Enables Java Flight Recorder saving recording to disk on exit")
     boolean jfr;
 
@@ -264,20 +288,30 @@ public class Run extends CamelCommand {
             description = "Local directory (or github link) for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma.")
     String localKameletDir;
 
-    @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
+    @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port", defaultValue = "8080")
     int port;
 
-    @Option(names = { "--console" }, description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
+    @Option(names = { "--management-port" }, description = "To use a dedicated port for HTTP management")
+    int managementPort = -1;
+
+    @Option(names = { "--console" }, defaultValue = "false",
+            description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
     boolean console;
 
-    @Option(names = { "--health" }, description = "Health check at /q/health on local HTTP server (port 8080 by default)")
+    @Option(names = { "--health" }, defaultValue = "false",
+            description = "Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default)")
     boolean health;
 
-    @Option(names = { "--metrics" },
-            description = "Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
+    @Option(names = { "--metrics" }, defaultValue = "false",
+            description = "Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
     boolean metrics;
 
-    @Option(names = { "--modeline" }, defaultValue = "true", description = "Enables Camel-K style modeline")
+    @Option(names = { "--observe" }, defaultValue = "false",
+            description = "Enable observability services")
+    boolean observe;
+
+    @Option(names = { "--modeline" }, defaultValue = "true",
+            description = "Whether to support JBang style //DEPS to specify additional dependencies")
     boolean modeline = true;
 
     @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
@@ -286,18 +320,19 @@ public class Run extends CamelCommand {
     @Option(names = { "--code" }, description = "Run the given text or file as Java DSL routes")
     String code;
 
-    @Option(names = { "--verbose" }, description = "Verbose output of startup activity (dependency resolution and downloading")
+    @Option(names = { "--verbose" }, defaultValue = "false",
+            description = "Verbose output of startup activity (dependency resolution and downloading")
     boolean verbose;
 
-    @Option(names = { "--ignore-loading-error" },
+    @Option(names = { "--ignore-loading-error" }, defaultValue = "false",
             description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
-    @Option(names = { "--lazy-bean" },
+    @Option(names = { "--lazy-bean" }, defaultValue = "false",
             description = "Whether to use lazy bean initialization (can help with complex classloading issues")
     protected boolean lazyBean;
 
-    @Option(names = { "--prompt" },
+    @Option(names = { "--prompt" }, defaultValue = "false",
             description = "Allow user to type in required parameters in prompt if not present in application")
     boolean prompt;
 
@@ -307,6 +342,9 @@ public class Run extends CamelCommand {
 
     @Override
     public boolean disarrangeLogging() {
+        if (exportRun) {
+            return false;
+        }
         if (RuntimeType.quarkus == runtime) {
             return true;
         } else if (RuntimeType.springBoot == runtime) {
@@ -343,11 +381,12 @@ public class Run extends CamelCommand {
         return run();
     }
 
-    public Integer runTransformMessage(String camelVersion) throws Exception {
+    public Integer runTransformMessage(String camelVersion, String repositories) throws Exception {
         // just boot silently an empty camel in the background and exit
         this.transformMessageRun = true;
         this.background = true;
         this.camelVersion = camelVersion;
+        this.repositories = repositories;
         this.empty = true;
         this.ignoreLoadingError = true;
         this.name = "transform";
@@ -385,9 +424,13 @@ public class Run extends CamelCommand {
         }
     }
 
-    private Properties loadProfileProperties(File source) throws Exception {
+    private Properties loadProfileProperties(Path source) throws Exception {
         Properties prop = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(prop, source);
+        if (Files.exists(source)) {
+            try (InputStream is = Files.newInputStream(source)) {
+                prop.load(is);
+            }
+        }
 
         // special for routes include pattern that we need to "fix" after reading from properties
         // to make this work in run command
@@ -411,19 +454,45 @@ public class Run extends CamelCommand {
     private int run() throws Exception {
         if (!empty && !files.isEmpty() && sourceDir != null) {
             // cannot have both files and source dir at the same time
-            System.err.println("Cannot specify both file(s) and source-dir at the same time.");
+            printer().printErr("Cannot specify both file(s) and source-dir at the same time.");
             return 1;
         }
 
-        if (RuntimeType.quarkus == runtime) {
-            return runQuarkus();
-        } else if (RuntimeType.springBoot == runtime) {
-            return runSpringBoot();
+        // special if user type: camel run .
+        if (sourceDir == null && (files != null && files.size() == 1 && ".".equals(files.get(0)))) {
+            files.clear();
+            try {
+                Files.list(Paths.get("."))
+                        .filter(p -> {
+                            try {
+                                return Files.isRegularFile(p) && !Files.isHidden(p);
+                            } catch (IOException e) {
+                                return false;
+                            }
+                        })
+                        .forEach(p -> files.add(p.getFileName().toString()));
+            } catch (IOException e) {
+                // Ignore
+            }
         }
 
-        File work = CommandLineHelper.getWorkDir();
+        if (!exportRun) {
+            if (RuntimeType.quarkus == runtime) {
+                return runQuarkus();
+            } else if (RuntimeType.springBoot == runtime) {
+                return runSpringBoot();
+            }
+        }
+
+        Path work = CommandLineHelper.getWorkDir();
         removeDir(work);
-        work.mkdirs();
+        if (!Files.exists(work)) {
+            try {
+                Files.createDirectories(work);
+            } catch (IOException e) {
+                printer().println("WARN: Failed to create working directory: " + work.toAbsolutePath());
+            }
+        }
 
         Properties profileProperties = !empty ? loadProfileProperties() : null;
         configureLogging();
@@ -436,16 +505,16 @@ public class Run extends CamelCommand {
             // code may refer to an existing file
             String name = "CodeRoute";
             boolean file = false;
-            File f = new File(code);
-            if (f.isFile() && f.exists()) {
+            Path codePath = Paths.get(code);
+            if (Files.isRegularFile(codePath) && Files.exists(codePath)) {
                 // must be a java file
-                boolean java = f.getName().endsWith(".java");
+                boolean java = codePath.getFileName().toString().endsWith(".java");
                 if (!java) {
-                    printer().println("ERROR: Only java source files is accepted when using --code parameter");
+                    printer().printErr("Only java source files is accepted when using --code parameter");
                     return 1;
                 }
-                code = Files.readString(f.toPath());
-                name = FileUtil.onlyName(f.getName());
+                code = Files.readString(codePath);
+                name = FileUtil.onlyName(codePath.getFileName().toString());
                 file = true;
             }
             // store code in temporary file
@@ -454,15 +523,18 @@ public class Run extends CamelCommand {
             files.add(0, codeFile);
         }
 
+        boolean autoDetectFiles = files.isEmpty() || RUN_JAVA_SH.equals(files.get(0));
+
         // if no specific file to run then try to auto-detect
-        if (!empty && files.isEmpty()) {
+        if (!empty && autoDetectFiles) {
             if (sourceDir != null) {
                 // silent-run then auto-detect all initial files for source-dir
-                String[] allFiles = new File(sourceDir).list();
-                if (allFiles != null) {
-                    for (String f : allFiles) {
-                        files.add(sourceDir + File.separator + f);
-                    }
+                try {
+                    Path sourceDirPath = Paths.get(sourceDir);
+                    Files.list(sourceDirPath)
+                            .forEach(p -> files.add(sourceDirPath.resolve(p.getFileName()).toString()));
+                } catch (IOException e) {
+                    // Ignore
                 }
             } else {
                 String routes
@@ -481,9 +553,12 @@ public class Run extends CamelCommand {
                         return 1;
                     } else {
                         // silent-run then auto-detect all files
-                        String[] allFiles = new File(".").list();
-                        if (allFiles != null) {
-                            files.addAll(Arrays.asList(allFiles));
+                        try {
+                            Files.list(Paths.get("."))
+                                    .map(p -> p.getFileName().toString())
+                                    .forEach(files::add);
+                        } catch (IOException e) {
+                            // Ignore
                         }
                     }
                 }
@@ -497,9 +572,10 @@ public class Run extends CamelCommand {
         final KameletMain main = createMainInstance();
         main.setProfile(profile);
         if (repositories != null && !repositories.isBlank()) {
-            main.setRepositories(String.join(",", repositories));
+            main.setRepositories(repositories);
         }
         main.setDownload(download);
+        main.setPackageScanJars(packageScanJars);
         main.setFresh(fresh);
         main.setMavenSettings(mavenSettings);
         main.setMavenSettingsSecurity(mavenSettingsSecurity);
@@ -541,6 +617,8 @@ public class Run extends CamelCommand {
         }
         if (modeline) {
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
+            // configure eager
+            main.configure().withModeline(true);
         }
         if (ignoreLoadingError) {
             writeSetting(main, profileProperties, "camel.jbang.ignoreLoadingError", "true");
@@ -552,13 +630,15 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.jbang.prompt", "true");
         }
         writeSetting(main, profileProperties, "camel.jbang.compileWorkDir",
-                CommandLineHelper.CAMEL_JBANG_WORK_DIR + File.separator + "compile");
+                Paths.get(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "compile").toString());
 
         if (gav != null) {
             writeSetting(main, profileProperties, "camel.jbang.gav", gav);
         }
         writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
-        writeSetting(main, profileProperties, "camel.jbang.repos", String.join(",", repositories));
+        if (repositories != null) {
+            writeSetting(main, profileProperties, "camel.jbang.repos", repositories);
+        }
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
@@ -569,6 +649,10 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.quarkusVersion", quarkusVersion);
         writeSetting(main, profileProperties, "camel.jbang.quarkusGroupId", quarkusGroupId);
         writeSetting(main, profileProperties, "camel.jbang.quarkusArtifactId", quarkusArtifactId);
+
+        if (observe) {
+            main.addInitialProperty("camel.jbang.dependencies", "camel:observability-services");
+        }
 
         // command line arguments
         if (property != null) {
@@ -583,7 +667,9 @@ public class Run extends CamelCommand {
         }
 
         if (exportRun) {
-            main.setSilent(true);
+            if (!verbose) {
+                main.setSilent(true);
+            }
             main.addInitialProperty("camel.jbang.export", "true");
             // enable stub in silent mode so we do not use real components
             main.setStubPattern("*");
@@ -615,9 +701,12 @@ public class Run extends CamelCommand {
                 () -> maxSeconds > 0 ? String.valueOf(maxSeconds) : null);
         writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
                 () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
-        writeSetting(main, profileProperties, "camel.jbang.platform-http.port",
-                () -> port > 0 ? String.valueOf(port) : null);
-        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null); // TODO: "true" instead of "jfr" ?
+        writeSetting(main, profileProperties, "camel.server.port",
+                () -> port > 0 && port != 8080 ? String.valueOf(port) : null);
+        if (managementPort != -1) {
+            writeSetting(main, profileProperties, "camel.management.port", () -> String.valueOf(managementPort));
+        }
+        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         writeSetting(main, profileProperties, "camel.jbang.kameletsVersion", kameletsVersion);
@@ -625,6 +714,8 @@ public class Run extends CamelCommand {
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
         StringJoiner sjClasspathFiles = new StringJoiner(",");
+        StringJoiner sjScriptFiles = new StringJoiner(",");
+        StringJoiner sjTlsFiles = new StringJoiner(",");
         StringJoiner sjKamelets = new StringJoiner(",");
         StringJoiner sjJKubeFiles = new StringJoiner(",");
 
@@ -642,29 +733,37 @@ public class Run extends CamelCommand {
             // find source files
             files = RunHelper.scanMavenOrGradleProject();
             // include extra dependencies from pom.xml
-            var pomDependencies = RunHelper.scanMavenDependenciesFromPom();
+            var pomDependencies = RunHelper.scanMavenDependenciesFromPom(Paths.get("pom.xml"));
             addDependencies(pomDependencies.toArray(new String[0]));
         }
 
         if (profile != null) {
             // need to include profile application properties if exists
             String name = "application-" + profile + ".properties";
-            if (new File(name).exists() && !files.contains(name)) {
+            if (Files.exists(Paths.get(name)) && !files.contains(name)) {
                 files.add(name);
             }
         }
 
         for (String file : files) {
-            if (file.startsWith("clipboard") && !(new File(file).exists())) {
+            if (file.startsWith("clipboard") && !(Files.exists(Paths.get(file)))) {
                 file = loadFromClipboard(file);
             } else if (skipFile(file)) {
+                continue;
+            } else if (isScriptFile(file)) {
+                // script files
+                sjScriptFiles.add(file);
+                continue;
+            } else if (isTlsFile(file)) {
+                // tls files
+                sjTlsFiles.add(file);
                 continue;
             } else if (jkubeFile(file)) {
                 // jkube
                 sjJKubeFiles.add(file);
                 continue;
             } else if (!knownFile(file) && !file.endsWith(".properties")) {
-                // non known files to be added on classpath
+                // unknown files to be added on classpath
                 sjClasspathFiles.add(file);
                 continue;
             }
@@ -696,9 +795,9 @@ public class Run extends CamelCommand {
             }
             if (file.startsWith("file:")) {
                 // check if file exist
-                File inputFile = new File(file.substring(5));
-                if (!inputFile.exists() && !inputFile.isFile()) {
-                    System.err.println("File does not exist: " + file);
+                Path inputPath = Paths.get(file.substring(5));
+                if (!Files.exists(inputPath) || !Files.isRegularFile(inputPath)) {
+                    printer().printErr("File does not exist: " + file);
                     return 1;
                 }
             }
@@ -741,9 +840,9 @@ public class Run extends CamelCommand {
 
         if (sourceDir != null) {
             // must be an existing directory
-            File dir = new File(sourceDir);
-            if (!dir.exists() && !dir.isDirectory()) {
-                System.err.println("Directory does not exist: " + sourceDir);
+            Path dirPath = Paths.get(sourceDir);
+            if (!Files.exists(dirPath) || !Files.isDirectory(dirPath)) {
+                printer().printErr("Directory does not exist: " + sourceDir);
                 return 1;
             }
             // make it a pattern as we load all files from this directory
@@ -762,6 +861,18 @@ public class Run extends CamelCommand {
             writeSettings("camel.jbang.classpathFiles", sjClasspathFiles.toString());
         } else {
             writeSetting(main, profileProperties, "camel.jbang.classpathFiles", () -> null);
+        }
+        if (sjScriptFiles.length() > 0) {
+            main.addInitialProperty("camel.jbang.scriptFiles", sjScriptFiles.toString());
+            writeSettings("camel.jbang.scriptFiles", sjScriptFiles.toString());
+        } else {
+            writeSetting(main, profileProperties, "camel.jbang.scriptFiles", () -> null);
+        }
+        if (sjTlsFiles.length() > 0) {
+            main.addInitialProperty("camel.jbang.tlsFiles", sjTlsFiles.toString());
+            writeSettings("camel.jbang.tlsFiles", sjTlsFiles.toString());
+        } else {
+            writeSetting(main, profileProperties, "camel.jbang.tlsFiles", () -> null);
         }
         if (sjJKubeFiles.length() > 0) {
             main.addInitialProperty("camel.jbang.jkubeFiles", sjJKubeFiles.toString());
@@ -803,7 +914,7 @@ public class Run extends CamelCommand {
             for (String file : names) {
                 if (!file.startsWith("file:")) {
                     if (!file.startsWith("/")) {
-                        file = FileSystems.getDefault().getPath("").toAbsolutePath() + File.separator + file;
+                        file = Paths.get(FileSystems.getDefault().getPath("").toAbsolutePath().toString(), file).toString();
                     }
                     file = "file://" + file;
                 }
@@ -843,7 +954,8 @@ public class Run extends CamelCommand {
         }
 
         // okay we have validated all input and are ready to run
-        if (camelVersion != null || isDebugMode()) {
+        // (if exporting then we cannot run a different version)
+        if (!exportRun && camelVersion != null || isDebugMode()) {
             // TODO: debug camel specific version
             boolean custom = false;
             if (camelVersion != null) {
@@ -869,7 +981,15 @@ public class Run extends CamelCommand {
             return runBackground(main);
         } else {
             // run default in current JVM with same camel version
-            return runKameletMain(main);
+            try {
+                return runKameletMain(main);
+            } catch (FailedToCreateRouteException ex) {
+                if (ignoreLoadingError) {
+                    printer().printErr(ex);
+                    return 0;
+                }
+                throw ex;
+            }
         }
     }
 
@@ -880,11 +1000,24 @@ public class Run extends CamelCommand {
     }
 
     protected int runQuarkus() throws Exception {
-        // create temp run dir
-        File runDir = new File(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
-        if (!this.background) {
-            runDir.deleteOnExit();
+        if (background) {
+            printer().println("Run Camel Quarkus with --background is not supported");
+            return 1;
         }
+
+        // create temp run dir
+        Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
+        if (!this.background) {
+            // Mark for deletion on exit
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    removeDir(runDirPath);
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }));
+        }
+        Files.createDirectories(runDirPath);
 
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
@@ -897,34 +1030,41 @@ public class Run extends CamelCommand {
         eq.quarkusArtifactId = this.quarkusArtifactId;
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
-        eq.exportDir = runDir.toString();
+        eq.exportDir = runDirPath.toString();
         eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
+        eq.name = this.name;
+        eq.verbose = this.verbose;
+        eq.port = this.port;
+        eq.managementPort = this.managementPort;
         eq.gav = this.gav;
         if (eq.gav == null) {
-            eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
+            if (eq.name == null) {
+                eq.name = "jbang-run-dummy";
+            }
+            eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
         eq.dependencies = this.dependencies;
-        if (!this.exportRun) {
-            eq.addDependencies("camel:cli-connector");
-        }
+        eq.addDependencies("camel:cli-connector");
         eq.fresh = this.fresh;
         eq.download = this.download;
+        eq.packageScanJars = this.packageScanJars;
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
+        eq.applicationProperties = this.property;
+
+        printer().println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
 
         // run export
         int exit = eq.export();
-        if (exit != 0 || this.exportRun) {
+        if (exit != 0) {
             return exit;
         }
-
-        System.out.println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
 
         // run quarkus via maven
         String mvnw = "/mvnw";
@@ -932,31 +1072,36 @@ public class Run extends CamelCommand {
             mvnw = "/mvnw.cmd";
         }
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "package", "quarkus:" + (dev ? "dev" : "run"));
+        pb.command(runDirPath.toString() + mvnw, "--quiet", "--file",
+                runDirPath.toRealPath().resolve("pom.xml").toString(), "package",
+                "quarkus:" + (dev ? "dev" : "run"));
 
-        if (background) {
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            if (!exportRun && !transformRun && !transformMessageRun) {
-                printer().println("Running Camel Quarkus integration: " + name + " (version: " + eq.quarkusVersion
-                                  + ") in background");
-            }
-            return 0;
-        } else {
-            pb.inheritIO(); // run in foreground (with IO so logs are visible)
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            // wait for that process to exit as we run in foreground
-            return p.waitFor();
-        }
+        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        Process p = pb.start();
+        this.spawnPid = p.pid();
+        // wait for that process to exit as we run in foreground
+        return p.waitFor();
     }
 
     protected int runSpringBoot() throws Exception {
-        // create temp run dir
-        File runDir = new File(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
-        if (!this.background) {
-            runDir.deleteOnExit();
+        if (background) {
+            printer().println("Run Camel Spring Boot with --background is not supported");
+            return 1;
         }
+
+        // create temp run dir
+        Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
+        if (!this.background) {
+            // Mark for deletion on exit
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    removeDir(runDirPath);
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }));
+        }
+        Files.createDirectories(runDirPath);
 
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
@@ -967,44 +1112,55 @@ public class Run extends CamelCommand {
         eq.gradleWrapper = false;
         eq.springBootVersion = this.springBootVersion;
         eq.camelVersion = this.camelVersion;
-        eq.camelSpringBootVersion = this.camelVersion;
+        eq.camelSpringBootVersion = this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
-        eq.exportDir = runDir.toString();
+        eq.exportDir = runDirPath.toString();
         eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
+        eq.name = this.name;
+        eq.verbose = this.verbose;
+        eq.port = this.port;
+        eq.managementPort = this.managementPort;
         eq.gav = this.gav;
+        eq.repositories = this.repositories;
         if (eq.gav == null) {
-            eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
+            if (eq.name == null) {
+                eq.name = "jbang-run-dummy";
+            }
+            eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
-        eq.dependencies.addAll(dependencies);
-        if (!this.exportRun) {
-            eq.addDependencies("camel:cli-connector");
-        }
+        eq.dependencies.addAll(this.dependencies);
+        eq.addDependencies("camel:cli-connector");
         if (this.dev) {
             // hot-reload of spring-boot
             eq.addDependencies("mvn:org.springframework.boot:spring-boot-devtools");
         }
         eq.fresh = this.fresh;
         eq.download = this.download;
+        eq.packageScanJars = this.packageScanJars;
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
+        eq.applicationProperties = this.property;
+
+        printer().println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
 
         // run export
         int exit = eq.export();
-        if (exit != 0 || exportRun) {
+        if (exit != 0) {
             return exit;
         }
 
-        System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
-
         // prepare spring-boot for logging to file
-        InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml");
-        eq.safeCopy(is, new File(eq.exportDir + "/src/main/resources/logback.xml"));
+        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
+            Path logbackPath = Paths.get(eq.exportDir, "src/main/resources/logback.xml");
+            Files.createDirectories(logbackPath.getParent());
+            Files.copy(is, logbackPath, StandardCopyOption.REPLACE_EXISTING);
+        }
 
         // run spring-boot via maven
         ProcessBuilder pb = new ProcessBuilder();
@@ -1012,23 +1168,15 @@ public class Run extends CamelCommand {
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
         }
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "spring-boot:run");
+        pb.command(runDirPath.toString() + mvnw, "--quiet", "--file",
+                runDirPath.toRealPath().resolve("pom.xml").toString(),
+                "spring-boot:run");
 
-        if (background) {
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            if (!exportRun && !transformRun && !transformMessageRun) {
-                printer().println("Running Camel Spring Boot integration: " + name + " (version: " + camelVersion
-                                  + ") in background");
-            }
-            return 0;
-        } else {
-            pb.inheritIO(); // run in foreground (with IO so logs are visible)
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            // wait for that process to exit as we run in foreground
-            return p.waitFor();
-        }
+        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        Process p = pb.start();
+        this.spawnPid = p.pid();
+        // wait for that process to exit as we run in foreground
+        return p.waitFor();
     }
 
     private boolean acceptPropertiesFile(String file) {
@@ -1082,23 +1230,23 @@ public class Run extends CamelCommand {
         }
 
         // application.properties
-        File profilePropertiesFile;
+        Path profilePropertiesPath;
         if (sourceDir != null) {
-            profilePropertiesFile = new File(sourceDir, "application.properties");
+            profilePropertiesPath = Paths.get(sourceDir).resolve("application.properties");
         } else {
-            profilePropertiesFile = new File("application.properties");
+            profilePropertiesPath = Paths.get("application.properties");
         }
         // based application-profile.properties
-        answer = doLoadAndInitProfileProperties(profilePropertiesFile);
+        answer = doLoadAndInitProfileProperties(profilePropertiesPath);
 
         if (profile != null) {
             if (sourceDir != null) {
-                profilePropertiesFile = new File(sourceDir, "application-" + profile + ".properties");
+                profilePropertiesPath = Paths.get(sourceDir).resolve("application-" + profile + ".properties");
             } else {
-                profilePropertiesFile = new File("application-" + profile + ".properties");
+                profilePropertiesPath = Paths.get("application-" + profile + ".properties");
             }
             // application-profile.properties should override standard application.properties
-            Properties override = doLoadAndInitProfileProperties(profilePropertiesFile);
+            Properties override = doLoadAndInitProfileProperties(profilePropertiesPath);
             if (override != null) {
                 if (answer == null) {
                     answer = override;
@@ -1114,10 +1262,10 @@ public class Run extends CamelCommand {
         return answer;
     }
 
-    private Properties doLoadAndInitProfileProperties(File profilePropertiesFile) throws Exception {
+    private Properties doLoadAndInitProfileProperties(Path profilePropertiesPath) throws Exception {
         Properties answer = null;
-        if (profilePropertiesFile.exists()) {
-            answer = loadProfileProperties(profilePropertiesFile);
+        if (Files.exists(profilePropertiesPath)) {
+            answer = this.loadProfileProperties((Path) profilePropertiesPath);
             // logging level/color may be configured in the properties file
             loggingLevel = answer.getProperty("loggingLevel", loggingLevel);
             loggingColor
@@ -1133,7 +1281,10 @@ public class Run extends CamelCommand {
                     mavenApacheSnapshotEnabled ? "true" : "false"));
             openapi = answer.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
+            packageScanJars
+                    = "true".equals(answer.getProperty("camel.jbang.packageScanJars", packageScanJars ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
+            backgroundWait = "true".equals(answer.getProperty("camel.jbang.backgroundWait", backgroundWait ? "true" : "false"));
             jvmDebugPort = parseJvmDebugPort(answer.getProperty("camel.jbang.jvmDebug", Integer.toString(jvmDebugPort)));
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
             kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
@@ -1185,6 +1336,9 @@ public class Run extends CamelCommand {
         if (background) {
             cmds.remove("--background=true");
             cmds.remove("--background");
+            cmds.remove("--background-wait");
+            cmds.remove("--background-wait=false");
+            cmds.remove("--background-wait=true");
         }
         if (camelVersion != null) {
             cmds.remove("--camel-version=" + camelVersion);
@@ -1220,13 +1374,7 @@ public class Run extends CamelCommand {
         pb.command(jbangArgs);
 
         if (background) {
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            if (!exportRun && !transformRun && !transformMessageRun) {
-                printer().println("Running Camel integration: " + name + " (version: " + camelVersion
-                                  + ") in background with PID: " + p.pid());
-            }
-            return 0;
+            return runBackgroundProcess(pb, "Camel Main");
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
             Process p = pb.start();
@@ -1250,17 +1398,83 @@ public class Run extends CamelCommand {
 
         cmds.remove("--background=true");
         cmds.remove("--background");
+        cmds.remove("--background-wait=false");
+        cmds.remove("--background-wait=true");
+        cmds.remove("--background-wait");
 
         addCamelCommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
+
+        return runBackgroundProcess(pb, "Camel Main");
+    }
+
+    protected int runBackgroundProcess(ProcessBuilder pb, String kind) throws Exception {
+        Path logPath = null;
+        if (backgroundWait) {
+            // store background output in a log file to capture any error on startup
+            logPath = getRunBackgroundLogFile("" + new Random().nextLong());
+            try {
+                Files.createFile(logPath);
+                logPath.toFile().deleteOnExit();
+            } catch (IOException e) {
+                // Ignore
+            }
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(logPath.toFile());
+        }
+
         Process p = pb.start();
         this.spawnPid = p.pid();
         if (!exportRun && !transformRun && !transformMessageRun) {
-            printer().println("Running Camel integration: " + name + " in background with PID: " + p.pid());
+            printer().println(
+                    "Running " + kind + ": " + name + " in background with PID: " + p.pid()
+                              + (backgroundWait ? " (waiting to startup)" : ""));
         }
-        return 0;
+
+        int ec = 0;
+        if (logPath != null) {
+            StopWatch watch = new StopWatch();
+            int state = 0; // state 5 is running
+            while (p.isAlive() && watch.taken() < 20000 && state < 5) {
+                JsonObject root = loadStatus(p.pid());
+                if (root != null) {
+                    JsonObject context = (JsonObject) root.get("context");
+                    if (context != null) {
+                        state = context.getInteger("phase");
+                    }
+                }
+                if (state < 5) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (Exception e) {
+                        // we want to exit
+                        break;
+                    }
+                }
+            }
+            if (!p.isAlive()) {
+                ec = p.exitValue();
+                if (ec != 0) {
+                    printer().println(kind + ": " + name + " startup failure");
+                    printer().println("");
+                    String text = Files.readString(logPath);
+                    printer().print(text);
+                }
+            } else {
+                printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
+            }
+        }
+        if (logPath != null) {
+            try {
+                Files.deleteIfExists(logPath);
+            } catch (IOException e) {
+                // Ignore
+            }
+        }
+
+        return ec;
     }
 
     protected int runDebug(KameletMain main) throws Exception {
@@ -1319,6 +1533,9 @@ public class Run extends CamelCommand {
         if (background) {
             cmds.remove("--background=true");
             cmds.remove("--background");
+            cmds.remove("--background-wait=true");
+            cmds.remove("--background-wait=false");
+            cmds.remove("--background-wait");
         }
         if (repositories != null) {
             if (!VersionHelper.isGE(v, "3.18.1")) {
@@ -1338,13 +1555,7 @@ public class Run extends CamelCommand {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
         if (background) {
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            if (!exportRun && !transformRun && !transformMessageRun) {
-                printer().println("Running Camel integration: " + name + " (version: " + camelVersion
-                                  + ") in background with PID: " + p.pid());
-            }
-            return 0;
+            return runBackgroundProcess(pb, "Camel Main");
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
             Process p = pb.start();
@@ -1493,16 +1704,14 @@ public class Run extends CamelCommand {
                 }
                 sj.add(part);
             }
-            main = new KameletMain(sj.toString());
+            main = new KameletMain(CAMEL_INSTANCE_TYPE, sj.toString());
             writeSettings("camel.jbang.localKameletDir", sj.toString());
         }
         return main;
     }
 
     private void configureLogging() throws Exception {
-        if (exportRun) {
-            // do not configure logging
-        } else if (logging) {
+        if (logging) {
             // allow to configure individual logging levels in application.properties
             Properties prop = loadProfileProperties();
             if (prop != null) {
@@ -1535,32 +1744,44 @@ public class Run extends CamelCommand {
             if (!scriptRun) {
                 // remember log file
                 String name = RuntimeUtil.getPid() + ".log";
-                logFile = new File(CommandLineHelper.getCamelDir(), name);
-                logFile.deleteOnExit();
+                final Path logDir = CommandLineHelper.getCamelDir();
+                Files.createDirectories(logDir); //make sure the parent dir exists
+                logFile = logDir.resolve(name);
+                try {
+                    // Create an empty file that will be deleted on exit
+                    Files.createFile(logFile);
+                    logFile.toFile().deleteOnExit();
+                } catch (IOException e) {
+                    // Ignore
+                }
             }
         } else {
-            RuntimeUtil.configureLog("off", false, false, false, false, null, null);
-            writeSettings("loggingLevel", "off");
+            if (exportRun) {
+                RuntimeUtil.configureLog(loggingLevel, false, false, false, true, null, null);
+                writeSettings("loggingLevel", loggingLevel);
+            } else {
+                RuntimeUtil.configureLog("off", false, false, false, false, null, null);
+                writeSettings("loggingLevel", "off");
+            }
         }
     }
 
     private void generateOpenApi() throws Exception {
-        File file = Paths.get(openapi).toFile();
-        if (!file.exists() && !file.isFile()) {
-            throw new FileNotFoundException("Cannot find file: " + file);
+        Path filePath = Paths.get(openapi);
+        if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
+            throw new FileNotFoundException("Cannot find file: " + filePath);
         }
 
-        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/rest-dsl.yaml.tmpl");
-        String content = IOHelper.loadText(is);
-        IOHelper.close(is);
+        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/rest-dsl.yaml.tmpl")) {
+            String content = IOHelper.loadText(is);
+            String onlyName = filePath.toString();
+            content = content.replaceFirst("\\{\\{ \\.Spec }}", onlyName);
 
-        String onlyName = file.getPath();
-        content = content.replaceFirst("\\{\\{ \\.Spec }}", onlyName);
+            Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
 
-        Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
-
-        // we need to include the spec on the classpath
-        files.add(openapi);
+            // we need to include the spec on the classpath
+            files.add(openapi);
+        }
     }
 
     private boolean knownFile(String file) throws Exception {
@@ -1569,7 +1790,6 @@ public class Run extends CamelCommand {
         if ("kamelet.yaml".equals(ext)) {
             return true;
         }
-
         String ext2 = FileUtil.onlyExt(file, true);
         if (ext2 != null) {
             SourceScheme sourceScheme = SourceScheme.fromUri(file);
@@ -1588,14 +1808,15 @@ public class Run extends CamelCommand {
                 } else {
                     // TODO: we probably need a way to parse the content and match against the YAML DSL expected by Camel
                     // This check looks very fragile
-                    return source.content().contains("from:") || source.content().contains("- from:")
+                    return source.content().contains("- from:")
                             || source.content().contains("- route:")
+                            || source.content().contains("- routeTemplate") || source.content().contains("- route-template:")
+                            || source.content().contains("- routeConfiguration:")
                             || source.content().contains("- route-configuration:")
-                            || source.content().contains("- rest:") || source.content().contains("- beans:")
-                            // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
-                            || source.content().contains("KameletBinding")
-                            || source.content().contains("Pipe")
-                            || source.content().contains("kind: Integration");
+                            || source.content().contains("- rest:")
+                            || source.content().contains("- beans:")
+                            // also support Pipes.
+                            || source.content().contains("Pipe");
                 }
             }
             // if the ext is an accepted file then we include it as a potential route
@@ -1650,9 +1871,11 @@ public class Run extends CamelCommand {
         }
 
         // skip dirs
-        File f = new File(name);
-        if (f.exists() && f.isDirectory()) {
-            return true;
+        if (!name.startsWith("classpath:")) {
+            Path path = Path.of(name);
+            if (Files.exists(path) && Files.isDirectory(path)) {
+                return true;
+            }
         }
 
         if (FileUtil.onlyExt(name) == null) {
@@ -1680,12 +1903,19 @@ public class Run extends CamelCommand {
         return false;
     }
 
+    private boolean isScriptFile(String name) {
+        return name.endsWith(".sh");
+    }
+
+    private boolean isTlsFile(String name) {
+        return name.endsWith(".crt") || name.endsWith(".key") || name.endsWith(".pem");
+    }
+
     private boolean jkubeFile(String name) {
         return name.endsWith(".jkube.yaml") || name.endsWith(".jkube.yml");
     }
 
     private void writeSettings(String key, String value) {
-        FileOutputStream fos = null;
         try {
             // use java.util.Properties to ensure the value is escaped correctly
             Properties prop = new Properties();
@@ -1693,49 +1923,70 @@ public class Run extends CamelCommand {
             StringWriter sw = new StringWriter();
             prop.store(sw, null);
 
-            File runSettings = new File(CommandLineHelper.getWorkDir(), RUN_SETTINGS_FILE);
-            fos = new FileOutputStream(runSettings, true);
+            Path runSettingsPath = CommandLineHelper.getWorkDir().resolve(RUN_SETTINGS_FILE);
 
+            StringBuilder content = new StringBuilder();
             String[] lines = sw.toString().split(System.lineSeparator());
             for (String line : lines) {
                 // properties store timestamp as comment which we want to skip
                 if (!line.startsWith("#")) {
-                    fos.write(line.getBytes(StandardCharsets.UTF_8));
-                    fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
+                    content.append(line).append(System.lineSeparator());
                 }
+            }
+
+            // Append to the file if it exists, otherwise create it
+            if (Files.exists(runSettingsPath)) {
+                Files.write(runSettingsPath, content.toString().getBytes(StandardCharsets.UTF_8),
+                        StandardOpenOption.APPEND);
+            } else {
+                Files.write(runSettingsPath, content.toString().getBytes(StandardCharsets.UTF_8));
             }
         } catch (Exception e) {
             // ignore
-        } finally {
-            IOHelper.close(fos);
         }
     }
 
-    private static void removeDir(File d) {
-        String[] list = d.list();
-        if (list == null) {
-            list = new String[0];
-        }
-        for (String s : list) {
-            File f = new File(d, s);
-            if (f.isDirectory()) {
-                removeDir(f);
-            } else {
-                delete(f);
+    private static void removeDir(Path directory) {
+        try {
+            if (Files.exists(directory)) {
+                Files.walk(directory)
+                        .sorted(java.util.Comparator.reverseOrder())
+                        .forEach(path -> {
+                            try {
+                                Files.deleteIfExists(path);
+                            } catch (IOException e) {
+                                // Fallback to deleteOnExit if we can't delete immediately
+                                try {
+                                    path.toFile().deleteOnExit();
+                                } catch (Exception ex) {
+                                    // Ignore
+                                }
+                            }
+                        });
             }
+        } catch (IOException e) {
+            // Ignore
         }
-        delete(d);
     }
 
-    private static void delete(File f) {
-        if (!f.delete()) {
+    private static void delete(Path path) {
+        try {
+            if (!Files.deleteIfExists(path)) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                if (!Files.deleteIfExists(path)) {
+                    path.toFile().deleteOnExit();
+                }
+            }
+        } catch (IOException e) {
+            // Fallback to deleteOnExit
             try {
-                Thread.sleep(10);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-            if (!f.delete()) {
-                f.deleteOnExit();
+                path.toFile().deleteOnExit();
+            } catch (Exception ex) {
+                // Ignore
             }
         }
     }
@@ -1770,7 +2021,6 @@ public class Run extends CamelCommand {
         final Set<String> downloaded = new HashSet<>();
         final Set<String> repos = new HashSet<>();
         final Set<String> kamelets = new HashSet<>();
-        final Set<String> modelines = new HashSet<>();
 
         @Override
         public void onDownloadDependency(String groupId, String artifactId, String version) {
@@ -1803,15 +2053,6 @@ public class Run extends CamelCommand {
             if (!kamelets.contains(name)) {
                 writeSettings("kamelet", name);
                 kamelets.add(name);
-            }
-        }
-
-        @Override
-        public void onLoadingModeline(String key, String value) {
-            String line = key + "=" + value;
-            if (!modelines.contains(line)) {
-                writeSettings("modeline", line);
-                modelines.add(line);
             }
         }
     }
@@ -1854,4 +2095,35 @@ public class Run extends CamelCommand {
             cmds.add(0, "camel");
         }
     }
+
+    private JsonObject loadStatus(long pid) {
+        try {
+            Path p = getStatusFile(Long.toString(pid));
+            if (Files.exists(p)) {
+                try (InputStream is = Files.newInputStream(p)) {
+                    String text = IOHelper.loadText(is);
+                    return (JsonObject) Jsoner.deserialize(text);
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
+    }
+
+    @Override
+    protected Printer printer() {
+        if (exportRun && (!logging && !verbose)) {
+            // Export run should be silent unless in logging or verbose mode
+            if (quietPrinter == null) {
+                quietPrinter = new Printer.QuietPrinter(super.printer());
+            }
+
+            CommandHelper.setPrinter(quietPrinter);
+            return quietPrinter;
+        }
+
+        return super.printer();
+    }
+
 }

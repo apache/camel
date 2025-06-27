@@ -73,7 +73,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 // we can also attach a predicate to the endpoint interceptor.
                 // So in this example the exchange is
                 // only intercepted if the body is Hello World
-                interceptSendToEndpoint("mock:foo").when(body().isEqualTo("Hello World")).to("mock:detour")
+                interceptSendToEndpoint("mock:foo").onWhen(body().isEqualTo("Hello World")).to("mock:detour")
                         .transform(constant("Bye World"));
 
                 from("direct:second").to("mock:bar").to("mock:foo").to("mock:result");

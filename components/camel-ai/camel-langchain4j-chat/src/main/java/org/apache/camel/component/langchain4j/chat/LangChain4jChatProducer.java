@@ -18,29 +18,20 @@ package org.apache.camel.component.langchain4j.chat;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.langchain4j.agent.tool.ToolExecutionRequest;
-import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
-import dev.langchain4j.model.output.Response;
 import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.rag.content.injector.ContentInjector;
 import dev.langchain4j.rag.content.injector.DefaultContentInjector;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
-import org.apache.camel.component.langchain4j.chat.tool.CamelToolExecutorCache;
-import org.apache.camel.component.langchain4j.chat.tool.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -50,7 +41,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
 
     private final LangChain4jChatEndpoint endpoint;
 
-    private ChatLanguageModel chatLanguageModel;
+    private ChatModel chatModel;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -108,8 +99,8 @@ public class LangChain4jChatProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.chatLanguageModel = this.endpoint.getConfiguration().getChatModel();
-        ObjectHelper.notNull(chatLanguageModel, "chatLanguageModel");
+        this.chatModel = this.endpoint.getConfiguration().getChatModel();
+        ObjectHelper.notNull(chatModel, "chatModel");
     }
 
     private void populateResponse(String response, Exchange exchange) {
@@ -125,7 +116,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
     private String sendChatMessage(ChatMessage chatMessage, Exchange exchange) {
         var augmentedChatMessage = addAugmentedData(chatMessage, exchange);
 
-        Response<AiMessage> response = this.chatLanguageModel.generate(augmentedChatMessage);
+        AiMessage response = this.chatModel.chat(augmentedChatMessage).aiMessage();
         return extractAiResponse(response);
     }
 
@@ -158,7 +149,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
     private String sendListChatMessage(List<ChatMessage> chatMessages, Exchange exchange) {
         LangChain4jChatEndpoint langChain4jChatEndpoint = (LangChain4jChatEndpoint) getEndpoint();
 
-        Response<AiMessage> response;
+        AiMessage response;
 
         // Check if the last message is a UserMessage and if there's a need to augment the message for RAG
         int size = chatMessages.size();
@@ -171,58 +162,12 @@ public class LangChain4jChatProducer extends DefaultProducer {
 
         }
 
-        final Map<String, Set<CamelToolSpecification>> tools = CamelToolExecutorCache.getInstance().getTools();
-        if (tools.containsKey(langChain4jChatEndpoint.getChatId())) {
-            final Set<CamelToolSpecification> camelToolSpecificationSet = tools
-                    .get(langChain4jChatEndpoint.getChatId());
-
-            final List<ToolSpecification> toolSpecifications = camelToolSpecificationSet.stream()
-                    .map(camelToolSpecification -> camelToolSpecification.getToolSpecification())
-                    .collect(Collectors.toList());
-
-            response = this.chatLanguageModel.generate(chatMessages, toolSpecifications);
-        } else {
-            response = this.chatLanguageModel.generate(chatMessages);
-        }
-
-        if (response.content().hasToolExecutionRequests()) {
-            chatMessages.add(response.content());
-
-            for (ToolExecutionRequest toolExecutionRequest : response.content().toolExecutionRequests()) {
-                String toolName = toolExecutionRequest.name();
-                CamelToolSpecification camelToolSpecification = CamelToolExecutorCache.getInstance().getTools()
-                        .get(langChain4jChatEndpoint.getChatId()).stream()
-                        .filter(cts -> cts.getToolSpecification().name().equals(toolName))
-                        .findFirst().orElseThrow(() -> new RuntimeException("Tool " + toolName + " not found"));
-                try {
-                    // Map Json to Header
-                    JsonNode jsonNode = objectMapper.readValue(toolExecutionRequest.arguments(), JsonNode.class);
-
-                    jsonNode.fieldNames()
-                            .forEachRemaining(name -> exchange.getMessage().setHeader(name, jsonNode.get(name)));
-
-                    // Execute the consumer route
-                    camelToolSpecification.getConsumer().getProcessor().process(exchange);
-                } catch (Exception e) {
-                    // How to handle this exception?
-                    exchange.setException(e);
-                }
-
-                chatMessages.add(new ToolExecutionResultMessage(
-                        toolExecutionRequest.id(),
-                        toolExecutionRequest.name(),
-                        exchange.getIn().getBody(String.class)));
-            }
-
-            response = this.chatLanguageModel.generate(chatMessages);
-        }
-
+        response = this.chatModel.chat(chatMessages).aiMessage();
         return extractAiResponse(response);
     }
 
-    private String extractAiResponse(Response<AiMessage> response) {
-        AiMessage message = response.content();
-        return message == null ? null : message.text();
+    private String extractAiResponse(AiMessage response) {
+        return response == null ? null : response.text();
     }
 
     public String sendWithPromptTemplate(String promptTemplate, Map<String, Object> variables, Exchange exchange) {

@@ -2,7 +2,7 @@
 :doctitle: SMB
 :shortname: smb
 :artifactid: camel-smb
-:description: Receive files from SMB (Server Message Block) shares.
+:description: Read and write files to Server Message Block (SMB) file shares.
 :since: 4.3
 :supportlevel: Stable
 :tabs-sync-option:
@@ -68,7 +68,7 @@ private void process(Exchange exchange) throws IOException {
 }
 
 public void configure() {
-    fromF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(), service.userName(), service.password())
+    fromF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(), service.userName(), service.password())
         .process(this::process)
         .to("mock:result");
 }
@@ -79,20 +79,18 @@ NOTE: you may also get the file contents as an InputStream using `exchange.getMe
 === Polling files (advanced)
 
 
-You can also get access to the file using the underlying `File` implementation provided by smbj. In that case, polling all the
+You can also get access to the file using the underlying `File` implementation provided by Camel. In that case, polling all the
 files from an SMB file share and reading their contents would look like this:
 
 [source,java]
 ----
 private void process(Exchange exchange) throws IOException {
-    final com.hierynomus.smbj.share.File file = exchange.getMessage().getBody(com.hierynomus.smbj.share.File.class);
-    try (InputStream inputStream = file.getInputStream()) {
-        LOG.debug("Read exchange: {}, with contents: {}", file.getFileInformation(), new String(inputStream.readAllBytes()));
-    }
+    final org.apache.camel.component.smb.SmbFile file = exchange.getMessage().getBody(org.apache.camel.component.smb.SmbFile.class);
+    LOG.debug("Read exchange: {}, with contents: {}", file.getFile(), new String((byte[]) file.getBody()));
 }
 
 public void configure() {
-    fromF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(), service.userName(), service.password())
+    fromF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(), service.userName(), service.password())
         .process(this::process)
         .to("mock:result");
 }
@@ -100,9 +98,11 @@ public void configure() {
 
 [NOTE]
 ====
-Beware that the File object provided is not a `java.io.File` instance, but, instead a `com.hierynomus.smbj.share.File` instance.
+Beware that the File object provided is not a `java.io.File` instance, but, instead a `org.apache.camel.component.smb.SmbFile` instance that extends Camel's `GenericFile`.
 Relying on the underlying implementation may make your code more susceptible to problems between version upgrades of the library
 used to implement this component.
+
+To maintain backward compatibility, a new Camel Header `CamelSmbUncPath` has been introduced that provides the full absolute path when a File is consumed from the SMB server.
 ====
 
 

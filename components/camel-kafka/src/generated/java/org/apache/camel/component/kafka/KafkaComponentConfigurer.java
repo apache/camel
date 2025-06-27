@@ -45,6 +45,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "batchwithindividualheaders":
         case "batchWithIndividualHeaders": getOrCreateConfiguration(target).setBatchWithIndividualHeaders(property(camelContext, boolean.class, value)); return true;
         case "batching": getOrCreateConfiguration(target).setBatching(property(camelContext, boolean.class, value)); return true;
+        case "batchingintervalms":
+        case "batchingIntervalMs": getOrCreateConfiguration(target).setBatchingIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "breakonfirsterror":
         case "breakOnFirstError": getOrCreateConfiguration(target).setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -238,6 +240,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "subscribeConsumerBackoffInterval": target.setSubscribeConsumerBackoffInterval(property(camelContext, long.class, value)); return true;
         case "subscribeconsumerbackoffmaxattempts":
         case "subscribeConsumerBackoffMaxAttempts": target.setSubscribeConsumerBackoffMaxAttempts(property(camelContext, int.class, value)); return true;
+        case "subscribeconsumertopicmustexists":
+        case "subscribeConsumerTopicMustExists": target.setSubscribeConsumerTopicMustExists(property(camelContext, boolean.class, value)); return true;
         case "synchronous": getOrCreateConfiguration(target).setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicispattern":
         case "topicIsPattern": getOrCreateConfiguration(target).setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
@@ -282,6 +286,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "batchwithindividualheaders":
         case "batchWithIndividualHeaders": return boolean.class;
         case "batching": return boolean.class;
+        case "batchingintervalms":
+        case "batchingIntervalMs": return java.lang.Integer.class;
         case "breakonfirsterror":
         case "breakOnFirstError": return boolean.class;
         case "bridgeerrorhandler":
@@ -475,6 +481,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "subscribeConsumerBackoffInterval": return long.class;
         case "subscribeconsumerbackoffmaxattempts":
         case "subscribeConsumerBackoffMaxAttempts": return int.class;
+        case "subscribeconsumertopicmustexists":
+        case "subscribeConsumerTopicMustExists": return boolean.class;
         case "synchronous": return boolean.class;
         case "topicispattern":
         case "topicIsPattern": return boolean.class;
@@ -515,6 +523,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "batchwithindividualheaders":
         case "batchWithIndividualHeaders": return getOrCreateConfiguration(target).isBatchWithIndividualHeaders();
         case "batching": return getOrCreateConfiguration(target).isBatching();
+        case "batchingintervalms":
+        case "batchingIntervalMs": return getOrCreateConfiguration(target).getBatchingIntervalMs();
         case "breakonfirsterror":
         case "breakOnFirstError": return getOrCreateConfiguration(target).isBreakOnFirstError();
         case "bridgeerrorhandler":
@@ -708,6 +718,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "subscribeConsumerBackoffInterval": return target.getSubscribeConsumerBackoffInterval();
         case "subscribeconsumerbackoffmaxattempts":
         case "subscribeConsumerBackoffMaxAttempts": return target.getSubscribeConsumerBackoffMaxAttempts();
+        case "subscribeconsumertopicmustexists":
+        case "subscribeConsumerTopicMustExists": return target.isSubscribeConsumerTopicMustExists();
         case "synchronous": return getOrCreateConfiguration(target).isSynchronous();
         case "topicispattern":
         case "topicIsPattern": return getOrCreateConfiguration(target).isTopicIsPattern();

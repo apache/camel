@@ -33,7 +33,7 @@ public class HttpProducerSendEmptyHeaderTest extends BaseJettyTest {
         mock.expectedMessageCount(1);
 
         // Jetty 8 treats an empty header as "" while Jetty 9 treats it as null
-        String expectedValue = isJetty8() ? "" : null;
+        String expectedValue = null;
         mock.expectedHeaderReceived("foo", expectedValue);
 
         template.sendBodyAndHeader("http://localhost:{{port}}/myapp/mytest", "Hello World", "foo", "");

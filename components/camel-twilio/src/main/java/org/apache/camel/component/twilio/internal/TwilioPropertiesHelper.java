@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.twilio.internal;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.twilio.TwilioConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -25,16 +28,22 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  */
 public final class TwilioPropertiesHelper extends ApiMethodPropertiesHelper<TwilioConfiguration> {
 
+    private static final Lock LOCK = new ReentrantLock();
     private static TwilioPropertiesHelper helper;
 
     private TwilioPropertiesHelper(CamelContext context) {
         super(context, TwilioConfiguration.class, TwilioConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized TwilioPropertiesHelper getHelper(CamelContext context) {
-        if (helper == null) {
-            helper = new TwilioPropertiesHelper(context);
+    public static TwilioPropertiesHelper getHelper(CamelContext context) {
+        LOCK.lock();
+        try {
+            if (helper == null) {
+                helper = new TwilioPropertiesHelper(context);
+            }
+            return helper;
+        } finally {
+            LOCK.unlock();
         }
-        return helper;
     }
 }

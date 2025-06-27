@@ -99,7 +99,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     @UriParam(description = "API basePath, for example \"`/v3`\". Default is unset, if set overrides the value present in"
                             + " OpenApi specification and in the component configuration.",
-              label = "producer")
+              label = "common")
     private String basePath;
     @UriParam(description = "Name of the Camel component that will perform the requests. The component must be present"
                             + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
@@ -154,6 +154,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer",
               description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
     private boolean clientRequestValidation;
+    @UriParam(label = "consumer",
+              description = "Whether to enable validation of the client request to check if the outgoing response from Camel is valid according to the OpenAPI specification")
+    private boolean clientResponseValidation;
     @UriParam(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
     @UriParam(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
@@ -296,6 +299,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (factory != null) {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
             Map<String, Object> copy = new HashMap<>(parameters); // defensive copy of the parameters
+            // avoid duplicate context-path
+            if (basePath.equals(config.getContextPath())) {
+                basePath = "";
+            }
             Consumer consumer = factory.createConsumer(getCamelContext(), processor, basePath, config, copy);
             if (consumer instanceof PlatformHttpConsumerAware phca) {
                 processor.setPlatformHttpConsumer(phca);
@@ -309,7 +316,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-
         final CamelContext camelContext = getCamelContext();
         final OpenAPI openapiDoc = loadSpecificationFrom(camelContext, specificationUri);
         final Paths paths = openapiDoc.getPaths();
@@ -323,7 +329,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
             if (maybeOperationEntry.isPresent()) {
                 final Entry<PathItem.HttpMethod, Operation> operationEntry = maybeOperationEntry.get();
-
                 final Operation operation = operationEntry.getValue();
                 Map<String, Parameter> pathParameters;
                 if (operation.getParameters() != null) {
@@ -334,13 +339,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                     pathParameters = new HashMap<>();
                 }
                 final String uriTemplate = resolveUri(pathEntry.getKey(), pathParameters);
-
                 final HttpMethod httpMethod = operationEntry.getKey();
                 final String method = httpMethod.name();
-
                 return createProducerFor(openapiDoc, operation, method, uriTemplate);
             }
-
         }
 
         final String supportedOperations = paths.values().stream().flatMap(p -> p.readOperations().stream())
@@ -437,6 +439,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         this.clientRequestValidation = clientRequestValidation;
     }
 
+    public boolean isClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
+    public void setClientResponseValidation(boolean clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
+    }
+
     public RestOpenapiProcessorStrategy getRestOpenapiProcessorStrategy() {
         return restOpenapiProcessorStrategy;
     }
@@ -486,7 +496,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         Map<String, Object> params = determineEndpointParameters(openapi, operation);
         boolean hasHost = params.containsKey("host");
-
         String basePath = determineBasePath(openapi);
         String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate;
         if (hasHost) {
@@ -507,6 +516,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return new RestOpenApiProducer(endpoint.createProducer(), hasHost, requestValidator);
     }
 
+    @Deprecated
     String determineBasePath(final OpenAPI openapi) {
         if (isNotEmpty(basePath)) {
             return basePath;
@@ -517,19 +527,17 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return componentBasePath;
         }
 
-        final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
-
-        if (isNotEmpty(specificationBasePath)) {
-            return specificationBasePath;
-        }
-
         final CamelContext camelContext = getCamelContext();
         final RestConfiguration restConfiguration
                 = CamelContextHelper.getRestConfiguration(camelContext, null, determineComponentName());
         final String restConfigurationBasePath = restConfiguration.getContextPath();
-
         if (isNotEmpty(restConfigurationBasePath)) {
             return restConfigurationBasePath;
+        }
+
+        final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
+        if (isNotEmpty(specificationBasePath)) {
+            return specificationBasePath;
         }
 
         return RestOpenApiComponent.DEFAULT_BASE_PATH;
@@ -732,18 +740,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     String literalPathParameterValue(final Parameter parameter) {
         final String name = parameter.getName();
-
         final String valueStr = String.valueOf(parameters.get(name));
-
         return UnsafeUriCharactersEncoder.encode(valueStr);
     }
 
     String literalQueryParameterValue(final Parameter parameter) {
         final String name = parameter.getName();
-
         final String valueStr = String.valueOf(parameters.get(name));
         final String encoded = UnsafeUriCharactersEncoder.encode(valueStr);
-
         return name + "=" + encoded;
     }
 
@@ -756,7 +760,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (parameters.containsKey(name)) {
             return literalQueryParameterValue(parameter);
         }
-
         return queryParameterExpression(parameter);
     }
 
@@ -766,7 +769,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         int start = uriTemplate.indexOf('{');
-
         if (start == -1) {
             return uriTemplate;
         }
@@ -777,7 +779,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             resolved.append(uriTemplate, pos, start);
 
             final int end = uriTemplate.indexOf('}', start);
-
             final String name = uriTemplate.substring(start + 1, end);
 
             if (parameters.containsKey(name)) {
@@ -799,7 +800,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return resolved.toString();
     }
 
-    protected RequestValidator configureRequestValidator(
+    private RequestValidator configureRequestValidator(
             OpenAPI openAPI, Operation operation, String method, String uriTemplate) {
         DefaultRequestValidator answer = new DefaultRequestValidator();
         answer.setOperation(new RestOpenApiOperation(operation, method, uriTemplate));

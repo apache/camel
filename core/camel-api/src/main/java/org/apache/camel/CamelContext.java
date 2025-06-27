@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.camel.clock.EventClock;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -155,7 +156,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setManagementName(String name);
 
     /**
-     * Gets the version of the this CamelContext.
+     * Gets the version of this CamelContext.
      *
      * @return the version
      */
@@ -508,6 +509,22 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     List<Route> getRoutes();
 
     /**
+     * To get all the routes that matches the filter.
+     *
+     * @param  filter to filter to include only accepted routes
+     * @return        the routes that matched the filter
+     */
+    List<Route> getRoutes(Predicate<Route> filter);
+
+    /**
+     * Gets the routes for the given group
+     *
+     * @param  groupId the id of the group
+     * @return         the routes or an empty list if no routes exists for the given group id
+     */
+    List<Route> getRoutesByGroup(String groupId);
+
+    /**
      * Returns the total number of routes in this CamelContext
      */
     int getRoutesSize();
@@ -644,6 +661,24 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      */
     String addRouteFromTemplate(
             String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
+            throws Exception;
+
+    /**
+     * Adds a new route from a given kamelet
+     *
+     * @param  routeId           the id of the new route to add (optional)
+     * @param  routeTemplateId   the id of the kamelet route template (mandatory)
+     * @param  prefixId          prefix to use for all node ids (not route id). Use null for no prefix. (optional)
+     * @param  parentRouteId     the id of the route which is using the kamelet (such as from / to)
+     * @param  parentProcessorId the id of the processor which is using the kamelet (such as to)
+     * @param  parameters        parameters to use for the route template when creating the new route
+     * @return                   the id of the route added (for example when an id was auto assigned)
+     * @throws Exception         is thrown if error creating and adding the new route
+     */
+    String addRouteFromKamelet(
+            String routeId, String routeTemplateId, String prefixId,
+            String parentRouteId, String parentProcessorId,
+            Map<String, Object> parameters)
             throws Exception;
 
     /**
@@ -1238,6 +1273,16 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     boolean isBacklogTracingTemplates();
 
     /**
+     * Whether backlog tracing should trace details from rest-dsl.
+     */
+    void setBacklogTracingRests(boolean backlogTracingRests);
+
+    /**
+     * Whether backlog tracing should trace details from rest-dsl.
+     */
+    boolean isBacklogTracingRests();
+
+    /**
      * Gets the current {@link UuidGenerator}
      *
      * @return the uuidGenerator
@@ -1278,6 +1323,26 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setLoadHealthChecks(Boolean loadHealthChecks);
 
     /**
+     * Used for exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     */
+    void setAutoStartupExcludePattern(String autoStartupExcludePattern);
+
+    /**
+     * Used for exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     */
+    String getAutoStartupExcludePattern();
+
+    /**
      * Whether to capture precise source location:line-number for all EIPs in Camel routes.
      *
      * Enabling this will impact parsing Java based routes (also Groovy, etc.) on startup as this uses
@@ -1296,14 +1361,12 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setSourceLocationEnabled(Boolean sourceLocationEnabled);
 
     /**
-     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
-     * experience by being able to configure various settings using modeline directly in your route source code.
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
      */
     Boolean isModeline();
 
     /**
-     * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
-     * experience by being able to configure various settings using modeline directly in your route source code.
+     * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
      */
     void setModeline(Boolean modeline);
 
@@ -1422,6 +1485,16 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * verbosity of tracing when using many route templates, and allow to focus on tracing your own Camel routes only.
      */
     boolean isTracingTemplates();
+
+    /**
+     * Whether tracing should trace details from rest-dsl.
+     */
+    void setTracingRests(boolean tracingRests);
+
+    /**
+     * Whether tracing should trace details from rest-dsl.
+     */
+    boolean isTracingRests();
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)

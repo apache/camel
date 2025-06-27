@@ -88,31 +88,34 @@ class XPathNamespacesTest {
                   steps:
                     - setProperty:
                         name: child-expression-namespace-from-routes
-                        xpath:
-                          resultType: java.lang.String
-                          saxon: "true"
-                          expression: /routes-ns-def:parent/routes-ns-def:child
-                          namespace:
-                            routes-ns-def: http://www.example.com/schema
-                            route-ns-def: http://www.example.com/schema
+                        expression:
+                          xpath:
+                            resultType: java.lang.String
+                            saxon: "true"
+                            expression: /routes-ns-def:parent/routes-ns-def:child
+                            namespace:
+                              routes-ns-def: http://www.example.com/schema
+                              route-ns-def: http://www.example.com/schema
                     - setProperty:
                         name: child-expression-namespace-from-route
-                        xpath:
-                          resultType: java.lang.String
-                          saxon: "true"
-                          expression: /route-ns-def:parent/route-ns-def:child
-                          namespace:
-                            routes-ns-def: http://www.example.com/schema
-                            route-ns-def: http://www.example.com/schema
+                        expression:
+                          xpath:
+                            resultType: java.lang.String
+                            saxon: "true"
+                            expression: /route-ns-def:parent/route-ns-def:child
+                            namespace:
+                              routes-ns-def: http://www.example.com/schema
+                              route-ns-def: http://www.example.com/schema
                     - setProperty:
                         name: child-expression-namespace-from-xpath
-                        xpath:
-                          resultType: java.lang.String
-                          saxon: "true"
-                          expression: /expression-ns-def:parent/expression-ns-def:child
-                          namespace:
-                            routes-ns-def: http://www.example.com/schema
-                            route-ns-def: http://www.example.com/schema
-                            expression-ns-def: http://www.example.com/schema
-            """;
+                        expression:
+                          xpath:
+                            resultType: java.lang.String
+                            saxon: "true"
+                            expression: /expression-ns-def:parent/expression-ns-def:child
+                            namespace:
+                              routes-ns-def: http://www.example.com/schema
+                              route-ns-def: http://www.example.com/schema
+                              expression-ns-def: http://www.example.com/schema
+                        """;
 }

@@ -17,27 +17,9 @@
 
 package org.apache.camel.test.infra.elasticsearch.services;
 
-import java.util.Optional;
-
-import javax.net.ssl.SSLContext;
-
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
-public interface ElasticSearchService extends TestService {
+public interface ElasticSearchService extends TestService, ContainerTestService, ElasticSearchInfraService {
 
-    int getPort();
-
-    String getElasticSearchHost();
-
-    default String getHttpHostAddress() {
-        return String.format("%s:%d", getElasticSearchHost(), getPort());
-    }
-
-    Optional<String> getCertificatePath();
-
-    Optional<SSLContext> getSslContext();
-
-    String getUsername();
-
-    String getPassword();
 }

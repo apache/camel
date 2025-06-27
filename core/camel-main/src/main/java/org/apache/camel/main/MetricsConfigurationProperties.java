@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for Micrometer Metrics.
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class MetricsConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
@@ -39,13 +39,21 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "true")
     private boolean enableExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
+    private boolean baseEndpointURIExchangeEventNotifier = true;
+    @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
+    @Metadata(defaultValue = "false")
+    private boolean enableInstrumentedThreadPoolFactory;
     @Metadata(defaultValue = "true")
     private boolean clearOnReload = true;
+    @Metadata(defaultValue = "false")
+    private boolean skipCamelInfo = false;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
     @Metadata
     private String binders;
+    @Metadata(defaultValue = "/q/metrics")
+    private String path = "/q/metrics";
 
     public MetricsConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -127,6 +135,22 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
         this.enableExchangeEventNotifier = enableExchangeEventNotifier;
     }
 
+    public boolean isBaseEndpointURIExchangeEventNotifier() {
+        return baseEndpointURIExchangeEventNotifier;
+    }
+
+    /**
+     * Whether to use static or dynamic values for Endpoint Name tags in captured metrics.
+     *
+     * By default, static values are used.
+     *
+     * When using dynamic tags, then a dynamic to (toD) can compute many different endpoint URIs that, can lead to many
+     * tags as the URI is dynamic, so use this with care if setting this option to false.
+     */
+    public void setBaseEndpointURIExchangeEventNotifier(boolean baseEndpointURIExchangeEventNotifier) {
+        this.baseEndpointURIExchangeEventNotifier = baseEndpointURIExchangeEventNotifier;
+    }
+
     public boolean isEnableRouteEventNotifier() {
         return enableRouteEventNotifier;
     }
@@ -139,6 +163,18 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
         this.enableRouteEventNotifier = enableRouteEventNotifier;
     }
 
+    public boolean isEnableInstrumentedThreadPoolFactory() {
+        return enableInstrumentedThreadPoolFactory;
+    }
+
+    /**
+     * Set whether to gather performance information about Camel Thread Pools by injecting an
+     * InstrumentedThreadPoolFactory.
+     */
+    public void setEnableInstrumentedThreadPoolFactory(boolean enableInstrumentedThreadPoolFactory) {
+        this.enableInstrumentedThreadPoolFactory = enableInstrumentedThreadPoolFactory;
+    }
+
     public boolean isClearOnReload() {
         return clearOnReload;
     }
@@ -148,6 +184,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public void setClearOnReload(boolean clearOnReload) {
         this.clearOnReload = clearOnReload;
+    }
+
+    public boolean isSkipCamelInfo() {
+        return skipCamelInfo;
+    }
+
+    /**
+     * Skip the evaluation of "app.info" metric which contains runtime provider information (default, `false`).
+     */
+    public void setSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
     }
 
     public String getTextFormatVersion() {
@@ -178,6 +225,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public void setBinders(String binders) {
         this.binders = binders;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * The path endpoint used to expose the metrics.
+     */
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @Override
@@ -249,10 +307,27 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
+     * Set whether to gather performance information about Camel Thread Pools by injecting an
+     * InstrumentedThreadPoolFactory.
+     */
+    public MetricsConfigurationProperties withEnableInstrumentedThreadPoolFactory(boolean enableInstrumentedThreadPoolFactory) {
+        this.enableInstrumentedThreadPoolFactory = enableInstrumentedThreadPoolFactory;
+        return this;
+    }
+
+    /**
      * Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang.
      */
     public MetricsConfigurationProperties withClearOnReload(boolean clearOnReload) {
         this.clearOnReload = clearOnReload;
+        return this;
+    }
+
+    /**
+     * Skip the evaluation of "app.info" metric which contains runtime provider information (default, `false`).
+     */
+    public MetricsConfigurationProperties withSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
         return this;
     }
 

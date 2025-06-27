@@ -1,14 +1,14 @@
 = JMX
 
-Camel has optional support for JMX management, which is 
+Camel has optional support for JMX management, which is
 part of the `camel-management` and `camel-management-api` JARs.
 
 == Using JMX to manage Apache Camel
 
 The JMX instrumentation agent is enabled in Camel when the `camel-management`
 JAR is included in the classpath. Once enabled, the Camel runtime creates and
-registers MBean management objects with a `MBeanServer` instance in the VM. 
-This allows Camel users to instantly obtain insights into how Camel routes 
+registers MBean management objects with a `MBeanServer` instance in the VM.
+This allows Camel users to instantly obtain insights into how Camel routes
 perform down to the individual processor level.
 
 The high level supported types of management objects are:
@@ -29,7 +29,7 @@ addition to performance counter-attributes.
 == Disabling or enabling Camel JMX
 
 JMX is only enabled in Camel when the `camel-management` JAR is included on the
-classpath. To quickly enable or disable JMX, simply add or remove this JAR 
+classpath. To quickly enable or disable JMX, simply add or remove this JAR
 from the classpath.
 
 It is also possible to enable or disable JMX via configuration as documented below.
@@ -334,3 +334,55 @@ declared that the `EndpointUri` JMX attribute is masked:
 String getEndpointUri();
 ----
 
+== Expose JMX metrics remotely
+
+When you're running the application locally, you can use any JMX client (ie, `jconsole`) to access to the process and the the statistics exposed. However, you may want to expose these metrics remotely in order to be accessed by any remote process: https://docs.oracle.com/javase/tutorial/jmx/remote/jconsole.html[expose the JMX metrics remotely].
+
+NOTE: make sure to properly secure the access to JMX services for production workloads.
+
+== How to use a Java Agent
+
+Exposing the JMX metrics with its native protocol may not always be possible (ie, for firewall limitations, security, etc). In this case you may recur to the availability of JSR 160 compatible Java Agents (for instance, https://jolokia.org/reference/html/manual/agents.html#agents-jvm[Jolokia]), which goal is to adapt the JMX interface with HTTP based protocol. With this approach you can run you application attaching a Java Agent whose goal will be to take care of exposing JMX via HTTP. As an example:
+```
+java -javaagent:jsr160-javaagent.jar -jar my-camel-app.jar
+```
+will expose certain endpoints (depending on the implementation) which would let you interact with JMX.
+
+Depending on the implementation you will need to provide to a different set of agent configuration. For example, if you're running Jolokia agent, then, you will need to run this configuration to expose a plain HTTP unsecure service:
+```
+java -javaagent:jolokia-agent-jvm-2.1.1-javaagent.jar=protocol=http,useSslClientAuthentication=false,discoveryEnabled=false,host=*,extendedClientCheck=false -jar my-camel-app.jar
+```
+From that moment onward you will be able to access the service via:
+
+```
+
+$ curl http://localhost:8778/jolokia/list/org.apache.camel | jq | more
+{
+  "request": {
+    "path": "org.apache.camel",
+    "type": "list"
+  },
+  "value": {
+    "context=camel-1,name=\"platform-http\",type=components": {
+      "op": {
+        "getCamelId": {
+          "args": [],
+          "ret": "java.lang.String",
+          "desc": "CamelId"
+        },
+        "isHealthCheckSupported": {
+          "args": [],
+          "ret": "boolean",
+          "desc": "HealthCheckSupported"
+        },
+        "getComponentName": {
+          "args": [],
+          "ret": "java.lang.String",
+          "desc": "ComponentName"
+        },
+...
+```
+
+Each agent implementation may provide a different way to get and execute actions on the various endpoint.
+
+WARNING: make sure to properly secure the access to the HTTP services for production workloads checking the specific agent configuration documentation.

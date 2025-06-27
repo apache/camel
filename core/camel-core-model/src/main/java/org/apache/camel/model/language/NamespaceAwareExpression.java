@@ -101,7 +101,10 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
         }
         if (namespace != null) {
             for (PropertyDefinition def : namespace) {
-                namespaces.put(def.getKey(), def.getValue());
+                boolean exists = namespaces.containsKey(def.getKey());
+                if (!exists) {
+                    namespaces.put(def.getKey(), def.getValue());
+                }
             }
         }
         return namespaces;

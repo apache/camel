@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.BucketCannedACL;
+import software.amazon.awssdk.services.s3.model.ChecksumAlgorithm;
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
@@ -53,6 +54,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
+import software.amazon.awssdk.services.s3.model.UploadPartResponse;
 import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 
 /**
@@ -68,6 +70,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private final Lock lock = new ReentrantLock();
     private transient String s3ProducerToString;
     private ScheduledExecutorService timeoutCheckerExecutorService;
+    private ChecksumAlgorithm algorithm = ChecksumAlgorithm.CRC32;
 
     public AWS2S3StreamUploadProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -194,7 +197,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     state.part, state.id);
             CreateMultipartUploadRequest.Builder createMultipartUploadRequest
                     = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
-                            .key(state.dynamicKeyName);
+                            .key(state.dynamicKeyName).checksumAlgorithm(algorithm);
 
             String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
             if (storageClass != null) {
@@ -300,14 +303,15 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private void uploadPart(UploadState state) {
         UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
                 .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId())
-                .partNumber(state.multipartIndex).build();
+                .partNumber(state.multipartIndex).checksumAlgorithm(algorithm).build();
 
         LOG.trace("Uploading part {}, multipart {} at index {} for {}", state.part, state.multipartIndex, state.index,
                 getConfiguration().getKeyName());
 
-        String etag = getEndpoint().getS3Client()
-                .uploadPart(uploadRequest, RequestBody.fromBytes(state.buffer.toByteArray())).eTag();
-        CompletedPart partUpload = CompletedPart.builder().partNumber(state.multipartIndex).eTag(etag).build();
+        UploadPartResponse partResponse = getEndpoint().getS3Client()
+                .uploadPart(uploadRequest, RequestBody.fromBytes(state.buffer.toByteArray()));
+        CompletedPart partUpload = CompletedPart.builder().partNumber(state.multipartIndex)
+                .checksumCRC32(partResponse.checksumCRC32()).eTag(partResponse.eTag()).build();
         state.completedParts.add(partUpload);
         state.buffer.reset();
         state.multipartIndex++;

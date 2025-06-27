@@ -32,8 +32,12 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "amazonkinesisasyncclient":
+        case "amazonKinesisAsyncClient": getOrCreateConfiguration(target).setAmazonKinesisAsyncClient(property(camelContext, software.amazon.awssdk.services.kinesis.KinesisAsyncClient.class, value)); return true;
         case "amazonkinesisclient":
         case "amazonKinesisClient": getOrCreateConfiguration(target).setAmazonKinesisClient(property(camelContext, software.amazon.awssdk.services.kinesis.KinesisClient.class, value)); return true;
+        case "applicationname":
+        case "applicationName": getOrCreateConfiguration(target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncclient":
         case "asyncClient": getOrCreateConfiguration(target).setAsyncClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
@@ -59,6 +63,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": getOrCreateConfiguration(target).setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
+        case "messagetimestamp":
+        case "messageTimestamp": getOrCreateConfiguration(target).setMessageTimestamp(property(camelContext, java.lang.String.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "profilecredentialsname":
@@ -100,7 +106,7 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"amazonKinesisClient"};
+        return new String[]{"amazonKinesisAsyncClient", "amazonKinesisClient"};
     }
 
     @Override
@@ -108,8 +114,12 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
+        case "amazonkinesisasyncclient":
+        case "amazonKinesisAsyncClient": return software.amazon.awssdk.services.kinesis.KinesisAsyncClient.class;
         case "amazonkinesisclient":
         case "amazonKinesisClient": return software.amazon.awssdk.services.kinesis.KinesisClient.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
         case "asyncclient":
         case "asyncClient": return boolean.class;
         case "autowiredenabled":
@@ -135,6 +145,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": return boolean.class;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return int.class;
+        case "messagetimestamp":
+        case "messageTimestamp": return java.lang.String.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
         case "profilecredentialsname":
@@ -180,8 +192,12 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
+        case "amazonkinesisasyncclient":
+        case "amazonKinesisAsyncClient": return getOrCreateConfiguration(target).getAmazonKinesisAsyncClient();
         case "amazonkinesisclient":
         case "amazonKinesisClient": return getOrCreateConfiguration(target).getAmazonKinesisClient();
+        case "applicationname":
+        case "applicationName": return getOrCreateConfiguration(target).getApplicationName();
         case "asyncclient":
         case "asyncClient": return getOrCreateConfiguration(target).isAsyncClient();
         case "autowiredenabled":
@@ -207,6 +223,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return getOrCreateConfiguration(target).getMaxResultsPerRequest();
+        case "messagetimestamp":
+        case "messageTimestamp": return getOrCreateConfiguration(target).getMessageTimestamp();
         case "overrideendpoint":
         case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
         case "profilecredentialsname":

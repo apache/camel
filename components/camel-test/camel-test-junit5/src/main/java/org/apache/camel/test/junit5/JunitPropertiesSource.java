@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import org.apache.camel.spi.PropertiesSource;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 class JunitPropertiesSource implements PropertiesSource {
+
     private final ExtensionContext.Store globalStore;
 
     JunitPropertiesSource(ExtensionContext.Store globalStore) {

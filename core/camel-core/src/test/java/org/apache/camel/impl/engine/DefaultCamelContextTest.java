@@ -304,6 +304,27 @@ public class DefaultCamelContextTest extends TestSupport {
     }
 
     @Test
+    public void testGetRouteByFilter() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext(false);
+        ctx.disableJMX();
+
+        ctx.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").group("cheese").to("mock:result");
+                from("direct:start2").group("cheese").to("mock:result2");
+                from("direct:start3").to("mock:result3");
+            }
+        });
+        ctx.start();
+
+        assertEquals(2, ctx.getRoutesByGroup("cheese").size());
+        assertEquals(1, ctx.getRoutes(f -> f.getGroup() == null).size());
+
+        ctx.stop();
+    }
+
+    @Test
     public void testSuspend() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();

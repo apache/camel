@@ -16,53 +16,73 @@
  */
 package org.apache.camel.component.smb;
 
+import java.net.URI;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.file.GenericFileComponent;
+import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("smb")
-public class SmbComponent extends DefaultComponent {
+public class SmbComponent extends GenericFileComponent<FileIdBothDirectoryInformation> {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (ObjectHelper.isEmpty(remaining)) {
-            throw new IllegalArgumentException("Host IP or address must be configured on endpoint using syntax smb:host:port");
+    private static final Logger LOG = LoggerFactory.getLogger(SmbComponent.class);
+
+    public static final String SMB_FILE_INPUT_STREAM = "CamelSmbFileInputStream";
+
+    public SmbComponent() {
+    }
+
+    public SmbComponent(CamelContext context) {
+        super(context);
+    }
+
+    @Override
+    protected GenericFileEndpoint<FileIdBothDirectoryInformation> buildFileEndpoint(
+            String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
+        String baseUri = getBaseUri(uri);
+
+        // lets make sure we create a new configuration as each endpoint can
+        // customize its own version
+        // must pass on baseUri to the configuration (see above)
+        SmbConfiguration config = new SmbConfiguration(new URI(baseUri));
+
+        // backwards compatible when path was query parameter
+        String path = getAndRemoveParameter(parameters, "path", String.class);
+        if (path != null) {
+            config.setPath(path);
+            LOG.warn(
+                    "The path option should be specified in the context-path. Instead of using ?path=/mypath then specify this in the context-path in uri: "
+                     + uri);
         }
 
-        final SmbEndpoint endpoint = new SmbEndpoint(uri, this);
-
-        final String hostPart = StringHelper.before(remaining, "/");
-        if (hostPart != null && hostPart.contains(":")) {
-            parseHost(hostPart, endpoint);
-        } else {
-            endpoint.setHostname(hostPart);
+        if (config.getShareName() == null) {
+            throw new IllegalArgumentException("ShareName must be configured");
         }
 
-        String path = StringHelper.after(remaining, "/");
-
+        SmbEndpoint endpoint = new SmbEndpoint(uri, this, config);
         setProperties(endpoint, parameters);
-        endpoint.setShareName(path);
-
         return endpoint;
     }
 
-    private static void parseHost(String hostPart, SmbEndpoint endpoint) {
-        // Host part is in the format hostname:port or ip:port
-        String host = StringHelper.before(hostPart, ":");
-        if (ObjectHelper.isEmpty(host)) {
-            throw new IllegalArgumentException("Invalid host or address: " + hostPart);
-        }
-
-        endpoint.setHostname(host);
-
-        String port = StringHelper.after(hostPart, ":");
-        if (ObjectHelper.isEmpty(port)) {
-            throw new IllegalArgumentException("Invalid port given on host: " + hostPart);
-        }
-
-        endpoint.setPort(Integer.parseInt(port));
+    @Override
+    protected void afterPropertiesSet(GenericFileEndpoint<FileIdBothDirectoryInformation> endpoint) throws Exception {
+        // noop
     }
+
+    /**
+     * Get the base uri part before the options as they can be non URI valid such as the expression using $ chars and
+     * the URI constructor will regard $ as an illegal character, and we don't want to enforce end users to escape the $
+     * for the expression (file language)
+     */
+    protected String getBaseUri(String uri) {
+        return StringHelper.before(uri, "?", uri);
+    }
+
 }

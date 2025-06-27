@@ -335,6 +335,34 @@ public class MainVaultTest {
         Assertions.assertEquals("localhost", cfg.getHost());
         Assertions.assertEquals("8200", cfg.getPort());
         Assertions.assertEquals("https", cfg.getScheme());
+        Assertions.assertFalse(cfg.isCloud());
+        Assertions.assertNull(cfg.getNamespace());
+        main.stop();
+    }
+
+    public void testMainHashicorpWithCloud() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.hashicorp.token", "1111");
+        main.addInitialProperty("camel.vault.hashicorp.host", "localhost");
+        main.addInitialProperty("camel.vault.hashicorp.port", "8200");
+        main.addInitialProperty("camel.vault.hashicorp.scheme", "https");
+        main.addInitialProperty("camel.vault.hashicorp.cloud", "true");
+        main.addInitialProperty("camel.vault.hashicorp.namespace", "admin");
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        HashicorpVaultConfiguration cfg = context.getVaultConfiguration().hashicorp();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("1111", cfg.getToken());
+        Assertions.assertEquals("localhost", cfg.getHost());
+        Assertions.assertEquals("8200", cfg.getPort());
+        Assertions.assertEquals("https", cfg.getScheme());
+        Assertions.assertTrue(cfg.isCloud());
+        Assertions.assertEquals("admin", cfg.getNamespace());
         main.stop();
     }
 
@@ -376,6 +404,88 @@ public class MainVaultTest {
 
         Assertions.assertTrue(cfg.isRefreshEnabled());
         Assertions.assertEquals("xxxx", cfg.getSecrets());
+        main.stop();
+    }
+
+    @Test
+    public void testMainKubernetesConfigmaps() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.kubernetescm.refreshEnabled", "true");
+        main.addInitialProperty("camel.vault.kubernetescm.configmaps", "xxxx");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        KubernetesConfigMapVaultConfiguration cfg = context.getVaultConfiguration().kubernetesConfigmaps();
+        assertNotNull(cfg);
+
+        Assertions.assertTrue(cfg.isRefreshEnabled());
+        Assertions.assertEquals("xxxx", cfg.getConfigmaps());
+        main.stop();
+    }
+
+    @Test
+    public void testMainKubernetesConfigmapsFluent() {
+        Main main = new Main();
+        main.configure().vault().kubernetesConfigmaps()
+                .withRefreshEnabled(true)
+                .withConfigmaps("xxxx")
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        KubernetesConfigMapVaultConfiguration cfg = context.getVaultConfiguration().kubernetesConfigmaps();
+        assertNotNull(cfg);
+
+        Assertions.assertTrue(cfg.isRefreshEnabled());
+        Assertions.assertEquals("xxxx", cfg.getConfigmaps());
+        main.stop();
+    }
+
+    @Test
+    public void testMainIBMSecretsManager() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.ibm.serviceUrl", "http://ibm.cloud.com");
+        main.addInitialProperty("camel.vault.ibm.token", "token");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        IBMSecretsManagerVaultConfiguration cfg = context.getVaultConfiguration().ibmSecretsManager();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("token", cfg.getToken());
+        Assertions.assertEquals("http://ibm.cloud.com", cfg.getServiceUrl());
+        main.stop();
+    }
+
+    @Test
+    public void testMainIBMFluent() {
+        Main main = new Main();
+        main.configure().vault().ibmSecretsManager()
+                .withToken("token")
+                .withServiceUrl("http://ibm.cloud.com")
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        IBMSecretsManagerVaultConfiguration cfg = context.getVaultConfiguration().ibmSecretsManager();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("token", cfg.getToken());
+        Assertions.assertEquals("http://ibm.cloud.com", cfg.getServiceUrl());
         main.stop();
     }
 }

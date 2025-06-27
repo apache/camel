@@ -19,6 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,10 +34,14 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.fabric8.kubernetes.api.model.APIGroup;
+import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
+import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
-import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import io.fabric8.kubernetes.client.dsl.base.ResourceDefinitionContext;
 import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
@@ -76,9 +83,8 @@ public final class KubernetesHelper {
     public static KubernetesClient getKubernetesClient() {
         if (kubernetesClient == null) {
             kubernetesClient = new KubernetesClientBuilder().build();
-            printClientInfo(kubernetesClient);
         }
-
+        setKubernetesClientProperties();
         return kubernetesClient;
     }
 
@@ -89,18 +95,22 @@ public final class KubernetesHelper {
         if (clients.containsKey(config)) {
             return clients.get(config);
         }
-
+        setKubernetesClientProperties();
         var client = new KubernetesClientBuilder().withConfig(config).build();
-        printClientInfo(client);
         return clients.put(config, client);
     }
 
-    private static void printClientInfo(KubernetesClient client) {
-        var printer = CommandHelper.GetPrinter();
-        if (printer != null) {
-            var serverUrl = client.getConfiguration().getMasterUrl();
-            var info = client.getKubernetesVersion();
-            printer.println(String.format("Kubernetes v%s.%s %s", info.getMajor(), info.getMinor(), serverUrl));
+    // set short timeouts to fail fast in case it's not connected to a cluster and don't waste time
+    // the user can override these values by setting the property in the cli
+    private static void setKubernetesClientProperties() {
+        if (System.getProperty("kubernetes.connection.timeout") == null) {
+            System.setProperty("kubernetes.connection.timeout", "2000");
+        }
+        if (System.getProperty("kubernetes.request.timeout") == null) {
+            System.setProperty("kubernetes.request.timeout", "2000");
+        }
+        if (System.getProperty("kubernetes.request.retry.backoffLimit") == null) {
+            System.setProperty("kubernetes.request.retry.backoffLimit", "1");
         }
     }
 
@@ -126,18 +136,93 @@ public final class KubernetesHelper {
     }
 
     /**
+     * Verify what cluster this shell console is connected to, currently it tests for Openshift and Minikube, in case of
+     * errors or no connected cluster, it defaults to Kubernetes.
+     *
+     * @return The cluster type may be: Openshift, Minikube or Kubernetes.
+     */
+    static ClusterType discoverClusterType() {
+        ClusterType cluster = ClusterType.KUBERNETES;
+        if (isConnectedToOpenshift()) {
+            cluster = ClusterType.OPENSHIFT;
+        } else if (isConnectedToMinikube()) {
+            cluster = ClusterType.MINIKUBE;
+        }
+        return cluster;
+    }
+
+    private static boolean isConnectedToOpenshift() {
+        boolean ocp = false;
+        try {
+            APIGroup apiGroup = getKubernetesClient().getApiGroup("config.openshift.io");
+            ocp = apiGroup != null;
+        } catch (RuntimeException e) {
+            System.out.println("Failed to detect cluster: " + e.getMessage() + ", default to kubernetes.");
+        }
+        return ocp;
+    }
+
+    private static boolean isConnectedToMinikube() {
+        boolean minikube = false;
+        boolean minikubeEnv = false;
+        try {
+            ResourceDefinitionContext nodecrd = new ResourceDefinitionContext.Builder()
+                    .withVersion("v1")
+                    .withKind("Node")
+                    .withNamespaced(false)
+                    .build();
+            // if there is a node with minikube label, then it's minikube
+            GenericKubernetesResourceList list = getKubernetesClient().genericKubernetesResources(nodecrd)
+                    .withLabels(Collections.singletonMap("minikube.k8s.io/name", null)).list();
+            minikube = list.getItems().size() > 0;
+            // thse env properties are set when running eval $(minikube docker-env) in the console
+            // this is important for the docker builder to actually build the image in the exposed docker from the minikube registry
+            minikubeEnv = System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
+                    && System.getenv("DOCKER_TLS_VERIFY") != null;
+            if (minikube && !minikubeEnv) {
+                System.out.println(
+                        "It seems you have minikube running but forgot to run \"eval $(minikube docker-env)\", default cluster to kubernetes.");
+            }
+        } catch (Exception e) {
+            // ignore it, since we try to discover the cluster and don't want the caller to handle any error
+        }
+        return minikube && minikubeEnv;
+    }
+
+    // when minikube is used with the registry addon exposed
+    // the build of images uses docker builder directly from the registry inside minikube
+    // that doesn't generate the container image digest in the registry
+    // that poses a problem when deploying a knative-service, since it validates the container image to have a digest
+    // then it fails with: failed to resolve image to digest
+    // so, for development purposes we disable this validation in minikube
+    // https://knative.dev/docs/serving/configuration/deployment/#skipping-tag-resolution
+    public static void skipKnativeImageTagResolutionInMinikube() {
+        ConfigMap cm = getKubernetesClient().configMaps().inNamespace("knative-serving").withName("config-deployment").get();
+        Map<String, String> data = cm.getData();
+        String skipTag = data.get("registries-skipping-tag-resolving");
+        if (skipTag == null || !skipTag.contains("localhost:5000")) {
+            // patch the cm/config-deployment in knative-serving namespace with
+            // registries-skipping-tag-resolving: localhost:5000
+            getKubernetesClient().configMaps().inNamespace("knative-serving").withName("config-deployment").edit(
+                    c -> new ConfigMapBuilder(c).addToData("registries-skipping-tag-resolving", "localhost:5000").build());
+        }
+    }
+
+    /**
      * Sanitize given name to meet Kubernetes resource naming requirements.
      *
      * @param  name to sanitize.
      * @return      sanitized name ready to be used as a Kubernetes resource name.
      */
     public static String sanitize(String name) {
-        name = FileUtil.onlyName(name);
-        name = StringHelper.sanitize(name);
-        name = StringHelper.camelCaseToDash(name);
-        name = name.toLowerCase(Locale.US);
-        name = name.replaceAll("[^a-z0-9-]", "");
-        name = name.trim();
+        if (name != null) {
+            name = FileUtil.onlyName(name);
+            name = StringHelper.sanitize(name);
+            name = StringHelper.camelCaseToDash(name);
+            name = name.toLowerCase(Locale.US);
+            name = name.replaceAll("[^a-z0-9-]", "");
+            name = name.trim();
+        }
         return name;
     }
 
@@ -186,6 +271,23 @@ public final class KubernetesHelper {
                         .formatted(extension, workingDir.toPath().toString()));
     }
 
+    public static Path resolveKubernetesManifestPath(String clusterType, Path workingDir) throws FileNotFoundException {
+        return resolveKubernetesManifestPath(clusterType, workingDir, "yml");
+    }
+
+    public static Path resolveKubernetesManifestPath(String clusterType, Path workingDir, String extension)
+            throws FileNotFoundException {
+
+        var manifestPath = getKubernetesManifestPath(clusterType, workingDir, extension);
+        if (Files.exists(manifestPath)) {
+            return manifestPath;
+        }
+
+        throw new FileNotFoundException(
+                "Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
+                        .formatted(extension, workingDir.toString()));
+    }
+
     public static String getPodPhase(Pod pod) {
         return Optional.ofNullable(pod).map(p -> p.getStatus().getPhase()).orElse("Unknown");
     }
@@ -199,13 +301,26 @@ public final class KubernetesHelper {
     }
 
     public static File getKubernetesManifest(String clusterType, File workingDir, String extension) {
-        ClusterType cs = ClusterType
-                .valueOf(Optional.ofNullable(clusterType).map(String::toUpperCase).orElse(ClusterType.KUBERNETES.name()));
-        String manifestFile = switch (cs) {
-            case KIND, MINIKUBE -> "kubernetes";
-            case OPENSHIFT -> "_openshift";
-            default -> cs.name().toLowerCase();
-        };
+        String manifestFile;
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+            manifestFile = "kubernetes";
+        } else {
+            manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
+        }
         return new File(workingDir, "%s.%s".formatted(manifestFile, extension));
+    }
+
+    public static Path getKubernetesManifestPath(String clusterType, Path workingDir) {
+        return getKubernetesManifestPath(clusterType, workingDir, "yml");
+    }
+
+    public static Path getKubernetesManifestPath(String clusterType, Path workingDir, String extension) {
+        String manifestFile;
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+            manifestFile = "kubernetes";
+        } else {
+            manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
+        }
+        return workingDir.resolve("%s.%s".formatted(manifestFile, extension));
     }
 }

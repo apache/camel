@@ -107,7 +107,7 @@ loaded from the file system.
 
 |`CamelFop.Encrypt.userPassword` |  | PDF user password
 
-|`CamelFop.Encrypt.ownerPassword` |  | PDF owner passoword
+|`CamelFop.Encrypt.ownerPassword` |  | PDF owner password
 
 |`CamelFop.Encrypt.allowPrint` | `true` |Allows printing the PDF
 

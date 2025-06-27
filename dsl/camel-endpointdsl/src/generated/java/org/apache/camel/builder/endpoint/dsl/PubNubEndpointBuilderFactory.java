@@ -92,7 +92,10 @@ public interface PubNubEndpointBuilderFactory {
         }
         /**
          * If Access Manager is utilized, client will use this authKey in all
-         * restricted requests.
+         * restricted requests. Default value notice: This setting is deprecated
+         * because it relates to deprecated Access Manager (PAM V2) and will be
+         * removed in the future. Please, migrate to new Access Manager (PAM V3)
+         * https://www.pubnub.com/docs/general/resources/migration-guides/pam-v3-migration.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -101,23 +104,9 @@ public interface PubNubEndpointBuilderFactory {
          * @param authKey the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default PubNubEndpointConsumerBuilder authKey(String authKey) {
             doSetProperty("authKey", authKey);
-            return this;
-        }
-        /**
-         * If cipher is passed, all communications to/from PubNub will be
-         * encrypted.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param cipherKey the value to set
-         * @return the dsl builder
-         */
-        default PubNubEndpointConsumerBuilder cipherKey(String cipherKey) {
-            doSetProperty("cipherKey", cipherKey);
             return this;
         }
         /**
@@ -325,22 +314,22 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option is a: <code>com.pubnub.api.PubNub</code> type.
+         * The option is a: <code>com.pubnub.api.java.PubNub</code> type.
          * 
          * Group: advanced
          * 
          * @param pubnub the value to set
          * @return the dsl builder
          */
-        default AdvancedPubNubEndpointConsumerBuilder pubnub(com.pubnub.api.PubNub pubnub) {
+        default AdvancedPubNubEndpointConsumerBuilder pubnub(com.pubnub.api.java.PubNub pubnub) {
             doSetProperty("pubnub", pubnub);
             return this;
         }
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option will be converted to a <code>com.pubnub.api.PubNub</code>
-         * type.
+         * The option will be converted to a
+         * <code>com.pubnub.api.java.PubNub</code> type.
          * 
          * Group: advanced
          * 
@@ -404,7 +393,10 @@ public interface PubNubEndpointBuilderFactory {
         }
         /**
          * If Access Manager is utilized, client will use this authKey in all
-         * restricted requests.
+         * restricted requests. Default value notice: This setting is deprecated
+         * because it relates to deprecated Access Manager (PAM V2) and will be
+         * removed in the future. Please, migrate to new Access Manager (PAM V3)
+         * https://www.pubnub.com/docs/general/resources/migration-guides/pam-v3-migration.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -413,23 +405,9 @@ public interface PubNubEndpointBuilderFactory {
          * @param authKey the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default PubNubEndpointProducerBuilder authKey(String authKey) {
             doSetProperty("authKey", authKey);
-            return this;
-        }
-        /**
-         * If cipher is passed, all communications to/from PubNub will be
-         * encrypted.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param cipherKey the value to set
-         * @return the dsl builder
-         */
-        default PubNubEndpointProducerBuilder cipherKey(String cipherKey) {
-            doSetProperty("cipherKey", cipherKey);
             return this;
         }
         /**
@@ -565,22 +543,22 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option is a: <code>com.pubnub.api.PubNub</code> type.
+         * The option is a: <code>com.pubnub.api.java.PubNub</code> type.
          * 
          * Group: advanced
          * 
          * @param pubnub the value to set
          * @return the dsl builder
          */
-        default AdvancedPubNubEndpointProducerBuilder pubnub(com.pubnub.api.PubNub pubnub) {
+        default AdvancedPubNubEndpointProducerBuilder pubnub(com.pubnub.api.java.PubNub pubnub) {
             doSetProperty("pubnub", pubnub);
             return this;
         }
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option will be converted to a <code>com.pubnub.api.PubNub</code>
-         * type.
+         * The option will be converted to a
+         * <code>com.pubnub.api.java.PubNub</code> type.
          * 
          * Group: advanced
          * 
@@ -622,7 +600,10 @@ public interface PubNubEndpointBuilderFactory {
         }
         /**
          * If Access Manager is utilized, client will use this authKey in all
-         * restricted requests.
+         * restricted requests. Default value notice: This setting is deprecated
+         * because it relates to deprecated Access Manager (PAM V2) and will be
+         * removed in the future. Please, migrate to new Access Manager (PAM V3)
+         * https://www.pubnub.com/docs/general/resources/migration-guides/pam-v3-migration.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -631,23 +612,9 @@ public interface PubNubEndpointBuilderFactory {
          * @param authKey the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default PubNubEndpointBuilder authKey(String authKey) {
             doSetProperty("authKey", authKey);
-            return this;
-        }
-        /**
-         * If cipher is passed, all communications to/from PubNub will be
-         * encrypted.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param cipherKey the value to set
-         * @return the dsl builder
-         */
-        default PubNubEndpointBuilder cipherKey(String cipherKey) {
-            doSetProperty("cipherKey", cipherKey);
             return this;
         }
         /**
@@ -740,22 +707,22 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option is a: <code>com.pubnub.api.PubNub</code> type.
+         * The option is a: <code>com.pubnub.api.java.PubNub</code> type.
          * 
          * Group: advanced
          * 
          * @param pubnub the value to set
          * @return the dsl builder
          */
-        default AdvancedPubNubEndpointBuilder pubnub(com.pubnub.api.PubNub pubnub) {
+        default AdvancedPubNubEndpointBuilder pubnub(com.pubnub.api.java.PubNub pubnub) {
             doSetProperty("pubnub", pubnub);
             return this;
         }
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option will be converted to a <code>com.pubnub.api.PubNub</code>
-         * type.
+         * The option will be converted to a
+         * <code>com.pubnub.api.java.PubNub</code> type.
          * 
          * Group: advanced
          * 

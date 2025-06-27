@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertExpression;
 import static org.apache.camel.test.junit5.TestSupport.assertInMessageHeader;
 import static org.apache.camel.test.junit5.TestSupport.assertPredicate;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -66,6 +67,18 @@ public class GroovyExpressionTest {
         assertPredicate(GroovyLanguage.groovy("variable.cheese == 'gauda'"), exchange, true);
         assertPredicate(GroovyLanguage.groovy("variables.cheese == 'gauda'"), exchange, true);
         assertPredicate(GroovyLanguage.groovy("variables['cheese'] == 'gauda'"), exchange, true);
+    }
+
+    @Test
+    public void testVariableHeaders() {
+        exchange.removeVariable("cheese");
+        exchange.setVariable("header:myKey.foo", "abc");
+        exchange.setVariable("header:myKey.bar", 123);
+        exchange.setVariable("myOtherKey", "Hello Again");
+
+        assertEquals("Hello Again", GroovyLanguage.groovy("variables['myOtherKey']").evaluate(exchange));
+        assertEquals("abc", GroovyLanguage.groovy("variables['header:myKey.foo']").evaluate(exchange));
+        assertEquals(123, GroovyLanguage.groovy("variables['header:myKey.bar']").evaluate(exchange));
     }
 
     @Test

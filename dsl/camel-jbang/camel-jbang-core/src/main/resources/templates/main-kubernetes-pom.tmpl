@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-health</artifactId>
+            <artifactId>camel-observability-services</artifactId>
         </dependency>
 {{ .CamelDependencies }}
 
@@ -42,22 +42,22 @@
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
-            <version>2.4.1</version>
+            <version>2.4.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.23.1</version>
+            <version>2.24.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
-            <version>2.23.1</version>
+            <version>2.24.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.23.1</version>
+            <version>2.24.3</version>
         </dependency>
 
         <dependency>
@@ -72,7 +72,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -125,31 +125,43 @@
             </plugin>
             <plugin>
                 <groupId>org.eclipse.jkube</groupId>
-                <artifactId>${camel.main.jkube.maven.plugin}</artifactId>
-                <version>${camel.main.jkube.version}</version>
+                <artifactId>${jkube.maven.plugin}</artifactId>
+                <version>${jkube.version}</version>
                 <configuration>
-                    <imagePullPolicy>${camel.main.kubernetes.image-pull-policy}</imagePullPolicy>
                     <buildStrategy>${jkube.build.strategy}</buildStrategy>
                     <images>
                         <image>
-                            <name>${camel.main.kubernetes.image-name}</name>
                             <build>
-                                <from>eclipse-temurin:{{ .JavaVersion }}</from>
-                                <!-- Supported only when using the jib build strategy -->
-                                <createImageOptions>
-                                    <platform>linux/amd64</platform>
-                                    <platform>linux/arm64</platform>
-                                </createImageOptions>
-                                <ports>
-                                    <port>${camel.main.kubernetes.ports.http.container-port}</port>
-                                </ports>
+                                <from>${jkube.container-image.from}</from>
                                 <entryPoint>
                                     <exec>
-                                        <arg>java</arg>
-                                        <arg>-jar</arg>
-                                        <arg>/maven/${project.artifactId}-${project.version}.jar</arg>
+                                        <arg>/maven/run-java.sh</arg>
+                                        <arg>run</arg>
                                     </exec>
                                 </entryPoint>
+                                <assembly>
+                                    <layers>
+                                        <layer>
+                                            <id>entrypoint</id>
+                                            <files>
+                                                <file>
+                                                    <source>src/main/scripts/run-java.sh</source>
+                                                    <outputDirectory>.</outputDirectory>
+                                                    <fileMode>755</fileMode>
+                                                </file>
+                                            </files>
+                                        </layer>
+                                        <layer>
+                                            <id>tls</id>
+                                            <fileSets>
+                                                <fileSet>
+                                                    <directory>src/main/tls</directory>
+                                                    <outputDirectory>./tls</outputDirectory>
+                                                </fileSet>
+                                            </fileSets>
+                                        </layer>
+                                    </layers>
+                                </assembly>
                             </build>
                         </image>
                     </images>
@@ -168,6 +180,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -175,7 +188,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <!-- For symmetry with Quarkus, copy kubernetes.yml to the same target location -->
+                            <!-- Copy kubernetes resources to target/kubernetes -->
                             <outputDirectory>${project.build.directory}/kubernetes</outputDirectory>
                             <resources>
                                 <resource>

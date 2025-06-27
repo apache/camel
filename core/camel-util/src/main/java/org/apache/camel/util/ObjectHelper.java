@@ -845,65 +845,53 @@ public final class ObjectHelper {
     /**
      * Returns a list of methods which are annotated with the given annotation
      *
-     * @param  type           the type to reflect on
-     * @param  annotationType the annotation type
-     * @return                a list of the methods found
+     * @param      type           the type to reflect on
+     * @param      annotationType the annotation type
+     * @return                    a list of the methods found
+     * @see                       AnnotationHelper
+     * @see                       AnnotationHelper
+     * @deprecated                use AnnotationHelper
      */
+    @Deprecated(since = "4.13.0")
     public static List<Method> findMethodsWithAnnotation(
             Class<?> type,
             Class<? extends Annotation> annotationType) {
-        return findMethodsWithAnnotation(type, annotationType, false);
+        return AnnotationHelper.findMethodsWithAnnotation(type, annotationType);
     }
 
     /**
      * Returns a list of methods which are annotated with the given annotation
      *
-     * @param  type                 the type to reflect on
-     * @param  annotationType       the annotation type
-     * @param  checkMetaAnnotations check for meta annotations
-     * @return                      a list of the methods found
+     * @param      type                 the type to reflect on
+     * @param      annotationType       the annotation type
+     * @param      checkMetaAnnotations check for meta annotations
+     * @return                          a list of the methods found
+     * @see                             AnnotationHelper
+     * @deprecated                      use AnnotationHelper
      */
+    @Deprecated(since = "4.13.0")
     public static List<Method> findMethodsWithAnnotation(
             Class<?> type,
             Class<? extends Annotation> annotationType,
             boolean checkMetaAnnotations) {
-        List<Method> answer = new ArrayList<>();
-        do {
-            Method[] methods = type.getDeclaredMethods();
-            for (Method method : methods) {
-                if (hasAnnotation(method, annotationType, checkMetaAnnotations)) {
-                    answer.add(method);
-                }
-            }
-            type = type.getSuperclass();
-        } while (type != null);
-        return answer;
+        return AnnotationHelper.findMethodsWithAnnotation(type, annotationType, checkMetaAnnotations);
     }
 
     /**
      * Checks if a Class or Method are annotated with the given annotation
      *
-     * @param  elem                 the Class or Method to reflect on
-     * @param  annotationType       the annotation type
-     * @param  checkMetaAnnotations check for meta annotations
-     * @return                      true if annotations is present
+     * @param      elem                 the Class or Method to reflect on
+     * @param      annotationType       the annotation type
+     * @param      checkMetaAnnotations check for meta annotations
+     * @return                          true if annotations is present
+     * @see                             AnnotationHelper
+     * @deprecated                      use AnnotationHelper
      */
+    @Deprecated(since = "4.13.0")
     public static boolean hasAnnotation(
             AnnotatedElement elem, Class<? extends Annotation> annotationType,
             boolean checkMetaAnnotations) {
-        if (elem.isAnnotationPresent(annotationType)) {
-            return true;
-        }
-        if (checkMetaAnnotations) {
-            for (Annotation a : elem.getAnnotations()) {
-                for (Annotation meta : a.annotationType().getAnnotations()) {
-                    if (meta.annotationType().getName().equals(annotationType.getName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return AnnotationHelper.hasAnnotation(elem, annotationType, checkMetaAnnotations);
     }
 
     /**

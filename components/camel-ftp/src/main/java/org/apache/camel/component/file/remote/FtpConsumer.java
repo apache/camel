@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.function.Suppliers;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -92,7 +94,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     @Override
-    protected boolean pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList, int depth) {
+    protected boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<FTPFile>> fileList, int depth) {
         String currentDir = null;
         if (isStepwise()) {
             // must remember current dir so we stay in that directory after the
@@ -103,7 +105,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         // strip trailing slash
         fileName = FileUtil.stripTrailingSeparator(fileName);
 
-        boolean answer = doPollDirectory(fileName, null, fileList, depth);
+        boolean answer = doPollDirectory(dynamic, fileName, null, fileList, depth);
         if (currentDir != null) {
             operations.changeCurrentDirectory(currentDir);
         }
@@ -111,8 +113,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return answer;
     }
 
-    protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList, int depth) {
-        boolean answer = doSafePollSubDirectory(absolutePath, dirName, fileList, depth);
+    protected boolean pollSubDirectory(
+            Exchange dynamic, String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList, int depth) {
+        boolean answer = doSafePollSubDirectory(dynamic, absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         if (isStepwise()) {
             operations.changeToParentDirectory();
@@ -121,7 +124,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     @Override
-    protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList, int depth) {
+    protected boolean doPollDirectory(
+            Exchange dynamic, String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList, int depth) {
         LOG.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
 
         depth++;
@@ -148,7 +152,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
 
         for (FTPFile file : files) {
-            if (handleFtpEntries(absolutePath, fileList, depth, files, file)) {
+            if (handleFtpEntries(dynamic, absolutePath, fileList, depth, files, file)) {
                 return false;
             }
         }
@@ -157,6 +161,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     private boolean handleFtpEntries(
+            Exchange dynamic,
             String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("FtpFile[name={}, dir={}, file={}]", file.getName(), file.isDirectory(), file.isFile());
@@ -168,11 +173,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
 
         if (file.isDirectory()) {
-            if (handleDirectory(absolutePath, fileList, depth, files, file)) {
+            if (handleDirectory(dynamic, absolutePath, fileList, depth, files, file)) {
                 return true;
             }
         } else if (file.isFile()) {
-            handleFile(absolutePath, fileList, depth, files, file);
+            handleFile(dynamic, absolutePath, fileList, depth, files, file);
         } else {
             LOG.debug("Ignoring unsupported remote file type: {}", file);
         }
@@ -180,26 +185,42 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     private boolean handleDirectory(
+            Exchange dynamic,
             String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
-        RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
-        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
-            // recursive scan and add the sub files and folders
-            String subDirectory = file.getName();
-            String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
-            boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
-            if (!canPollMore) {
-                return true;
+        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            // calculate the absolute file path using util class
+            String absoluteFilePath
+                    = FtpUtils.absoluteFilePath((FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
+            Supplier<GenericFile<FTPFile>> remote
+                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+            Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
+            if (isValidFile(dynamic, remote, file.getName(), absoluteFilePath, relativePath, true, files)) {
+                // recursive scan and add the sub files and folders
+                String subDirectory = file.getName();
+                String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
+                boolean canPollMore = pollSubDirectory(dynamic, path, subDirectory, fileList, depth);
+                if (!canPollMore) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     private void handleFile(
+            Exchange dynamic,
             String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
-        RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
-        if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
-            // matched file so add
-            fileList.add(remote);
+        if (depth >= endpoint.getMinDepth()) {
+            // calculate the absolute file path using util class
+            String absoluteFilePath
+                    = FtpUtils.absoluteFilePath((FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
+            Supplier<GenericFile<FTPFile>> remote
+                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+            Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
+            if (isValidFile(dynamic, remote, file.getName(), absoluteFilePath, relativePath, false, files)) {
+                // matched file so add
+                fileList.add(remote.get());
+            }
         }
     }
 
@@ -258,7 +279,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     @Override
-    protected boolean isMatched(GenericFile<FTPFile> file, String doneFileName, FTPFile[] files) {
+    protected boolean isMatched(Supplier<GenericFile<FTPFile>> file, String doneFileName, FTPFile[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
 
         for (FTPFile f : files) {
@@ -294,7 +315,17 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
-    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file, String charset) {
+    @Override
+    protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, FTPFile file) {
+        return () -> {
+            // the relative filename, skip the leading endpoint configured path
+            String relativePath = StringHelper.after(absolutePath, endpointPath);
+            // skip leading /
+            return FileUtil.stripLeadingSeparator(relativePath + "/") + file.getName();
+        };
+    }
+
+    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, String absoluteFilePath, FTPFile file, String charset) {
         RemoteFile<FTPFile> answer = new RemoteFile<>();
 
         answer.setCharset(charset);
@@ -311,23 +342,10 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         // absolute or relative path
         boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
         answer.setAbsolute(absolute);
-
-        // create a pseudo absolute name
-        String dir = FileUtil.stripTrailingSeparator(absolutePath);
-        String fileName = file.getName();
-        if (((FtpConfiguration) endpoint.getConfiguration()).isHandleDirectoryParserAbsoluteResult()) {
-            fileName = FtpUtils.extractDirNameFromAbsolutePath(file.getName());
-        }
-        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + fileName);
-        // if absolute start with a leading separator otherwise let it be
-        // relative
-        if (absolute) {
-            absoluteFileName = "/" + absoluteFileName;
-        }
-        answer.setAbsoluteFilePath(absoluteFileName);
+        answer.setAbsoluteFilePath(absoluteFilePath);
 
         // the relative filename, skip the leading endpoint configured path
-        String relativePath = StringHelper.after(absoluteFileName, endpointPath);
+        String relativePath = StringHelper.after(absoluteFilePath, endpointPath);
         // skip leading /
         relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);

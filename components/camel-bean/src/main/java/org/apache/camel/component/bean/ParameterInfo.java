@@ -28,12 +28,14 @@ final class ParameterInfo {
 
     private final int index;
     private final Class<?> type;
+    private final boolean varargs;
     private final Annotation[] annotations;
     private Expression expression;
 
-    ParameterInfo(int index, Class<?> type, Annotation[] annotations, Expression expression) {
+    ParameterInfo(int index, Class<?> type, boolean varargs, Annotation[] annotations, Expression expression) {
         this.index = index;
         this.type = type;
+        this.varargs = varargs;
         this.annotations = annotations;
         this.expression = expression;
     }
@@ -54,6 +56,10 @@ final class ParameterInfo {
         return type;
     }
 
+    public boolean isVarargs() {
+        return varargs;
+    }
+
     public void setExpression(Expression expression) {
         this.expression = expression;
     }
@@ -64,6 +70,7 @@ final class ParameterInfo {
         sb.append("ParameterInfo");
         sb.append("[index=").append(index);
         sb.append(", type=").append(type);
+        sb.append(", varargs=").append(varargs);
         sb.append(", annotations=").append(annotations == null ? "null" : Arrays.asList(annotations).toString());
         sb.append(", expression=").append(expression);
         sb.append(']');

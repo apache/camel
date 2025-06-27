@@ -31,6 +31,10 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": target.setIBMSecretsManagerVaultConfiguration(property(camelContext, org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class, value)); return true;
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": target.setKubernetesConfigMapVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class, value)); return true;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
         case "projectid":
@@ -42,6 +46,8 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "subscriptionname":
         case "subscriptionName": target.setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultinstance":
@@ -61,6 +67,10 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": return org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class;
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": return org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
         case "projectid":
@@ -72,6 +82,8 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secrets": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "subscriptionname":
         case "subscriptionName": return java.lang.String.class;
         case "usedefaultinstance":
@@ -92,6 +104,10 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": return target.getIBMSecretsManagerVaultConfiguration();
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": return target.getKubernetesConfigMapVaultConfiguration();
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
         case "projectid":
@@ -103,6 +119,8 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secrets": return target.getSecrets();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "subscriptionname":
         case "subscriptionName": return target.getSubscriptionName();
         case "usedefaultinstance":

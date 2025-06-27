@@ -35,4 +35,11 @@ public final class AzureStorageQueueServiceFactory {
                 .addRemoteMapping(AzureStorageQueueRemoteService::new)
                 .build();
     }
+
+    public static class AzureStorageQueueLocalContainerService extends AzureStorageQueueLocalContainerInfraService
+            implements AzureService {
+    }
+
+    public static class AzureStorageQueueRemoteService extends AzureStorageQueueInfraService implements AzureService {
+    }
 }

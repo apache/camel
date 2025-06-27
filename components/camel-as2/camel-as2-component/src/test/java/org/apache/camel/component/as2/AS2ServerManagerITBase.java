@@ -95,7 +95,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
     protected static final String FROM = "mrAS@example.org";
     protected static final String CLIENT_FQDN = "example.org";
     protected static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
-    protected static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
+    protected static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     protected static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
                                                 + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
                                                 + "BGM+380+342459+9'\n"

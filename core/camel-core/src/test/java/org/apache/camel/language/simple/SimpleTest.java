@@ -889,6 +889,7 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${headers}", headers);
         assertExpression("${in.headers}", headers);
+        assertExpression("${headers.size}", 2);
     }
 
     @Test
@@ -952,6 +953,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertEquals(3, variables.size());
 
         assertExpression("${variables}", variables);
+        assertExpression("${variables.size}", 3);
     }
 
     @Test
@@ -2041,6 +2043,23 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getMessage().setBody("Hello");
         exchange.getMessage().setHeader("foo", "{\"foo\": \"cheese\"}");
         assertExpression("${replace(&quot;,&apos;,${header.foo})}", "{'foo': 'cheese'}");
+    }
+
+    @Test
+    public void testList() {
+        exchange.getMessage().setBody("4");
+        assertExpression("${list(1,2,3)}", "[1, 2, 3]");
+        assertExpression("${list(1,2,3,${body})}", "[1, 2, 3, 4]");
+        assertExpression("${list('a','b','c')}", "[a, b, c]");
+        assertExpression("${list()}", "[]");
+    }
+
+    @Test
+    public void testMap() {
+        exchange.getMessage().setBody("d");
+        assertExpression("${map(1,a,2,b,3,c)}", "{1=a, 2=b, 3=c}");
+        assertExpression("${map(1,a,2,b,3,c,4,${body})}", "{1=a, 2=b, 3=c, 4=d}");
+        assertExpression("${map()}", "{}");
     }
 
     @Test

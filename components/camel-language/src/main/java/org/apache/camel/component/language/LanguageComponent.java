@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -34,6 +35,11 @@ import org.apache.camel.util.StringHelper;
 public class LanguageComponent extends DefaultComponent {
 
     public static final String RESOURCE = "resource:";
+
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache = true;
+    @Metadata
+    private boolean allowTemplateFromHeader;
 
     public LanguageComponent() {
     }
@@ -75,8 +81,35 @@ public class LanguageComponent extends DefaultComponent {
 
         LanguageEndpoint endpoint = new LanguageEndpoint(uri, this, language, null, resourceUri);
         endpoint.setScript(script);
+        endpoint.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        endpoint.setContentCache(contentCache);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
 }

@@ -78,14 +78,12 @@ import org.slf4j.Logger;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type>
-        implements Block, CopyableDefinition<ProcessorDefinition> {
+        implements Block, CopyableDefinition<ProcessorDefinition>, DisabledAwareDefinition {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     protected String disabled;
-    @XmlAttribute
-    protected Boolean inheritErrorHandler;
     @XmlTransient
     private final Deque<Block> blocks = new LinkedList<>();
     @XmlTransient
@@ -96,6 +94,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     @XmlTransient
     private final int index;
+    @XmlTransient
+    private Boolean inheritErrorHandler; // used for camel-jta
 
     protected ProcessorDefinition() {
         // every time we create a definition we should inc the counter
@@ -105,7 +105,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     protected ProcessorDefinition(ProcessorDefinition source) {
         super(source);
         this.disabled = source.disabled;
-        this.inheritErrorHandler = source.inheritErrorHandler;
         this.blocks.addAll(source.blocks);
         this.parent = source.parent;
         this.routeConfiguration = source.routeConfiguration;
@@ -197,7 +196,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         CamelContextAware.trySetCamelContext(output, context);
 
         if (!(this instanceof OutputNode)) {
-            getParent().addOutput(output);
+            ProcessorDefinition p = getParent();
+            p.addOutput(output);
             return;
         }
 
@@ -212,7 +212,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // still allow if using advice-with)
         boolean parentIsRoute = RouteDefinition.class.isAssignableFrom(this.getClass())
                 || AdviceWithDefinition.class.isAssignableFrom(this.getClass());
-        if (output.isTopLevelOnly() && !parentIsRoute) {
+        boolean parentIsAlreadyTop = this.isTopLevelOnly();
+        if (output.isTopLevelOnly() && !parentIsRoute && !parentIsAlreadyTop) {
             throw new IllegalArgumentException(
                     "The output must be added as top-level on the route. Try moving " + output + " to the top of route.");
         }
@@ -660,15 +661,53 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Override
     public Type id(String id) {
+        // special for choice otherwise
+        if (this instanceof ChoiceDefinition cbr) {
+            if (cbr.getOtherwise() != null) {
+                if (cbr.getOtherwise().getOutputs().isEmpty()) {
+                    cbr.getOtherwise().id(id);
+                } else {
+                    var last = cbr.getOtherwise().getOutputs().get(cbr.getOtherwise().getOutputs().size() - 1);
+                    last.id(id);
+                }
+            } else if (!cbr.getWhenClauses().isEmpty()) {
+                var last = cbr.getWhenClauses().get(cbr.getWhenClauses().size() - 1);
+                if (last.getOutputs().isEmpty()) {
+                    last.setId(id);
+                } else {
+                    var p = last.getOutputs().get(last.getOutputs().size() - 1);
+                    p.id(id);
+                }
+            } else {
+                cbr.setId(id);
+            }
+            return asType();
+        }
+
         if (this instanceof OutputNode && getOutputs().isEmpty()) {
             // set id on this
             setId(id);
         } else {
+            List<ProcessorDefinition<?>> outputs = null;
+            if (this instanceof NoOutputDefinition<Type>) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
+            } else if (this instanceof OutputExpressionNode) {
+                outputs = getOutputs();
+            } else if (this instanceof ExpressionNode) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
+            } else {
+                outputs = getOutputs();
+            }
 
             // set it on last output as this is what the user means to do
             // for Block(s) with non empty getOutputs() the id probably refers
             // to the last definition in the current Block
-            List<ProcessorDefinition<?>> outputs = getOutputs();
             if (!blocks.isEmpty()) {
                 if (blocks.getLast() instanceof ProcessorDefinition) {
                     ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
@@ -677,7 +716,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                     }
                 }
             }
-            if (!getOutputs().isEmpty()) {
+            if (outputs != null && !outputs.isEmpty()) {
+                // set id on last output
                 outputs.get(outputs.size() - 1).setId(id);
             } else {
                 // the output could be empty
@@ -759,6 +799,84 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
         if (route != null) {
             route.setNodePrefixId(prefixId);
+        }
+
+        return asType();
+    }
+
+    /**
+     * Sets the description of this node.
+     * <p/>
+     * <b>Important:</b> If you want to set the description of the route, then you <b>must</b> use
+     * {@link #routeDescription(String)} instead.
+     *
+     * @param  description the description
+     * @return             the builder
+     */
+    @Override
+    public Type description(String description) {
+        // special for choice otherwise
+        if (this instanceof ChoiceDefinition cbr) {
+            if (cbr.getOtherwise() != null) {
+                if (cbr.getOtherwise().getOutputs().isEmpty()) {
+                    cbr.getOtherwise().description(description);
+                } else {
+                    var last = cbr.getOtherwise().getOutputs().get(cbr.getOtherwise().getOutputs().size() - 1);
+                    last.description(description);
+                }
+            } else if (!cbr.getWhenClauses().isEmpty()) {
+                var last = cbr.getWhenClauses().get(cbr.getWhenClauses().size() - 1);
+                if (last.getOutputs().isEmpty()) {
+                    last.setDescription(description);
+                } else {
+                    var p = last.getOutputs().get(last.getOutputs().size() - 1);
+                    p.description(description);
+                }
+            } else {
+                cbr.setDescription(description);
+            }
+            return asType();
+        }
+
+        if (this instanceof OutputNode && getOutputs().isEmpty()) {
+            // set description on this
+            setDescription(description);
+        } else {
+            List<ProcessorDefinition<?>> outputs = null;
+            if (this instanceof NoOutputDefinition<Type>) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
+            } else if (this instanceof OutputExpressionNode) {
+                outputs = getOutputs();
+            } else if (this instanceof ExpressionNode) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
+            } else {
+                outputs = getOutputs();
+            }
+
+            // set it on last output as this is what the user means to do
+            // for Block(s) with non empty getOutputs() the id probably refers
+            // to the last definition in the current Block
+            if (!blocks.isEmpty()) {
+                if (blocks.getLast() instanceof ProcessorDefinition) {
+                    ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
+                    if (!block.getOutputs().isEmpty()) {
+                        outputs = block.getOutputs();
+                    }
+                }
+            }
+            if (outputs != null && !outputs.isEmpty()) {
+                // set description on last output
+                outputs.get(outputs.size() - 1).setDescription(description);
+            } else {
+                // the output could be empty
+                setDescription(description);
+            }
         }
 
         return asType();
@@ -1046,25 +1164,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the choice builder
      */
     public ChoiceDefinition endChoice() {
-        // are we nested choice?
         ProcessorDefinition<?> def = this;
-        if (def.getParent() instanceof WhenDefinition) {
-            return (ChoiceDefinition) def.getParent().getParent();
+
+        // are we already a choice
+        if (def instanceof ChoiceDefinition cho) {
+            return cho;
+        }
+
+        // end and find the choice
+        def = end();
+        if (def instanceof RouteDefinition) {
+            // okay that was too far down so go back up
+            def = this;
         }
 
         // are we already a choice?
-        if (def instanceof ChoiceDefinition choiceDefinition) {
-            return choiceDefinition;
-        }
-
-        // okay end this and get back to the choice
-        def = end();
-        if (def instanceof WhenDefinition) {
-            return (ChoiceDefinition) def.getParent();
-        } else if (def instanceof OtherwiseDefinition) {
-            return (ChoiceDefinition) def.getParent();
+        if (def instanceof ChoiceDefinition choice) {
+            return choice;
         } else {
-            return (ChoiceDefinition) def;
+            throw new IllegalArgumentException(
+                    "Cannot endChoice() to find current/parent choice DSL. If you have nested choice then you may need to end().endChoice() to go back to parent choice.");
         }
     }
 
@@ -1300,6 +1419,36 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         LoadBalanceDefinition answer = new LoadBalanceDefinition();
         addOutput(answer);
         return answer.loadBalance(loadBalancer);
+    }
+
+    /**
+     * Creates a log message to be logged at INFO level.
+     *
+     * @param  logLanguage to use a custom log language such as groovy
+     * @param  message     the log message (you can use simple language syntax)
+     * @return             the builder
+     */
+    public Type log(String logLanguage, String message) {
+        LogDefinition answer = new LogDefinition(message);
+        answer.setLogLanguage(logLanguage);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * Creates a log message to be logged at INFO level.
+     *
+     * @param  logLanguage  to use a custom log language such as groovy
+     * @param  loggingLevel the logging level to use
+     * @param  message      the log message (you can use simple language syntax)
+     * @return              the builder
+     */
+    public Type log(String logLanguage, LoggingLevel loggingLevel, String message) {
+        LogDefinition answer = new LogDefinition(message);
+        answer.setLoggingLevel(loggingLevel.name());
+        answer.setLogLanguage(logLanguage);
+        addOutput(answer);
+        return asType();
     }
 
     /**
@@ -4084,32 +4233,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return asType();
     }
 
-    /**
-     * Sets whether or not to inherit the configured error handler. <br/>
-     * The default value is <tt>true</tt>.
-     * <p/>
-     * You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you
-     * want to use a custom error handler strategy.
-     *
-     * @param  inheritErrorHandler whether to not to inherit the error handler for this node
-     * @return                     the builder
-     */
-    public Type inheritErrorHandler(boolean inheritErrorHandler) {
-        // set on last output
-        int size = getOutputs().size();
-        if (size == 0) {
-            // if no outputs then configure this DSL
-            setInheritErrorHandler(inheritErrorHandler);
-        } else {
-            // configure on last output as its the intended
-            ProcessorDefinition<?> output = getOutputs().get(size - 1);
-            if (output != null) {
-                output.setInheritErrorHandler(inheritErrorHandler);
-            }
-        }
-        return asType();
-    }
-
     @SuppressWarnings("unchecked")
     Type asType() {
         return (Type) this;
@@ -4255,20 +4378,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.interceptStrategies.add(strategy);
     }
 
-    public Boolean isInheritErrorHandler() {
+    @Override
+    public String getDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(String disabled) {
+        this.disabled = disabled;
+    }
+
+    public Boolean getInheritErrorHandler() {
         return inheritErrorHandler;
     }
 
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
-    }
-
-    public String getDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(String disabled) {
-        this.disabled = disabled;
     }
 
     /**

@@ -17,12 +17,12 @@
     limitations under the License.
 
 -->
-<routes id="camel" xmlns="http://camel.apache.org/schema/spring">
+<routes id="camel" xmlns="http://camel.apache.org/schema/xml-io">
     <route>
         <from uri="seda:a"/>
         <pipeline>
             <marshal>
-                <json library="Jackson"/>
+                <json/>
             </marshal>
             <to uri="seda:b"/>
         </pipeline>

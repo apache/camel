@@ -118,11 +118,11 @@ In the example above we set up this for the hazelcast map component and setup ha
 ------------------------------------------------------------------------------
 <bean id="config" class="com.hazelcast.config.Config">
     <constructor-arg type="java.lang.String" value="HZ.INSTANCE" />
-    <propety name="networkConfig" ref="myNetworkConfig"/>
+    <property name="networkConfig" ref="myNetworkConfig"/>
 </bean>
 
 <bean id="myNetworkConfig" class="com.hazelcast.config.NetworkConfig">
-  <propety name="port">1234</propety>
+  <property name="port">1234</property>
 </bean>
 
 <bean id="myHazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
@@ -130,7 +130,7 @@ In the example above we set up this for the hazelcast map component and setup ha
 </bean>
 
 <bean id="hazelcast" class="org.apache.camel.component.hazelcast.map.HazelcastMapComponent">
-  <propety name="hazelcastInstance" ref="myHazelcastInstance"/>
+  <property name="hazelcastInstance" ref="myHazelcastInstance"/>
 </bean>
 ------------------------------------------------------------------------------
 

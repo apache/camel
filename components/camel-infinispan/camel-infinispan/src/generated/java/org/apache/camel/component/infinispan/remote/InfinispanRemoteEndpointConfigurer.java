@@ -37,6 +37,18 @@ public class InfinispanRemoteEndpointConfigurer extends PropertyConfigurerSuppor
         case "customListener": target.getConfiguration().setCustomListener(property(camelContext, org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener.class, value)); return true;
         case "defaultvalue":
         case "defaultValue": target.getConfiguration().setDefaultValue(property(camelContext, java.lang.Object.class, value)); return true;
+        case "embeddingstoredimension":
+        case "embeddingStoreDimension": target.getConfiguration().setEmbeddingStoreDimension(property(camelContext, int.class, value)); return true;
+        case "embeddingstoredistance":
+        case "embeddingStoreDistance": target.getConfiguration().setEmbeddingStoreDistance(property(camelContext, int.class, value)); return true;
+        case "embeddingstoreenabled":
+        case "embeddingStoreEnabled": target.getConfiguration().setEmbeddingStoreEnabled(property(camelContext, boolean.class, value)); return true;
+        case "embeddingstoreregisterschema":
+        case "embeddingStoreRegisterSchema": target.getConfiguration().setEmbeddingStoreRegisterSchema(property(camelContext, boolean.class, value)); return true;
+        case "embeddingstoretypename":
+        case "embeddingStoreTypeName": target.getConfiguration().setEmbeddingStoreTypeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "embeddingstorevectorsimilarity":
+        case "embeddingStoreVectorSimilarity": target.getConfiguration().setEmbeddingStoreVectorSimilarity(property(camelContext, org.infinispan.api.annotations.indexing.option.VectorSimilarity.class, value)); return true;
         case "eventtypes":
         case "eventTypes": target.getConfiguration().setEventTypes(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -93,6 +105,18 @@ public class InfinispanRemoteEndpointConfigurer extends PropertyConfigurerSuppor
         case "customListener": return org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener.class;
         case "defaultvalue":
         case "defaultValue": return java.lang.Object.class;
+        case "embeddingstoredimension":
+        case "embeddingStoreDimension": return int.class;
+        case "embeddingstoredistance":
+        case "embeddingStoreDistance": return int.class;
+        case "embeddingstoreenabled":
+        case "embeddingStoreEnabled": return boolean.class;
+        case "embeddingstoreregisterschema":
+        case "embeddingStoreRegisterSchema": return boolean.class;
+        case "embeddingstoretypename":
+        case "embeddingStoreTypeName": return java.lang.String.class;
+        case "embeddingstorevectorsimilarity":
+        case "embeddingStoreVectorSimilarity": return org.infinispan.api.annotations.indexing.option.VectorSimilarity.class;
         case "eventtypes":
         case "eventTypes": return java.lang.String.class;
         case "exceptionhandler":
@@ -145,6 +169,18 @@ public class InfinispanRemoteEndpointConfigurer extends PropertyConfigurerSuppor
         case "customListener": return target.getConfiguration().getCustomListener();
         case "defaultvalue":
         case "defaultValue": return target.getConfiguration().getDefaultValue();
+        case "embeddingstoredimension":
+        case "embeddingStoreDimension": return target.getConfiguration().getEmbeddingStoreDimension();
+        case "embeddingstoredistance":
+        case "embeddingStoreDistance": return target.getConfiguration().getEmbeddingStoreDistance();
+        case "embeddingstoreenabled":
+        case "embeddingStoreEnabled": return target.getConfiguration().isEmbeddingStoreEnabled();
+        case "embeddingstoreregisterschema":
+        case "embeddingStoreRegisterSchema": return target.getConfiguration().isEmbeddingStoreRegisterSchema();
+        case "embeddingstoretypename":
+        case "embeddingStoreTypeName": return target.getConfiguration().getEmbeddingStoreTypeName();
+        case "embeddingstorevectorsimilarity":
+        case "embeddingStoreVectorSimilarity": return target.getConfiguration().getEmbeddingStoreVectorSimilarity();
         case "eventtypes":
         case "eventTypes": return target.getConfiguration().getEventTypes();
         case "exceptionhandler":

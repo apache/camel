@@ -88,15 +88,22 @@ public abstract class CamelTestSupport extends AbstractTestSupport
                 .withRouteFilterExcludePattern(getRouteFilterExcludePattern())
                 .withRouteFilterIncludePattern(getRouteFilterIncludePattern())
                 .withMockEndpoints(isMockEndpoints())
-                .withMockEndpointsAndSkip(isMockEndpointsAndSkip());
+                .withMockEndpointsAndSkip(isMockEndpointsAndSkip())
+                .withAutoStartupExcludePatterns(isAutoStartupExcludePatterns())
+                .withStubEndpoints(isStubEndpoints());
     }
 
     @Override
     public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
-        testExecutionConfiguration.withJMX(useJmx())
+        boolean coverage = CamelContextTestHelper.isRouteCoverageEnabled(isDumpRouteCoverage());
+        String dump = CamelContextTestHelper.getRouteDump(getDumpRoute());
+        boolean jmx = coverage || useJmx(); // route coverage requires JMX
+
+        testExecutionConfiguration.withJMX(jmx)
                 .withUseRouteBuilder(isUseRouteBuilder())
                 .withUseAdviceWith(isUseAdviceWith())
-                .withDumpRouteCoverage(isDumpRouteCoverage());
+                .withDumpRouteCoverage(coverage)
+                .withDumpRoute(dump);
     }
 
     @Override
@@ -224,16 +231,16 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
         if (contextManager != null) {
             contextManager.dumpRouteCoverage(getClass(), testInfo.getDisplayName(), time);
+            String dump = CamelContextTestHelper.getRouteDump(getDumpRoute());
+            contextManager.dumpRoute(getClass(), testInfo.getDisplayName(), dump);
         } else {
             LOG.warn(
                     "A context manager is required to dump the route coverage for the Camel context but it's not available (it's null). "
-                     +
-                     "It's likely that the test is misconfigured!");
+                     + "It's likely that the test is misconfigured!");
         }
 
         doPostTearDown();
         cleanupResources();
-
     }
 
     /**
@@ -340,6 +347,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     /**
      * Factory method which derived classes can use to create a {@link RouteBuilder} to define the routes for testing
+     *
+     * @see #createRouteBuilders()
      */
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -352,12 +361,10 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     /**
      * Factory method which derived classes can use to create an array of {@link org.apache.camel.builder.RouteBuilder}s
-     * to define the routes for testing
+     * to define the routes for testing.
      *
-     * @see        #createRouteBuilder()
-     * @deprecated This method will be made private. Do not use
+     * @see #createRouteBuilder()
      */
-    @Deprecated(since = "4.7.0")
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] { createRouteBuilder() };
     }

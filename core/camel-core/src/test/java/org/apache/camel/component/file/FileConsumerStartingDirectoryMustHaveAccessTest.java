@@ -17,8 +17,8 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.IOException;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.junit.jupiter.api.AfterEach;
@@ -52,13 +52,14 @@ public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTest
         Endpoint endpoint = context.getEndpoint(
                 fileUri("noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true"));
 
-        IOException e = assertThrows(IOException.class,
+        Exception e = assertThrows(Exception.class,
                 () -> {
-                    endpoint.createConsumer(exchange -> {
+                    Consumer c = endpoint.createConsumer(exchange -> {
                         // noop
                     });
+                    c.start();
                 }, "Should have thrown an exception");
 
-        assertTrue(e.getMessage().startsWith("Starting directory permission denied"), e.getMessage());
+        assertTrue(e.getCause().getMessage().startsWith("Starting directory permission denied"), e.getMessage());
     }
 }

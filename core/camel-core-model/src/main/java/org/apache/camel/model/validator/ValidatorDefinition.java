@@ -22,21 +22,15 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.model.CopyableDefinition;
-import org.apache.camel.model.InputTypeDefinition;
-import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Validator;
 
 /**
- * <p>
- * Represents a {@link Validator} which declaratively validates message content according to the input type declared by
- * {@link InputTypeDefinition} and/or output type declared by {@link OutputTypeDefinition}.
- * </p>
- * <p>
+ * A validator which declaratively validates message content according to the input type declared by input and/or output
+ * type on the route leve.
+ *
  * If you specify type='xml:ABC', the validator will be picked up when current message type is 'xml:ABC'. If you specify
- * type='json', then it will be picked up for all of json validation. {@see Validator} {@see InputTypeDefinition}
- * {@see OutputTypeDefinition}
+ * type='json', then it will be picked up for all of json validation.
  */
 @Metadata(label = "validation")
 @XmlType(name = "validator")

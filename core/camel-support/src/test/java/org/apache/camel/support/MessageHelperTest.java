@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support;
 
 import java.util.Map;
@@ -93,8 +92,12 @@ class MessageHelperTest {
         }
 
         @Override
-        public void reset() {
+        public Message newInstance() {
+            return null;
+        }
 
+        @Override
+        public void reset() {
         }
 
         @Override
@@ -109,7 +112,6 @@ class MessageHelperTest {
 
         @Override
         public void setMessageId(String messageId) {
-
         }
 
         @Override
@@ -154,7 +156,6 @@ class MessageHelperTest {
 
         @Override
         public void setHeader(String name, Object value) {
-
         }
 
         @Override
@@ -179,7 +180,6 @@ class MessageHelperTest {
 
         @Override
         public void setHeaders(Map<String, Object> headers) {
-
         }
 
         @Override
@@ -214,7 +214,6 @@ class MessageHelperTest {
 
         @Override
         public <T> void setBody(Object body, Class<T> type) {
-
         }
 
         @Override
@@ -224,12 +223,10 @@ class MessageHelperTest {
 
         @Override
         public void copyFrom(Message message) {
-
         }
 
         @Override
         public void copyFromWithNewBody(Message message, Object newBody) {
-
         }
 
         @Override
@@ -244,7 +241,10 @@ class MessageHelperTest {
 
         @Override
         public void setPayloadForTrait(MessageTrait trait, Object object) {
+        }
 
+        @Override
+        public void removeTrait(MessageTrait trait) {
         }
     }
 }

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo4-parent</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-olingo4</artifactId>
@@ -36,6 +36,9 @@
         <maven.exe.file.extension />
         <componentPackage>org.apache.camel.component.olingo4</componentPackage>
         <outPackage>org.apache.camel.component.olingo4.internal</outPackage>
+        <!-- s390 is too slow -->
+        <skipTests.s390x>true</skipTests.s390x>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>

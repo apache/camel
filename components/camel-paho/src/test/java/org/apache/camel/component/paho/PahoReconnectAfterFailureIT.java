@@ -37,6 +37,7 @@ import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -118,9 +119,13 @@ public class PahoReconnectAfterFailureIT implements ConfigurableRoute, Configura
         // Start broker and wait for supervisor to restart route
         // consumer should now connect
         startBroker();
-        routeStartedLatch.await(5, TimeUnit.SECONDS);
-        assertEquals(ServiceStatus.Started, routeController.getRouteStatus(TESTING_ROUTE_ID),
-                "Expecting consumer connected to broker and route started");
+
+        routeStartedLatch.await(10, TimeUnit.SECONDS);
+
+        Awaitility.await().untilAsserted(() -> {
+            assertEquals(ServiceStatus.Started, routeController.getRouteStatus(TESTING_ROUTE_ID),
+                    "Expecting consumer connected to broker and route started");
+        });
 
         // Given
         String msg = "msg";
@@ -148,7 +153,7 @@ public class PahoReconnectAfterFailureIT implements ConfigurableRoute, Configura
         }
 
         startBroker();
-        routeStartedLatch.await(5, TimeUnit.SECONDS);
+        routeStartedLatch.await(10, TimeUnit.SECONDS);
 
         template.sendBody("direct:test", msg);
 

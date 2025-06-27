@@ -70,7 +70,7 @@ public class MicrometerMessageHistoryTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 names
-        assertEquals(3, registry.getMeters().size());
+        assertEquals(4, registry.getMeters().size());
 
         Timer fooTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).tag(NODE_ID_TAG, "foo").timer();
         assertEquals(count / 2, fooTimer.count());

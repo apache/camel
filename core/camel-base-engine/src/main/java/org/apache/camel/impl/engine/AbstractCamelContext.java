@@ -87,6 +87,7 @@ import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BackOffTimerFactory;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -243,12 +244,15 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
     private Boolean autoStartup = Boolean.TRUE;
+    private String autoStartupExcludePattern;
     private Boolean backlogTrace = Boolean.FALSE;
     private Boolean backlogTraceStandby = Boolean.FALSE;
     private Boolean backlogTraceTemplates = Boolean.FALSE;
+    private Boolean backlogTraceRests = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
     private Boolean traceStandby = Boolean.FALSE;
     private Boolean traceTemplates = Boolean.FALSE;
+    private Boolean traceRests = Boolean.TRUE;
     private String tracePattern;
     private String tracingLoggingFormat;
     private Boolean modeline = Boolean.FALSE;
@@ -381,6 +385,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
                 this::createAnnotationBasedProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(DumpRoutesStrategy.class, this::createDumpRoutesStrategy);
+        camelContextExtension.lazyAddContextPlugin(BackOffTimerFactory.class, this::createBackOffTimerFactory);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -785,15 +790,28 @@ public abstract class AbstractCamelContext extends BaseService
         }
         if (answer == null) {
             try {
-                scheme = StringHelper.before(uri, ":");
+                // the uri may not contain a scheme such as a dynamic kamelet
+                // so we need to find the component name via the first text before : or ? mark
+                int pos1 = uri.indexOf(':');
+                int pos2 = uri.indexOf('?');
+                if (pos1 != -1 && pos2 != -1) {
+                    scheme = uri.substring(0, Math.min(pos1, pos2));
+                } else if (pos1 != -1) {
+                    scheme = uri.substring(0, pos1);
+                } else if (pos2 != -1) {
+                    scheme = uri.substring(0, pos2);
+                } else {
+                    scheme = null;
+                }
                 if (scheme == null) {
                     // it may refer to a logical endpoint
                     answer = camelContextExtension.getRegistry().lookupByNameAndType(uri, Endpoint.class);
                     if (answer != null) {
                         return answer;
-                    } else {
-                        throw new NoSuchEndpointException(uri);
                     }
+                }
+                if (scheme == null) {
+                    scheme = uri;
                 }
                 LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
                 Component component = getComponent(scheme);
@@ -945,6 +963,27 @@ public abstract class AbstractCamelContext extends BaseService
                 routesLock.unlock();
             }
         }
+    }
+
+    @Override
+    public List<Route> getRoutes(Predicate<Route> filter) {
+        routesLock.lock();
+        try {
+            List<Route> answer = new ArrayList<>();
+            for (Route route : getRoutes()) {
+                if (filter.test(route)) {
+                    answer.add(route);
+                }
+            }
+            return answer;
+        } finally {
+            routesLock.unlock();
+        }
+    }
+
+    @Override
+    public List<Route> getRoutesByGroup(String groupId) {
+        return getRoutes(f -> groupId.equals(f.getGroup()));
     }
 
     @Override
@@ -2590,7 +2629,8 @@ public abstract class AbstractCamelContext extends BaseService
                 if (!counters.containsKey(source)) {
                     for (String targetName : cnames) {
                         Class<?> target = getComponent(targetName).getClass();
-                        if (source == target) {
+                        boolean skip = "StubComponent".equals(target.getSimpleName());
+                        if (!skip && source == target) {
                             Set<String> names = counters.computeIfAbsent(source, k -> new TreeSet<>());
                             names.add(targetName);
                         }
@@ -3689,6 +3729,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public String getAutoStartupExcludePattern() {
+        return autoStartupExcludePattern;
+    }
+
+    @Override
+    public void setAutoStartupExcludePattern(String autoStartupExcludePattern) {
+        this.autoStartupExcludePattern = autoStartupExcludePattern;
+    }
+
+    @Override
     public Boolean isLoadTypeConverters() {
         return loadTypeConverters != null && loadTypeConverters;
     }
@@ -4007,6 +4057,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public void setTracingRests(boolean tracingRests) {
+        this.traceRests = tracingRests;
+    }
+
+    @Override
+    public boolean isTracingRests() {
+        return traceRests != null && traceRests;
+    }
+
+    @Override
     public void setBacklogTracingTemplates(boolean backlogTracingTemplates) {
         this.backlogTraceTemplates = backlogTracingTemplates;
     }
@@ -4014,6 +4074,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public boolean isBacklogTracingTemplates() {
         return backlogTraceTemplates != null && backlogTraceTemplates;
+    }
+
+    @Override
+    public boolean isBacklogTracingRests() {
+        return backlogTraceRests != null && backlogTraceRests;
+    }
+
+    @Override
+    public void setBacklogTracingRests(boolean backlogTracingRests) {
+        this.backlogTraceRests = backlogTracingRests;
     }
 
     @Override
@@ -4273,6 +4343,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract EndpointServiceRegistry createEndpointServiceRegistry();
 
     protected abstract StartupConditionStrategy createStartupConditionStrategy();
+
+    protected abstract BackOffTimerFactory createBackOffTimerFactory();
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.

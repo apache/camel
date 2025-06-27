@@ -228,6 +228,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The charset of the content type of EDI message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: us-ascii
+         * Group: common
+         * 
+         * @param ediMessageCharset the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder ediMessageCharset(String ediMessageCharset) {
+            doSetProperty("ediMessageCharset", ediMessageCharset);
+            return this;
+        }
+        /**
          * The transfer encoding of EDI message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -245,24 +260,7 @@ public interface AS2EndpointBuilderFactory {
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
          * 
-         * The option is a: <code>org.apache.hc.core5.http.ContentType</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param ediMessageType the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder ediMessageType(org.apache.hc.core5.http.ContentType ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent, application/xml.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.hc.core5.http.ContentType</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -285,35 +283,6 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder from(String from) {
             doSetProperty("from", from);
-            return this;
-        }
-        /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
-            return this;
-        }
-        /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder hostnameVerifier(String hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
             return this;
         }
         /**
@@ -564,35 +533,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder sslContext(String sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -665,6 +605,21 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
+         * The access token that is used by the client for bearer
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -756,28 +711,101 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
+         * Set hostname verifier for SSL session.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
-         * @param signedReceiptMicAlgorithms the value to set
+         * @param hostnameVerifier the value to set
          * @return the dsl builder
          */
-        default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+        default AS2EndpointConsumerBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder hostnameVerifier(String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * The access token that is used by the server when it sends an async
+         * MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnAccessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder mdnAccessToken(String mdnAccessToken) {
+            doSetProperty("mdnAccessToken", mdnAccessToken);
+            return this;
+        }
+        /**
+         * The password that is used by the server for basic authentication when
+         * it sends an async MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnPassword the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder mdnPassword(String mdnPassword) {
+            doSetProperty("mdnPassword", mdnPassword);
+            return this;
+        }
+        /**
+         * The user-name that is used by the server for basic authentication
+         * when it sends an async MDN. If options for basic authentication and
+         * bearer authentication are both set then basic authentication takes
+         * precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnUserName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder mdnUserName(String mdnUserName) {
+            doSetProperty("mdnUserName", mdnUserName);
+            return this;
+        }
+        /**
+         * The password that is used by the client for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
          * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
+         * a message integrity check (MIC) returned in message disposition
+         * notification (MDN). Multiple algorithms can be separated by comma.
          * 
-         * The option will be converted to a <code>java.lang.String[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -876,6 +904,51 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signingPrivateKey(String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * The user-name that is used by the client for basic authentication. If
+         * options for basic authentication and bearer authentication are both
+         * set then basic authentication takes precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -1186,6 +1259,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The charset of the content type of EDI message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: us-ascii
+         * Group: common
+         * 
+         * @param ediMessageCharset the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder ediMessageCharset(String ediMessageCharset) {
+            doSetProperty("ediMessageCharset", ediMessageCharset);
+            return this;
+        }
+        /**
          * The transfer encoding of EDI message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1203,24 +1291,7 @@ public interface AS2EndpointBuilderFactory {
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
          * 
-         * The option is a: <code>org.apache.hc.core5.http.ContentType</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param ediMessageType the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder ediMessageType(org.apache.hc.core5.http.ContentType ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent, application/xml.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.hc.core5.http.ContentType</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1243,35 +1314,6 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder from(String from) {
             doSetProperty("from", from);
-            return this;
-        }
-        /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
-            return this;
-        }
-        /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder hostnameVerifier(String hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
             return this;
         }
         /**
@@ -1522,35 +1564,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder sslContext(String sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1623,6 +1636,21 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
+         * The access token that is used by the client for bearer
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -1714,28 +1742,101 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
+         * Set hostname verifier for SSL session.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
-         * @param signedReceiptMicAlgorithms the value to set
+         * @param hostnameVerifier the value to set
          * @return the dsl builder
          */
-        default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+        default AS2EndpointProducerBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder hostnameVerifier(String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * The access token that is used by the server when it sends an async
+         * MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnAccessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder mdnAccessToken(String mdnAccessToken) {
+            doSetProperty("mdnAccessToken", mdnAccessToken);
+            return this;
+        }
+        /**
+         * The password that is used by the server for basic authentication when
+         * it sends an async MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnPassword the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder mdnPassword(String mdnPassword) {
+            doSetProperty("mdnPassword", mdnPassword);
+            return this;
+        }
+        /**
+         * The user-name that is used by the server for basic authentication
+         * when it sends an async MDN. If options for basic authentication and
+         * bearer authentication are both set then basic authentication takes
+         * precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnUserName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder mdnUserName(String mdnUserName) {
+            doSetProperty("mdnUserName", mdnUserName);
+            return this;
+        }
+        /**
+         * The password that is used by the client for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
          * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
+         * a message integrity check (MIC) returned in message disposition
+         * notification (MDN). Multiple algorithms can be separated by comma.
          * 
-         * The option will be converted to a <code>java.lang.String[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1834,6 +1935,51 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signingPrivateKey(String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * The user-name that is used by the client for basic authentication. If
+         * options for basic authentication and bearer authentication are both
+         * set then basic authentication takes precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -2125,6 +2271,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The charset of the content type of EDI message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: us-ascii
+         * Group: common
+         * 
+         * @param ediMessageCharset the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder ediMessageCharset(String ediMessageCharset) {
+            doSetProperty("ediMessageCharset", ediMessageCharset);
+            return this;
+        }
+        /**
          * The transfer encoding of EDI message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2142,24 +2303,7 @@ public interface AS2EndpointBuilderFactory {
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
          * 
-         * The option is a: <code>org.apache.hc.core5.http.ContentType</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param ediMessageType the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder ediMessageType(org.apache.hc.core5.http.ContentType ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent, application/xml.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.hc.core5.http.ContentType</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2182,35 +2326,6 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder from(String from) {
             doSetProperty("from", from);
-            return this;
-        }
-        /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
-            return this;
-        }
-        /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder hostnameVerifier(String hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
             return this;
         }
         /**
@@ -2461,35 +2576,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder sslContext(String sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2562,6 +2648,21 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
+         * The access token that is used by the client for bearer
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -2653,28 +2754,101 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
+         * Set hostname verifier for SSL session.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
          * Group: security
          * 
-         * @param signedReceiptMicAlgorithms the value to set
+         * @param hostnameVerifier the value to set
          * @return the dsl builder
          */
-        default AS2EndpointBuilder signedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+        default AS2EndpointBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder hostnameVerifier(String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * The access token that is used by the server when it sends an async
+         * MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnAccessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder mdnAccessToken(String mdnAccessToken) {
+            doSetProperty("mdnAccessToken", mdnAccessToken);
+            return this;
+        }
+        /**
+         * The password that is used by the server for basic authentication when
+         * it sends an async MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnPassword the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder mdnPassword(String mdnPassword) {
+            doSetProperty("mdnPassword", mdnPassword);
+            return this;
+        }
+        /**
+         * The user-name that is used by the server for basic authentication
+         * when it sends an async MDN. If options for basic authentication and
+         * bearer authentication are both set then basic authentication takes
+         * precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnUserName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder mdnUserName(String mdnUserName) {
+            doSetProperty("mdnUserName", mdnUserName);
+            return this;
+        }
+        /**
+         * The password that is used by the client for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
          * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
+         * a message integrity check (MIC) returned in message disposition
+         * notification (MDN). Multiple algorithms can be separated by comma.
          * 
-         * The option will be converted to a <code>java.lang.String[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2773,6 +2947,51 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signingPrivateKey(String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * The user-name that is used by the client for basic authentication. If
+         * options for basic authentication and bearer authentication are both
+         * set then basic authentication takes precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
         /**

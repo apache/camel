@@ -28,6 +28,8 @@ public class KafkaHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // filter out kafka record metadata
         getInFilter().add("org.apache.kafka.clients.producer.RecordMetadata");
 
+        setLowerCase(true);
+
         // filter headers beginning with "Camel" or "org.apache.camel" or "kafka."
         setOutFilterStartsWith("Camel", "camel", "org.apache.camel.", "kafka.");
         setInFilterStartsWith("Camel", "camel", "org.apache.camel.", "kafka.");

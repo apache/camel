@@ -21,13 +21,5 @@ import org.apache.camel.test.infra.common.services.TestService;
 /**
  * Test infra service for ArangoDB
  */
-public interface ArangoDBService extends TestService {
-
-    int getPort();
-
-    String getHost();
-
-    default String getServiceAddress() {
-        return String.format("%s:%d", getHost(), getPort());
-    }
+public interface ArangoDBService extends TestService, ArangoDBInfraService {
 }

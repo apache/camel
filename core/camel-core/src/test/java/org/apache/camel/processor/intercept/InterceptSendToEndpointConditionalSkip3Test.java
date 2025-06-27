@@ -68,11 +68,11 @@ public class InterceptSendToEndpointConditionalSkip3Test extends ContextTestSupp
             public void configure() {
                 // we have 2 interceptors, which may both trigger, or either or,
                 // or none
-                interceptSendToEndpoint("mock:skip").skipSendToOriginalEndpoint().when(body().contains("skip"))
+                interceptSendToEndpoint("mock:skip").skipSendToOriginalEndpoint().onWhen(body().contains("skip"))
                         .to("mock:detour1");
 
                 // we intercept the interceptor
-                interceptSendToEndpoint("mock:detour1").skipSendToOriginalEndpoint().when(body().contains("skip2"))
+                interceptSendToEndpoint("mock:detour1").skipSendToOriginalEndpoint().onWhen(body().contains("skip2"))
                         .to("mock:detour2");
 
                 from("direct:start").to("mock:a").to("mock:skip").to("mock:c");

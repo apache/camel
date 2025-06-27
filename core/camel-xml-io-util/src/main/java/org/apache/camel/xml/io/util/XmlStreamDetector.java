@@ -101,6 +101,7 @@ public class XmlStreamDetector {
                             String comment = reader.getText();
                             if (comment != null) {
                                 comment.lines().map(String::trim).forEach(l -> {
+                                    // TODO: remove modeline support after 4.10
                                     if (l.startsWith("camel-k:")) {
                                         information.modelines.add(l);
                                     }

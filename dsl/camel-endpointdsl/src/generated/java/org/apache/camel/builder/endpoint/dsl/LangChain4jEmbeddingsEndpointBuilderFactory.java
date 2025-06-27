@@ -267,6 +267,20 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
         public String langChain4jEmbeddingsVector() {
             return "CamelLangChain4jEmbeddingsVector";
         }
+        /**
+         * A TextSegment representation of the vector embedding input text.
+         * 
+         * The option is a: {@code  dev.langchain4j.data.segment.TextSegment}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jEmbeddingsTextSegment}.
+         */
+        public String langChain4jEmbeddingsTextSegment() {
+            return "CamelLangChain4jEmbeddingsTextSegment";
+        }
     }
     static LangChain4jEmbeddingsEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jEmbeddingsEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jEmbeddingsEndpointBuilder, AdvancedLangChain4jEmbeddingsEndpointBuilder {

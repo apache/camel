@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for Camel Main to configure context name, stream caching and other global configurations.
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties>
         implements BootstrapCloseable {
 
@@ -60,6 +60,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private StartupConditionConfigurationProperties startupConditionConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
     private OtelConfigurationProperties otelConfigurationProperties;
+    private Otel2ConfigurationProperties otel2ConfigurationProperties;
+    private TelemetryDevConfigurationProperties telemetryDevConfigurationProperties;
     private MetricsConfigurationProperties metricsConfigurationProperties;
     private ThreadPoolConfigurationProperties threadPoolProperties;
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
@@ -67,6 +69,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private RestConfigurationProperties restConfigurationProperties;
     private VaultConfigurationProperties vaultConfigurationProperties;
     private HttpServerConfigurationProperties httpServerConfigurationProperties;
+    private HttpManagementServerConfigurationProperties httpManagementServerConfigurationProperties;
     private SSLConfigurationProperties sslConfigurationProperties;
     private DebuggerConfigurationProperties debuggerConfigurationProperties;
     private TracerConfigurationProperties tracerConfigurationProperties;
@@ -85,6 +88,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (otelConfigurationProperties != null) {
             otelConfigurationProperties.close();
             otelConfigurationProperties = null;
+        }
+        if (otel2ConfigurationProperties != null) {
+            otel2ConfigurationProperties.close();
+            otel2ConfigurationProperties = null;
+        }
+        if (telemetryDevConfigurationProperties != null) {
+            telemetryDevConfigurationProperties.close();
+            telemetryDevConfigurationProperties = null;
         }
         if (metricsConfigurationProperties != null) {
             metricsConfigurationProperties.close();
@@ -113,6 +124,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (httpServerConfigurationProperties != null) {
             httpServerConfigurationProperties.close();
             httpServerConfigurationProperties = null;
+        }
+        if (httpManagementServerConfigurationProperties != null) {
+            httpManagementServerConfigurationProperties.close();
+            httpManagementServerConfigurationProperties = null;
         }
         if (sslConfigurationProperties != null) {
             sslConfigurationProperties.close();
@@ -209,6 +224,20 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any OpenTelemetry configuration specified
+     */
+    public boolean hasOtel2Configuration() {
+        return otel2ConfigurationProperties != null;
+    }
+
+    /**
+     * Whether there has been any TelemetryDev configuration specified
+     */
+    public boolean hasTelemetryDevConfiguration() {
+        return telemetryDevConfigurationProperties != null;
+    }
+
+    /**
      * To configure Micrometer metrics.
      */
     public MetricsConfigurationProperties metrics() {
@@ -236,10 +265,27 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * To configure embedded HTTP management server (for standalone applications; not Spring Boot or Quarkus)
+     */
+    public HttpManagementServerConfigurationProperties httpManagementServer() {
+        if (httpManagementServerConfigurationProperties == null) {
+            httpManagementServerConfigurationProperties = new HttpManagementServerConfigurationProperties(this);
+        }
+        return httpManagementServerConfigurationProperties;
+    }
+
+    /**
      * Whether there has been any embedded HTTP server configuration specified
      */
     public boolean hasHttpServerConfiguration() {
         return httpServerConfigurationProperties != null;
+    }
+
+    /**
+     * Whether there has been any embedded HTTP management server configuration specified
+     */
+    public boolean hasHttpManagementServerConfiguration() {
+        return httpManagementServerConfigurationProperties != null;
     }
 
     /**

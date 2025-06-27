@@ -16,16 +16,11 @@
  */
 package org.apache.camel.test.infra.openldap.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Openldap
  */
-public interface OpenldapService extends TestService {
-
-    Integer getPort();
-
-    Integer getSslPort();
-
-    String getHost();
+public interface OpenldapService extends TestService, OpenldapInfraService, ContainerTestService {
 }

@@ -48,6 +48,7 @@ public class XmlStreamInfo {
     /**
      * Trimmed and unparsed lines starting with Camel-recognized modeline markers (now: {@code camel-k:}).
      */
+    // TODO: remove modeline support after 4.10
     final List<String> modelines = new ArrayList<>();
 
     public boolean isValid() {

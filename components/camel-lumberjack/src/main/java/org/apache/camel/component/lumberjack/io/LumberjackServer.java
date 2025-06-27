@@ -78,11 +78,11 @@ public final class LumberjackServer {
         ChannelHandler initializer = new LumberjackChannelInitializer(sslContext, executorService, messageProcessor);
 
         // Bootstrap the netty server
-        ServerBootstrap serverBootstrap = new ServerBootstrap()  //
-                .group(bossGroup, workerGroup)               //
-                .channel(NioServerSocketChannel.class)           //
-                .option(ChannelOption.SO_BACKLOG, 100)           //
-                .childHandler(initializer);                      //
+        ServerBootstrap serverBootstrap = new ServerBootstrap()
+                .group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, 100)
+                .childHandler(initializer);
 
         // Connect the socket
         channel = serverBootstrap.bind(host, port).sync().channel();

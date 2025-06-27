@@ -17,10 +17,13 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,15 +33,14 @@ import java.util.Set;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.io.FileUtils;
 
 class ExportSpringBoot extends Export {
 
@@ -51,83 +53,95 @@ class ExportSpringBoot extends Export {
     public Integer export() throws Exception {
         String[] ids = gav.split(":");
         if (ids.length != 3) {
-            System.err.println("--gav must be in syntax: groupId:artifactId:version");
+            printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
         if (!buildTool.equals("maven") && !buildTool.equals("gradle")) {
-            System.err.println("--build-tool must either be maven or gradle, was: " + buildTool);
+            printer().printErr("--build-tool must either be maven or gradle, was: " + buildTool);
             return 1;
         }
 
-        File profile = new File("application.properties");
+        Path profile = Path.of("application.properties");
 
         // the settings file has information what to export
-        File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
-        if (fresh || !files.isEmpty() || !settings.exists()) {
+        Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
+        if (fresh || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
-            if (!quiet) {
-                printer().println("Generating fresh run data");
-            }
-            int silent = runSilently(ignoreLoadingError, lazyBean);
+            printer().println("Generating fresh run data");
+            int silent = runSilently(ignoreLoadingError, lazyBean, verbose);
             if (silent != 0) {
                 return silent;
             }
         } else {
-            if (!quiet) {
-                printer().println("Reusing existing run data");
-            }
+            printer().println("Reusing existing run data");
         }
 
-        if (!quiet) {
-            printer().println("Exporting as Spring Boot project to: " + exportDir);
-        }
+        printer().println("Exporting as Spring Boot project to: " + exportDir);
 
         // use a temporary work dir
-        File buildDir = new File(BUILD_DIR);
-        FileUtil.removeDir(buildDir);
-        buildDir.mkdirs();
+        Path buildDir = Path.of(BUILD_DIR);
+        PathUtils.deleteDirectory(buildDir);
+        Files.createDirectories(buildDir);
 
-        File srcJavaDirRoot = new File(BUILD_DIR, "src/main/java");
+        Path srcJavaDirRoot = buildDir.resolve("src/main/java");
         String srcPackageName = exportPackageName(ids[0], ids[1], packageName);
-        File srcJavaDir;
+        Path srcJavaDir;
         if (srcPackageName == null) {
             srcJavaDir = srcJavaDirRoot;
         } else {
-            srcJavaDir = new File(srcJavaDirRoot, srcPackageName.replace('.', File.separatorChar));
+            srcJavaDir = srcJavaDirRoot.resolve(srcPackageName.replace('.', File.separatorChar));
         }
-        srcJavaDir.mkdirs();
-        File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
-        srcResourcesDir.mkdirs();
-        File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
-        File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
+        Files.createDirectories(srcJavaDir);
+        Path srcResourcesDir = buildDir.resolve("src/main/resources");
+        Files.createDirectories(srcResourcesDir);
+        Path srcCamelResourcesDir = buildDir.resolve("src/main/resources/camel");
+        Path srcKameletsResourcesDir = buildDir.resolve("src/main/resources/kamelets");
         // copy application properties files
         copyApplicationPropertiesFiles(srcResourcesDir);
 
         // copy source files
-        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
+        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir,
+                srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
 
+        // create main class
+        createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
+        // gather dependencies
+        final Set<String> deps = resolveDependencies(settings, profile);
+        // copy local lib JARs
+        copyLocalLibDependencies(deps);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!hasModeline(settings)) {
                 prop.remove("camel.main.modeline");
             }
+            // ensure spring-boot keeps running if no HTTP server included
+            boolean http = deps.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http"));
+            if (!http) {
+                prop.put("camel.main.run-controller", "true");
+            }
+            // are we using http then enable embedded HTTP server (if not explicit configured already)
+            int port = httpServerPort(settings);
+            if (port == -1 && http) {
+                port = 8080;
+            }
+            if (port != -1 && port != 8080) {
+                prop.put("server.port", port);
+            }
+            port = httpManagementPort(settings);
+            if (port != -1) {
+                prop.put("management.server.port", port);
+            }
             return prop;
         });
-        // create main class
-        createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
-        // gather dependencies
-        Set<String> deps = resolveDependencies(settings, profile);
-        // copy local lib JARs
-        copyLocalLibDependencies(deps);
         if ("maven".equals(buildTool)) {
-            createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps);
+            createMavenPom(settings, profile, buildDir.resolve("pom.xml"), deps);
             if (mavenWrapper) {
                 copyMavenWrapper();
             }
         } else if ("gradle".equals(buildTool)) {
-            createSettingsGradle(new File(BUILD_DIR, "settings.gradle"));
-            createBuildGradle(settings, new File(BUILD_DIR, "build.gradle"), deps);
+            createSettingsGradle(buildDir.resolve("settings.gradle"));
+            createBuildGradle(settings, buildDir.resolve("build.gradle"), deps);
             if (gradleWrapper) {
                 copyGradleWrapper();
             }
@@ -141,27 +155,27 @@ class ExportSpringBoot extends Export {
             CommandHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
-        FileUtils.copyDirectory(new File(BUILD_DIR), new File(exportDir));
-        FileUtil.removeDir(new File(BUILD_DIR));
+        PathUtils.copyDirectory(buildDir, Paths.get(exportDir));
+        PathUtils.deleteDirectory(buildDir);
 
         return 0;
     }
 
-    private void createSettingsGradle(File file) throws Exception {
+    private void createSettingsGradle(Path file) throws Exception {
         String[] ids = gav.split(":");
 
         String text = String.format("rootProject.name = '%s'", ids[1]);
-        IOHelper.writeText(text, new FileOutputStream(file, false));
+        IOHelper.writeText(text, Files.newOutputStream(file));
     }
 
-    private void createMavenPom(File settings, File profile, File pom, Set<String> deps) throws Exception {
+    private void createMavenPom(Path settings, Path profile, Path pom, Set<String> deps) throws Exception {
         String[] ids = gav.split(":");
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
         String repos = getMavenRepositories(settings, prop, camelSpringBootVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion, download);
         if (ObjectHelper.isEmpty(camelVersion)) {
             camelVersion = catalog.getLoadedVersion();
         }
@@ -253,10 +267,10 @@ class ExportSpringBoot extends Export {
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
-        IOHelper.writeText(context, new FileOutputStream(pom, false));
+        IOHelper.writeText(context, Files.newOutputStream(pom));
     }
 
-    private void createBuildGradle(File settings, File gradleBuild, Set<String> deps) throws Exception {
+    private void createBuildGradle(Path settings, Path gradleBuild, Set<String> deps) throws Exception {
         String[] ids = gav.split(":");
 
         String context = readResourceTemplate("templates/spring-boot-build-gradle.tmpl");
@@ -265,7 +279,7 @@ class ExportSpringBoot extends Export {
         RuntimeUtil.loadProperties(prop, settings);
         String repos = getMavenRepositories(settings, prop, camelSpringBootVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion, download);
         String camelVersion = catalog.getLoadedVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
@@ -336,11 +350,11 @@ class ExportSpringBoot extends Export {
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
-        IOHelper.writeText(context, new FileOutputStream(gradleBuild, false));
+        IOHelper.writeText(context, Files.newOutputStream(gradleBuild));
     }
 
     @Override
-    protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
+    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
         Set<String> answer = super.resolveDependencies(settings, profile);
 
         // remove out of the box dependencies
@@ -355,16 +369,17 @@ class ExportSpringBoot extends Export {
         return answer;
     }
 
-    private void createMainClassSource(File srcJavaDir, String packageName, String mainClassname) throws Exception {
+    private void createMainClassSource(Path srcJavaDir, String packageName, String mainClassname) throws Exception {
         String context = readResourceTemplate("templates/spring-boot-main.tmpl");
 
         context = context.replaceFirst("\\{\\{ \\.PackageName }}", packageName);
         context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
-        IOHelper.writeText(context, new FileOutputStream(srcJavaDir + "/" + mainClassname + ".java", false));
+        IOHelper.writeText(context,
+                Files.newOutputStream(srcJavaDir.resolve(mainClassname + ".java")));
     }
 
     @Override
-    protected void adjustJavaSourceFileLine(String line, FileOutputStream fos) throws Exception {
+    protected void adjustJavaSourceFileLine(String line, OutputStream fos) throws Exception {
         if (line.startsWith("public class")
                 && (line.contains("RouteBuilder") || line.contains("EndpointRouteBuilder"))) {
             fos.write("import org.springframework.stereotype.Component;\n\n"

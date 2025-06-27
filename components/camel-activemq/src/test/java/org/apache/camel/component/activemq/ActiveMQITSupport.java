@@ -23,7 +23,6 @@ import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
-import org.apache.camel.test.infra.messaging.services.MessagingLocalContainerService;
 import org.apache.camel.test.infra.messaging.services.MessagingService;
 import org.apache.camel.test.infra.messaging.services.MessagingServiceFactory;
 import org.junit.jupiter.api.Order;
@@ -40,10 +39,10 @@ public abstract class ActiveMQITSupport implements ConfigurableContext, Configur
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-    public static MessagingLocalContainerService<ArtemisContainer> createLocalService() {
+    public static MessagingServiceFactory.MessagingLocalContainerService<ArtemisContainer> createLocalService() {
         ArtemisContainer container = new ArtemisContainer();
 
-        return new MessagingLocalContainerService<>(container, c -> container.defaultEndpoint());
+        return new MessagingServiceFactory.MessagingLocalContainerService(container, c -> container.defaultEndpoint());
     }
 
     /* We don't want topic advisories here: they may cause publication issues (i.e.:

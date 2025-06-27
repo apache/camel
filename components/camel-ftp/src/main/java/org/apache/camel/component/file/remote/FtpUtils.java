@@ -126,9 +126,7 @@ public final class FtpUtils {
      * Checks whether directory used in ftp/ftps/sftp endpoint URI is relative. Absolute path will be converted to
      * relative path and a WARN will be printed.
      *
-     * @see                 <a href="http://camel.apache.org/ftp2.html">FTP/SFTP/FTPS Component</a>
-     * @param ftpComponent
-     * @param configuration
+     * @see <a href="http://camel.apache.org/ftp2.html">FTP/SFTP/FTPS Component</a>
      */
     public static void ensureRelativeFtpDirectory(Component ftpComponent, RemoteFileConfiguration configuration) {
         if (FileUtil.hasLeadingSeparator(configuration.getDirectoryName())) {
@@ -139,6 +137,37 @@ public final class FtpUtils {
             configuration.setDirectory(relativePath);
             configuration.setDirectoryName(relativePath);
         }
+    }
+
+    public static String absoluteFilePath(FtpConfiguration configuration, String absolutePath, String name) {
+        boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
+        // create a pseudo absolute name
+        String dir = FileUtil.stripTrailingSeparator(absolutePath);
+        String fileName = name;
+        if (configuration.isHandleDirectoryParserAbsoluteResult()) {
+            fileName = FtpUtils.extractDirNameFromAbsolutePath(name);
+        }
+        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + fileName);
+        // if absolute start with a leading separator otherwise let it be
+        // relative
+        if (absolute) {
+            absoluteFileName = "/" + absoluteFileName;
+        }
+        return absoluteFileName;
+    }
+
+    public static String absoluteFilePath(String absolutePath, String name) {
+        boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
+
+        // create a pseudo absolute name
+        String dir = FileUtil.stripTrailingSeparator(absolutePath);
+        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + name);
+        // if absolute start with a leading separator otherwise let it be
+        // relative
+        if (absolute) {
+            absoluteFileName = "/" + absoluteFileName;
+        }
+        return absoluteFileName;
     }
 
 }

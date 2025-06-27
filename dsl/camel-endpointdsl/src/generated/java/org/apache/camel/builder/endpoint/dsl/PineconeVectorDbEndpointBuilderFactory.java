@@ -45,6 +45,183 @@ public interface PineconeVectorDbEndpointBuilderFactory {
         }
 
         /**
+         * Sets the cloud type to use (aws/gcp/azure).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param cloud the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder cloud(String cloud) {
+            doSetProperty("cloud", cloud);
+            return this;
+        }
+        /**
+         * Sets the cloud region.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param cloudRegion the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder cloudRegion(String cloudRegion) {
+            doSetProperty("cloudRegion", cloudRegion);
+            return this;
+        }
+        /**
+         * Sets the Collection Dimension to use (1-1536).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 1536
+         * Group: producer
+         * 
+         * @param collectionDimension the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder collectionDimension(Integer collectionDimension) {
+            doSetProperty("collectionDimension", collectionDimension);
+            return this;
+        }
+        /**
+         * Sets the Collection Dimension to use (1-1536).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 1536
+         * Group: producer
+         * 
+         * @param collectionDimension the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder collectionDimension(String collectionDimension) {
+            doSetProperty("collectionDimension", collectionDimension);
+            return this;
+        }
+        /**
+         * Sets the Collection Similarity Metric to use
+         * (cosine/euclidean/dotproduct).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param collectionSimilarityMetric the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder collectionSimilarityMetric(String collectionSimilarityMetric) {
+            doSetProperty("collectionSimilarityMetric", collectionSimilarityMetric);
+            return this;
+        }
+        /**
+         * Sets a custom host URL to connect to.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder host(String host) {
+            doSetProperty("host", host);
+            return this;
+        }
+        /**
+         * Sets the index name to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param indexName the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder indexName(String indexName) {
+            doSetProperty("indexName", indexName);
+            return this;
+        }
+        /**
+         * Set the proxy host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * Set the proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Set the proxy port.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Whether the client uses Transport Layer Security (TLS) to secure
+         * communications.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
+         * Whether the client uses Transport Layer Security (TLS) to secure
+         * communications.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder tls(String tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
          * Sets the API key to use for authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -340,6 +517,54 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          */
         public String pineconeQueryTopK() {
             return "CamelPineconeQueryTopK";
+        }
+        /**
+         * Namespace for actions (query/upsert/etc).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeNamespace}.
+         */
+        public String pineconeNamespace() {
+            return "CamelPineconeNamespace";
+        }
+        /**
+         * Query Filter.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeQueryFilter}.
+         */
+        public String pineconeQueryFilter() {
+            return "CamelPineconeQueryFilter";
+        }
+        /**
+         * Query Include Values.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeQueryIncludeValues}.
+         */
+        public String pineconeQueryIncludeValues() {
+            return "CamelPineconeQueryIncludeValues";
+        }
+        /**
+         * Query Include Metadata.
+         * 
+         * The option is a: {@code com.google.protobuf.Struct} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeQueryIncludeMetadata}.
+         */
+        public String pineconeQueryIncludeMetadata() {
+            return "CamelPineconeQueryIncludeMetadata";
         }
     }
     static PineconeVectorDbEndpointBuilder endpointBuilder(String componentName, String path) {

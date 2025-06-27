@@ -48,6 +48,10 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     private Set<String> requiredHeaders;
     @XmlTransient
     private Set<String> requiredQueryParameters;
+    @XmlTransient
+    private Map<String, String> responseCodes;
+    @XmlTransient
+    private Set<String> responseHeaders;
 
     @XmlAttribute
     private String consumes;
@@ -72,6 +76,9 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String clientResponseValidation;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
@@ -134,6 +141,38 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
     public Set<String> getRequiredQueryParameters() {
         return requiredQueryParameters;
+    }
+
+    /**
+     * Adds a response code
+     */
+    public void addResponseCode(String code, String contentType) {
+        if (responseCodes == null) {
+            responseCodes = new HashMap<>();
+        }
+        responseCodes.put(code, contentType);
+    }
+
+    public Map<String, String> getResponseCodes() {
+        return responseCodes;
+    }
+
+    /**
+     * Adds a response code
+     */
+    public void addResponseHeader(String headerName) {
+        // content-type header should be skipped
+        if ("content-type".equalsIgnoreCase(headerName)) {
+            return;
+        }
+        if (responseHeaders == null) {
+            responseHeaders = new HashSet<>();
+        }
+        responseHeaders.add(headerName);
+    }
+
+    public Set<String> getResponseHeaders() {
+        return responseHeaders;
     }
 
     /**
@@ -294,6 +333,21 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
      */
     public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
+    }
+
+    public String getClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
+    /**
+     * Whether to check what Camel is returning as response to the client:
+     *
+     * 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included
+     * according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid
+     * JSon. Returns 500 if validation error detected.
+     */
+    public void setClientResponseValidation(String clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
     }
 
     public String getEnableCORS() {

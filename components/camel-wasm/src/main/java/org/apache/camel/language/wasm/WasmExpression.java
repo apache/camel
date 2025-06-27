@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
-import com.dylibso.chicory.runtime.Module;
+import com.dylibso.chicory.wasm.Parser;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -72,7 +72,7 @@ public class WasmExpression extends ExpressionAdapter implements ExpressionResul
         final Resource res = rl.resolveResource(module);
 
         try (InputStream is = res.getInputStream()) {
-            this.function = new WasmFunction(Module.builder(is).build(), expression);
+            this.function = new WasmFunction(Parser.parse(is), expression);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }

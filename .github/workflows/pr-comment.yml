@@ -40,7 +40,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Check Permission
-        uses: actions-cool/check-user-permission@956b2e73cdfe3bcb819bb7225e490cb3b18fd76e
+        uses: actions-cool/check-user-permission@7b90a27f92f3961b368376107661682c441f6103
       - name: Retrieve sha
         id: pr
         env:
@@ -51,7 +51,7 @@ jobs:
         run: |
           pr="$(gh api /repos/${GH_REPO}/pulls/${PR_NUMBER})"
           head_sha="$(echo "$pr" | jq -r .head.sha)"
-          pushed_at="$(echo "$pr" | jq -r .pushed_at)"
+          pushed_at="$(echo "$pr" | jq -r .head.repo.pushed_at)"
           if [[ $(date -d "$pushed_at" +%s) -gt $(date -d "$COMMENT_AT" +%s) ]]; then
               exit 1
           fi
@@ -68,7 +68,7 @@ jobs:
       - id: install-packages
         uses: ./.github/actions/install-packages
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b # v4.5.0
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}

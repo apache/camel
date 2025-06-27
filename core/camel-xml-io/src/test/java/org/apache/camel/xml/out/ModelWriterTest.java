@@ -64,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class ModelWriterTest {
 
-    public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
+    public static final String NAMESPACE = ModelWriter.DEFAULT_NAMESPACE;
 
     private static final Map<Field, Boolean> TRANSIENT = new ConcurrentHashMap<>();
 

@@ -16,9 +16,12 @@
  */
 package org.apache.camel.dsl.java.joor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 
 public class DummyRoute extends RouteBuilder {
+
+    private CamelContext camelContext;
 
     @Override
     public void configure() throws Exception {

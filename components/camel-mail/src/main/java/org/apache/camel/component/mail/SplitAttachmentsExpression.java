@@ -72,7 +72,7 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
             }
 
             // clear attachments on original message after we have split them
-            inMessage.getAttachmentObjects().clear();
+            inMessage.clearAttachments();
 
             return answer;
         } catch (Exception e) {

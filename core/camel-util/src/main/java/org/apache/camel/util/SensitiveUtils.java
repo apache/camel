@@ -45,7 +45,6 @@ public final class SensitiveUtils {
                     "blobaccesskey",
                     "blobstoragesharedkeycredential",
                     "certresourcepassword",
-                    "cipherkey",
                     "clientid",
                     "clientsecret",
                     "clientsecretcredential",
@@ -54,6 +53,7 @@ public final class SensitiveUtils {
                     "consumersecret",
                     "emailaddress",
                     "httpproxypassword",
+                    "kerberosauthticket",
                     "keystorePassword",
                     "keystorepassword",
                     "login",
@@ -77,6 +77,7 @@ public final class SensitiveUtils {
                     "publickeyid",
                     "publishkey",
                     "queueownerawsaccountid",
+                    "realm",
                     "refreshtoken",
                     "sascredential",
                     "sasljaasconfig",
@@ -125,7 +126,6 @@ public final class SensitiveUtils {
                                                     + "|\\Qblobaccesskey\\E"
                                                     + "|\\Qblobstoragesharedkeycredential\\E"
                                                     + "|\\Qcertresourcepassword\\E"
-                                                    + "|\\Qcipherkey\\E"
                                                     + "|\\Qclientid\\E"
                                                     + "|\\Qclientsecret\\E"
                                                     + "|\\Qclientsecretcredential\\E"
@@ -134,6 +134,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qconsumersecret\\E"
                                                     + "|\\Qemailaddress\\E"
                                                     + "|\\Qhttpproxypassword\\E"
+                                                    + "|\\Qkerberosauthticket\\E"
                                                     + "|\\QkeystorePassword\\E"
                                                     + "|\\Qkeystorepassword\\E"
                                                     + "|\\Qlogin\\E"
@@ -157,6 +158,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qpublickeyid\\E"
                                                     + "|\\Qpublishkey\\E"
                                                     + "|\\Qqueueownerawsaccountid\\E"
+                                                    + "|\\Qrealm\\E"
                                                     + "|\\Qrefreshtoken\\E"
                                                     + "|\\Qsascredential\\E"
                                                     + "|\\Qsasljaasconfig\\E"

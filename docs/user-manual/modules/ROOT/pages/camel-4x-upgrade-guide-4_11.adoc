@@ -1,0 +1,134 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.10 to 4.11
+
+=== EIPs
+
+==== Recipient List, Split and Multicast EIP
+
+In parallel processing mode, you can also enable `synchronous=true` to force these EIPs to process
+the sub-tasks using the upper bounds of the thread-pool. If using `synchronous=false` then Camel
+will allow its reactive routing engine to use as many threads as possible, which may be available
+due to sub-tasks using other thread-pools such as `CompletableFuture.runAsync` or others.
+
+Setting `synchronous=true` is the same behaviour is in Camel 2 which did not have the reactive routing engine.
+
+==== WireTap and OnCompletion EIP
+
+When MDC is enabled, then the WireTap and OnCompletion (in parallel mode) will now propagate MDC
+context when creating threads to process the exchanges. This makes these EIPs similar to how
+other EIPs such as Multicast EIP already does this.
+
+=== camel-api
+
+Added `removeTraits` method to `org.apache.camel.Message`.
+
+Added `bind` method that accepts `Supplier` for the bean and also accepts init and destroy methods,
+to the `org.apache.camel.spi.Registry` interface.
+
+=== camel-attachments
+
+The attachments have been refactored to be stored internally as a _message trait_,
+and the `org.apache.camel.attachment.AttachmentMessage` is only a facade to provide
+end user access to the fine-grained Attachment APIs. The underlying message implementation
+such as `DefaultMessage` in the `Exchange` is un-affected when converting from `Message` to `AttachmentMessage` via:
+
+[source,java]
+----
+AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
+am.addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
+----
+
+The class `org.apache.camel.attachment.AttachmentMap` has been removed.
+Removed `getDelegateMessage` method from `org.apache.camel.attachment.AttachmentMessage`.
+
+=== camel-bean
+
+The header `Exchange.BEAN_METHOD_NAME` with constant value `CamelBeanMethodName` has been deprecated, and support for using this header has been removed.
+Instead, you can specify the `method` option directly as shown, or using any other header of your choosing as follows.
+
+[source,java]
+----
+    toD("bean:myBean?method=${header.myMethodName}");
+----
+
+=== camel-main
+
+Remove the deprecated `camel.main.lightweight` option that was not in use.
+
+=== file based components
+
+The file based component such as `camel-file`, `camel-ftp`, `camel-smb`, and `camel-azure-files` has
+been improved to allow optimized dynamic poll when using dynamic `fileName` header.
+
+This change means that there is a new `DynamicPollingConsumer` API the consumer implements.
+And as such some APIs inside these components has been changed.
+
+This will only affect if you have built your own custom Camel component on top of `camel-file`.
+And if so, your custom code may need to be changed slightly as well.
+
+=== camel-ftp
+
+The file name header `Exchange.FILE_NAME` now includes the relative path such as `subdir/hello.txt`
+when using `recursive=true`, to be similar to how `camel-file` component behaves.
+
+=== camel-as2
+
+The `camel-as2` component has been made more tooling friendly to configure options.
+
+The option `signedReceiptMicAlgorithms` is changed from a `String[]` to a single `String` using comma to separate algorithm names.
+
+The option `ediMessageType` is changed from `ContentType` into two options as `String` fields.
+This allows to define the content-type and charset separately and more user-friendly.
+
+=== camel-kafka
+
+The camel-kafka option `recordMetadata` has changed default from `true` to `false`.
+
+=== camel-jbang
+
+The option `lazy-bean` has changed to be default `true` when exporting to make the export
+work in more situations out of the box.
+
+From this version onward the `export` command add the `camel-observability-services` dependency (which includes telemetry, metrics, health and JMX management services out of the box).
+
+The `--health` and `--metrics` flags of `run` command have been deprecated in favor of the newly `--observe` flag which add the `camel-observability-services` dependency (hence including telemetry, metrics, health and JMX management out of the box). For the run command, this has to be explicitly enabled (ie, `camel run  ... --observe`).
+
+=== camel-sql
+
+When inserting or updating many rows in `batch=true` mode (producer) then this component
+has been optimized to execute the entire batch operation in a single transaction; by turning off auto-commit
+on the SQL Connection, and doing a manual `commit` or `rollback`. This can dramatically improve performance
+on some databases. The old behaviour can be restored by setting the `batchAutoCommitDisabled=false` on the component or endpoint.
+
+=== camel-etcd3
+
+This deprecated component was removed in this release.
+
+=== camel-platform-http
+
+The `org.apache.camel.component.platform.http.PlatformHttpHeaderFilterStrategy` class has been removed. Use the `org.apache.camel.http.base.HttpHeaderFilterStrategy`
+
+=== camel-undertow
+
+The `org.apache.camel.component.undertow.UndertowHeaderFilterStrategy` class has been deprecated. The default header filter strategy is now the `org.apache.camel.http.base.HttpHeaderFilterStrategy`
+
+=== camel-metrics
+
+A new gauge metric, `app.info` is available by default. This is providing a few information related to the runtime provider such as:
+
+```
+# HELP app_info
+# TYPE app_info gauge
+app_info{camel_context="camel-1",camel_runtime_provider="Spring-Boot",camel_runtime_version="3.4.3",camel_version="4.10.2"} 1
+```
+
+This information is evaluated at runtime startup and available through the usual metrics endpoint. To disable this metric you need to use the `camel.metrics.skipCamelInfo=true` property.
+
+=== camel-observability-services
+
+In this version we're moving the telemetry component from `camel-opentelemetry` to `camel-opentelemetry2`.

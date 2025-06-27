@@ -16,15 +16,11 @@
  */
 package org.apache.camel.test.infra.xmpp.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Xmpp
  */
-public interface XmppService extends TestService {
-    String host();
-
-    int port();
-
-    String getUrl();
+public interface XmppService extends TestService, XmppInfraService, ContainerTestService {
 }

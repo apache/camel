@@ -24,6 +24,21 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
         org.apache.camel.component.pinecone.PineconeVectorDbConfiguration target = (org.apache.camel.component.pinecone.PineconeVectorDbConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "client": target.setClient(property(camelContext, io.pinecone.clients.Pinecone.class, value)); return true;
+        case "cloud": target.setCloud(property(camelContext, java.lang.String.class, value)); return true;
+        case "cloudregion":
+        case "cloudRegion": target.setCloudRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectiondimension":
+        case "collectionDimension": target.setCollectionDimension(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "collectionsimilaritymetric":
+        case "collectionSimilarityMetric": target.setCollectionSimilarityMetric(property(camelContext, java.lang.String.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "indexname":
+        case "indexName": target.setIndexName(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "tls": target.setTls(property(camelContext, boolean.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -33,6 +48,21 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "client": return io.pinecone.clients.Pinecone.class;
+        case "cloud": return java.lang.String.class;
+        case "cloudregion":
+        case "cloudRegion": return java.lang.String.class;
+        case "collectiondimension":
+        case "collectionDimension": return java.lang.Integer.class;
+        case "collectionsimilaritymetric":
+        case "collectionSimilarityMetric": return java.lang.String.class;
+        case "host": return java.lang.String.class;
+        case "indexname":
+        case "indexName": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "tls": return boolean.class;
         case "token": return java.lang.String.class;
         default: return null;
         }
@@ -43,6 +73,21 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
         org.apache.camel.component.pinecone.PineconeVectorDbConfiguration target = (org.apache.camel.component.pinecone.PineconeVectorDbConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "client": return target.getClient();
+        case "cloud": return target.getCloud();
+        case "cloudregion":
+        case "cloudRegion": return target.getCloudRegion();
+        case "collectiondimension":
+        case "collectionDimension": return target.getCollectionDimension();
+        case "collectionsimilaritymetric":
+        case "collectionSimilarityMetric": return target.getCollectionSimilarityMetric();
+        case "host": return target.getHost();
+        case "indexname":
+        case "indexName": return target.getIndexName();
+        case "proxyhost":
+        case "proxyHost": return target.getProxyHost();
+        case "proxyport":
+        case "proxyPort": return target.getProxyPort();
+        case "tls": return target.isTls();
         case "token": return target.getToken();
         default: return null;
         }

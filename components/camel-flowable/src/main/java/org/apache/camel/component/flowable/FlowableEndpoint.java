@@ -33,7 +33,7 @@ import org.flowable.eventregistry.model.CamelOutboundChannelModel;
 /**
  * Send and receive messages from the Flowable BPMN and CMMN engines.
  */
-@UriEndpoint(firstVersion = "4.19.0", scheme = "flowable", title = "Flowable", syntax = "flowable:channelKey",
+@UriEndpoint(firstVersion = "4.9.0", scheme = "flowable", title = "Flowable", syntax = "flowable:channelKey",
              category = { Category.WORKFLOW })
 public class FlowableEndpoint extends DefaultEndpoint {
 

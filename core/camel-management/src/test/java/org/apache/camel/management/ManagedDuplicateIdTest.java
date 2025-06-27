@@ -52,7 +52,7 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
             fail("Should fail");
         } catch (Exception e) {
             assertEquals(
-                    "Failed to start route foo because of duplicate id detected: clash. Please correct ids to be unique among all your routes.",
+                    "Failed to start route: foo because: Duplicate id detected: clash. Please correct ids to be unique among all your routes.",
                     e.getMessage());
         }
     }

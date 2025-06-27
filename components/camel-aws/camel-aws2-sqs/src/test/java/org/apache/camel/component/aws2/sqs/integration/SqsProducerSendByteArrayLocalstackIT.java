@@ -24,11 +24,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Assert;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.bouncycastle.util.Strings;
 
-@Disabled("Not working due localstack update (Incorrect padding error), it is working against real SQS")
 public class SqsProducerSendByteArrayLocalstackIT extends Aws2SQSBaseTest {
 
     @EndpointInject("direct:start")
@@ -42,6 +40,7 @@ public class SqsProducerSendByteArrayLocalstackIT extends Aws2SQSBaseTest {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            @Override
             public void process(Exchange exchange) {
                 byte[] headerValue = "HeaderTest".getBytes();
                 exchange.getIn().setHeader("value1", headerValue);
@@ -61,11 +60,11 @@ public class SqsProducerSendByteArrayLocalstackIT extends Aws2SQSBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").startupOrder(2)
-                        .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName()).to("mock:result");
+                from("direct:start").startupOrder(2).toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName())
+                        .to("mock:result");
 
-                fromF("aws2-sqs://%s?deleteAfterRead=true&autoCreateQueue=true", sharedNameGenerator.getName())
-                        .startupOrder(1).log("${body}");
+                fromF("aws2-sqs://%s?deleteAfterRead=true&autoCreateQueue=true", sharedNameGenerator.getName()).startupOrder(1)
+                        .log("${body}");
             }
         };
     }

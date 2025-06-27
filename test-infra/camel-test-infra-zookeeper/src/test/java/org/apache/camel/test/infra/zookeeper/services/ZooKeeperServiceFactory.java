@@ -16,9 +16,23 @@
  */
 package org.apache.camel.test.infra.zookeeper.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class ZooKeeperServiceFactory {
+    private static class SingletonZooKeeperService extends SingletonService<ZooKeeperService>
+            implements ZooKeeperService {
+        public SingletonZooKeeperService(ZooKeeperService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getConnectionString() {
+            return getService().getConnectionString();
+        }
+    }
+
     private ZooKeeperServiceFactory() {
 
     }
@@ -33,4 +47,11 @@ public final class ZooKeeperServiceFactory {
                 .addRemoteMapping(ZooKeeperRemoteService::new)
                 .build();
     }
+}
+
+class ZooKeeperLocalContainerService extends ZooKeeperLocalContainerInfraService
+        implements ZooKeeperService, ContainerTestService {
+}
+
+class ZooKeeperRemoteService extends ZooKeeperRemoteInfraService implements ZooKeeperService {
 }

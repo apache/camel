@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.config;
 
+import java.io.IOException;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -23,11 +25,14 @@ import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "set",
-                     description = "Set user configuration value", sortOptions = false)
+                     description = "Set user configuration value", sortOptions = false, showDefaultValues = true)
 public class ConfigSet extends CamelCommand {
 
     @CommandLine.Parameters(description = "Configuration parameter (ex. key=value)", arity = "1")
     String configuration;
+
+    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    boolean global = true;
 
     public ConfigSet(CamelJBangMain main) {
         super(main);
@@ -35,7 +40,11 @@ public class ConfigSet extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        CommandLineHelper.createPropertyFile();
+        return setConfiguration(!global);
+    }
+
+    private int setConfiguration(boolean local) throws IOException {
+        CommandLineHelper.createPropertyFile(local);
 
         if (configuration.split("=").length == 1) {
             printer().println("Configuration parameter not in key=value format");
@@ -46,8 +55,8 @@ public class ConfigSet extends CamelCommand {
             String key = StringHelper.before(configuration, "=").trim();
             String value = StringHelper.after(configuration, "=").trim();
             properties.put(key, value);
-            CommandLineHelper.storeProperties(properties, printer());
-        });
+            CommandLineHelper.storeProperties(properties, printer(), local);
+        }, local);
 
         return 0;
     }

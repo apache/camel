@@ -33,6 +33,10 @@ public class ElasticSearchRestClientConstant {
     @Metadata(description = "The Index name", javaType = "String")
     public static final String INDEX_NAME = "INDEX_NAME";
 
+    @Metadata(description = "The operation to perform",
+              javaType = "org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation")
+    public static final String OPERATION = "OPERATION";
+
     public static final int SOCKET_CONNECTION_TIMEOUT = 30000;
     public static final int SNIFFER_INTERVAL_AND_FAILURE_DELAY = 60000;
 

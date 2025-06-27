@@ -56,7 +56,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -1441,13 +1441,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
         
         /**
          * Controls what DDL will Debezium store in database schema history. By
-         * default (true) only DDL that manipulates a table from captured
-         * schema/database will be stored. If set to false, then Debezium will
-         * store all incoming DDL statements.
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a table from captured
+         * schema/database will be stored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: mysql
          * 
          * @param schemaHistoryInternalStoreOnlyCapturedDatabasesDdl the value

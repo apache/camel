@@ -16,7 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -27,15 +28,16 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "thread-dump", description = "List threads in a running Camel integration", sortOptions = false)
+@Command(name = "thread-dump", description = "List threads in a running Camel integration", sortOptions = false,
+         showDefaultValues = true)
 public class CamelThreadDump extends ActionWatchCommand {
 
     public static class IdNameStateCompletionCandidates implements Iterable<String> {
@@ -50,6 +52,18 @@ public class CamelThreadDump extends ActionWatchCommand {
 
     }
 
+    public static class StateCompletionCandidates implements Iterable<String> {
+
+        public StateCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("RUNNABLE", "BLOCKED", "WAITING", "TIMED_WAITING").iterator();
+        }
+
+    }
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
@@ -58,8 +72,12 @@ public class CamelThreadDump extends ActionWatchCommand {
     String sort;
 
     @CommandLine.Option(names = { "--filter" },
-                        description = "Filter thread names (use all to include all threads)", defaultValue = "Camel")
-    String filter;
+                        description = "Filter thread names/ids (use all to include all threads)", defaultValue = "Camel")
+    String[] filters;
+
+    @CommandLine.Option(names = { "--state" }, completionCandidates = StateCompletionCandidates.class,
+                        description = "To only show threads for a given state")
+    String state;
 
     @CommandLine.Option(names = { "--trace" },
                         description = "Include stack-traces", defaultValue = "false")
@@ -96,14 +114,14 @@ public class CamelThreadDump extends ActionWatchCommand {
         this.pid = pids.get(0);
 
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile(Long.toString(pid));
-        FileUtil.deleteFile(outputFile);
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "thread-dump");
-        File f = getActionFile(Long.toString(pid));
+        Path f = getActionFile(Long.toString(pid));
         try {
-            IOHelper.writeText(root.toJson(), f);
+            Files.writeString(f, root.toJson());
         } catch (Exception e) {
             // ignore
         }
@@ -117,15 +135,23 @@ public class CamelThreadDump extends ActionWatchCommand {
                 Row row = new Row();
                 row.id = jt.getLong("id");
                 row.name = jt.getString("name");
+                row.state = jt.getString("state");
 
                 // filter
-                boolean match
-                        = "all".equals(filter) || row.name.contains(filter) || PatternHelper.matchPattern(row.name, filter);
+                boolean match = false;
+                for (String filter : filters) {
+                    match |= "all".equalsIgnoreCase(filter) || filter.equals("" + row.id)
+                            || StringHelper.containsIgnoreCase(row.name, filter)
+                            || PatternHelper.matchPattern(row.name, filter);
+                }
+                // state
+                if (state != null) {
+                    match &= StringHelper.containsIgnoreCase(row.state, state);
+                }
                 if (!match) {
                     continue;
                 }
 
-                row.state = jt.getString("state");
                 row.waited = jt.getLong("waitedCount");
                 row.waitedTime = jt.getLong("waitedTime");
                 row.blocked = jt.getLong("blockedCount");
@@ -158,7 +184,7 @@ public class CamelThreadDump extends ActionWatchCommand {
         }
 
         // delete output file after use
-        FileUtil.deleteFile(outputFile);
+        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -209,7 +235,7 @@ public class CamelThreadDump extends ActionWatchCommand {
         }
     }
 
-    protected JsonObject waitForOutputFile(File outputFile) {
+    protected JsonObject waitForOutputFile(Path outputFile) {
         return getJsonObject(outputFile);
     }
 

@@ -19,6 +19,7 @@ package org.apache.camel.component.platform.http.vertx;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -69,6 +70,8 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -77,6 +80,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class VertxPlatformHttpEngineTest {
     public static SSLContextParameters serverSSLParameters;
@@ -124,7 +128,8 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.start();
 
-            assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
+            assertThat(VertxPlatformHttpRouter.lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)))
+                    .isNotNull();
             assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
                 assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
             });
@@ -137,6 +142,7 @@ public class VertxPlatformHttpEngineTest {
     @Test
     public void testEngine() throws Exception {
         final CamelContext context = createCamelContext();
+        VertxPlatformHttpServer platformHttpServer;
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -180,9 +186,14 @@ public class VertxPlatformHttpEngineTest {
             assertNotNull(server);
             assertEquals("http", server.getScheme());
             assertEquals(RestAssured.port, server.getServerPort());
+
+            platformHttpServer = context.hasService(VertxPlatformHttpServer.class);
+            assertNotNull(platformHttpServer.getVertx());
         } finally {
             context.stop();
         }
+
+        assertNull(platformHttpServer.getVertx());
     }
 
     @Test
@@ -214,6 +225,69 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .body(equalTo("get"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testSlowConsumerWithTimeout() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.getRegistry().bind(
+                    "vertx-options",
+                    new VertxOptions()
+                            .setMaxEventLoopExecuteTime(2)
+                            .setMaxEventLoopExecuteTimeUnit(TimeUnit.SECONDS));
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/get?requestTimeout=500")
+                            .routeId("get")
+                            .delay(1000)
+                            .setBody().constant("get");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(503);
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testTimeoutNotExceeded() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        String response = "Request did not time out";
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/get?requestTimeout=500")
+                            .routeId("get")
+                            .setBody().constant(response);
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo(response));
 
         } finally {
             context.stop();
@@ -384,7 +458,74 @@ public class VertxPlatformHttpEngineTest {
     }
 
     @Test
-    public void testFileUpload() throws Exception {
+    public void testMultipleFileUpload() throws Exception {
+        final List<String> attachmentIds = List.of("myFirstTestFile", "mySecondTestFile");
+
+        String tmpDirectory = null;
+        List<File> tempFiles = new ArrayList<>(attachmentIds.size());
+        for (String attachmentId : attachmentIds) {
+            final String fileContent = "Test multipart upload content " + attachmentId;
+            File tempFile;
+            if (tmpDirectory == null) {
+                tempFile = File.createTempFile("platform-http-" + attachmentId, ".txt");
+            } else {
+                tempFile = File.createTempFile("platform-http-" + attachmentId, ".txt", new File(tmpDirectory));
+            }
+
+            tempFiles.add(tempFile);
+            tmpDirectory = tempFile.getParent();
+            Files.write(tempFile.toPath(), fileContent.getBytes(StandardCharsets.UTF_8));
+        }
+
+        final CamelContext context = createCamelContext(configuration -> {
+            VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler
+                    = new VertxPlatformHttpServerConfiguration.BodyHandler();
+            // turn on file uploads
+            bodyHandler.setHandleFileUploads(true);
+            bodyHandler.setUploadsDirectory(tempFiles.get(0).getParent());
+            configuration.setBodyHandler(bodyHandler);
+        });
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/upload")
+                            .process(exchange -> {
+                                AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
+
+                                String result = "";
+                                for (String attachmentId : attachmentIds) {
+                                    DataHandler attachment = message.getAttachment(attachmentId);
+                                    result += attachment.getContent();
+                                }
+
+                                exchange.getIn().setHeader("ConcatFileContent", result);
+                            })
+                            .setHeader("UploadedAttachments", simple("${headers.CamelAttachmentsSize}"));
+                }
+            });
+
+            context.start();
+
+            given()
+                    .multiPart(attachmentIds.get(0), tempFiles.get(0))
+                    .multiPart(attachmentIds.get(1), tempFiles.get(1))
+                    .when()
+                    .post("/upload")
+                    .then()
+                    .statusCode(204)
+                    .body(emptyOrNullString())
+                    .header("UploadedAttachments", is(String.valueOf(attachmentIds.size())))
+                    .header("ConcatFileContent",
+                            is("Test multipart upload content myFirstTestFileTest multipart upload content mySecondTestFile"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testSingleFileUpload() throws Exception {
         final String attachmentId = "myTestFile";
         final String fileContent = "Test multipart upload content";
         final File tempFile = File.createTempFile("platform-http", ".txt");
@@ -407,8 +548,10 @@ public class VertxPlatformHttpEngineTest {
                             .process(exchange -> {
                                 AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
                                 DataHandler attachment = message.getAttachment(attachmentId);
-                                message.setBody(attachment.getContent());
-                            });
+                                exchange.getMessage().setHeader("myDataHandler", attachment);
+                            })
+                            .setHeader("UploadedFileContentType", simple("${header.CamelFileContentType}"))
+                            .setHeader("UploadedFileSize", simple("${header.CamelFileLength}"));
                 }
             });
 
@@ -420,6 +563,9 @@ public class VertxPlatformHttpEngineTest {
                     .post("/upload")
                     .then()
                     .statusCode(200)
+                    .header("myDataHandler", containsString("jakarta.activation.DataHandler"))
+                    .header("UploadedFileContentType", is("text/plain"))
+                    .header("UploadedFileSize", is(String.valueOf(fileContent.getBytes().length)))
                     .body(is(fileContent));
         } finally {
             context.stop();
@@ -603,7 +749,8 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.start();
 
-            VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(context);
+            VertxPlatformHttpRouter router
+                    = VertxPlatformHttpRouter.lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port));
             router.route().order(0).handler(basicAuthHandler);
 
             RestAssured.get("/secure")

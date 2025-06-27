@@ -302,8 +302,6 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             enabledCipherSuitePatterns = null;
         }
 
-        ///
-
         final List<String> enabledSecureSocketProtocols = this.getSecureSocketProtocols() == null
                 ? null : this.parsePropertyValues(this.getSecureSocketProtocols().getSecureSocketProtocol());
 
@@ -469,8 +467,6 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             enabledCipherSuitePatterns = null;
         }
 
-        ///
-
         final List<String> enabledSecureSocketProtocols = this.getSecureSocketProtocols() == null
                 ? null : this.parsePropertyValues(this.getSecureSocketProtocols().getSecureSocketProtocol());
 
@@ -569,8 +565,6 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         } else {
             enabledCipherSuitePatterns = null;
         }
-
-        ///
 
         final List<String> enabledSecureSocketProtocols = this.getSecureSocketProtocols() == null
                 ? null : this.parsePropertyValues(this.getSecureSocketProtocols().getSecureSocketProtocol());

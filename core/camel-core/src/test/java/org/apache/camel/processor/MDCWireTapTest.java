@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MDCWireTapTest extends ContextTestSupport {
 
@@ -64,8 +63,7 @@ public class MDCWireTapTest extends ContextTestSupport {
                     public void process(Exchange exchange) {
                         assertEquals("route-b", MDC.get("camel.routeId"));
                         assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                        // custom MDC is not propagated
-                        assertNull(MDC.get("custom.id"));
+                        assertEquals("1", MDC.get("custom.id"));
                     }
                 }).to("log:b-done").to("mock:b");
             }

@@ -39,6 +39,8 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.dataformat.soap.SoapConstants.SOAP_METHOD_NAME;
+
 /**
  * Data format supporting SOAP 1.1 and 1.2.
  */
@@ -165,7 +167,7 @@ public class SoapDataFormat extends JaxbDataFormat {
         if (soapAction != null && elementNameStrategy instanceof ServiceInterfaceStrategy) {
             ServiceInterfaceStrategy strategy = (ServiceInterfaceStrategy) elementNameStrategy;
             String methodName = strategy.getMethodForSoapAction(soapAction);
-            exchange.getOut().setHeader(Exchange.BEAN_METHOD_NAME, methodName);
+            exchange.getOut().setHeader(SOAP_METHOD_NAME, methodName);
         }
 
         // Store soap action for an eventual later marshal step.

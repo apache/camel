@@ -119,12 +119,19 @@ from("direct:start")
   .to("rest:get:hello/{me}");
 ----
 
-And then the dynamic value `\{me}` is mapped to a Camel message with the same name.
+And then the dynamic value `\{me}` is mapped to a header or variable with the same name.
 So to call this REST service, you can send an empty message body and a header as shown:
 
 [source,java]
 ----
 template.sendBodyAndHeader("direct:start", null, "me", "Donald Duck");
+----
+
+Instead of a header you can also use exchange variable such as:
+
+[source,java]
+----
+String response = template.withVariable("me", "Donald Duck").to("direct:start").request(String.class);
 ----
 
 The Rest producer needs to know the hostname and port of the REST service, which you can configure

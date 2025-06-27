@@ -29,6 +29,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("AutoConfigurationLogSummary", boolean.class);
         map.put("AutoConfigurationSystemPropertiesEnabled", boolean.class);
         map.put("AutoStartup", boolean.class);
+        map.put("AutoStartupExcludePattern", java.lang.String.class);
         map.put("AutowiredEnabled", boolean.class);
         map.put("BasePackageScan", java.lang.String.class);
         map.put("BasePackageScanEnabled", boolean.class);
@@ -76,7 +77,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("JmxManagementRegisterRoutesCreateByTemplate", boolean.class);
         map.put("JmxManagementStatisticsLevel", org.apache.camel.ManagementStatisticsLevel.class);
         map.put("JmxUpdateRouteEnabled", boolean.class);
-        map.put("Lightweight", boolean.class);
         map.put("LoadHealthChecks", boolean.class);
         map.put("LoadStatisticsEnabled", boolean.class);
         map.put("LoadTypeConverters", boolean.class);
@@ -145,7 +145,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("UseMdcLogging", boolean.class);
         map.put("UuidGenerator", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MainConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -166,6 +165,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "autoConfigurationSystemPropertiesEnabled": target.setAutoConfigurationSystemPropertiesEnabled(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": target.setAutoStartupExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "basepackagescan":
@@ -258,7 +259,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "jmxManagementStatisticsLevel": target.setJmxManagementStatisticsLevel(property(camelContext, org.apache.camel.ManagementStatisticsLevel.class, value)); return true;
         case "jmxupdaterouteenabled":
         case "jmxUpdateRouteEnabled": target.setJmxUpdateRouteEnabled(property(camelContext, boolean.class, value)); return true;
-        case "lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "loadhealthchecks":
         case "loadHealthChecks": target.setLoadHealthChecks(property(camelContext, boolean.class, value)); return true;
         case "loadstatisticsenabled":
@@ -398,10 +398,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         return ALL_OPTIONS;
     }
 
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
-    }
-
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
@@ -419,6 +415,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "autoConfigurationSystemPropertiesEnabled": return boolean.class;
         case "autostartup":
         case "autoStartup": return boolean.class;
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "basepackagescan":
@@ -511,7 +509,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "jmxManagementStatisticsLevel": return org.apache.camel.ManagementStatisticsLevel.class;
         case "jmxupdaterouteenabled":
         case "jmxUpdateRouteEnabled": return boolean.class;
-        case "lightweight": return boolean.class;
         case "loadhealthchecks":
         case "loadHealthChecks": return boolean.class;
         case "loadstatisticsenabled":
@@ -664,6 +661,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "autoConfigurationSystemPropertiesEnabled": return target.isAutoConfigurationSystemPropertiesEnabled();
         case "autostartup":
         case "autoStartup": return target.isAutoStartup();
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": return target.getAutoStartupExcludePattern();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "basepackagescan":
@@ -756,7 +755,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "jmxManagementStatisticsLevel": return target.getJmxManagementStatisticsLevel();
         case "jmxupdaterouteenabled":
         case "jmxUpdateRouteEnabled": return target.isJmxUpdateRouteEnabled();
-        case "lightweight": return target.isLightweight();
         case "loadhealthchecks":
         case "loadHealthChecks": return target.isLoadHealthChecks();
         case "loadstatisticsenabled":

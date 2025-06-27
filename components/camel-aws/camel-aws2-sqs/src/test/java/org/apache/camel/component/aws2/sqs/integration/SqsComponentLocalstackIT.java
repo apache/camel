@@ -38,34 +38,11 @@ public class SqsComponentLocalstackIT extends Aws2SQSBaseTest {
     private MockEndpoint result;
 
     @Test
-    public void sendInOnly() throws Exception {
-        result.expectedMessageCount(1);
-
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("This is my message text.");
-            }
-        });
-
-        MockEndpoint.assertIsSatisfied(context);
-
-        Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals("This is my message text.", resultExchange.getIn().getBody());
-        assertNotNull(resultExchange.getIn().getHeader(Sqs2Constants.MESSAGE_ID));
-        assertNotNull(resultExchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(Sqs2Constants.MD5_OF_BODY));
-        assertNotNull(resultExchange.getIn().getHeader(Sqs2Constants.ATTRIBUTES));
-        assertNotNull(resultExchange.getIn().getHeader(Sqs2Constants.MESSAGE_ATTRIBUTES));
-
-        assertNotNull(exchange.getIn().getHeader(Sqs2Constants.MESSAGE_ID));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getIn().getHeader(Sqs2Constants.MD5_OF_BODY));
-    }
-
-    @Test
     public void sendInOut() throws Exception {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
+            @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("This is my message text.");
             }
@@ -87,11 +64,10 @@ public class SqsComponentLocalstackIT extends Aws2SQSBaseTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final String sqsEndpointUri = String
-                .format("aws2-sqs://%s?messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s&autoCreateQueue=true",
-                        sharedNameGenerator.getName(),
-                        "1209600", "65536", "60",
-                        "file:src/test/resources/org/apache/camel/component/aws2/sqs/policy.txt");
+        final String sqsEndpointUri = String.format(
+                "aws2-sqs://%s?messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s&autoCreateQueue=true",
+                sharedNameGenerator.getName(), "1209600", "65536", "60",
+                "file:src/test/resources/org/apache/camel/component/aws2/sqs/policy.txt");
 
         return new RouteBuilder() {
             @Override

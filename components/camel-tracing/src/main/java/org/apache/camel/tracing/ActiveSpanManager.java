@@ -27,7 +27,11 @@ import org.slf4j.MDC;
  */
 public final class ActiveSpanManager {
 
+    @Deprecated
+    // Use specific MDC instrumentation provided by your tracing/telemetry SDK instead
     public static final String MDC_TRACE_ID = "trace_id";
+    @Deprecated
+    // Use specific MDC instrumentation provided by your tracing/telemetry SDK instead
     public static final String MDC_SPAN_ID = "span_id";
     private static final Logger LOG = LoggerFactory.getLogger(ActiveSpanManager.class);
 
@@ -126,8 +130,8 @@ public final class ActiveSpanManager {
             this.parent = parent;
             this.span = span;
             this.scope = span.makeCurrent();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Tracing: started scope: {}", this.scope);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Tracing: started scope: {}", this.scope);
             }
         }
 
@@ -141,8 +145,8 @@ public final class ActiveSpanManager {
 
         private void closeScope() {
             try {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Tracing: closing scope: {}", this.scope);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Tracing: closing scope: {}", this.scope);
                 }
                 scope.close();
             } catch (Exception e) {

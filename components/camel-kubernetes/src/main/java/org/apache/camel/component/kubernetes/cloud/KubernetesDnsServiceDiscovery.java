@@ -26,6 +26,7 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.util.ObjectHelper;
 
+@Deprecated
 public class KubernetesDnsServiceDiscovery extends KubernetesServiceDiscovery {
     private final ConcurrentMap<String, List<ServiceDefinition>> cache;
     private final String namespace;

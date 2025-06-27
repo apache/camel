@@ -19,6 +19,8 @@ package org.apache.camel.main;
 public final class MainConstants {
 
     public static final String DEFAULT_PROPERTY_PLACEHOLDER_LOCATION = "classpath:application.properties;optional=true";
+    public static final String DEFAULT_OBSERVABILITY_SERVICES_PROPERTY_LOCATION
+            = "classpath:observability-services.properties;optional=true";
     public static final String INITIAL_PROPERTIES_LOCATION = "camel.main.initial-properties-location";
     public static final String OVERRIDE_PROPERTIES_LOCATION = "camel.main.override-properties-location";
     public static final String CLOUD_PROPERTIES_LOCATION = "camel.main.cloud-properties-location";

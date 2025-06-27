@@ -23,37 +23,38 @@
       steps:
         - split:
             id: split
-            simple:
-              expression: "${body}"
+            expression:
+              simple:
+                expression: "${body}"
             steps:
               - to:
                   id: myMock
                   uri: mock:sub
               - choice:
                   id: choice
-                  steps:
-                    - when:
-                        id: when
+                  when:
+                    - id: when
+                      expression:
                         header:
                           expression: foo
-                        steps:
-                          - to:
-                              id: to
-                              uri: mock:foo
-                    - when:
-                        id: when
+                      steps:
+                        - to:
+                            id: to
+                            uri: mock:foo
+                    - id: when
+                      expression:
                         header:
                           expression: bar
-                        steps:
-                          - to:
-                              id: to
-                              uri: mock:bar
-                    - otherwise:
-                        id: otherwise
-                        steps:
-                          - to:
-                              id: to
-                              uri: mock:other
+                      steps:
+                        - to:
+                            id: to
+                            uri: mock:bar
+                  otherwise:
+                    id: otherwise
+                    steps:
+                      - to:
+                          id: to
+                          uri: mock:other
         - to:
             id: to
             uri: mock:last

@@ -171,6 +171,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
+    public Boolean getAutoStartup() {
+        return route.isAutoStartup();
+    }
+
+    @Override
     public String getSourceLocation() {
         return sourceLocation;
     }

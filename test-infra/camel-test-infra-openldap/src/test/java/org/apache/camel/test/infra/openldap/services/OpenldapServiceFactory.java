@@ -33,4 +33,10 @@ public final class OpenldapServiceFactory {
                 .addRemoteMapping(OpenldapRemoteService::new)
                 .build();
     }
+
+    public static class OpenldapLocalContainerService extends OpenldapLocalContainerInfraService implements OpenldapService {
+    }
+
+    public static class OpenldapRemoteService extends OpenldapRemoteInfraService implements OpenldapService {
+    }
 }

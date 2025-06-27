@@ -26,6 +26,8 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
@@ -99,6 +101,7 @@ public class XPathBuilder extends ServiceSupport
     private static volatile XPathFactory defaultXPathFactory;
 
     private CamelContext camelContext;
+    private final Lock lock = new ReentrantLock();
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<>();
     private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<>();
     private final String text;
@@ -1073,39 +1076,49 @@ public class XPathBuilder extends ServiceSupport
      * This implementation must be synchronized to ensure thread safety, as this XPathBuilder instance may not have been
      * started prior to being used.
      */
-    protected synchronized XPathExpression createXPathExpression()
+    protected XPathExpression createXPathExpression()
             throws XPathExpressionException {
-        // ensure we are started
+        lock.lock();
         try {
-            start();
-        } catch (Exception e) {
-            throw new RuntimeExpressionException("Error starting XPathBuilder", e);
-        }
+            // ensure we are started
+            try {
+                start();
+            } catch (Exception e) {
+                throw new RuntimeExpressionException("Error starting XPathBuilder", e);
+            }
 
-        // XPathFactory is not thread safe
-        XPath xPath = getXPathFactory().newXPath();
+            // XPathFactory is not thread safe
+            XPath xPath = getXPathFactory().newXPath();
 
-        if (!logNamespaces && LOG.isTraceEnabled()) {
-            LOG.trace("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext());
-        } else if (logNamespaces && LOG.isInfoEnabled()) {
-            LOG.info("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext());
-        }
-        xPath.setNamespaceContext(getNamespaceContext());
-        xPath.setXPathVariableResolver(getVariableResolver());
+            if (!logNamespaces && LOG.isTraceEnabled()) {
+                LOG.trace("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext());
+            } else if (logNamespaces && LOG.isInfoEnabled()) {
+                LOG.info("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext());
+            }
+            xPath.setNamespaceContext(getNamespaceContext());
+            xPath.setXPathVariableResolver(getVariableResolver());
 
-        XPathFunctionResolver parentResolver = getFunctionResolver();
-        if (parentResolver == null) {
-            parentResolver = xPath.getXPathFunctionResolver();
+            XPathFunctionResolver parentResolver = getFunctionResolver();
+            if (parentResolver == null) {
+                parentResolver = xPath.getXPathFunctionResolver();
+            }
+            xPath.setXPathFunctionResolver(createDefaultFunctionResolver(parentResolver));
+            return xPath.compile(text);
+        } finally {
+            lock.unlock();
         }
-        xPath.setXPathFunctionResolver(createDefaultFunctionResolver(parentResolver));
-        return xPath.compile(text);
     }
 
-    protected synchronized XPathExpression createTraceNamespaceExpression()
+    protected XPathExpression createTraceNamespaceExpression()
             throws XPathExpressionException {
-        // XPathFactory is not thread safe
-        XPath xPath = getXPathFactory().newXPath();
-        return xPath.compile(OBTAIN_ALL_NS_XPATH);
+        lock.lock();
+        try {
+            // XPathFactory is not thread safe
+            XPath xPath = getXPathFactory().newXPath();
+            return xPath.compile(OBTAIN_ALL_NS_XPATH);
+        } finally {
+            lock.unlock();
+        }
     }
 
     protected DefaultNamespaceContext createNamespaceContext(XPathFactory factory) {
@@ -1307,47 +1320,53 @@ public class XPathBuilder extends ServiceSupport
         poolLogNamespaces.clear();
     }
 
-    protected synchronized XPathFactory createXPathFactory() throws XPathFactoryConfigurationException {
-        if (objectModelUri != null) {
-            String xpathFactoryClassName = factoryClassName;
-            if (objectModelUri.equals(SAXON_OBJECT_MODEL_URI)
-                    && (xpathFactoryClassName == null || SAXON_FACTORY_CLASS_NAME.equals(xpathFactoryClassName))) {
-                // from Saxon 9.7 onwards you should favour to create the class
-                // directly
-                // https://www.saxonica.com/html/documentation/xpath-api/jaxp-xpath/factory.html
-                try {
-                    if (camelContext != null) {
-                        Class<XPathFactory> clazz
-                                = camelContext.getClassResolver().resolveClass(SAXON_FACTORY_CLASS_NAME, XPathFactory.class);
-                        if (clazz != null) {
-                            LOG.debug("Creating Saxon XPathFactory using class: {})", clazz);
-                            xpathFactory = camelContext.getInjector().newInstance(clazz);
-                            LOG.info("Created Saxon XPathFactory: {}", xpathFactory);
+    protected XPathFactory createXPathFactory() throws XPathFactoryConfigurationException {
+        lock.lock();
+        try {
+            if (objectModelUri != null) {
+                String xpathFactoryClassName = factoryClassName;
+                if (objectModelUri.equals(SAXON_OBJECT_MODEL_URI)
+                        && (xpathFactoryClassName == null || SAXON_FACTORY_CLASS_NAME.equals(xpathFactoryClassName))) {
+                    // from Saxon 9.7 onwards you should favour to create the class
+                    // directly
+                    // https://www.saxonica.com/html/documentation/xpath-api/jaxp-xpath/factory.html
+                    try {
+                        if (camelContext != null) {
+                            Class<XPathFactory> clazz
+                                    = camelContext.getClassResolver().resolveClass(SAXON_FACTORY_CLASS_NAME,
+                                            XPathFactory.class);
+                            if (clazz != null) {
+                                LOG.debug("Creating Saxon XPathFactory using class: {})", clazz);
+                                xpathFactory = camelContext.getInjector().newInstance(clazz);
+                                LOG.info("Created Saxon XPathFactory: {}", xpathFactory);
+                            }
                         }
+                    } catch (Exception e) {
+                        LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of {}" +
+                                 " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).",
+                                SAXON_FACTORY_CLASS_NAME);
+                        LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
                     }
-                } catch (Exception e) {
-                    LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of {}" +
-                             " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).",
-                            SAXON_FACTORY_CLASS_NAME);
-                    LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
                 }
+
+                if (xpathFactory == null) {
+                    LOG.debug("Creating XPathFactory from objectModelUri: {}", objectModelUri);
+                    xpathFactory = ObjectHelper.isEmpty(xpathFactoryClassName)
+                            ? XPathFactory.newInstance(objectModelUri)
+                            : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
+                    LOG.info("Created XPathFactory: {} from objectModelUri: {}", xpathFactory, objectModelUri);
+                }
+
+                return xpathFactory;
             }
 
-            if (xpathFactory == null) {
-                LOG.debug("Creating XPathFactory from objectModelUri: {}", objectModelUri);
-                xpathFactory = ObjectHelper.isEmpty(xpathFactoryClassName)
-                        ? XPathFactory.newInstance(objectModelUri)
-                        : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
-                LOG.info("Created XPathFactory: {} from objectModelUri: {}", xpathFactory, objectModelUri);
+            if (defaultXPathFactory == null) {
+                defaultXPathFactory = createDefaultXPathFactory();
             }
-
-            return xpathFactory;
+            return defaultXPathFactory;
+        } finally {
+            lock.unlock();
         }
-
-        if (defaultXPathFactory == null) {
-            defaultXPathFactory = createDefaultXPathFactory();
-        }
-        return defaultXPathFactory;
     }
 
     protected static XPathFactory createDefaultXPathFactory() throws XPathFactoryConfigurationException {

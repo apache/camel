@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import static org.apache.camel.util.URISupport.sanitizeUri;
+
 /**
  * Thrown if Camel failed to create a consumer for a given endpoint.
  */
@@ -24,23 +26,23 @@ public class FailedToCreateConsumerException extends RuntimeCamelException {
     private final String uri;
 
     public FailedToCreateConsumerException(String endpointURI, Throwable cause) {
-        super("Failed to create Consumer for endpoint for: " + endpointURI + ". Reason: " + cause, cause);
-        this.uri = endpointURI;
+        super("Failed to create Consumer for endpoint for: " + sanitizeUri(endpointURI) + ". Reason: " + cause, cause);
+        this.uri = sanitizeUri(endpointURI);
     }
 
     public FailedToCreateConsumerException(Endpoint endpoint, Throwable cause) {
         super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + cause, cause);
-        this.uri = endpoint.getEndpointUri();
+        this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 
     public FailedToCreateConsumerException(Endpoint endpoint, String message, Throwable cause) {
         super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + message, cause);
-        this.uri = endpoint.getEndpointUri();
+        this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 
     public FailedToCreateConsumerException(Endpoint endpoint, String message) {
         super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + message);
-        this.uri = endpoint.getEndpointUri();
+        this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 
     public String getUri() {

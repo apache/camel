@@ -60,6 +60,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
+            definition.getOnWhen().preCreateProcessor();
             when = createPredicate(definition.getOnWhen().getExpression());
         }
 

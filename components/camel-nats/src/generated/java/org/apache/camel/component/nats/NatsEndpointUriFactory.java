@@ -23,7 +23,7 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(34);
         props.add("bridgeErrorHandler");
         props.add("connection");
         props.add("connectionTimeout");
@@ -33,6 +33,9 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("flushConnection");
         props.add("flushTimeout");
         props.add("headerFilterStrategy");
+        props.add("jetstreamAsync");
+        props.add("jetstreamEnabled");
+        props.add("jetstreamName");
         props.add("lazyStartProducer");
         props.add("maxMessages");
         props.add("maxPingsOut");

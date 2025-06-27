@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+        @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                                   disabledReason = "Apache CI nodes are too resource constrained for this test"),
         @DisabledIfSystemProperty(named = "arangodb.tests.disable", matches = "true",
                                   disabledReason = "Manually disabled tests")
@@ -55,7 +55,7 @@ public class ArangoCustomVertxIT extends BaseArangoDb {
             public void configure() {
                 from("direct:query")
                         .toF("arangodb:{{arangodb.testDb}}?host=%s&port=%d&operation=AQL_QUERY",
-                                service.getHost(), service.getPort());
+                                service.host(), service.port());
             }
         };
     }

@@ -127,6 +127,37 @@ YAML::
 ----
 ====
 
+=== Configuring Base Path
+
+By default, Camel uses the base path that are specified in the OpenAPI contract such as:
+
+[source,json]
+----
+    "basePath": {
+            "default": "/api/v3"
+    }
+----
+
+You can configure Camel to use a different base path (such as `cheese`) by either setting the base-path
+on the Rest OpenAPI component as follows, such as in `application.properties`:
+
+[source,properties]
+----
+camel.component.rest-openapi.base-path = /cheese
+----
+
+Or configure this in the _rest configuration_ such as:
+
+[source,yaml]
+----
+- restConfiguration:
+    clientRequestValidation: true
+    contextPath: /cheese
+- rest:
+    openApi:
+      specification: petstore-v3.json
+----
+
 === Ignoring missing API operations
 
 When using OpenAPI with _contract-first_, then Camel will on startup check if there is a corresponding `direct:operationId` route
@@ -291,6 +322,25 @@ Here Camel will detect the `schema` part:
 ----
 
 And compute the class name as `Pet` and attempt to discover this class from classpath scanning specified via the `bindingPackageScan` option.
+
+You can also use `title` attribute of the Schema to provide the name of the POJO class. This is helpful when you need to use one name for the Schema in the OpenAPI contract and use another name for the actual POJO class in the implementation.
+
+[source,json]
+----
+"components": {
+        "schemas": {
+            "Pet": {
+                "type": "object",
+                "title": "PetResponseDto",
+                "properties": {
+                    ...
+                }
+            }
+        }
+    },
+----
+
+Here Camel will detect the class name as `PetResponseDto` and try to discover it from the classpath. This can be used for both Responses and RequestBodies.
 
 You can source code generate Java POJO classes from an OpenAPI specification via tooling such as the `swagger-codegen-maven-plugin` Maven plugin.
 For more details, see this https://github.com/apache/camel-spring-boot-examples/tree/main/openapi-contract-first[Spring Boot example].

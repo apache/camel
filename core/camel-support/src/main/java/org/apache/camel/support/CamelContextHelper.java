@@ -652,7 +652,7 @@ public final class CamelContextHelper {
     public static String getUptime(CamelContext context) {
         long delta = context.getUptime().toMillis();
         if (delta == 0) {
-            return "";
+            return "0ms";
         }
 
         return TimeUtils.printDuration(delta);

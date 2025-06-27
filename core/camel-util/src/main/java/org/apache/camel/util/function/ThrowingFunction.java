@@ -17,7 +17,7 @@
 package org.apache.camel.util.function;
 
 /**
- * Represents a function that accepts a single arguments, produces a result and may thrown an exception.
+ * Represents a function that accepts a single arguments, produces a result and may throw an exception.
  *
  * @param <I> the type of the input of the function
  * @param <R> the type of the result of the function

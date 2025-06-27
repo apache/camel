@@ -75,7 +75,7 @@ class YamlTestSupport extends Specification implements HasCamelContext {
                 closure.delegate = routeTemplate(name)
                 closure.call()
             }
-        });
+        })
     }
 
     def loadRoutes(Resource... resources) {
@@ -123,16 +123,6 @@ class YamlTestSupport extends Specification implements HasCamelContext {
         PluginHelper.getRoutesLoader(context).loadRoutes(
             resources.collect {
                 it -> ResourceHelper.fromString("route-${index++}.kamelet.yaml", it.stripIndent())
-            }
-        )
-    }
-
-    def loadIntegrations(String... resources) {
-        int index = 0
-
-        PluginHelper.getRoutesLoader(context).loadRoutes(
-            resources.collect {
-                it -> ResourceHelper.fromString("integration-${index++}.yaml", it.stripIndent())
             }
         )
     }

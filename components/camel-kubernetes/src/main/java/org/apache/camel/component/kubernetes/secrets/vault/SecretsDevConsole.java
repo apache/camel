@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.component.kubernetes.properties.SecretPropertiesFunction;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
@@ -66,8 +67,11 @@ public class SecretsDevConsole extends AbstractDevConsole {
 
         if (propertiesFunction != null) {
             sb.append("Kubernetes Secrets Cluster:");
-            sb.append(String.format("\n    Master Url: %s", propertiesFunction.getClient().getMasterUrl()));
-            sb.append("\n    Login: OAuth Token");
+            KubernetesClient client = propertiesFunction.getClient();
+            if (client != null && client.getMasterUrl() != null) {
+                sb.append(String.format("\n    Master Url: %s", client.getMasterUrl().toString()));
+                sb.append("\n    Login: OAuth Token");
+            }
             KubernetesVaultConfiguration kubernetes
                     = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
             if (kubernetes != null) {
@@ -98,8 +102,11 @@ public class SecretsDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
         if (propertiesFunction != null) {
-            root.put("masterUrl", propertiesFunction.getClient().getMasterUrl().toString());
-            root.put("login", "OAuth Token");
+            KubernetesClient client = propertiesFunction.getClient();
+            if (client != null && client.getMasterUrl() != null) {
+                root.put("masterUrl", client.getMasterUrl().toString());
+                root.put("login", "OAuth Token");
+            }
         }
         KubernetesVaultConfiguration kubernetes = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
         if (kubernetes != null) {

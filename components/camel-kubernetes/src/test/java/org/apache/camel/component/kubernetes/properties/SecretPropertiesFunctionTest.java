@@ -73,6 +73,9 @@ public class SecretPropertiesFunctionTest extends KubernetesTestSupport {
 
             out = cmf.apply("mysecret/mypass");
             Assertions.assertEquals("tiger", out);
+
+            out = cmf.apply("mysecret/mypass:lion");
+            Assertions.assertEquals("tiger", out);
         } finally {
             client.resource(sec).delete();
         }

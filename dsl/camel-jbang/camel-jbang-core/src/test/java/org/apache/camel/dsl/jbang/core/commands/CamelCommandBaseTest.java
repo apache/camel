@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CamelCommandBaseTest {
@@ -24,7 +25,7 @@ public class CamelCommandBaseTest {
     protected StringPrinter printer;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         printer = new StringPrinter();
     }
 

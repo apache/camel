@@ -18,6 +18,8 @@ package org.apache.camel.component.undertow.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -27,6 +29,7 @@ import io.undertow.server.handlers.PathTemplateHandler;
  * Extended PathTemplateHandler to monitor add/remove handlers. Also this enables hot swapping a default handler.
  */
 public class CamelPathTemplateHandler implements HttpHandler {
+    private final Lock lock = new ReentrantLock();
     private final Map<String, CamelMethodHandler> handlers = new HashMap<>();
     private final Wrapper defaultHandlerWrapper = new Wrapper();
     private final PathTemplateHandler delegate;
@@ -42,18 +45,28 @@ public class CamelPathTemplateHandler implements HttpHandler {
         delegate.handleRequest(exchange);
     }
 
-    public synchronized CamelPathTemplateHandler add(final String uriTemplate, final CamelMethodHandler handler) {
-        delegate.add(uriTemplate, handler);
-        handlers.put(uriTemplate, handler);
-        handlerString = null;
-        return this;
+    public CamelPathTemplateHandler add(final String uriTemplate, final CamelMethodHandler handler) {
+        lock.lock();
+        try {
+            delegate.add(uriTemplate, handler);
+            handlers.put(uriTemplate, handler);
+            handlerString = null;
+            return this;
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public synchronized CamelPathTemplateHandler remove(final String uriTemplate) {
-        delegate.remove(uriTemplate);
-        handlers.remove(uriTemplate);
-        handlerString = null;
-        return this;
+    public CamelPathTemplateHandler remove(final String uriTemplate) {
+        lock.lock();
+        try {
+            delegate.remove(uriTemplate);
+            handlers.remove(uriTemplate);
+            handlerString = null;
+            return this;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public CamelMethodHandler get(final String uriTemplate) {
@@ -64,13 +77,23 @@ public class CamelPathTemplateHandler implements HttpHandler {
         return handlers.isEmpty();
     }
 
-    public synchronized CamelMethodHandler getDefault() {
-        return this.defaultHandlerWrapper.get();
+    public CamelMethodHandler getDefault() {
+        lock.lock();
+        try {
+            return this.defaultHandlerWrapper.get();
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public synchronized void setDefault(final CamelMethodHandler defaultHandler) {
-        this.defaultHandlerWrapper.set(defaultHandler);
-        handlerString = null;
+    public void setDefault(final CamelMethodHandler defaultHandler) {
+        lock.lock();
+        try {
+            this.defaultHandlerWrapper.set(defaultHandler);
+            handlerString = null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override

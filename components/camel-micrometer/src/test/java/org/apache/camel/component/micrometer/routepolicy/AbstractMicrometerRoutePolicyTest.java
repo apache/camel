@@ -33,6 +33,7 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
     protected MicrometerRoutePolicyFactory createMicrometerRoutePolicyFactory() {
         MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
         factory.getPolicyConfiguration().setContextEnabled(false);
+        factory.getPolicyConfiguration().setExcludePattern(null);
         return factory;
     }
 

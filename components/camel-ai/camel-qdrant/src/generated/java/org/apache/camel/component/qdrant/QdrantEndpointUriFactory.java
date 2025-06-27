@@ -23,11 +23,13 @@ public class QdrantEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(9);
         props.add("apiKey");
         props.add("collection");
+        props.add("filter");
         props.add("host");
         props.add("lazyStartProducer");
+        props.add("maxResults");
         props.add("port");
         props.add("timeout");
         props.add("tls");

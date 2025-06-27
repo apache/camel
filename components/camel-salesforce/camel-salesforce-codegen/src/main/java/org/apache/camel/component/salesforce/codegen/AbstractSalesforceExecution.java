@@ -34,6 +34,7 @@ import org.apache.camel.component.salesforce.internal.client.PubSubApiClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -129,6 +130,16 @@ public abstract class AbstractSalesforceExecution {
      * Salesforce login URL, defaults to https://login.salesforce.com.
      */
     String loginUrl;
+
+    /**
+     * Salesforce JWT Audience.
+     */
+    String jwtAudience;
+
+    /**
+     * Salesforce KeystoreParameters.
+     */
+    KeyStoreParameters keyStoreParameters;
 
     /**
      * Salesforce password.
@@ -294,7 +305,7 @@ public abstract class AbstractSalesforceExecution {
         // set session before calling start()
         final SalesforceSession session = new SalesforceSession(
                 new DefaultCamelContext(), httpClient, httpClient.getTimeout(),
-                new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
+                getSalesforceLoginSession());
         httpClient.setSession(session);
 
         try {
@@ -304,6 +315,17 @@ public abstract class AbstractSalesforceExecution {
         }
 
         return httpClient;
+    }
+
+    private SalesforceLoginConfig getSalesforceLoginSession() {
+        if (keyStoreParameters != null) {
+            SalesforceLoginConfig salesforceLoginConfig
+                    = new SalesforceLoginConfig(loginUrl, clientId, userName, keyStoreParameters, false);
+            salesforceLoginConfig.setJwtAudience(jwtAudience);
+
+            return salesforceLoginConfig;
+        }
+        return new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false);
     }
 
     private void disconnectFromSalesforce(final RestClient restClient) {
@@ -381,6 +403,14 @@ public abstract class AbstractSalesforceExecution {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setJwtAudience(String jwtAudience) {
+        this.jwtAudience = jwtAudience;
+    }
+
+    public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) {
+        this.keyStoreParameters = keyStoreParameters;
     }
 
     public void setUserName(String userName) {

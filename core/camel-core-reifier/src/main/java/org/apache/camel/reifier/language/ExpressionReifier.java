@@ -157,9 +157,10 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 expression = definition.getExpressionValue();
             } else {
                 ObjectHelper.notNull(definition.getLanguage(), "language");
-                Language language = camelContext.resolveLanguage(definition.getLanguage());
+                String lan = parseString(definition.getLanguage());
+                Language language = camelContext.resolveLanguage(lan);
                 if (language == null) {
-                    throw new NoSuchLanguageException(definition.getLanguage());
+                    throw new NoSuchLanguageException(lan);
                 }
                 String exp = parseString(definition.getExpression());
                 // should be true by default
@@ -195,9 +196,10 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 predicate = new ExpressionToPredicateAdapter(definition.getExpressionValue());
             } else {
                 ObjectHelper.notNull(definition.getLanguage(), "language");
-                Language language = camelContext.resolveLanguage(definition.getLanguage());
+                String lan = parseString(definition.getLanguage());
+                Language language = camelContext.resolveLanguage(lan);
                 if (language == null) {
-                    throw new NoSuchLanguageException(definition.getLanguage());
+                    throw new NoSuchLanguageException(lan);
                 }
                 String exp = parseString(definition.getExpression());
                 // should be true by default

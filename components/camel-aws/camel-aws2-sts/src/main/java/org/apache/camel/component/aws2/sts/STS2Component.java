@@ -38,8 +38,6 @@ public class STS2Component extends DefaultComponent {
 
     public STS2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new STS2ComponentVerifierExtension());
     }
 
     @Override

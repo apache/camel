@@ -30,15 +30,15 @@ import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false)
+@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false, showDefaultValues = true)
 public class Hawtio extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name;
 
     @CommandLine.Option(names = { "--version" },
-                        description = "Version of the Hawtio web console", defaultValue = "4.1.0")
-    String version = "4.1.0";
+                        description = "Version of the Hawtio web console", defaultValue = "4.4.0")
+    String version = "4.4.0";
 
     // use port 8888 as 8080 is too commonly used
     @CommandLine.Option(names = { "--port" },
@@ -62,7 +62,7 @@ public class Hawtio extends CamelCommand {
         if (name == null) {
             exit = callHawtio();
         } else {
-            // attach jolokia before calling hawtio and disconnect afterwards
+            // attach jolokia before calling hawtio and disconnect afterward
             try {
                 exit = connectJolokia();
                 if (exit == 0) {
@@ -101,7 +101,7 @@ public class Hawtio extends CamelCommand {
         // download war that has the web-console
         MavenArtifact ma = downloader.downloadArtifact("io.hawt", "hawtio-war:war", version);
         if (ma == null) {
-            System.err.println("Cannot download io.hawt:hawtio-war:war:" + version);
+            printer().printErr("Cannot download io.hawt:hawtio-war:war:" + version);
             return 1;
         }
 
@@ -131,7 +131,7 @@ public class Hawtio extends CamelCommand {
                     try {
                         Desktop.getDesktop().browse(new URI(url));
                     } catch (Exception e) {
-                        System.err.println("Failed to open browser session, to access Hawtio open url: " + url);
+                        printer().printErr("Failed to open browser session, to access Hawtio open url: " + url);
                     }
                 }
             }
@@ -141,13 +141,13 @@ public class Hawtio extends CamelCommand {
             shutdownLatch.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.err.println("Interrupted while launching Hawtio");
+            printer().printErr("Interrupted while launching Hawtio");
             return 1;
         } catch (Exception e) {
-            System.err.println("Cannot launch Hawtio due to: " + e.getMessage());
+            printer().printErr("Cannot launch Hawtio due to: " + e.getMessage());
             return 1;
         } finally {
-            downloader.stop();
+            downloader.close();
         }
 
         return 0;

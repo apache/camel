@@ -45,6 +45,12 @@ public interface ManagedPollEnricherMBean extends ManagedProcessorMBean, Managed
     @ManagedAttribute(description = "Whether to aggregate when there was an exception thrown during calling the resource endpoint")
     Boolean isAggregateOnException();
 
+    @ManagedAttribute(description = "Whether to allow components to optimise poll if they are PollDynamicAware")
+    Boolean isAllowOptimisedComponents();
+
+    @ManagedAttribute(description = "Whether an optimised component (PollDynamicAware) is in use")
+    Boolean isOptimised();
+
     @Override
     @ManagedOperation(description = "Statistics of the endpoints that has been poll enriched from")
     TabularData extendedInformation();

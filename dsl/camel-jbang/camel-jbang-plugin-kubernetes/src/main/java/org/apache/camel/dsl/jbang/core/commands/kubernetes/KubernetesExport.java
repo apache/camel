@@ -21,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +36,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Export;
 import org.apache.camel.dsl.jbang.core.commands.ExportBaseCommand;
 import org.apache.camel.dsl.jbang.core.commands.Run;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
@@ -56,10 +57,6 @@ public class KubernetesExport extends Export {
 
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
     protected String serviceAccount;
-
-    @CommandLine.Option(names = { "--property" },
-                        description = "Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value|file:/path/to/my-conf.properties|[configmap|secret]:name]).")
-    protected String[] properties;
 
     @CommandLine.Option(names = { "--config" },
                         description = "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
@@ -106,8 +103,24 @@ public class KubernetesExport extends Export {
     protected String imageGroup;
 
     @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
-                        description = "The image builder used to build the container image (e.g. docker, jib, podman, s2i).")
-    protected String imageBuilder;
+                        description = "The image builder used to build the container image (e.g. docker, jib, podman).")
+    protected String imageBuilder = "jib";
+
+    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
+                        description = "Whether to push the container image to a given image registry.")
+    protected boolean imagePush = true;
+
+    @CommandLine.Option(names = { "--image-platform" },
+                        description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
+    protected String[] imagePlatforms;
+
+    @CommandLine.Option(names = { "--base-image" },
+                        description = "The base image that is used to build the container image from (default is eclipse-temurin:<java-version>).")
+    protected String baseImage;
+
+    @CommandLine.Option(names = { "--registry-mirror" },
+                        description = "Optional Docker registry mirror where to pull images from when building the container image.")
+    protected String registryMirror;
 
     @CommandLine.Option(names = { "--cluster-type" },
                         description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
@@ -131,6 +144,7 @@ public class KubernetesExport extends Export {
         quarkusVersion = configurer.quarkusVersion;
 
         files = configurer.files;
+        name = configurer.name;
         gav = configurer.gav;
         repositories = configurer.repositories;
         dependencies = configurer.dependencies;
@@ -160,9 +174,11 @@ public class KubernetesExport extends Export {
         gradleWrapper = configurer.gradleWrapper;
         fresh = configurer.fresh;
         download = configurer.download;
+        packageScanJars = configurer.packageScanJars;
         quiet = configurer.quiet;
         logging = configurer.logging;
         loggingLevel = configurer.loggingLevel;
+        verbose = configurer.verbose;
     }
 
     public Integer export() throws Exception {
@@ -170,50 +186,47 @@ public class KubernetesExport extends Export {
             runtime = RuntimeType.quarkus;
         }
 
-        if (!quiet) {
-            printer().println("Exporting application ...");
-        }
+        printer().println("Exporting application ...");
 
         if (!buildTool.equals("maven")) {
             printer().printf("--build-tool=%s is not yet supported%n", buildTool);
         }
 
-        String propPrefix;
-        if (runtime == RuntimeType.springBoot) {
-            propPrefix = "camel.springboot";
-        } else if (runtime == RuntimeType.main) {
-            propPrefix = "camel.main";
-        } else {
-            propPrefix = runtime.runtime();
-        }
-
-        boolean useQuarkusPlugin = runtime == RuntimeType.quarkus;
-        boolean useJKubePlugin = !useQuarkusPlugin;
-
         // Resolve image group and registry
         String resolvedImageGroup = resolveImageGroup();
-        if (resolvedImageGroup != null) {
-            buildProperties.add("%s.container-image.group=%s".formatted(propPrefix, resolvedImageGroup));
-        }
-
         String resolvedImageRegistry = resolveImageRegistry();
-        if (useQuarkusPlugin && resolvedImageRegistry != null) {
+
+        if (resolvedImageRegistry != null) {
+            buildProperties.add("jkube.container-image.registry=%s".formatted(resolvedImageRegistry));
+            if (imagePush) {
+                buildProperties.add("jkube.docker.push.registry=%s".formatted(resolvedImageRegistry));
+            }
+
+            // [TODO] jkube config for insecure registries?
             var allowInsecure = resolvedImageRegistry.startsWith("localhost");
-            buildProperties.add("%s.container-image.registry=%s".formatted(propPrefix, resolvedImageRegistry));
-            buildProperties.add("%s.container-image.insecure=%b".formatted(propPrefix, allowInsecure));
+            if (allowInsecure && "jib".equals(imageBuilder)) {
+                buildProperties.add("jib.allowInsecureRegistries=true");
+            }
         }
 
         String projectName = getProjectName();
-        CamelCatalog catalog = CatalogHelper.loadCatalog(runtime, runtime.version());
+        String runtimeVersion;
+        if (runtime == RuntimeType.quarkus) {
+            runtimeVersion = quarkusVersion;
+        } else if (runtime == RuntimeType.springBoot) {
+            runtimeVersion = camelSpringBootVersion;
+        } else {
+            runtimeVersion = camelVersion;
+        }
+        CamelCatalog catalog = CatalogHelper.loadCatalog(runtime, runtimeVersion, download);
 
         List<Source> sources;
         try {
+            addFile(Run.RUN_JAVA_SH);
             sources = SourceHelper.resolveSources(files);
         } catch (Exception e) {
-            if (!quiet) {
-                printer().printf("Project export failed: %s - %s%n", e.getMessage(),
-                        Optional.ofNullable(e.getCause()).map(Throwable::getMessage).orElse("unknown reason"));
-            }
+            printer().printf("Project export failed: %s - %s%n", e.getMessage(),
+                    Optional.ofNullable(e.getCause()).map(Throwable::getMessage).orElse("unknown reason"));
             return 1;
         }
 
@@ -227,17 +240,25 @@ public class KubernetesExport extends Export {
                 .filter(parts -> parts.length == 2)
                 .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
 
-        // Add labels to TraitContext
-        //
-        // Generated by quarkus/jkube
-        // app.kubernetes.io/name
-        // app.kubernetes.io/version
-        //
-        addLabel("app.kubernetes.io/runtime", "camel");
-        context.addLabels(Arrays.stream(labels)
+        annotations = Optional.ofNullable(annotations).orElse(new String[0]);
+        context.addAnnotations(Arrays.stream(annotations)
                 .map(item -> item.split("="))
                 .filter(parts -> parts.length == 2)
                 .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
+
+        // Add labels to TraitContext
+        //
+        // Generated by jkube
+        // app.kubernetes.io/name
+        // app.kubernetes.io/version
+        //
+        context.addLabel("app.kubernetes.io/runtime", "camel");
+        if (labels != null) {
+            context.addLabels(Arrays.stream(labels)
+                    .map(item -> item.split("="))
+                    .filter(parts -> parts.length == 2)
+                    .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
+        }
 
         if (clusterType != null) {
             context.setClusterType(ClusterType.valueOf(clusterType.toUpperCase()));
@@ -247,17 +268,20 @@ public class KubernetesExport extends Export {
             context.setServiceAccount(serviceAccount);
         }
 
-        // application.properties
-        String[] applicationProperties = extractPropertiesTraits(new File("application.properties"));
-
         // application-{profile}.properties
-        String[] applicationProfileProperties = null;
+        var applicationProfileProperties = new String[0];
         if (this.profile != null) {
             // override from profile specific configuration
-            applicationProfileProperties = extractPropertiesTraits(new File("application-" + profile + ".properties"));
+            applicationProfileProperties = extractPropertiesTraits(Paths.get("application-" + profile + ".properties"));
         }
 
-        Traits traitsSpec = getTraitSpec(applicationProperties, applicationProfileProperties);
+        Traits traitsSpec = getTraitSpec(applicationProfileProperties, applicationProperties);
+
+        // Map properties to env variables (where needed)
+        var propsMap = propertiesMap(applicationProfileProperties, applicationProperties);
+        if (propsMap.containsKey("ssl.truststore.certificates")) {
+            addEnvVar("SSL_TRUSTSTORE_CERTIFICATES", propsMap.get("ssl.truststore.certificates"));
+        }
 
         TraitHelper.configureMountTrait(traitsSpec, configs, resources, volumes);
         if (openapi != null && openapi.startsWith("configmap:")) {
@@ -265,158 +289,112 @@ public class KubernetesExport extends Export {
             // Remove OpenAPI spec option to avoid duplicate handling by parent export command
             openapi = null;
         }
-        TraitHelper.configureProperties(traitsSpec, properties);
         TraitHelper.configureContainerImage(traitsSpec, image,
-                resolvedImageRegistry, resolvedImageGroup, projectName, getVersion());
+                resolvedImageRegistry, resolvedImageGroup, projectName, getVersion(), buildProperties);
         TraitHelper.configureEnvVars(traitsSpec, envVars);
         TraitHelper.configureConnects(traitsSpec, connects);
 
         Container container = traitsSpec.getContainer();
-
-        var resolvedImageName = TraitHelper.getResolvedImageName(resolvedImageGroup, projectName, getVersion());
-        buildProperties.add("%s.kubernetes.image-name=%s".formatted(propPrefix, resolvedImageName));
-        buildProperties.add("%s.kubernetes.ports.%s.container-port=%d".formatted(propPrefix,
-                Optional.ofNullable(container.getPortName()).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME),
-                Optional.ofNullable(container.getPort()).map(Long::intValue).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT)));
-
-        // Need to set quarkus.container properties, otherwise these settings get overwritten by Quarkus
         if (container.getName() != null && !container.getName().equals(projectName)) {
-            buildProperties.add("%s.kubernetes.container-name=%s".formatted(propPrefix, container.getName()));
+            printer().printf("Custom container name '%s' not supported%n".formatted(container.getName()));
         }
 
-        if (container.getImagePullPolicy() != null) {
-            var imagePullPolicy = container.getImagePullPolicy().getValue();
-            if (runtime == RuntimeType.quarkus) {
-                imagePullPolicy = StringHelper.camelCaseToDash(imagePullPolicy);
+        buildProperties.add("jkube.skip.push=%b".formatted(!imagePush));
+
+        if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            // Displays the Camel logo as part the deployment
+            context.addLabel("app.openshift.io/runtime", "camel");
+
+            if (!"docker".equals(imageBuilder)) {
+                printer().printf("OpenShift forcing --image-builder=docker%n");
+                imageBuilder = "docker";
             }
-            buildProperties.add("%s.kubernetes.image-pull-policy=%s".formatted(propPrefix, imagePullPolicy));
+            // the deployment trait already generates the src/main/jkube/deployment.yml
+            // but we also have to set in the jkube to generate Deployment instead of DeploymentConfig
+            buildProperties.add("jkube.build.switchToDeployment=true");
+            buildProperties.add("jkube.maven.plugin=%s".formatted("openshift-maven-plugin"));
+        } else {
+            buildProperties.add("jkube.maven.plugin=%s".formatted("kubernetes-maven-plugin"));
         }
 
-        if (useJKubePlugin) {
-            if ("docker".equals(imageBuilder) || "jib".equals(imageBuilder)) {
-                buildProperties.add("jkube.build.strategy=%s".formatted(imageBuilder));
-            }
-            if (resolvedImageRegistry != null) {
-                buildProperties.add("jkube.docker.push.registry=%s".formatted(resolvedImageRegistry));
-            }
-            var skipPush = !container.getImagePush();
-            buildProperties.add("jkube.skip.push=%b".formatted(skipPush));
+        if (baseImage == null) {
+            // use default base image with java version
+            baseImage = "eclipse-temurin:%s".formatted(javaVersion);
+        }
+
+        if (registryMirror != null) {
+            baseImage = "%s/%s".formatted(registryMirror, baseImage);
+        }
+
+        buildProperties.add("jkube.container-image.from=%s".formatted(baseImage));
+        buildProperties.add("jkube.build.strategy=%s".formatted(imageBuilder));
+
+        if ("jib".equals(imageBuilder)) {
+            buildProperties.add("jkube.container-image.nocache=true");
+            buildProperties.add("jib.disableUpdateChecks=true");
+        }
+
+        if (imagePlatforms != null) {
+            buildProperties.add("jkube.container-image.platforms=%s".formatted(
+                    Arrays.stream(imagePlatforms).distinct().collect(Collectors.joining(","))));
         }
 
         // Runtime specific for Main
         if (runtime == RuntimeType.main) {
-            addDependencies("org.apache.camel:camel-health",
-                    "org.apache.camel:camel-platform-http-main");
+            addDependencies("org.apache.camel:camel-health", "org.apache.camel:camel-platform-http-main");
         }
 
-        // Runtime specific for Quarkus
-        if (useQuarkusPlugin) {
+        Path settingsPath = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
+        var jkubeVersion = jkubeMavenPluginVersion(settingsPath, mapBuildProperties());
+        buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
-            // Quarkus specific dependencies
-            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
-                addDependencies("io.quarkus:quarkus-openshift");
-            } else {
-                addDependencies("io.quarkus:quarkus-kubernetes");
-
-                // on clusters other than OpenShift we need a default image builder
-                if (imageBuilder == null) {
-                    imageBuilder = "jib";
-                }
-            }
-
-            // auto translate s2i image builder to openshift
-            if ("s2i".equals(imageBuilder)) {
-                imageBuilder = "openshift";
-            }
-
-            // Configure image builder
-            if (imageBuilder != null) {
-                addDependencies("io.quarkus:quarkus-container-image-%s".formatted(imageBuilder));
-                buildProperties.add("quarkus.container-image.builder=%s".formatted(imageBuilder));
-            }
-
-            // Quarkus specific properties
-            buildProperties.add("quarkus.container-image.build=true");
-        }
-
-        // SpringBoot/Main Runtime specific
-        if (useJKubePlugin) {
-            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
-                buildProperties.add("%s.jkube.maven.plugin=%s".formatted(propPrefix, "openshift-maven-plugin"));
-            } else {
-                buildProperties.add("%s.jkube.maven.plugin=%s".formatted(propPrefix, "kubernetes-maven-plugin"));
-            }
-            File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
-            var jkubeVersion = jkubeMavenPluginVersion(settings, mapBuildProperties());
-            buildProperties.add("%s.jkube.version=%s".formatted(propPrefix, jkubeVersion));
-        }
+        setContainerHealthPaths();
 
         // Run export
-        int exit = super.export();
+        int exit = super.doExport();
         if (exit != 0) {
-            if (!quiet) {
-                printer().println("Project export failed");
-            }
+            printer().println("Project export failed");
             return exit;
         }
 
         // Post export processing
-        // Note, the resulting kubernetes.yml is tested but not used by springboot
-        if (!quiet) {
-            printer().println("Building Kubernetes manifest ...");
-        }
+        printer().println("Building Kubernetes manifest ...");
 
         new TraitCatalog().apply(traitsSpec, context, clusterType, runtime);
 
+        // Dump each fragment to its respective kind
         var kubeFragments = context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
+        for (var map : kubeFragments) {
+            var ymlFragment = KubernetesHelper.dumpYaml(map);
+            var kind = map.get("kind").toString().toLowerCase();
+            safeCopy(new ByteArrayInputStream(ymlFragment.getBytes(StandardCharsets.UTF_8)),
+                    Paths.get(exportDir, "src/main/jkube", kind + ".yml"));
 
-        // Quarkus: dump joined fragments to kubernetes.yml
-        if (runtime == RuntimeType.quarkus) {
-            var kubeManifest = kubeFragments.stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---\n"));
-            File manifestFile = KubernetesHelper.getKubernetesManifest(clusterType, exportDir + "/src/main/kubernetes");
-            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
-                // Quarkus maven plugin does not support manifest merging (correctly)
-                // We still export the wanted configuration for comparison with the quarkus generated manifest
-                manifestFile = new File(exportDir + "/src/main/kubernetes/_openshift.yml");
-            }
-            safeCopy(new ByteArrayInputStream(kubeManifest.getBytes(StandardCharsets.UTF_8)), manifestFile);
-        }
-
-        // SpringBoot: dump each fragment to its respective kind
-        if (runtime == RuntimeType.springBoot || runtime == RuntimeType.main) {
-            for (var map : kubeFragments) {
-                var ymlFragment = KubernetesHelper.dumpYaml(map);
-                var kind = map.get("kind").toString().toLowerCase();
-                safeCopy(new ByteArrayInputStream(ymlFragment.getBytes(StandardCharsets.UTF_8)),
-                        new File(exportDir + "/src/main/jkube/%s.yml".formatted(kind)));
-
-            }
         }
 
         context.doWithConfigurationResources((fileName, content) -> {
             try {
-                File target = new File(exportDir + SRC_MAIN_RESOURCES + fileName);
-                if (target.exists()) {
-                    Files.writeString(target.toPath(), "%n%s".formatted(content), StandardOpenOption.APPEND);
+                Path targetPath = Paths.get(exportDir, "src/main/resources", fileName);
+                if (Files.exists(targetPath)) {
+                    Files.writeString(targetPath, "%n%s".formatted(content), StandardOpenOption.APPEND);
                 } else {
-                    safeCopy(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), target);
+                    safeCopy(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), targetPath);
                 }
             } catch (Exception e) {
-                if (!quiet) {
-                    printer().printf("Failed to create configuration resource %s - %s%n",
-                            exportDir + SRC_MAIN_RESOURCES + fileName, e.getMessage());
-                }
+                printer().printf("Failed to create configuration resource %s - %s%n",
+                        exportDir + SRC_MAIN_RESOURCES + fileName, e.getMessage());
             }
         });
 
-        if (!quiet) {
-            printer().println("Project export successful!");
-        }
+        printer().println("Project export successful!");
 
         return 0;
     }
 
     protected Integer export(ExportBaseCommand cmd) throws Exception {
+        if (runtime == RuntimeType.quarkus) {
+            cmd.pomTemplateName = "quarkus-kubernetes-pom.tmpl";
+        }
         if (runtime == RuntimeType.springBoot) {
             cmd.pomTemplateName = "spring-boot-kubernetes-pom.tmpl";
         }
@@ -426,16 +404,13 @@ public class KubernetesExport extends Export {
         return super.export(cmd);
     }
 
-    protected Traits getTraitSpec(String[] applicationProperties, String[] applicationProfileProperties) {
+    protected Traits getTraitSpec(String[] applicationProfileProperties, String[] applicationProperties) {
 
-        // annotation traits
-        String[] annotationsTraits = TraitHelper.extractTraitsFromAnnotations(this.annotations);
-
-        String[] allTraits
-                = TraitHelper.mergeTraits(traits, annotationsTraits, applicationProfileProperties, applicationProperties);
+        var annotationsTraits = TraitHelper.extractTraitsFromAnnotations(this.annotations);
+        var allTraits = TraitHelper.mergeTraits(traits, annotationsTraits, applicationProfileProperties, applicationProperties);
 
         Traits traitsSpec;
-        if (allTraits != null && allTraits.length > 0) {
+        if (allTraits.length > 0) {
             traitsSpec = TraitHelper.parseTraits(allTraits);
         } else {
             traitsSpec = new Traits();
@@ -444,13 +419,21 @@ public class KubernetesExport extends Export {
         return traitsSpec;
     }
 
-    private void addLabel(String key, String value) {
-        var labelArray = Optional.ofNullable(labels).orElse(new String[0]);
-        var labelList = new ArrayList<>(Arrays.asList(labelArray));
-        var labelEntry = "%s=%s".formatted(key, value);
-        if (!labelList.contains(labelEntry)) {
-            labelList.add(labelEntry);
-            labels = labelList.toArray(new String[0]);
+    private void addFile(String file) {
+        if (!files.contains(file)) {
+            // ensure mutability
+            files = new ArrayList<>(files);
+            files.add(file);
+        }
+    }
+
+    private void addEnvVar(String key, String value) {
+        var envArray = Optional.ofNullable(envVars).orElse(new String[0]);
+        var envList = new ArrayList<>(Arrays.asList(envArray));
+        var envEntry = "%s=%s".formatted(key, value);
+        if (!envList.contains(envEntry)) {
+            envList.add(envEntry);
+            envVars = envList.toArray(new String[0]);
         }
     }
 
@@ -474,7 +457,10 @@ public class KubernetesExport extends Export {
 
     private String resolveImageRegistry() {
         if (image != null) {
-            return extractImageRegistry(image);
+            String extracted = extractImageRegistry(image);
+            if (extracted != null) {
+                return extracted;
+            }
         }
 
         if (imageRegistry != null) {
@@ -494,6 +480,30 @@ public class KubernetesExport extends Export {
         }
 
         return null;
+    }
+
+    private void setContainerHealthPaths() {
+        // the camel-observability-services artifact is set in the pom template
+        // it renames the container health base path to /observe, so this has to be in the container health probes http path
+        // only quarkus and sb runtimes, because there is no published health endpoints when using runtime=main
+        if (RuntimeType.quarkus == runtime) {
+            // jkube reads quarkus properties to set the container health probes path
+            buildProperties.add("quarkus.smallrye-health.root-path=/observe/health");
+        } else if (RuntimeType.springBoot == runtime) {
+            List<String> newProps = new ArrayList<>();
+            // jkube reads spring-boot properties to set the kubernetes container health probes path
+            // in this case, jkube reads from the application.properties and not from the build properties in pom.xml
+            newProps.add("management.endpoints.web.base-path=/observe");
+            // jkube uses the old property to enable the readiness/liveness probes
+            // TODO: rename this property once https://github.com/eclipse-jkube/jkube/issues/3690 is fixed
+            newProps.add("management.health.probes.enabled=true");
+            if (applicationProperties == null) {
+                applicationProperties = newProps.toArray(new String[newProps.size()]);
+            } else {
+                newProps.addAll(Arrays.asList(applicationProperties));
+                applicationProperties = newProps.toArray(new String[newProps.size()]);
+            }
+        }
     }
 
     private String extractImageGroup(String image) {
@@ -516,21 +526,27 @@ public class KubernetesExport extends Export {
         return imageRegistry;
     }
 
-    protected String[] extractPropertiesTraits(File file) throws Exception {
-        if (file.exists()) {
+    protected String[] extractPropertiesTraits(Path path) throws Exception {
+        if (Files.exists(path)) {
             Properties prop = new CamelCaseOrderedProperties();
-            RuntimeUtil.loadProperties(prop, file);
+            RuntimeUtil.loadProperties(prop, path);
             return TraitHelper.extractTraitsFromProperties(prop);
         } else {
             return null;
         }
     }
 
-    protected String getProjectName() {
-        if (image != null) {
-            return KubernetesHelper.sanitize(KubernetesHelper.sanitize(StringHelper.beforeLast(image, ":")));
-        }
+    protected String[] extractPropertiesTraits(File file) throws Exception {
+        return extractPropertiesTraits(file.toPath());
+    }
 
+    protected String getProjectName() {
+        if (name != null) {
+            return KubernetesHelper.sanitize(name);
+        }
+        if (image != null) {
+            return KubernetesHelper.sanitize(StringHelper.beforeLast(image, ":"));
+        }
         return KubernetesHelper.sanitize(super.getProjectName());
     }
 
@@ -542,12 +558,17 @@ public class KubernetesExport extends Export {
         return super.getVersion();
     }
 
+    protected void setApplicationProperties(String[] props) {
+        this.applicationProperties = props;
+    }
+
     /**
      * Configurer used to customize internal options for the Export command.
      */
     public record ExportConfigurer(RuntimeType runtime,
             String quarkusVersion,
             List<String> files,
+            String name,
             String gav,
             String repositories,
             List<String> dependencies,
@@ -577,8 +598,10 @@ public class KubernetesExport extends Export {
             boolean gradleWrapper,
             boolean fresh,
             boolean download,
+            boolean packageScanJars,
             boolean quiet,
             boolean logging,
-            String loggingLevel) {
+            String loggingLevel,
+            boolean verbose) {
     }
 }

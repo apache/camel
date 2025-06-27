@@ -16,9 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -27,14 +28,13 @@ import java.util.Set;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.io.FileUtils;
 
 class ExportCamelMain extends Export {
 
@@ -47,93 +47,96 @@ class ExportCamelMain extends Export {
     public Integer export() throws Exception {
         String[] ids = gav.split(":");
         if (ids.length != 3) {
-            System.err.println("--gav must be in syntax: groupId:artifactId:version");
+            printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
         if (!buildTool.equals("maven") && !buildTool.equals("gradle")) {
-            System.err.println("--build-tool must either be maven or gradle, was: " + buildTool);
+            printer().printErr("--build-tool must either be maven or gradle, was: " + buildTool);
             return 1;
         }
         if (buildTool.equals("gradle")) {
-            System.err.println("--build-tool=gradle is not support yet for camel-main runtime.");
+            printer().printErr("--build-tool=gradle is not support yet for camel-main runtime.");
         }
 
         // the settings file has information what to export
-        File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
-        if (fresh || !files.isEmpty() || !settings.exists()) {
+        Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
+        if (fresh || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
-            if (!quiet && fresh) {
-                printer().println("Generating fresh run data");
-            }
-            int silent = runSilently(ignoreLoadingError, lazyBean);
+            printer().println("Generating fresh run data");
+            int silent = runSilently(ignoreLoadingError, lazyBean, verbose);
             if (silent != 0) {
                 return silent;
             }
         } else {
-            if (!quiet) {
-                printer().println("Reusing existing run data");
-            }
+            printer().println("Reusing existing run data");
         }
 
-        if (!quiet) {
-            printer().println("Exporting as Camel Main project to: " + exportDir);
-        }
+        printer().println("Exporting as Camel Main project to: " + exportDir);
 
-        File profile = new File("application.properties");
+        Path profile = Path.of("application.properties");
 
         // use a temporary work dir
-        File buildDir = new File(BUILD_DIR);
-        FileUtil.removeDir(buildDir);
-        buildDir.mkdirs();
+        Path buildDir = Path.of(BUILD_DIR);
+        PathUtils.deleteDirectory(buildDir);
+        Files.createDirectories(buildDir);
 
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
 
         // compute source folders
-        File srcJavaDirRoot = new File(BUILD_DIR, "src/main/java");
+        Path srcJavaDirRoot = buildDir.resolve("src/main/java");
         String srcPackageName = exportPackageName(ids[0], ids[1], packageName);
-        File srcJavaDir;
+        Path srcJavaDir;
         if (srcPackageName == null) {
             srcJavaDir = srcJavaDirRoot;
         } else {
-            srcJavaDir = new File(srcJavaDirRoot, srcPackageName.replace('.', File.separatorChar));
+            srcJavaDir = srcJavaDirRoot.resolve(srcPackageName.replace('.', '/'));
         }
-        srcJavaDir.mkdirs();
-        File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
-        srcResourcesDir.mkdirs();
-        File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
-        File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
+        Files.createDirectories(srcJavaDir);
+        Path srcResourcesDir = buildDir.resolve("src/main/resources");
+        Files.createDirectories(srcResourcesDir);
+        Path srcCamelResourcesDir = buildDir.resolve("src/main/resources/camel");
+        Path srcKameletsResourcesDir = buildDir.resolve("src/main/resources/kamelets");
         // copy application properties files
         copyApplicationPropertiesFiles(srcResourcesDir);
         // copy source files
-        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
+        copySourceFiles(settings, profile,
+                srcJavaDirRoot, srcJavaDir,
+                srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
         // copy from settings to profile
-        copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
-            if (!prop.containsKey("camel.main.basePackageScan")
-                    && !prop.containsKey("camel.main.base-package-scan")) {
-                // use dot as root package if no package are in use
-                prop.put("camel.main.basePackageScan", srcPackageName == null ? "." : srcPackageName);
-            }
-            if (!hasModeline(settings)) {
-                prop.remove("camel.main.modeline");
-            }
-            // are we using http then enable embedded HTTP server (if not explicit configured already)
-            int port = httpServerPort(settings);
-            if (port == -1 && deps.stream().anyMatch(d -> d.contains("camel-platform-http") || d.contains("camel-rest"))) {
-                port = 8080;
-            }
-            if (port != -1 && !prop.containsKey("camel.server.enabled")) {
-                prop.put("camel.server.enabled", "true");
-                if (port != 8080 && !prop.containsKey("camel.server.port")) {
-                    prop.put("camel.server.port", port);
-                }
-                if (!prop.containsKey("camel.server.health-check-enabled")) {
-                    prop.put("camel.server.health-check-enabled", "true");
-                }
-            }
-            return prop;
-        });
+        copySettingsAndProfile(settings, profile,
+                srcResourcesDir, prop -> {
+                    if (!prop.containsKey("camel.main.basePackageScan")
+                            && !prop.containsKey("camel.main.base-package-scan")) {
+                        // use dot as root package if no package are in use
+                        prop.put("camel.main.basePackageScan", srcPackageName == null ? "." : srcPackageName);
+                    }
+                    if (!hasModeline(settings)) {
+                        prop.remove("camel.main.modeline");
+                    }
+                    // are we using http then enable embedded HTTP server (if not explicit configured already)
+                    int port = httpServerPort(settings);
+                    if (port == -1
+                            && deps.stream().anyMatch(d -> d.contains("camel-platform-http") || d.contains("camel-rest"))) {
+                        port = 8080;
+                    }
+                    if (port != -1 && !prop.containsKey("camel.server.enabled")) {
+                        prop.put("camel.server.enabled", "true");
+                        if (port != 8080 && !prop.containsKey("camel.server.port")) {
+                            prop.put("camel.server.port", port);
+                        }
+                        if (!prop.containsKey("camel.server.health-check-enabled")) {
+                            prop.put("camel.server.health-check-enabled", "true");
+                        }
+                    }
+                    port = httpManagementPort(settings);
+                    if (port != -1) {
+                        prop.put("camel.management.enabled", "true");
+                        prop.put("camel.management.port", port);
+                    }
+                    return prop;
+                });
         // create main class
         createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
         // copy local lib JARs
@@ -142,13 +145,14 @@ class ExportCamelMain extends Export {
         copyAgentDependencies(deps);
         deps.removeIf(d -> d.startsWith("agent:"));
         if ("maven".equals(buildTool)) {
-            createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps, srcPackageName);
+            createMavenPom(settings, profile,
+                    buildDir.resolve("pom.xml"), deps, srcPackageName);
             if (mavenWrapper) {
                 copyMavenWrapper();
             }
         }
         copyDockerFiles(BUILD_DIR);
-        String appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
+        String appJar = Paths.get("target", ids[1] + "-" + ids[2] + ".jar").toString();
         copyReadme(BUILD_DIR, appJar);
         if (cleanExportDir || !exportDir.equals(".")) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
@@ -156,13 +160,13 @@ class ExportCamelMain extends Export {
             CommandHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
-        FileUtils.copyDirectory(new File(BUILD_DIR), new File(exportDir));
-        FileUtil.removeDir(new File(BUILD_DIR));
+        PathUtils.copyDirectory(buildDir, Path.of(exportDir));
+        PathUtils.deleteDirectory(buildDir);
 
         return 0;
     }
 
-    private void createMavenPom(File settings, File profile, File pom, Set<String> deps, String packageName) throws Exception {
+    private void createMavenPom(Path settings, Path profile, Path pom, Set<String> deps, String packageName) throws Exception {
         String[] ids = gav.split(":");
 
         InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/" + pomTemplateName);
@@ -247,16 +251,16 @@ class ExportCamelMain extends Export {
         // include docker/kubernetes with jib/jkube
         context = enrichMavenPomJib(context, settings, profile);
 
-        IOHelper.writeText(context, new FileOutputStream(pom, false));
+        Files.writeString(pom, context);
     }
 
-    protected String enrichMavenPomJib(String context, File settings, File profile) throws Exception {
+    protected String enrichMavenPomJib(String context, Path settings, Path profile) throws Exception {
         StringBuilder sb1 = new StringBuilder();
         StringBuilder sb2 = new StringBuilder();
 
         // is kubernetes included?
         Properties prop = new CamelCaseOrderedProperties();
-        if (profile.exists()) {
+        if (Files.exists(profile)) {
             RuntimeUtil.loadProperties(prop, profile);
         }
         // include additional build properties
@@ -286,7 +290,8 @@ class ExportCamelMain extends Export {
             String context2 = IOHelper.loadText(is);
             IOHelper.close(is);
 
-            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings, prop));
+            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}",
+                    jibMavenPluginVersion(settings, prop));
 
             // image from/to auth
             String auth = "";
@@ -331,10 +336,10 @@ class ExportCamelMain extends Export {
     }
 
     @Override
-    protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
+    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
         Set<String> answer = super.resolveDependencies(settings, profile);
 
-        if (profile != null && profile.exists()) {
+        if (profile != null && Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
             // if metrics is defined then include camel-micrometer-prometheus for camel-main runtime
@@ -366,7 +371,7 @@ class ExportCamelMain extends Export {
         return answer;
     }
 
-    private void createMainClassSource(File srcJavaDir, String packageName, String mainClassname) throws Exception {
+    private void createMainClassSource(Path srcJavaDir, String packageName, String mainClassname) throws Exception {
         InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main.tmpl");
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
@@ -377,25 +382,26 @@ class ExportCamelMain extends Export {
             context = context.replaceFirst("\\{\\{ \\.PackageName }}", "");
         }
         context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
-        IOHelper.writeText(context, new FileOutputStream(srcJavaDir + "/" + mainClassname + ".java", false));
+        Path outputFile = srcJavaDir.resolve(mainClassname + ".java");
+        Files.writeString(outputFile, context);
     }
 
     @Override
     protected void copySourceFiles(
-            File settings, File profile, File srcJavaDirRoot, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir,
-            File srcKameletsResourcesDir, String packageName)
+            Path settings, Path profile, Path srcJavaDirRoot, Path srcJavaDir, Path srcResourcesDir, Path srcCamelResourcesDir,
+            Path srcKameletsResourcesDir, String packageName)
             throws Exception {
 
         super.copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, packageName);
 
         // log4j configuration
-        InputStream is = ExportCamelMain.class.getResourceAsStream("/log4j2.properties");
-        safeCopy(is, new File(srcResourcesDir, "log4j2.properties"));
+        InputStream is = ExportCamelMain.class.getResourceAsStream("/log4j2-main.properties");
+        safeCopy(is, srcResourcesDir.resolve("log4j2.properties"));
         is = ExportCamelMain.class.getResourceAsStream("/log4j2.component.properties");
-        safeCopy(is, new File(srcResourcesDir, "log4j2.component.properties"));
+        safeCopy(is, srcResourcesDir.resolve("log4j2.component.properties"));
         // assembly for runner jar
         is = ExportCamelMain.class.getResourceAsStream("/assembly/runner.xml");
-        safeCopy(is, new File(srcResourcesDir, "assembly/runner.xml"));
+        safeCopy(is, srcResourcesDir.resolve("assembly/runner.xml"));
     }
 }

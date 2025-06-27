@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.util.Locale;
+
 import org.apache.camel.catalog.DefaultCamelCatalog;
 
 public enum RuntimeType {
@@ -24,14 +26,15 @@ public enum RuntimeType {
     quarkus,
     main;
 
-    public static final String QUARKUS_VERSION = "3.16.1";
-    public static final String SPRING_BOOT_VERSION = "3.3.5";
+    public static final String QUARKUS_VERSION = "3.24.1";
+    public static final String SPRING_BOOT_VERSION = "3.5.3";
 
     public static RuntimeType fromValue(String value) {
+        value = value.toLowerCase(Locale.ROOT);
         return switch (value) {
-            case "spring-boot", "camel-spring-boot" -> RuntimeType.springBoot;
+            case "spring", "spring-boot", "camel-spring-boot" -> RuntimeType.springBoot;
             case "quarkus", "camel-quarkus" -> RuntimeType.quarkus;
-            case "main", "camel-main" -> RuntimeType.main;
+            case "main", "camel-main", "camel" -> RuntimeType.main;
             default -> throw new IllegalArgumentException("Unsupported runtime " + value);
         };
     }
@@ -40,7 +43,7 @@ public enum RuntimeType {
         return switch (this) {
             case springBoot -> "spring-boot";
             case quarkus -> "quarkus";
-            case main -> "camel-main";
+            case main -> "main";
         };
     }
 
@@ -50,5 +53,10 @@ public enum RuntimeType {
             case quarkus -> QUARKUS_VERSION;
             case main -> new DefaultCamelCatalog().getCatalogVersion();
         };
+    }
+
+    @Override
+    public String toString() {
+        return runtime();
     }
 }

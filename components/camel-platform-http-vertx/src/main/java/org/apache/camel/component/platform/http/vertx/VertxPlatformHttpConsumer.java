@@ -37,6 +37,7 @@ import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.TimeoutHandler;
 import io.vertx.ext.web.impl.RouteImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -55,6 +56,7 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.MimeTypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +85,12 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     private VertxPlatformHttpRouter router;
     private HttpRequestBodyHandler httpRequestBodyHandler;
     private CookieConfiguration cookieConfiguration;
+    private final String routerName;
 
     public VertxPlatformHttpConsumer(PlatformHttpEndpoint endpoint,
                                      Processor processor,
-                                     List<Handler<RoutingContext>> handlers) {
+                                     List<Handler<RoutingContext>> handlers,
+                                     String routerName) {
         super(endpoint, processor);
 
         this.handlers = handlers;
@@ -94,6 +98,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
         this.muteExceptions = endpoint.isMuteException();
         this.handleWriteResponseError = endpoint.isHandleWriteResponseError();
+        this.routerName = routerName;
     }
 
     @Override
@@ -106,9 +111,11 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         super.doInit();
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
         path = configureEndpointPath(getEndpoint());
-        router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
+        router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext(), routerName);
         if (!getEndpoint().isHttpProxy() && getEndpoint().isUseStreaming()) {
             httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
+        } else if (!getEndpoint().isHttpProxy() && !getEndpoint().isUseBodyHandler()) {
+            httpRequestBodyHandler = new NoOpHttpRequestBodyHandler(router.bodyHandler());
         } else {
             httpRequestBodyHandler = new DefaultHttpRequestBodyHandler(router.bodyHandler());
         }
@@ -122,6 +129,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         super.doStart();
 
         final Route newRoute = router.route(path);
+
+        if (getEndpoint().getRequestTimeout() > 0) {
+            newRoute.handler(TimeoutHandler.create(getEndpoint().getRequestTimeout()));
+        }
 
         if (getEndpoint().getCamelContext().getRestConfiguration().isEnableCORS() && getEndpoint().getConsumes() != null) {
             ((RouteImpl) newRoute).setEmptyBodyPermittedWithConsumes(true);
@@ -211,7 +222,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 handleProxy(ctx, exchange);
             }
 
-            populateMultiFormData(ctx, exchange.getIn(), getEndpoint().getHeaderFilterStrategy());
+            if (getEndpoint().isUseBodyHandler()) {
+                populateMultiFormData(ctx, exchange.getIn(), getEndpoint().getHeaderFilterStrategy());
+            }
 
             vertx.executeBlocking(() -> processExchange(exchange), false).onComplete(processExchangeResult -> {
                 if (processExchangeResult.succeeded()) {
@@ -313,7 +326,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                     if (headerFilterStrategy != null
                             && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, message.getExchange())) {
                         appendEntry(message.getHeaders(), key, value);
-                        appendEntry(body, key, value);
+                        if (getEndpoint().isPopulateBodyWithForm()) {
+                            appendEntry(body, key, value);
+                        }
                     }
                 }
             }
@@ -329,6 +344,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     }
 
     protected void populateAttachments(List<FileUpload> uploads, Message message) {
+        message.setHeader(Exchange.ATTACHMENTS_SIZE, uploads.size());
         for (FileUpload upload : uploads) {
             final String name = upload.name();
             final String fileName = upload.fileName();
@@ -351,6 +367,21 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 final File localFile = new File(upload.uploadedFileName());
                 final AttachmentMessage attachmentMessage = message.getExchange().getMessage(AttachmentMessage.class);
                 attachmentMessage.addAttachment(name, new DataHandler(new CamelFileDataSource(localFile, fileName)));
+
+                // populate body in case there is only one attachment
+                if (uploads.size() == 1) {
+                    message.setHeader(Exchange.FILE_PATH, localFile.getAbsolutePath());
+                    message.setHeader(Exchange.FILE_LENGTH, upload.size());
+                    message.setHeader(Exchange.FILE_NAME, upload.fileName());
+                    String ct = MimeTypeHelper.probeMimeType(upload.fileName());
+                    if (ct == null) {
+                        ct = upload.contentType();
+                    }
+                    if (ct != null) {
+                        message.setHeader(Exchange.FILE_CONTENT_TYPE, ct);
+                    }
+                    message.setBody(localFile);
+                }
             } else {
                 LOGGER.debug(
                         "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",

@@ -26,6 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 
 @CloudServiceFactory("kubernetes-service-discovery")
 @Configurer
+@Deprecated
 public class KubernetesServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private final KubernetesConfiguration configuration;
     private String lookup;

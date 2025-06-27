@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.key.vault;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.security.keyvault.secrets.models.DeletedSecret;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
+import com.azure.security.keyvault.secrets.models.SecretProperties;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -46,6 +47,9 @@ public class KeyVaultProducer extends DefaultProducer {
                 break;
             case deleteSecret:
                 deleteSecret(exchange);
+                break;
+            case updateSecretProperties:
+                updateSecretProperties(exchange);
                 break;
             case purgeDeletedSecret:
                 purgeDeletedSecret(exchange);
@@ -75,6 +79,18 @@ public class KeyVaultProducer extends DefaultProducer {
                 .getSecret(secretName);
         Message message = getMessageForResponse(exchange);
         message.setBody(p.getValue());
+    }
+
+    private void updateSecretProperties(Exchange exchange) {
+        final SecretProperties secretProperties
+                = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_PROPERTIES, SecretProperties.class);
+        if (ObjectHelper.isEmpty(secretProperties)) {
+            throw new IllegalArgumentException(MISSING_SECRET_NAME);
+        }
+        SecretProperties p = getEndpoint().getSecretClient()
+                .updateSecretProperties(secretProperties);
+        Message message = getMessageForResponse(exchange);
+        message.setBody(p);
     }
 
     private void deleteSecret(Exchange exchange) {

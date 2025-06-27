@@ -195,14 +195,20 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The directory where the camel-spring XML models are
      */
-    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-xml")
+    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-parent/camel-spring-xml")
     protected File springDir;
 
     /**
      * The directory where the camel-spring XML schema are
      */
-    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-xml/target/schema")
+    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-parent/camel-spring-xml/target/schema")
     protected File springSchemaDir;
+
+    /**
+     * The directory where the camel-xml-io XML schema are
+     */
+    @Parameter(defaultValue = "${project.basedir}/../../core/camel-xml-io/target/classes")
+    protected File xmlioSchemaDir;
 
     /**
      * The directory where the camel-main metadata are
@@ -917,13 +923,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-huawei":
                 case "camel-infinispan":
                 case "camel-jetty-common":
-                case "camel-kantive":
+                case "camel-knative":
                 case "camel-langchain4j-core":
                 case "camel-microprofile":
                 case "camel-olingo2":
                 case "camel-olingo4":
                 case "camel-salesforce":
                 case "camel-servicenow":
+                case "camel-spring-parent":
                 case "camel-test":
                 case "camel-vertx":
                     return false;
@@ -949,9 +956,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         newJsons.forEach(this::copy);
 
         for (Path file : jsonFiles) {
-
             OtherModel model = (OtherModel) allModels.get(file);
-
             String name = asComponentName(file);
 
             // grab the label, and remember it in the used labels
@@ -976,22 +981,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
         FileUtil.updateFile(all, String.join("\n", otherNames) + "\n");
 
         printOthersReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
-
         return otherNames;
     }
 
     protected void executeXmlSchemas() throws Exception {
         Path schemasOutDir = this.schemasOutDir.toPath();
-        Path springSchemaDir = this.springSchemaDir.toPath();
-
         getLog().info("Copying Spring XML schema");
-
-        copyFile(springSchemaDir.resolve("camel-spring.xsd"), schemasOutDir);
+        copyFile(this.springSchemaDir.toPath().resolve("camel-spring.xsd"), schemasOutDir);
+        getLog().info("Copying XML-IO schema");
+        copyFile(this.xmlioSchemaDir.toPath().resolve("camel-xml-io.xsd"), schemasOutDir);
     }
 
     protected void executeMain() throws Exception {
         getLog().info("Copying camel-main metadata");
-
         copyFile(mainDir.toPath().resolve("camel-main-configuration-metadata.json"), mainOutDir.toPath());
     }
 

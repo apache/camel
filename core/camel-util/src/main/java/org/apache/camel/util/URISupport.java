@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
 
@@ -47,10 +48,6 @@ public final class URISupport {
     public static final String RAW_TOKEN_PREFIX = "RAW";
     public static final char[] RAW_TOKEN_START = { '(', '{' };
     public static final char[] RAW_TOKEN_END = { ')', '}' };
-
-    // Java 17 text blocks have new lines with optional white space
-    private static final String TEXT_BLOCK_MARKER = System.lineSeparator();
-    private static final Pattern TEXT_BLOCK_PATTERN = Pattern.compile("\n\\s*");
 
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
@@ -97,10 +94,9 @@ public final class URISupport {
     }
 
     public static String textBlockToSingleLine(String uri) {
-        // text blocks
-        if (uri != null && uri.contains(TEXT_BLOCK_MARKER)) {
-            uri = TEXT_BLOCK_PATTERN.matcher(uri).replaceAll("");
-            uri = uri.trim();
+        // Java 17 text blocks have new lines with optional white space
+        if (uri != null) {
+            uri = uri.lines().map(String::trim).collect(Collectors.joining());
         }
         return uri;
     }

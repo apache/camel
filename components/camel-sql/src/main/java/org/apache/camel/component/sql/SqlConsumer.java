@@ -141,6 +141,10 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         final PreparedStatementCallback<Integer> callback = new PreparedStatementCallback<Integer>() {
             @Override
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
+                if (getEndpoint().getFetchSize() > 0) {
+                    ps.setFetchSize(getEndpoint().getFetchSize());
+                }
+
                 Queue<DataHolder> answer = new LinkedList<>();
 
                 int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();

@@ -27,7 +27,7 @@ import jakarta.xml.ws.soap.SOAPFaultException;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.AvailablePort;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -122,14 +122,14 @@ public class GreeterClientTest {
                     "Get a wrong exception message");
             assertTrue(
                     ex.getMessage().endsWith(
-                            "Caused by: [org.springframework.security.access.AccessDeniedException - Access Denied]"),
+                            "Caused by: [org.springframework.security.authorization.AuthorizationDeniedException - Access Denied]"),
                     "Get a wrong exception message");
         }
     }
 
     public static boolean isPortAvailable() {
         try {
-            AvailablePortFinder.probePort(InetAddress.getByName("localhost"), 9000);
+            AvailablePort.probePort(InetAddress.getByName("localhost"), 9000);
         } catch (IllegalStateException | UnknownHostException e) {
             return false;
         }

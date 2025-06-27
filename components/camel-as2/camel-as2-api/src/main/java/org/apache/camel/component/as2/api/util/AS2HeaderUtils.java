@@ -20,10 +20,12 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.entity.Importance;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HeaderElement;
+import org.apache.hc.core5.http.HttpMessage;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.http.message.MessageSupport;
@@ -162,4 +164,12 @@ public final class AS2HeaderUtils {
         return null;
     }
 
+    public static void addAuthorizationHeader(HttpMessage message, String userName, String password, String accessToken) {
+        if (userName != null && password != null) {
+            message.addHeader(AS2Header.AUTHORIZATION,
+                    ("Basic " + java.util.Base64.getEncoder().encodeToString((userName + ":" + password).getBytes())));
+        } else if (accessToken != null) {
+            message.addHeader(AS2Header.AUTHORIZATION, "Bearer " + accessToken);
+        }
+    }
 }

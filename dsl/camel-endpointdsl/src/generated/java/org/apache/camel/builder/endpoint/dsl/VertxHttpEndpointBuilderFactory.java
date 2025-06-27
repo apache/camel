@@ -45,6 +45,42 @@ public interface VertxHttpEndpointBuilderFactory {
         }
 
         /**
+         * If the option is true, the Exchange.HTTP_URI header will be ignored
+         * and the endpoint URI will be used for the HTTP request. You may also
+         * set option throwExceptionOnFailure to false to return the fault
+         * response back to the client.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
+            return this;
+        }
+        /**
+         * If the option is true, the Exchange.HTTP_URI header will be ignored
+         * and the endpoint URI will be used for the HTTP request. You may also
+         * set option throwExceptionOnFailure to false to return the fault
+         * response back to the client.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
+            return this;
+        }
+        /**
          * The amount of time in milliseconds until a connection is established.
          * A timeout value of zero is interpreted as an infinite timeout.
          * 
@@ -173,6 +209,57 @@ public interface VertxHttpEndpointBuilderFactory {
          */
         default VertxHttpEndpointBuilder httpMethod(String httpMethod) {
             doSetProperty("httpMethod", httpMethod);
+            return this;
+        }
+        /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * io.vertx.ext.web.multipart.MultipartForm to build the form.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder multipartUpload(boolean multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * io.vertx.ext.web.multipart.MultipartForm to build the form.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder multipartUpload(String multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * The name of the multipart/form-data when multipartUpload is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: data
+         * Group: producer
+         * 
+         * @param multipartUploadName the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder multipartUploadName(String multipartUploadName) {
+            doSetProperty("multipartUploadName", multipartUploadName);
             return this;
         }
         /**

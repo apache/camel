@@ -46,7 +46,7 @@ public class RestDslXmlGeneratorV3Test {
     public void shouldGenerateSpringXml() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             final String xml = RestDslGenerator.toXml(document).generate(context);
-            assertThat(xml).contains("http://camel.apache.org/schema/spring");
+            assertThat(xml).contains("http://camel.apache.org/schema/xml-io");
         }
     }
 
@@ -62,7 +62,7 @@ public class RestDslXmlGeneratorV3Test {
 
             final Document document = builder.parse(new InputSource(new StringReader(xml)));
 
-            assertThat(document.isDefaultNamespace("http://camel.apache.org/schema/spring")).isTrue();
+            assertThat(document.isDefaultNamespace("http://camel.apache.org/schema/xml-io")).isTrue();
         }
     }
 

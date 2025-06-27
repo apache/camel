@@ -16,6 +16,8 @@
  */
 package org.apache.camel.catalog.impl;
 
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -1322,7 +1324,7 @@ public abstract class AbstractCamelCatalog {
         // if there are {{ }}} property placeholders then we need to resolve them to something else
         // as the simple parse cannot resolve them before parsing as we dont run the actual Camel application
         // with property placeholders setup so we need to dummy this by replace the {{ }} to something else
-        // therefore we use an more unlikely character: {{XXX}} to ~^XXX^~
+        // therefore we use a more unlikely character: {{XXX}} to ~^XXX^~
         String resolved = simple.replaceAll("\\{\\{(.+)\\}\\}", "~^$1^~");
 
         LanguageValidationResult answer = new LanguageValidationResult(simple);
@@ -1412,9 +1414,109 @@ public abstract class AbstractCamelCatalog {
         return answer;
     }
 
+    private LanguageValidationResult doValidateGroovy(ClassLoader classLoader, String groovy, boolean predicate) {
+        if (classLoader == null) {
+            classLoader = getClass().getClassLoader();
+        }
+
+        // if there are {{ }}} property placeholders then we need to resolve them to something else
+        // as the simple parse cannot resolve them before parsing as we dont run the actual Camel application
+        // with property placeholders setup so we need to dummy this by replace the {{ }} to something else
+        // therefore we use a more unlikely character: {{XXX}} to ~^XXX^~
+        String resolved = groovy.replaceAll("\\{\\{(.+)\\}\\}", "~^$1^~");
+
+        LanguageValidationResult answer = new LanguageValidationResult(groovy);
+
+        Object context;
+        Object instance = null;
+        Class<?> clazz;
+
+        try {
+            // need a simple camel context for the groovy language parser to be able to parse
+            clazz = classLoader.loadClass("org.apache.camel.impl.engine.SimpleCamelContext");
+            context = clazz.getDeclaredConstructor(boolean.class).newInstance(false);
+            clazz = classLoader.loadClass("org.apache.camel.language.groovy.GroovyLanguage");
+            instance = clazz.getDeclaredConstructor().newInstance();
+            clazz = classLoader.loadClass("org.apache.camel.CamelContext");
+            instance.getClass().getMethod("setCamelContext", clazz).invoke(instance, context);
+        } catch (Exception e) {
+            clazz = null;
+            answer.setError(e.getMessage());
+        }
+
+        if (clazz != null) {
+            Throwable cause = null;
+            try {
+                if (predicate) {
+                    instance.getClass().getMethod("validatePredicate", String.class).invoke(instance, resolved);
+                } else {
+                    instance.getClass().getMethod("validateExpression", String.class).invoke(instance, resolved);
+                }
+            } catch (InvocationTargetException e) {
+                cause = e.getTargetException();
+            } catch (Exception e) {
+                cause = e;
+            }
+
+            if (cause != null) {
+
+                // reverse ~^XXX^~ back to {{XXX}}
+                String errMsg = cause.getMessage();
+                errMsg = errMsg.replaceAll("\\~\\^(.+)\\^\\~", "{{$1}}");
+
+                answer.setError(errMsg);
+
+                // is it simple parser exception then we can grab the index where the problem is
+                if (cause.getClass().getName().equals("org.apache.camel.language.groovy.GroovyValidationException")) {
+                    try {
+                        // we need to grab the index field from those simple parser exceptions
+                        Method method = cause.getClass().getMethod("getIndex");
+                        Object result = method.invoke(cause);
+                        if (result != null) {
+                            int index = (int) result;
+                            answer.setIndex(index);
+                        }
+                    } catch (Exception i) {
+                        // ignore
+                    }
+                }
+
+                // we need to grab the short message field from this simple syntax exception
+                if (answer.getShortError() == null) {
+                    // fallback and try to make existing message short instead
+                    String msg = answer.getError();
+                    // grab everything before " @ " which would be regarded as the short message
+                    LineNumberReader lnr = new LineNumberReader(new StringReader(msg));
+                    try {
+                        String line = lnr.readLine();
+                        do {
+                            if (line.contains(" @ ")) {
+                                // skip leading Scrip_xxxx.groovy: N:
+                                if (line.startsWith("Script_") && StringHelper.countChar(line, ':') > 2) {
+                                    line = StringHelper.after(line, ":", line);
+                                    line = StringHelper.after(line, ":", line);
+                                    line = line.trim();
+                                }
+                                answer.setShortError(line);
+                                break;
+                            }
+                            line = lnr.readLine();
+                        } while (line != null);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
     public LanguageValidationResult validateLanguagePredicate(ClassLoader classLoader, String language, String text) {
         if ("simple".equals(language)) {
             return doValidateSimple(classLoader, text, true);
+        } else if ("groovy".equals(language)) {
+            return doValidateGroovy(classLoader, text, true);
         } else {
             return doValidateLanguage(classLoader, language, text, true);
         }
@@ -1423,6 +1525,8 @@ public abstract class AbstractCamelCatalog {
     public LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text) {
         if ("simple".equals(language)) {
             return doValidateSimple(classLoader, text, false);
+        } else if ("groovy".equals(language)) {
+            return doValidateGroovy(classLoader, text, false);
         } else {
             return doValidateLanguage(classLoader, language, text, false);
         }

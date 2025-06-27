@@ -77,6 +77,9 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private String clientRequestValidation;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private String clientResponseValidation;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
@@ -277,6 +280,21 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
      */
     public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
+    }
+
+    public String getClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
+    /**
+     * Whether to check what Camel is returning as response to the client:
+     *
+     * 1) Status-code and Content-Type matches Rest DSL response messages. 2) Check whether expected headers is included
+     * according to the Rest DSL repose message headers. 3) If the response body is JSon then check whether its valid
+     * JSon. Returns 500 if validation error detected.
+     */
+    public void setClientResponseValidation(String clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
     }
 
     public String getEnableCORS() {

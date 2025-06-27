@@ -404,6 +404,77 @@ XML::
 3. Set the repository to the route
 ====
 
+=== Embedding store support with camel-langchain4j-embeddings
+
+This component provides the capability to store and query vector embeddings.
+To activate this functionality, add `camel-langchain4j-embeddings` to your project.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-langchain4j-embeddings</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+----
+
+If you want to disable this functionality, set the `embeddingStoreEnabled` option to `false`.
+
+To store an embedding:
+
+[source,java]
+----
+from("direct:put")
+    // Create an embedding from the message body
+    .to("langchain4j-embeddings:create")
+    .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.PUT)
+    // Transform the embedding to a format usable by Infinispan
+    .transform(new DataType("infinispan:embeddings"))
+    // Store the embedding
+    .to("infinispan:myCache?embeddingStoreDimension=384");
+----
+
+The `embeddingStoreDimension` option *must* be specified. It must also match the dimension of the embedding model used by the `langchain4j-embeddings` endpoint.
+
+To query embeddings:
+
+[source,java]
+----
+from("direct:query")
+    // Create an embedding from the message body
+    .to("langchain4j-embeddings:create")
+    .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.QUERY)
+    // Transforms the embedding to a vector kNN search
+    .transform(new DataType("infinispan:embeddings"))
+    // Query embeddings
+    .to("infinispan:myCache?embeddingStoreDimension=384");
+----
+
+By default, a simple https://infinispan.org/docs/stable/titles/query/query.html#vector-search_ickle-query-language[vector kNN search] query is executed that looks like the following.
+
+[source,sql]
+----
+select i, score(i) from InfinispanRemoteEmbedding i
+where i.embedding <-> [the vector embedding]~3
+----
+
+The `~3` part determines the distance from the search vector embedding, in relation to the configured vector similarity.
+These can be modified via the `embeddingStoreDistance` and `embeddingStoreVectorSimilarity` options.
+
+The result of the query operation is `List<Object[]>`. The elements of the `Object` array are as follows.
+
+[cols="10%,20%,70%a", options="header"]
+|===
+|Index |Type |Description
+|0
+|`InfinispanRemoteEmbedding`
+|Information about the embedding such as the embedding text and its `float` array representation.
+|1
+|`Float`
+|The score in relation to how closely the embedding matches the search text.
+|===
+
 [NOTE]
 ====
 With the release of Infinispan 11, it is required to set the encoding configuration on any cache created. This is critical for consuming events too.

@@ -60,6 +60,8 @@ public class AWS2S3Configuration implements Cloneable {
     private boolean deleteAfterRead = true;
     @UriParam(label = "consumer")
     private boolean moveAfterRead;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean removePrefixOnMove;
     @UriParam(label = "consumer")
     private String destinationBucket;
     @UriParam(label = "consumer")
@@ -351,6 +353,20 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setMoveAfterRead(boolean moveAfterRead) {
         this.moveAfterRead = moveAfterRead;
+    }
+
+    public boolean isRemovePrefixOnMove() {
+        return removePrefixOnMove;
+    }
+
+    /**
+     * Remove the contents of the prefix configuration string from the new S3Object key before copying. For example, if
+     * prefix is set to 'demo/notify' and the destinationBucketPrefix is set to 'demo/archive', an S3Object with a key
+     * of 'demo/notify/example.txt' will be copied to 'demo/archive/example.txt', rather than the default behavior where
+     * the new key is 'demo/archive/demo/notify/example.txt'. Only applicable when moveAfterRead is true.
+     */
+    public void setRemovePrefixOnMove(boolean removePrefixOnMove) {
+        this.removePrefixOnMove = removePrefixOnMove;
     }
 
     public String getDestinationBucket() {

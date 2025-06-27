@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
@@ -40,6 +42,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.xml.sax.EntityResolver;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
@@ -73,9 +76,10 @@ public class XsltBuilder implements Processor {
     private ErrorListener errorListener;
     private EntityResolver entityResolver;
     private XsltMessageLogger xsltMessageLogger;
+    private Expression source;
 
     private final XMLConverterHelper converter = new XMLConverterHelper();
-    private final Object sourceHandlerFactoryLock = new Object();
+    private final Lock sourceHandlerFactoryLock = new ReentrantLock();
 
     public XsltBuilder() {
     }
@@ -111,7 +115,7 @@ public class XsltBuilder implements Processor {
         // the underlying input stream, which we need to close to avoid locking files or other resources
         InputStream is = null;
         try {
-            Source source = getSourceHandlerFactory().getSource(exchange);
+            Source source = getSourceHandlerFactory().getSource(exchange, this.source);
 
             source = prepareSource(source);
 
@@ -298,12 +302,15 @@ public class XsltBuilder implements Processor {
 
     public SourceHandlerFactory getSourceHandlerFactory() {
         if (this.sourceHandlerFactory == null) {
-            synchronized (this.sourceHandlerFactoryLock) {
+            sourceHandlerFactoryLock.lock();
+            try {
                 if (this.sourceHandlerFactory == null) {
                     final XmlSourceHandlerFactoryImpl xmlSourceHandlerFactory = createXmlSourceHandlerFactoryImpl();
                     xmlSourceHandlerFactory.setFailOnNullBody(isFailOnNullBody());
                     this.sourceHandlerFactory = xmlSourceHandlerFactory;
                 }
+            } finally {
+                sourceHandlerFactoryLock.unlock();
             }
         }
 
@@ -495,6 +502,14 @@ public class XsltBuilder implements Processor {
                 transformer.setParameter(key, value);
             }
         }
+    }
+
+    public Expression getSource() {
+        return source;
+    }
+
+    public void setSource(Expression source) {
+        this.source = source;
     }
 
     private static final class XsltBuilderOnCompletion extends SynchronizationAdapter {

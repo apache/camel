@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import org.apache.camel.impl.DefaultCamelContext;
@@ -28,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ContextManagerExtension
-        implements BeforeEachCallback, AfterEachCallback, AfterAllCallback,
-        BeforeAllCallback {
+        implements BeforeEachCallback, AfterEachCallback, AfterAllCallback, BeforeAllCallback {
+
     private static final Logger LOG = LoggerFactory.getLogger(ContextManagerExtension.class);
 
     private final TestExecutionConfiguration testConfigurationBuilder;

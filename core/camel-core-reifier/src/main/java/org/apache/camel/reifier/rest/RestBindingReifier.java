@@ -66,6 +66,11 @@ public class RestBindingReifier extends AbstractReifier {
             validation = parseBoolean(definition.getClientRequestValidation(), false);
         }
         rbc.setClientRequestValidation(validation);
+        validation = config.isClientResponseValidation();
+        if (definition.getClientResponseValidation() != null) {
+            validation = parseBoolean(definition.getClientResponseValidation(), false);
+        }
+        rbc.setClientResponseValidation(validation);
         rbc.setConsumes(parseString(definition.getConsumes()));
         rbc.setProduces(parseString(definition.getProduces()));
         rbc.setCorsHeaders(config.getCorsHeaders());
@@ -78,6 +83,8 @@ public class RestBindingReifier extends AbstractReifier {
         rbc.setTypeClass(definition.getTypeClass());
         rbc.setOutType(parseString(definition.getOutType()));
         rbc.setOutTypeClass(definition.getOutTypeClass());
+        rbc.setResponseCodes(definition.getResponseCodes());
+        rbc.setResponseHeaders(definition.getResponseHeaders());
 
         // use factory to create advice
         return RestBindingAdviceFactory.build(camelContext, rbc);

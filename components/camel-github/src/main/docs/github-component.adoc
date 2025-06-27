@@ -96,7 +96,8 @@ request discussion) or `org.eclipse.egit.github.core.CommitComment`
 
 |tag |polling |`org.eclipse.egit.github.core.RepositoryTag`
 
-|commit |polling |`org.eclipse.egit.github.core.RepositoryCommit`
+|commit |polling |`org.eclipse.egit.github.core.RepositoryCommit` or `String` with commit message and headers with some metadata.
+This can be configured by the `commitMessageAsBody` option.
 |=======================================================================
 
 === Producer Endpoints:

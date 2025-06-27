@@ -33,12 +33,21 @@ import org.apache.camel.support.service.ServiceSupport;
 public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelContextAware, KnativeConsumerFactory {
     private Router router;
     private CamelContext camelContext;
+    private KnativeHttpServiceOptions serviceOptions;
 
     public KnativeHttpConsumerFactory() {
     }
 
     public KnativeHttpConsumerFactory(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (serviceOptions == null) {
+            KnativeHttpSupport.lookupServiceOptions(camelContext)
+                    .ifPresent(options -> serviceOptions = options);
+        }
     }
 
     public Router getRouter() {
@@ -52,6 +61,18 @@ public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelC
 
         this.router = router;
         return this;
+    }
+
+    public KnativeHttpServiceOptions getServiceOptions() {
+        return serviceOptions;
+    }
+
+    public void setServiceOptions(KnativeHttpServiceOptions serviceOptions) {
+        if (ServiceHelper.isStarted(this)) {
+            throw new IllegalArgumentException("Can't set the service options after the service has been started");
+        }
+
+        this.serviceOptions = serviceOptions;
     }
 
     @Override
@@ -72,6 +93,7 @@ public class KnativeHttpConsumerFactory extends ServiceSupport implements CamelC
                 endpoint,
                 service,
                 this::lookupRouter,
+                serviceOptions,
                 processor);
     }
 

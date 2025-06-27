@@ -66,4 +66,7 @@ public final class MongoDBServiceFactory {
             INSTANCE = instance.build();
         }
     }
+
+    public static class MongoDBRemoteService extends MongoDBRemoteInfraService implements MongoDBService {
+    }
 }

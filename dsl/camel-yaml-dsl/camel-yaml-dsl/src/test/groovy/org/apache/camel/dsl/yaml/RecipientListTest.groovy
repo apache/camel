@@ -43,21 +43,21 @@ class RecipientListTest extends YamlTestSupport {
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - recipient-list:
+                          - recipientList:
                               constant: "direct:a,direct:b"
-                              stop-on-exception: true
-                              parallel-processing: true
+                              stopOnException: true
+                              parallelProcessing: true
                           - to: "mock:result"
                     '''),
                 asResource('expression-block', '''
                     - from:
                         uri: "direct:start"
                         steps:    
-                          - recipient-list:
+                          - recipientList:
                               expression:  
                                 constant: "direct:a,direct:b"
-                              stop-on-exception: true
-                              parallel-processing: true
+                              stopOnException: true
+                              parallelProcessing: true
                           - to: "mock:result"
                     ''')
             ]

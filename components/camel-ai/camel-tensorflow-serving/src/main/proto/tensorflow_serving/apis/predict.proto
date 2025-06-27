@@ -1,0 +1,207 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+package tensorflow.serving;
+
+import "tensorflow/core/framework/tensor.proto";
+import "tensorflow_serving/apis/model.proto";
+
+option cc_enable_arenas = true;
+
+// PredictRequest specifies which TensorFlow model to run, as well as
+// how inputs are mapped to tensors and how outputs are filtered before
+// returning to user.
+message PredictRequest {
+  // Model Specification. If version is not specified, will use the latest
+  // (numerical) version.
+  ModelSpec model_spec = 1;
+
+  // Input tensors.
+  // Names of input tensor are alias names. The mapping from aliases to real
+  // input tensor names is stored in the SavedModel export as a prediction
+  // SignatureDef under the 'inputs' field.
+  map<string, TensorProto> inputs = 2;
+
+  // Output filter.
+  // Names specified are alias names. The mapping from aliases to real output
+  // tensor names is stored in the SavedModel export as a prediction
+  // SignatureDef under the 'outputs' field.
+  // Only tensors specified here will be run/fetched and returned, with the
+  // exception that when none is specified, all tensors specified in the
+  // named signature will be run/fetched and returned.
+  repeated string output_filter = 3;
+
+  // Reserved field 4.
+  reserved 4;
+
+  // Options for streaming requests to control how multiple requests/responses
+  // are handled within a single stream.
+  PredictStreamedOptions predict_streamed_options = 5;
+
+  // Client identifier to group requests belonging to a specific entity.
+  // Example entities can be product ids, service names, user ids etc.
+  // Servers can use this to optimize placement, caching and colocation.
+  // TODO(b/329897437): Migrate to client_id in RequestOptions.
+  optional bytes client_id = 6;
+
+  // Options for PredictRequest.
+  message RequestOptions {
+    // Client identifier to group requests belonging to a specific entity.
+    // Example entities can be product ids, service names, user ids etc.
+    // Servers can use this to optimize placement, caching and colocation.
+    optional bytes client_id = 1;
+
+    // Deterministic mode for the request. When specified, model servers will
+    // reduce numeric instability based on different mode selections.
+    enum DeterministicMode {
+      DETERMINISTIC_MODE_UNSPECIFIED = 0;
+
+      // Only supported in disaggregated serving. When set, the request will be
+      // pinned to a fixed decoder slot index that's deterministic across
+      // processes.
+      FIXED_DECODER_SLOT = 1;
+    }
+
+    optional DeterministicMode deterministic_mode = 2;
+
+    // Only supported in disaggregated serving. When set, additional arrays from
+    // prefill will be returned if available.
+    optional bool return_additional_arrays_from_prefill = 3;
+
+    // Returns these stop tokens in response if the model stops at them. The
+    // model may stop at other tokens, but will not return them in the response.
+    repeated int64 return_stoptokens = 4;
+  }
+
+  optional RequestOptions request_options = 7;
+}
+
+// Options only used for streaming requests that control how inputs/ouputs are
+// handled in the stream.
+message PredictStreamedOptions {
+  // Request state used to handle splitting of requests.  NONE is the
+  // default when the stream request is not split and used for a single-turn,
+  // single request.
+  //
+  // SPLIT is used when multiple streamed requests are used to generate a
+  // logical request. END_SPLIT should be called for the last split of the
+  // multi-turn request to start the processing of the current turn. NONE can
+  // not be interspersed with SPLIT and END_SPLIT messages.
+  // If another request is sent on the same stream after END_SPLIT, it can be
+  // either SPLIT or END_SPLIT to start accumulating input or trigger the next
+  // model turn respectively.
+  //
+  // Some examples with a mix of request states and the logical request.
+  //
+  // Example 1:
+  //   NONE
+  //
+  // Single turn, single request.
+  //
+  // Example 2 :
+  //   END_SPLIT
+  //
+  // Will be treated as a single logical input request for a single turn,
+  // similar to Example 1.
+  //
+  // Example 3:
+  //   SPLIT
+  //   SPLIT
+  //   END_SPLIT
+  //
+  // Will be treated as a single logical input request for a single turn,
+  // similar to Example 1.
+  //
+  // Example 4:
+  //   END_SPLIT
+  //   END_SPLIT
+  //
+  // Will be treated as two logical turn requests (1. END_SPLIT 2. END_SPLIT)
+  //
+  // Example 5:
+  //   SPLIT
+  //   END_SPLIT
+  //   SPLIT
+  //   SPLIT
+  //   END_SPLIT
+  //
+  // Will be treated as two logical turn requests (1. SPLIT, END_SPLIT 2. SPLIT,
+  // SPLIT, END_SPLIT)
+  //
+  // Incorrect Example 1:
+  //   NONE
+  //   END_SPLIT
+  //
+  // Invalid because NONE and END_SPLIT are interspersed.
+  //
+  // Incorrect Example 2:
+  //   SPLIT
+  //   SPLIT
+  //
+  // Invalid because END_SPLIT is never called.
+  //
+  // Incorrect Example 3:
+  //   SPLIT
+  //   NONE
+  //   SPLIT
+  //   END_SPLIT
+  //
+  // Invalid because NONE is interspersed with SPLIT/END_SPLIT.
+
+  enum RequestState {
+    NONE = 0;
+    SPLIT = 1;
+    END_SPLIT = 2;
+  }
+
+  // Request state used to handle segmentation of requests.
+  RequestState request_state = 1;
+
+  // Input tensors split dimensions.
+  // Defines the dimension used to split input tensors specified
+  // in PredictRequest.inputs. The dimension will be used
+  // for concatenation of multiple SPLIT requests.
+  //
+  // For input tensor in PredictRequest.inputs that are not contained in this
+  // map, the tensors from the first SPLIT request will be used.
+  //
+  // For example, with an original input tensor of [[1, 2, 3, 4], [5, 6, 7, 8]].
+  //
+  // For a split dimension of 0 and two requests (SPLIT and END_SPLIT), the
+  // input tensors for request 1 should be [1, 2, 3, 4] and request 2 should be
+  // be [5, 6, 7, 8].
+  //
+  // For a split dimension of 1 and two requests (SPLIT and END_SPLIT), the
+  // input tensors for request 1 should be [[1, 2], [5, 6]] and request 2 should
+  // be [[3, 4], [7, 8]].
+  map<string, int32> split_dimensions = 2;
+
+  // If true, there will be a single PredictResponse output.
+  // If false, output can be split into 1 or more PredictResponses.
+  // Value of this field should be the same for all requests in the stream.
+  bool return_single_response = 3;
+}
+
+// Response for PredictRequest on successful run.
+message PredictResponse {
+  // Effective Model Specification used to process PredictRequest.
+  ModelSpec model_spec = 2;
+
+  // Output tensors.
+  map<string, TensorProto> outputs = 1;
+}

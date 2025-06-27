@@ -22,25 +22,29 @@ public enum AS2ClientManagerApiMethod implements ApiMethod {
     SEND(
         org.apache.hc.core5.http.protocol.HttpCoreContext.class,
         "send",
-        arg("ediMessage", String.class),
+        arg("ediMessage", Object.class),
         arg("requestUri", String.class),
         arg("subject", String.class),
         arg("from", String.class),
         arg("as2From", String.class),
         arg("as2To", String.class),
         arg("as2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class),
-        arg("ediMessageContentType", org.apache.hc.core5.http.ContentType.class),
+        arg("ediMessageContentType", String.class),
+        arg("ediMessageCharset", String.class),
         arg("ediMessageTransferEncoding", String.class),
         arg("signingAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class),
         arg("signingCertificateChain", new java.security.cert.Certificate[0].getClass()),
         arg("signingPrivateKey", java.security.PrivateKey.class),
         arg("compressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class),
         arg("dispositionNotificationTo", String.class),
-        arg("signedReceiptMicAlgorithms", new String[0].getClass()),
+        arg("signedReceiptMicAlgorithms", String.class),
         arg("encryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class),
         arg("encryptingCertificateChain", new java.security.cert.Certificate[0].getClass()),
         arg("attachedFileName", String.class),
-        arg("receiptDeliveryOption", String.class));
+        arg("receiptDeliveryOption", String.class),
+        arg("userName", String.class),
+        arg("password", String.class),
+        arg("accessToken", String.class));
 
     private final ApiMethod apiMethod;
 

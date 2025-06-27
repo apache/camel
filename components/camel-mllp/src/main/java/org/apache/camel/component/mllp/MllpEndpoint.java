@@ -36,6 +36,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 
 /**
@@ -118,6 +119,7 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
 
     @Override
     public Producer createProducer() throws Exception {
+
         return new MllpTcpClientProducer(this);
     }
 
@@ -312,6 +314,25 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         configuration.setIdleTimeoutStrategy(strategy);
     }
 
+    /**
+     * Sets the SSLContextParameters for the endpoint. Subclasses overriding this method should ensure that the
+     * configuration's SSLContextParameters are appropriately updated and validated.
+     *
+     * @param sslContextParameters the SSLContextParameters to use
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        configuration.setSslContextParameters(sslContextParameters);
+    }
+
+    /**
+     * Retrieves the SSLContextParameters for the endpoint. Subclasses overriding this method should ensure the returned
+     * SSLContextParameters are consistent with the endpoint's configuration.
+     *
+     * @return the current SSLContextParameters
+     */
+    public SSLContextParameters getSslContextParameters() {
+        return configuration.getSslContextParameters();
+    }
     // Utility methods for producers and consumers
 
     public boolean checkBeforeSendProperties(Exchange exchange, Socket socket, Logger log) {

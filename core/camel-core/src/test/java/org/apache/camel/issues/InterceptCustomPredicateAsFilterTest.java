@@ -71,7 +71,7 @@ public class InterceptCustomPredicateAsFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // secret messages should be filtered out asap
-                intercept().when(not(filter)).to("mock:secret").stop();
+                intercept().onWhen(not(filter)).to("mock:secret").stop();
 
                 from("direct:start").to("mock:good");
             }

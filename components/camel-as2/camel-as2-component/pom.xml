@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-as2-parent</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-as2</artifactId>
@@ -125,6 +125,10 @@
                                         <nullableOption>encryptingCertificateChain</nullableOption>
                                         <nullableOption>attachedFileName</nullableOption>
                                         <nullableOption>receiptDeliveryOption</nullableOption>
+                                        <nullableOption>ediMessageCharset</nullableOption>
+                                        <nullableOption>userName</nullableOption>
+                                        <nullableOption>password</nullableOption>
+                                        <nullableOption>accessToken</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>

@@ -874,14 +874,12 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
-         * already processed files. Will by default use a memory based LRUCache
-         * that holds 1000 entries. If noop=true then idempotent will be enabled
-         * as well to avoid consuming the same files over and over again.
+         * Sets whether to eagerly add the filename to the idempotent repository
+         * or wait until the exchange is complete.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: filter
          * 
          * @param idempotentEager the value to set
@@ -892,15 +890,13 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
-         * already processed files. Will by default use a memory based LRUCache
-         * that holds 1000 entries. If noop=true then idempotent will be enabled
-         * as well to avoid consuming the same files over and over again.
+         * Sets whether to eagerly add the filename to the idempotent repository
+         * or wait until the exchange is complete.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
+         * Default: true
          * Group: filter
          * 
          * @param idempotentEager the value to set
@@ -1917,7 +1913,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1937,7 +1934,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2617,6 +2615,44 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Should an exception be thrown if connection failed (exhausted)By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpEndpointConsumerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
+         * Should an exception be thrown if connection failed (exhausted)By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpEndpointConsumerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
          * Whether to allow using LIST command when downloading a file. Default
          * is true. In some use cases you may want to download a specific file
          * and are not allowed to use the LIST command, and therefore you can
@@ -2870,7 +2906,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2890,7 +2927,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2909,7 +2947,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -2929,7 +2967,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -3097,44 +3135,6 @@ public interface FtpEndpointBuilderFactory {
          */
         default AdvancedFtpEndpointConsumerBuilder stepwise(String stepwise) {
             doSetProperty("stepwise", stepwise);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpEndpointConsumerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpEndpointConsumerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -4316,7 +4316,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4336,7 +4337,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4355,7 +4357,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4375,7 +4377,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -4543,44 +4545,6 @@ public interface FtpEndpointBuilderFactory {
          */
         default AdvancedFtpEndpointProducerBuilder stepwise(String stepwise) {
             doSetProperty("stepwise", stepwise);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpEndpointProducerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpEndpointProducerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -5245,7 +5209,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5265,7 +5230,8 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClientConfig.
+         * FTPClientConfig. This is a multi-value option with prefix:
+         * ftpClientConfig.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5284,7 +5250,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5304,7 +5270,7 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Used by FtpComponent to provide additional parameters for the
-         * FTPClient.
+         * FTPClient. This is a multi-value option with prefix: ftpClient.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -5475,44 +5441,6 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpEndpointBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpEndpointBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
          * The option is a: <code>int</code> type.
@@ -5647,10 +5575,24 @@ public interface FtpEndpointBuilderFactory {
             return "CamelFileLastModified";
         }
         /**
-         * Specifies the output file name (relative to the endpoint directory)
-         * to be used for the output message when sending to the endpoint. If
-         * this is not present and no expression either, then a generated
-         * message ID is used as the filename instead.
+         * Only the file name (the name with no leading paths).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileNameOnly}.
+         */
+        public String fileNameOnly() {
+            return "CamelFileNameOnly";
+        }
+        /**
+         * (producer) Specifies the name of the file to write (relative to the
+         * endpoint directory). This name can be a String; a String with a file
+         * or simple Language expression; or an Expression object. If it's null
+         * then Camel will auto-generate a filename based on the message unique
+         * ID. (consumer) Name of the consumed file as a relative file path with
+         * offset from the starting directory configured on the endpoint.
          * 
          * The option is a: {@code String} type.
          * 
@@ -5662,16 +5604,70 @@ public interface FtpEndpointBuilderFactory {
             return "CamelFileName";
         }
         /**
-         * Only the file name (the name with no leading paths).
+         * The name of the file that has been consumed.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
-         * @return the name of the header {@code FileNameOnly}.
+         * @return the name of the header {@code FileNameConsumed}.
          */
-        public String fileNameOnly() {
-            return "CamelFileNameOnly";
+        public String fileNameConsumed() {
+            return "CamelFileNameConsumed";
+        }
+        /**
+         * A boolean option specifying whether the consumed file denotes an
+         * absolute path or not. Should normally be false for relative paths.
+         * Absolute paths should normally not be used but we added to the move
+         * option to allow moving files to absolute paths. But can be used
+         * elsewhere as well.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileAbsolute}.
+         */
+        public String fileAbsolute() {
+            return "CamelFileAbsolute";
+        }
+        /**
+         * The absolute path to the file. For relative files this path holds the
+         * relative path instead.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileAbsolutePath}.
+         */
+        public String fileAbsolutePath() {
+            return "CamelFileAbsolutePath";
+        }
+        /**
+         * The file path. For relative files this is the starting directory. For
+         * absolute files this is the absolute path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FilePath}.
+         */
+        public String filePath() {
+            return "CamelFilePath";
+        }
+        /**
+         * The relative path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileRelativePath}.
+         */
+        public String fileRelativePath() {
+            return "CamelFileRelativePath";
         }
         /**
          * The parent path.
@@ -5686,11 +5682,53 @@ public interface FtpEndpointBuilderFactory {
             return "CamelFileParent";
         }
         /**
+         * The actual absolute filepath (path name) for the output file that was
+         * written. This header is set by Camel and its purpose is providing
+         * end-users with the name of the file that was written.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FileNameProduced}.
+         */
+        public String fileNameProduced() {
+            return "CamelFileNameProduced";
+        }
+        /**
+         * Is used for overruling CamelFileName header and use the value instead
+         * (but only once, as the producer will remove this header after writing
+         * the file). The value can be only be a String. Notice that if the
+         * option fileName has been configured, then this is still being
+         * evaluated.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OverruleFileName}.
+         */
+        public String overruleFileName() {
+            return "CamelOverruleFileName";
+        }
+        /**
+         * Path to the local work file, if local work directory is used.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileLocalWorkPath}.
+         */
+        public String fileLocalWorkPath() {
+            return "CamelFileLocalWorkPath";
+        }
+        /**
          * The remote file input stream.
          * 
          * The option is a: {@code java.io.InputStream} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @return the name of the header {@code RemoteFileInputStream}.
          */
@@ -5698,16 +5736,16 @@ public interface FtpEndpointBuilderFactory {
             return "CamelRemoteFileInputStream";
         }
         /**
-         * Path to the local work file, if local work directory is used.
+         * The remote hostname.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
-         * @return the name of the header {@code FileLocalWorkPath}.
+         * @return the name of the header {@code FileHost}.
          */
-        public String fileLocalWorkPath() {
-            return "CamelFileLocalWorkPath";
+        public String fileHost() {
+            return "CamelFileHost";
         }
         /**
          * The FTP client reply code.
@@ -5732,18 +5770,6 @@ public interface FtpEndpointBuilderFactory {
          */
         public String ftpReplyString() {
             return "CamelFtpReplyString";
-        }
-        /**
-         * The remote hostname.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: common
-         * 
-         * @return the name of the header {@code FileHost}.
-         */
-        public String fileHost() {
-            return "CamelFileHost";
         }
     }
     static FtpEndpointBuilder endpointBuilder(String componentName, String path) {

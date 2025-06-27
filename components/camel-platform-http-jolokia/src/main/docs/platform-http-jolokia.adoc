@@ -19,3 +19,32 @@ Jolokia can be enabled as follows in `application.properties`:
 camel.server.enabled = true
 camel.server.jolokiaEnabled = true
 ----
+
+After the application is started, you can query the Jolokia endpoint (default `/q/jolokia`) as in this example:
+
+```
+$ curl http://localhost:8080/q/jolokia/list/org.apache.camel | jq
+
+{
+  "request": {
+    "path": "org.apache.camel",
+    "type": "list"
+  },
+  "value": {
+    "context=test,name=\"timer://yaml\\?period=1000\",type=endpoints": {
+      "op": {
+        "getEndpointUri": {
+          "args": [],
+          "ret": "java.lang.String",
+          "desc": "EndpointUri"
+        },
+...
+```
+
+== How to use it
+
+This components acts as a Jolokia agent exposing HTTP endpoints to access JMX services. It looks for default restrictor policies located in `classpath:/jolokia-access.xml`, allowing by default access to all MBeans if no policy is found.
+
+WARNING: this may be exposing sensitive information, make sure to protect the access to the endpoints accurately.
+
+Make sure to https://jolokia.org/reference/html/manual/security.html#security-policy-location[include a security policy] as provided in Jolokia documentation to avoid any security problem.

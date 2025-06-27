@@ -43,7 +43,6 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         map.put("TrustStore", java.lang.String.class);
         map.put("TrustStorePassword", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(SSLConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -95,10 +94,6 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

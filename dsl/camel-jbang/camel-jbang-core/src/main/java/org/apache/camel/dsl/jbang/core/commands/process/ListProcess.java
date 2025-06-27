@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -30,21 +31,30 @@ import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
-@Command(name = "ps", description = "List running Camel integrations", sortOptions = false)
+@Command(name = "ps", description = "List running Camel integrations", sortOptions = false, showDefaultValues = true)
 public class ListProcess extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--remote" },
+                        description = "Break down counters into remote/total pairs")
+    boolean remote;
+
     @CommandLine.Option(names = { "--pid" },
                         description = "List only pid in the output")
     boolean pid;
+
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format")
+    boolean jsonOutput;
 
     public ListProcess(CamelJBangMain main) {
         super(main);
@@ -96,7 +106,15 @@ public class ListProcess extends ProcessWatchCommand {
                             if (num != null) {
                                 row.inflightRemote = num.toString();
                             }
+                            stats = (Map<String, ?>) stats.get("reload");
+                            if (stats != null) {
+                                stats = (Map<String, ?>) stats.get("lastError");
+                            }
+                            if (stats != null) {
+                                row.reloadError = (String) stats.get("message");
+                            }
                         }
+
                         rows.add(row);
                     }
                 });
@@ -104,49 +122,83 @@ public class ListProcess extends ProcessWatchCommand {
         // sort rows
         rows.sort(this::sortRow);
 
+        // print rows
         if (!rows.isEmpty()) {
             if (pid) {
-                rows.forEach(r -> printer().println(r.pid));
+                if (jsonOutput) {
+                    printer().println(
+                            Jsoner.serialize(
+                                    rows.stream().map(row -> row.pid).collect(Collectors.toList())));
+                } else {
+                    rows.forEach(r -> printer().println(r.pid));
+                }
             } else {
-                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                .with(r -> r.name),
-                        new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
-                        new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                                .with(r -> extractState(r.state)),
-                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                        new Column().header("TOTAL").with(this::getTotal),
-                        new Column().header("REMOTE").with(this::getTotalRemote),
-                        new Column().header("FAIL").with(this::getFailed),
-                        new Column().header("INFLIGHT").with(this::getInflight))));
+                if (jsonOutput) {
+                    printer().println(
+                            Jsoner.serialize(
+                                    rows.stream().map(row -> Map.of(
+                                            "pid", row.pid,
+                                            "name", row.name,
+                                            "ready", row.ready,
+                                            "status", getStatus(row),
+                                            "age", row.ago,
+                                            "total", getTotal(row),
+                                            "fail", getFailed(row),
+                                            "inflight", getInflight(row))).collect(Collectors.toList())));
+                } else {
+                    printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                            new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                            new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                    .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                    .with(r -> r.name),
+                            new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
+                            new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                                    .with(this::getStatus),
+                            new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                            new Column().header("TOTAL").with(this::getTotal),
+                            new Column().header("FAIL").with(this::getFailed),
+                            new Column().header("INFLIGHT").with(this::getInflight),
+                            new Column().header("") // empty header as we only show info when there is an error
+                                    .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
+                                    .maxWidth(70, OverflowBehaviour.NEWLINE)
+                                    .with(this::getDescription))));
+                }
             }
         }
 
         return 0;
     }
 
+    private String getStatus(Row r) {
+        if (r.reloadError != null) {
+            return "Error";
+        }
+        return extractState(r.state);
+    }
+
+    private String getDescription(Row r) {
+        if (r.reloadError != null) {
+            return "Reload failed due to: " + r.reloadError;
+        }
+        return null;
+    }
+
     private String getTotal(Row r) {
+        if (remote && r.totalRemote != null) {
+            return r.totalRemote + "/" + r.total;
+        }
         return r.total;
     }
 
-    private String getTotalRemote(Row r) {
-        if (r.totalRemote != null) {
-            return r.totalRemote;
-        }
-        return "";
-    }
-
     private String getFailed(Row r) {
-        if (r.failedRemote != null) {
+        if (remote && r.failedRemote != null) {
             return r.failedRemote + "/" + r.failed;
         }
         return r.failed;
     }
 
     private String getInflight(Row r) {
-        if (r.inflightRemote != null) {
+        if (remote && r.inflightRemote != null) {
             return r.inflightRemote + "/" + r.inflight;
         }
         return r.inflight;
@@ -184,6 +236,7 @@ public class ListProcess extends ProcessWatchCommand {
         String failedRemote;
         String inflight;
         String inflightRemote;
+        String reloadError;
     }
 
 }

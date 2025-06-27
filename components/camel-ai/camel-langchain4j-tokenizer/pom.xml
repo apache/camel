@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ai-parent</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-langchain4j-tokenizer</artifactId>
@@ -62,14 +62,14 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-azure-open-ai</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-rc-version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-dashscope</artifactId>
-            <version>${langchain4j-version}</version>
+            <artifactId>langchain4j-community-dashscope</artifactId>
+            <version>${langchain4j-community-version}</version>
             <scope>provided</scope>
             <exclusions>
                 <!-- messes up with the log -->

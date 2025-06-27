@@ -360,6 +360,21 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return this;
         }
         /**
+         * The prefix which is used in the BlobListOptions to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
+            return this;
+        }
+        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
@@ -716,7 +731,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -736,7 +752,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1812,6 +1829,21 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          */
         public String googleCloudStorageLastUpdate() {
             return "CamelGoogleCloudStorageLastUpdate";
+        }
+        /**
+         * The bucket Name to override which this object will be stored or which
+         * will be used for the current operation or in which this object is
+         * contained.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageOverrideBucketName}.
+         */
+        public String googleCloudStorageOverrideBucketName() {
+            return "CamelGoogleCloudStorageOverrideBucketName";
         }
     }
     static GoogleCloudStorageEndpointBuilder endpointBuilder(String componentName, String path) {

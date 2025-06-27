@@ -39,7 +39,6 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         map.put("PropertiesParser", org.apache.camel.component.properties.PropertiesParser.class);
         map.put("SystemPropertiesMode", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(PropertiesComponentConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -82,10 +81,6 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -108,7 +109,7 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
             }
         }
 
-        int counter = 0;
+        Queue<Object> exchanges = new ArrayDeque<>();
         while (!newComments.isEmpty()) {
             Comment newComment = newComments.pop();
             Exchange e = createExchange(true);
@@ -116,10 +117,9 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
 
             // Required by the producers.  Set it here for convenience.
             e.getIn().setHeader(GitHubConstants.GITHUB_PULLREQUEST, commentIdToPullRequest.get(newComment.getId()));
-
-            getProcessor().process(e);
-            counter++;
+            exchanges.add(e);
         }
-        return counter;
+        return processBatch(exchanges);
     }
+
 }

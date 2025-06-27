@@ -28,14 +28,13 @@ import org.apache.camel.model.SagaPropagation;
 import org.apache.camel.saga.InMemorySagaService;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SagaTimeoutTest extends ContextTestSupport {
 
     @Test
     public void testTimeoutCalledCorrectly() throws Exception {
-
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
         compensate.expectedMessageCount(1);
         compensate.expectedHeaderReceived("id", "myid");
@@ -51,7 +50,6 @@ public class SagaTimeoutTest extends ContextTestSupport {
 
     @Test
     public void testTimeoutHasNoEffectIfCompleted() throws Exception {
-
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
         compensate.expectedMessageCount(1);
         compensate.setResultWaitTime(500);
@@ -72,7 +70,6 @@ public class SagaTimeoutTest extends ContextTestSupport {
 
     @Test
     public void testTimeoutMultiParticipants() throws Exception {
-
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
         compensate.expectedMessageCount(1);
 
@@ -87,7 +84,11 @@ public class SagaTimeoutTest extends ContextTestSupport {
                     template.sendBody("direct:saga-multi-participants", "Hello");
                 });
 
-        assertEquals("Cannot begin: status is COMPENSATED", ex.getCause().getMessage());
+        String msg1 = "Cannot begin: status is COMPENSATING";
+        String msg2 = "Cannot begin: status is COMPENSATED";
+        String msg = ex.getCause().getMessage();
+        assertTrue(msg.equals(msg1) || msg.equals(msg2));
+
         end.assertIsSatisfied();
         complete.assertIsSatisfied();
         compensate.assertIsSatisfied();
@@ -95,11 +96,9 @@ public class SagaTimeoutTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 context.addService(new InMemorySagaService());
 
                 from("direct:saga").saga().timeout(100, TimeUnit.MILLISECONDS).option("id", constant("myid"))

@@ -26,7 +26,8 @@ import org.jolokia.jvmagent.client.util.VirtualMachineHandlerOperations;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "jolokia", description = "Attach Jolokia JVM Agent to a running Camel integration", sortOptions = false)
+@Command(name = "jolokia", description = "Attach Jolokia JVM Agent to a running Camel integration", sortOptions = false,
+         showDefaultValues = true)
 public class Jolokia extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
@@ -84,7 +85,7 @@ public class Jolokia extends ProcessBaseCommand {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Cannot execute jolokia command due: " + e.getMessage());
+            printer().printErr("Cannot execute jolokia command due: " + e.getMessage());
             exitCode = 1;
         }
 

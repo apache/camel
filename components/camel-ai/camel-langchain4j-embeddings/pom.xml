@@ -25,7 +25,7 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-langchain4j-embeddings</artifactId>
@@ -48,14 +48,30 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-langchain4j-core</artifactId>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
+            <version>${langchain4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai</artifactId>
+            <version>${langchain4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-hugging-face</artifactId>
+            <version>${langchain4j-beta-version}</version>
         </dependency>
 
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-direct</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-infinispan</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -71,6 +87,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-pinecone</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-neo4j</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -92,27 +113,41 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-embeddings</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-beta-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
-            <version>${langchain4j-version}</version>
+            <version>${langchain4j-beta-version}</version>
             <scope>test</scope>
         </dependency>
 
         <!-- test infra -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-infinispan</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+       <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-qdrant</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+       <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-milvus</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-milvus</artifactId>
+            <artifactId>camel-test-infra-neo4j</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

@@ -18,6 +18,10 @@ package org.apache.camel.main;
 
 /**
  * A lifecycle listener to receive callbacks when the Main is started and stopped.
+ *
+ * Beware that if you use MainListener then depending on how Camel is started and these main listener is configured then
+ * the beforeInitialize and beforeConfigure events may already have been triggered. So depending on your use-cases then
+ * favour using the later stage events to trigger your code.
  */
 public interface MainListener {
 

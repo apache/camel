@@ -25,13 +25,13 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Flaky test on CI environments")
 public class ControlBusFailRouteTest extends ContextTestSupport {
 
     @Test

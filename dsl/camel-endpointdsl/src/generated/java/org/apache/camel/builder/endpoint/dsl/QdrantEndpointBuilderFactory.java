@@ -74,6 +74,36 @@ public interface QdrantEndpointBuilderFactory {
             return this;
         }
         /**
+         * Max results for similarity search.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 3
+         * Group: producer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default QdrantEndpointBuilder maxResults(int maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * Max results for similarity search.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 3
+         * Group: producer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default QdrantEndpointBuilder maxResults(String maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
          * The port to connect to.
          * 
          * The option is a: <code>int</code> type.
@@ -220,6 +250,38 @@ public interface QdrantEndpointBuilderFactory {
          */
         default AdvancedQdrantEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Filter of type io.qdrant.client.grpc.Points.Points.Filter for
+         * similarity search. This is for advanced usage.
+         * 
+         * The option is a: <code>io.qdrant.client.grpc.Points.Filter</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedQdrantEndpointBuilder filter(io.qdrant.client.grpc.Points.Filter filter) {
+            doSetProperty("filter", filter);
+            return this;
+        }
+        /**
+         * Filter of type io.qdrant.client.grpc.Points.Points.Filter for
+         * similarity search. This is for advanced usage.
+         * 
+         * The option will be converted to a
+         * <code>io.qdrant.client.grpc.Points.Filter</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedQdrantEndpointBuilder filter(String filter) {
+            doSetProperty("filter", filter);
             return this;
         }
     }

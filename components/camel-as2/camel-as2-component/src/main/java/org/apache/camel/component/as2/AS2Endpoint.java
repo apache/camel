@@ -50,7 +50,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
-import org.apache.hc.core5.http.ContentType;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
  * Transfer data securely and reliably using the AS2 protocol (RFC4130).
@@ -166,11 +166,11 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         configuration.setAs2MessageStructure(as2MessageStructure);
     }
 
-    public ContentType getEdiMessageType() {
+    public String getEdiMessageType() {
         return configuration.getEdiMessageType();
     }
 
-    public void setEdiMessageContentType(ContentType ediMessageType) {
+    public void setEdiMessageContentType(String ediMessageType) {
         configuration.setEdiMessageType(ediMessageType);
     }
 
@@ -222,11 +222,11 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         configuration.setDispositionNotificationTo(dispositionNotificationTo);
     }
 
-    public String[] getSignedReceiptMicAlgorithms() {
+    public String getSignedReceiptMicAlgorithms() {
         return configuration.getSignedReceiptMicAlgorithms();
     }
 
-    public void setSignedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
+    public void setSignedReceiptMicAlgorithms(String signedReceiptMicAlgorithms) {
         configuration.setSignedReceiptMicAlgorithms(signedReceiptMicAlgorithms);
     }
 
@@ -330,6 +330,21 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
             as2AsyncMDNServerConnection = AS2ConnectionHelper.createAS2AsyncMDNServerConnection(configuration);
         } catch (IOException e) {
             throw new RuntimeCamelException("Async MDN Server HTTP connection failed", e);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (getSslContext() == null) {
+            SSLContextParameters params = getComponent(AS2Component.class).getSslContextParameters();
+            if (params == null && getComponent(AS2Component.class).isUseGlobalSslContextParameters()) {
+                params = getComponent(AS2Component.class).retrieveGlobalSslContextParameters();
+            }
+            if (params != null) {
+                setSslContext(params.createSSLContext(getCamelContext()));
+            }
         }
     }
 }

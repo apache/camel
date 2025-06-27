@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5.util;
 
 import java.util.Map;
@@ -30,14 +29,18 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.junit5.StubComponentAutowireStrategy;
+import org.apache.camel.test.junit5.StubComponentResolver;
 import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
@@ -52,6 +55,11 @@ public final class CamelContextTestHelper {
      * JVM system property which can be set to true to turn on dumping route coverage statistics.
      */
     public static final String ROUTE_COVERAGE_ENABLED = "CamelTestRouteCoverage";
+
+    /**
+     * JVM system property which can be set to true to turn on dumping routes as xml or yaml
+     */
+    public static final String ROUTE_DUMP_ENABLED = "CamelTestRouteDump";
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextTestHelper.class);
 
@@ -159,6 +167,27 @@ public final class CamelContextTestHelper {
     }
 
     /**
+     * Enables auto stub
+     */
+    public static void enableAutoStub(CamelContext context, String pattern) {
+        if (pattern != null) {
+            StubComponent stub = context.getComponent("stub", StubComponent.class);
+            // enable shadow mode on stub component
+            stub.setShadow(true);
+            stub.setShadowPattern(pattern);
+            // should not autowire
+            stub.setAutowiredEnabled(false);
+            // and use a specialized component resolver
+            context.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
+                    new StubComponentResolver(pattern));
+            // need to replace autowire strategy with stub capable
+            context.getLifecycleStrategies()
+                    .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy"));
+            context.getLifecycleStrategies().add(new StubComponentAutowireStrategy(context, pattern));
+        }
+    }
+
+    /**
      * Configure the PropertiesComponent from the given context
      *
      * @param context          the context with the PropertiesComponent to configure
@@ -246,6 +275,35 @@ public final class CamelContextTestHelper {
     }
 
     public static boolean isRouteCoverageEnabled(boolean legacyDumpCoverage) {
-        return Boolean.parseBoolean(System.getProperty(ROUTE_COVERAGE_ENABLED, "false")) || legacyDumpCoverage;
+        // JVM system property take precedence
+        String p = System.getProperty(ROUTE_COVERAGE_ENABLED);
+        if (p != null) {
+            p = p.trim().toLowerCase();
+            boolean valid = "true".equals(p) || "false".equals(p);
+            if (!valid) {
+                throw new IllegalArgumentException("RouteCoverage must be: true or false");
+            }
+            return Boolean.parseBoolean(p);
+        }
+        return legacyDumpCoverage;
+    }
+
+    public static String getRouteDump(String legacyDumpRoute) {
+        // JVM system property take precedence
+        String p = System.getProperty(ROUTE_DUMP_ENABLED);
+        if (p == null || p.isBlank()) {
+            p = legacyDumpRoute;
+        }
+        if (p != null) {
+            p = p.trim().toLowerCase();
+            if ("true".equals(p)) {
+                p = "xml"; // xml is default
+            }
+            boolean valid = "xml".equals(p) || "yaml".equals(p) || "false".equals(p);
+            if (!valid) {
+                throw new IllegalArgumentException("RouteDump must be: xml, yaml, true, or false");
+            }
+        }
+        return p;
     }
 }

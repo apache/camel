@@ -157,24 +157,28 @@ public class KafkaProducerFullIT extends BaseKafkaTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(DIRECT_START_STRINGS_URI).to("kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1").to(KAFKA_ACK_MOCK);
+                from(DIRECT_START_STRINGS_URI).to("kafka:" + TOPIC_STRINGS + "?recordMetadata=true&requestRequiredAcks=-1")
+                        .to(KAFKA_ACK_MOCK);
 
-                from(DIRECT_START_STRINGS_2_URI).to("kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1").to(KAFKA_ACK_MOCK);
+                from(DIRECT_START_STRINGS_2_URI).to("kafka:" + TOPIC_STRINGS + "?recordMetadata=true&requestRequiredAcks=-1")
+                        .to(KAFKA_ACK_MOCK);
 
-                from(DIRECT_START_BYTES_URI).to("kafka:" + TOPIC_BYTES + "?requestRequiredAcks=-1"
+                from(DIRECT_START_BYTES_URI).to("kafka:" + TOPIC_BYTES + "?recordMetadata=true&requestRequiredAcks=-1"
                                                 + "&valueSerializer=org.apache.kafka.common.serialization.ByteArraySerializer&"
                                                 + "keySerializer=org.apache.kafka.common.serialization.ByteArraySerializer")
                         .to(KAFKA_ACK_MOCK);
 
-                from(DIRECT_START_TRACED_URI).to("kafka:" + TOPIC_INTERCEPTED + "?requestRequiredAcks=-1"
+                from(DIRECT_START_TRACED_URI).to("kafka:" + TOPIC_INTERCEPTED + "?recordMetadata=true&requestRequiredAcks=-1"
                                                  + "&interceptorClasses=org.apache.camel.component.kafka.MockProducerInterceptor")
                         .to(KAFKA_ACK_MOCK);
 
-                from(DIRECT_PROPAGATED_HEADERS_URI).to("kafka:" + TOPIC_PROPAGATED_HEADERS + "?requestRequiredAcks=-1")
+                from(DIRECT_PROPAGATED_HEADERS_URI)
+                        .to("kafka:" + TOPIC_PROPAGATED_HEADERS + "?recordMetadata=true&requestRequiredAcks=-1")
                         .to(KAFKA_ACK_MOCK);
 
                 from(DIRECT_NO_RECORD_SPECIFIC_HEADERS_URI)
-                        .to("kafka:" + TOPIC_NO_RECORD_SPECIFIC_HEADERS + "?requestRequiredAcks=-1").to(KAFKA_ACK_MOCK);
+                        .to("kafka:" + TOPIC_NO_RECORD_SPECIFIC_HEADERS + "?recordMetadata=true&requestRequiredAcks=-1")
+                        .to(KAFKA_ACK_MOCK);
             }
         };
     }

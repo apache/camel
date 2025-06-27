@@ -21,7 +21,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "start-route",
-                     description = "Start Camel routes", sortOptions = false)
+                     description = "Start Camel routes", sortOptions = false, showDefaultValues = true)
 public class CamelRouteStartAction extends CamelRouteAction {
 
     public CamelRouteStartAction(CamelJBangMain main) {

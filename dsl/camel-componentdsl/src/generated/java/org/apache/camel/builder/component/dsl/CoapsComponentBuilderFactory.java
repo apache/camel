@@ -52,6 +52,22 @@ public interface CoapsComponentBuilderFactory {
      */
     interface CoapsComponentBuilder extends ComponentBuilder<CoAPComponent> {
     
+        /**
+         * Name of COAP configuration file to load and use. Will by default load
+         * from classpath, so use file: as prefix to load from file system.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param configurationFile the value to set
+         * @return the dsl builder
+         */
+        default CoapsComponentBuilder configurationFile(java.lang.String configurationFile) {
+            doSetProperty("configurationFile", configurationFile);
+            return this;
+        }
+    
         
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
@@ -141,6 +157,7 @@ public interface CoapsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "configurationFile": ((CoAPComponent) component).setConfigurationFile((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((CoAPComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((CoAPComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((CoAPComponent) component).setAutowiredEnabled((boolean) value); return true;

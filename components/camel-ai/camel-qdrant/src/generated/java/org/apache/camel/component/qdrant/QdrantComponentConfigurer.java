@@ -35,14 +35,22 @@ public class QdrantComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.qdrant.QdrantConfiguration.class, value)); return true;
+        case "filter": getOrCreateConfiguration(target).setFilter(property(camelContext, io.qdrant.client.grpc.Points.Filter.class, value)); return true;
         case "host": getOrCreateConfiguration(target).setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxresults":
+        case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, int.class, value)); return true;
         case "port": getOrCreateConfiguration(target).setPort(property(camelContext, int.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "tls": getOrCreateConfiguration(target).setTls(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"filter"};
     }
 
     @Override
@@ -53,9 +61,12 @@ public class QdrantComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.qdrant.QdrantConfiguration.class;
+        case "filter": return io.qdrant.client.grpc.Points.Filter.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxresults":
+        case "maxResults": return int.class;
         case "port": return int.class;
         case "timeout": return java.time.Duration.class;
         case "tls": return boolean.class;
@@ -72,9 +83,12 @@ public class QdrantComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "filter": return getOrCreateConfiguration(target).getFilter();
         case "host": return getOrCreateConfiguration(target).getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxresults":
+        case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
         case "port": return getOrCreateConfiguration(target).getPort();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();
         case "tls": return getOrCreateConfiguration(target).isTls();

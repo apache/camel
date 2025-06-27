@@ -103,6 +103,8 @@ public class SoapCxfClientTest extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
+        getCamelContext().getRegistry().bind("myServerBean", serverBean);
+
         String jaxbPackage = GetCustomersByName.class.getPackage().getName();
         ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, false);
         SoapDataFormat soapDataFormat = new SoapDataFormat(jaxbPackage, elNameStrat);
@@ -110,7 +112,7 @@ public class SoapCxfClientTest extends RouteBuilder {
         from("direct:cxfclient") //
                 .onException(Exception.class).handled(true).marshal(soapDataFormat).end() //
                 .unmarshal(soapDataFormat) //
-                .bean(serverBean) //
+                .toD("bean:myServerBean?method=${header.CamelSoapMethodName}")
                 .marshal(soapDataFormat);
     }
 

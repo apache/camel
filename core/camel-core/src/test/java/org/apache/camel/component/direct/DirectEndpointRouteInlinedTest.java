@@ -62,7 +62,7 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
                 }, "Should have thrown exception");
 
         assertTrue(e.getMessage().matches(
-                "Failed to start route route[0-9]+ because of Multiple consumers for the same endpoint is not allowed: direct://start"));
+                "Failed to start route: route[0-9]+ because: Multiple consumers for the same endpoint is not allowed: direct://start"));
     }
 
 }

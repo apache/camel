@@ -71,9 +71,10 @@ YAML::
     uri: direct:start
     steps:
       - dynamicRouter:
-          method:
-            beanType: com.foo.MySlipBean
-            method: slip
+          expression:
+            method:
+              beanType: com.foo.MySlipBean
+              method: slip
 ----
 ====
 

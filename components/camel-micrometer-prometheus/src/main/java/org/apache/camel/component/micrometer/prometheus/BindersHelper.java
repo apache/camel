@@ -55,7 +55,7 @@ public final class BindersHelper {
             System.out.println("Cannot read " + JANDEX_INDEX + " with list of known MeterBinder classes");
         } else {
             DotName dn = DotName.createSimple(MeterBinder.class);
-            List<ClassInfo> classes = index.getKnownDirectImplementors(dn);
+            Set<ClassInfo> classes = index.getAllKnownImplementors(dn);
             for (ClassInfo info : classes) {
                 boolean deprecated = info.hasAnnotation(Deprecated.class);
                 if (deprecated) {

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kamelet-main</artifactId>
@@ -128,7 +128,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-catalog-lucene</artifactId>
+            <artifactId>camel-catalog-suggest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -161,22 +161,17 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-tooling-maven</artifactId>
         </dependency>
-        <!-- optional spring annotation support -->
+        <!-- legacy Spring beans XML support -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring-version}</version>
-        </dependency>
-        <!-- optional quarkus annotation support -->
-        <dependency>
-            <groupId>jakarta.enterprise</groupId>
-            <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>${jakarta-enterprise-cdi-api-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.microprofile.config</groupId>
-            <artifactId>microprofile-config-api</artifactId>
-            <version>${microprofile-config-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.micrometer</groupId>
+                    <artifactId>micrometer-observation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- test -->

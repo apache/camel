@@ -16,10 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,9 +29,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -74,6 +76,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
             "camel.component.kamelet.location",
             "camel.jbang.classpathFiles",
             "camel.jbang.localKameletDir",
+            "camel.jbang.scriptFiles",
+            "camel.jbang.tlsFiles",
             "camel.jbang.jkubeFiles",
             "kamelet"
     };
@@ -84,6 +88,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     private MavenDownloader downloader;
+
+    private Printer quietPrinter;
 
     @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -105,6 +111,18 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     protected RuntimeType runtime;
 
+    @CommandLine.Option(names = { "--name" },
+                        description = "The integration name. Use this when the name should not get derived otherwise.")
+    protected String name;
+
+    @CommandLine.Option(names = { "--port" },
+                        description = "Embeds a local HTTP server on this port", defaultValue = "8080")
+    int port;
+
+    @CommandLine.Option(names = { "--management-port" },
+                        description = "To use a dedicated port for HTTP management")
+    int managementPort = -1;
+
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
@@ -120,11 +138,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     protected String mavenSettingsSecurity;
 
-    @CommandLine.Option(names = { "--maven-central-enabled" },
+    @CommandLine.Option(names = { "--maven-central-enabled" }, defaultValue = "true",
                         description = "Whether downloading JARs from Maven Central repository is enabled")
     protected boolean mavenCentralEnabled = true;
 
-    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" },
+    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true",
                         description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     protected boolean mavenApacheSnapshotEnabled = true;
 
@@ -191,7 +209,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
     protected String exportDir;
 
-    @CommandLine.Option(names = { "--clean-dir" },
+    @CommandLine.Option(names = { "--clean-dir" }, defaultValue = "false",
                         description = "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)")
     protected boolean cleanExportDir;
 
@@ -203,37 +221,48 @@ public abstract class ExportBaseCommand extends CamelCommand {
                                       + "Use false to turn off and not include package name in the Java source files.")
     protected String packageName;
 
-    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
+    @CommandLine.Option(names = { "--fresh" }, defaultValue = "false",
+                        description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
 
     @CommandLine.Option(names = { "--download" }, defaultValue = "true",
                         description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     protected boolean download = true;
 
+    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    protected boolean packageScanJars;
+
     @CommandLine.Option(names = { "--build-property" },
                         description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     protected List<String> buildProperties = new ArrayList<>();
 
+    @CommandLine.Option(names = { "--prop", "--property" },
+                        description = "Camel application properties, ex. --property=prop1=foo")
+    protected String[] applicationProperties;
+
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
-                        description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
+                        description = "Can be used to turn on logging to console (logs by default to file in <user home>/.camel directory)")
     protected boolean logging;
 
     @CommandLine.Option(names = { "--quiet" }, defaultValue = "false",
                         description = "Will be quiet, only print when error occurs")
     protected boolean quiet;
 
-    @CommandLine.Option(names = { "--ignore-loading-error" },
+    @CommandLine.Option(names = { "--verbose" }, defaultValue = "false",
+                        description = "Verbose output of startup activity (dependency resolution and downloading")
+    protected boolean verbose;
+
+    @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
-    @CommandLine.Option(names = { "--lazy-bean" },
+    @CommandLine.Option(names = { "--lazy-bean" }, defaultValue = "true",
                         description = "Whether to use lazy bean initialization (can help with complex classloading issues")
-    protected boolean lazyBean;
+    protected boolean lazyBean = true;
 
     protected boolean symbolicLink;     // copy source files using symbolic link
-
     protected boolean javaLiveReload; // reload java codes in dev
-
     public String pomTemplateName;   // support for specialised pom templates
 
     public ExportBaseCommand(CamelJBangMain main) {
@@ -244,9 +273,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
     public Integer doCall() throws Exception {
         // configure logging first
         if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, false, false, false, true, null, null);
+            // log to console instead of camel-export.log file
+            RuntimeUtil.configureLog(loggingLevel, false, false, false, false, null, null);
         } else {
-            RuntimeUtil.configureLog("off", false, false, false, true, null, null);
+            RuntimeUtil.configureLog(loggingLevel, false, false, false, true, null, null);
         }
 
         if (!quiet) {
@@ -308,22 +338,32 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return null;
     }
 
-    protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean) throws Exception {
+    protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean, boolean verbose) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
         run.dependencies = dependencies;
         run.files = files;
+        run.name = name;
+        run.port = port;
+        run.managementPort = managementPort;
         run.excludes = excludes;
         run.openapi = openapi;
         run.download = download;
+        run.packageScanJars = packageScanJars;
         run.runtime = runtime;
         run.camelVersion = camelVersion;
+        run.camelSpringBootVersion = camelSpringBootVersion;
         run.quarkusVersion = quarkusVersion;
+        run.quarkusGroupId = quarkusGroupId;
         run.springBootVersion = springBootVersion;
         run.kameletsVersion = kameletsVersion;
         run.localKameletDir = localKameletDir;
         run.ignoreLoadingError = ignoreLoadingError;
         run.lazyBean = lazyBean;
+        run.property = applicationProperties;
+        run.repositories = repositories;
+        run.verbose = verbose;
+        run.logging = logging;
         return run.runExport(ignoreLoadingError);
     }
 
@@ -349,7 +389,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return context;
     }
 
-    protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
+    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
         Set<String> answer = new TreeSet<>((o1, o2) -> {
             // favour org.apache.camel first
             boolean c1 = o1.contains("org.apache.camel:");
@@ -409,7 +449,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     if (asfKamelets) {
                         // include JARs for official ASF kamelets
                         answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                        answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                        if (VersionHelper.compare(camelVersion, "4.10.0") < 0) {
+                            answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                        }
                     }
                 }
             } else if (line.startsWith("camel.jbang.dependencies=")) {
@@ -423,7 +465,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             if (asfKamelets) {
                                 // include JARs for official ASF kamelets
                                 answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                                answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                                if (VersionHelper.compare(camelVersion, "4.10.0") < 0) {
+                                    answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                                }
                             }
                         }
                     }
@@ -457,7 +501,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                                     if (asfKamelets) {
                                         // include JARs for official ASF kamelets
                                         answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                                        answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                                        if (VersionHelper.compare(camelVersion, "4.10.0") < 0) {
+                                            answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                                        }
                                     }
                                 }
                             }
@@ -471,7 +517,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 if (asfKamelets) {
                     // include JARs for official ASF kamelets
                     answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                    answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                    if (VersionHelper.compare(camelVersion, "4.10.0") < 0) {
+                        answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                    }
                 }
             } else if (line.startsWith("modeline=")) {
                 answer.add("camel:dsl-modeline");
@@ -479,7 +527,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // include custom dependencies defined in profile
-        if (profile != null && profile.exists()) {
+        if (profile != null && Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
             for (String d : RuntimeUtil.getDependenciesAsArray(prop)) {
@@ -518,9 +566,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected void copySourceFiles(
-            File settings, File profile, File srcJavaDirRoot, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir,
-            File srcKameletsResourcesDir, String packageName)
+            Path settings, Path profile, Path srcJavaDirRoot, Path srcJavaDir, Path srcResourcesDir, Path srcCamelResourcesDir,
+            Path srcKameletsResourcesDir, String packageName)
             throws Exception {
+
         // read the settings file and find the files to copy
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
@@ -549,7 +598,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     if (scheme != null) {
                         f = f.substring(scheme.length() + 1);
                     }
-                    boolean skip = profile.getName().equals(f); // skip copying profile
+                    boolean skip = profile.getFileName().toString().equals(f); // skip copying profile
                     if (skip) {
                         continue;
                     }
@@ -566,58 +615,72 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             || "camel.jbang.localKameletDir".equals(k) || "kamelet.yaml".equalsIgnoreCase(ext2);
                     boolean camel = !kamelet && "camel.main.routesIncludePattern".equals(k);
                     boolean jkube = "camel.jbang.jkubeFiles".equals(k);
-                    boolean web = "html".equals(ext) || "js".equals(ext) || "css".equals(ext) || "jpeg".equals(ext)
-                            || "jpg".equals(ext) || "png".equals(ext) || "ico".equals(ext);
-                    File srcWeb = new File(srcResourcesDir, "META-INF/resources");
-                    File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : kamelet ? srcKameletsResourcesDir
-                            : web ? srcWeb : srcResourcesDir;
+                    boolean script = "camel.jbang.scriptFiles".equals(k);
+                    boolean tls = "camel.jbang.tlsFiles".equals(k);
+                    boolean web = ext != null && List.of("css", "html", "ico", "jpeg", "jpg", "js", "png").contains(ext);
+                    Path targetDir;
+                    if (java) {
+                        targetDir = srcJavaDir;
+                    } else if (camel) {
+                        targetDir = srcCamelResourcesDir;
+                    } else if (kamelet) {
+                        targetDir = srcKameletsResourcesDir;
+                    } else if (script) {
+                        targetDir = srcJavaDirRoot.getParent().resolve("scripts");
+                    } else if (tls) {
+                        targetDir = srcJavaDirRoot.getParent().resolve("tls");
+                    } else if (web) {
+                        targetDir = srcResourcesDir.resolve("META-INF/resources");
+                    } else {
+                        targetDir = srcResourcesDir;
+                    }
+                    Files.createDirectories(targetDir);
 
-                    File source;
+                    Path source;
                     if ("kamelet".equals(k) && localKameletDir != null) {
                         // source is a local kamelet
-                        source = new File(localKameletDir, f + ".kamelet.yaml");
+                        source = Paths.get(localKameletDir, f + ".kamelet.yaml");
                     } else {
-                        source = new File(f);
+                        source = Paths.get(f);
                     }
-                    File out;
-                    if (source.isDirectory()) {
-                        out = target;
+                    Path out;
+                    if (Files.isDirectory(source)) {
+                        out = targetDir;
                     } else {
-                        out = new File(target, source.getName());
+                        out = targetDir.resolve(source.getFileName());
                     }
                     if (!java) {
                         if (kamelet) {
-                            out.getParentFile().mkdirs();
                             safeCopy(source, out, true);
                         } else if (jkube) {
                             // file should be renamed and moved into src/main/jkube
                             f = f.replace(".jkube.yaml", ".yaml");
                             f = f.replace(".jkube.yml", ".yml");
-                            out = new File(srcCamelResourcesDir.getParentFile().getParentFile(), "jkube/" + f);
-                            out.getParentFile().mkdirs();
+                            out = srcCamelResourcesDir.getParent().getParent().resolve("jkube/" + f);
+                            Files.createDirectories(out.getParent());
                             safeCopy(source, out, true);
                         } else {
-                            out.getParentFile().mkdirs();
-                            safeCopy(source, out, true);
+                            Files.createDirectories(out.getParent());
+                            safeCopy(scheme, source, out, true);
                         }
                     } else {
                         // need to append package name in java source file
-                        List<String> lines = Files.readAllLines(source.toPath());
+                        List<String> lines = Files.readAllLines(source);
                         Optional<String> hasPackage = lines.stream().filter(l -> l.trim().startsWith("package ")).findFirst();
-                        FileOutputStream fos;
+                        OutputStream fos;
 
                         if (hasPackage.isPresent()) {
                             String pn = determinePackageName(hasPackage.get());
                             if (pn != null) {
-                                File dir = new File(srcJavaDirRoot, pn.replace('.', File.separatorChar));
-                                dir.mkdirs();
-                                out = new File(dir, source.getName());
+                                Path dir = srcJavaDirRoot.resolve(pn.replace('.', '/'));
+                                Files.createDirectories(dir);
+                                out = dir.resolve(source.getFileName());
                             } else {
                                 throw new IOException("Cannot determine package name from source: " + source);
                             }
                         } else {
                             if (javaLiveReload) {
-                                out = new File(srcJavaDirRoot, source.getName());
+                                out = srcJavaDirRoot.resolve(source.getFileName());
                             } else {
                                 if (packageName != null && !"false".equalsIgnoreCase(packageName)) {
                                     lines.add(0, "");
@@ -628,7 +691,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         if (javaLiveReload) {
                             safeCopy(source, out, true);
                         } else {
-                            fos = new FileOutputStream(out);
+                            fos = Files.newOutputStream(out);
                             for (String line : lines) {
                                 adjustJavaSourceFileLine(line, fos);
                                 fos.write(line.getBytes(StandardCharsets.UTF_8));
@@ -642,7 +705,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
     }
 
-    protected void adjustJavaSourceFileLine(String line, FileOutputStream fos) throws Exception {
+    protected void adjustJavaSourceFileLine(String line, OutputStream fos) throws Exception {
         // noop
     }
 
@@ -668,69 +731,102 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected void copySettingsAndProfile(
-            File settings, File profile, File targetDir,
+            Path settings, Path profile, Path targetDir,
             Function<Properties, Object> customize)
             throws Exception {
-        Properties prop = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(prop, settings);
+        Properties settingsProps = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(settingsProps, settings);
 
-        Properties prop2 = new CamelCaseOrderedProperties();
-        if (profile.exists()) {
-            RuntimeUtil.loadProperties(prop2, profile);
+        Properties profileProps = new CamelCaseOrderedProperties();
+        if (Files.exists(profile)) {
+            RuntimeUtil.loadProperties(profileProps, profile);
         }
-        prop2.putAll(prop);
-        prepareApplicationProperties(prop2);
+        profileProps.putAll(settingsProps);
+        prepareApplicationProperties(profileProps);
 
-        for (Map.Entry<Object, Object> entry : prop.entrySet()) {
+        for (Map.Entry<Object, Object> entry : settingsProps.entrySet()) {
             String key = entry.getKey().toString();
             boolean skip = !key.startsWith("camel.main")
                     || "camel.main.routesCompileDirectory".equals(key)
                     || "camel.main.routesReloadEnabled".equals(key);
             if (skip) {
-                prop2.remove(key);
+                profileProps.remove(key);
             }
         }
 
         if (customize != null) {
-            customize.apply(prop2);
+            customize.apply(profileProps);
         }
 
-        FileOutputStream fos = new FileOutputStream(new File(targetDir, "application.properties"), false);
-        try {
-            for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
-                String k = entry.getKey().toString();
-                String v = entry.getValue().toString();
+        Path appPropsPath = targetDir.resolve("application.properties");
+        StringBuilder content = new StringBuilder();
+        for (Map.Entry<Object, Object> entry : profileProps.entrySet()) {
+            String k = entry.getKey().toString();
+            String v = entry.getValue().toString();
 
-                boolean skip = k.startsWith("camel.jbang.") || k.startsWith("jkube.");
-                if (skip) {
-                    continue;
-                }
+            boolean skip = k.startsWith("camel.jbang.") || k.startsWith("jkube.");
+            if (skip) {
+                continue;
+            }
 
-                // files are now loaded in classpath
-                v = v.replaceAll("file:", "classpath:");
-                if ("camel.main.routesIncludePattern".equals(k)) {
-                    // camel.main.routesIncludePattern should remove all .java as we use move them to regular src/main/java
-                    // camel.main.routesIncludePattern should remove all file: classpath: as we copy
-                    // them to src/main/resources/camel where camel autoload from
-                    v = Arrays.stream(v.split(","))
-                            .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
-                            .collect(Collectors.joining(","));
-                }
-                if (!v.isBlank()) {
-                    String line = applicationPropertyLine(k, v);
-                    if (line != null && !line.isBlank()) {
-                        fos.write(line.getBytes(StandardCharsets.UTF_8));
-                        fos.write("\n".getBytes(StandardCharsets.UTF_8));
-                    }
+            // files are now loaded in classpath
+            v = v.replaceAll("file:", "classpath:");
+            if ("camel.main.routesIncludePattern".equals(k)) {
+                // camel.main.routesIncludePattern should remove all .java as we use move them to regular src/main/java
+                // camel.main.routesIncludePattern should remove all file: classpath: as we copy
+                // them to src/main/resources/camel where camel autoload from
+                v = Arrays.stream(v.split(","))
+                        .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
+                        .collect(Collectors.joining(","));
+            }
+            if (!v.isBlank()) {
+                String line = applicationPropertyLine(k, v);
+                if (line != null && !line.isBlank()) {
+                    content.append(line).append("\n");
                 }
             }
-        } finally {
-            IOHelper.close(fos);
         }
+
+        // User properties
+        Properties userProps = new CamelCaseOrderedProperties();
+        prepareUserProperties(userProps);
+        for (Map.Entry<Object, Object> entryUserProp : userProps.entrySet()) {
+            String uK = entryUserProp.getKey().toString();
+            String uV = entryUserProp.getValue().toString();
+            String line = applicationPropertyLine(uK, uV);
+            if (line != null && !line.isBlank()) {
+                content.append(line).append("\n");
+            }
+        }
+
+        // write all the properties
+        Files.writeString(appPropsPath, content.toString(), StandardCharsets.UTF_8);
     }
 
     protected void prepareApplicationProperties(Properties properties) {
-        // noop
+        // NOOP
+    }
+
+    protected void prepareUserProperties(Properties properties) {
+        properties.putAll(propertiesMap(this.applicationProperties));
+    }
+
+    protected Map<String, String> propertiesMap(String[]... propertySources) {
+        Map<String, String> result = new LinkedHashMap<>();
+        if (propertySources != null) {
+            for (String[] props : Arrays.stream(propertySources).filter(Objects::nonNull).toList()) {
+                for (String s : props) {
+                    String[] kv = s.split("=");
+                    if (kv.length != 2) {
+                        // likely a user mistake, we warn the user
+                        printer().println("WARN: property '" + s + "'' has a bad format (should be 'key=value'), skipping.");
+                    } else {
+                        result.put(kv[0], kv[1]);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     // Returns true if it has either an openapi spec or it uses contract-first DSL
@@ -745,41 +841,60 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected void copyMavenWrapper() throws Exception {
-        File wrapper = new File(BUILD_DIR, ".mvn/wrapper");
-        wrapper.mkdirs();
+        Path wrapperPath = Paths.get(BUILD_DIR, ".mvn/wrapper");
+        Files.createDirectories(wrapperPath);
         // copy files
-        InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/mvnw");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "mvnw")));
-        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/mvnw.cmd");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "mvnw.cmd")));
-        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.jar");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "maven-wrapper.jar")));
-        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.properties");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "maven-wrapper.properties")));
+        Path mvnwPath = Paths.get(BUILD_DIR, "mvnw");
+        Path mvnwCmdPath = Paths.get(BUILD_DIR, "mvnw.cmd");
+        Path wrapperJarPath = wrapperPath.resolve("maven-wrapper.jar");
+        Path wrapperPropsPath = wrapperPath.resolve("maven-wrapper.properties");
+
+        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/mvnw")) {
+            Files.copy(is, mvnwPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/mvnw.cmd")) {
+            Files.copy(is, mvnwCmdPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.jar")) {
+            Files.copy(is, wrapperJarPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        try (InputStream is
+                = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.properties")) {
+            Files.copy(is, wrapperPropsPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+
         // set execute file permission on mvnw/mvnw.cmd files
-        File file = new File(BUILD_DIR, "mvnw");
-        file.setExecutable(true);
-        file = new File(BUILD_DIR, "mvnw.cmd");
-        file.setExecutable(true);
+        FileUtil.setPosixFilePermissions(mvnwPath, "rwxr-xr-x");
+        FileUtil.setPosixFilePermissions(mvnwCmdPath, "rwxr-xr-x");
     }
 
     protected void copyGradleWrapper() throws Exception {
-        File wrapper = new File(BUILD_DIR, "gradle/wrapper");
-        wrapper.mkdirs();
+        Path wrapperPath = Paths.get(BUILD_DIR, "gradle/wrapper");
+        Files.createDirectories(wrapperPath);
         // copy files
-        InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "gradlew")));
-        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew.bat");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "gradlew.bat")));
-        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.jar");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "gradle-wrapper.jar")));
-        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.properties");
-        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "gradle-wrapper.properties")));
-        // set execute file permission on gradlew/gradlew.cmd files
-        File file = new File(BUILD_DIR, "gradlew");
-        file.setExecutable(true);
-        file = new File(BUILD_DIR, "gradlew.bat");
-        file.setExecutable(true);
+        Path gradlewPath = Paths.get(BUILD_DIR, "gradlew");
+        Path gradlewBatPath = Paths.get(BUILD_DIR, "gradlew.bat");
+        Path wrapperJarPath = wrapperPath.resolve("gradle-wrapper.jar");
+        Path wrapperPropsPath = wrapperPath.resolve("gradle-wrapper.properties");
+
+        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew")) {
+            Files.copy(is, gradlewPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew.bat")) {
+            Files.copy(is, gradlewBatPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        try (InputStream is
+                = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.jar")) {
+            Files.copy(is, wrapperJarPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        try (InputStream is
+                = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.properties")) {
+            Files.copy(is, wrapperPropsPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        // set execute file permission on gradlew/gradlew.bat files
+        FileUtil.setPosixFilePermissions(gradlewPath, "rwxr-xr-x");
+        FileUtil.setPosixFilePermissions(gradlewBatPath, "rwxr-xr-x");
     }
 
     protected String applicationPropertyLine(String key, String value) {
@@ -793,7 +908,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
      * @param  camelVersion the camel version
      * @return              repositories or null if none are in use
      */
-    protected String getMavenRepositories(File settings, Properties prop, String camelVersion) throws Exception {
+    protected String getMavenRepositories(Path settings, Properties prop, String camelVersion) throws Exception {
         Set<String> answer = new LinkedHashSet<>();
 
         String propRepositories = prop.getProperty("camel.jbang.repositories");
@@ -827,7 +942,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 .collect(Collectors.joining(","));
     }
 
-    protected static boolean hasModeline(File settings) {
+    protected static boolean hasModeline(Path settings) {
         try {
             List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
             return lines.stream().anyMatch(l -> l.startsWith("modeline="));
@@ -837,10 +952,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return false;
     }
 
-    protected static int httpServerPort(File settings) {
+    protected static int httpServerPort(Path settings) {
         try {
             List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-            String port = lines.stream().filter(l -> l.startsWith("camel.jbang.platform-http.port="))
+            String port = lines.stream().filter(l -> l.startsWith("camel.server.port="))
                     .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
             return Integer.parseInt(port);
         } catch (Exception e) {
@@ -849,7 +964,19 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return -1;
     }
 
-    protected static String jibMavenPluginVersion(File settings, Properties prop) {
+    protected static int httpManagementPort(Path settings) {
+        try {
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+            String port = lines.stream().filter(l -> l.startsWith("camel.management.port="))
+                    .map(s -> StringHelper.after(s, "=")).findFirst().orElse("-1");
+            return Integer.parseInt(port);
+        } catch (Exception e) {
+            // ignore
+        }
+        return -1;
+    }
+
+    protected static String jibMavenPluginVersion(Path settings, Properties prop) {
         String answer = null;
         if (prop != null) {
             answer = prop.getProperty("camel.jbang.jib-maven-plugin-version");
@@ -863,10 +990,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "3.4.3";
+        return answer != null ? answer : "3.4.5";
     }
 
-    protected static String jkubeMavenPluginVersion(File settings, Properties props) {
+    protected static String jkubeMavenPluginVersion(Path settings, Properties props) {
         String answer = null;
         if (props != null) {
             answer = props.getProperty("camel.jbang.jkube-maven-plugin-version");
@@ -881,23 +1008,36 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "1.17.0";
+        return answer != null ? answer : "1.18.1";
     }
 
-    protected void safeCopy(File source, File target, boolean override) throws Exception {
-        if (!source.exists()) {
+    private void safeCopy(String scheme, Path source, Path target, boolean override) throws Exception {
+        if ("classpath".equals(scheme)) {
+            try (var ins = getClass().getClassLoader().getResourceAsStream(source.toString());
+                 var outs = Files.newOutputStream(target)) {
+                IOHelper.copy(ins, outs);
+            }
+        } else {
+            safeCopy(source, target, override);
+        }
+    }
+
+    protected void safeCopy(Path source, Path target, boolean override) throws Exception {
+        if (!Files.exists(source)) {
             return;
         }
 
-        if (source.isDirectory()) {
-            // flattern files if they are from a directory
-            File[] children = source.listFiles();
-            if (children != null) {
-                for (File child : children) {
-                    if (child.isFile()) {
-                        safeCopy(child, new File(target, child.getName()), override);
-                    }
-                }
+        if (Files.isDirectory(source)) {
+            // flatten files if they are from a directory
+            try (var stream = Files.list(source)) {
+                stream.filter(Files::isRegularFile)
+                        .forEach(child -> {
+                            try {
+                                safeCopy(child, target.resolve(child.getFileName()), override);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
             }
             return;
         }
@@ -905,8 +1045,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         if (symbolicLink) {
             try {
                 // must use absolute paths
-                Path link = target.toPath().toAbsolutePath();
-                Path src = source.toPath().toAbsolutePath();
+                Path link = target.toAbsolutePath();
+                Path src = source.toAbsolutePath();
                 if (Files.exists(link)) {
                     Files.delete(link);
                 }
@@ -917,27 +1057,39 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
-        if (!target.exists()) {
-            Files.copy(source.toPath(), target.toPath());
+        if (!Files.exists(target)) {
+            Files.copy(source, target);
         } else if (override) {
-            Files.copy(source.toPath(), target.toPath(),
+            Files.copy(source, target,
                     StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
-    protected void safeCopy(InputStream source, File target) throws Exception {
+    // This method is kept for backward compatibility with derived classes
+    @Deprecated
+    protected void safeCopy(java.io.File source, java.io.File target, boolean override) throws Exception {
+        safeCopy(source.toPath(), target.toPath(), override);
+    }
+
+    protected void safeCopy(InputStream source, Path target) throws Exception {
         if (source == null) {
             return;
         }
 
-        File dir = target.getParentFile();
-        if (!dir.exists()) {
-            dir.mkdirs();
+        Path dir = target.getParent();
+        if (!Files.exists(dir)) {
+            Files.createDirectories(dir);
         }
 
-        if (!target.exists()) {
-            Files.copy(source, target.toPath());
+        if (!Files.exists(target)) {
+            Files.copy(source, target);
         }
+    }
+
+    // This method is kept for backward compatibility with derived classes
+    @Deprecated
+    protected void safeCopy(InputStream source, java.io.File target) throws Exception {
+        safeCopy(source, target.toPath());
     }
 
     private static String determinePackageName(String content) {
@@ -958,10 +1110,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
         if (dependency.startsWith("camel-quarkus:")) {
             return "camel:" + dependency.substring("camel-quarkus:".length());
-        }
-
-        if (dependency.startsWith("camel-k-")) {
-            return "camel-k:" + dependency.substring("camel-k-".length());
         }
 
         if (dependency.startsWith("camel-")) {
@@ -1001,27 +1149,26 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     private static MavenGav parseLocalJar(String dep) {
-        File file = new File(dep + ".jar");
-        if (!file.isFile() || !file.exists()) {
+        Path path = Paths.get(dep + ".jar");
+        if (!Files.isRegularFile(path) || !Files.exists(path)) {
             return null;
         }
 
-        try {
-            JarFile jf = new JarFile(file);
+        try (JarFile jf = new JarFile(path.toFile())) {
             Optional<JarEntry> je = jf.stream().filter(e -> e.getName().startsWith("META-INF/maven/")
                     && e.getName().endsWith("/pom.properties")).findFirst();
             if (je.isPresent()) {
                 JarEntry e = je.get();
-                InputStream is = jf.getInputStream(e);
-                Properties prop = new Properties();
-                prop.load(is);
-                IOHelper.close(is);
-                MavenGav gav = new MavenGav();
-                gav.setGroupId(prop.getProperty("groupId"));
-                gav.setArtifactId(prop.getProperty("artifactId"));
-                gav.setVersion(prop.getProperty("version"));
-                gav.setPackaging("lib");
-                return gav;
+                try (InputStream is = jf.getInputStream(e)) {
+                    Properties prop = new Properties();
+                    prop.load(is);
+                    MavenGav gav = new MavenGav();
+                    gav.setGroupId(prop.getProperty("groupId"));
+                    gav.setArtifactId(prop.getProperty("artifactId"));
+                    gav.setVersion(prop.getProperty("version"));
+                    gav.setPackaging("lib");
+                    return gav;
+                }
             }
         } catch (Exception e) {
             // ignore
@@ -1033,12 +1180,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected void copyLocalLibDependencies(Set<String> deps) throws Exception {
         for (String d : deps) {
             if (d.startsWith("lib:")) {
-                File libDir = new File(BUILD_DIR, "lib");
-                libDir.mkdirs();
+                Path libDirPath = Paths.get(BUILD_DIR, "lib");
+                Files.createDirectories(libDirPath);
                 String n = d.substring(4);
-                File source = new File(n);
-                File target = new File(libDir, n);
-                safeCopy(source, target, true);
+                Path sourcePath = Paths.get(n);
+                Path targetPath = libDirPath.resolve(n);
+                safeCopy(sourcePath, targetPath, true);
             }
         }
     }
@@ -1046,8 +1193,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected void copyAgentDependencies(Set<String> deps) throws Exception {
         for (String d : deps) {
             if (d.startsWith("agent:")) {
-                File libDir = new File(BUILD_DIR, "agent");
-                libDir.mkdirs();
+                Path libDirPath = Paths.get(BUILD_DIR, "agent");
+                Files.createDirectories(libDirPath);
                 String n = d.substring(6);
                 MavenGav gav = MavenGav.parseGav(n);
                 copyAgentLibDependencies(gav);
@@ -1067,39 +1214,51 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 Files.copy(artifact.getFile().toPath(), target);
             }
         } catch (MavenResolutionException e) {
-            System.err.println("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
+            printer().printErr("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
         } catch (IOException e) {
-            System.err.println("Error copying the artifact: " + gav + " due to: " + e.getMessage());
+            printer().printErr("Error copying the artifact: " + gav + " due to: " + e.getMessage());
         }
     }
 
-    protected void copyApplicationPropertiesFiles(File srcResourcesDir) throws Exception {
-        File[] files = new File(".").listFiles(f -> {
-            if (!f.isFile()) {
-                return false;
-            }
-            String ext = FileUtil.onlyExt(f.getName());
-            String name = FileUtil.onlyName(f.getName());
-            if (!"properties".equals(ext)) {
-                return false;
-            }
-            if (name.equals("application")) {
-                // skip generic as its handled specially
-                return false;
-            }
-            if (profile == null) {
-                // accept all kind of configuration files
-                return name.startsWith("application");
-            } else {
-                // only accept the configuration file that matches the profile
-                return name.equals("application-" + profile);
-            }
-        });
-        if (files != null) {
-            for (File f : files) {
-                safeCopy(f, new File(srcResourcesDir, f.getName()), true);
-            }
+    protected void copyApplicationPropertiesFiles(Path srcResourcesDir) throws Exception {
+        try {
+            Files.list(Paths.get("."))
+                    .filter(p -> Files.isRegularFile(p))
+                    .filter(p -> {
+                        String fileName = p.getFileName().toString();
+                        String ext = FileUtil.onlyExt(fileName);
+                        String name = FileUtil.onlyName(fileName);
+                        if (!"properties".equals(ext)) {
+                            return false;
+                        }
+                        if (name.equals("application")) {
+                            // skip generic as its handled specially
+                            return false;
+                        }
+                        if (profile == null) {
+                            // accept all kind of configuration files
+                            return name.startsWith("application");
+                        } else {
+                            // only accept the configuration file that matches the profile
+                            return name.equals("application-" + profile);
+                        }
+                    })
+                    .forEach(p -> {
+                        try {
+                            safeCopy(p, srcResourcesDir.resolve(p.getFileName()), true);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+        } catch (IOException e) {
+            // Ignore
         }
+    }
+
+    // This method is kept for backward compatibility with derived classes
+    @Deprecated
+    protected void copyApplicationPropertiesFiles(java.io.File srcResourcesDir) throws Exception {
+        copyApplicationPropertiesFiles(srcResourcesDir.toPath());
     }
 
     private MavenDownloader getDownloader() {
@@ -1112,6 +1271,24 @@ public abstract class ExportBaseCommand extends CamelCommand {
     private void init() {
         this.downloader = new MavenDownloaderImpl();
         ((MavenDownloaderImpl) downloader).build();
+    }
+
+    protected Printer outPrinter() {
+        return super.printer();
+    }
+
+    @Override
+    protected Printer printer() {
+        if (quiet) {
+            if (quietPrinter == null) {
+                quietPrinter = new Printer.QuietPrinter(super.printer());
+            }
+
+            CommandHelper.setPrinter(quietPrinter);
+            return quietPrinter;
+        }
+
+        return super.printer();
     }
 
     static class FilesConsumer extends ParameterConsumer<Export> {

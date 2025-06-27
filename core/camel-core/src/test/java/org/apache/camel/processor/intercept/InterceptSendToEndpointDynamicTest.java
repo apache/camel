@@ -85,8 +85,8 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                // intercept sending to to either ./foo or ./bar directory
-                interceptSendToEndpoint(fileUri("(foo|bar)")).skipSendToOriginalEndpoint().to("mock:detour");
+                // intercept sending to, either ./foo or ./bar directory
+                interceptSendToEndpoint("^file:.*(foo|bar)$").skipSendToOriginalEndpoint().to("mock:detour");
 
                 from("direct:first").to(fileUri("foo")).to(fileUri("bar")).to(fileUri("cheese"))
                         .to("mock:result");

@@ -59,6 +59,8 @@ import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.AppendBlobClient;
 import com.azure.storage.blob.specialized.BlobInputStream;
+import com.azure.storage.blob.specialized.BlobLeaseClient;
+import com.azure.storage.blob.specialized.BlobLeaseClientBuilder;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import com.azure.storage.blob.specialized.PageBlobClient;
 import com.azure.storage.common.StorageSharedKeyCredential;
@@ -234,5 +236,9 @@ public class BlobClientWrapper {
 
     private PageBlobClient getPageBlobClient() {
         return client.getPageBlobClient();
+    }
+
+    public BlobLeaseClient getLeaseClient() {
+        return new BlobLeaseClientBuilder().blobClient(client).buildClient();
     }
 }

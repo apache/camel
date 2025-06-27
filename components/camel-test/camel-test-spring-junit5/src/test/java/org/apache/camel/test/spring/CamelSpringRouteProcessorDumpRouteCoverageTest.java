@@ -43,6 +43,7 @@ public class CamelSpringRouteProcessorDumpRouteCoverageTest extends CamelSpringP
         assertEquals(JmxManagementStrategy.class, camelContext.getManagementStrategy().getClass());
     }
 
+    @Test
     @Override
     public void testRouteCoverage() {
         camelContext.stop();

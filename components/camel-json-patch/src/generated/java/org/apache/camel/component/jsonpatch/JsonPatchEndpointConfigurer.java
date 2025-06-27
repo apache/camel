@@ -25,6 +25,8 @@ public class JsonPatchEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -38,6 +40,8 @@ public class JsonPatchEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
         case "contentcache":
         case "contentCache": return boolean.class;
         case "lazystartproducer":
@@ -52,6 +56,8 @@ public class JsonPatchEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return target.isAllowContextMapAll();
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "contentcache":
         case "contentCache": return target.isContentCache();
         case "lazystartproducer":

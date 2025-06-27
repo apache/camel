@@ -27,13 +27,25 @@ include::partial$eip-options.adoc[]
 include::partial$eip-exchangeProperties.adoc[]
 // eip exchangeProperties: END
 
-=== Difference between Log EIP and Log component
+== Difference between Log EIP and Log component
 
 This log EIP is much lighter and meant for logging human logs such as `Starting to do ...` etc.
 It can only log a message based on the xref:languages:simple-language.adoc[Simple] language.
 
 The xref:ROOT:log-component.adoc[log] component is meant for logging the message content (body, headers, etc).
 There are many options on the log component to configure what content to log.
+
+The log component provides fine-grained control over which parts of the exchange are logged or not. 
+However, it's possible to quickly log a formatted exchange using the Log EIP:
+
+[source,xml]
+----
+<route id="foo">
+    <from uri="direct:foo"/>
+    <log message="${logExchange}"/>
+    <to uri="mock:foo"/>
+</route>
+----
 
 == Example
 

@@ -35,4 +35,11 @@ public final class AzureStorageBlobServiceFactory {
                 .addRemoteMapping(AzureStorageBlobRemoteService::new)
                 .build();
     }
+
+    static class AzureStorageBlobLocalContainerService extends AzureStorageBlobLocalContainerInfraService
+            implements AzureService {
+    }
+
+    static class AzureStorageBlobRemoteService extends AzureStorageBlobRemoteInfraService implements AzureService {
+    }
 }

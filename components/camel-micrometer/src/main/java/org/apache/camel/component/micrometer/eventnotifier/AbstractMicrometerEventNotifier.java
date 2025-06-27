@@ -40,6 +40,7 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
     private CamelContext camelContext;
     private MeterRegistry meterRegistry;
     private boolean prettyPrint;
+    private boolean skipCamelInfo = false;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 
     protected AbstractMicrometerEventNotifier(Class<T> eventType) {
@@ -72,6 +73,14 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
         this.prettyPrint = prettyPrint;
     }
 
+    public boolean isSkipCamelInfo() {
+        return skipCamelInfo;
+    }
+
+    public void setSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
+    }
+
     public TimeUnit getDurationUnit() {
         return durationUnit;
     }
@@ -99,6 +108,7 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
                 registryService = new MicrometerEventNotifierService();
                 registryService.setMeterRegistry(getMeterRegistry());
                 registryService.setPrettyPrint(isPrettyPrint());
+                registryService.setSkipCamelInfo(isSkipCamelInfo());
                 registryService.setDurationUnit(getDurationUnit());
                 registryService.setMatchingTags(Tags.of(KIND, KIND_EXCHANGE));
                 camelContext.addService(registryService);

@@ -31,6 +31,10 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
     private String port;
     @Metadata
     private String scheme;
+    @Metadata
+    private boolean cloud;
+    @Metadata
+    private String namespace;
 
     public String getToken() {
         return token;
@@ -74,5 +78,27 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
      */
     public void setScheme(String scheme) {
         this.scheme = scheme;
+    }
+
+    public boolean isCloud() {
+        return cloud;
+    }
+
+    /**
+     * Determine if the Hashicorp Vault is deployed on Hashicorp Cloud or not
+     */
+    public void setCloud(boolean cloud) {
+        this.cloud = cloud;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * If the Hashicorp Vault instance is deployed on Hashicorp Cloud, this field will determine the namespace
+     */
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 }

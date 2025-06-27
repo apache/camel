@@ -28,7 +28,9 @@ import org.apache.camel.support.ResourceHelper;
 @Component("jolt")
 public class JoltComponent extends DefaultComponent {
 
-    @Metadata(defaultValue = "false")
+    @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache = true;
+    @Metadata
     private boolean allowTemplateFromHeader;
     @Metadata(label = "advanced")
     private Transform transform;
@@ -38,12 +40,13 @@ public class JoltComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
 
         JoltEndpoint answer = new JoltEndpoint(uri, this, remaining);
         answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
         answer.setContentCache(cache);
         answer.setTransform(transform);
+        setProperties(answer, parameters);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {
@@ -52,6 +55,17 @@ public class JoltComponent extends DefaultComponent {
         }
 
         return answer;
+    }
+
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets whether to use resource content cache or not
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
     }
 
     public Transform getTransform() {
@@ -71,7 +85,7 @@ public class JoltComponent extends DefaultComponent {
 
     /**
      * Whether to allow to use resource template from header or not (default false).
-     *
+     * <p>
      * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
      * security vulnerability if the header is coming from a malicious user, so use this with care.
      */

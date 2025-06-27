@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import java.util.Properties;
@@ -102,6 +101,21 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
     }
 
     /**
+     * Whether to dump route as XML or YAML
+     * <p/>
+     * This allows tooling or manual inspection of the tested routes.
+     * <p/>
+     * You can also turn on route dump globally via setting JVM system property <tt>CamelTestRouteDump=xml</tt>.
+     *
+     * @deprecated Use the accessors from {@link #testConfiguration()} method
+     * @return     <tt>xml</tt> or <tt>yaml</tt> to write route dump to the log
+     */
+    @Deprecated(since = "4.10.0")
+    public String getDumpRoute() {
+        return testConfigurationBuilder.getDumpRoute();
+    }
+
+    /**
      * Override when using <a href="http://camel.apache.org/advicewith.html">advice with</a> and return <tt>true</tt>.
      * This helps to know advice with is to be used, and {@link CamelContext} will not be started before the advice with
      * takes place. This helps by ensuring the advice with has been property setup before the {@link CamelContext} is
@@ -160,6 +174,35 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
     @Deprecated(since = "4.7.0")
     public String isMockEndpointsAndSkip() {
         return camelContextConfiguration().mockEndpointsAndSkip();
+    }
+
+    /**
+     * Override to enable auto stub endpoints based on the pattern.
+     * <p/>
+     * Return <tt>*</tt> to mock all endpoints.
+     *
+     * @see        EndpointHelper#matchEndpoint(CamelContext, String, String)
+     * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
+     */
+    @Deprecated(since = "4.11.0")
+    public String isStubEndpoints() {
+        return camelContextConfiguration().stubEndpoints();
+    }
+
+    /**
+     * Override to exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     *
+     * @see        EndpointHelper#matchEndpoint(CamelContext, String, String)
+     * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
+     */
+    @Deprecated(since = "4.11.0")
+    public String isAutoStartupExcludePatterns() {
+        return camelContextConfiguration().autoStartupExcludePatterns();
     }
 
     /**

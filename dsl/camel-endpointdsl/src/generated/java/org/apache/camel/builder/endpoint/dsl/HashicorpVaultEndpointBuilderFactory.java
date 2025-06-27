@@ -45,6 +45,38 @@ public interface HashicorpVaultEndpointBuilderFactory {
         }
 
         /**
+         * Determine if the Hashicorp Vault is deployed on Hashicorp Cloud or
+         * not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param cloud the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder cloud(boolean cloud) {
+            doSetProperty("cloud", cloud);
+            return this;
+        }
+        /**
+         * Determine if the Hashicorp Vault is deployed on Hashicorp Cloud or
+         * not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param cloud the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder cloud(String cloud) {
+            doSetProperty("cloud", cloud);
+            return this;
+        }
+        /**
          * Hashicorp Vault instance host to be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -56,6 +88,21 @@ public interface HashicorpVaultEndpointBuilderFactory {
          */
         default HashicorpVaultEndpointBuilder host(String host) {
             doSetProperty("host", host);
+            return this;
+        }
+        /**
+         * If the Hashicorp Vault instance is deployed on Hashicorp Cloud, this
+         * field will determine the namespace.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder namespace(String namespace) {
+            doSetProperty("namespace", namespace);
             return this;
         }
         /**

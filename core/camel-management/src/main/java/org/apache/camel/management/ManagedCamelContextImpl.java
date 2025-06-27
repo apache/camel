@@ -16,6 +16,9 @@
  */
 package org.apache.camel.management;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
@@ -107,7 +110,6 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         }
 
         Route route = camelContext.getRoute(routeId);
-
         if (route != null) {
             try {
                 ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
@@ -118,6 +120,35 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         }
 
         return null;
+    }
+
+    @Override
+    public List<ManagedRouteMBean> getManagedRoutes() {
+        // null group will return all
+        return getManagedRoutesByGroup(null);
+    }
+
+    @Override
+    public List<ManagedRouteMBean> getManagedRoutesByGroup(String groupId) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
+        List<ManagedRouteMBean> answer = new ArrayList<>();
+        for (Route route : camelContext.getRoutes()) {
+            if (groupId == null || groupId.equals(route.getGroup())) {
+                try {
+                    ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
+                    ManagedRouteMBean mr
+                            = getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+                    answer.add(mr);
+                } catch (MalformedObjectNameException e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+            }
+        }
+        return answer;
     }
 
     @Override

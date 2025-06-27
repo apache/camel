@@ -334,6 +334,26 @@ Message out = exchange.getOut();
 int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 ------------------------------------------------------------------------------------
 
+=== Defining specific properties of Apache HTTP client via Camel parameters
+
+There are different parameters you could set in a route, that will influence the behavior of the Apache HTTP Client.
+
+Most of the option are available here: https://hc.apache.org/httpcomponents-client-5.4.x/current/httpclient5/apidocs/org/apache/hc/client5/http/config/RequestConfig.Builder.html[Apache HttpClient Request Config Builder].
+
+* httpClient.authenticationEnabled - Determines whether authentication should be handled automatically.
+* httpClient.circularRedirectsAllowed - Determines whether circular redirects (redirects to the same location) should be allowed.
+* httpClient.connectionKeepAlive - Determines the default of value of connection keep-alive time period when not explicitly communicated by the origin server with a Keep-Alive response header.
+* httpClient.connectionRequestTimeout - Determines the connection lease request timeout used when requesting a connection from the connection manager.
+* httpClient.contentCompressionEnabled - Determines whether the target server is requested to compress content.
+* httpClient.cookieSpec - Determines the name of the cookie specification to be used for HTTP state management.
+* httpClient.defaultKeepAlive - Determines the default keep-alive
+* httpClient.expectContinueEnabled - Determines whether the 'Expect: 100-Continue' handshake is enabled for entity enclosing methods.
+* httpClient.hardCancellationEnabled - Determines whether request cancellation should kill the underlying connection.
+* httpClient.maxRedirects - Determines the maximum number of redirects to be followed.
+* httpClient.protocolUpgradeEnabled - Determines whether the client server should automatically attempt to upgrade to a safer or a newer version of the protocol, whenever possible.
+* httpClient.redirectsEnabled - Determines whether redirects should be handled automatically.
+* httpClient.responseTimeout - Determines the timeout until arrival of a response from the opposite endpoint.
+
 === Disabling Cookies
 
 To disable cookies in the CookieStore, you can set the HTTP Client to ignore cookies by
@@ -360,6 +380,22 @@ String scope = "my-scope"; // optional scope
 from("direct:start")
   .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2Scope=" + scope);
 ------------------------------------------------------------------------------------
+
+Additional support for OAuth2 is for RFC 8707 where a _Resource Indicator_ must be provided in the body:
+
+[source,java]
+------------------------------------------------------------------------------------
+String clientId = "my-client-id";
+String clientSecret = "my-client-secret";
+String tokenEndpoint = "https://localhost:8080/realms/master/protocol/openid-connect/token";
+String scope = "my-scope"; // optional scope
+String resourceIndicator = "https://localhost:9090"; // optional, for RFC 8707
+
+from("direct:start")
+  .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2Scope=" + scope + "&oauth2ResourceIndicator=" + resourceIndicator);
+------------------------------------------------------------------------------------
+
+NOTE: Resource Indicator is the URL to the actual endpoint as defined in the component URI.
 
 [NOTE]
 Camel only provides support for OAuth2 client credentials flow

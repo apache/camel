@@ -276,6 +276,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
               javaType = "java.lang.String", label = "common")
     private String packages;
 
+    @Metadata(description = "Timeout in seconds to validate when a custom pubSubReplayId has been configured, when starting the Camel Salesforce consumer.",
+              defaultValue = "30", label = "consumer,advanced")
+    private int initialReplyIdTimeout = 30;
+
     // component state
     private SalesforceHttpClient httpClient;
 
@@ -293,8 +297,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public SalesforceComponent(CamelContext context) {
         super(context);
-        registerExtension(SalesforceComponentVerifierExtension::new);
-        registerExtension(SalesforceMetaDataExtension::new);
     }
 
     @Override
@@ -829,6 +831,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         } else {
             return null;
         }
+    }
+
+    public int getInitialReplyIdTimeout() {
+        return initialReplyIdTimeout;
+    }
+
+    public void setInitialReplyIdTimeout(int initialReplyIdTimeout) {
+        this.initialReplyIdTimeout = initialReplyIdTimeout;
     }
 
     public SalesforceSession getSession() {

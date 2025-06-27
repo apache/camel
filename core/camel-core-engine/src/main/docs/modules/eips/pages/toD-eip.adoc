@@ -228,7 +228,7 @@ from("direct:login")
   .toD("http:myloginserver:8080/login?userid=${header.userName}");
 ----
 
-It Will essentially be optimized to (pseudo route):
+It will essentially be optimized to (**internally** pseudo route):
 
 [source,java]
 ----
@@ -251,7 +251,7 @@ to provide dynamic values to override the uri in `toD`. If you want to use these
 In other words these headers are used internally by `toD` to carry the dynamic details of the endpoint.
 ====
 
-In case of problems then you can turn on DEBUG logging level on `org.apache.camel.processor.SendDynamicProcessor` which will log
+In case of problems then you can turn on `DEBUG` logging level on `org.apache.camel.processor.SendDynamicProcessor` which will log
 during startup if `toD` was optimized, or if there was a failure loading the optimized component, with a stacktrace logged.
 
 [source,text]

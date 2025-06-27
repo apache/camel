@@ -28,6 +28,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         map.put("DefaultCredentialsProvider", boolean.class);
         map.put("GcpVaultConfiguration", org.apache.camel.vault.GcpVaultConfiguration.class);
         map.put("HashicorpVaultConfiguration", org.apache.camel.vault.HashicorpVaultConfiguration.class);
+        map.put("IBMSecretsManagerVaultConfiguration", org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class);
+        map.put("KubernetesConfigMapVaultConfiguration", org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class);
         map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
         map.put("OverrideEndpoint", boolean.class);
         map.put("ProfileCredentialsProvider", boolean.class);
@@ -37,11 +39,11 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         map.put("Region", java.lang.String.class);
         map.put("SecretKey", java.lang.String.class);
         map.put("Secrets", java.lang.String.class);
+        map.put("SpringCloudConfigConfiguration", org.apache.camel.vault.SpringCloudConfigConfiguration.class);
         map.put("SqsQueueUrl", java.lang.String.class);
         map.put("UriEndpointOverride", java.lang.String.class);
         map.put("UseSqsNotification", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(AwsVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,6 +62,10 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": target.setIBMSecretsManagerVaultConfiguration(property(camelContext, org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class, value)); return true;
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": target.setKubernetesConfigMapVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class, value)); return true;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
         case "overrideendpoint":
@@ -76,6 +82,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "sqsqueueurl":
         case "sqsQueueUrl": target.setSqsQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "uriendpointoverride":
@@ -89,10 +97,6 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override
@@ -110,6 +114,10 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": return org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class;
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": return org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
         case "overrideendpoint":
@@ -126,6 +134,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "secrets": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "sqsqueueurl":
         case "sqsQueueUrl": return java.lang.String.class;
         case "uriendpointoverride":
@@ -152,6 +162,10 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
         case "hashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
+        case "ibmsecretsmanagervaultconfiguration":
+        case "iBMSecretsManagerVaultConfiguration": return target.getIBMSecretsManagerVaultConfiguration();
+        case "kubernetesconfigmapvaultconfiguration":
+        case "kubernetesConfigMapVaultConfiguration": return target.getKubernetesConfigMapVaultConfiguration();
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
         case "overrideendpoint":
@@ -168,6 +182,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secretkey":
         case "secretKey": return target.getSecretKey();
         case "secrets": return target.getSecrets();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "sqsqueueurl":
         case "sqsQueueUrl": return target.getSqsQueueUrl();
         case "uriendpointoverride":

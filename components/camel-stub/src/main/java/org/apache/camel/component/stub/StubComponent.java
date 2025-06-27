@@ -21,6 +21,7 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.seda.SedaComponent;
@@ -38,9 +39,9 @@ import org.apache.camel.support.NormalizedUri;
 @org.apache.camel.spi.annotations.Component("stub")
 public class StubComponent extends SedaComponent {
 
-    @Metadata
+    @Metadata(label = "advanced")
     private boolean shadow;
-    @Metadata
+    @Metadata(label = "advanced")
     private String shadowPattern;
 
     public StubComponent() {
@@ -54,6 +55,10 @@ public class StubComponent extends SedaComponent {
     @Override
     protected void validateParameters(String uri, Map<String, Object> parameters, String optionPrefix) {
         // Don't validate so we can stub any URI
+    }
+
+    protected void setProperties(Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+        // Don't configure extra properties
     }
 
     @Override

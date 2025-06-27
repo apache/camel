@@ -16,7 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,33 +93,37 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     public abstract Integer doCall() throws Exception;
 
-    public File getStatusFile(String pid) {
-        return new File(CommandLineHelper.getCamelDir(), pid + "-status.json");
+    public Path getStatusFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-status.json");
     }
 
-    public File getActionFile(String pid) {
-        return new File(CommandLineHelper.getCamelDir(), pid + "-action.json");
+    public Path getActionFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-action.json");
     }
 
-    public File getOutputFile(String pid) {
-        return new File(CommandLineHelper.getCamelDir(), pid + "-output.json");
+    public Path getOutputFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-output.json");
     }
 
-    public File getTraceFile(String pid) {
-        return new File(CommandLineHelper.getCamelDir(), pid + "-trace.json");
+    public Path getTraceFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
     }
 
-    public File getReceiveFile(String pid) {
-        return new File(CommandLineHelper.getCamelDir(), pid + "-receive.json");
+    public Path getReceiveFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-receive.json");
     }
 
-    public File getDebugFile(String pid) {
-        return new File(CommandLineHelper.getCamelDir(), pid + "-debug.json");
+    public Path getDebugFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-debug.json");
+    }
+
+    public Path getRunBackgroundLogFile(String uuid) {
+        return CommandLineHelper.getCamelDir().resolve(uuid + "-run.log");
     }
 
     protected Printer printer() {
         var out = getMain().getOut();
-        CommandHelper.SetPrinter(out);
+        CommandHelper.setPrinter(out);
         return out;
     }
 

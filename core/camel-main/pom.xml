@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-main</artifactId>
@@ -165,6 +165,14 @@
                                 <class>org.apache.camel.vault.GcpVaultConfiguration=org.apache.camel.main.GcpVaultConfiguration</class>
                                 <!-- we want to have configurer for HashicorpVaultConfiguration in the package main to prevent a split packages issue -->
                                 <class>org.apache.camel.vault.HashicorpVaultConfiguration=org.apache.camel.main.HashicorpVaultConfiguration</class>
+                                <!-- we want to have configurer for KubernetesVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.KubernetesVaultConfiguration=org.apache.camel.main.KubernetesVaultConfiguration</class>
+                                <!-- we want to have configurer for KubernetesConfigMapVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.KubernetesConfigMapVaultConfiguration=org.apache.camel.main.KubernetesConfigMapVaultConfiguration</class>
+                                <!-- we want to have configurer for IBMSecretsManagerVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.IBMSecretsManagerVaultConfiguration=org.apache.camel.main.IBMSecretsManagerVaultConfiguration</class>
+                                <!-- we want to have configurer for SpringCloudConfigConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.SpringCloudConfigConfiguration=org.apache.camel.main.SpringCloudConfigConfiguration</class>
                             </classes>
                         </configuration>
                     </execution>

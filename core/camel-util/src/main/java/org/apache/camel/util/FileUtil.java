@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -624,6 +625,24 @@ public final class FileUtil {
                 throw e;
             }
         }
+    }
+
+    /**
+     * Set posix file permissions
+     *
+     * @param  path        the file
+     * @param  permissions permissions such as: rwxr-xr-x
+     * @return             true if permission was set or false if the file-system does not support posix (such as
+     *                     windows)
+     */
+    public static boolean setPosixFilePermissions(Path path, String permissions) throws IOException {
+        try {
+            Files.setPosixFilePermissions(path, PosixFilePermissions.fromString(permissions));
+            return true;
+        } catch (UnsupportedOperationException e) {
+            // ignore
+        }
+        return false;
     }
 
     /**

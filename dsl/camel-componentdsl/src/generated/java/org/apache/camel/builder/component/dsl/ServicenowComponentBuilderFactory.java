@@ -280,7 +280,8 @@ public interface ServicenowComponentBuilderFactory {
         }
     
         /**
-         * Defines both request and response models.
+         * Defines both request and response models. This is a multi-value
+         * option with prefix: model.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
@@ -334,7 +335,8 @@ public interface ServicenowComponentBuilderFactory {
         }
     
         /**
-         * Defines the request model.
+         * Defines the request model. This is a multi-value option with prefix:
+         * request-model.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
@@ -367,7 +369,8 @@ public interface ServicenowComponentBuilderFactory {
         }
     
         /**
-         * Defines the response model.
+         * Defines the response model. This is a multi-value option with prefix:
+         * response-model.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;

@@ -50,6 +50,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private long logMiningSleepTimeDefaultMs = 1000;
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
+    @UriParam(label = LABEL_NAME, defaultValue = "20000")
+    private long logMiningBatchSizeIncrement = 20000;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long logMiningArchiveLogOnlyScnPollIntervalMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -498,6 +500,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getSnapshotSelectStatementOverrides() {
         return snapshotSelectStatementOverrides;
+    }
+
+    /**
+     * Active batch size will be also increased/decreased by this amount for
+     * tuning connector throughput when needed.
+     */
+    public void setLogMiningBatchSizeIncrement(long logMiningBatchSizeIncrement) {
+        this.logMiningBatchSizeIncrement = logMiningBatchSizeIncrement;
+    }
+
+    public long getLogMiningBatchSizeIncrement() {
+        return logMiningBatchSizeIncrement;
     }
 
     /**
@@ -1526,9 +1540,9 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Controls what DDL will Debezium store in database schema history. By
-     * default (true) only DDL that manipulates a table from captured
-     * schema/database will be stored. If set to false, then Debezium will store
-     * all incoming DDL statements.
+     * default (false) Debezium will store all incoming DDL statements. If set
+     * to true, then only DDL that manipulates a table from captured
+     * schema/database will be stored.
      */
     public void setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl(
             boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl) {
@@ -1776,8 +1790,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The minimum SCN interval size that this connector will try to read from
-     * redo/archive logs. Active batch size will be also increased/decreased by
-     * this amount for tuning connector throughput when needed.
+     * redo/archive logs.
      */
     public void setLogMiningBatchSizeMin(long logMiningBatchSizeMin) {
         this.logMiningBatchSizeMin = logMiningBatchSizeMin;
@@ -1809,6 +1822,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.tables.order.by.row.count", snapshotTablesOrderByRowCount);
         addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.default.ms", logMiningSleepTimeDefaultMs);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
+        addPropertyIfNotNull(configBuilder, "log.mining.batch.size.increment", logMiningBatchSizeIncrement);
         addPropertyIfNotNull(configBuilder, "log.mining.archive.log.only.scn.poll.interval.ms", logMiningArchiveLogOnlyScnPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "log.mining.restart.connection", logMiningRestartConnection);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);

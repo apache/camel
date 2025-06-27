@@ -33,5 +33,11 @@ public interface CircuitBreakerConstants {
     @Metadata(label = "circuitBreaker", description = "Whether the circuit breaker rejected processing the exchange",
               javaType = "boolean")
     String RESPONSE_REJECTED = "CamelCircuitBreakerResponseRejected";
+    @Metadata(label = "circuitBreaker", description = "Whether the circuit breaker ignored an exception during processing",
+              javaType = "boolean")
+    String RESPONSE_IGNORED = "CamelCircuitBreakerResponseIgnored";
+    @Metadata(label = "circuitBreaker", description = "The state of the circuit breaker",
+              javaType = "String", enums = "CLOSED,OPEN,FORCED_OPEN,HALF_OPEN")
+    String RESPONSE_STATE = "CamelCircuitBreakerState";
 
 }

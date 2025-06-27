@@ -46,6 +46,7 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "messageOrderingEnabled": target.setMessageOrderingEnabled(property(camelContext, boolean.class, value)); return true;
         case "pubsubendpoint":
         case "pubsubEndpoint": target.setPubsubEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "retry": target.setRetry(property(camelContext, com.google.api.gax.retrying.RetrySettings.class, value)); return true;
         case "serializer": target.setSerializer(property(camelContext, org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -86,6 +87,7 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "messageOrderingEnabled": return boolean.class;
         case "pubsubendpoint":
         case "pubsubEndpoint": return java.lang.String.class;
+        case "retry": return com.google.api.gax.retrying.RetrySettings.class;
         case "serializer": return org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
@@ -122,6 +124,7 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "messageOrderingEnabled": return target.isMessageOrderingEnabled();
         case "pubsubendpoint":
         case "pubsubEndpoint": return target.getPubsubEndpoint();
+        case "retry": return target.getRetry();
         case "serializer": return target.getSerializer();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();

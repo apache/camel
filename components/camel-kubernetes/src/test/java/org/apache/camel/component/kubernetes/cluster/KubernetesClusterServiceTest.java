@@ -96,6 +96,13 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     public void testSimpleLeaderElection(LeaseResourceType type) {
         LeaderRecorder mypod1 = addMember("mypod1", type);
         LeaderRecorder mypod2 = addMember("mypod2", type);
+
+        // Add some unhealthy members to verify they are not considered for leadership
+        addMember("badpod1", type);
+        addMember("badpod2", type);
+        addMember("notreadypod1", type);
+        addMember("notreadypod2", type);
+
         context.start();
 
         mypod1.waitForAnyLeader(5, TimeUnit.SECONDS);

@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -29,12 +31,23 @@ import org.apache.camel.util.StringHelper;
  *
  * @see CSimpleGeneratedCode
  */
-public class CSimpleCodeGenerator {
+public class CSimpleCodeGenerator implements CamelContextAware {
 
     private static final AtomicInteger UUID = new AtomicInteger();
 
+    private CamelContext camelContext;
     private Set<String> imports = new TreeSet<>();
     private Map<String, String> aliases = new HashMap<>();
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public Set<String> getImports() {
         return imports;
@@ -127,14 +140,14 @@ public class CSimpleCodeGenerator {
 
         if (predicate) {
             CSimplePredicateParser parser = new CSimplePredicateParser();
-            script = parser.parsePredicate(script);
+            script = parser.parsePredicate(camelContext, script);
             if (script.isBlank()) {
                 // a predicate that is whitespace is regarded as false
                 script = "false";
             }
         } else {
             CSimpleExpressionParser parser = new CSimpleExpressionParser();
-            script = parser.parseExpression(script);
+            script = parser.parseExpression(camelContext, script);
             if (script.isBlank()) {
                 // an expression can be whitespace, but then we need to wrap this in quotes
                 script = "\"" + script + "\"";

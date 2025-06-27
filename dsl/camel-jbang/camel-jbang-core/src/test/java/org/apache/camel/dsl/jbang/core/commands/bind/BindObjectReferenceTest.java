@@ -23,6 +23,8 @@ import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class BindObjectReferenceTest extends CamelCommandBaseTest {
 
     @Test
@@ -173,13 +175,12 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals(
+        assertThat(output).isEqualToIgnoringNewLines(
                 """
-                        Error: Failed to resolve endpoint URI expression sandbox.camel.apache.org:Foo:bar - no matching binding provider found
-                        Failed to construct Pipe resource
+                        ERROR: Failed to resolve endpoint URI expression sandbox.camel.apache.org:Foo:bar - no matching binding provider found
+                        ERROR: Failed to construct Pipe resource
                         """
-                        .trim(),
-                output);
+                        .trim());
     }
 
     private Bind createCommand(String source, String sink) {

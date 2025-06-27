@@ -26,20 +26,20 @@ import java.util.Optional;
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
@@ -100,6 +100,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "security",
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
+    @Metadata(label = "advanced", defaultValue = "false",
+              description = "To use System Properties as fallback for configuration for configuring HTTP Client")
+    private boolean useSystemProperties;
     @Metadata(label = "producer,advanced", description = "To use a custom org.apache.hc.client5.http.cookie.CookieStore."
                                                          + " By default the org.apache.hc.client5.http.cookie.BasicCookieStore is used which is an in-memory only cookie store."
                                                          + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
@@ -133,7 +136,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     // proxy
     @Metadata(label = "producer,proxy", enums = "http,https", description = "Proxy authentication protocol scheme")
     protected String proxyAuthScheme;
-    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM",
+              description = "Proxy authentication method to use (NTLM is deprecated)")
     protected String proxyAuthMethod;
     @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
     protected String proxyAuthUsername;
@@ -179,14 +183,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
               description = "Disables the default user agent set by this builder if none has been provided by the user")
     protected boolean defaultUserAgentDisabled;
     @Metadata(label = "producer",
+              description = "Whether to skip Camel control headers (CamelHttp... headers) to influence this endpoint. Control headers from previous HTTP components can influence"
+                            + " how this Camel component behaves such as CamelHttpPath, CamelHttpQuery, etc.")
+    private boolean skipControlHeaders;
+    @Metadata(label = "producer",
               description = "Whether to skip mapping all the Camel headers as HTTP request headers."
-                            + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
-                            + " parsing overhead with many object allocations for the JVM garbage collector.")
+                            + " This is useful when you know that calling the HTTP service should not include any custom headers.")
     protected boolean skipRequestHeaders;
     @Metadata(label = "producer",
-              description = "Whether to skip mapping all the HTTP response headers to Camel headers."
-                            + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
-                            + " with many object allocations for the JVM garbage collector.")
+              description = "Whether to skip mapping all the HTTP response headers to Camel headers.")
     protected boolean skipResponseHeaders;
     @Metadata(label = "producer,advanced",
               defaultValue = "true",
@@ -197,11 +202,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
               description = "Whether to the HTTP request should follow redirects."
                             + " By default the HTTP request does not follow redirects ")
     protected boolean followRedirects;
-    @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
+    @Metadata(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
     protected String userAgent;
+    @Metadata(label = "producer,advanced", autowired = true, description = "To use a custom activity listener")
+    protected HttpActivityListener httpActivityListener;
+    @Metadata(label = "producer",
+              description = "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
+    protected boolean logHttpActivity;
 
     public HttpComponent() {
-        registerExtension(HttpComponentVerifierExtension::new);
     }
 
     /**
@@ -235,10 +244,35 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String clientSecret = getParameter(parameters, "oauth2ClientSecret", String.class);
         String tokenEndpoint = getParameter(parameters, "oauth2TokenEndpoint", String.class);
         String scope = getParameter(parameters, "oauth2Scope", String.class);
+        String resourceIndicator = getParameter(parameters, "oauth2ResourceIndicator", String.class);
+        HttpConfiguration configDefaults = new HttpConfiguration();
+        boolean cacheTokens = getParameter(
+                parameters,
+                "oauth2CacheTokens",
+                boolean.class,
+                configDefaults.isOauth2CacheTokens());
+        long cachedTokensDefaultExpirySeconds = getParameter(
+                parameters,
+                "oauth2CachedTokensDefaultExpirySeconds",
+                long.class,
+                configDefaults.getOauth2CachedTokensDefaultExpirySeconds());
+        long cachedTokensExpirationMarginSeconds = getParameter(
+                parameters,
+                "oauth2CachedTokensExpirationMarginSeconds",
+                long.class,
+                configDefaults.getOauth2CachedTokensExpirationMarginSeconds());
 
         if (clientId != null && clientSecret != null && tokenEndpoint != null) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
-                    new OAuth2ClientConfigurer(clientId, clientSecret, tokenEndpoint, scope));
+                    new OAuth2ClientConfigurer(
+                            clientId,
+                            clientSecret,
+                            tokenEndpoint,
+                            resourceIndicator,
+                            scope,
+                            cacheTokens,
+                            cachedTokensDefaultExpirySeconds,
+                            cachedTokensExpirationMarginSeconds));
         }
         return configurer;
     }
@@ -254,15 +288,17 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             String authHost = getParameter(parameters, "authHost", String.class);
 
             return CompositeHttpConfigurer.combineConfigurers(configurer,
-                    new BasicAuthenticationHttpClientConfigurer(
-                            authUsername, authPassword, authDomain, authHost, credentialsProvider));
+                    new DefaultAuthenticationHttpClientConfigurer(
+                            authUsername, authPassword, authDomain, authHost, null, credentialsProvider));
         } else if (this.httpConfiguration != null) {
-            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
+            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())
+                    || "bearer".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
                 return CompositeHttpConfigurer.combineConfigurers(configurer,
-                        new BasicAuthenticationHttpClientConfigurer(
+                        new DefaultAuthenticationHttpClientConfigurer(
                                 this.httpConfiguration.getAuthUsername(),
                                 this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(),
-                                this.httpConfiguration.getAuthHost(), credentialsProvider));
+                                this.httpConfiguration.getAuthHost(), this.httpConfiguration.getAuthBearerToken(),
+                                credentialsProvider));
             }
         }
 
@@ -407,10 +443,13 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         endpoint.setConnectTimeout(valConnectTimeout);
         endpoint.setConnectionRequestTimeout(valConnectionRequestTimeout);
         endpoint.setCopyHeaders(copyHeaders);
+        endpoint.setSkipControlHeaders(skipControlHeaders);
         endpoint.setSkipRequestHeaders(skipRequestHeaders);
         endpoint.setSkipResponseHeaders(skipResponseHeaders);
         endpoint.setUserAgent(userAgent);
         endpoint.setMuteException(muteException);
+        endpoint.setHttpActivityListener(httpActivityListener);
+        endpoint.setLogHttpActivity(logHttpActivity);
 
         // configure the endpoint with the common configuration from the component
         if (getHttpConfiguration() != null) {
@@ -476,11 +515,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // need to check the parameters of maxTotalConnections and connectionsPerRoute
         final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
         final int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
-        final boolean useSystemProperties = CamelContextHelper.mandatoryConvertTo(this.getCamelContext(), boolean.class,
-                parameters.get("useSystemProperties"));
+        // do not remove as we set this later again
+        final boolean sysProp = getParameter(parameters, "useSystemProperties", boolean.class, useSystemProperties);
 
         final Registry<ConnectionSocketFactory> connectionRegistry
-                = createConnectionRegistry(hostnameVerifier, sslContextParameters, useSystemProperties);
+                = createConnectionRegistry(hostnameVerifier, sslContextParameters, sysProp);
 
         // allow the builder pattern
         httpConnectionOptions.putAll(PropertiesHelper.extractProperties(parameters, "httpConnection."));
@@ -718,6 +757,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      */
     public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
+    }
+
+    public boolean isUseSystemProperties() {
+        return useSystemProperties;
+    }
+
+    public void setUseSystemProperties(boolean useSystemProperties) {
+        this.useSystemProperties = useSystemProperties;
     }
 
     public int getMaxTotalConnections() {
@@ -971,6 +1018,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         this.copyHeaders = copyHeaders;
     }
 
+    public boolean isSkipControlHeaders() {
+        return skipControlHeaders;
+    }
+
+    public void setSkipControlHeaders(boolean skipControlHeaders) {
+        this.skipControlHeaders = skipControlHeaders;
+    }
+
     public boolean isSkipRequestHeaders() {
         return skipRequestHeaders;
     }
@@ -1003,9 +1058,30 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         this.userAgent = userAgent;
     }
 
+    public HttpActivityListener getHttpActivityListener() {
+        return httpActivityListener;
+    }
+
+    public void setHttpActivityListener(HttpActivityListener httpActivityListener) {
+        this.httpActivityListener = httpActivityListener;
+    }
+
+    public boolean isLogHttpActivity() {
+        return logHttpActivity;
+    }
+
+    public void setLogHttpActivity(boolean logHttpActivity) {
+        this.logHttpActivity = logHttpActivity;
+    }
+
     @Override
     public void doStart() throws Exception {
         super.doStart();
+        if (logHttpActivity && httpActivityListener == null) {
+            httpActivityListener = new LoggingHttpActivityListener();
+        }
+        CamelContextAware.trySetCamelContext(httpActivityListener, getCamelContext());
+        ServiceHelper.startService(httpActivityListener);
     }
 
     @Override
@@ -1016,12 +1092,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             clientConnectionManager.close();
             clientConnectionManager = null;
         }
+        ServiceHelper.stopService(httpActivityListener);
 
         super.doStop();
-    }
-
-    public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
-                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 
 import org.apache.camel.support.task.budget.TimeBoundedBudget;
@@ -50,7 +51,6 @@ public class BackgroundTask implements BlockingTask {
          */
         public BackgroundTaskBuilder withBudget(TimeBudget timeBudget) {
             this.budget = timeBudget;
-
             return this;
         }
 
@@ -61,7 +61,6 @@ public class BackgroundTask implements BlockingTask {
          */
         public BackgroundTaskBuilder withScheduledExecutor(ScheduledExecutorService service) {
             this.service = service;
-
             return this;
         }
 
@@ -77,9 +76,8 @@ public class BackgroundTask implements BlockingTask {
     private final ScheduledExecutorService service;
     private final String name;
     private final CountDownLatch latch = new CountDownLatch(1);
-
     private Duration elapsed = Duration.ZERO;
-    private boolean completed;
+    private final AtomicBoolean completed = new AtomicBoolean();
 
     BackgroundTask(TimeBudget budget, ScheduledExecutorService service, String name) {
         this.budget = budget;
@@ -95,26 +93,24 @@ public class BackgroundTask implements BlockingTask {
 
         if (!budget.next()) {
             LOG.warn("The task {} does not have more budget to continue running", name);
-            completed = false;
+            completed.set(false);
             latch.countDown();
             return;
         }
 
         if (supplier.getAsBoolean()) {
-            completed = true;
+            completed.set(true);
             latch.countDown();
-            LOG.trace("Task {} succeeded and the current task won't be schedulable anymore: {}", name, latch.getCount());
+            LOG.trace("Task {} succeeded and the current task is unscheduled: {}", name, latch.getCount());
         }
     }
 
     @Override
     public boolean run(BooleanSupplier supplier) {
-
         Future<?> task = service.scheduleAtFixedRate(() -> runTaskWrapper(supplier), budget.initialDelay(),
                 budget.interval(), TimeUnit.MILLISECONDS);
-
         waitForTaskCompletion(task);
-        return completed;
+        return completed.get();
     }
 
     private void waitForTaskCompletion(Future<?> task) {
@@ -143,5 +139,10 @@ public class BackgroundTask implements BlockingTask {
     @Override
     public Duration elapsed() {
         return elapsed;
+    }
+
+    @Override
+    public int iteration() {
+        return budget.iteration();
     }
 }

@@ -34,7 +34,12 @@ public class DeploymentTrait extends BaseTrait {
 
     @Override
     public boolean configure(Traits traitConfig, TraitContext context) {
-        return true;
+        // disable the deployment trait if knative-service is enabled
+        boolean knEnabled = false;
+        if (traitConfig.getKnativeService() != null) {
+            knEnabled = Optional.ofNullable(traitConfig.getKnativeService().getEnabled()).orElse(false);
+        }
+        return !knEnabled;
     }
 
     @Override
@@ -45,7 +50,7 @@ public class DeploymentTrait extends BaseTrait {
                 .endMetadata()
                 .withNewSpec()
                 .withSelector(new LabelSelectorBuilder()
-                        .withMatchLabels(Map.of(KUBERNETES_NAME_LABEL, context.getName()))
+                        .withMatchLabels(Map.of(KUBERNETES_LABEL_NAME, context.getName()))
                         .build())
                 .endSpec();
 

@@ -45,25 +45,85 @@ public final class MongoDbBasicConvertersLoader implements TypeConverterLoader, 
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.util.List.class, java.lang.String.class, true,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromStringToList((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromStringToList((java.lang.String) value);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.util.Map.class, org.bson.Document.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromDocumentToMap((org.bson.Document) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromDocumentToMap((org.bson.Document) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.bson.Document.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromByteArrayToDocument((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromByteArrayToDocument((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.bson.Document.class, java.io.File.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromFileToDocument((java.io.File) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromFileToDocument((java.io.File) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.bson.Document.class, java.io.InputStream.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromInputStreamToDocument((java.io.InputStream) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromInputStreamToDocument((java.io.InputStream) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.bson.Document.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromStringToDocument((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromStringToDocument((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.bson.Document.class, java.util.Map.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromMapToDocument((java.util.Map) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromMapToDocument((java.util.Map) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.bson.conversions.Bson.class, java.io.InputStream.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromInputStreamToBson((java.io.InputStream) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromInputStreamToBson((java.io.InputStream) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.bson.conversions.Bson.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromStringToBson((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromStringToBson((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.bson.types.ObjectId.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromStringToObjectId((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mongodb.converters.MongoDbBasicConverters.fromStringToObjectId((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

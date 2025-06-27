@@ -25,8 +25,12 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "amazonkinesisasyncclient":
+        case "amazonKinesisAsyncClient": target.getConfiguration().setAmazonKinesisAsyncClient(property(camelContext, software.amazon.awssdk.services.kinesis.KinesisAsyncClient.class, value)); return true;
         case "amazonkinesisclient":
         case "amazonKinesisClient": target.getConfiguration().setAmazonKinesisClient(property(camelContext, software.amazon.awssdk.services.kinesis.KinesisClient.class, value)); return true;
+        case "applicationname":
+        case "applicationName": target.getConfiguration().setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncclient":
         case "asyncClient": target.getConfiguration().setAsyncClient(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
@@ -59,6 +63,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": target.getConfiguration().setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
+        case "messagetimestamp":
+        case "messageTimestamp": target.getConfiguration().setMessageTimestamp(property(camelContext, java.lang.String.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
@@ -119,7 +125,7 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"amazonKinesisClient"};
+        return new String[]{"amazonKinesisAsyncClient", "amazonKinesisClient"};
     }
 
     @Override
@@ -127,8 +133,12 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
+        case "amazonkinesisasyncclient":
+        case "amazonKinesisAsyncClient": return software.amazon.awssdk.services.kinesis.KinesisAsyncClient.class;
         case "amazonkinesisclient":
         case "amazonKinesisClient": return software.amazon.awssdk.services.kinesis.KinesisClient.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
         case "asyncclient":
         case "asyncClient": return boolean.class;
         case "backofferrorthreshold":
@@ -161,6 +171,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return boolean.class;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return int.class;
+        case "messagetimestamp":
+        case "messageTimestamp": return java.lang.String.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
         case "pollstrategy":
@@ -225,8 +237,12 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
+        case "amazonkinesisasyncclient":
+        case "amazonKinesisAsyncClient": return target.getConfiguration().getAmazonKinesisAsyncClient();
         case "amazonkinesisclient":
         case "amazonKinesisClient": return target.getConfiguration().getAmazonKinesisClient();
+        case "applicationname":
+        case "applicationName": return target.getConfiguration().getApplicationName();
         case "asyncclient":
         case "asyncClient": return target.getConfiguration().isAsyncClient();
         case "backofferrorthreshold":
@@ -259,6 +275,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return target.getConfiguration().getMaxResultsPerRequest();
+        case "messagetimestamp":
+        case "messageTimestamp": return target.getConfiguration().getMessageTimestamp();
         case "overrideendpoint":
         case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "pollstrategy":

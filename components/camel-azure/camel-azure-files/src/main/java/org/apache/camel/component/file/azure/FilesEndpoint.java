@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.22.0", scheme = FilesComponent.SCHEME, extendsScheme = "file", title = "Azure Files",
              syntax = FilesComponent.SCHEME + ":account/share", category = {
                      Category.CLOUD, Category.FILE },
-             headersClass = FilesHeaders.class)
+             headersClass = FilesConstants.class)
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"

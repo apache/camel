@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.camel.dsl.jbang.it.support.InVersion;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test;
 public class DependencyListITCase extends JBangTestSupport {
 
     @Test
+    @InVersion(includeSnapshot = false)
     public void testDependencyList() {
         checkCommandOutputs("dependency list", "org.apache.camel:camel-main:" + version());
         checkCommandOutputs("dependency list --output=maven", "<dependency>\n" +
@@ -39,6 +41,7 @@ public class DependencyListITCase extends JBangTestSupport {
     }
 
     @Test
+    @InVersion(includeSnapshot = false)
     public void testCopyingJars() throws IOException {
         Files.createDirectory(Path.of(getDataFolder() + "/deps"));
         execute(String.format("dependency copy --output-directory=%s/deps", mountPoint()));

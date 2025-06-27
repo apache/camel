@@ -27,19 +27,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
-import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
-import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -61,14 +57,10 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.spi.DependencyStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.StringQuoteHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +79,6 @@ import org.snakeyaml.engine.v2.scanner.StreamReader;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMap;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asSequenceNode;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringList;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.isSequenceNode;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
@@ -99,18 +90,13 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "yaml";
     public static final String[] SUPPORTED_EXTENSION = { EXTENSION, "camel.yaml", "pipe.yaml" };
-    private static final String DEPRECATED_EXTENSION = "camelk.yaml";
 
     private static final Logger LOG = LoggerFactory.getLogger(YamlRoutesBuilderLoader.class);
 
-    private final AtomicBoolean deprecatedWarnLogged = new AtomicBoolean();
-    private final AtomicBoolean deprecatedBindingWarnLogged = new AtomicBoolean();
-
-    // API versions for Camel-K Integration and Pipe
-    // we are lenient so lets just assume we can work with any of the v1 even if they evolve
-    private static final String INTEGRATION_VERSION = "camel.apache.org/v1";
+    // API versions for Pipe
+    // we are lenient so lets just assume we can work with any of the v1 even if
+    // they evolve
     @Deprecated
-    private static final String BINDING_VERSION = "camel.apache.org/v1alpha1";
     private static final String PIPE_VERSION = "camel.apache.org/v1";
     private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1beta2";
     private static final String KNATIVE_MESSAGING_VERSION = "messaging.knative.dev/v1";
@@ -130,19 +116,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     @Override
     public boolean isSupportedExtension(String extension) {
         // this builder can support multiple extensions
-        if (DEPRECATED_EXTENSION.equals(extension)) {
-            if (deprecatedWarnLogged.compareAndSet(false, true)) {
-                LOG.warn("File extension camelk.yaml is deprecated. Use camel.yaml instead.");
-            }
-            return true;
-        }
         return Arrays.asList(SUPPORTED_EXTENSION).contains(extension);
     }
 
     protected RouteBuilder builder(final YamlDeserializationContext ctx, final Node root) {
 
         // we need to keep track of already configured items as the yaml-dsl returns a
-        // RouteConfigurationBuilder that is capable of both route and route configurations
+        // RouteConfigurationBuilder that is capable of both route and route
+        // configurations
         // which can lead to the same items being processed twice
         final Set<Integer> indexes = new HashSet<>();
 
@@ -179,7 +160,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     }
                 }
 
-                // knowing this is the last time an YAML may have been parsed, we can clear the cache
+                // knowing this is the last time an YAML may have been parsed, we can clear the
+                // cache
                 // (route may get reloaded later)
                 Resource resource = ctx.getResource();
                 if (resource != null) {
@@ -334,24 +316,13 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         // backwards compatible fixes
         Object target = root;
 
-        // check if the yaml is a camel-k yaml with embedded binding/routes (called flow(s))
+        // check if the yaml with embedded pipes
         if (Objects.equals(root.getNodeType(), NodeType.MAPPING)) {
             final MappingNode mn = YamlDeserializerSupport.asMappingNode(root);
-            // camel-k: integration
-            boolean integration = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(INTEGRATION_VERSION)) &&
-                    anyTupleMatches(mn.getValue(), "kind", "Integration");
-            // camel-k: kamelet binding (deprecated)
-            boolean binding = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(BINDING_VERSION)) &&
-                    anyTupleMatches(mn.getValue(), "kind", "KameletBinding");
-            // camel-k: pipe
+            // pipe
             boolean pipe = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(PIPE_VERSION)) &&
                     anyTupleMatches(mn.getValue(), "kind", "Pipe");
-            if (integration) {
-                target = preConfigureIntegration(root, ctx, target, preParse);
-            } else if (binding || pipe) {
-                if (binding && deprecatedBindingWarnLogged.compareAndSet(false, true)) {
-                    LOG.warn("CamelK kind=KameletBinding is deprecated. Use CamelK kind=Pipe instead.");
-                }
+            if (pipe) {
                 target = preConfigurePipe(root, ctx, target, preParse);
             }
         }
@@ -386,322 +357,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     }
 
     /**
-     * Camel K Integration file
-     */
-    private Object preConfigureIntegration(Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
-        Node spec = nodeAt(root, "/spec");
-        if (spec != null) {
-            return preConfigureIntegrationSpec(spec, ctx, target, preParse);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    /**
-     * Camel K Integration spec
-     */
-    private List<Object> preConfigureIntegrationSpec(
-            Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
-        // when in pre-parse phase then we only want to gather spec/dependencies,spec/configuration,spec/traits
-
-        List<Object> answer = new ArrayList<>();
-
-        // if there are dependencies then include them first
-        Node deps = nodeAt(root, "/dependencies");
-        if (deps != null) {
-            var dep = preConfigureDependencies(deps);
-            answer.add(dep);
-        }
-
-        // if there are configurations then include them early
-        Node configuration = nodeAt(root, "/configuration");
-        if (configuration != null) {
-            var list = preConfigureConfiguration(ctx.getResource(), configuration);
-            answer.addAll(list);
-        }
-        // if there are trait configuration then include them early
-        configuration = nodeAt(root, "/traits/camel");
-        if (configuration != null) {
-            var list = preConfigureTraitCamel(ctx.getResource(), configuration);
-            answer.addAll(list);
-        }
-        // if there are trait environment then include them early
-        configuration = nodeAt(root, "/traits/environment");
-        if (configuration != null) {
-            var list = preConfigureTraitEnvironment(ctx.getResource(), configuration);
-            answer.addAll(list);
-        }
-
-        if (!preParse) {
-            // if there are sources then include them before routes
-            Node sources = nodeAt(root, "/sources");
-            if (sources != null) {
-                var list = preConfigureSources(sources);
-                answer.addAll(list);
-            }
-            // add routes last
-            Node routes = nodeAt(root, "/flows");
-            if (routes == null) {
-                routes = nodeAt(root, "/flow");
-            }
-            if (routes != null) {
-                // routes should be an array
-                if (routes.getNodeType() != NodeType.SEQUENCE) {
-                    throw new InvalidNodeTypeException(routes, NodeType.SEQUENCE);
-                }
-                answer.add(routes);
-            }
-        }
-
-        return answer;
-    }
-
-    private CamelContextCustomizer preConfigureDependencies(Node node) {
-        final List<String> dep = YamlDeserializerSupport.asStringList(node);
-        return new CamelContextCustomizer() {
-            @Override
-            public void configure(CamelContext camelContext) {
-                // notify the listeners about each dependency detected
-                for (DependencyStrategy ds : camelContext.getRegistry().findByType(DependencyStrategy.class)) {
-                    for (String d : dep) {
-                        try {
-                            ds.onDependency(d);
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    }
-                }
-            }
-        };
-    }
-
-    private List<CamelContextCustomizer> preConfigureConfiguration(Resource resource, Node node) {
-        List<CamelContextCustomizer> answer = new ArrayList<>();
-
-        final List<String> lines = new ArrayList<>();
-        SequenceNode seq = asSequenceNode(node);
-        for (Node n : seq.getValue()) {
-            MappingNode content = asMappingNode(n);
-            Map<String, Object> params = asMap(content);
-            Object type = params.get("type");
-            Object value = params.get("value");
-            if ("property".equals(type) && value != null) {
-                String line = value.toString();
-                lines.add(line);
-            }
-        }
-        answer.add(new CamelContextCustomizer() {
-            @Override
-            public void configure(CamelContext camelContext) {
-                try {
-                    org.apache.camel.component.properties.PropertiesComponent pc
-                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
-                    IntegrationConfigurationPropertiesSource ps
-                            = (IntegrationConfigurationPropertiesSource) pc.getPropertiesSource("integration-configuration");
-                    if (ps == null) {
-                        ps = new IntegrationConfigurationPropertiesSource(
-                                pc, new PropertiesLocation(resource.getLocation()), "integration-configuration");
-                        pc.addPropertiesSource(ps);
-                    }
-                    lines.forEach(ps::parseConfigurationValue);
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Error adding properties from spec/configuration", e);
-                }
-            }
-        });
-
-        return answer;
-    }
-
-    private List<CamelContextCustomizer> preConfigureTraitCamel(Resource resource, Node node) {
-        List<CamelContextCustomizer> answer = new ArrayList<>();
-
-        Node target;
-        if (nodeAt(node, "/configuration") != null) {
-            // legacy trait configuration parameters
-            target = nodeAt(node, "/configuration/properties");
-        } else {
-            target = nodeAt(node, "/properties");
-        }
-
-        final List<String> lines = asStringList(target);
-        if (lines == null || lines.isEmpty()) {
-            return answer;
-        }
-
-        answer.add(new CamelContextCustomizer() {
-            @Override
-            public void configure(CamelContext camelContext) {
-                try {
-                    org.apache.camel.component.properties.PropertiesComponent pc
-                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
-                    IntegrationConfigurationPropertiesSource ps
-                            = (IntegrationConfigurationPropertiesSource) pc
-                                    .getPropertiesSource("integration-trait-configuration");
-                    if (ps == null) {
-                        ps = new IntegrationConfigurationPropertiesSource(
-                                pc, new PropertiesLocation(resource.getLocation()), "integration-trait-configuration");
-                        pc.addPropertiesSource(ps);
-                    }
-                    lines.forEach(ps::parseConfigurationValue);
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Error adding properties from spec/traits/camel", e);
-                }
-            }
-        });
-
-        return answer;
-    }
-
-    private List<CamelContextCustomizer> preConfigureTraitEnvironment(Resource resource, Node node) {
-        List<CamelContextCustomizer> answer = new ArrayList<>();
-
-        Node target;
-        if (nodeAt(node, "/configuration") != null) {
-            // legacy trait configuration parameters
-            target = nodeAt(node, "/configuration/vars");
-        } else {
-            target = nodeAt(node, "/vars");
-        }
-
-        final List<String> lines = asStringList(target);
-        if (lines == null || lines.isEmpty()) {
-            return answer;
-        }
-
-        answer.add(new CamelContextCustomizer() {
-            @Override
-            public void configure(CamelContext camelContext) {
-                try {
-                    org.apache.camel.component.properties.PropertiesComponent pc
-                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
-                    IntegrationConfigurationPropertiesSource ps
-                            = (IntegrationConfigurationPropertiesSource) pc
-                                    .getPropertiesSource("environment-trait-configuration");
-                    if (ps == null) {
-                        ps = new IntegrationConfigurationPropertiesSource(
-                                pc, new PropertiesLocation(resource.getLocation()), "environment-trait-configuration");
-                        pc.addPropertiesSource(ps);
-                    }
-                    lines.forEach(ps::parseConfigurationValue);
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Error adding properties from spec/traits/environment", e);
-                }
-            }
-        });
-
-        return answer;
-    }
-
-    private List<CamelContextCustomizer> preConfigureTraitConfigurationBinding(Resource resource, Map<String, Object> map) {
-        List<CamelContextCustomizer> answer = new ArrayList<>();
-
-        if (map == null || map.isEmpty()) {
-            return null;
-        }
-        Object value = map.get("trait.camel.apache.org/camel.properties");
-        if (value == null || value.toString().isEmpty()) {
-            return null;
-        }
-        final String[] properties = StringQuoteHelper.splitSafeQuote(value.toString(), ',', true);
-
-        answer.add(new CamelContextCustomizer() {
-            @Override
-            public void configure(CamelContext camelContext) {
-                try {
-                    org.apache.camel.component.properties.PropertiesComponent pc
-                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
-                    IntegrationConfigurationPropertiesSource ps
-                            = (IntegrationConfigurationPropertiesSource) pc
-                                    .getPropertiesSource("binding-trait-configuration");
-                    if (ps == null) {
-                        ps = new IntegrationConfigurationPropertiesSource(
-                                pc, new PropertiesLocation(resource.getLocation()), "binding-trait-configuration");
-                        pc.addPropertiesSource(ps);
-                    }
-
-                    for (String line : properties) {
-                        ps.parseConfigurationValue(line);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Error adding properties from metadata/annotations/", e);
-                }
-            }
-        });
-
-        return answer;
-    }
-
-    private List<CamelContextCustomizer> preConfigureTraitEnvironmentBinding(Resource resource, Map<String, Object> map) {
-        List<CamelContextCustomizer> answer = new ArrayList<>();
-
-        if (map == null || map.isEmpty()) {
-            return null;
-        }
-        Object value = map.get("trait.camel.apache.org/environment.vars");
-        if (value == null || value.toString().isEmpty()) {
-            return null;
-        }
-        final String[] properties = StringQuoteHelper.splitSafeQuote(value.toString(), ',', true);
-
-        answer.add(new CamelContextCustomizer() {
-            @Override
-            public void configure(CamelContext camelContext) {
-                try {
-                    org.apache.camel.component.properties.PropertiesComponent pc
-                            = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
-                    IntegrationConfigurationPropertiesSource ps
-                            = (IntegrationConfigurationPropertiesSource) pc
-                                    .getPropertiesSource("environment-trait-configuration");
-                    if (ps == null) {
-                        ps = new IntegrationConfigurationPropertiesSource(
-                                pc, new PropertiesLocation(resource.getLocation()), "environment-trait-configuration");
-                        pc.addPropertiesSource(ps);
-                    }
-
-                    for (String line : properties) {
-                        ps.parseConfigurationValue(line);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Error adding properties from metadata/annotations/", e);
-                }
-            }
-        });
-
-        return answer;
-    }
-
-    private List<CamelContextCustomizer> preConfigureSources(Node node) {
-        List<CamelContextCustomizer> answer = new ArrayList<>();
-
-        SequenceNode seq = asSequenceNode(node);
-        for (Node n : seq.getValue()) {
-            MappingNode content = asMappingNode(n);
-            Map<String, Object> params = asMap(content);
-            Object name = params.get("name");
-            Object code = params.get("content");
-            if (name != null && code != null) {
-                String ext = FileUtil.onlyExt(name.toString(), false);
-                final Resource res = new IntegrationSourceResource(ext, name.toString(), code.toString());
-                answer.add(new CamelContextCustomizer() {
-                    @Override
-                    public void configure(CamelContext camelContext) {
-                        try {
-                            PluginHelper.getRoutesLoader(camelContext).loadRoutes(res);
-                        } catch (Exception e) {
-                            throw new RuntimeCamelException(
-                                    "Error loading sources from resource: " + res + " due to " + e.getMessage(), e);
-                        }
-                    }
-                });
-            }
-        }
-
-        return answer;
-    }
-
-    /**
-     * Camel K Pipe file
+     * Pipe file
      */
     private Object preConfigurePipe(Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
         // when in pre-parse phase then we only want to gather /metadata/annotations
@@ -710,22 +366,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         MappingNode ann = asMappingNode(nodeAt(root, "/metadata/annotations"));
         Map<String, Object> params = asMap(ann);
-        if (params != null) {
-            var list = preConfigureTraitConfigurationBinding(ctx.getResource(), params);
-            if (list != null) {
-                answer.addAll(list);
-            }
-            list = preConfigureTraitEnvironmentBinding(ctx.getResource(), params);
-            if (list != null) {
-                answer.addAll(list);
-            }
-        }
-
-        // Pipe may hold an integration spec
-        Node integration = nodeAt(root, "/spec/integration");
-        if (integration != null) {
-            answer.addAll(preConfigureIntegrationSpec(integration, ctx, target, preParse));
-        }
 
         if (!preParse) {
             // start with a route
@@ -911,16 +551,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         // extract uri is different if kamelet or not
         boolean kamelet = mn != null && anyTupleMatches(mn.getValue(), "kind", "Kamelet");
-        boolean strimzi
-                = !kamelet && mn != null && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(STRIMZI_VERSION))
-                        && anyTupleMatches(mn.getValue(), "kind", "KafkaTopic");
-        boolean knativeBroker
-                = !kamelet && mn != null
-                        && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_EVENTING_VERSION))
-                        && anyTupleMatches(mn.getValue(), "kind", "Broker");
-        boolean knativeChannel
-                = !kamelet && !strimzi && mn != null
-                        && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_MESSAGING_VERSION));
+        boolean strimzi = !kamelet && mn != null
+                && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(STRIMZI_VERSION))
+                && anyTupleMatches(mn.getValue(), "kind", "KafkaTopic");
+        boolean knativeBroker = !kamelet && mn != null
+                && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_EVENTING_VERSION))
+                && anyTupleMatches(mn.getValue(), "kind", "Broker");
+        boolean knativeChannel = !kamelet && !strimzi && mn != null
+                && anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(KNATIVE_MESSAGING_VERSION));
         String uri;
         if (knativeBroker) {
             uri = KNATIVE_EVENT_TYPE;
@@ -935,7 +573,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         Map<String, Object> params = asMap(prop);
 
         if (knativeBroker && params != null && params.containsKey("type")) {
-            // Use explicit event type from properties - remove setting from params and set as uri
+            // Use explicit event type from properties - remove setting from params and set
+            // as uri
             uri = params.remove("type").toString();
         }
 
@@ -964,7 +603,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     @Override
     public void preParseRoute(Resource resource) throws Exception {
-        // preparsing is done at early stage, so we have a chance to load additional beans and populate
+        // preparsing is done at early stage, so we have a chance to load additional
+        // beans and populate
         // Camel registry
         if (preparseDone.getOrDefault(resource.getLocation(), false)) {
             return;

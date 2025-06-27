@@ -67,7 +67,6 @@ public class AcknowledgementIT extends PubsubTestSupport {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         if (AcknowledgementIT.fail) {
-                            Thread.sleep(750);
                             throw new Exception("fail");
                         }
                     }
@@ -82,10 +81,7 @@ public class AcknowledgementIT extends PubsubTestSupport {
      * body comparison will fail. Check 2 : Failure. As the route throws and exception and the message is NACK'ed. The
      * message should remain in the PubSub Subscription for the third check. Check 3 : Success for the second message.
      * The message received should match the second message sent.
-     *
-     * @throws Exception
      */
-
     @Test
     public void singleMessage() throws Exception {
 

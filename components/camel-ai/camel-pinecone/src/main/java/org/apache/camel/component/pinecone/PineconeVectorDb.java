@@ -20,6 +20,7 @@ import org.apache.camel.spi.Metadata;
 
 public class PineconeVectorDb {
     public static final String SCHEME = "pinecone";
+    public static final int DEFAULT_COLLECTION_DIMENSION = 1536;
 
     private PineconeVectorDb() {
     }
@@ -64,5 +65,18 @@ public class PineconeVectorDb {
 
         @Metadata(description = "Query Top K", javaType = "Integer")
         public static final String QUERY_TOP_K = "CamelPineconeQueryTopK";
+
+        @Metadata(description = "Namespace for actions (query/upsert/etc)", javaType = "String")
+        public static final String NAMESPACE = "CamelPineconeNamespace";
+
+        @Metadata(description = "Query Filter", javaType = "String")
+        public static final String QUERY_FILTER = "CamelPineconeQueryFilter";
+
+        @Metadata(description = "Query Include Values", javaType = "boolean")
+        public static final String QUERY_INCLUDE_VALUES = "CamelPineconeQueryIncludeValues";
+
+        @Metadata(description = "Query Include Metadata", javaType = "com.google.protobuf.Struct")
+        public static final String QUERY_INCLUDE_METADATA = "CamelPineconeQueryIncludeMetadata";
+
     }
 }

@@ -23,13 +23,14 @@ public class SqlEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(47);
+        Set<String> props = new HashSet<>(49);
         props.add("allowNamedParameters");
         props.add("alwaysPopulateStatement");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
         props.add("batch");
+        props.add("batchAutoCommitDisabled");
         props.add("breakBatchOnConsumeFail");
         props.add("bridgeErrorHandler");
         props.add("dataSource");
@@ -37,6 +38,7 @@ public class SqlEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("expectedUpdateCount");
+        props.add("fetchSize");
         props.add("greedy");
         props.add("initialDelay");
         props.add("lazyStartProducer");

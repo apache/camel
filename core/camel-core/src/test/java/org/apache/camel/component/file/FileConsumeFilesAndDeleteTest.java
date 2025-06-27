@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.nio.file.Files;
+import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,29 +31,32 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * Unit test for consuming the same filename only.
  */
 public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME_1 = "report" + UUID.randomUUID() + ".txt";
+    private static final String TEST_FILE_NAME_2 = "report2" + UUID.randomUUID() + ".txt";
+    private static final String TEST_FILE_NAME_3 = "report2008" + UUID.randomUUID() + ".txt";
 
     @Test
     public void testConsumeAndDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader(fileUri() + "/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME_2);
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME_1);
+        template.sendBodyAndHeader(fileUri() + "/2008", "2008 Report", Exchange.FILE_NAME, TEST_FILE_NAME_3);
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesWaitTime();
 
         // file should not exists
-        assertFalse(Files.exists(testFile("report.txt")), "File should been deleted");
+        assertFalse(Files.exists(testFile(TEST_FILE_NAME_1)), "File should been deleted");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&fileName=report.txt&delete=true"))
+                from(fileUri("?initialDelay=0&delay=10&fileName=" + TEST_FILE_NAME_1 + "&delete=true"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

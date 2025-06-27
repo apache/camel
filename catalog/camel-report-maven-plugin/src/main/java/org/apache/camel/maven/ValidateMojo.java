@@ -33,8 +33,8 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.common.FileUtil;
-import org.apache.camel.catalog.lucene.LuceneSuggestionStrategy;
 import org.apache.camel.catalog.maven.MavenVersionManager;
+import org.apache.camel.catalog.suggest.CatalogSuggestionStrategy;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
@@ -248,7 +248,7 @@ public class ValidateMojo extends AbstractMojo {
         // add activemq as a known component
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
         // enable did you mean
-        catalog.setSuggestionStrategy(new LuceneSuggestionStrategy());
+        catalog.setSuggestionStrategy(new CatalogSuggestionStrategy());
         // enable loading other catalog versions dynamically
         catalog.setVersionManager(
                 new MavenVersionManager(repositorySystem, repositorySystemSession, session.getSettings()));
@@ -359,11 +359,9 @@ public class ValidateMojo extends AbstractMojo {
 
             Path target = extraSourcesPath.resolve(artifact.getGav().getArtifactId());
             getLog().info("Unzipping the artifact: " + artifact + " to " + target);
-            if (Files.exists(target)) {
-                continue;
+            if (!Files.exists(target)) {
+                unzipArtifact(artifact, target);
             }
-
-            unzipArtifact(artifact, target);
 
             FileUtil.findJavaFiles(target.toFile(), javaFiles);
             FileUtil.findXmlFiles(target.toFile(), xmlFiles);
@@ -560,7 +558,7 @@ public class ValidateMojo extends AbstractMojo {
 
         // find all java route builder classes
         findJavaRouteBuilderClasses(javaFiles, includeJava, includeTest, project);
-        // find all xml routes
+        // find all XML routes
         findXmlRouters(xmlFiles, includeXml, includeTest, project);
 
         for (File file : javaFiles) {
@@ -852,7 +850,7 @@ public class ValidateMojo extends AbstractMojo {
             String fqn = file.getPath();
             String baseDir = ".";
             JavaType<?> out = Roaster.parse(file);
-            // we should only parse java classes (not interfaces and enums etc)
+            // we should only parse java classes (not interfaces and enums etc.)
             if (out instanceof JavaClassSource clazz) {
                 RouteBuilderParser.parseRouteBuilderEndpoints(clazz, baseDir, fqn, fileEndpoints, unparsable, includeTest);
                 RouteBuilderParser.parseRouteBuilderSimpleExpressions(clazz, baseDir, fqn, fileSimpleExpressions);
@@ -904,7 +902,7 @@ public class ValidateMojo extends AbstractMojo {
         Set<CamelEndpointDetails> producers = endpoints.stream()
                 .filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
 
-        // are there any producers that do not have a consumer pair
+        // are there any producers that do not have a consumer pair?
         for (CamelEndpointDetails detail : producers) {
             boolean none = consumers.stream().noneMatch(c -> matchEndpointPath(detail.getEndpointUri(), c.getEndpointUri()));
             if (none) {

@@ -56,7 +56,7 @@ include::partial$component-endpoint-headers.adoc[]
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:list").
-    toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listNamespaces").
+    toF("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces").
     to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -75,7 +75,7 @@ from("direct:listByLabels").process(new Processor() {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACES_LABELS, labels);
             }
         });
-    toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listNamespacesByLabels").
+    toF("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespacesByLabels").
     to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -85,18 +85,25 @@ This operation returns a list of namespaces from your cluster, using a label sel
 
 [source,java]
 --------------------------------------------------------------------------------
-fromF("kubernetes-namespaces://%s?oauthToken=%s&namespace=default", host, authToken).process(new KubernertesProcessor()).to("mock:result");
-    public class KubernertesProcessor implements Processor {
+fromF("kubernetes-namespaces://%s?oauthToken=%s", host, authToken)
+    .process(new KubernetesProcessor()).to("mock:result");
+
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Namespace ns = exchange.getIn().getBody(Namespace.class);
-            log.info("Got event with configmap name: " + ns.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with namespace name: " + ns.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 --------------------------------------------------------------------------------
 
-This consumer will return a list of events on the namespace default.
+This consumer returns a message per event received for all Namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Namespaces with the specified label.
+- `resourceName` - Watch the Namespace with the specified name.
 
 
 include::spring-boot:partial$starter.adoc[]

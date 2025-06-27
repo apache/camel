@@ -90,7 +90,6 @@ public final class GitHubHelper {
         path = sj.toString();
 
         if ("tree".equals(action)) {
-            // https://api.github.com/repos/apache/camel-k-examples/contents/examples/generic-examples
             url = "https://api.github.com/repos/" + org + "/" + repo + "/contents/" + path;
             if (!"main".equals(branch) && !"master".equals(branch)) {
                 url = url + "?ref=" + branch;
@@ -127,8 +126,7 @@ public final class GitHubHelper {
                         properties.add(u);
                     } else if (routes != null) {
                         if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
-                                || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)
-                                || "groovy".equalsIgnoreCase(ext) || "js".equalsIgnoreCase(ext)) {
+                                || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
                             String htmlUrl = c.get("html_url").asText();
                             String u = asGithubSingleUrl(htmlUrl);
                             routes.add(u);

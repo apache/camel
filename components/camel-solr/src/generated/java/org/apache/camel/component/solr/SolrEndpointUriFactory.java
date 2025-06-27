@@ -17,34 +17,32 @@ import org.apache.camel.spi.EndpointUriFactory;
 @Generated("org.apache.camel.maven.packaging.GenerateEndpointUriFactoryMojo")
 public class SolrEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":url";
-    private static final String[] SCHEMES = new String[]{"solr", "solrs", "solrCloud"};
+    private static final String BASE = ":host:port/basePath";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(20);
-        props.add("allowCompression");
+        Set<String> props = new HashSet<>(19);
+        props.add("async");
         props.add("autoCommit");
+        props.add("basePath");
+        props.add("certificatePath");
         props.add("collection");
         props.add("connectionTimeout");
-        props.add("defaultMaxConnectionsPerHost");
-        props.add("followRedirects");
-        props.add("httpClient");
+        props.add("deleteByQuery");
+        props.add("enableSSL");
+        props.add("from");
+        props.add("host");
         props.add("lazyStartProducer");
-        props.add("maxRetries");
-        props.add("maxTotalConnections");
+        props.add("operation");
         props.add("password");
+        props.add("port");
         props.add("requestHandler");
-        props.add("soTimeout");
+        props.add("requestTimeout");
+        props.add("size");
         props.add("solrClient");
-        props.add("streamingQueueSize");
-        props.add("streamingThreadCount");
-        props.add("url");
         props.add("username");
-        props.add("zkChroot");
-        props.add("zkHost");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");
@@ -55,12 +53,7 @@ public class SolrEndpointUriFactory extends org.apache.camel.support.component.E
 
     @Override
     public boolean isEnabled(String scheme) {
-        for (String s : SCHEMES) {
-            if (s.equals(scheme)) {
-                return true;
-            }
-        }
-        return false;
+        return "solr".equals(scheme);
     }
 
     @Override
@@ -70,7 +63,9 @@ public class SolrEndpointUriFactory extends org.apache.camel.support.component.E
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "url", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "host", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "port", 8983, false, copy);
+        uri = buildPathParameter(syntax, uri, "basePath", "/solr", false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

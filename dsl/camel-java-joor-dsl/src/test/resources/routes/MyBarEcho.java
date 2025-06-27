@@ -16,13 +16,29 @@
  */
 import org.apache.camel.BindToRegistry;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @BindToRegistry("myBarEcho")
 public class MyBarEcho {
 
+    private static final AtomicInteger ctr = new AtomicInteger();
+
     private MyBar bar = new MyBar("Moes Bar");
+
+    public MyBarEcho() {
+        ctr.incrementAndGet();
+    }
 
     public String echo(String s) {
         return s + " is at " + bar.getName();
     }
 
+    public int getCounter() {
+        return ctr.get();
+    }
+
+    @Override
+    public String toString() {
+        return "MyBarEcho" + ctr.get();
+    }
 }

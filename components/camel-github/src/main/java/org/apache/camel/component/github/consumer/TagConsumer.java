@@ -19,6 +19,7 @@ package org.apache.camel.component.github.consumer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,9 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TagConsumer extends AbstractGitHubConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TagConsumer.class);
 
-    private List<String> tagNames = new ArrayList<>();
+    private static final Logger LOG = LoggerFactory.getLogger(TagConsumer.class);
+
+    private final List<String> tagNames = new ArrayList<>();
 
     public TagConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
@@ -54,14 +56,13 @@ public class TagConsumer extends AbstractGitHubConsumer {
             }
         }
 
-        int counter = 0;
+        Queue<Object> exchanges = new ArrayDeque<>();
         while (!newTags.isEmpty()) {
             RepositoryTag newTag = newTags.pop();
             Exchange e = createExchange(true);
             e.getIn().setBody(newTag);
-            getProcessor().process(e);
-            counter++;
+            exchanges.add(e);
         }
-        return counter;
+        return processBatch(exchanges);
     }
 }

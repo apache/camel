@@ -19,11 +19,13 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 
 /**
- * Allows to plugin custom post processors that are processed after the DSL has loaded the source and compiled into a
+ * Allows to plugin custom post-processors that are processed after the DSL has loaded the source and compiled into a
  * Java object.
  * <p/>
  * This is used to detect and handle {@link org.apache.camel.BindToRegistry} and {@link org.apache.camel.Converter}
  * classes.
+ *
+ * @see CompilePreProcessor
  */
 public interface CompilePostProcessor {
 

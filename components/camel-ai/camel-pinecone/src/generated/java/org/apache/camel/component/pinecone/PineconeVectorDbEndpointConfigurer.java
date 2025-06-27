@@ -23,8 +23,23 @@ public class PineconeVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PineconeVectorDbEndpoint target = (PineconeVectorDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cloud": target.getConfiguration().setCloud(property(camelContext, java.lang.String.class, value)); return true;
+        case "cloudregion":
+        case "cloudRegion": target.getConfiguration().setCloudRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectiondimension":
+        case "collectionDimension": target.getConfiguration().setCollectionDimension(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "collectionsimilaritymetric":
+        case "collectionSimilarityMetric": target.getConfiguration().setCollectionSimilarityMetric(property(camelContext, java.lang.String.class, value)); return true;
+        case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "indexname":
+        case "indexName": target.getConfiguration().setIndexName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "tls": target.getConfiguration().setTls(property(camelContext, boolean.class, value)); return true;
         case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -33,8 +48,23 @@ public class PineconeVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cloud": return java.lang.String.class;
+        case "cloudregion":
+        case "cloudRegion": return java.lang.String.class;
+        case "collectiondimension":
+        case "collectionDimension": return java.lang.Integer.class;
+        case "collectionsimilaritymetric":
+        case "collectionSimilarityMetric": return java.lang.String.class;
+        case "host": return java.lang.String.class;
+        case "indexname":
+        case "indexName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "tls": return boolean.class;
         case "token": return java.lang.String.class;
         default: return null;
         }
@@ -44,8 +74,23 @@ public class PineconeVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PineconeVectorDbEndpoint target = (PineconeVectorDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cloud": return target.getConfiguration().getCloud();
+        case "cloudregion":
+        case "cloudRegion": return target.getConfiguration().getCloudRegion();
+        case "collectiondimension":
+        case "collectionDimension": return target.getConfiguration().getCollectionDimension();
+        case "collectionsimilaritymetric":
+        case "collectionSimilarityMetric": return target.getConfiguration().getCollectionSimilarityMetric();
+        case "host": return target.getConfiguration().getHost();
+        case "indexname":
+        case "indexName": return target.getConfiguration().getIndexName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "proxyhost":
+        case "proxyHost": return target.getConfiguration().getProxyHost();
+        case "proxyport":
+        case "proxyPort": return target.getConfiguration().getProxyPort();
+        case "tls": return target.getConfiguration().isTls();
         case "token": return target.getConfiguration().getToken();
         default: return null;
         }

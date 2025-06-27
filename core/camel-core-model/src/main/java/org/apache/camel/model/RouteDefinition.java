@@ -62,6 +62,7 @@ import org.apache.camel.spi.RoutePolicy;
 public class RouteDefinition extends OutputDefinition<RouteDefinition>
         implements NamedRoute, PreconditionContainer, ResourceAware {
     private final AtomicBoolean prepared = new AtomicBoolean();
+    private final AtomicBoolean inlined = new AtomicBoolean();
     private FromDefinition input;
     private String routeConfigurationId;
     private transient Set<String> appliedRouteConfigurationIds;
@@ -145,6 +146,22 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     public void markUnprepared() {
         prepared.set(false);
+    }
+
+    /**
+     * Check if the route has been inlined by rest-dsl
+     *
+     * @return whether the route has been inlined by rest-dsl or not
+     */
+    public boolean isInlined() {
+        return inlined.get();
+    }
+
+    /**
+     * Marks the route definition as inlined by rest-dsl
+     */
+    public void markInlined() {
+        inlined.set(true);
     }
 
     /**
@@ -262,7 +279,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * Set the group name for this route
+     * The group name for this route. Multiple routes can belong to the same group.
      *
      * @param  name the group name
      * @return      the builder
@@ -273,7 +290,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * Set the route group for this route
+     * The group name for this route. Multiple routes can belong to the same group.
      *
      * @param  group the route group
      * @return       the builder
@@ -939,20 +956,14 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * The group that this route belongs to; could be the name of the RouteBuilder class or be explicitly configured in
-     * the XML.
-     * <p/>
-     * May be null.
+     * The group name for this route. Multiple routes can belong to the same group.
      */
     public String getGroup() {
         return group;
     }
 
     /**
-     * The group that this route belongs to; could be the name of the RouteBuilder class or be explicitly configured in
-     * the XML.
-     * <p/>
-     * May be null.
+     * The group name for this route. Multiple routes can belong to the same group.
      */
     @XmlAttribute
     @Metadata(label = "advanced")

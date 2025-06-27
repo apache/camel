@@ -165,7 +165,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
     protected String doParseCode() {
         StringBuilder sb = new StringBuilder(256);
         for (SimpleNode node : nodes) {
-            String exp = node.createCode(expression);
+            String exp = node.createCode(camelContext, expression);
             SimpleExpressionParser.parseLiteralNode(sb, node, exp);
         }
         String code = sb.toString();

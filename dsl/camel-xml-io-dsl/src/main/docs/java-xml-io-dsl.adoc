@@ -19,7 +19,7 @@ However, the `xml-io-dsl` is a source code generated parser that is Camel specif
 route files (not classic Spring `<beans>` XML files).
 
 If you are using Camel XML DSL then it is recommended using `xml-io-dsl` instead of `xml-jaxb-dsl`.
-You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel Main, and Camel K etc.
+You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel Main.
 
 == Example
 
@@ -28,11 +28,11 @@ The following `my-route.xml` source file:
 .my-route.xml
 [source,xml]
 ----
-<routes xmlns="http://camel.apache.org/schema/spring">
+<routes xmlns="http://camel.apache.org/schema/xml-io">
     <route>
         <from uri="timer:tick"/>
         <setBody>
-            <constant>Hello Camel K!</constant>
+            <constant>Hello Camel!</constant>
          </setBody>
         <to uri="log:info"/>
     </route>
@@ -41,14 +41,7 @@ The following `my-route.xml` source file:
 
 TIP: You can omit the `xmlns` namespace. And if there is only a single route, you can use `<route>` as the root XML tag.
 
-Can then be loaded and run with Camel CLI or Camel K.
-
-.Running with Camel K
-
-[source,bash]
-----
-kamel run my-route.xml
-----
+Can then be loaded and run with Camel CLI.
 
 .Running with Camel CLI
 
@@ -76,6 +69,10 @@ It is now possible with `xml-io-dsl` to declare some beans to be bound to xref:m
 
 </camel>
 ----
+
+=== Loading Spring XML files with embedded beans
+
+**Deprecated**
 
 While keeping all the benefits of fast XML parser used by `xml-io-dsl`, Camel can also process XML elements declared in other XML namespaces and process them separately. With this mechanism it is possible to include XML elements using Spring's `http://www.springframework.org/schema/beans` namespace.
 
@@ -298,7 +295,7 @@ You then have to declare those methods in XML DSL as follows:
 ----
 
 The init and destroy methods are optional, so a bean does not have to have both,
-for example you may only have destroy methods.
+for example you may only have a destroy methods.
 
 
 == See Also

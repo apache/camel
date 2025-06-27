@@ -56,7 +56,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-Each API endpoint support the following operations.
+Each API endpoint supports the following operations.
 
 === Inference API
 
@@ -136,12 +136,12 @@ Caller can call `list` to confirm the model is unregistered. |
 The Metrics API provides the operations to fetch metrics in the Prometheus format.
 
 ----
-torchserve:mertrics/<operation>[?options]
+torchserve:metrics/<operation>[?options]
 ----
 
 [width="100%",cols="2,5,1,2",options="header"]
 |===
-| operation | Description | Headers | Result
+| Operation | Description | Options | Result
 | `metrics` | Get TorchServe application metrics in prometheus format. | `metricsName` | `String`
 |===
 
@@ -162,7 +162,7 @@ from("direct:ping")
 ----
 from("file:data/kitten.jpg")
     .to("torchserve:inference/predictions?modelName=squeezenet1_1")
-    .log("Result: ${body}");;
+    .log("Result: ${body}");
 ----
 
 === Management API

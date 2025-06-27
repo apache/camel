@@ -75,16 +75,20 @@ public interface AttachmentMessage extends Message {
     void addAttachmentObject(String id, Attachment content);
 
     /**
-     * Returns all attachments of the message
+     * Returns all attachments of the message.
+     * <p/>
+     * To add or remove attachments then use the APIs from this message, as the returned map is a read-only instance.
      *
-     * @return the attachments in a map or <tt>null</tt>
+     * @return the attachments in a read-only map
      */
     Map<String, DataHandler> getAttachments();
 
     /**
      * Returns all attachments of the message
+     * <p/>
+     * To add or remove attachments then use the APIs from this message, as the returned map is a read-only instance.
      *
-     * @return the attachments in a map or <tt>null</tt>
+     * @return the attachments in a read-only map
      */
     Map<String, Attachment> getAttachmentObjects();
 
@@ -108,5 +112,10 @@ public interface AttachmentMessage extends Message {
      * @return <tt>true</tt> if this message has any attachments.
      */
     boolean hasAttachments();
+
+    /**
+     * Clears all the attachments.
+     */
+    void clearAttachments();
 
 }

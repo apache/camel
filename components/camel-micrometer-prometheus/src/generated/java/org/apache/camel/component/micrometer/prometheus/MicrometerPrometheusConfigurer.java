@@ -23,6 +23,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": target.setBaseEndpointURIExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
         case "camelcontext":
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
@@ -30,6 +32,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "clearOnReload": target.setClearOnReload(property(camelContext, boolean.class, value)); return true;
         case "enableexchangeeventnotifier":
         case "enableExchangeEventNotifier": target.setEnableExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
+        case "enableinstrumentedthreadpoolfactory":
+        case "enableInstrumentedThreadPoolFactory": target.setEnableInstrumentedThreadPoolFactory(property(camelContext, boolean.class, value)); return true;
         case "enablemessagehistory":
         case "enableMessageHistory": target.setEnableMessageHistory(property(camelContext, boolean.class, value)); return true;
         case "enablerouteeventnotifier":
@@ -38,8 +42,11 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "enableRoutePolicy": target.setEnableRoutePolicy(property(camelContext, boolean.class, value)); return true;
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "routepolicylevel":
         case "routePolicyLevel": target.setRoutePolicyLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "skipcamelinfo":
+        case "skipCamelInfo": target.setSkipCamelInfo(property(camelContext, boolean.class, value)); return true;
         case "textformatversion":
         case "textFormatVersion": target.setTextFormatVersion(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -49,6 +56,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": return boolean.class;
         case "binders": return java.lang.String.class;
         case "camelcontext":
         case "camelContext": return org.apache.camel.CamelContext.class;
@@ -56,6 +65,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "clearOnReload": return boolean.class;
         case "enableexchangeeventnotifier":
         case "enableExchangeEventNotifier": return boolean.class;
+        case "enableinstrumentedthreadpoolfactory":
+        case "enableInstrumentedThreadPoolFactory": return boolean.class;
         case "enablemessagehistory":
         case "enableMessageHistory": return boolean.class;
         case "enablerouteeventnotifier":
@@ -64,8 +75,11 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "enableRoutePolicy": return boolean.class;
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
+        case "path": return java.lang.String.class;
         case "routepolicylevel":
         case "routePolicyLevel": return java.lang.String.class;
+        case "skipcamelinfo":
+        case "skipCamelInfo": return boolean.class;
         case "textformatversion":
         case "textFormatVersion": return java.lang.String.class;
         default: return null;
@@ -76,6 +90,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": return target.isBaseEndpointURIExchangeEventNotifier();
         case "binders": return target.getBinders();
         case "camelcontext":
         case "camelContext": return target.getCamelContext();
@@ -83,6 +99,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "clearOnReload": return target.isClearOnReload();
         case "enableexchangeeventnotifier":
         case "enableExchangeEventNotifier": return target.isEnableExchangeEventNotifier();
+        case "enableinstrumentedthreadpoolfactory":
+        case "enableInstrumentedThreadPoolFactory": return target.isEnableInstrumentedThreadPoolFactory();
         case "enablemessagehistory":
         case "enableMessageHistory": return target.isEnableMessageHistory();
         case "enablerouteeventnotifier":
@@ -91,8 +109,11 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "enableRoutePolicy": return target.isEnableRoutePolicy();
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
+        case "path": return target.getPath();
         case "routepolicylevel":
         case "routePolicyLevel": return target.getRoutePolicyLevel();
+        case "skipcamelinfo":
+        case "skipCamelInfo": return target.isSkipCamelInfo();
         case "textformatversion":
         case "textFormatVersion": return target.getTextFormatVersion();
         default: return null;

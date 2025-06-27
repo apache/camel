@@ -104,7 +104,7 @@ public class MicUtilsTest {
                                                              + "UNZ+1+00000000000778'";
 
     private static final String EXPECTED_MESSAGE_DIGEST_ALGORITHM = "sha1";
-    private static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "XUt+ug5GEDD0X9+Nv8DGYZZThOQ=";
+    private static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "0mGTGdBjQtu8VQ52506Coi0xHbc=";
 
     @BeforeEach
     public void setUp() {
@@ -124,7 +124,8 @@ public class MicUtilsTest {
 
         ApplicationEDIFACTEntity edifactEntity
                 = new ApplicationEDIFACTEntity(
-                        EDI_MESSAGE, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.NONE, true, "filename.txt");
+                        EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII.name(),
+                        AS2TransferEncoding.NONE, true, "filename.txt");
         InputStream is = edifactEntity.getContent();
         BasicHttpEntity basicEntity = new BasicHttpEntity(is, ContentType.create(CONTENT_TYPE_VALUE));
         request.setEntity(basicEntity);
@@ -148,7 +149,8 @@ public class MicUtilsTest {
         request.addHeader(AS2Header.CONTENT_TYPE, "application/edifact;charset=UTF-8");
 
         InputStream is = new ApplicationEDIFACTEntity(
-                EDI_MESSAGE_WITH_NON_ASCII, StandardCharsets.UTF_8.name(), AS2TransferEncoding.NONE, true, "filename.txt")
+                EDI_MESSAGE_WITH_NON_ASCII.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8.name(),
+                AS2TransferEncoding.NONE, true, "filename.txt")
                 .getContent();
         request.setEntity(new BasicHttpEntity(is, ContentType.create(CONTENT_TYPE_VALUE, StandardCharsets.UTF_8)));
         ReceivedContentMic receivedContentMic = MicUtils.createReceivedContentMic(request, null, null);
@@ -160,8 +162,7 @@ public class MicUtilsTest {
         // calculate the MIC of the EDI message directly for comparison
         String expectedDigest = new ReceivedContentMic(
                 "sha1", MicUtils.createMic(
-                        // the entity parser appends 'CR' and 'LF' for each line
-                        EDI_MESSAGE_WITH_NON_ASCII.replaceAll("\n", "\r\n").getBytes(StandardCharsets.UTF_8), "sha1"))
+                        EDI_MESSAGE_WITH_NON_ASCII.getBytes(StandardCharsets.UTF_8), "sha1"))
                 .getEncodedMessageDigest();
 
         assertEquals(expectedDigest, receivedContentMic.getEncodedMessageDigest(), "Unexpected encoded message digest value");
@@ -178,7 +179,8 @@ public class MicUtilsTest {
 
         ApplicationEDIFACTEntity edifactEntity
                 = new ApplicationEDIFACTEntity(
-                        EDI_MESSAGE, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.NONE, true, "filename.txt");
+                        EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII.name(),
+                        AS2TransferEncoding.NONE, true, "filename.txt");
         InputStream is = edifactEntity.getContent();
         BasicHttpEntity basicEntity = new BasicHttpEntity(is, ContentType.create(CONTENT_TYPE_VALUE));
         request.setEntity(basicEntity);
@@ -197,9 +199,7 @@ public class MicUtilsTest {
     private String getMicContent(String content, String algorithm) {
         return new String(
                 Base64.getEncoder().encode(
-                        createMic(content
-                                .replaceAll("\\n", "\r\n")
-                                .getBytes(StandardCharsets.US_ASCII), algorithm)),
+                        createMic(content.getBytes(StandardCharsets.US_ASCII), algorithm)),
                 StandardCharsets.US_ASCII);
     }
 }

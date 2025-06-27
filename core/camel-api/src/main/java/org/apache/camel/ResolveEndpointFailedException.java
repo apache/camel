@@ -27,17 +27,17 @@ public class ResolveEndpointFailedException extends RuntimeCamelException {
 
     public ResolveEndpointFailedException(String uri, Throwable cause) {
         super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: " + cause.getMessage(), cause);
-        this.uri = uri;
+        this.uri = sanitizeUri(uri);
     }
 
     public ResolveEndpointFailedException(String uri, String message) {
         super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: " + message);
-        this.uri = uri;
+        this.uri = sanitizeUri(uri);
     }
 
     public ResolveEndpointFailedException(String uri) {
         super("Failed to resolve endpoint: " + sanitizeUri(uri));
-        this.uri = uri;
+        this.uri = sanitizeUri(uri);
     }
 
     public String getUri() {

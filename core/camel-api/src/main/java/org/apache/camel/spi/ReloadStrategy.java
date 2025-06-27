@@ -48,4 +48,9 @@ public interface ReloadStrategy extends StaticService, CamelContextAware {
      * Reset the counters.
      */
     void resetCounters();
+
+    /**
+     * Gets the last error if reloading failed
+     */
+    Exception getLastError();
 }

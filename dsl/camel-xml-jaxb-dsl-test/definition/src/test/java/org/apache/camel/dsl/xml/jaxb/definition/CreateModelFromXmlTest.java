@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.model.BasicExpressionNode;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -105,21 +106,36 @@ public class CreateModelFromXmlTest extends ContextTestSupport {
     private void assertNamespacesPresent(RoutesDefinition routesDefinition, Map<String, String> expectedNamespaces) {
         for (RouteDefinition route : routesDefinition.getRoutes()) {
             Collection<ExpressionNode> col = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
-            if (col.isEmpty()) {
-                fail("Expected to find at least one ExpressionNode in route");
-            } else {
-                for (ExpressionNode en : col) {
-                    ExpressionDefinition ed = en.getExpression();
+            for (ExpressionNode en : col) {
+                ExpressionDefinition ed = en.getExpression();
 
-                    NamespaceAware na = null;
-                    Expression exp = ed.getExpressionValue();
-                    if (exp instanceof NamespaceAware) {
-                        na = (NamespaceAware) exp;
-                    } else if (ed instanceof NamespaceAware) {
-                        na = (NamespaceAware) ed;
-                    }
+                NamespaceAware na = null;
+                Expression exp = ed.getExpressionValue();
+                if (exp instanceof NamespaceAware) {
+                    na = (NamespaceAware) exp;
+                } else if (ed instanceof NamespaceAware) {
+                    na = (NamespaceAware) ed;
+                }
 
-                    assertNotNull(na);
+                assertNotNull(na);
+                if (na.getNamespaces() != null) {
+                    assertEquals(expectedNamespaces, na.getNamespaces());
+                }
+            }
+            Collection<BasicExpressionNode> col2 = filterTypeInOutputs(route.getOutputs(), BasicExpressionNode.class);
+            for (BasicExpressionNode en : col2) {
+                ExpressionDefinition ed = en.getExpression();
+
+                NamespaceAware na = null;
+                Expression exp = ed.getExpressionValue();
+                if (exp instanceof NamespaceAware) {
+                    na = (NamespaceAware) exp;
+                } else if (ed instanceof NamespaceAware) {
+                    na = (NamespaceAware) ed;
+                }
+
+                assertNotNull(na);
+                if (na.getNamespaces() != null) {
                     assertEquals(expectedNamespaces, na.getNamespaces());
                 }
             }

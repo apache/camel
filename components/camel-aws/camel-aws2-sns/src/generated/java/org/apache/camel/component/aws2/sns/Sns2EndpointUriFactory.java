@@ -23,10 +23,11 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(28);
+        Set<String> props = new HashSet<>(29);
         props.add("accessKey");
         props.add("amazonSNSClient");
         props.add("autoCreateTopic");
+        props.add("batchEnabled");
         props.add("headerFilterStrategy");
         props.add("kmsMasterKeyId");
         props.add("lazyStartProducer");

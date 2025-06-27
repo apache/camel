@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
@@ -45,9 +45,9 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
             JsonObject root = new JsonObject();
             root.put("action", "route");
             root.put("id", id);
-            File f = getActionFile(Long.toString(pid));
+            Path f = getActionFile(Long.toString(pid));
             onAction(root);
-            IOHelper.writeText(root.toJson(), f);
+            PathUtils.writeTextSafely(root.toJson(), f);
         }
 
         return 0;

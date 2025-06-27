@@ -50,7 +50,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -74,7 +74,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. This is a multi-value option with prefix: additionalProperties.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1650,6 +1650,42 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          */
         default DebeziumPostgresEndpointBuilder slotDropOnStop(String slotDropOnStop) {
             doSetProperty("slotDropOnStop", slotDropOnStop);
+            return this;
+        }
+        /**
+         * Whether or not to create a failover slot. This is only supported when
+         * connecting to a primary server of a Postgres cluster, version 17 or
+         * newer. When not specified, or when not connecting to a Postgres 17
+         * primary, no failover slot will be created.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param slotFailover the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder slotFailover(boolean slotFailover) {
+            doSetProperty("slotFailover", slotFailover);
+            return this;
+        }
+        /**
+         * Whether or not to create a failover slot. This is only supported when
+         * connecting to a primary server of a Postgres cluster, version 17 or
+         * newer. When not specified, or when not connecting to a Postgres 17
+         * primary, no failover slot will be created.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param slotFailover the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder slotFailover(String slotFailover) {
+            doSetProperty("slotFailover", slotFailover);
             return this;
         }
         /**

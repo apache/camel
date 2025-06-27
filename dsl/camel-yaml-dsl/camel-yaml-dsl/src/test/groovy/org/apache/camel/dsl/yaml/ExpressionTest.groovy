@@ -39,10 +39,10 @@ class ExpressionTest extends YamlTestSupport {
             '''
         then:
         try {
-            loadRoutes(route);
+            loadRoutes(route)
             Assertions.fail("Should have thrown exception")
         } catch (IllegalArgumentException e) {
-            Assertions.assertTrue(e.getMessage().contains("2 are valid"), e.getMessage());
+            Assertions.assertTrue(e.getMessage().contains("2 are valid"), e.getMessage())
         }
     }
 
@@ -62,10 +62,10 @@ class ExpressionTest extends YamlTestSupport {
             '''
         then:
         try {
-            loadRoutes(route);
+            loadRoutes(route)
             Assertions.fail("Should have thrown exception")
         } catch (IllegalArgumentException e) {
-            Assertions.assertTrue(e.getMessage().contains("2 are valid"), e.getMessage());
+            Assertions.assertTrue(e.getMessage().contains("2 are valid"), e.getMessage())
         }
     }
 
@@ -85,10 +85,10 @@ class ExpressionTest extends YamlTestSupport {
             '''
         then:
         try {
-            loadRoutes(route);
+            loadRoutes(route)
             Assertions.fail("Should have thrown exception")
         } catch (IllegalArgumentException e) {
-            Assertions.assertTrue(e.getMessage().contains("2 are valid"), e.getMessage());
+            Assertions.assertTrue(e.getMessage().contains("2 are valid"), e.getMessage())
         }
     }
 
@@ -106,10 +106,10 @@ class ExpressionTest extends YamlTestSupport {
             '''
         then:
         try {
-            loadRoutes(route);
+            loadRoutes(route)
             Assertions.fail("Should have thrown exception")
         } catch (Exception e) {
-            Assertions.assertTrue(e.getMessage().contains("additional properties"), e.getMessage());
+            Assertions.assertTrue(e.getMessage().contains("additional properties"), e.getMessage())
         }
     }
 
@@ -128,10 +128,10 @@ class ExpressionTest extends YamlTestSupport {
             '''
         then:
         try {
-            loadRoutes(route);
+            loadRoutes(route)
             Assertions.fail("Should have thrown exception")
         } catch (Exception e) {
-            Assertions.assertTrue(e.getMessage().contains("0 are valid"), e.getMessage());
+            Assertions.assertTrue(e.getMessage().contains("0 are valid"), e.getMessage())
         }
     }
 

@@ -19,7 +19,7 @@ package org.apache.camel.dsl.yaml.support.model
 class MyFacHelper {
 
     static MyFacBean createBean(String field1, String field2) {
-        return new MyFacBean(field1, field2);
+        return new MyFacBean(field1, field2)
     }
 
 }

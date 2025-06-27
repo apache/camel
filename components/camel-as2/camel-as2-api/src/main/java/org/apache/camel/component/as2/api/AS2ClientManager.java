@@ -17,6 +17,7 @@
 package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -28,6 +29,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedD
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDataEntity;
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.AS2HeaderUtils;
 import org.apache.camel.component.as2.api.util.CompressionUtils;
 import org.apache.camel.component.as2.api.util.EncryptingUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
@@ -43,6 +45,9 @@ import org.bouncycastle.cms.CMSCompressedDataGenerator;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.operator.OutputCompressor;
 import org.bouncycastle.operator.OutputEncryptor;
+import org.slf4j.helpers.MessageFormatter;
+
+import static org.apache.camel.component.as2.api.entity.ApplicationEntity.CONTENT_DISPOSITION_PATTERN;
 
 /**
  * Sends EDI Messages over HTTP
@@ -68,6 +73,11 @@ public class AS2ClientManager {
      * The HTTP Context Attribute indicating the EDI message content type to be sent.
      */
     public static final String EDI_MESSAGE_CONTENT_TYPE = CAMEL_AS2_CLIENT_PREFIX + "edi-message-content-type";
+
+    /**
+     * The HTTP Context Attribute indicating the EDI message content charset to be sent.
+     */
+    public static final String EDI_MESSAGE_CHARSET = CAMEL_AS2_CLIENT_PREFIX + "edi-message-charset";
 
     /**
      * The HTTP Context Attribute indicating the EDI message transfer encoding to be sent.
@@ -177,6 +187,7 @@ public class AS2ClientManager {
      * @param  as2To                      - AS2 name of recipient
      * @param  as2MessageStructure        - the structure of AS2 to send; see {@link AS2MessageStructure}
      * @param  ediMessageContentType      - the content type of EDI message
+     * @param  ediMessageCharset          - the charset of the EDI message.
      * @param  ediMessageTransferEncoding - the transfer encoding used to transport EDI message
      * @param  signingAlgorithm           - the algorithm used to sign the message or <code>null</code> if sending EDI
      *                                    message unsigned
@@ -195,30 +206,38 @@ public class AS2ClientManager {
      *                                    if sending EDI message unencrypted
      * @param  attachedFileName           - the name of the attached file or <code>null</code> if user doesn't want to
      *                                    specify it
+     * @param  receiptDeliveryOption      - the return URL that the message receiver should send an asynchronous MDN to
+     * @param  userName                   - the user-name that is used for basic authentication
+     * @param  password                   - the password that is used by the client for basic authentication
+     * @param  accessToken                - the access token that is used by the client for bearer authentication
      * @return                            {@link HttpCoreContext} containing request and response used to send EDI
      *                                    message
      * @throws HttpException              when things go wrong.
      */
     public HttpCoreContext send(
-            String ediMessage,
+            Object ediMessage,
             String requestUri,
             String subject,
             String from,
             String as2From,
             String as2To,
             AS2MessageStructure as2MessageStructure,
-            ContentType ediMessageContentType,
+            String ediMessageContentType,
+            String ediMessageCharset,
             String ediMessageTransferEncoding,
             AS2SignatureAlgorithm signingAlgorithm,
             Certificate[] signingCertificateChain,
             PrivateKey signingPrivateKey,
             AS2CompressionAlgorithm compressionAlgorithm,
             String dispositionNotificationTo,
-            String[] signedReceiptMicAlgorithms,
+            String signedReceiptMicAlgorithms,
             AS2EncryptionAlgorithm encryptingAlgorithm,
             Certificate[] encryptingCertificateChain,
             String attachedFileName,
-            String receiptDeliveryOption)
+            String receiptDeliveryOption,
+            String userName,
+            String password,
+            String accessToken)
             throws HttpException {
 
         ObjectHelper.notNull(ediMessage, "EDI Message");
@@ -239,6 +258,7 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.AS2_TO, as2To);
         httpContext.setAttribute(AS2ClientManager.AS2_MESSAGE_STRUCTURE, as2MessageStructure);
         httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CONTENT_TYPE, ediMessageContentType);
+        httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CHARSET, ediMessageCharset);
         httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_TRANSFER_ENCODING, ediMessageTransferEncoding);
         httpContext.setAttribute(AS2ClientManager.SIGNING_ALGORITHM, signingAlgorithm);
         httpContext.setAttribute(AS2ClientManager.SIGNING_CERTIFICATE_CHAIN, signingCertificateChain);
@@ -257,15 +277,32 @@ public class AS2ClientManager {
         // Create Message Body
         ApplicationEntity applicationEntity;
         try {
+            ContentType ct = ContentType.create(ediMessageContentType, ediMessageCharset);
+            byte[] msgBytes;
+            if (ediMessage instanceof InputStream isMsg) {
+                msgBytes = isMsg.readAllBytes();
+            } else if (ediMessage instanceof String strMsg) {
+                msgBytes = strMsg.getBytes(ct.getCharset() == null
+                        ? StandardCharsets.US_ASCII : ct.getCharset());
+            } else {
+                throw new IllegalArgumentException(
+                        "Message type not supported. Must be InputStream or String");
+            }
             applicationEntity
-                    = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, ediMessageTransferEncoding, false,
+                    = EntityUtils.createEDIEntity(msgBytes, ct, ediMessageTransferEncoding, false,
                             attachedFileName);
         } catch (Exception e) {
             throw new HttpException("Failed to create EDI message entity", e);
         }
+
+        AS2HeaderUtils.addAuthorizationHeader(request, userName, password, accessToken);
         switch (as2MessageStructure) {
             case PLAIN: {
                 plain(applicationEntity, request);
+                if (attachedFileName != null && !attachedFileName.isEmpty()) {
+                    request.setHeader(AS2Header.CONTENT_DISPOSITION,
+                            MessageFormatter.format(CONTENT_DISPOSITION_PATTERN, attachedFileName).getMessage());
+                }
                 break;
             }
             case SIGNED: {

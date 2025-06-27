@@ -101,7 +101,7 @@ public class DataLakeComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"serviceClient"};
+        return new String[]{"clientSecretCredential", "sasCredential", "serviceClient", "sharedKeyCredential"};
     }
 
     @Override

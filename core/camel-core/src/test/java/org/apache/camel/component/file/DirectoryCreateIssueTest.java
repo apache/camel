@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.nio.file.Files;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DirectoryCreateIssueTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME_PREFIX = "file" + UUID.randomUUID();
 
     private final int numFiles = 10;
 
@@ -43,7 +45,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
                 for (int i = 0; i < numFiles; i++) {
                     destinations[i] = "direct:file" + i;
 
-                    from("direct:file" + i).setHeader(Exchange.FILE_NAME, constant("file" + i + ".txt"))
+                    from("direct:file" + i).setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME_PREFIX + i + ".txt"))
                             .to(fileUri("a/b/c/d/e/f/g/h/?fileExist=Override&noop=true"), "mock:result");
                 }
 
@@ -67,7 +69,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
         // wait a little while for the files to settle down
         Awaitility.await().pollDelay(50, TimeUnit.MILLISECONDS).untilAsserted(() -> {
             for (int i = 0; i < numFiles; i++) {
-                assertTrue(Files.isRegularFile(testFile("a/b/c/d/e/f/g/h/file" + i + ".txt")));
+                assertTrue(Files.isRegularFile(testFile("a/b/c/d/e/f/g/h/" + TEST_FILE_NAME_PREFIX + i + ".txt")));
             }
         });
     }

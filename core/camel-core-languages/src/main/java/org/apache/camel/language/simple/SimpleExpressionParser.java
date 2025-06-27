@@ -206,7 +206,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         StringBuilder sb = new StringBuilder(256);
         boolean firstIsLiteral = false;
         for (SimpleNode node : nodes) {
-            String exp = node.createCode(expression);
+            String exp = node.createCode(camelContext, expression);
             if (exp != null) {
                 if (sb.isEmpty() && node instanceof LiteralNode) {
                     firstIsLiteral = true;

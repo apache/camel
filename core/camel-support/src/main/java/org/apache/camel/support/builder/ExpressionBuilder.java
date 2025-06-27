@@ -368,6 +368,23 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the size of the message headers
+     */
+    public static Expression headersSizeExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeaders().size();
+            }
+
+            @Override
+            public String toString() {
+                return "headers.size";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the {@link Exchange} variables
      *
      * @return an expression object which will return the variables
@@ -382,6 +399,23 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "variables";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for the number of {@link Exchange} variables
+     */
+    public static Expression variablesSizeExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exchange.getVariables().size();
+            }
+
+            @Override
+            public String toString() {
+                return "variables.size";
             }
         };
     }
@@ -2209,7 +2243,7 @@ public class ExpressionBuilder {
                         expression.init(context);
                         if (expression instanceof ConstantExpressionAdapter constantExpressionAdapter) {
                             Object value = constantExpressionAdapter.getValue();
-                            preprocessedExpression.add(value.toString());
+                            preprocessedExpression.add(String.valueOf(value));
                         } else {
                             preprocessedExpression.add(expression);
                             constantsOnly = false;
@@ -2445,6 +2479,29 @@ public class ExpressionBuilder {
         };
     }
 
+    public static Expression beanExpression(final Class<?> bean, final String method) {
+        return new ExpressionAdapter() {
+            private Language language;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Expression exp = language.createExpression(null, new Object[] { null, null, method, bean });
+                exp.init(exchange.getContext());
+                return exp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                this.language = context.resolveLanguage("bean");
+            }
+
+            public String toString() {
+                return "bean(" + bean + ", " + method + ")";
+            }
+        };
+    }
+
     public static Expression propertiesComponentExpression(final String key, final String defaultValue) {
         return new ExpressionAdapter() {
             private Expression exp;
@@ -2563,6 +2620,21 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "xtokenize(" + path + ")";
+            }
+        };
+    }
+
+    public static Expression customExpression(final Expression expression, final Function<Object, Object> function) {
+        return new ExpressionAdapter() {
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object input = expression.evaluate(exchange, Object.class);
+                return function.apply(input);
+            }
+
+            public String toString() {
+                return "custom(" + expression + ")";
             }
         };
     }

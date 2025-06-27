@@ -39,6 +39,7 @@ public class RestServiceDetails {
     private String bindingMode;
     private String skipBindingOnErrorCode;
     private String clientRequestValidation;
+    private String clientResponseValidation;
     private String enableCORS;
     private String apiDocs;
     private String description;
@@ -146,6 +147,14 @@ public class RestServiceDetails {
 
     public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
+    }
+
+    public String getClientResponseValidation() {
+        return clientResponseValidation;
+    }
+
+    public void setClientResponseValidation(String clientResponseValidation) {
+        this.clientResponseValidation = clientResponseValidation;
     }
 
     public String getEnableCORS() {

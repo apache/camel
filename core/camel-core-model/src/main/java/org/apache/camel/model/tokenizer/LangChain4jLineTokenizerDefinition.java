@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.model.tokenizer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -24,6 +23,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
+/**
+ * Camel AI: Tokenizer for splitting line by line.
+ */
 @Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer with line splitter")
 @XmlRootElement(name = "langChain4jLineTokenizer")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,9 +53,7 @@ public class LangChain4jLineTokenizerDefinition extends LangChain4jTokenizerDefi
         @Override
         public LangChain4jLineTokenizerDefinition end() {
             LangChain4jLineTokenizerDefinition definition = new LangChain4jLineTokenizerDefinition();
-
             setup(definition);
-
             return definition;
         }
     }

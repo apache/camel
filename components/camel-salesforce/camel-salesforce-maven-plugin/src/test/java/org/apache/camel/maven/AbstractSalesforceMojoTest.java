@@ -71,6 +71,36 @@ public abstract class AbstractSalesforceMojoTest {
         mojo.execute();
     }
 
+    @Test
+    public void shouldLoginWithJwtAndProvideRestClient() throws IOException, MojoExecutionException, MojoFailureException {
+        final AbstractSalesforceMojo mojo = new AbstractSalesforceMojo() {
+            final Logger logger = LoggerFactory.getLogger(AbstractSalesforceExecution.class.getName());
+
+            @Override
+            protected AbstractSalesforceExecution getSalesforceExecution() {
+                return new AbstractSalesforceExecution() {
+                    @Override
+                    protected void executeWithClient() {
+                        assertThat(getRestClient()).isNotNull();
+
+                        getRestClient().getGlobalObjects(NO_HEADERS, (response, headers, exception) -> {
+                            assertThat(exception).isNull();
+                        });
+                    }
+
+                    @Override
+                    protected Logger getLog() {
+                        return logger;
+                    }
+                };
+            }
+        };
+
+        setupJwt(mojo);
+
+        mojo.execute();
+    }
+
     static void setup(final AbstractSalesforceMojo mojo) throws IOException {
         // load test-salesforce-login properties
         try (final InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES)) {
@@ -87,6 +117,30 @@ public abstract class AbstractSalesforceMojoTest {
                     = new FileNotFoundException(
                             "Create a properties file named " + TEST_LOGIN_PROPERTIES
                                                 + " with clientId, clientSecret, userName, password"
+                                                + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
+            exception.initCause(e);
+
+            throw exception;
+        }
+    }
+
+    static void setupJwt(final AbstractSalesforceMojo mojo) throws IOException {
+        // load test-salesforce-login properties
+        try (final InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES)) {
+            final Properties properties = new Properties();
+            properties.load(stream);
+            mojo.clientId = properties.getProperty("salesforce.client.id");
+            mojo.userName = properties.getProperty("salesforce.username");
+            mojo.loginUrl = properties.getProperty("salesforce.login.url");
+            mojo.keystoreResource = properties.getProperty("salesforce.keystore.resource");
+            mojo.keystorePassword = properties.getProperty("salesforce.keystore.password");
+            mojo.keystoreType = properties.getProperty("salesforce.keystore.type");
+            mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;
+        } catch (final FileNotFoundException e) {
+            final FileNotFoundException exception
+                    = new FileNotFoundException(
+                            "Create a properties file named " + TEST_LOGIN_PROPERTIES
+                                                + " with clientId, userName, keyStoreResource, keyStorePassword, keyStoreType"
                                                 + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
             exception.initCause(e);
 

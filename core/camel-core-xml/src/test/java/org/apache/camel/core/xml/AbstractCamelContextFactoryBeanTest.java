@@ -29,7 +29,6 @@ import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -38,6 +37,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 

@@ -186,6 +186,10 @@ public class TraitContext {
                 .collect(Collectors.toList());
     }
 
+    public void addLabel(String name, String value) {
+        this.labels.put(name, value);
+    }
+
     public void addLabels(Map<String, String> labels) {
         this.labels.putAll(labels);
     }
@@ -202,10 +206,10 @@ public class TraitContext {
         return annotations;
     }
 
-    public CamelCatalog getCatalog() {
+    public CamelCatalog getCatalog(boolean download) {
         if (catalog == null) {
             try {
-                catalog = CatalogHelper.loadCatalog(RuntimeType.quarkus, RuntimeType.QUARKUS_VERSION);
+                catalog = CatalogHelper.loadCatalog(RuntimeType.quarkus, RuntimeType.QUARKUS_VERSION, download);
             } catch (Exception e) {
                 throw new RuntimeCamelException("Failed to create default Quarkus Camel catalog", e);
             }

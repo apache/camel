@@ -20,6 +20,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class InfinispanRemoteAggregationRepositoryIT extends InfinispanRemoteTestSupport {
     public static final int COMPLETION_SIZE = 4;
     public static final String CORRELATOR_HEADER = "CORRELATOR_HEADER";
@@ -53,6 +55,8 @@ public class InfinispanRemoteAggregationRepositoryIT extends InfinispanRemoteTes
                         .to("mock:result");
             }
         });
+
+        assertNotNull(repo.getCamelContext());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

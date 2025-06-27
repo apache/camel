@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -154,6 +155,9 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
         if (value != null) {
             T ret = fastConvertTo(type, exchange, value);
+            if (ret == Void.class) {
+                return null;
+            }
             if (ret != null) {
                 return ret;
             }
@@ -161,7 +165,11 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
         }
 
-        return (T) doConvertToAndStat(type, exchange, value, false);
+        Object answer = doConvertToAndStat(type, exchange, value, false);
+        if (answer == Void.class) {
+            answer = null;
+        }
+        return (T) answer;
     }
 
     private static Boolean customParseBoolean(String str) {
@@ -191,6 +199,9 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         }
 
         Object answer = doConvertToAndStat(type, exchange, value, false);
+        if (answer == Void.class) {
+            return null;
+        }
         if (answer == null) {
             // Could not find suitable conversion
             throw new NoTypeConversionAvailableException(value, type);
@@ -249,7 +260,11 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
         }
 
-        return (T) doConvertToAndStat(type, exchange, value, true);
+        Object answer = doConvertToAndStat(type, exchange, value, true);
+        if (answer == Void.class) {
+            return null;
+        }
+        return (T) answer;
     }
 
     private static <T> void requireNonNullBoolean(Class<T> type, Object value, Object answer) {
@@ -290,7 +305,6 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             if (!tryConvert) {
                 statistics.incrementHit();
             }
-
             return answer;
         }
     }
@@ -550,6 +564,18 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
     public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
         return doLookup(toType, fromType);
+    }
+
+    @Override
+    public Map<Class<?>, TypeConverter> lookup(Class<?> toType) {
+        Map<Class<?>, TypeConverter> answer = new LinkedHashMap<>();
+        for (var e : converters.entrySet()) {
+            Class<?> target = e.getKey().getTo();
+            if (target == toType) {
+                answer.put(e.getKey().getFrom(), e.getValue());
+            }
+        }
+        return answer;
     }
 
     @Deprecated(since = "4.0.0")

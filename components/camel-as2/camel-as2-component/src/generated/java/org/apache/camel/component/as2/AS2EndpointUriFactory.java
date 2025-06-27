@@ -23,7 +23,8 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(45);
+        Set<String> props = new HashSet<>(52);
+        props.add("accessToken");
         props.add("apiName");
         props.add("as2From");
         props.add("as2MessageStructure");
@@ -36,6 +37,7 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("decryptingPrivateKey");
         props.add("dispositionNotificationTo");
         props.add("ediMessage");
+        props.add("ediMessageCharset");
         props.add("ediMessageContentType");
         props.add("ediMessageTransferEncoding");
         props.add("ediMessageType");
@@ -51,8 +53,12 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("httpSocketTimeout");
         props.add("inBody");
         props.add("lazyStartProducer");
+        props.add("mdnAccessToken");
         props.add("mdnMessageTemplate");
+        props.add("mdnPassword");
+        props.add("mdnUserName");
         props.add("methodName");
+        props.add("password");
         props.add("receiptDeliveryOption");
         props.add("requestUri");
         props.add("requestUriPattern");
@@ -68,9 +74,17 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("targetHostname");
         props.add("targetPortNumber");
         props.add("userAgent");
+        props.add("userName");
         props.add("validateSigningCertificateChain");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(6);
+        secretProps.add("accessToken");
+        secretProps.add("mdnAccessToken");
+        secretProps.add("mdnPassword");
+        secretProps.add("mdnUserName");
+        secretProps.add("password");
+        secretProps.add("userName");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 

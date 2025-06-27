@@ -20,6 +20,7 @@ public enum PineconeVectorDbAction {
     CREATE_COLLECTION,
     CREATE_SERVERLESS_INDEX,
     CREATE_POD_INDEX,
+    FETCH,
     UPSERT,
     DELETE_INDEX,
     DELETE_COLLECTION,

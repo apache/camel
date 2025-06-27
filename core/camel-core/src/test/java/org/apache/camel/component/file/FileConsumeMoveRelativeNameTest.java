@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.junit.jupiter.api.Test;
  * Unit test for consuming multiple directories.
  */
 public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME_PREFIX = UUID.randomUUID().toString();
 
     public static final String FILE_QUERY = "?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old";
 
@@ -34,13 +37,14 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
 
-        mock.expectedFileExists(testFile(".done/bye.txt.old"));
-        mock.expectedFileExists(testFile(".done/sub/hello.txt.old"));
-        mock.expectedFileExists(testFile(".done/sub/sub2/goodday.txt.old"));
+        mock.expectedFileExists(testFile(".done/" + TEST_FILE_NAME_PREFIX + "bye.txt.old"));
+        mock.expectedFileExists(testFile(".done/" + TEST_FILE_NAME_PREFIX + "sub/hello.txt.old"));
+        mock.expectedFileExists(testFile(".done/" + TEST_FILE_NAME_PREFIX + "sub/sub2/goodday.txt.old"));
         String fileUrl = fileUri(FILE_QUERY);
-        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
+        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "bye.txt");
+        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "sub/hello.txt");
+        template.sendBodyAndHeader(fileUrl, "Goodday World", Exchange.FILE_NAME,
+                TEST_FILE_NAME_PREFIX + "sub/sub2/goodday.txt");
 
         context.getRouteController().startRoute("foo");
 

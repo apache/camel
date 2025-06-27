@@ -183,7 +183,8 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
             try {
                 returnValue = getSecretFromSource(key, subkey, defaultValue, version);
             } catch (JsonProcessingException e) {
-                throw new RuntimeCamelException("Something went wrong while recovering " + key + " from vault");
+                throw new RuntimeCamelException(
+                        "Error getting secret from vault using key: " + key + " due to: " + e.getMessage(), e);
             }
         }
 

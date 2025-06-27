@@ -19,6 +19,7 @@ package org.apache.camel.component.google.pubsub;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import com.google.api.gax.retrying.RetrySettings;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -48,61 +49,51 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
     @UriPath(label = "common", description = "The Google Cloud PubSub Project Id")
     @Metadata(required = true)
     private String projectId;
-
     @UriPath(label = "common",
              description = "The Destination Name. For the consumer this will be the subscription name, while for the producer this will be the topic name.")
     @Metadata(required = true)
     private String destinationName;
-
-    @UriParam(label = "common", name = "authenticate",
+    @UriParam(label = "security",
               description = "Use Credentials when interacting with PubSub service (no authentication is required when using emulator).",
               defaultValue = "true")
     private boolean authenticate = true;
-
-    @UriParam(label = "common",
+    @UriParam(label = "security",
               description = "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
-
-    @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
+    @Deprecated
+    @UriParam(label = "advanced", description = "To use a custom logger name")
     private String loggerId;
-
-    @UriParam(label = "consumer", name = "concurrentConsumers",
+    @UriParam(label = "consumer,advanced", name = "concurrentConsumers",
               description = "The number of parallel streams consuming from the subscription",
               defaultValue = "1")
     private Integer concurrentConsumers = 1;
-
-    @UriParam(label = "consumer", name = "maxMessagesPerPoll",
+    @UriParam(label = "consumer,advanced", name = "maxMessagesPerPoll",
               description = "The max number of messages to receive from the server in a single API call", defaultValue = "1")
     private Integer maxMessagesPerPoll = 1;
-
-    @UriParam(label = "consumer", name = "synchronousPull", description = "Synchronously pull batches of messages",
+    @UriParam(label = "consumer,advanced", name = "synchronousPull", description = "Synchronously pull batches of messages",
               defaultValue = "false")
     private boolean synchronousPull;
-
     @UriParam(label = "consumer", defaultValue = "AUTO", enums = "AUTO,NONE",
               description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubConstants.AckMode ackMode = GooglePubsubConstants.AckMode.AUTO;
-
-    @UriParam(label = "consumer", name = "maxAckExtensionPeriod",
+    @UriParam(label = "consumer,advanced", name = "maxAckExtensionPeriod",
               description = "Set the maximum period a message ack deadline will be extended. Value in seconds",
               defaultValue = "3600")
     private int maxAckExtensionPeriod = 3600;
-
-    @UriParam(defaultValue = "false",
-              description = "Should message ordering be enabled",
-              label = "producer,advanced")
+    @UriParam(label = "producer,advanced",
+              description = "Should message ordering be enabled")
     private boolean messageOrderingEnabled;
-
-    @UriParam(description = "Pub/Sub endpoint to use. Required when using message ordering, and ensures that messages are received in order even when multiple publishers are used",
-              label = "producer,advanced")
+    @UriParam(label = "producer,advanced",
+              description = "Pub/Sub endpoint to use. Required when using message ordering, and ensures that messages are received in order even when multiple publishers are used")
     private String pubsubEndpoint;
-
-    @UriParam(name = "serializer",
-              description = "A custom GooglePubsubSerializer to use for serializing message payloads in the producer",
-              label = "producer,advanced")
+    @UriParam(label = "producer,advanced",
+              description = "A custom GooglePubsubSerializer to use for serializing message payloads in the producer")
     @Metadata(autowired = true)
     private GooglePubsubSerializer serializer;
+    @UriParam(label = "producer,advanced",
+              description = "A custom RetrySettings to control how the publisher handles retry-able failures")
+    private RetrySettings retry;
 
     public GooglePubsubEndpoint(String uri, Component component) {
         super(uri, component);
@@ -250,6 +241,14 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
 
     public void setMessageOrderingEnabled(boolean messageOrderingEnabled) {
         this.messageOrderingEnabled = messageOrderingEnabled;
+    }
+
+    public RetrySettings getRetry() {
+        return retry;
+    }
+
+    public void setRetry(RetrySettings retry) {
+        this.retry = retry;
     }
 
     public String getPubsubEndpoint() {
