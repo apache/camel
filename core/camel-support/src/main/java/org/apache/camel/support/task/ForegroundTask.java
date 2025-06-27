@@ -18,6 +18,7 @@ package org.apache.camel.support.task;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -73,6 +74,7 @@ public class ForegroundTask implements BlockingTask {
     private final String name;
     private final IterationBudget budget;
     private Duration elapsed = Duration.ZERO;
+    private final AtomicBoolean running = new AtomicBoolean();
 
     ForegroundTask(IterationBudget budget, String name) {
         this.budget = budget;
@@ -81,6 +83,7 @@ public class ForegroundTask implements BlockingTask {
 
     @Override
     public boolean run(BooleanSupplier supplier) {
+        running.set(true);
         boolean completed = false;
 
         try {
@@ -93,7 +96,6 @@ public class ForegroundTask implements BlockingTask {
                     LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
                             name, budget.iteration());
                     completed = true;
-
                     break;
                 }
 
@@ -106,6 +108,7 @@ public class ForegroundTask implements BlockingTask {
             Thread.currentThread().interrupt();
         } finally {
             elapsed = budget.elapsed();
+            running.set(false);
         }
 
         return completed;
@@ -120,6 +123,7 @@ public class ForegroundTask implements BlockingTask {
      * @return           An optional with the result
      */
     public <T> Optional<T> run(Supplier<T> supplier, Predicate<T> predicate) {
+        running.set(true);
         try {
             if (budget.initialDelay() > 0) {
                 Thread.sleep(budget.initialDelay());
@@ -142,9 +146,15 @@ public class ForegroundTask implements BlockingTask {
             Thread.currentThread().interrupt();
         } finally {
             elapsed = budget.elapsed();
+            running.set(false);
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running.get();
     }
 
     @Override

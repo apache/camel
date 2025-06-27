@@ -77,6 +77,7 @@ public class BackgroundTask implements BlockingTask {
     private final String name;
     private final CountDownLatch latch = new CountDownLatch(1);
     private Duration elapsed = Duration.ZERO;
+    private final AtomicBoolean running = new AtomicBoolean();
     private final AtomicBoolean completed = new AtomicBoolean();
 
     BackgroundTask(TimeBudget budget, ScheduledExecutorService service, String name) {
@@ -107,6 +108,7 @@ public class BackgroundTask implements BlockingTask {
 
     @Override
     public boolean run(BooleanSupplier supplier) {
+        running.set(true);
         Future<?> task = service.scheduleAtFixedRate(() -> runTaskWrapper(supplier), budget.initialDelay(),
                 budget.interval(), TimeUnit.MILLISECONDS);
         waitForTaskCompletion(task);
@@ -133,7 +135,13 @@ public class BackgroundTask implements BlockingTask {
             Thread.currentThread().interrupt();
         } finally {
             elapsed = budget.elapsed();
+            running.set(false);
         }
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running.get();
     }
 
     @Override

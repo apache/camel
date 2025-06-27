@@ -49,4 +49,11 @@ public interface BlockingTask extends Task {
      *                  task was interrupted.
      */
     boolean run(BooleanSupplier supplier);
+
+    /**
+     * Whether the task has been submitted for running (the state of the task can be waiting for next run etc).
+     *
+     * @return true if the run method has been called.
+     */
+    boolean isRunning();
 }
