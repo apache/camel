@@ -90,11 +90,15 @@ public class MasterComponentTest {
             // Start the context after some random time so the startup order
             // changes for each test.
             Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
-                    .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
+                    .untilAsserted(() -> Assertions.assertDoesNotThrow(() -> {
+                        LOGGER.info("Starting node {}", id);
+                        context.start();
+                    }));
 
+            LOGGER.info("Waiting for {} events on node {}", events, id);
             contextLatch.await();
 
-            LOGGER.debug("Shutting down node {}", id);
+            LOGGER.info("Shutting down node {}", id);
             RESULTS.add(id);
 
             context.stop();
