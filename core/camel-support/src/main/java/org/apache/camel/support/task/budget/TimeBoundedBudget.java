@@ -30,6 +30,7 @@ public class TimeBoundedBudget implements TimeBudget {
     private final long interval;
     private final long maxDuration;
     private final Instant startTime;
+    private int iterations;
 
     TimeBoundedBudget(long initialDelay, long interval, long maxDuration) {
         this.initialDelay = initialDelay;
@@ -70,7 +71,13 @@ public class TimeBoundedBudget implements TimeBudget {
 
     @Override
     public boolean next() {
+        iterations++;
         return true;
+    }
+
+    @Override
+    public int iteration() {
+        return iterations;
     }
 
     @Override

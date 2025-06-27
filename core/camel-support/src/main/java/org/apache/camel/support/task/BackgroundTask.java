@@ -140,4 +140,9 @@ public class BackgroundTask implements BlockingTask {
     public Duration elapsed() {
         return elapsed;
     }
+
+    @Override
+    public int iteration() {
+        return budget.iteration();
+    }
 }

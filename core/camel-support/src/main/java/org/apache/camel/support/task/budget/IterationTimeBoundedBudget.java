@@ -53,7 +53,7 @@ public class IterationTimeBoundedBudget implements IterationBudget, TimeBudget {
 
     @Override
     public int iteration() {
-        return iterationBudget.maxIterations();
+        return iterationBudget.iteration();
     }
 
     @Override

@@ -28,10 +28,4 @@ public interface IterationBudget extends Budget {
      */
     int maxIterations();
 
-    /**
-     * The current number of iterations
-     *
-     * @return the current number of iterations
-     */
-    int iteration();
 }
