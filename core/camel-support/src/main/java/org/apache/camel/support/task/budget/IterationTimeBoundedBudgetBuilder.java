@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task.budget;
 
 import java.time.Duration;
@@ -24,6 +23,7 @@ import java.time.Duration;
  * on a per-case basis. By default, execute the iterations for up to Integer.MAX_VALUE and a duration of 5 seconds.
  */
 public class IterationTimeBoundedBudgetBuilder implements BudgetBuilder<IterationTimeBoundedBudget> {
+
     private static final long DEFAULT_MAX_DURATION = 5000;
     private static final int DEFAULT_MAX_ITERATIONS = Integer.MAX_VALUE;
     private static final long DEFAULT_INITIAL_DELAY = 0;
@@ -38,7 +38,6 @@ public class IterationTimeBoundedBudgetBuilder implements BudgetBuilder<Iteratio
         if (duration != null) {
             this.initialDelay = duration.toMillis();
         }
-
         return this;
     }
 
@@ -46,7 +45,6 @@ public class IterationTimeBoundedBudgetBuilder implements BudgetBuilder<Iteratio
         if (duration != null) {
             this.interval = duration.toMillis();
         }
-
         return this;
     }
 
@@ -54,7 +52,6 @@ public class IterationTimeBoundedBudgetBuilder implements BudgetBuilder<Iteratio
         if (maxIterations > 0) {
             this.maxIterations = maxIterations;
         }
-
         return this;
     }
 
@@ -62,13 +59,11 @@ public class IterationTimeBoundedBudgetBuilder implements BudgetBuilder<Iteratio
         if (duration != null) {
             this.maxDuration = duration.toMillis();
         }
-
         return this;
     }
 
     public IterationTimeBoundedBudgetBuilder withUnlimitedDuration() {
         this.maxDuration = TimeBoundedBudget.UNLIMITED_DURATION;
-
         return this;
     }
 

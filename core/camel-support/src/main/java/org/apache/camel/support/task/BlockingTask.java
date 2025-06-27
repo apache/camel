@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task;
 
 import java.util.function.BooleanSupplier;
@@ -24,6 +23,7 @@ import java.util.function.Predicate;
  * Defines a task that blocks the code execution when ran. The task under execution must be thread-safe.
  */
 public interface BlockingTask extends Task {
+
     /**
      * Run the task
      *

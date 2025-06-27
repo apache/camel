@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task.budget;
 
 /**
@@ -23,6 +22,7 @@ package org.apache.camel.support.task.budget;
  * @param <T>
  */
 public interface BudgetBuilder<T extends Budget> {
+
     /**
      * Build the budget
      *

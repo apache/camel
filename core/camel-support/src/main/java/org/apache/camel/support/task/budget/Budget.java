@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task.budget;
 
 import java.time.Duration;
@@ -23,6 +22,7 @@ import java.time.Duration;
  * A budget defines how much a task can execute
  */
 public interface Budget {
+
     /**
      * Defines an initial delay before running the task
      *

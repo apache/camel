@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task;
 
 import java.time.Duration;
@@ -36,6 +35,7 @@ public class ForegroundTask implements BlockingTask {
      * A builder helper for building new foreground tasks
      */
     public static class ForegroundTaskBuilder extends AbstractTaskBuilder<ForegroundTask> {
+
         private String name;
         private IterationBudget budget;
 
@@ -48,7 +48,6 @@ public class ForegroundTask implements BlockingTask {
         @Override
         public ForegroundTaskBuilder withName(String name) {
             this.name = name;
-
             return this;
         }
 
@@ -60,7 +59,6 @@ public class ForegroundTask implements BlockingTask {
          */
         public ForegroundTaskBuilder withBudget(IterationBudget budget) {
             this.budget = budget;
-
             return this;
         }
 

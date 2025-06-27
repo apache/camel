@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.support.task.budget;
 
 import java.time.Duration;
@@ -28,6 +27,7 @@ import java.time.Duration;
  * @see TimeBoundedBudget
  */
 public class IterationTimeBoundedBudget implements IterationBudget, TimeBudget {
+
     private final IterationBudget iterationBudget;
     private final TimeBoundedBudget timeBoundedBudget;
 
@@ -61,7 +61,6 @@ public class IterationTimeBoundedBudget implements IterationBudget, TimeBudget {
         if (canContinue()) {
             return iterationBudget.next();
         }
-
         return false;
     }
 
@@ -71,7 +70,6 @@ public class IterationTimeBoundedBudget implements IterationBudget, TimeBudget {
         if (!iterationBudget.canContinue()) {
             return false;
         }
-
         // Otherwise, can continue to schedule/run the task
         return timeBoundedBudget.canContinue();
     }
