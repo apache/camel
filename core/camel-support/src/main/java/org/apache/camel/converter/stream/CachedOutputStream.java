@@ -167,6 +167,7 @@ public class CachedOutputStream extends OutputStream {
         }
     }
 
+    
     public int getStrategyBufferSize() {
         return strategy.getBufferSize();
     }
