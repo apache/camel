@@ -160,13 +160,12 @@ public class CachedOutputStream extends OutputStream {
         try {
             // creates a tmp file and a file output stream
             currentStream = tempFileManager.createOutputStream(strategy);
-            IOHelper.copy(bout.newInputStreamCache(), currentStream);
+            IOHelper.copy(bout.newInputStreamCache(), currentStream, strategy.getBufferSize());
         } finally {
             // ensure flag is flipped to file based
             inMemory = false;
         }
     }
-
     
     public int getStrategyBufferSize() {
         return strategy.getBufferSize();
