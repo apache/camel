@@ -156,11 +156,11 @@ public class CachedOutputStream extends OutputStream {
 
     private void pageToFileStream() throws IOException {
         flush();
-        ByteArrayOutputStream bout = (ByteArrayOutputStream) currentStream;
+        CachedByteArrayOutputStream bout = (CachedByteArrayOutputStream) currentStream;
         try {
             // creates a tmp file and a file output stream
             currentStream = tempFileManager.createOutputStream(strategy);
-            bout.writeTo(currentStream);
+            IOHelper.copy(bout.newInputStreamCache(), currentStream);
         } finally {
             // ensure flag is flipped to file based
             inMemory = false;
