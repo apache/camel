@@ -4,6 +4,15 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
+== Upgrading from 4.10.5 to 4.10.7
+
+=== camel-file / camel-ftp / camel-smb / camel-azure-files
+
+The consumers (`camel-ftp`, `camel-smb`, and `camel-azure-files`) will now in case of failure to create starting directory,
+on startup, keep attempting to create the directory on polling, until its successfully created.
+Previously in case of error creating the starting directory then this could cause the consumer to not be able to recover,
+and you would have to restart the route to attempt again.
+
 == Upgrading from 4.10.4 to 4.10.5
 
 === camel-core
