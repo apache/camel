@@ -216,7 +216,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     protected void scheduleConnectionRecovery() {
         if (scheduler == null) {
             this.scheduler = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "SimpleMessageListenerContainer");
+                    "SjmsConnectionRecovery");
         }
 
         // we need to recover using a background task

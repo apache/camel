@@ -126,14 +126,14 @@ public interface MasterComponentBuilderFactory {
          * max attempts reached. This option is the maximum number of attempts
          * to try.
          * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param backOffMaxAttempts the value to set
          * @return the dsl builder
          */
-        default MasterComponentBuilder backOffMaxAttempts(long backOffMaxAttempts) {
+        default MasterComponentBuilder backOffMaxAttempts(int backOffMaxAttempts) {
             doSetProperty("backOffMaxAttempts", backOffMaxAttempts);
             return this;
         }
@@ -189,7 +189,7 @@ public interface MasterComponentBuilderFactory {
             case "bridgeErrorHandler": ((MasterComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "autowiredEnabled": ((MasterComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "backOffDelay": ((MasterComponent) component).setBackOffDelay((long) value); return true;
-            case "backOffMaxAttempts": ((MasterComponent) component).setBackOffMaxAttempts((long) value); return true;
+            case "backOffMaxAttempts": ((MasterComponent) component).setBackOffMaxAttempts((int) value); return true;
             case "service": ((MasterComponent) component).setService((org.apache.camel.cluster.CamelClusterService) value); return true;
             case "serviceSelector": ((MasterComponent) component).setServiceSelector((org.apache.camel.cluster.CamelClusterService.Selector) value); return true;
             default: return false;
