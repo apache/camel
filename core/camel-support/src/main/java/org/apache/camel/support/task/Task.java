@@ -30,4 +30,12 @@ public interface Task {
      * @return The duration to execute the task
      */
     Duration elapsed();
+
+    /**
+     * The current number of iterations (such as when the task is being repeated)
+     *
+     * @return the current number of iterations
+     */
+    int iteration();
+
 }

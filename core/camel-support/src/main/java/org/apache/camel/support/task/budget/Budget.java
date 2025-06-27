@@ -52,6 +52,13 @@ public interface Budget {
     boolean next();
 
     /**
+     * The current number of iterations
+     *
+     * @return the current number of iterations
+     */
+    int iteration();
+
+    /**
      * The amount of time that has elapsed since the budget was created. This can be used to account for the amount of
      * time it took to run a task. The precision should be withing a few microseconds/milliseconds due to the start time
      * being created along with the budget instance. We do so to avoid the overhead of checking it the next or
