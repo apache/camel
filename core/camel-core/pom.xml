@@ -317,6 +317,7 @@
                                 <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
                                 <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
                             </environmentVariables>
+                            <argLine>-XX:MaxDirectMemorySize=512k</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
