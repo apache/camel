@@ -916,7 +916,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String values = StringHelper.beforeLast(remainder, ")");
             String[] tokens = null;
             if (ObjectHelper.isNotEmpty(values)) {
-                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
             }
             return SimpleExpressionBuilder.listExpression(tokens);
         }
@@ -926,7 +926,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String values = StringHelper.beforeLast(remainder, ")");
             String[] tokens = null;
             if (ObjectHelper.isNotEmpty(values)) {
-                tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
             }
             // there must be an even number of tokens as each map element is a pair
             if (tokens != null && tokens.length % 2 == 1) {
@@ -1969,7 +1969,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             StringJoiner sj = new StringJoiner(", ");
             for (int i = 0; tokens != null && i < tokens.length; i++) {
-                sj.add(tokens[i]);
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
             }
             String p = sj.length() > 0 ? sj.toString() : "null";
             return "list(exchange, " + p + ")";
@@ -1985,7 +1991,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             StringJoiner sj = new StringJoiner(", ");
             for (int i = 0; tokens != null && i < tokens.length; i++) {
-                sj.add(tokens[i]);
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
             }
             String p = sj.length() > 0 ? sj.toString() : "null";
             return "map(exchange, " + p + ")";
