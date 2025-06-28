@@ -106,6 +106,19 @@ public class BackgroundTask implements BlockingTask {
         }
     }
 
+    /**
+     * Schedules the task to be run
+     *
+     * @param  supplier the task as a boolean supplier. The result is used to check if the task has completed or not.
+     *                  The supplier must return true if the execution has completed or false otherwise.
+     * @return          a future for the task
+     */
+    public Future<?> schedule(BooleanSupplier supplier) {
+        running.set(true);
+        return service.scheduleAtFixedRate(() -> runTaskWrapper(supplier), budget.initialDelay(),
+                budget.interval(), TimeUnit.MILLISECONDS);
+    }
+
     @Override
     public boolean run(BooleanSupplier supplier) {
         running.set(true);

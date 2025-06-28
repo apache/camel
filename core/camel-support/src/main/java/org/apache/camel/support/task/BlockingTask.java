@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.task;
 
+import java.util.concurrent.Future;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 

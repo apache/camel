@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -35,11 +37,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.sjms.SessionMessageListener;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
-import org.apache.camel.support.PluginHelper;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.backoff.BackOff;
-import org.apache.camel.util.backoff.BackOffTimer;
+import org.apache.camel.support.task.BackgroundTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,9 +65,9 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     private final Lock consumerLock = new ReentrantLock();
     private Set<MessageConsumer> consumers;
     private Set<Session> sessions;
-    private BackOffTimer.Task recoverTask;
-    private BackOffTimer timer;
-    private ScheduledExecutorService scheduler;
+    private ScheduledExecutorService recoverPool;
+    private BackgroundTask recoverTask;
+    private Future<?> recoverFuture;
 
     public SimpleMessageListenerContainer(SjmsEndpoint endpoint) {
         this.endpoint = endpoint;
@@ -196,17 +197,17 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         scheduleConnectionRecovery();
     }
 
-    protected boolean recoverConnection(BackOffTimer.Task task) throws Exception {
-        LOG.debug("Recovering from JMS Connection exception (attempt: {})", task.getCurrentAttempts());
+    protected boolean recoverConnection(BackgroundTask task) {
+        LOG.debug("Recovering from JMS Connection exception (attempt: {})", task.iteration());
         try {
             refreshConnection();
             initConsumers();
-            LOG.debug("Successfully recovered JMS Connection (attempt: {})", task.getCurrentAttempts());
+            LOG.debug("Successfully recovered JMS Connection (attempt: {})", task.iteration());
             // success so do not try again
             return false;
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to recover JMS Connection. Will try again in {} millis", task.getCurrentDelay(), e);
+                LOG.debug("Failed to recover JMS Connection. Will try again in {} millis", endpoint.getRecoveryInterval(), e);
             }
             // try again
             return true;
@@ -214,22 +215,31 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     }
 
     protected void scheduleConnectionRecovery() {
-        if (scheduler == null) {
-            this.scheduler = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "SjmsConnectionRecovery");
-        }
-
-        // we need to recover using a background task
-        if (recoverTask == null || recoverTask.getStatus() != BackOffTimer.Task.Status.Active) {
-            BackOff backOff = BackOff.builder().delay(endpoint.getRecoveryInterval()).build();
-            if (timer == null) {
-                timer = PluginHelper.getBackOffTimerFactory(endpoint.getCamelContext().getCamelContextExtension())
-                        .newBackOffTimer("SjmsConnectionRecovery",
-                                scheduler);
-                ServiceHelper.startService(timer);
+        connectionLock.lock();
+        try {
+            if (recoverPool == null) {
+                recoverPool = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                        "SjmsConnectionRecovery");
             }
-            recoverTask = timer.schedule(backOff, this::recoverConnection);
+            if (recoverTask == null) {
+                recoverTask = createTask();
+                recoverFuture = recoverTask.schedule(() -> recoverConnection(recoverTask));
+            }
+        } finally {
+            connectionLock.unlock();
         }
+    }
+
+    private BackgroundTask createTask() {
+        return Tasks.backgroundTask()
+                .withScheduledExecutor(recoverPool)
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withInterval(Duration.ofMillis(endpoint.getRecoveryInterval()))
+                        .withInitialDelay(Duration.ofSeconds(1))
+                        .withUnlimitedDuration()
+                        .build())
+                .withName("SjmsConnectionRecovery")
+                .build();
     }
 
     @Override
@@ -242,17 +252,17 @@ public class SimpleMessageListenerContainer extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
-        if (recoverTask != null) {
-            recoverTask.cancel();
-        }
         stopConnection();
         stopConsumers();
-        if (scheduler != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(scheduler);
-            scheduler = null;
+        if (recoverPool != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(recoverPool);
+            recoverPool = null;
         }
-        ServiceHelper.stopService(timer);
-        timer = null;
+        if (recoverFuture != null && recoverTask != null && recoverTask.isRunning()) {
+            recoverFuture.cancel(true);
+            recoverTask = null;
+            recoverFuture = null;
+        }
     }
 
     @Override

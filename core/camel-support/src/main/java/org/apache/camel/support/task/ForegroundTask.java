@@ -18,6 +18,7 @@ package org.apache.camel.support.task;
 
 import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
