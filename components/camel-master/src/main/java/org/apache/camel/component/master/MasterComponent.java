@@ -17,7 +17,6 @@
 package org.apache.camel.component.master;
 
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -46,9 +45,7 @@ public class MasterComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private long backOffDelay = 5000;
     @Metadata(label = "advanced")
-    private long backOffMaxAttempts = 10;
-
-    private ScheduledExecutorService backOffThreadPool;
+    private int backOffMaxAttempts = 10;
 
     public MasterComponent() {
         this(null);
@@ -111,10 +108,6 @@ public class MasterComponent extends DefaultComponent {
         this.serviceSelector = serviceSelector;
     }
 
-    public ScheduledExecutorService getBackOffThreadPool() {
-        return backOffThreadPool;
-    }
-
     public long getBackOffDelay() {
         return backOffDelay;
     }
@@ -129,7 +122,7 @@ public class MasterComponent extends DefaultComponent {
         this.backOffDelay = backOffDelay;
     }
 
-    public long getBackOffMaxAttempts() {
+    public int getBackOffMaxAttempts() {
         return backOffMaxAttempts;
     }
 
@@ -139,7 +132,7 @@ public class MasterComponent extends DefaultComponent {
      *
      * This option is the maximum number of attempts to try.
      */
-    public void setBackOffMaxAttempts(long backOffMaxAttempts) {
+    public void setBackOffMaxAttempts(int backOffMaxAttempts) {
         this.backOffMaxAttempts = backOffMaxAttempts;
     }
 
@@ -151,24 +144,6 @@ public class MasterComponent extends DefaultComponent {
         if (service == null) {
             service = ClusterServiceHelper.lookupService(context, serviceSelector).orElseThrow(
                     () -> new IllegalStateException("No cluster service found"));
-        }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        if (backOffThreadPool == null) {
-            backOffThreadPool
-                    = getCamelContext().getExecutorServiceManager().newDefaultScheduledThreadPool(this, "MasterLeaderTask");
-        }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        if (backOffThreadPool != null) {
-            getCamelContext().getExecutorServiceManager().shutdown(backOffThreadPool);
-            backOffThreadPool = null;
         }
     }
 }

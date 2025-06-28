@@ -17,6 +17,7 @@
 package org.apache.camel.component.pgevent;
 
 import java.sql.PreparedStatement;
+import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -26,10 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.PluginHelper;
-import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.backoff.BackOff;
-import org.apache.camel.util.backoff.BackOffTimer;
+import org.apache.camel.support.task.BackgroundTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +44,9 @@ public class PgEventConsumer extends DefaultConsumer {
     private final PgEventEndpoint endpoint;
     private PGConnection dbConnection;
     private ScheduledExecutorService reconnectPool;
+    private BackgroundTask reconnectTask;
     private ExecutorService workerPool;
     private boolean shutdownWorkerPool;
-    private BackOffTimer timer;
 
     public PgEventConsumer(PgEventEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -67,14 +67,20 @@ public class PgEventConsumer extends DefaultConsumer {
         }
         // used for re-connecting to the database
         reconnectPool = getEndpoint().getCamelContext().getExecutorServiceManager()
-                .newSingleThreadScheduledExecutor(this, "Reconnector");
-        timer = PluginHelper.getBackOffTimerFactory(endpoint.getCamelContext().getCamelContextExtension())
-                .newBackOffTimer("PgEventConsumer", reconnectPool);
+                .newSingleThreadScheduledExecutor(this, "PgEventReconnect");
+        reconnectTask = Tasks.backgroundTask()
+                .withScheduledExecutor(reconnectPool)
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
+                        .withInitialDelay(Duration.ofSeconds(1))
+                        .withUnlimitedDuration()
+                        .build())
+                .withName("PgEventReconnect")
+                .build();
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(timer);
         listener.initConnection();
         super.doStart();
     }
@@ -89,23 +95,26 @@ public class PgEventConsumer extends DefaultConsumer {
             endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(workerPool, 10000);
             workerPool = null;
         }
-        ServiceHelper.stopService(timer);
     }
 
     public class PgEventListener implements PGNotificationListener {
 
         public void reconnect() {
-            BackOff bo = BackOff.builder().delay(endpoint.getReconnectDelay()).build();
-            timer.schedule(bo, t -> {
-                LOG.debug("Connecting attempt #{}", t.getCurrentAttempts());
-                try {
-                    initConnection();
-                } catch (Exception e) {
-                    return true;
-                }
-                LOG.debug("Connecting successful");
-                return false;
-            });
+            // only submit the task if not already running
+            if (!reconnectTask.isRunning()) {
+                reconnectTask.run(() -> {
+                    if (isRunAllowed()) {
+                        LOG.debug("Connecting attempt #{}", reconnectTask.iteration());
+                        try {
+                            initConnection();
+                        } catch (Exception e) {
+                            return true;
+                        }
+                        LOG.debug("Connecting successful");
+                    }
+                    return false;
+                });
+            }
         }
 
         public void initConnection() throws Exception {

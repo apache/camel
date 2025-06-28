@@ -28,7 +28,7 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
         case "backoffdelay":
         case "backOffDelay": target.setBackOffDelay(property(camelContext, long.class, value)); return true;
         case "backoffmaxattempts":
-        case "backOffMaxAttempts": target.setBackOffMaxAttempts(property(camelContext, long.class, value)); return true;
+        case "backOffMaxAttempts": target.setBackOffMaxAttempts(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "service": target.setService(property(camelContext, org.apache.camel.cluster.CamelClusterService.class, value)); return true;
@@ -46,7 +46,7 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
         case "backoffdelay":
         case "backOffDelay": return long.class;
         case "backoffmaxattempts":
-        case "backOffMaxAttempts": return long.class;
+        case "backOffMaxAttempts": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "service": return org.apache.camel.cluster.CamelClusterService.class;

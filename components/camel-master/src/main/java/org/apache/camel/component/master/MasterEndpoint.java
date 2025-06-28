@@ -34,14 +34,10 @@ import org.apache.camel.support.DefaultEndpoint;
  * Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
  */
 @ManagedResource(description = "Managed Master Endpoint")
-@UriEndpoint(firstVersion = "2.20.0",
-             scheme = "master",
-             syntax = "master:namespace:delegateUri",
-             consumerOnly = true,
-             title = "Master",
-             lenientProperties = true,
-             category = { Category.CLUSTERING })
+@UriEndpoint(firstVersion = "2.20.0", scheme = "master", syntax = "master:namespace:delegateUri", title = "Master",
+             consumerOnly = true, lenientProperties = true, category = { Category.CLUSTERING })
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
+
     private final Endpoint delegateEndpoint;
     private final CamelClusterService clusterService;
 
@@ -56,7 +52,6 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
     public MasterEndpoint(String uri, MasterComponent component, CamelClusterService clusterService, String namespace,
                           String delegateUri) {
         super(uri, component);
-
         this.clusterService = clusterService;
         this.namespace = namespace;
         this.delegateUri = delegateUri;
