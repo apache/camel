@@ -901,7 +901,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
             }
-            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
             if (tokens.length > 3) {
                 throw new SimpleParserException(
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
