@@ -169,10 +169,15 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
                 }
             }
 
-            task.cancel(true);
+            TaskManagerRegistry registry = null;
+            if (camelContext != null) {
+                registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+            }
+            if (registry != null) {
+                registry.removeTask(this);
+            }
 
-            TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
-            registry.removeTask(this);
+            task.cancel(true);
         } catch (InterruptedException e) {
             LOG.warn("Interrupted while waiting for the repeatable task to execute: {}", e.getMessage(), e);
             Thread.currentThread().interrupt();
