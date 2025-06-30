@@ -104,6 +104,8 @@ import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.apache.camel.support.scan.DefaultPackageScanResourceResolver;
 import org.apache.camel.support.scan.WebSpherePackageScanClassResolver;
 import org.apache.camel.support.startup.DefaultStartupConditionStrategy;
+import org.apache.camel.support.task.DefaultTaskManagerRegistry;
+import org.apache.camel.support.task.TaskManagerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -744,6 +746,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected BackOffTimerFactory createBackOffTimerFactory() {
         return new DefaultBackOffTimerFactory(this);
+    }
+
+    @Override
+    protected TaskManagerRegistry createTaskManagerRegistry() {
+        return new DefaultTaskManagerRegistry(this);
     }
 
     @Override

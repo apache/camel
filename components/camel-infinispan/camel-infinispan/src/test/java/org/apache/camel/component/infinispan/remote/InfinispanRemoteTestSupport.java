@@ -59,7 +59,7 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
             final ForegroundTask task = Tasks.foregroundTask()
                     .withBudget(budget).build();
 
-            final boolean cacheCreated = task.run(this::createCache);
+            final boolean cacheCreated = task.run(null, this::createCache);
             Assumptions.assumeTrue(cacheCreated, "The container cache is not running healthily");
         }
     }

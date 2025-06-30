@@ -33,9 +33,9 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "backoff",
-         description = "Get back-off tasks of Camel integrations", sortOptions = false, showDefaultValues = true)
-public class ListBackOff extends ProcessWatchCommand {
+@Command(name = "internal-tasks",
+         description = "List internal tasks of Camel integrations", sortOptions = false, showDefaultValues = true)
+public class ListInternalTask extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -44,7 +44,7 @@ public class ListBackOff extends ProcessWatchCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
-    public ListBackOff(CamelJBangMain main) {
+    public ListInternalTask(CamelJBangMain main) {
         super(main);
     }
 
@@ -72,28 +72,22 @@ public class ListBackOff extends ProcessWatchCommand {
                         row.uptime = extractSince(ph);
                         row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("backoff");
+                        JsonObject jo = (JsonObject) root.get("internal-tasks");
                         if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("timers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    jo = (JsonObject) arr.get(i);
-                                    JsonArray arr2 = (JsonArray) jo.get("tasks");
-                                    for (int j = 0; j < arr2.size(); j++) {
-                                        jo = (JsonObject) arr2.get(j);
-                                        row = row.copy();
-                                        row.task = jo.getString("name");
-                                        row.status = jo.getString("status");
-                                        row.attempts = jo.getLong("attempts");
-                                        row.delay = jo.getLong("delay");
-                                        row.elapsed = jo.getLong("elapsed");
-                                        row.firstTime = jo.getLong("firstTime");
-                                        row.lastTime = jo.getLong("lastTime");
-                                        row.nextTime = jo.getLong("nextTime");
-                                        row.error = jo.getString("error");
-                                        rows.add(row);
-                                    }
-                                }
+                            JsonArray arr = (JsonArray) jo.get("tasks");
+                            for (int i = 0; i < arr.size(); i++) {
+                                jo = (JsonObject) arr.get(i);
+                                row = row.copy();
+                                row.task = jo.getString("name");
+                                row.status = jo.getString("status");
+                                row.attempts = jo.getLong("attempts");
+                                row.delay = jo.getLong("delay");
+                                row.elapsed = jo.getLong("elapsed");
+                                row.firstTime = jo.getLong("firstTime");
+                                row.lastTime = jo.getLong("lastTime");
+                                row.nextTime = jo.getLong("nextTime");
+                                row.error = jo.getString("error");
+                                rows.add(row);
                             }
                         }
                     }

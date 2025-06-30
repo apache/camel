@@ -26,6 +26,10 @@ The `BackOffTimer` is mostly used internally in Camel components to conduct task
 be repeated until completed, such as recovery tasks. And as such this refactor is not
 expected to impact Camel end users.
 
+Added `CamelContext` as first parameter to the `run` method(s) in `org.apache.camel.support.task.BlockingTask`.
+The `org.apache.camel.support.task.BackgroundTask` is changed to use a fixed delay between runs, which
+is similar to `BackOffTimer`.
+
 === camel-file / camel-ftp / camel-smb / camel-azure-files
 
 When using `poll` or `pollEnrich` with the file based components, then the `eagerLimitMaxMessagesPerPoll` option

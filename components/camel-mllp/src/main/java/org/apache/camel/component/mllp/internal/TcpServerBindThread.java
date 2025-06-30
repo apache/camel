@@ -47,7 +47,6 @@ public class TcpServerBindThread extends Thread {
     private final SSLContextParameters sslContextParameters;
 
     public TcpServerBindThread(MllpTcpServerConsumer consumer, final SSLContextParameters sslParams) {
-
         this.consumer = consumer;
         this.sslContextParameters = sslParams;
 
@@ -107,7 +106,7 @@ public class TcpServerBindThread extends Thread {
                 .withName("mllp-tcp-server-accept")
                 .build();
 
-        if (task.run(() -> doBind(serverSocket, socketAddress))) {
+        if (task.run(consumer.getEndpoint().getCamelContext(), () -> doBind(serverSocket, socketAddress))) {
             consumer.startAcceptThread(serverSocket);
         } else {
             log.error("Failed to bind to address {} within timeout {}", socketAddress,

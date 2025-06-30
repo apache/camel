@@ -148,7 +148,7 @@ public class KafkaFetchRecords implements Runnable {
                                 .withInterval(Duration.ofMillis(currentBackoffInterval))
                                 .build())
                         .build();
-                boolean success = task.run(this::createConsumerTask);
+                boolean success = task.run(kafkaConsumer.getEndpoint().getCamelContext(), this::createConsumerTask);
                 if (!success) {
                     int max = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffMaxAttempts();
                     setupCreateConsumerException(task, max);
@@ -168,7 +168,7 @@ public class KafkaFetchRecords implements Runnable {
                                 .withInterval(Duration.ofMillis(currentBackoffInterval))
                                 .build())
                         .build();
-                success = task.run(this::initializeConsumerTask);
+                success = task.run(kafkaConsumer.getEndpoint().getCamelContext(), this::initializeConsumerTask);
                 if (!success) {
                     int max = kafkaConsumer.getEndpoint().getComponent().getSubscribeConsumerBackoffMaxAttempts();
                     setupInitializeErrorException(task, max);

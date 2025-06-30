@@ -212,7 +212,7 @@ public class SmppProducer extends DefaultProducer {
                     configuration.getReconnectDelay(), configuration.getMaxReconnect());
 
             try {
-                task.run(this::doReconnect);
+                task.run(getEndpoint().getCamelContext(), this::doReconnect);
             } finally {
                 connectLock.unlock();
             }

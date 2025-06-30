@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.camel.support.task;
+package org.apache.camel.support.task.task;
 
 import java.time.Duration;
 import java.util.concurrent.Executors;
 
+import org.apache.camel.support.task.BackgroundTask;
+import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                         .build())
                 .build();
 
-        boolean completed = task.run(this::booleanSupplier);
+        boolean completed = task.run(camelContext, this::booleanSupplier);
         assertTrue(taskCount.intValue() <= maxIterations);
         assertFalse(completed, "The task did not complete, the return should be false");
 
@@ -74,7 +75,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
     @Timeout(10)
     void testRunNoMoreSupplierWithDelay() {
         /*
-         * It should run at most 4 times in 4 seconds because:
+         * It should run approx most 4 times in 4 seconds because:
          * 1) there is a delay.
          * 2) the interval is of 1 second
          */
@@ -87,8 +88,8 @@ public class BackgroundTaskTest extends TaskTestSupport {
                         .build())
                 .build();
 
-        boolean completed = task.run(this::booleanSupplier);
-        assertTrue((maxIterations - 1) <= taskCount.intValue());
+        boolean completed = task.run(camelContext, this::booleanSupplier);
+        assertTrue(taskCount.intValue() < maxIterations, "number of runs: " + taskCount.intValue());
         assertFalse(completed, "The task did not complete, the return should be false");
 
         Duration duration = task.elapsed();
@@ -117,7 +118,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                         .build())
                 .build();
 
-        boolean completed = task.run(this::taskPredicate, new Object());
+        boolean completed = task.run(camelContext, this::taskPredicate, new Object());
         assertTrue(taskCount.intValue() <= maxIterations);
         assertFalse(completed, "The task did not complete, the return should be false");
 
@@ -146,7 +147,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                         .build())
                 .build();
 
-        boolean completed = task.run(this::taskPredicateWithDeterministicStop, Integer.valueOf(3));
+        boolean completed = task.run(camelContext, this::taskPredicateWithDeterministicStop, Integer.valueOf(3));
         assertEquals(3, taskCount.intValue());
         assertTrue(completed, "The task did complete, the return should be true");
     }
@@ -168,7 +169,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                         .build())
                 .build();
 
-        boolean completed = task.run(this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
+        boolean completed = task.run(camelContext, this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
         assertTrue(taskCount.intValue() <= 2, "Slow task: it should not run more than 2 times in 4 seconds");
 
         Duration duration = task.elapsed();
@@ -198,7 +199,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                         .build())
                 .build();
 
-        boolean completed = task.run(this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
+        boolean completed = task.run(camelContext, this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
         Duration duration = task.elapsed();
         assertNotNull(duration);
         assertFalse(duration.isNegative());

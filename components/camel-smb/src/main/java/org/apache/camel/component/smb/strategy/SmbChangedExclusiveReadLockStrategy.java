@@ -44,8 +44,8 @@ public class SmbChangedExclusiveReadLockStrategy
 
     @Override
     public void prepareOnStartup(
-            GenericFileOperations<FileIdBothDirectoryInformation> tGenericFileOperations,
-            GenericFileEndpoint<FileIdBothDirectoryInformation> tGenericFileEndpoint) {
+            GenericFileOperations<FileIdBothDirectoryInformation> operations,
+            GenericFileEndpoint<FileIdBothDirectoryInformation> endpoint) {
         // noop
     }
 
@@ -66,7 +66,7 @@ public class SmbChangedExclusiveReadLockStrategy
 
         SmbExclusiveReadLockCheck exclusiveReadLockCheck = new SmbExclusiveReadLockCheck(minAge, minLength);
 
-        if (!task.run(() -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
+        if (!task.run(exchange.getContext(), () -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
             CamelLogger.log(LOG, readLockLoggingLevel,
                     "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
 

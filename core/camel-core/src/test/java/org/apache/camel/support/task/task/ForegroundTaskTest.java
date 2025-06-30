@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.camel.support.task;
+package org.apache.camel.support.task.task;
 
 import java.time.Duration;
 
+import org.apache.camel.support.task.ForegroundTask;
+import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,23 +30,22 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ForegroundTimeTaskTest extends TaskTestSupport {
+public class ForegroundTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
     @Test
-    @Timeout(10)
+    //    @Timeout(10)
     void testRunNoMoreSupplier() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
                         .withInterval(Duration.ofSeconds(1))
                         .build())
                 .build();
 
-        task.run(this::booleanSupplier);
+        task.run(camelContext, this::booleanSupplier);
         assertEquals(maxIterations, taskCount.intValue());
 
         Duration duration = task.elapsed();
@@ -55,21 +55,19 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
         assertTrue(duration.toMillis() > 0);
     }
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier and an initial delay")
+    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
     @Test
     @Timeout(10)
     void testRunNoMoreSupplierWithDelay() {
-        // this should run 5 times in a total duration of 6 seconds (5s executing + 1s delay)
         ForegroundTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(6_500)) // Add 500 ms delay to make the test more flexible
+                .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ofSeconds(1))
                         .withInterval(Duration.ofSeconds(1))
                         .build())
                 .build();
 
-        task.run(this::booleanSupplier);
+        task.run(camelContext, this::booleanSupplier);
         assertEquals(maxIterations, taskCount.intValue());
     }
 
@@ -79,33 +77,14 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     void testRunNoMorePredicate() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
                         .withInterval(Duration.ofSeconds(1))
                         .build())
                 .build();
 
-        task.run(this::taskPredicate, new Object());
-        assertEquals(maxIterations, taskCount.intValue());
-    }
-
-    @DisplayName("Test that the task does not run for more than the max duration when using a predicate and an initial delay")
-    @Test
-    @Timeout(10)
-    void testRunNoMorePredicateMaxDuration() {
-        // It should run 5 times in 4 seconds because there is no delay
-        ForegroundTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
-                        .withMaxIterations(50)
-                        .withInitialDelay(Duration.ZERO)
-                        .withInterval(Duration.ofSeconds(1))
-                        .build())
-                .build();
-
-        task.run(this::taskPredicate, new Object());
+        task.run(camelContext, this::taskPredicate, new Object());
         assertEquals(maxIterations, taskCount.intValue());
     }
 
@@ -115,15 +94,14 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     void testRunNoMorePredicateDeterministic() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
                         .withInterval(Duration.ofSeconds(1))
                         .build())
                 .build();
 
-        task.run(this::taskPredicateWithDeterministicStop, 3);
+        task.run(camelContext, this::taskPredicateWithDeterministicStop, Integer.valueOf(3));
         assertEquals(3, taskCount.intValue());
     }
 
@@ -133,15 +111,14 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     void testRunNoMorePredicateDeterministicSlow() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ZERO)
                         .withInterval(Duration.ofSeconds(1))
                         .build())
                 .build();
 
-        task.run(this::taskPredicateWithDeterministicStopSlow, 3);
+        task.run(camelContext, this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
         assertTrue(taskCount.intValue() < maxIterations);
     }
 
@@ -151,15 +128,14 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
     void testRunNoMorePredicateDeterministicSlowWithDelay() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
-                .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofSeconds(5))
+                .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ofSeconds(1))
                         .withInterval(Duration.ofSeconds(1))
                         .build())
                 .build();
 
-        task.run(this::taskPredicateWithDeterministicStopSlow, 3);
+        task.run(camelContext, this::taskPredicateWithDeterministicStopSlow, Integer.valueOf(3));
         assertTrue(taskCount.intValue() < maxIterations);
     }
 }

@@ -139,7 +139,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
         TaskPayload payload = new TaskPayload(configuration);
 
-        if (!task.run(this::tryConnect, payload)) {
+        if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload)) {
             if (exchange != null) {
                 exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
                 exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());

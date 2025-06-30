@@ -118,8 +118,9 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         MongoCollection<Document> finalPtsCollection = ptsCollection;
         Date finalFromDate = fromDate;
         Document finalPersistentTimestamp = persistentTimestamp;
-        task.run(() -> processCollection(finalFromDate, usesTimestamp, persistsTimestamp, usesAttribute, finalPtsCollection,
-                finalPersistentTimestamp));
+        task.run(endpoint.getCamelContext(),
+                () -> processCollection(finalFromDate, usesTimestamp, persistsTimestamp, usesAttribute, finalPtsCollection,
+                        finalPersistentTimestamp));
     }
 
     private boolean processCollection(

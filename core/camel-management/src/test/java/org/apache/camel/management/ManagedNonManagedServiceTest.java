@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisabledOnOs(OS.AIX)
 public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
-    private static final int SERVICES = 16;
+    private static final int SERVICES = 17;
 
     @Test
     public void testService() throws Exception {

@@ -31,7 +31,8 @@ public interface Budget {
     long initialDelay();
 
     /**
-     * The interval between each task execution
+     * The interval between each task execution (delay between the termination of one execution and the commencement of
+     * the next).
      *
      * @return the interval, in milliseconds, for each task execution
      */

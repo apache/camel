@@ -223,7 +223,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             }
             if (recoverTask == null) {
                 recoverTask = createTask();
-                recoverFuture = recoverTask.schedule(() -> recoverConnection(recoverTask));
+                recoverFuture = recoverTask.schedule(endpoint.getCamelContext(), () -> recoverConnection(recoverTask));
             }
         } finally {
             connectionLock.unlock();

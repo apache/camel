@@ -138,7 +138,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
             TaskPayload payload = new TaskPayload(configuration);
 
-            if (!task.run(this::tryConnect, payload)) {
+            if (!task.run(endpoint.getCamelContext(), this::tryConnect, payload)) {
                 throw new GenericFileOperationFailedException(
                         "Cannot connect to " + configuration.remoteServerInformation(),
                         payload.exception);

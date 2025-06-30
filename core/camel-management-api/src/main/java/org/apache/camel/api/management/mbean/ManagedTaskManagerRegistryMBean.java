@@ -21,11 +21,7 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-@Deprecated
-public interface ManagedBackoffTimerMBean {
-
-    @ManagedAttribute(description = "Name of the backoff timer")
-    String getName();
+public interface ManagedTaskManagerRegistryMBean {
 
     @ManagedAttribute(description = "Number of total tasks")
     Integer getSize();

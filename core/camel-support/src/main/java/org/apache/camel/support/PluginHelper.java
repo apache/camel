@@ -55,6 +55,7 @@ import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
+import org.apache.camel.support.task.TaskManagerRegistry;
 
 /**
  * Convenient helper to get easy access to various extensions from {@link ExtendedCamelContext}.
@@ -584,4 +585,12 @@ public final class PluginHelper {
             ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(BackOffTimerFactory.class);
     }
+
+    /**
+     * Gets the {@link TaskManagerRegistry} to use.
+     */
+    public static TaskManagerRegistry getTaskManagerRegistry(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(TaskManagerRegistry.class);
+    }
+
 }

@@ -2,11 +2,11 @@
   "console": {
     "kind": "console",
     "group": "camel",
-    "name": "backoff",
-    "title": "BackOff",
-    "description": "Display information about BackOff tasks",
+    "name": "internal-tasks",
+    "title": "Internal Tasks",
+    "description": "Display information about internal tasks",
     "deprecated": false,
-    "javaType": "org.apache.camel.impl.console.BackOffDevConsole",
+    "javaType": "org.apache.camel.impl.console.TaskRegistryDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.13.0-SNAPSHOT"

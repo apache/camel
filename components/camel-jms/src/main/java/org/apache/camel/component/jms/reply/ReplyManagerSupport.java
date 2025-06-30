@@ -108,7 +108,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 .withInterval(Duration.ofMillis(interval))
                 .build())
                 .build();
-        boolean done = task.run(() -> {
+        boolean done = task.run(camelContext, () -> {
             log.trace("Waiting for replyTo to be ready: {}", replyTo != null);
             return replyTo != null;
         });
@@ -249,7 +249,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 .build())
                 .build();
 
-        return task.run(() -> getReplyHandler(correlationID), Objects::nonNull).orElse(null);
+        return task.run(camelContext, () -> getReplyHandler(correlationID), Objects::nonNull).orElse(null);
     }
 
     private ReplyHandler getReplyHandler(String correlationID) {
