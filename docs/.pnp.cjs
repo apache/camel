@@ -43,7 +43,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gulp", "npm:4.0.2"],\
             ["gulp-cli", "npm:3.1.0"],\
             ["gulp-inject", "npm:5.0.5"],\
-            ["gulp-rename", "npm:2.0.0"],\
+            ["gulp-rename", "npm:2.1.0"],\
             ["gulp-sort", "npm:2.0.0"],\
             ["map-stream", "npm:0.0.7"],\
             ["prettier-eslint-cli", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:8.0.1"],\
@@ -77,7 +77,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["gulp", "npm:4.0.2"],\
             ["gulp-cli", "npm:3.1.0"],\
             ["gulp-inject", "npm:5.0.5"],\
-            ["gulp-rename", "npm:2.0.0"],\
+            ["gulp-rename", "npm:2.1.0"],\
             ["gulp-sort", "npm:2.0.0"],\
             ["map-stream", "npm:0.0.7"],\
             ["prettier-eslint-cli", "virtual:2c610f76f644a633eeb9dfdbedcfce0166801ee59e3837f66b2054b454dac8d45ae1806a247a932c013c07d243b2c1e84fbe9998428676d783c2454982c011e5#npm:8.0.1"],\
@@ -4474,10 +4474,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["gulp-rename", [\
-        ["npm:2.0.0", {\
-          "packageLocation": "./.yarn/cache/gulp-rename-npm-2.0.0-2a2997d9ce-b9add0d130.zip/node_modules/gulp-rename/",\
+        ["npm:2.1.0", {\
+          "packageLocation": "./.yarn/cache/gulp-rename-npm-2.1.0-c7a60516b5-83be4ad1e8.zip/node_modules/gulp-rename/",\
           "packageDependencies": [\
-            ["gulp-rename", "npm:2.0.0"]\
+            ["gulp-rename", "npm:2.1.0"]\
           ],\
           "linkType": "HARD"\
         }]\
