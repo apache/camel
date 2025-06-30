@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.task.budget.IterationBudget;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,13 +84,16 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
 
     @Override
     public boolean run(CamelContext camelContext, BooleanSupplier supplier) {
-        ObjectHelper.notNull(camelContext, "CamelContext", this);
-
         running.set(true);
         boolean completed = false;
 
-        TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
-        registry.addTask(this);
+        TaskManagerRegistry registry = null;
+        if (camelContext != null) {
+            registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+        }
+        if (registry != null) {
+            registry.addTask(this);
+        }
         try {
             if (budget.initialDelay() > 0) {
                 Thread.sleep(budget.initialDelay());
@@ -127,7 +129,9 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
         } finally {
             elapsed = budget.elapsed();
             running.set(false);
-            registry.removeTask(this);
+            if (registry != null) {
+                registry.removeTask(this);
+            }
         }
 
         return completed;
@@ -143,11 +147,14 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
      * @return              An optional with the result
      */
     public <T> Optional<T> run(CamelContext camelContext, Supplier<T> supplier, Predicate<T> predicate) {
-        ObjectHelper.notNull(camelContext, "CamelContext", this);
-
         running.set(true);
-        TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
-        registry.addTask(this);
+        TaskManagerRegistry registry = null;
+        if (camelContext != null) {
+            registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+        }
+        if (registry != null) {
+            registry.addTask(this);
+        }
         try {
             if (budget.initialDelay() > 0) {
                 Thread.sleep(budget.initialDelay());
@@ -182,7 +189,9 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
         } finally {
             elapsed = budget.elapsed();
             running.set(false);
-            registry.removeTask(this);
+            if (registry != null) {
+                registry.removeTask(this);
+            }
         }
 
         return Optional.empty();

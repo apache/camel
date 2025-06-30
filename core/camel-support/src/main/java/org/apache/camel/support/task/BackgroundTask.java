@@ -30,7 +30,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.task.budget.TimeBoundedBudget;
 import org.apache.camel.support.task.budget.TimeBudget;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,13 +94,18 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             return;
         }
 
-        TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
-        registry.addTask(this);
+        TaskManagerRegistry registry = null;
+        if (camelContext != null) {
+            registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+            registry.addTask(this);
+        }
         if (!budget.next()) {
             LOG.warn("The task {} does not have more budget to continue running", getName());
             status = Status.Exhausted;
             completed.set(false);
-            registry.removeTask(this);
+            if (registry != null) {
+                registry.removeTask(this);
+            }
             latch.countDown();
             return;
         }
@@ -114,7 +118,9 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             if (supplier.getAsBoolean()) {
                 status = Status.Completed;
                 completed.set(true);
-                registry.removeTask(this);
+                if (registry != null) {
+                    registry.removeTask(this);
+                }
                 latch.countDown();
                 LOG.trace("Task {} succeeded and the current task is unscheduled: {}", getName(), latch.getCount());
             }
@@ -135,8 +141,6 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
      * @return              a future for the task
      */
     public Future<?> schedule(CamelContext camelContext, BooleanSupplier supplier) {
-        ObjectHelper.notNull(camelContext, "CamelContext", this);
-
         running.set(true);
         return service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier), budget.initialDelay(),
                 budget.interval(), TimeUnit.MILLISECONDS);
@@ -144,8 +148,6 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
 
     @Override
     public boolean run(CamelContext camelContext, BooleanSupplier supplier) {
-        ObjectHelper.notNull(camelContext, "CamelContext", this);
-
         running.set(true);
         Future<?> task = service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier), budget.initialDelay(),
                 budget.interval(), TimeUnit.MILLISECONDS);

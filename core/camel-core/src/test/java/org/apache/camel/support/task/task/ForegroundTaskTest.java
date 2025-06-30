@@ -34,7 +34,7 @@ public class ForegroundTaskTest extends TaskTestSupport {
 
     @DisplayName("Test that the task does not run for more than the max iterations when using a supplier")
     @Test
-    //    @Timeout(10)
+    @Timeout(10)
     void testRunNoMoreSupplier() {
         // It should run 5 times in 4 seconds because there is no delay
         ForegroundTask task = Tasks.foregroundTask()
