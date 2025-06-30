@@ -54,7 +54,6 @@ import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
-import org.apache.camel.management.mbean.ManagedBackoffTimer;
 import org.apache.camel.management.mbean.ManagedBeanIntrospection;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
@@ -121,7 +120,6 @@ import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.backoff.BackOffTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -581,8 +579,6 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedValidatorRegistry(context, validatorRegistry);
         } else if (service instanceof BrowsableVariableRepository variableRepository) {
             answer = new ManagedVariableRepository(context, variableRepository);
-        } else if (service instanceof BackOffTimer timer) {
-            answer = new ManagedBackoffTimer(camelContext, timer);
         } else if (service instanceof TaskManagerRegistry registry) {
             answer = new ManagedTaskManagerRegistry(camelContext, registry);
         } else if (service instanceof CamelClusterService camelClusterService) {
