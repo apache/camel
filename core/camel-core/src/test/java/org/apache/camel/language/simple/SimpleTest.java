@@ -2099,16 +2099,21 @@ public class SimpleTest extends LanguageTestSupport {
     @Test
     public void testIif() {
         exchange.getIn().setHeader("foo", 44);
-        assertExpression("${iif(${header.foo} > 0,'positive','negative')}", "positive");
+        assertExpression("${iif(${header.foo} > 0,positive,negative)}", "positive");
         exchange.getIn().setHeader("foo", -123);
-        assertExpression("${iif(${header.foo} > 0,'positive','negative')}", "negative");
+        assertExpression("${iif(${header.foo} > 0,positive,negative)}", "negative");
 
         exchange.getIn().setBody("Hello World");
         exchange.getIn().setHeader("foo", 44);
-        assertExpression("${iif(${header.foo} > 0,${body},'Bye World')}", "Hello World");
+        assertExpression("${iif(${header.foo} > 0,${body},Bye World)}", "Hello World");
         exchange.getIn().setHeader("foo", -123);
-        assertExpression("${iif(${header.foo} > 0,${body},'Bye World')}", "Bye World");
+        assertExpression("${iif(${header.foo} > 0,${body},Bye World)}", "Bye World");
         assertExpression("${iif(${header.foo} > 0,${body},${null})}", null);
+
+        exchange.getIn().setHeader("CamelFileName", "testfile.txt");
+        assertExpression("${iif(${file:name} startsWith 'test',foo,bar)}", "foo");
+        exchange.getIn().setHeader("CamelFileName", "dummy.txt");
+        assertExpression("${iif(${file:name} startsWith 'test',foo,bar)}", "bar");
     }
 
     @Test
