@@ -128,6 +128,7 @@ public class SmbOperations implements SmbFileOperations {
         if (session != null) {
             try {
                 session.close();
+                session.getConnection().close();
             } catch (TransportException t) {
                 try {
                     session.getConnection().close(true);
