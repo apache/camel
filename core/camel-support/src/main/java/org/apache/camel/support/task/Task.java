@@ -24,8 +24,26 @@ import java.time.Duration;
  */
 public interface Task {
 
+    enum Status {
+        Active,
+        Inactive,
+        Exhausted,
+        Completed,
+        Failed
+    }
+
     /**
-     * How long it took to run the task
+     * Optional name of the task
+     */
+    String getName();
+
+    /**
+     * Gets the task status.
+     */
+    Status getStatus();
+
+    /**
+     * How long it took to run the task when the task was completed
      *
      * @return The duration to execute the task
      */
@@ -37,5 +55,35 @@ public interface Task {
      * @return the current number of iterations
      */
     int iteration();
+
+    /**
+     * The current computed delay.
+     */
+    long getCurrentDelay();
+
+    /**
+     * The current elapsed time.
+     */
+    long getCurrentElapsedTime();
+
+    /**
+     * The time the first attempt was performed.
+     */
+    long getFirstAttemptTime();
+
+    /**
+     * The time the last attempt has been performed.
+     */
+    long getLastAttemptTime();
+
+    /**
+     * An indication about the time the next attempt will be made.
+     */
+    long getNextAttemptTime();
+
+    /**
+     * The task failed for some un-expected exception
+     */
+    Throwable getException();
 
 }

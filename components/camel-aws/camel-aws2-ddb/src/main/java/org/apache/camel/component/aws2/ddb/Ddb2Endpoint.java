@@ -157,7 +157,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
                 .build())
                 .build();
 
-        if (!task.run(this::waitForTable, tableName)) {
+        if (!task.run(getCamelContext(), this::waitForTable, tableName)) {
             throw new RuntimeCamelException("Table " + tableName + " never went active");
         }
     }

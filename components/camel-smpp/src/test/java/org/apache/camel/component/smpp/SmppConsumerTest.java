@@ -190,6 +190,7 @@ public class SmppConsumerTest {
                     "");
             when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
                     .thenReturn("1");
+            when(endpoint.getCamelContext()).thenReturn(null);
             smppUtilsMock.when(() -> SmppUtils.newReconnectTask(any(), anyString(), anyLong(), anyLong(), anyInt()))
                     .thenReturn(new BackgroundTask.BackgroundTaskBuilder().withScheduledExecutor(reconnectService)
                             .withBudget(Budgets.timeBudget().build()).build());

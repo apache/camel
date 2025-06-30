@@ -66,7 +66,7 @@ public class FilesChangedExclusiveReadLockStrategy implements GenericFileExclusi
         FilesExclusiveReadLockCheck exclusiveReadLockCheck
                 = new FilesExclusiveReadLockCheck(fastExistsCheck, minAge, minLength);
 
-        if (!task.run(() -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
+        if (!task.run(exchange.getContext(), () -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
             CamelLogger.log(LOG, readLockLoggingLevel,
                     "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
 

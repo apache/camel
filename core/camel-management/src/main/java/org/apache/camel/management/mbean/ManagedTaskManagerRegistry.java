@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.util.Set;
-
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
@@ -26,54 +24,50 @@ import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
-import org.apache.camel.api.management.mbean.ManagedBackoffTimerMBean;
-import org.apache.camel.util.backoff.BackOffTimer;
+import org.apache.camel.api.management.mbean.ManagedTaskManagerRegistryMBean;
+import org.apache.camel.support.task.BackgroundTask;
+import org.apache.camel.support.task.Task;
+import org.apache.camel.support.task.TaskManagerRegistry;
 
-@ManagedResource(description = "Managed BackoffTimer")
-public class ManagedBackoffTimer extends ManagedService implements ManagedBackoffTimerMBean {
+@ManagedResource(description = "Managed TaskManagerRegistry")
+public class ManagedTaskManagerRegistry extends ManagedService implements ManagedTaskManagerRegistryMBean {
 
-    private final BackOffTimer timer;
+    private final TaskManagerRegistry registry;
 
-    public ManagedBackoffTimer(CamelContext context, BackOffTimer timer) {
-        super(context, (Service) timer);
-        this.timer = timer;
-    }
-
-    @Override
-    public String getName() {
-        return timer.getName();
+    public ManagedTaskManagerRegistry(CamelContext context, TaskManagerRegistry registry) {
+        super(context, registry);
+        this.registry = registry;
     }
 
     @Override
     public Integer getSize() {
-        return timer.size();
+        return registry.getSize();
     }
 
     @Override
     public TabularData listTasks() {
         try {
-            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listBackoffTTaskTabularType());
-            Set<BackOffTimer.Task> tasks = timer.getTasks();
-            for (BackOffTimer.Task task : tasks) {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listInternalTaskTabularType());
+            for (Task task : registry.getTasks()) {
                 String name = task.getName();
+                String kind = task instanceof BackgroundTask ? "background" : "foreground";
                 String status = task.getStatus().name();
-                long attempts = task.getCurrentAttempts();
+                long attempts = task.iteration();
                 long delay = task.getCurrentDelay();
                 long elapsed = task.getCurrentElapsedTime();
                 long firstTime = task.getFirstAttemptTime();
                 long lastTime = task.getLastAttemptTime();
                 long nextTime = task.getNextAttemptTime();
                 String failure = task.getException() != null ? task.getException().getMessage() : null;
-                CompositeType ct = CamelOpenMBeanTypes.listBackoffTaskCompositeType();
+                CompositeType ct = CamelOpenMBeanTypes.listInternalTaskCompositeType();
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "name", "status", "attempts", "delay", "elapsed", "firstTime", "lastTime", "nextTime",
+                                "name", "kind", "status", "attempts", "delay", "elapsed", "firstTime", "lastTime", "nextTime",
                                 "failure" },
-                        new Object[] { name, status, attempts, delay, elapsed, firstTime, lastTime, nextTime, failure });
+                        new Object[] { name, kind, status, attempts, delay, elapsed, firstTime, lastTime, nextTime, failure });
                 answer.put(data);
             }
             return answer;

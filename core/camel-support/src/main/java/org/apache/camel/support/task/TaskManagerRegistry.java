@@ -14,22 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.support.task;
 
-import javax.management.openmbean.TabularData;
+import java.util.Set;
 
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.StaticService;
 
-public interface ManagedBackoffTimerMBean {
+/**
+ * A registry for current tasks (foreground and background) that has been submitted for running.
+ */
+public interface TaskManagerRegistry extends StaticService {
 
-    @ManagedAttribute(description = "Name of the backoff timer")
-    String getName();
+    /**
+     * Adds the task
+     */
+    void addTask(Task task);
 
-    @ManagedAttribute(description = "Number of total tasks")
-    Integer getSize();
+    /**
+     * Removes the task
+     */
+    void removeTask(Task task);
 
-    @ManagedOperation(description = "Lists all the tasks")
-    TabularData listTasks();
+    /**
+     * Number of tasks
+     */
+    int getSize();
+
+    /**
+     * Gets the current list of tasks
+     */
+    Set<Task> getTasks();
 
 }

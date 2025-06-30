@@ -193,7 +193,7 @@ public class SmppConsumer extends DefaultConsumer {
                     configuration.getMaxReconnect());
 
             try {
-                task.run(this::doReconnect);
+                task.run(getEndpoint().getCamelContext(), this::doReconnect);
             } finally {
                 reconnectLock.unlock();
             }

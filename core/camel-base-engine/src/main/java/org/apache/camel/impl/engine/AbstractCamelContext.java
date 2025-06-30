@@ -190,6 +190,7 @@ import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.task.TaskManagerRegistry;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -2243,6 +2244,9 @@ public abstract class AbstractCamelContext extends BaseService
             }
             startupStepRecorder.endStep(step4);
         }
+
+        // setup internal task registry
+        getCamelContextExtension().addContextPlugin(TaskManagerRegistry.class, createTaskManagerRegistry());
 
         // setup dev-console registry as its needed this early phase for 3rd party to register custom consoles
         DevConsoleRegistry dcr = getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
@@ -4345,6 +4349,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract StartupConditionStrategy createStartupConditionStrategy();
 
     protected abstract BackOffTimerFactory createBackOffTimerFactory();
+
+    protected abstract TaskManagerRegistry createTaskManagerRegistry();
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.

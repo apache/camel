@@ -162,7 +162,7 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             }
 
             final BackgroundTask leaderTask = createTask();
-            leaderTask.run(() -> {
+            leaderTask.run(getEndpoint().getCamelContext(), () -> {
                 if (!isRunAllowed()) {
                     return false;
                 }

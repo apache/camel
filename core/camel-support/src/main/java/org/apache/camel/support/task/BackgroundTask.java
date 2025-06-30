@@ -26,16 +26,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.task.budget.TimeBoundedBudget;
 import org.apache.camel.support.task.budget.TimeBudget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A sleepless blocking task that runs in a Thread the background. The execution is blocked until the task budget is
- * exhausted. All background tasks are constrained by a time budget.
+ * A sleepless blocking task that runs in a thread in the background (using a scheduled thread pool). The execution is
+ * processed until the task budget is either completed, or exhausted. All background tasks are constrained by a time
+ * budget.
  */
-public class BackgroundTask implements BlockingTask {
+public class BackgroundTask extends AbstractTask implements BlockingTask {
 
     /**
      * A builder helper for building new background tasks
@@ -74,61 +77,85 @@ public class BackgroundTask implements BlockingTask {
 
     private final TimeBudget budget;
     private final ScheduledExecutorService service;
-    private final String name;
     private final CountDownLatch latch = new CountDownLatch(1);
     private Duration elapsed = Duration.ZERO;
     private final AtomicBoolean running = new AtomicBoolean();
     private final AtomicBoolean completed = new AtomicBoolean();
 
     BackgroundTask(TimeBudget budget, ScheduledExecutorService service, String name) {
+        super(name);
         this.budget = budget;
         this.service = Objects.requireNonNull(service);
-        this.name = name;
     }
 
-    private void runTaskWrapper(BooleanSupplier supplier) {
+    private void runTaskWrapper(CamelContext camelContext, BooleanSupplier supplier) {
         LOG.trace("Current latch value: {}", latch.getCount());
         if (latch.getCount() == 0) {
             return;
         }
 
+        TaskManagerRegistry registry = null;
+        if (camelContext != null) {
+            registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+            registry.addTask(this);
+        }
         if (!budget.next()) {
-            LOG.warn("The task {} does not have more budget to continue running", name);
+            LOG.warn("The task {} does not have more budget to continue running", getName());
+            status = Status.Exhausted;
             completed.set(false);
+            if (registry != null) {
+                registry.removeTask(this);
+            }
             latch.countDown();
             return;
         }
 
-        if (supplier.getAsBoolean()) {
-            completed.set(true);
-            latch.countDown();
-            LOG.trace("Task {} succeeded and the current task is unscheduled: {}", name, latch.getCount());
+        lastAttemptTime = System.currentTimeMillis();
+        if (firstAttemptTime < 0) {
+            firstAttemptTime = lastAttemptTime;
         }
+        try {
+            if (supplier.getAsBoolean()) {
+                status = Status.Completed;
+                completed.set(true);
+                if (registry != null) {
+                    registry.removeTask(this);
+                }
+                latch.countDown();
+                LOG.trace("Task {} succeeded and the current task is unscheduled: {}", getName(), latch.getCount());
+            }
+        } catch (Exception e) {
+            status = Status.Failed;
+            cause = e;
+            throw e;
+        }
+        nextAttemptTime = lastAttemptTime + budget.interval();
     }
 
     /**
      * Schedules the task to be run
      *
-     * @param  supplier the task as a boolean supplier. The result is used to check if the task has completed or not.
-     *                  The supplier must return true if the execution has completed or false otherwise.
-     * @return          a future for the task
+     * @param  camelContext the camel context
+     * @param  supplier     the task as a boolean supplier. The result is used to check if the task has completed or
+     *                      not. The supplier must return true if the execution has completed or false otherwise.
+     * @return              a future for the task
      */
-    public Future<?> schedule(BooleanSupplier supplier) {
+    public Future<?> schedule(CamelContext camelContext, BooleanSupplier supplier) {
         running.set(true);
-        return service.scheduleAtFixedRate(() -> runTaskWrapper(supplier), budget.initialDelay(),
+        return service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier), budget.initialDelay(),
                 budget.interval(), TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public boolean run(BooleanSupplier supplier) {
+    public boolean run(CamelContext camelContext, BooleanSupplier supplier) {
         running.set(true);
-        Future<?> task = service.scheduleAtFixedRate(() -> runTaskWrapper(supplier), budget.initialDelay(),
+        Future<?> task = service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier), budget.initialDelay(),
                 budget.interval(), TimeUnit.MILLISECONDS);
-        waitForTaskCompletion(task);
+        waitForTaskCompletion(camelContext, task);
         return completed.get();
     }
 
-    private void waitForTaskCompletion(Future<?> task) {
+    private void waitForTaskCompletion(CamelContext camelContext, Future<?> task) {
         try {
             // We need it to be cancellable/non-runnable after reaching a certain point, and it needs to be deterministic.
             // This is why we ignore the ScheduledFuture returned and implement the go/no-go using a latch.
@@ -140,6 +167,14 @@ public class BackgroundTask implements BlockingTask {
                 } else {
                     LOG.debug("The task has finished the execution and it is ready to continue");
                 }
+            }
+
+            TaskManagerRegistry registry = null;
+            if (camelContext != null) {
+                registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+            }
+            if (registry != null) {
+                registry.removeTask(this);
             }
 
             task.cancel(true);
@@ -166,4 +201,10 @@ public class BackgroundTask implements BlockingTask {
     public int iteration() {
         return budget.iteration();
     }
+
+    @Override
+    public long getCurrentDelay() {
+        return budget.interval();
+    }
+
 }

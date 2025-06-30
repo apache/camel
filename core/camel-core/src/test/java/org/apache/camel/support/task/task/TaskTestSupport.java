@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.camel.support.task;
+package org.apache.camel.support.task.task;
 
 import java.util.concurrent.atomic.LongAdder;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TaskTestSupport {
     protected final int maxIterations = 5;
     protected final LongAdder taskCount = new LongAdder();
+    protected CamelContext camelContext = new DefaultCamelContext();
 
     protected boolean booleanSupplier() {
         taskCount.increment();

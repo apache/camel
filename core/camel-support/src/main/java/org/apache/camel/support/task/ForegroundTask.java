@@ -23,6 +23,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.task.budget.IterationBudget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Runs a task in the foreground, executing for a given number of iteration and sleeping between each of them.
  */
-public class ForegroundTask implements BlockingTask {
+public class ForegroundTask extends AbstractTask implements BlockingTask {
 
     /**
      * A builder helper for building new foreground tasks
@@ -71,44 +73,65 @@ public class ForegroundTask implements BlockingTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(ForegroundTask.class);
 
-    private final String name;
     private final IterationBudget budget;
     private Duration elapsed = Duration.ZERO;
     private final AtomicBoolean running = new AtomicBoolean();
 
     ForegroundTask(IterationBudget budget, String name) {
+        super(name);
         this.budget = budget;
-        this.name = name;
     }
 
     @Override
-    public boolean run(BooleanSupplier supplier) {
+    public boolean run(CamelContext camelContext, BooleanSupplier supplier) {
         running.set(true);
         boolean completed = false;
 
+        TaskManagerRegistry registry = null;
+        if (camelContext != null) {
+            registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+        }
+        if (registry != null) {
+            registry.addTask(this);
+        }
         try {
             if (budget.initialDelay() > 0) {
                 Thread.sleep(budget.initialDelay());
             }
 
             while (budget.next()) {
+                lastAttemptTime = System.currentTimeMillis();
+                if (firstAttemptTime < 0) {
+                    firstAttemptTime = lastAttemptTime;
+                }
+                nextAttemptTime = lastAttemptTime + budget.interval();
                 if (supplier.getAsBoolean()) {
                     LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
-                            name, budget.iteration());
+                            getName(), budget.iteration());
+                    status = Status.Completed;
                     completed = true;
                     break;
                 }
 
                 if (budget.canContinue()) {
                     Thread.sleep(budget.interval());
+                } else {
+                    status = Status.Exhausted;
                 }
             }
         } catch (InterruptedException e) {
-            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
+            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", getName());
             Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            status = Status.Failed;
+            cause = e;
+            throw e;
         } finally {
             elapsed = budget.elapsed();
             running.set(false);
+            if (registry != null) {
+                registry.removeTask(this);
+            }
         }
 
         return completed;
@@ -117,36 +140,58 @@ public class ForegroundTask implements BlockingTask {
     /**
      * Run a task until it produces a result
      *
-     * @param  supplier  the supplier of the result
-     * @param  predicate a predicate to test if the result is acceptable
-     * @param  <T>       the type for the result
-     * @return           An optional with the result
+     * @param  camelContext the camel context
+     * @param  supplier     the supplier of the result
+     * @param  predicate    a predicate to test if the result is acceptable
+     * @param  <T>          the type for the result
+     * @return              An optional with the result
      */
-    public <T> Optional<T> run(Supplier<T> supplier, Predicate<T> predicate) {
+    public <T> Optional<T> run(CamelContext camelContext, Supplier<T> supplier, Predicate<T> predicate) {
         running.set(true);
+        TaskManagerRegistry registry = null;
+        if (camelContext != null) {
+            registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+        }
+        if (registry != null) {
+            registry.addTask(this);
+        }
         try {
             if (budget.initialDelay() > 0) {
                 Thread.sleep(budget.initialDelay());
             }
 
             while (budget.next()) {
+                lastAttemptTime = System.currentTimeMillis();
+                if (firstAttemptTime < 0) {
+                    firstAttemptTime = lastAttemptTime;
+                }
                 T ret = supplier.get();
                 if (predicate.test(ret)) {
                     LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
-                            name, budget.iteration());
+                            getName(), budget.iteration());
+                    status = Status.Completed;
                     return Optional.ofNullable(ret);
                 }
+                nextAttemptTime = lastAttemptTime + budget.interval();
 
                 if (budget.canContinue()) {
                     Thread.sleep(budget.interval());
+                } else {
+                    status = Status.Exhausted;
                 }
             }
         } catch (InterruptedException e) {
-            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
+            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", getName());
             Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            status = Status.Failed;
+            cause = e;
         } finally {
             elapsed = budget.elapsed();
             running.set(false);
+            if (registry != null) {
+                registry.removeTask(this);
+            }
         }
 
         return Optional.empty();
@@ -166,4 +211,10 @@ public class ForegroundTask implements BlockingTask {
     public int iteration() {
         return budget.iteration();
     }
+
+    @Override
+    public long getCurrentDelay() {
+        return budget.interval();
+    }
+
 }

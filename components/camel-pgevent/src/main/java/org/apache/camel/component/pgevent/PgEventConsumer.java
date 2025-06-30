@@ -102,7 +102,7 @@ public class PgEventConsumer extends DefaultConsumer {
         public void reconnect() {
             // only submit the task if not already running
             if (!reconnectTask.isRunning()) {
-                reconnectTask.run(() -> {
+                reconnectTask.run(endpoint.getCamelContext(), () -> {
                     if (isRunAllowed()) {
                         LOG.debug("Connecting attempt #{}", reconnectTask.iteration());
                         try {
