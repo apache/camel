@@ -291,7 +291,7 @@ includes the route stack-trace). This can be used if you do not want to
 log sensitive data from the message itself.
 
 |uuid(type) |String |Returns a UUID using the Camel `UuidGenerator`.
-You can choose between `default`, `classic`, `short` and `simple` as the type.
+You can choose between `default`, `classic`, `short`, `simple` and `random` as the type.
 If no type is given, the default is used. It is also possible to use a custom `UuidGenerator`
 and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}`
 where the ID is _myGenerator_.

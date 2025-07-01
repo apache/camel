@@ -2058,6 +2058,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             } else if ("default".equals(generator)) {
                 sb.append("    UuidGenerator uuid = new org.apache.camel.support.DefaultUuidGenerator();\n");
                 sb.append("return uuid.generateUuid();");
+            } else if ("random".equals(generator)) {
+                sb.append("    UuidGenerator uuid = new org.apache.camel.support.RandomUuidGenerator();\n");
+                sb.append("return uuid.generateUuid();");
             } else {
                 generator = StringQuoteHelper.doubleQuote(generator);
                 sb.append("if (uuid == null) uuid = customUuidGenerator(exchange, ").append(generator)

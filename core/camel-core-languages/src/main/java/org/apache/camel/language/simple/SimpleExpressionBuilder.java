@@ -46,6 +46,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.RandomUuidGenerator;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -525,6 +526,8 @@ public final class SimpleExpressionBuilder {
                     uuid = new ShortUuidGenerator();
                 } else if ("simple".equals(generator)) {
                     uuid = new SimpleUuidGenerator();
+                } else if ("random".equals(generator)) {
+                    uuid = new RandomUuidGenerator();
                 } else if (generator == null || "default".equals(generator)) {
                     uuid = new DefaultUuidGenerator();
                 } else {
