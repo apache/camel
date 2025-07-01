@@ -1,0 +1,311 @@
+= LangChain4j Agent Component
+:doctitle: LangChain4j Agent
+:shortname: langchain4j-agent
+:artifactid: camel-langchain4j-agent
+:description: LangChain4j Agent component
+:since: 4.14
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: langchain4j-agent
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The LangChain4j Agent component provides comprehensive AI agent capabilities by integrating with the https://github.com/langchain4j/langchain4j[LangChain4j library]. This component supports advanced AI agent patterns including tool calling, conversation memory, retrieval-augmented generation (RAG), and input/output guardrails.
+
+== Features
+
+The LangChain4j Agent component offers the following key features:
+
+* **Tool Integration**: Seamless integration with Camel routes via the `langchain4j-tools` component
+* **Conversation Memory**: Persistent chat memory for maintaining conversation context
+* **RAG Support**: Integration with retrieval systems for naive and advanced RAG
+* **Guardrails**: Input and output validation and transformation
+
+== URI format
+
+[source]
+----
+langchain4j-agent:agentId[?options]
+----
+
+Where *agentId* is a unique identifier for the agent instance.
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+include::spring-boot:partial$starter.adoc[]
+
+
+== Usage
+
+=== Using a specific Chat Model
+
+The Camel LangChain4j chat component provides an abstraction for interacting with various types of Large Language Models (LLMs) supported by https://github.com/langchain4j/langchain4j[LangChain4j].
+
+==== Integrating with specific LLM
+
+To integrate with a specific LLM, users should follow the steps described below, which explain
+how to integrate with OpenAI.
+
+Add the dependency for LangChain4j OpenAI support:
+
+.Example
+[source,xml]
+----
+<dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-open-ai</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+Initialize the OpenAI Chat Model, and add it to the Camel Registry:
+
+[source, java]
+----
+ChatModel model = OpenAiChatModel.builder()
+                .apiKey(openApiKey)
+                .modelName(GPT_3_5_TURBO)
+                .temperature(0.3)
+                .timeout(ofSeconds(3000))
+                .build();
+context.getRegistry().bind("chatModel", model);
+----
+
+Use the model in the Camel LangChain4j Agent Producer
+
+[source, java]
+----
+ from("direct:chat")
+      .to("langchain4j-agent:test?chatModel=#chatModel")
+
+----
+
+[NOTE]
+====
+To switch to another Large Language Model and its corresponding dependency, replace the `langchain4j-open-ai` dependency with the appropriate dependency for the desired model. Update the initialization parameters accordingly in the code snippet provided above.
+====
+
+=== Basic Chat with only a userMessage
+
+For simple chat interactions, you can use the producer only by setting the chatModel.
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:simple?chatModel=#chatModel")
+
+----
+
+The body can either contain the prompt as a String, or you can create an object of type *org.apache.camel.component.langchain4j.agent.AiAgentBody* containing the userMessage.
+
+.Usage example with a body as String:
+[source, java]
+----
+var prompt = "What is Apache Camel";
+
+String response = template.requestBody("direct:chat", prompt, String.class);
+----
+
+.Usage example with a body as AiAgentBody:
+[source, java]
+----
+var prompt = "What is Apache Camel";
+AiAgentBody body = new AiAgentBody(prompt);
+
+String response = template.requestBody("direct:chat", body, String.class);
+----
+
+=== Basic Chat with user and system messages
+
+For simple chat interactions, you can use the producer only by setting the chatModel.
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:simple?chatModel=#chatModel")
+
+----
+
+The body can either contain the user prompt as a String and specifying the *CamelLangChain4jAgentSystemMessage* header for the system prompt, or you can create an object of type *org.apache.camel.component.langchain4j.agent.AiAgentBody* containing both *userMessage* and *systemMessage*.
+
+.Usage example with a body as String:
+[source, java]
+----
+var userPrompt = "Write a short story about a lost cat.";
+var systemPrompt = "You are a whimsical storyteller. Your responses should be imaginative, descriptive, and always include a touch of magic. Start every story with 'Once upon a starlit night...";
+
+String response = template.requestBodyAndHeader("direct:chat",
+                userPrompt, "CamelLangChain4jAgentSystemMessage", systemPrompt , String.class);
+----
+
+.Usage example with a body as AiAgentBody:
+[source, java]
+----
+var userPrompt = "Write a short story about a lost cat.";
+var systemPrompt = "You are a whimsical storyteller. Your responses should be imaginative, descriptive, and always include a touch of magic. Start every story with 'Once upon a starlit night...";
+
+AiAgentBody body = new AiAgentBody()
+                .withUserMessage(userPrompt)
+                .withSystemMessage(systemPrompt);
+
+String response = template.requestBody("direct:chat", body, String.class);
+----
+
+=== Chat with Tools
+
+Integrate with Camel routes as tools. This is powerful, because under the hood the LangChain4j Agent component reuses under the hood LangChain4j AIService to integrate with any Camel Routes defined using the Camel LangChain4j Tools component.
+
+[source,java]
+----
+// Define tool routes
+from("langchain4j-tools:userDb?tags=users&description=Query user database&parameter.userId=string")
+    .setBody(constant("{\"name\": \"John Doe\", \"id\": \"123\"}"));
+
+from("langchain4j-tools:weather?tags=weather&description=Get weather information&parameter.city=string")
+    .setBody(constant("{\"weather\": \"sunny\", \"temperature\": \"22°C\"}"));
+
+// Agent with tools
+from("direct:chat")
+    .to("langchain4j-agent:tools?chatModel=#chatModel&tags=users,weather")
+
+----
+
+.Usage example :
+[source, java]
+----
+var userPrompt = "Can you tell me the name of user 123 and the weather in New York?";
+var systemPrompt = "You are a helpful assistant that can access user database and weather information. Use the available tools to provide accurate information.";
+
+String response = template.requestBodyAndHeader("direct:chat",
+                userPrompt, "CamelLangChain4jAgentSystemMessage", systemPrompt , String.class);
+----
+
+[NOTE]
+====
+There's no need to add Camel LangChain4j Tools component as a dependency when using the tools with LangChain4j Agent component.
+====
+
+=== RAG Integration
+
+For the current version of the component, RAG is an advanced feature that requires adding a Retrieval Augmentor of type *dev.langchain4j.rag.RetrievalAugmentor*. This class enables to use either naive or advanced RAG.
+For more information and examples you can check the https://docs.langchain4j.dev/tutorials/rag#retrieval-augmentor[LangChain4j RAG documentation page]
+
+
+[source,java]
+----
+
+
+from("direct:chat")
+    .to("langchain4j-agent:rag?chatModel=#chatModel&retrievalAugmentor=#retrievalAugmentor")
+
+----
+
+.Usage example with Retrieval Augmentor serving as naive RAG :
+[source, java]
+----
+// creating the retrieval Augmentor
+EmbeddingStoreContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
+                .embeddingStore(embeddingStore) // the embedding store should be defined
+                .embeddingModel(embeddingModel) // the embedding model should be defined
+                .maxResults(3)
+                .minScore(0.6)
+                .build();
+
+RetrievalAugmentor retrievalAugmentor = DefaultRetrievalAugmentor.builder()
+                .contentRetriever(contentRetriever)
+                // other options or steps can be included for Advanced RAG
+                .build();
+
+// bind the retrievalAugmentor in the context
+context.getRegistry().bind("retrievalAugmentor", retrievalAugmentor);
+
+// using the producer
+String response = template.requestBody("direct:chat", body, String.class);
+----
+
+=== Chat with Memory
+For the current version of the component, Memory is an advanced feature that requires adding a Chat Memory Provider of type dev.langchain4j.memory.chat.ChatMemoryProvider. This class enables using a dedicated LangChain4j ChatMemoryProvider.
+For more information and examples you can check the https://docs.langchain4j.dev/tutorials/chat-memory[LangChain4j Chat Memory documentation page].
+
+[NOTE]
+====
+The component requires using a Chat Memory Provider that uses a https://docs.langchain4j.dev/tutorials/chat-memory#persistence[persistent memory store].
+====
+
+The memory works for multiple users/sessions. For each context window, the users needs to set the memory ID.
+2 ways to set the memory ID:
+- By setting the Header CamelLangChain4jAgentMemoryId. This supposes that user is using a body as String.
+- By setting the AiAgentBody.memoryId field. This supposes that that user is using a body as AiAgentBody.
+
+[NOTE]
+====
+If there's no need to use different sessions, it is recommended to use the same memory ID.
+====
+
+.Example of Route
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:memory?chatModel=#chatModel&chatMemoryProvider=#chatMemoryProvider")
+
+----
+
+.Example of usage with AiAgentBody
+[source,java]
+----
+// Example of creating a Chat Memory Provider : Create a message window memory that keeps the last 10 messages
+        ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
+                .id(memoryId)
+                .maxMessages(10)
+                .chatMemoryStore(store) // the Chat Memory store is previously created
+                .build();
+
+// bind the chat memory provider in the context
+context.getRegistry().bind("chatMemoryProvider", chatMemoryProvider);
+
+
+AiAgentBody request = new AiAgentBody("Hello!", null, "session-123");
+String response = template.requestBody("direct:chat", request, String.class);
+----
+
+
+=== Input and Output Guardrails
+There's a possibility to use these advanced features to add Input and Output Guardrails to the AiAgent Route.
+For this, create classes defining InputGuardrails and OutputGuardrails as defined in the https://docs.langchain4j.dev/tutorials/guardrails[LangChain4j Guardrails documentation] page.
+
+The list of input guardrails classes should be defined as inputGuardrails option as a list of classes separated by comma.
+The list of output guardrails classes should be defined as outputGuardrails option as a list of classes separated by comma.
+
+[source,java]
+----
+from("direct:agent-with-guardrails")
+    .to("langchain4j-agent:safe?chatModel=#chatModel" +
+        "&inputGuardrails=com.example.MyInputGuardrail" +
+        "&outputGuardrails=com.example.MyOutputGuardrail1,com.example.MyOutputGuardrail2")
+----
+
+[NOTE]
+====
+The current version of the component returns a String as response. If the outputGuardrails extends JsonExtractorOutputGuardrail class, make sure to return a Json in String format.
+====

@@ -1329,6 +1329,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-langchain4j-agent</artifactId>
+        <version>4.14.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-langchain4j-chat</artifactId>
         <version>4.14.0-SNAPSHOT</version>
       </dependency>
