@@ -175,7 +175,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                         bc.getProduces(), bc.getType(), bc.getOutType(), routeId, desc);
 
                 RestBindingAdvice binding = RestBindingAdviceFactory.build(camelContext, bc);
-                RestBindingAdviceFactory.build(camelContext, bc);
 
                 ServiceHelper.buildService(binding);
                 paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
