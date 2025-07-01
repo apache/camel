@@ -32,6 +32,6 @@ RUN jbang trust add https://github.com/apache/camel
 # used to initiliaze dependencies in the docker image
 RUN jbang -Dcamel.jbang.version=$CAMEL_VERSION camel@apache/camel version
 
-ENTRYPOINT [ "jbang", "-Dcamel.jbang.version=4.10.5", "camel@apache/camel"]
+ENTRYPOINT [ "jbang", "-Dcamel.jbang.version=4.10.6", "camel@apache/camel"]
 
 
