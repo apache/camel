@@ -166,7 +166,7 @@ public class CachedOutputStream extends OutputStream {
             inMemory = false;
         }
     }
-    
+
     public int getStrategyBufferSize() {
         return strategy.getBufferSize();
     }
