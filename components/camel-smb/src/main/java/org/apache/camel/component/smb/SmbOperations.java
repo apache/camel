@@ -97,7 +97,7 @@ public class SmbOperations implements SmbFileOperations {
                 LOG.debug("Connected and logged in to: {}:{}", configuration.getHostname(), configuration.getPort());
                 loggedIn = true;
             }
-        } catch (IOException e) {
+        } catch (SMBRuntimeException | IOException e) {
             disconnect();
             throw new GenericFileOperationFailedException(
                     "Cannot connect to: " + configuration.getHostname() + ":" + configuration.getPort() + " due to: "
@@ -128,6 +128,7 @@ public class SmbOperations implements SmbFileOperations {
         if (session != null) {
             try {
                 session.close();
+                session.getConnection().close();
             } catch (TransportException t) {
                 try {
                     session.getConnection().close(true);
