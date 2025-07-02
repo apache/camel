@@ -150,7 +150,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
     }
 
-    private final class SyncScheduler implements Executor {
+    private final class TransactedScheduler implements Executor {
 
         @Override
         public void execute(Runnable command) {
@@ -179,7 +179,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
     private final Scheduler scheduler = new Scheduler();
-    private final SyncScheduler syncScheduler = new SyncScheduler();
+    private final TransactedScheduler txScheduler = new TransactedScheduler();
     private ExecutorService aggregateExecutorService;
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
@@ -381,7 +381,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         schedule(runnable, false);
     }
 
-    protected void schedule(final Runnable runnable, boolean sync) {
+    protected void schedule(final Runnable runnable, boolean transacted) {
         if (isParallelProcessing()) {
             Runnable task = prepareMDCParallelTask(camelContext, runnable);
             try {
@@ -391,8 +391,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
                     rej.reject();
                 }
             }
-        } else if (sync) {
-            reactiveExecutor.scheduleSync(runnable);
+        } else if (transacted) {
+            reactiveExecutor.scheduleQueue(runnable);
         } else {
             reactiveExecutor.schedule(runnable);
         }
@@ -415,7 +415,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         final ScheduledFuture<?> timeoutTask;
 
         MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback, int capacity,
-                      boolean sync) {
+                      boolean transacted) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
@@ -435,9 +435,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
             }
             if (capacity > 0) {
                 this.completion
-                        = new AsyncCompletionService<>(sync ? syncScheduler : scheduler, !isStreaming(), lock, capacity);
+                        = new AsyncCompletionService<>(transacted ? txScheduler : scheduler, !isStreaming(), lock, capacity);
             } else {
-                this.completion = new AsyncCompletionService<>(sync ? syncScheduler : scheduler, !isStreaming(), lock);
+                this.completion = new AsyncCompletionService<>(transacted ? txScheduler : scheduler, !isStreaming(), lock);
             }
         }
 
