@@ -43,3 +43,5 @@ Camel comes with the following implementations out of the box:
 * `org.apache.camel.support.SimpleUuidGenerator`: This implementation uses
 internally a `java.util.concurrent.atomic.AtomicLong` and increases the
 ID for every call by one. Starting with 1 as the first id.
+* `org.apache.camel.support.RandomUuidGenerator`: type 4 (pseudo randomly generated) UUID. 
+The UUID is generated using a cryptographically strong pseudo random number generator.
