@@ -26,7 +26,7 @@ __metadata:
     gulp: ~4.0
     gulp-cli: ~3.1
     gulp-inject: ^5.0.5
-    gulp-rename: ^2.0.0
+    gulp-rename: ^2.1.0
     gulp-sort: ^2.0.0
     map-stream: ^0.0.7
     prettier-eslint-cli: ^8.0.1
@@ -3804,10 +3804,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gulp-rename@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "gulp-rename@npm:2.0.0"
-  checksum: b9add0d130487dee6067206eebfc3867e4e254117edef154e8c270e3111b112335439ac1cac1519d6a32541343e04bd299484253a333b4e34c7d430039953e99
+"gulp-rename@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "gulp-rename@npm:2.1.0"
+  checksum: 83be4ad1e8f4f8525681011695f02a9edbd50a37a08b8bdf9c0f01c67f317f8a5e50d1d693d65e3e23fb95669e7e22b4a9bbcd94eed46c3be9ad7e1be532d48b
   languageName: node
   linkType: hard
 
