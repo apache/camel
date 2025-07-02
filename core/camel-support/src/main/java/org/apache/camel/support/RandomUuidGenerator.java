@@ -21,8 +21,8 @@ import java.util.UUID;
 import org.apache.camel.spi.UuidGenerator;
 
 /**
- * Random {@link UuidGenerator} type 4 (pseudo randomly generated) UUID. 
- * The UUID is generated using a cryptographically strong pseudo random number generator.
+ * Random {@link UuidGenerator} type 4 (pseudo randomly generated) UUID. The UUID is generated using a cryptographically
+ * strong pseudo random number generator.
  */
 public class RandomUuidGenerator implements UuidGenerator {
 
