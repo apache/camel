@@ -89,12 +89,6 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito-version}</version>
-            <scope>test</scope>
-        </dependency>
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -107,41 +101,18 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- for validator tests, the artifact itself is included inside the project repository 'camel-validator-test-repo' above -->
-        <dependency>
-            <groupId>org.apache.camel.tests</groupId>
-            <artifactId>camel-validator-test-resources</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
     </dependencies>
 
     <build>
         <plugins>
-
-            <!-- to validate Camel endpoints: mvn camel-report:validate -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-report-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <failOnError>false</failOnError>
-                    <includeTest>true</includeTest>
-                    <includeXml>true</includeXml>
-                    <ignoreLenientProperties>false</ignoreLenientProperties>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
                         <derby.stream.error.file>target/derby.log</derby.stream.error.file>
                     </systemPropertyVariables>
+                    <!-- run with low memory to test stream caching should avoid OOME -->
                     <argLine>-XX:MaxDirectMemorySize=512k</argLine>
-                    <excludes>
-                        <!-- exclude doc tests as they dont work on CI server -->
-                        <exclude>**/*DocumentationTest.*</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
