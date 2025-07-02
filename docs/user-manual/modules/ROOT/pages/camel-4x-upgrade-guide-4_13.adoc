@@ -89,7 +89,3 @@ which is standard across all runtimes.
 === camel-fury
 
 Camel Fury dataformat has been renamed camel-fory, this is valid for all the component elements: scheme, DSL and documentation.
-
-=== camel-simple
-
-Camel Simple has added a new uuid generator type named `random` which implements type 4 (pseudo randomly generated) UUID.
