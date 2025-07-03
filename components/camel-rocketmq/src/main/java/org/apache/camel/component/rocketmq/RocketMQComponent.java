@@ -32,14 +32,29 @@ public class RocketMQComponent extends DefaultComponent {
     @Metadata(label = "consumer")
     private String consumerGroup;
 
+    @Metadata(label = "consumer", defaultValue = "tag")
+    private String messageSelectorType = "tag";
+
     @Metadata(label = "consumer", defaultValue = "*")
     private String subscribeTags = "*";
+
+    @Metadata(label = "consumer", defaultValue = "1 = 1")
+    private String subscribeSql = "1 = 1";
 
     @Metadata(label = "common")
     private String sendTag = "";
 
     @Metadata(label = "common", defaultValue = "localhost:9876")
     private String namesrvAddr = "localhost:9876";
+
+    @Metadata(label = "common")
+    private String namespace;
+
+    @Metadata(label = "common", defaultValue = "false")
+    private boolean enableTrace = false;
+
+    @Metadata(label = "common", defaultValue = "LOCAL")
+    private String accessChannel = "LOCAL";
 
     @Metadata(label = "producer")
     private String replyToTopic;
@@ -67,8 +82,13 @@ public class RocketMQComponent extends DefaultComponent {
         RocketMQEndpoint endpoint = new RocketMQEndpoint(uri, this);
         endpoint.setProducerGroup(getProducerGroup());
         endpoint.setConsumerGroup(getConsumerGroup());
+        endpoint.setMessageSelectorType(getMessageSelectorType());
+        endpoint.setSubscribeSql(getSubscribeSql());
         endpoint.setSubscribeTags(getSubscribeTags());
         endpoint.setNamesrvAddr(getNamesrvAddr());
+        endpoint.setNamespace(getNamespace());
+        endpoint.setEnableTrace(isEnableTrace());
+        endpoint.setAccessChannel(getAccessChannel());
         endpoint.setSendTag(getSendTag());
         endpoint.setReplyToTopic(getReplyToTopic());
         endpoint.setReplyToConsumerGroup(getReplyToConsumerGroup());
@@ -80,6 +100,29 @@ public class RocketMQComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
         endpoint.setTopicName(remaining);
         return endpoint;
+    }
+
+    public String getMessageSelectorType() {
+        return messageSelectorType;
+    }
+
+    /**
+     * Message Selector Type, TAG or SQL [TAG] by default
+     */
+    public void setMessageSelectorType(String messageSelectorType) {
+        this.messageSelectorType = messageSelectorType;
+    }
+
+    public String getSubscribeSql() {
+        return subscribeSql;
+    }
+
+    /**
+     * Subscribe SQL of consumer. See
+     * https://rocketmq.apache.org/docs/featureBehavior/07messagefilter/#attribute-based-sql-filtering for more details.
+     */
+    public void setSubscribeSql(String subscribeSql) {
+        this.subscribeSql = subscribeSql;
     }
 
     public String getSubscribeTags() {
@@ -113,6 +156,39 @@ public class RocketMQComponent extends DefaultComponent {
      */
     public void setNamesrvAddr(String namesrvAddr) {
         this.namesrvAddr = namesrvAddr;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * Namespace of RocketMQ cluster. You need to specify this if you are using serverless version of RocketMQ.
+     */
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public boolean isEnableTrace() {
+        return enableTrace;
+    }
+
+    /**
+     * Whether to enable trace.
+     */
+    public void setEnableTrace(boolean enableTrace) {
+        this.enableTrace = enableTrace;
+    }
+
+    public String getAccessChannel() {
+        return accessChannel;
+    }
+
+    /**
+     * Access channel of RocketMQ cluster. LOCAL or CLOUD, [LOCAL] by default
+     */
+    public void setAccessChannel(String accessChannel) {
+        this.accessChannel = accessChannel;
     }
 
     public String getProducerGroup() {

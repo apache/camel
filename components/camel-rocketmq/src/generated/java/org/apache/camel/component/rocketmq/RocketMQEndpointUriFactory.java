@@ -23,13 +23,17 @@ public class RocketMQEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(17);
+        Set<String> props = new HashSet<>(22);
+        props.add("accessChannel");
         props.add("accessKey");
         props.add("bridgeErrorHandler");
         props.add("consumerGroup");
+        props.add("enableTrace");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("lazyStartProducer");
+        props.add("messageSelectorType");
+        props.add("namespace");
         props.add("namesrvAddr");
         props.add("producerGroup");
         props.add("replyToConsumerGroup");
@@ -38,6 +42,7 @@ public class RocketMQEndpointUriFactory extends org.apache.camel.support.compone
         props.add("requestTimeoutMillis");
         props.add("secretKey");
         props.add("sendTag");
+        props.add("subscribeSql");
         props.add("subscribeTags");
         props.add("topicName");
         props.add("waitForSendResult");

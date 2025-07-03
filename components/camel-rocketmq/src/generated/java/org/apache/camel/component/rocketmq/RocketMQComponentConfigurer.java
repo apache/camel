@@ -23,6 +23,8 @@ public class RocketMQComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RocketMQComponent target = (RocketMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesschannel":
+        case "accessChannel": target.setAccessChannel(property(camelContext, java.lang.String.class, value)); return true;
         case "accesskey":
         case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -31,8 +33,13 @@ public class RocketMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumergroup":
         case "consumerGroup": target.setConsumerGroup(property(camelContext, java.lang.String.class, value)); return true;
+        case "enabletrace":
+        case "enableTrace": target.setEnableTrace(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "messageselectortype":
+        case "messageSelectorType": target.setMessageSelectorType(property(camelContext, java.lang.String.class, value)); return true;
+        case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "namesrvaddr":
         case "namesrvAddr": target.setNamesrvAddr(property(camelContext, java.lang.String.class, value)); return true;
         case "producergroup":
@@ -49,6 +56,8 @@ public class RocketMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sendtag":
         case "sendTag": target.setSendTag(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscribesql":
+        case "subscribeSql": target.setSubscribeSql(property(camelContext, java.lang.String.class, value)); return true;
         case "subscribetags":
         case "subscribeTags": target.setSubscribeTags(property(camelContext, java.lang.String.class, value)); return true;
         case "waitforsendresult":
@@ -60,6 +69,8 @@ public class RocketMQComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesschannel":
+        case "accessChannel": return java.lang.String.class;
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "autowiredenabled":
@@ -68,8 +79,13 @@ public class RocketMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return boolean.class;
         case "consumergroup":
         case "consumerGroup": return java.lang.String.class;
+        case "enabletrace":
+        case "enableTrace": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "messageselectortype":
+        case "messageSelectorType": return java.lang.String.class;
+        case "namespace": return java.lang.String.class;
         case "namesrvaddr":
         case "namesrvAddr": return java.lang.String.class;
         case "producergroup":
@@ -86,6 +102,8 @@ public class RocketMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "secretKey": return java.lang.String.class;
         case "sendtag":
         case "sendTag": return java.lang.String.class;
+        case "subscribesql":
+        case "subscribeSql": return java.lang.String.class;
         case "subscribetags":
         case "subscribeTags": return java.lang.String.class;
         case "waitforsendresult":
@@ -98,6 +116,8 @@ public class RocketMQComponentConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RocketMQComponent target = (RocketMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesschannel":
+        case "accessChannel": return target.getAccessChannel();
         case "accesskey":
         case "accessKey": return target.getAccessKey();
         case "autowiredenabled":
@@ -106,8 +126,13 @@ public class RocketMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumergroup":
         case "consumerGroup": return target.getConsumerGroup();
+        case "enabletrace":
+        case "enableTrace": return target.isEnableTrace();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "messageselectortype":
+        case "messageSelectorType": return target.getMessageSelectorType();
+        case "namespace": return target.getNamespace();
         case "namesrvaddr":
         case "namesrvAddr": return target.getNamesrvAddr();
         case "producergroup":
@@ -124,6 +149,8 @@ public class RocketMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "secretKey": return target.getSecretKey();
         case "sendtag":
         case "sendTag": return target.getSendTag();
+        case "subscribesql":
+        case "subscribeSql": return target.getSubscribeSql();
         case "subscribetags":
         case "subscribeTags": return target.getSubscribeTags();
         case "waitforsendresult":

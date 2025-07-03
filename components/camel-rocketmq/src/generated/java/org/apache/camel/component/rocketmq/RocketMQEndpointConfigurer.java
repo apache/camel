@@ -23,18 +23,25 @@ public class RocketMQEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RocketMQEndpoint target = (RocketMQEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesschannel":
+        case "accessChannel": target.setAccessChannel(property(camelContext, java.lang.String.class, value)); return true;
         case "accesskey":
         case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumergroup":
         case "consumerGroup": target.setConsumerGroup(property(camelContext, java.lang.String.class, value)); return true;
+        case "enabletrace":
+        case "enableTrace": target.setEnableTrace(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "messageselectortype":
+        case "messageSelectorType": target.setMessageSelectorType(property(camelContext, java.lang.String.class, value)); return true;
+        case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "namesrvaddr":
         case "namesrvAddr": target.setNamesrvAddr(property(camelContext, java.lang.String.class, value)); return true;
         case "producergroup":
@@ -51,6 +58,8 @@ public class RocketMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sendtag":
         case "sendTag": target.setSendTag(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscribesql":
+        case "subscribeSql": target.setSubscribeSql(property(camelContext, java.lang.String.class, value)); return true;
         case "subscribetags":
         case "subscribeTags": target.setSubscribeTags(property(camelContext, java.lang.String.class, value)); return true;
         case "waitforsendresult":
@@ -62,18 +71,25 @@ public class RocketMQEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesschannel":
+        case "accessChannel": return java.lang.String.class;
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "consumergroup":
         case "consumerGroup": return java.lang.String.class;
+        case "enabletrace":
+        case "enableTrace": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "messageselectortype":
+        case "messageSelectorType": return java.lang.String.class;
+        case "namespace": return java.lang.String.class;
         case "namesrvaddr":
         case "namesrvAddr": return java.lang.String.class;
         case "producergroup":
@@ -90,6 +106,8 @@ public class RocketMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "secretKey": return java.lang.String.class;
         case "sendtag":
         case "sendTag": return java.lang.String.class;
+        case "subscribesql":
+        case "subscribeSql": return java.lang.String.class;
         case "subscribetags":
         case "subscribeTags": return java.lang.String.class;
         case "waitforsendresult":
@@ -102,18 +120,25 @@ public class RocketMQEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RocketMQEndpoint target = (RocketMQEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesschannel":
+        case "accessChannel": return target.getAccessChannel();
         case "accesskey":
         case "accessKey": return target.getAccessKey();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumergroup":
         case "consumerGroup": return target.getConsumerGroup();
+        case "enabletrace":
+        case "enableTrace": return target.isEnableTrace();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "messageselectortype":
+        case "messageSelectorType": return target.getMessageSelectorType();
+        case "namespace": return target.getNamespace();
         case "namesrvaddr":
         case "namesrvAddr": return target.getNamesrvAddr();
         case "producergroup":
@@ -130,6 +155,8 @@ public class RocketMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "secretKey": return target.getSecretKey();
         case "sendtag":
         case "sendTag": return target.getSendTag();
+        case "subscribesql":
+        case "subscribeSql": return target.getSubscribeSql();
         case "subscribetags":
         case "subscribeTags": return target.getSubscribeTags();
         case "waitforsendresult":

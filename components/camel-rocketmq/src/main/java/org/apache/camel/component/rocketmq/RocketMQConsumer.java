@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.rocketmq.client.AccessChannel;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.MessageSelector;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -40,10 +42,26 @@ public class RocketMQConsumer extends DefaultConsumer implements Suspendable {
 
     private void startConsumer() throws MQClientException {
         mqPushConsumer = new DefaultMQPushConsumer(
-                null, endpoint.getConsumerGroup(),
+                endpoint.getConsumerGroup(),
                 RocketMQAclUtils.getAclRPCHook(getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
         mqPushConsumer.setNamesrvAddr(endpoint.getNamesrvAddr());
-        mqPushConsumer.subscribe(endpoint.getTopicName(), endpoint.getSubscribeTags());
+        mqPushConsumer.setNamespaceV2(endpoint.getNamespace());
+
+        MessageSelector messageSelector;
+        switch (endpoint.getMessageSelectorType().toLowerCase()) {
+            case "tag":
+                messageSelector = MessageSelector.byTag(endpoint.getSubscribeTags());
+                break;
+            case "sql":
+                messageSelector = MessageSelector.bySql(endpoint.getSubscribeSql());
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown selector type: " + endpoint.getMessageSelectorType());
+        }
+        mqPushConsumer.setEnableTrace(endpoint.isEnableTrace());
+        mqPushConsumer.setAccessChannel(AccessChannel.valueOf(endpoint.getAccessChannel()));
+        mqPushConsumer.subscribe(endpoint.getTopicName(), messageSelector);
+
         mqPushConsumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
             MessageExt messageExt = msgs.get(0);
             Exchange exchange = endpoint.createRocketExchange(messageExt.getBody());
