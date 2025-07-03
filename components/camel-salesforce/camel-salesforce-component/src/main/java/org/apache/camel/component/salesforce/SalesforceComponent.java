@@ -276,6 +276,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
               javaType = "java.lang.String", label = "common")
     private String packages;
 
+    @Deprecated
     @Metadata(description = "Timeout in seconds to validate when a custom pubSubReplayId has been configured, when starting the Camel Salesforce consumer.",
               defaultValue = "30", label = "consumer,advanced")
     private int initialReplyIdTimeout = 30;

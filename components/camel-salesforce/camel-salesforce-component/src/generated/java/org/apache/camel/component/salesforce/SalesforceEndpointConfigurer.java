@@ -57,6 +57,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "fallbackreplayid":
         case "fallBackReplayId": target.getConfiguration().setFallBackReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "fallbacktolatestreplayid":
+        case "fallbackToLatestReplayId": target.setFallbackToLatestReplayId(property(camelContext, boolean.class, value)); return true;
         case "format": target.getConfiguration().setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
         case "httpclient":
         case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
@@ -193,6 +195,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "fallbackreplayid":
         case "fallBackReplayId": return java.lang.Long.class;
+        case "fallbacktolatestreplayid":
+        case "fallbackToLatestReplayId": return boolean.class;
         case "format": return org.apache.camel.component.salesforce.internal.PayloadFormat.class;
         case "httpclient":
         case "httpClient": return org.apache.camel.component.salesforce.SalesforceHttpClient.class;
@@ -330,6 +334,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": return target.getExchangePattern();
         case "fallbackreplayid":
         case "fallBackReplayId": return target.getConfiguration().getFallBackReplayId();
+        case "fallbacktolatestreplayid":
+        case "fallbackToLatestReplayId": return target.isFallbackToLatestReplayId();
         case "format": return target.getConfiguration().getFormat();
         case "httpclient":
         case "httpClient": return target.getConfiguration().getHttpClient();
