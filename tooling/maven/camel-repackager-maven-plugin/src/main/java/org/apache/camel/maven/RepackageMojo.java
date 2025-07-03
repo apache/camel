@@ -18,7 +18,6 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -38,11 +37,11 @@ import org.springframework.boot.loader.tools.LibraryScope;
 import org.springframework.boot.loader.tools.Repackager;
 
 /**
- * Maven plugin to repackage a JAR using Spring Boot loader tools to create a self-executing JAR.
- * This creates a JAR with the Spring Boot nested structure where dependencies are kept as separate
- * JARs in BOOT-INF/lib/ and application classes are in BOOT-INF/classes/.
+ * Maven plugin to repackage a JAR using Spring Boot loader tools to create a self-executing JAR. This creates a JAR
+ * with the Spring Boot nested structure where dependencies are kept as separate JARs in BOOT-INF/lib/ and application
+ * classes are in BOOT-INF/classes/.
  */
-@Mojo(name = "repackage", defaultPhase = LifecyclePhase.PACKAGE, 
+@Mojo(name = "repackage", defaultPhase = LifecyclePhase.PACKAGE,
       requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class RepackageMojo extends AbstractMojo {
 
@@ -138,8 +137,8 @@ public class RepackageMojo extends AbstractMojo {
         String scope = artifact.getScope();
         // Include compile and runtime dependencies
         return Artifact.SCOPE_COMPILE.equals(scope) ||
-               Artifact.SCOPE_RUNTIME.equals(scope) ||
-               (Artifact.SCOPE_PROVIDED.equals(scope) && artifact.getGroupId().startsWith("org.apache.camel"));
+                Artifact.SCOPE_RUNTIME.equals(scope) ||
+                (Artifact.SCOPE_PROVIDED.equals(scope) && artifact.getGroupId().startsWith("org.apache.camel"));
     }
 
     private LibraryScope getLibraryScope(Artifact artifact) {
