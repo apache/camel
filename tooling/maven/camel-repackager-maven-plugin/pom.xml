@@ -36,9 +36,9 @@
     <description>Maven plugin to create self-executing JARs using Spring Boot loader tools</description>
 
     <properties>
-        <firstVersion>4.12.0</firstVersion>
+        <firstVersion>4.13.0</firstVersion>
         <label>tooling</label>
-        <supportLevel>Stable</supportLevel>
+        <supportLevel>Preview</supportLevel>
         <spring-boot-version>3.5.3</spring-boot-version>
     </properties>
 
