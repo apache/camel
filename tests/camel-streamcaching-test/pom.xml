@@ -28,8 +28,8 @@
     </parent>
 
     <artifactId>camel-streamcaching-test</artifactId>
-    <name>Camel :: Stream Caching Tests</name>
-    <description>Performs cross component integration tests</description>
+    <name>Camel :: Integration Tests :: Stream Caching Tests</name>
+    <description>Special test for stream caching</description>
 
 
     <dependencies>
