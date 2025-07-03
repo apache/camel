@@ -24,11 +24,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
-import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.protobuf.ByteString;
 import com.salesforce.eventbus.protobuf.ConsumerEvent;
 import com.salesforce.eventbus.protobuf.FetchRequest;
@@ -63,6 +60,7 @@ import org.apache.avro.reflect.ReflectDatumWriter;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.avro.specific.SpecificRecord;
+import org.apache.camel.component.salesforce.InvalidReplayIdException;
 import org.apache.camel.component.salesforce.PubSubApiConsumer;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -77,7 +75,7 @@ public class PubSubApiClient extends ServiceSupport {
 
     public static final String PUBSUB_ERROR_AUTH_ERROR = "sfdc.platform.eventbus.grpc.service.auth.error";
     private static final String PUBSUB_ERROR_AUTH_REFRESH_INVALID = "sfdc.platform.eventbus.grpc.service.auth.refresh.invalid";
-    private static final String PUBSUB_ERROR_CORRUPTED_REPLAY_ID
+    public static final String PUBSUB_ERROR_CORRUPTED_REPLAY_ID
             = "sfdc.platform.eventbus.grpc.subscription.fetch.replayid.corrupted";
 
     protected PubSubGrpc.PubSubStub asyncStub;
@@ -105,7 +103,7 @@ public class PubSubApiClient extends ServiceSupport {
 
     private ReplayPreset initialReplayPreset;
     private String initialReplayId;
-    private int initialReplayIdTimeout;
+    private boolean fallbackToLatestReplayId;
 
     public PubSubApiClient(SalesforceSession session, SalesforceLoginConfig loginConfig, String pubSubHost,
                            int pubSubPort, long backoffIncrement, long maxBackoff, boolean allowUseProxyServer) {
@@ -151,12 +149,11 @@ public class PubSubApiClient extends ServiceSupport {
     }
 
     public void subscribe(
-            PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId, int initialReplayIdTimeout,
-            boolean initialSubscribe) {
+            PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId, boolean fallbackToLatestReplayId) {
         LOG.debug("Starting subscribe {}", consumer.getTopic());
         this.initialReplayPreset = replayPreset;
         this.initialReplayId = initialReplayId;
-        this.initialReplayIdTimeout = initialReplayIdTimeout;
+        this.fallbackToLatestReplayId = fallbackToLatestReplayId;
         if (replayPreset == ReplayPreset.CUSTOM && initialReplayId == null) {
             throw new RuntimeException("initialReplayId is required for ReplayPreset.CUSTOM");
         }
@@ -165,9 +162,6 @@ public class PubSubApiClient extends ServiceSupport {
         ByteString replayId = null;
         if (initialReplayId != null) {
             replayId = base64DecodeToByteString(initialReplayId);
-            if (initialSubscribe) {
-                checkInitialReplayIdValidity(topic, replayId, initialReplayIdTimeout);
-            }
         }
         LOG.info("Subscribing to topic: {}.", topic);
         final FetchResponseObserver responseObserver = new FetchResponseObserver(consumer);
@@ -183,57 +177,6 @@ public class PubSubApiClient extends ServiceSupport {
             fetchRequestBuilder.setReplayId(replayId);
         }
         serverStream.onNext(fetchRequestBuilder.build());
-    }
-
-    public void checkInitialReplayIdValidity(String topic, ByteString replayId, int initialReplayIdTimeout) {
-        LOG.info("Checking initialReplayId: {} for topic: {}", base64EncodeByteString(replayId), topic);
-
-        final AtomicReference<Throwable> error = new AtomicReference<>();
-        final CountDownLatch latch = new CountDownLatch(1);
-        final StreamObserver<FetchResponse> responseObserver = new StreamObserver<>() {
-
-            @Override
-            public void onNext(FetchResponse value) {
-                latch.countDown();
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                if (t instanceof StatusRuntimeException e) {
-                    Metadata trailers = e.getTrailers();
-                    if (trailers != null && PUBSUB_ERROR_CORRUPTED_REPLAY_ID
-                            .equals(trailers.get(Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER)))) {
-                        error.set(t);
-                    }
-                }
-                latch.countDown();
-            }
-
-            @Override
-            public void onCompleted() {
-            }
-        };
-        StreamObserver<FetchRequest> serverStream = asyncStub.subscribe(responseObserver);
-        FetchRequest.Builder fetchRequestBuilder = FetchRequest.newBuilder()
-                .setReplayPreset(ReplayPreset.CUSTOM)
-                .setTopicName(topic)
-                .setNumRequested(1)
-                .setReplayId(replayId);
-        serverStream.onNext(fetchRequestBuilder.build());
-
-        try {
-            if (!Uninterruptibles.awaitUninterruptibly(latch, initialReplayIdTimeout, TimeUnit.SECONDS)) {
-                throw new RuntimeException("Timeout while checking initialReplayId.");
-            }
-        } finally {
-            serverStream.onCompleted();
-        }
-
-        if (error.get() != null) {
-            throw new RuntimeException(
-                    "initialReplayId " + base64EncodeByteString(replayId) + " is not valid",
-                    error.get());
-        }
     }
 
     public TopicInfo getTopicInfo(String name) {
@@ -408,10 +351,22 @@ public class PubSubApiClient extends ServiceSupport {
                             LOG.debug("logged in {}", consumer.getTopic());
                         }
                         case PUBSUB_ERROR_CORRUPTED_REPLAY_ID -> {
-                            LOG.error("replay id: " + replayId
-                                      + " is corrupt. Trying to recover by resubscribing with LATEST replay preset");
-                            replayId = null;
-                            initialReplayPreset = ReplayPreset.LATEST;
+                            String currReplayId = null;
+                            if (replayId != null) {
+                                currReplayId = replayId;
+                            } else if (initialReplayPreset == ReplayPreset.CUSTOM) {
+                                currReplayId = initialReplayId;
+                            }
+                            if (fallbackToLatestReplayId) {
+                                initialReplayPreset = ReplayPreset.LATEST;
+                                LOG.warn("replay id: " + currReplayId
+                                         + " is corrupt. Trying to recover by resubscribing with LATEST replay preset");
+                                replayId = null;
+                            } else {
+                                consumer.getExceptionHandler().handleException(new InvalidReplayIdException(
+                                        "Corrupt replay id: " + currReplayId,
+                                        currReplayId));
+                            }
                         }
                         default -> LOG.error("unexpected errorCode: {}", errorCode);
                     }
@@ -431,12 +386,13 @@ public class PubSubApiClient extends ServiceSupport {
                 throw new RuntimeException(e);
             }
             if (replayId != null) {
-                subscribe(consumer, ReplayPreset.CUSTOM, replayId, initialReplayIdTimeout, false);
+                subscribe(consumer, ReplayPreset.CUSTOM, replayId, fallbackToLatestReplayId);
             } else {
                 if (initialReplayPreset == ReplayPreset.CUSTOM) {
-                    subscribe(consumer, initialReplayPreset, initialReplayId, initialReplayIdTimeout, false);
+                    subscribe(consumer, initialReplayPreset, initialReplayId,
+                            fallbackToLatestReplayId);
                 } else {
-                    subscribe(consumer, initialReplayPreset, null, initialReplayIdTimeout, false);
+                    subscribe(consumer, initialReplayPreset, null, fallbackToLatestReplayId);
                 }
             }
         }

@@ -23,7 +23,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(68);
+        Set<String> props = new HashSet<>(69);
         props.add("allOrNone");
         props.add("apexMethod");
         props.add("apexQueryParams");
@@ -41,6 +41,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("fallBackReplayId");
+        props.add("fallbackToLatestReplayId");
         props.add("format");
         props.add("httpClient");
         props.add("includeDetails");

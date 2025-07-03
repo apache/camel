@@ -72,6 +72,13 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", description = "The replayId value to use when subscribing to the Pub/Sub API.")
     private String pubSubReplayId;
 
+    @UriParam(label = "consumer",
+              description = "Whether the pub/sub consumer needs to fallback to the latest replay id when the provided id is not valid. "
+                            + "If set to false, the component will keep retrying; in order to treat this as an exception you can "
+                            + "use BridgeExceptionHandlerToErrorHandler and handle the exception in the route.",
+              defaultValue = "false")
+    private boolean fallbackToLatestReplayId;
+
     public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent, SalesforceEndpointConfig configuration,
                               OperationName operationName, String topicName) {
         super(uri, salesforceComponent);
@@ -139,6 +146,14 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     public void setPubSubReplayId(String pubSubReplayId) {
         this.pubSubReplayId = pubSubReplayId;
+    }
+
+    public boolean isFallbackToLatestReplayId() {
+        return fallbackToLatestReplayId;
+    }
+
+    public void setFallbackToLatestReplayId(boolean fallbackToLatestReplayId) {
+        this.fallbackToLatestReplayId = fallbackToLatestReplayId;
     }
 
     @Override

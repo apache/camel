@@ -18,7 +18,10 @@ package org.apache.camel.component.salesforce;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Base64;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.protobuf.ByteString;
@@ -348,6 +351,86 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
 
         template.requestBody("direct:publishCamelEventMessage", List.of(record));
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void canHandleInvalidReplayIdExceptions() throws Exception {
+        context.getPropertiesComponent().addOverrideProperty("invalidPubSubReplayId", getInvalidReplayId());
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(InvalidReplayIdException.class)
+                        .handled(true)
+                        .to("mock:HandleInvalidReplayIdException");
+
+                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" +
+                     "?replayPreset=CUSTOM" +
+                     "&pubSubReplayId={{invalidPubSubReplayId}}" +
+                     "&bridgeErrorHandler=true")
+                        .routeId("r.subscriberWithInvalidReplayId")
+                        .autoStartup(false)
+                        .to("mock:SubscriberWithInvalidReplayId");
+            }
+        });
+
+        MockEndpoint errorHandlerMock = getMockEndpoint("mock:HandleInvalidReplayIdException");
+        errorHandlerMock.expectedMessageCount(1);
+
+        MockEndpoint subscriberMock = getMockEndpoint("mock:SubscriberWithInvalidReplayId");
+        subscriberMock.expectedMessageCount(0);
+
+        context.getRouteController().startRoute("r.subscriberWithInvalidReplayId");
+        final GenericRecord record = new GenericRecordBuilder(camelEventSchema)
+                .set("Message__c", "hello world")
+                .set("CreatedDate", System.currentTimeMillis() / 1000)
+                .set("CreatedById", "123")
+                .build();
+        template.requestBody("direct:publishCamelEventMessage", List.of(record));
+
+        errorHandlerMock.assertIsSatisfied();
+        subscriberMock.assertIsSatisfied();
+    }
+
+    @Test
+    public void fallsBackToLatestReplayId() throws Exception {
+        context.getPropertiesComponent().addOverrideProperty("invalidPubSubReplayId", getInvalidReplayId());
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" +
+                     "?replayPreset=CUSTOM" +
+                     "&pubSubReplayId={{invalidPubSubReplayId}}" +
+                     "&fallbackToLatestReplayId=true")
+                        .routeId("r.subscriberWithFallbackToLatestReplayId")
+                        .to("mock:SubscriberWithFallbackToLatestReplayId");
+            }
+        });
+
+        MockEndpoint mock = getMockEndpoint("mock:SubscriberWithFallbackToLatestReplayId");
+        mock.expectedMessageCount(1);
+
+        // Need to wait to ensure that the event is published _after_ the client has subscribed
+        Thread.sleep(3000);
+        final GenericRecord record = new GenericRecordBuilder(camelEventSchema)
+                .set("Message__c", "hello world")
+                .set("CreatedDate", System.currentTimeMillis() / 1000)
+                .set("CreatedById", "123")
+                .build();
+        template.requestBody("direct:publishCamelEventMessage", List.of(record));
+
+        mock.assertIsSatisfied();
+    }
+
+    private String getInvalidReplayId() {
+        // behind the scenes a replay id is just the index
+        // of an event in a topic, hopefully creating a huge, random replay id
+        // is enough to make it invalid
+        long replayId = 100000000000L + new Random().nextLong(100000000000L);
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.putLong(replayId);
+        return Base64.getEncoder().encodeToString(buffer.array());
     }
 
     @Override
