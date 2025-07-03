@@ -49,8 +49,8 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private String messageSelectorType = "tag";
     @UriParam(label = "consumer", defaultValue = "*")
     private String subscribeTags = "*";
-    @UriParam(label = "consumer", defaultValue = "")
-    private String subscribeSql = "";
+    @UriParam(label = "consumer", defaultValue = "1 = 1")
+    private String subscribeSql = "1 = 1";
     @UriParam(label = "producer")
     private String sendTag = "";
     @UriParam(label = "producer")
@@ -129,7 +129,7 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     /**
-     * Message Selector Type, TAG or SQL92 [TAG] by default
+     * Message Selector Type, TAG or SQL [TAG] by default
      */
     public void setMessageSelectorType(String messageSelectorType) {
         this.messageSelectorType = messageSelectorType;

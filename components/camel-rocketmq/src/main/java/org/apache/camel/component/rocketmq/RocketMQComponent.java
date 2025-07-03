@@ -38,8 +38,8 @@ public class RocketMQComponent extends DefaultComponent {
     @Metadata(label = "consumer", defaultValue = "*")
     private String subscribeTags = "*";
 
-    @Metadata(label = "consumer", defaultValue = "")
-    private String subscribeSql = "";
+    @Metadata(label = "consumer", defaultValue = "1 = 1")
+    private String subscribeSql = "1 = 1";
 
     @Metadata(label = "common")
     private String sendTag = "";
@@ -107,7 +107,7 @@ public class RocketMQComponent extends DefaultComponent {
     }
 
     /**
-     * Message Selector Type, TAG or SQL92 [TAG] by default
+     * Message Selector Type, TAG or SQL [TAG] by default
      */
     public void setMessageSelectorType(String messageSelectorType) {
         this.messageSelectorType = messageSelectorType;
