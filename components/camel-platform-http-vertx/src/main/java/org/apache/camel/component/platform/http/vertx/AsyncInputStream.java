@@ -32,6 +32,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.streams.ReadStream;
 import io.vertx.core.streams.impl.InboundBuffer;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AsyncInputStream implements ReadStream<Buffer> {
     private static final Logger LOG = LoggerFactory.getLogger(AsyncInputStream.class);
-    private static final int DEFAULT_BUFFER_SIZE = 4096;
 
     private final Lock lock = new ReentrantLock();
     private final ReadableByteChannel channel;
@@ -186,7 +186,7 @@ public class AsyncInputStream implements ReadStream<Buffer> {
 
     private void doRead() {
         checkStreamClosed();
-        doRead(ByteBuffer.allocate(DEFAULT_BUFFER_SIZE));
+        doRead(ByteBuffer.allocate(IOHelper.DEFAULT_BUFFER_SIZE));
     }
 
     private void doRead(ByteBuffer buffer) {
@@ -194,7 +194,7 @@ public class AsyncInputStream implements ReadStream<Buffer> {
         try {
             if (!readInProgress) {
                 readInProgress = true;
-                Buffer buff = Buffer.buffer(DEFAULT_BUFFER_SIZE);
+                Buffer buff = Buffer.buffer(IOHelper.DEFAULT_BUFFER_SIZE);
                 doRead(buff, 0, buffer, readPos, result -> {
                     if (result.succeeded()) {
                         readInProgress = false;
