@@ -105,7 +105,7 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
                     firstAttemptTime = lastAttemptTime;
                 }
                 nextAttemptTime = lastAttemptTime + budget.interval();
-                if (supplier.getAsBoolean()) {
+                if (doRun(supplier)) {
                     LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
                             getName(), budget.iteration());
                     status = Status.Completed;
@@ -135,6 +135,18 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
         }
 
         return completed;
+    }
+
+    protected boolean doRun(BooleanSupplier supplier) {
+        try {
+            cause = null;
+            return supplier.getAsBoolean();
+        } catch (TaskRunFailureException e) {
+            LOG.debug("Task {} failed at {} iterations and will attempt again on next interval: {}",
+                    getName(), budget.iteration(), e.getMessage());
+            cause = e;
+            return false;
+        }
     }
 
     /**

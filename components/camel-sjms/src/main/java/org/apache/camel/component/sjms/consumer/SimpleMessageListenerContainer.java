@@ -39,6 +39,7 @@ import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.task.BackgroundTask;
+import org.apache.camel.support.task.TaskRunFailureException;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
@@ -206,11 +207,11 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             // success so do not try again
             return false;
         } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to recover JMS Connection. Will try again in {} millis", endpoint.getRecoveryInterval(), e);
-            }
-            // try again
-            return true;
+            String message = "Failed to recover JMS Connection (attempt: " + task.iteration() + "). Will try again in "
+                             + endpoint.getRecoveryInterval() + " millis";
+            LOG.warn(message);
+            // make the task runner aware of the exception (will retry)
+            throw new TaskRunFailureException(message, e);
         }
     }
 

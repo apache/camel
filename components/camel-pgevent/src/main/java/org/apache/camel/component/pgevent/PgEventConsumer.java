@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.task.BackgroundTask;
+import org.apache.camel.support.task.TaskRunFailureException;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
@@ -108,7 +109,11 @@ public class PgEventConsumer extends DefaultConsumer {
                         try {
                             initConnection();
                         } catch (Exception e) {
-                            return true;
+                            String message
+                                    = "Failed to connect attempt #" + reconnectTask.iteration() + " due to: " + e.getMessage();
+                            getExceptionHandler().handleException(message, e);
+                            // make the task runner aware of the exception (will retry)
+                            throw new TaskRunFailureException(message, e);
                         }
                         LOG.debug("Connecting successful");
                     }

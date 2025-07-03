@@ -115,7 +115,7 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             firstAttemptTime = lastAttemptTime;
         }
         try {
-            if (supplier.getAsBoolean()) {
+            if (doRun(supplier)) {
                 status = Status.Completed;
                 completed.set(true);
                 if (registry != null) {
@@ -153,6 +153,18 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
                 budget.interval(), TimeUnit.MILLISECONDS);
         waitForTaskCompletion(camelContext, task);
         return completed.get();
+    }
+
+    protected boolean doRun(BooleanSupplier supplier) {
+        try {
+            cause = null;
+            return supplier.getAsBoolean();
+        } catch (TaskRunFailureException e) {
+            LOG.debug("Task {} failed at {} iterations and will attempt again on next interval: {}",
+                    getName(), budget.iteration(), e.getMessage());
+            cause = e;
+            return false;
+        }
     }
 
     private void waitForTaskCompletion(CamelContext camelContext, Future<?> task) {

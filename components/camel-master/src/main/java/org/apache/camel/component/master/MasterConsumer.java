@@ -37,6 +37,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.resume.AdapterHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.task.BackgroundTask;
+import org.apache.camel.support.task.TaskRunFailureException;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
@@ -196,7 +197,8 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                     String message = "Leadership taken. Attempt #" + leaderTask.iteration()
                                      + " failed to start consumer due to: " + cause.getMessage();
                     getExceptionHandler().handleException(message, cause);
-                    return true; // retry
+                    // make the task runner aware of the exception (will retry)
+                    throw new TaskRunFailureException(message, cause);
                 }
 
                 LOG.info("Leadership taken. Attempt #{} success. Consumer started: {}", leaderTask.iteration(),
