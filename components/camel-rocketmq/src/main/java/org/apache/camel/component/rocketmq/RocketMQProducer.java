@@ -32,6 +32,7 @@ import org.apache.camel.component.rocketmq.reply.ReplyManager;
 import org.apache.camel.component.rocketmq.reply.RocketMQReplyManagerSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.rocketmq.client.AccessChannel;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendCallback;
@@ -228,9 +229,12 @@ public class RocketMQProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         this.mqProducer = new DefaultMQProducer(
-                null, getEndpoint().getProducerGroup(),
+                getEndpoint().getProducerGroup(),
                 RocketMQAclUtils.getAclRPCHook(getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
         this.mqProducer.setNamesrvAddr(getEndpoint().getNamesrvAddr());
+        this.mqProducer.setNamespaceV2(getEndpoint().getNamespace());
+        this.mqProducer.setEnableTrace(getEndpoint().isEnableTrace());
+        this.mqProducer.setAccessChannel(AccessChannel.valueOf(getEndpoint().getAccessChannel()));
         this.mqProducer.start();
     }
 
