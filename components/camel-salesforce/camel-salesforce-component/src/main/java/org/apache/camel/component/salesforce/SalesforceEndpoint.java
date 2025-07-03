@@ -77,7 +77,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
                             + "If set to false, the component will keep retrying; in order to treat this as an exception you can "
                             + "use BridgeExceptionHandlerToErrorHandler and handle the exception in the route.",
               defaultValue = "false")
-    private boolean fallbackToLatestReplayId = false;
+    private boolean fallbackToLatestReplayId;
 
     public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent, SalesforceEndpointConfig configuration,
                               OperationName operationName, String topicName) {

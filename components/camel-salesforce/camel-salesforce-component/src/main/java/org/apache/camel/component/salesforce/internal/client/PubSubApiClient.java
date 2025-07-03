@@ -359,12 +359,12 @@ public class PubSubApiClient extends ServiceSupport {
                             }
                             if (fallbackToLatestReplayId) {
                                 initialReplayPreset = ReplayPreset.LATEST;
-                                LOG.error("replay id: " + currReplayId
-                                          + " is corrupt. Trying to recover by resubscribing with LATEST replay preset");
+                                LOG.warn("replay id: " + currReplayId
+                                         + " is corrupt. Trying to recover by resubscribing with LATEST replay preset");
                                 replayId = null;
                             } else {
                                 consumer.getExceptionHandler().handleException(new InvalidReplayIdException(
-                                        "Invalid replay id: " + currReplayId,
+                                        "Corrupt replay id: " + currReplayId,
                                         currReplayId));
                             }
                         }
