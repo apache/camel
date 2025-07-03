@@ -838,6 +838,15 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(JOB_ID, jobId);
         valueMap.put(BATCH_ID, batchId);
         valueMap.put(RESULT_ID, resultId);
+        if (locator != null) {
+            valueMap.put(LOCATOR, locator);
+        }
+        if (maxRecords != null) {
+            valueMap.put(MAX_RECORDS, maxRecords);
+        }
+        if (queryLocator != null) {
+            valueMap.put(QUERY_LOCATOR, queryLocator);
+        }
 
         // add analytics API properties
         valueMap.put(REPORT_ID, reportId);
