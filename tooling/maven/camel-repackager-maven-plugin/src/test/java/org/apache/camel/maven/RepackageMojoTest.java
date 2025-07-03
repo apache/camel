@@ -17,8 +17,6 @@
 package org.apache.camel.maven;
 
 import java.io.File;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -37,13 +35,13 @@ public class RepackageMojoTest {
     public void testSpringBootLoaderStructure() throws Exception {
         // This test would verify that the repackaged JAR has the correct Spring Boot structure
         // For now, it's a placeholder to demonstrate the expected behavior
-        
+
         // Expected structure after repackaging:
         // - META-INF/MANIFEST.MF with Main-Class: org.springframework.boot.loader.launch.JarLauncher
         // - org/springframework/boot/loader/ classes
         // - BOOT-INF/classes/ with application classes
         // - BOOT-INF/lib/ with dependency JARs
-        
+
         assertTrue(true, "Placeholder test - would verify Spring Boot JAR structure");
     }
 
@@ -52,7 +50,7 @@ public class RepackageMojoTest {
         // This test would verify that the manifest has the correct entries:
         // Main-Class: org.springframework.boot.loader.launch.JarLauncher
         // Start-Class: org.apache.camel.dsl.jbang.launcher.CamelLauncher
-        
+
         assertTrue(true, "Placeholder test - would verify manifest entries");
     }
 
@@ -60,7 +58,7 @@ public class RepackageMojoTest {
     public void testDependencyInclusion() throws Exception {
         // This test would verify that all compile and runtime dependencies
         // are included as separate JARs in BOOT-INF/lib/
-        
+
         assertTrue(true, "Placeholder test - would verify dependency inclusion");
     }
 }
