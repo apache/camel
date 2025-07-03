@@ -249,7 +249,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // enable.idempotence
     // reconnect.backoff.ms
     @UriParam(label = "producer", defaultValue = "true")
-    private boolean enableIdempotence;
+    private boolean enableIdempotence = true;
     @UriParam(label = "producer", description = "To use a custom KafkaHeaderSerializer to serialize kafka headers values")
     private KafkaHeaderSerializer headerSerializer = new DefaultKafkaHeaderSerializer();
 
@@ -360,6 +360,12 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer")
     private Integer batchingIntervalMs;
 
+    @UriParam(label = "producer")
+    private String transactionalId;
+
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean transacted;
+
     public KafkaConfiguration() {
     }
 
@@ -407,6 +413,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotEmpty(props, ProducerConfig.RETRY_BACKOFF_MAX_MS_CONFIG, getRetryBackoffMaxMs());
         addPropertyIfNotEmpty(props, ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, isEnableIdempotence());
         addPropertyIfNotEmpty(props, ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
+        addPropertyIfNotEmpty(props, ProducerConfig.TRANSACTIONAL_ID_CONFIG, getTransactionalId());
         addPropertyIfNotEmpty(props, "schema.registry.url", getSchemaRegistryURL());
 
         // SSL
@@ -2025,4 +2032,29 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     public void setBatchingIntervalMs(Integer batchingIntervalMs) {
         this.batchingIntervalMs = batchingIntervalMs;
     }
+
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    /**
+     * Indicates to create a transactional.id kafka property by using the endpoint id and route id. This property is
+     * ignored in case there is transactional.id kafka property or the transactionalId parameter.
+     */
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
+    }
+
+    public String getTransactionalId() {
+        return transactionalId;
+    }
+
+    /**
+     * Enable the kafka producer to be a transactional one by setting the transactional.id property. In case this
+     * property is used, the transacted parameter is ignored.
+     */
+    public void setTransactionalId(String transactionalId) {
+        this.transactionalId = transactionalId;
+    }
+
 }

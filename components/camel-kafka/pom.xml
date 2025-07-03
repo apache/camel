@@ -67,6 +67,12 @@
             <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring-version}</version>
+            <scope>test</scope>
+        </dependency>
 
        <dependency>
             <groupId>org.apache.camel</groupId>
@@ -75,12 +81,27 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-sql</artifactId>
+            <scope>test</scope>
+        </dependency>
        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-kafka</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.3.232</version>
             <scope>test</scope>
         </dependency>
 

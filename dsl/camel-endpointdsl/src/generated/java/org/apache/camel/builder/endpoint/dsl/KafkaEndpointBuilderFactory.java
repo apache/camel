@@ -3456,6 +3456,56 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Indicates to create a transactional.id kafka property by using the
+         * endpoint id and route id. This property is ignored in case there is
+         * transactional.id kafka property or the transactionalId parameter.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder transacted(boolean transacted) {
+            doSetProperty("transacted", transacted);
+            return this;
+        }
+        /**
+         * Indicates to create a transactional.id kafka property by using the
+         * endpoint id and route id. This property is ignored in case there is
+         * transactional.id kafka property or the transactionalId parameter.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder transacted(String transacted) {
+            doSetProperty("transacted", transacted);
+            return this;
+        }
+        /**
+         * Enable the kafka producer to be a transactional one by setting the
+         * transactional.id property. In case this property is used, the
+         * transacted parameter is ignored.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param transactionalId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder transactionalId(String transactionalId) {
+            doSetProperty("transactionalId", transactionalId);
+            return this;
+        }
+        /**
          * Sets whether sending to kafka should send the message body as a
          * single record, or use a java.util.Iterator to send multiple records
          * to kafka (if the message body can be iterated).

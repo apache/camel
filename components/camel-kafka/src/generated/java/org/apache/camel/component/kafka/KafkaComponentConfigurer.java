@@ -245,6 +245,9 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": getOrCreateConfiguration(target).setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicispattern":
         case "topicIsPattern": getOrCreateConfiguration(target).setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
+        case "transacted": getOrCreateConfiguration(target).setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "transactionalid":
+        case "transactionalId": getOrCreateConfiguration(target).setTransactionalId(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "useiterator":
@@ -486,6 +489,9 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": return boolean.class;
         case "topicispattern":
         case "topicIsPattern": return boolean.class;
+        case "transacted": return boolean.class;
+        case "transactionalid":
+        case "transactionalId": return java.lang.String.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         case "useiterator":
@@ -723,6 +729,9 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": return getOrCreateConfiguration(target).isSynchronous();
         case "topicispattern":
         case "topicIsPattern": return getOrCreateConfiguration(target).isTopicIsPattern();
+        case "transacted": return getOrCreateConfiguration(target).isTransacted();
+        case "transactionalid":
+        case "transactionalId": return getOrCreateConfiguration(target).getTransactionalId();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "useiterator":

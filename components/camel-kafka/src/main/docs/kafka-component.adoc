@@ -341,15 +341,19 @@ from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 
 === Kafka Transaction
 
-You need to add `transactional.id`, `enable.idempotence` and `retries` in `additional-properties` to enable kafka transaction with the producer.
+You need to add `transactionalId=<tx-id>` or `transacted=true` to enable kafka transaction with the producer.
 [source,java]
 ----
 from("direct:transaction")
-.to("kafka:my_topic?additional-properties[transactional.id]=1234&additional-properties[enable.idempotence]=true&additional-properties[retries]=5");
+.to("kafka:my_topic?transacted=true");
 ----
 At the end of exchange routing, the kafka producer would commit the transaction or abort it if there is an Exception throwing or the exchange is `RollbackOnly`. Since Kafka does not support transactions in multi threads, it will throw `ProducerFencedException` if there is another producer with the same `transaction.id` to make the transactional request.
 
 It would work with JTA `camel-jta` by using `transacted()` and if it involves some resources (SQL or JMS), which supports XA, then they would work in tandem, where they both will either commit or rollback at the end of the exchange routing. In some cases, if the JTA transaction manager fails to commit (during the 2PC processing), but kafka transaction has been committed before and there is no chance to roll back the changes since the kafka transaction does not support JTA/XA spec. There is still a risk with the data consistency.
+
+When you use the `transacted=true` parameter, the `transactionalId` is made from the endpoint id and route id, but if you want finer control you can just use the `transactionalId` parameter, however remeber to have a `transactionalId` for each kafka producer endpoint. Note that the old style of using `additionalProperties[transactional.id]` is still valid.
+
+If both `transacted=true` and `transactionalId` are present, the latter takes precedence.
 
 === Setting Kerberos config file
 
@@ -785,6 +789,3 @@ camelContext.addRoutes(new RouteBuilder() {
 ----
 
 include::spring-boot:partial$starter.adoc[]
-
-
-

@@ -223,6 +223,9 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicispattern":
         case "topicIsPattern": target.getConfiguration().setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
+        case "transacted": target.getConfiguration().setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "transactionalid":
+        case "transactionalId": target.getConfiguration().setTransactionalId(property(camelContext, java.lang.String.class, value)); return true;
         case "useiterator":
         case "useIterator": target.getConfiguration().setUseIterator(property(camelContext, boolean.class, value)); return true;
         case "valuedeserializer":
@@ -442,6 +445,9 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "synchronous": return boolean.class;
         case "topicispattern":
         case "topicIsPattern": return boolean.class;
+        case "transacted": return boolean.class;
+        case "transactionalid":
+        case "transactionalId": return java.lang.String.class;
         case "useiterator":
         case "useIterator": return boolean.class;
         case "valuedeserializer":
@@ -662,6 +668,9 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "synchronous": return target.getConfiguration().isSynchronous();
         case "topicispattern":
         case "topicIsPattern": return target.getConfiguration().isTopicIsPattern();
+        case "transacted": return target.getConfiguration().isTransacted();
+        case "transactionalid":
+        case "transactionalId": return target.getConfiguration().getTransactionalId();
         case "useiterator":
         case "useIterator": return target.getConfiguration().isUseIterator();
         case "valuedeserializer":
