@@ -62,7 +62,7 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     @UriParam(label = "common")
     private String namespace;
     @UriParam(label = "common", defaultValue = "false")
-    private boolean enableTrace = false;
+    private boolean enableTrace;
     @UriParam(label = "common", defaultValue = "LOCAL")
     private String accessChannel = "LOCAL";
     @UriParam(label = "advanced", defaultValue = "10000")

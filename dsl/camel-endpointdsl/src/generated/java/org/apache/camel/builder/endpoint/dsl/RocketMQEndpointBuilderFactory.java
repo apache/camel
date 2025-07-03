@@ -44,6 +44,66 @@ public interface RocketMQEndpointBuilderFactory {
             return (AdvancedRocketMQEndpointConsumerBuilder) this;
         }
         /**
+         * Access channel of RocketMQ cluster. LOCAL or CLOUD, LOCAL by default.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: LOCAL
+         * Group: common
+         * 
+         * @param accessChannel the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointConsumerBuilder accessChannel(String accessChannel) {
+            doSetProperty("accessChannel", accessChannel);
+            return this;
+        }
+        /**
+         * Whether to enable trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param enableTrace the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointConsumerBuilder enableTrace(boolean enableTrace) {
+            doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+        /**
+         * Whether to enable trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param enableTrace the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointConsumerBuilder enableTrace(String enableTrace) {
+            doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+        /**
+         * Namespace of RocketMQ cluster. You need to specify this if you are
+         * using serverless version of RocketMQ.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointConsumerBuilder namespace(String namespace) {
+            doSetProperty("namespace", namespace);
+            return this;
+        }
+        /**
          * Name server address of RocketMQ cluster.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -70,6 +130,37 @@ public interface RocketMQEndpointBuilderFactory {
          */
         default RocketMQEndpointConsumerBuilder consumerGroup(String consumerGroup) {
             doSetProperty("consumerGroup", consumerGroup);
+            return this;
+        }
+        /**
+         * Message Selector Type, TAG or SQL TAG by default.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: tag
+         * Group: consumer
+         * 
+         * @param messageSelectorType the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointConsumerBuilder messageSelectorType(String messageSelectorType) {
+            doSetProperty("messageSelectorType", messageSelectorType);
+            return this;
+        }
+        /**
+         * Subscribe SQL of consumer. See
+         * https://rocketmq.apache.org/docs/featureBehavior/07messagefilter/#attribute-based-sql-filtering for more details.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: 1 = 1
+         * Group: consumer
+         * 
+         * @param subscribeSql the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointConsumerBuilder subscribeSql(String subscribeSql) {
+            doSetProperty("subscribeSql", subscribeSql);
             return this;
         }
         /**
@@ -316,6 +407,66 @@ public interface RocketMQEndpointBuilderFactory {
             return (AdvancedRocketMQEndpointProducerBuilder) this;
         }
 
+        /**
+         * Access channel of RocketMQ cluster. LOCAL or CLOUD, LOCAL by default.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: LOCAL
+         * Group: common
+         * 
+         * @param accessChannel the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointProducerBuilder accessChannel(String accessChannel) {
+            doSetProperty("accessChannel", accessChannel);
+            return this;
+        }
+        /**
+         * Whether to enable trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param enableTrace the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointProducerBuilder enableTrace(boolean enableTrace) {
+            doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+        /**
+         * Whether to enable trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param enableTrace the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointProducerBuilder enableTrace(String enableTrace) {
+            doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+        /**
+         * Namespace of RocketMQ cluster. You need to specify this if you are
+         * using serverless version of RocketMQ.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointProducerBuilder namespace(String namespace) {
+            doSetProperty("namespace", namespace);
+            return this;
+        }
         /**
          * Name server address of RocketMQ cluster.
          * 
@@ -574,6 +725,66 @@ public interface RocketMQEndpointBuilderFactory {
             return (AdvancedRocketMQEndpointBuilder) this;
         }
 
+        /**
+         * Access channel of RocketMQ cluster. LOCAL or CLOUD, LOCAL by default.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: LOCAL
+         * Group: common
+         * 
+         * @param accessChannel the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointBuilder accessChannel(String accessChannel) {
+            doSetProperty("accessChannel", accessChannel);
+            return this;
+        }
+        /**
+         * Whether to enable trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param enableTrace the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointBuilder enableTrace(boolean enableTrace) {
+            doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+        /**
+         * Whether to enable trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param enableTrace the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointBuilder enableTrace(String enableTrace) {
+            doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+        /**
+         * Namespace of RocketMQ cluster. You need to specify this if you are
+         * using serverless version of RocketMQ.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
+         */
+        default RocketMQEndpointBuilder namespace(String namespace) {
+            doSetProperty("namespace", namespace);
+            return this;
+        }
         /**
          * Name server address of RocketMQ cluster.
          * 

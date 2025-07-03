@@ -52,6 +52,56 @@ public interface RocketmqComponentBuilderFactory {
     
         
         /**
+         * Access channel of RocketMQ cluster. LOCAL or CLOUD, LOCAL by default.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: LOCAL
+         * Group: common
+         * 
+         * @param accessChannel the value to set
+         * @return the dsl builder
+         */
+        default RocketmqComponentBuilder accessChannel(java.lang.String accessChannel) {
+            doSetProperty("accessChannel", accessChannel);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to enable trace.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param enableTrace the value to set
+         * @return the dsl builder
+         */
+        default RocketmqComponentBuilder enableTrace(boolean enableTrace) {
+            doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+    
+        /**
+         * Namespace of RocketMQ cluster. You need to specify this if you are
+         * using serverless version of RocketMQ.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
+         */
+        default RocketmqComponentBuilder namespace(java.lang.String namespace) {
+            doSetProperty("namespace", namespace);
+            return this;
+        }
+    
+        
+        /**
          * Name server address of RocketMQ cluster.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -122,6 +172,41 @@ public interface RocketmqComponentBuilderFactory {
          */
         default RocketmqComponentBuilder consumerGroup(java.lang.String consumerGroup) {
             doSetProperty("consumerGroup", consumerGroup);
+            return this;
+        }
+    
+        
+        /**
+         * Message Selector Type, TAG or SQL TAG by default.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: tag
+         * Group: consumer
+         * 
+         * @param messageSelectorType the value to set
+         * @return the dsl builder
+         */
+        default RocketmqComponentBuilder messageSelectorType(java.lang.String messageSelectorType) {
+            doSetProperty("messageSelectorType", messageSelectorType);
+            return this;
+        }
+    
+        
+        /**
+         * Subscribe SQL of consumer. See
+         * https://rocketmq.apache.org/docs/featureBehavior/07messagefilter/#attribute-based-sql-filtering for more details.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: 1 = 1
+         * Group: consumer
+         * 
+         * @param subscribeSql the value to set
+         * @return the dsl builder
+         */
+        default RocketmqComponentBuilder subscribeSql(java.lang.String subscribeSql) {
+            doSetProperty("subscribeSql", subscribeSql);
             return this;
         }
     
@@ -330,10 +415,15 @@ public interface RocketmqComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "accessChannel": ((RocketMQComponent) component).setAccessChannel((java.lang.String) value); return true;
+            case "enableTrace": ((RocketMQComponent) component).setEnableTrace((boolean) value); return true;
+            case "namespace": ((RocketMQComponent) component).setNamespace((java.lang.String) value); return true;
             case "namesrvAddr": ((RocketMQComponent) component).setNamesrvAddr((java.lang.String) value); return true;
             case "sendTag": ((RocketMQComponent) component).setSendTag((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((RocketMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "consumerGroup": ((RocketMQComponent) component).setConsumerGroup((java.lang.String) value); return true;
+            case "messageSelectorType": ((RocketMQComponent) component).setMessageSelectorType((java.lang.String) value); return true;
+            case "subscribeSql": ((RocketMQComponent) component).setSubscribeSql((java.lang.String) value); return true;
             case "subscribeTags": ((RocketMQComponent) component).setSubscribeTags((java.lang.String) value); return true;
             case "lazyStartProducer": ((RocketMQComponent) component).setLazyStartProducer((boolean) value); return true;
             case "producerGroup": ((RocketMQComponent) component).setProducerGroup((java.lang.String) value); return true;
