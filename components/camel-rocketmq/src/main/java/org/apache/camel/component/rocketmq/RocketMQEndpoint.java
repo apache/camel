@@ -45,7 +45,7 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private String producerGroup;
     @UriParam(label = "consumer")
     private String consumerGroup;
-    @UriParam(label = "consumer", defaultValue = "tag")
+    @UriParam(label = "consumer", defaultValue = "tag", enums = "tag,sql")
     private String messageSelectorType = "tag";
     @UriParam(label = "consumer", defaultValue = "*")
     private String subscribeTags = "*";
@@ -61,15 +61,15 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private String namesrvAddr = "localhost:9876";
     @UriParam(label = "common")
     private String namespace;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "common")
     private boolean enableTrace;
-    @UriParam(label = "common", defaultValue = "LOCAL")
+    @UriParam(label = "common", defaultValue = "LOCAL", enums = "LOCAL,CLOUD")
     private String accessChannel = "LOCAL";
     @UriParam(label = "advanced", defaultValue = "10000")
     private long requestTimeoutMillis = 10000L;
     @UriParam(label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerIntervalMillis = 1000L;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer")
     private boolean waitForSendResult;
     @UriParam(label = "security", secret = true)
     private String accessKey;
