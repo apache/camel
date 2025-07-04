@@ -8896,7 +8896,7 @@ Whether to require register classes. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to use the threadsafe fory. Default value: true
+Whether to use the threadsafe Fory. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>

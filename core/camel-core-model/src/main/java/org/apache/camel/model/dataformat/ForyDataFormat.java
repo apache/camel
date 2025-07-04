@@ -33,23 +33,20 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "fory")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ForyDataFormat extends DataFormatDefinition {
+
     @XmlTransient
     private Class<?> unmarshalType;
-
     @XmlAttribute(name = "unmarshalType")
     @Metadata(description = "Class of the java type to use when unmarshalling")
     private String unmarshalTypeName;
-
     @XmlAttribute
     @Metadata(label = "advanced", description = "Whether to require register classes", defaultValue = "true",
               javaType = "java.lang.Boolean")
     private String requireClassRegistration;
-
     @XmlAttribute
-    @Metadata(label = "advanced", description = "Whether to use the threadsafe fory", defaultValue = "true",
+    @Metadata(label = "advanced", description = "Whether to use the threadsafe Fory", defaultValue = "true",
               javaType = "java.lang.Boolean")
     private String threadSafe;
-
     @XmlAttribute
     @Metadata(label = "advanced", description = "Whether to auto-discover Fory from the registry", defaultValue = "true",
               javaType = "java.lang.Boolean")

@@ -11047,7 +11047,7 @@
           "threadSafe" : {
             "type" : "boolean",
             "title" : "Thread Safe",
-            "description" : "Whether to use the threadsafe fory"
+            "description" : "Whether to use the threadsafe Fory"
           },
           "unmarshalType" : {
             "type" : "string",

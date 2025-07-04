@@ -31,8 +31,6 @@ import org.apache.fory.Fory;
 import org.apache.fory.config.ForyBuilder;
 import org.apache.fory.config.Language;
 import org.apache.fory.io.ForyInputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Serialize and deserialize messages using <a href="https://fory.apache.org">Apache Fory</a>
@@ -40,7 +38,6 @@ import org.slf4j.LoggerFactory;
 @Dataformat("fory")
 @Metadata(firstVersion = "4.9.0", title = "Fory")
 public class ForyDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
-    private static final Logger LOG = LoggerFactory.getLogger(ForyDataFormat.class);
 
     private CamelContext camelContext;
     private Class<?> unmarshalType;
@@ -48,7 +45,6 @@ public class ForyDataFormat extends ServiceSupport implements DataFormat, DataFo
     private boolean requireClassRegistration = true;
     private boolean threadSafe = true;
     private boolean allowAutoWiredFury = true;
-
     private BaseFory fory;
 
     public ForyDataFormat() {
@@ -105,17 +101,9 @@ public class ForyDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
-
     // Properties
     // -------------------------------------------------------------------------
+
     public BaseFory getFory() {
         return fory;
     }

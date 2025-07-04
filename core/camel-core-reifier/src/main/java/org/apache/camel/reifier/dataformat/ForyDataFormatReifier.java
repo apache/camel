@@ -23,15 +23,16 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ForyDataFormat;
 
 public class ForyDataFormatReifier extends DataFormatReifier<ForyDataFormat> {
+
     public ForyDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
         super(camelContext, (ForyDataFormat) definition);
     }
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("unmarshalType", definition.getUnmarshalType());
+        properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
         properties.put("requireClassRegistration", definition.getRequireClassRegistration());
         properties.put("threadSafe", definition.getThreadSafe());
-        properties.put("allowAutoWiredFury", definition.getAllowAutoWiredFory());
+        properties.put("allowAutoWiredFory", definition.getAllowAutoWiredFory());
     }
 }

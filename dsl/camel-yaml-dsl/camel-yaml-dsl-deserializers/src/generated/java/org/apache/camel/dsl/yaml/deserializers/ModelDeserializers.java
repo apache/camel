@@ -6239,7 +6239,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allowAutoWiredFory", type = "boolean", description = "Whether to auto-discover Fory from the registry", displayName = "Allow Auto Wired Fory"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "requireClassRegistration", type = "boolean", description = "Whether to require register classes", displayName = "Require Class Registration"),
-                    @YamlProperty(name = "threadSafe", type = "boolean", description = "Whether to use the threadsafe fory", displayName = "Thread Safe"),
+                    @YamlProperty(name = "threadSafe", type = "boolean", description = "Whether to use the threadsafe Fory", displayName = "Thread Safe"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class of the java type to use when unmarshalling", displayName = "Unmarshal Type")
             }
     )
