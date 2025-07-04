@@ -69,6 +69,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "eventSchemaId": getOrCreateConfig(target).setEventSchemaId(property(camelContext, java.lang.String.class, value)); return true;
         case "fallbackreplayid":
         case "fallBackReplayId": getOrCreateConfig(target).setFallBackReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "fallbacktolatestreplayid":
+        case "fallbackToLatestReplayId": getOrCreateConfig(target).setFallbackToLatestReplayId(property(camelContext, boolean.class, value)); return true;
         case "format": getOrCreateConfig(target).setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
         case "httpclient":
         case "httpClient": getOrCreateConfig(target).setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
@@ -275,6 +277,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "eventSchemaId": return java.lang.String.class;
         case "fallbackreplayid":
         case "fallBackReplayId": return java.lang.Long.class;
+        case "fallbacktolatestreplayid":
+        case "fallbackToLatestReplayId": return boolean.class;
         case "format": return org.apache.camel.component.salesforce.internal.PayloadFormat.class;
         case "httpclient":
         case "httpClient": return org.apache.camel.component.salesforce.SalesforceHttpClient.class;
@@ -482,6 +486,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "eventSchemaId": return getOrCreateConfig(target).getEventSchemaId();
         case "fallbackreplayid":
         case "fallBackReplayId": return getOrCreateConfig(target).getFallBackReplayId();
+        case "fallbacktolatestreplayid":
+        case "fallbackToLatestReplayId": return getOrCreateConfig(target).isFallbackToLatestReplayId();
         case "format": return getOrCreateConfig(target).getFormat();
         case "httpclient":
         case "httpClient": return getOrCreateConfig(target).getHttpClient();

@@ -54,7 +54,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.topic = endpoint.getTopicName();
         this.initialReplayPreset = endpoint.getConfiguration().getReplayPreset();
         this.initialReplayId = endpoint.getPubSubReplayId();
-        this.fallbackToLatestReplayId = endpoint.isFallbackToLatestReplayId();
+        this.fallbackToLatestReplayId = endpoint.getConfiguration().isFallbackToLatestReplayId();
         if (initialReplayPreset == ReplayPreset.CUSTOM && initialReplayId == null) {
             throw new IllegalArgumentException("pubSubReplayId option is required if ReplayPreset is CUSTOM.");
         }
