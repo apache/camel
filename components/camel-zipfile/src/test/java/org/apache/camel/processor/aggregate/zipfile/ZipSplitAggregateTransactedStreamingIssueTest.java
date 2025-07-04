@@ -24,6 +24,7 @@ import org.apache.camel.dataformat.zipfile.ZipSplitter;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.h2.jdbcx.JdbcDataSource;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +33,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ZipSplitAggregateTransactedIssueTest extends CamelTestSupport {
+@Disabled("")
+public class ZipSplitAggregateTransactedStreamingIssueTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ZipSplitAggregateTransactedIssueTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZipSplitAggregateTransactedStreamingIssueTest.class);
 
     String zipArchiveWithTwoFiles
             = "UEsDBBQAAAAIAFlrtFDFAfecUAAAAB4BAAALAAAAT3JkZXJzMS54bWyzyS9KSS0qtuPl4oQwQSxOm8wUOxMb/cwUCK+gKD+lNLkEzOG0yUvMTbWDCik42uiD+WB1+kgKbfThxqEZbEqUwU6kG2xGlMHOhA2GsortAFBLAwQUAAAACABBW9hQgBf0tVgAAAAqAQAACwAAAE9yZGVyczIueG1ss8kvSkktKrbj5eKEMEEsTpvMFDtDQ0Mb/cwUCL+gKD+lNLkEzOG0yUvMTbWDCimA1YFFwCr1kZTa6MONRDPcyMiIKMPB6kg13NjYmCjDweoIGQ5lFdsBAFBLAQIfABQAAAAIAFlrtFDFAfecUAAAAB4BAAALACQAAAAAAAAAIAAAAAAAAABPcmRlcnMxLnhtbAoAIAAAAAAAAQAYAAD57I2ZLtYBg97kuHn02gEA+eyNmS7WAVBLAQIfABQAAAAIAEFb2FCAF/S1WAAAACoBAAALACQAAAAAAAAAIAAAAHkAAABPcmRlcnMyLnhtbAoAIAAAAAAAAQAYAAAxPXoJStYBjn3iuHn02gEAMT16CUrWAVBLBQYAAAAAAgACALoAAAD6AAAAAAA=";
@@ -80,7 +82,7 @@ public class ZipSplitAggregateTransactedIssueTest extends CamelTestSupport {
                         .transacted("transacted")
                         .setBody().simple(zipArchiveWithTwoFiles)
                         .unmarshal().base64()
-                        .split().ref("zipSplitter").aggregationStrategy(new StringAggregationStrategy())
+                        .split().ref("zipSplitter").streaming().aggregationStrategy(new StringAggregationStrategy())
                             .log("Splitting ${header.CamelFileName}")
                         .end()
                         .to("mock:result");

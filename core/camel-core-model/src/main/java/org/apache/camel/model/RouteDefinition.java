@@ -380,6 +380,17 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     /**
      * Enable or disables stream caching for this route.
      *
+     * @param  streamCache whether to use stream caching
+     * @return             the builder
+     */
+    public RouteDefinition streamCache(boolean streamCache) {
+        setStreamCache(streamCache ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * Enable or disables stream caching for this route.
+     *
      * @param  streamCache whether to use stream caching (true or false), the value can be a property placeholder
      * @return             the builder
      */
