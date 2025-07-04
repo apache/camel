@@ -37,7 +37,7 @@
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -47,7 +47,7 @@
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/resources/bin</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>camel.sh</include>
                 <include>camel.bat</include>
