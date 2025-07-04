@@ -185,12 +185,12 @@ public class BrowseDevConsole extends AbstractDevConsole {
                         jo.put("limit", max);
                         jo.put("position", begin);
                         if (!list.isEmpty()) {
-                            long ts = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0, long.class);
+                            long ts = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
                             if (ts > 0) {
                                 jo.put("firstTimestamp", ts);
                             }
                             if (list.size() > 1) {
-                                ts = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0,
+                                ts = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L,
                                         long.class);
                                 if (ts > 0) {
                                     jo.put("lastTimestamp", ts);
