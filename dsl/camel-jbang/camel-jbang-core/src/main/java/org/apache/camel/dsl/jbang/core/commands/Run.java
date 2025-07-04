@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1005,12 +1006,32 @@ public class Run extends CamelCommand {
             return 1;
         }
 
+        AtomicReference<Process> processRef = new AtomicReference<>();
+
         // create temp run dir
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
             // Mark for deletion on exit
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
+                    // We need to wait for the process to exit before doing any cleanup
+                    Process process = processRef.get();
+                    if (process != null) {
+                        process.destroy();
+
+                        for (int i = 0; i < 30; i++) {
+                            if (!process.isAlive()) {
+                                break;
+                            }
+
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                        }
+                    }
+
                     removeDir(runDirPath);
                 } catch (Exception e) {
                     // Ignore
@@ -1078,6 +1099,7 @@ public class Run extends CamelCommand {
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         Process p = pb.start();
+        processRef.set(p);
         this.spawnPid = p.pid();
         // wait for that process to exit as we run in foreground
         return p.waitFor();
@@ -1089,12 +1111,32 @@ public class Run extends CamelCommand {
             return 1;
         }
 
+        AtomicReference<Process> processRef = new AtomicReference<>();
+
         // create temp run dir
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
             // Mark for deletion on exit
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
+                    // We need to wait for the process to exit before doing any cleanup
+                    Process process = processRef.get();
+                    if (process != null) {
+                        process.destroy();
+
+                        for (int i = 0; i < 30; i++) {
+                            if (!process.isAlive()) {
+                                break;
+                            }
+
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                        }
+                    }
+
                     removeDir(runDirPath);
                 } catch (Exception e) {
                     // Ignore
@@ -1174,6 +1216,7 @@ public class Run extends CamelCommand {
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         Process p = pb.start();
+        processRef.set(p);
         this.spawnPid = p.pid();
         // wait for that process to exit as we run in foreground
         return p.waitFor();
