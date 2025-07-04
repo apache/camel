@@ -456,7 +456,7 @@
         <rome-version>2.1.0</rome-version>
         <rssreader-version>3.9.3</rssreader-version>
         <rxjava2-version>2.2.21</rxjava2-version>
-        <saxon-version>12.7</saxon-version>
+        <saxon-version>12.8</saxon-version>
         <scala-datasonnet-version>2.13.16</scala-datasonnet-version>
         <shiro-version>2.0.4</shiro-version>
         <sisu-maven-plugin-version>0.9.0.M4</sisu-maven-plugin-version>
