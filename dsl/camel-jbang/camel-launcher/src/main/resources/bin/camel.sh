@@ -90,7 +90,7 @@ then
 fi
 
 # Set the classpath to the JAR file
-for f in "$BASEDIR"/camel-jbang-launcher-*.jar; do
+for f in "$BASEDIR"/camel-launcher-*.jar; do
   if [ -f "$f" ]; then
     CLASSPATH="$f"
     break

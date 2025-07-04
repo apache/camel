@@ -50,11 +50,11 @@ goto error
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=-Xmx512m
 
 @REM Find the JAR file
-dir /b "%BASEDIR%\camel-jbang-launcher-*.jar" > nul 2>&1
+dir /b "%BASEDIR%\camel-launcher-*.jar" > nul 2>&1
 if not errorlevel 1 (
-  for /f "tokens=*" %%j in ('dir /b "%BASEDIR%\camel-jbang-launcher-*.jar"') do set LAUNCHER_JAR=%BASEDIR%\%%j
+  for /f "tokens=*" %%j in ('dir /b "%BASEDIR%\camel-launcher-*.jar"') do set LAUNCHER_JAR=%BASEDIR%\%%j
 ) else (
-  for %%i in ("%BASEDIR%\camel-jbang-launcher-*.jar") do set LAUNCHER_JAR=%%i
+  for %%i in ("%BASEDIR%\camel-launcher-*.jar") do set LAUNCHER_JAR=%%i
 )
 
 @REM Execute Camel JBang
