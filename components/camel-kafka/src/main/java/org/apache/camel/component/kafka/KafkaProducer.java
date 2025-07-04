@@ -40,6 +40,7 @@ import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
@@ -57,7 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.kafka.producer.support.ProducerUtil.tryConvertToSerializedType;
 
-public class KafkaProducer extends DefaultAsyncProducer {
+public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducer.class);
 
@@ -75,6 +76,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     private final String endpointTopic;
     private final Integer configPartitionKey;
     private final String configKey;
+    private String routeId;
 
     public KafkaProducer(KafkaEndpoint endpoint) {
         super(endpoint);
@@ -154,12 +156,17 @@ public class KafkaProducer extends DefaultAsyncProducer {
     @SuppressWarnings("rawtypes")
     protected void doStart() throws Exception {
         Properties props = getProps();
+        transactionId = ObjectHelper.isNotEmpty(configuration.getTransactionalId())
+                ? configuration.getTransactionalId() : props.getProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG);
+        if (ObjectHelper.isEmpty(transactionId) && configuration.isTransacted()) {
+            transactionId = getEndpoint().getId() + "-" + getRouteId();
+            props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionId);
+        }
         if (kafkaProducer == null) {
             createProducer(props);
         }
 
         // init kafka transaction
-        transactionId = props.getProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG);
         if (transactionId != null) {
             kafkaProducer.initTransactions();
         }
@@ -523,5 +530,15 @@ public class KafkaProducer extends DefaultAsyncProducer {
         exchange.getUnitOfWork().beginTransactedBy(transactionId);
         kafkaProducer.beginTransaction();
         exchange.getUnitOfWork().addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 }
