@@ -352,6 +352,7 @@
                                     <exclude>**/camel-jbang-run.properties</exclude>
                                     <exclude>**/javax.annotations.processing.Processor</exclude>
                                     <exclude>**/helm/etc/**</exclude>
+                                    <exclude>**/examples/*</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
@@ -547,6 +548,7 @@
                             <exclude>**/.camel-jbang-run/**/*</exclude>
                             <exclude>**/.camel-jbang/**/*</exclude>
                             <exclude>**/commands/edit/edit-help.txt</exclude>
+                            <exclude>**/examples/*</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>

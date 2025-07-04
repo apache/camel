@@ -32,10 +32,10 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Launcher</name>
-    <description>Camel Fat-Jar Launcher</description>
+    <description>Camel Launcher</description>
 
     <properties>
-        <firstVersion>4.12.0</firstVersion>
+        <firstVersion>4.13.0</firstVersion>
         <label>jbang</label>
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
