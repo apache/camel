@@ -81,17 +81,19 @@ public class ListVariable extends ProcessWatchCommand {
                         row.pid = Long.toString(ph.pid());
 
                         JsonObject jv = (JsonObject) root.get("variables");
-                        for (String id : jv.keySet()) {
-                            JsonArray arr = jv.getCollection(id);
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = row.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.id = id;
-                                    row.key = jo.getString("key");
-                                    row.type = jo.getString("type");
-                                    row.value = jo.get("value");
-                                    rows.add(row);
+                        if (jv != null) {
+                            for (String id : jv.keySet()) {
+                                JsonArray arr = jv.getCollection(id);
+                                if (arr != null) {
+                                    for (int i = 0; i < arr.size(); i++) {
+                                        row = row.copy();
+                                        JsonObject jo = (JsonObject) arr.get(i);
+                                        row.id = id;
+                                        row.key = jo.getString("key");
+                                        row.type = jo.getString("type");
+                                        row.value = jo.get("value");
+                                        rows.add(row);
+                                    }
                                 }
                             }
                         }
@@ -106,7 +108,7 @@ public class ListVariable extends ProcessWatchCommand {
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
-                    new Column().header("REPOSITORY").headerAlign(HorizontalAlign.CENTER).with(r -> r.id),
+                    new Column().header("REPO").headerAlign(HorizontalAlign.CENTER).with(r -> r.id),
                     new Column().header("TYPE").headerAlign(HorizontalAlign.CENTER)
                             .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(r -> r.type),
                     new Column().header("KEY").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
