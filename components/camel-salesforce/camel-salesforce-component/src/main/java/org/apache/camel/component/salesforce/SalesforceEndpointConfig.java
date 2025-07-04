@@ -124,6 +124,8 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public static final String NOT_FOUND_BEHAVIOUR = "notFoundBehaviour";
 
+    public static final String FALL_BACK_TO_LATEST_REPLAY_ID = "fallbackToLatestReplayId";
+
     // general properties
     @UriParam(defaultValue = DEFAULT_VERSION)
     private String apiVersion = DEFAULT_VERSION;
@@ -285,6 +287,13 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     @UriParam(defaultValue = "EXCEPTION")
     private NotFoundBehaviour notFoundBehaviour = NotFoundBehaviour.EXCEPTION;
+
+    @UriParam(label = "consumer",
+              description = "Whether the pub/sub consumer needs to fallback to the latest replay id when the provided id is not valid. "
+                            + "If set to false, the component will keep retrying; in order to treat this as an exception you can "
+                            + "use BridgeExceptionHandlerToErrorHandler and handle the exception in the route.",
+              defaultValue = "false")
+    private boolean fallbackToLatestReplayId;
 
     public SalesforceEndpointConfig copy() {
         try {
@@ -871,6 +880,8 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(RAW_HTTP_HEADERS, rawHttpHeaders);
         valueMap.put(RAW_QUERY_PARAMETERS, rawQueryParameters);
 
+        valueMap.put(FALL_BACK_TO_LATEST_REPLAY_ID, fallbackToLatestReplayId);
+
         return Collections.unmodifiableMap(valueMap);
     }
 
@@ -1236,4 +1247,13 @@ public class SalesforceEndpointConfig implements Cloneable {
     public void setEventSchemaId(String eventSchemaId) {
         this.eventSchemaId = eventSchemaId;
     }
+
+    public boolean isFallbackToLatestReplayId() {
+        return fallbackToLatestReplayId;
+    }
+
+    public void setFallbackToLatestReplayId(boolean fallbackToLatestReplayId) {
+        this.fallbackToLatestReplayId = fallbackToLatestReplayId;
+    }
+
 }
