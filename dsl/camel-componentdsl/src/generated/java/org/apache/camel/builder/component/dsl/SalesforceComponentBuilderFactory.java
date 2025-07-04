@@ -1029,6 +1029,27 @@ public interface SalesforceComponentBuilderFactory {
     
         
         /**
+         * Whether the pub/sub consumer needs to fallback to the latest replay
+         * id when the provided id is not valid. If set to false, the component
+         * will keep retrying; in order to treat this as an exception you can
+         * use BridgeExceptionHandlerToErrorHandler and handle the exception in
+         * the route.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param fallbackToLatestReplayId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder fallbackToLatestReplayId(boolean fallbackToLatestReplayId) {
+            doSetProperty("fallbackToLatestReplayId", fallbackToLatestReplayId);
+            return this;
+        }
+    
+        
+        /**
          * Max number of events to receive in a batch from the Pub/Sub API.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -1883,6 +1904,7 @@ public interface SalesforceComponentBuilderFactory {
             case "workerPoolMaxSize": ((SalesforceComponent) component).setWorkerPoolMaxSize((int) value); return true;
             case "workerPoolSize": ((SalesforceComponent) component).setWorkerPoolSize((int) value); return true;
             case "bridgeErrorHandler": ((SalesforceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "fallbackToLatestReplayId": getOrCreateConfiguration((SalesforceComponent) component).setFallbackToLatestReplayId((boolean) value); return true;
             case "pubSubBatchSize": getOrCreateConfiguration((SalesforceComponent) component).setPubSubBatchSize((int) value); return true;
             case "pubSubDeserializeType": getOrCreateConfiguration((SalesforceComponent) component).setPubSubDeserializeType((org.apache.camel.component.salesforce.PubSubDeserializeType) value); return true;
             case "pubSubPojoClass": getOrCreateConfiguration((SalesforceComponent) component).setPubSubPojoClass((java.lang.String) value); return true;
