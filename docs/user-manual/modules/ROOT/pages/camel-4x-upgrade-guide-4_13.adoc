@@ -52,6 +52,13 @@ Renamed class `org.apache.camel.component.http.BasicAuthenticationHttpClientConf
 
 If using a header to provide a custom script, then this must now be turned on via `allowTemplateFromHeader=true` on the endpoint or component.
 
+=== camel-salesforce
+
+`initialReplyIdTimeout` is now deprecated and it will be removed in a future release. Pub/sub replay ids are no longer checked at
+startup: when the client subscribes, if the replay id is invalid, an error is raised. To handle the error you can use a specific
+`ExceptionHandler` or you can set `fallbackToLatestReplayId` to `true` in order to make the consumer start from the
+latest event.
+
 === camel-yaml-dsl
 
 The deprecated kebab-case has been removed.
