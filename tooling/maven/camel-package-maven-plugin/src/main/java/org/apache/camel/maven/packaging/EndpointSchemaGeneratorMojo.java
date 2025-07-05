@@ -1300,6 +1300,31 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             if (apiOption) {
+                // include extra methods that has no parameters and are only included in the class annotation
+                final String apiModelName = apiName;
+                Optional<ApiModel> op = componentModel.getApiOptions().stream()
+                        .filter(o -> o.getName().equals(apiModelName))
+                        .findFirst();
+                if (op.isPresent()) {
+                    ApiModel am = op.get();
+                    apiParams = classElement.getAnnotation(ApiParams.class);
+                    if (apiParams != null) {
+                        ApiMethod[] extra = apiParams.apiMethods();
+                        if (extra != null) {
+                            for (ApiMethod m : extra) {
+                                boolean exists = am.getMethods().stream()
+                                        .anyMatch(o -> m.methodName().equals(o.getName()));
+                                if (!exists) {
+                                    ApiMethodModel o = am.newMethod(m.methodName());
+                                    o.setDescription(m.description());
+                                    for (String sig : m.signatures()) {
+                                        o.addSignature(sig);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 // do not check super classes for api options as we only check one level (to include new options and not common)
                 // if there are no options added then add the api name as empty option so we have it marked
                 break;
