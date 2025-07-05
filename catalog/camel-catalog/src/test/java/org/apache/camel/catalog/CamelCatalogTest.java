@@ -1221,11 +1221,13 @@ public class CamelCatalogTest {
         uri = "twilio:account/update?pathSid=123";
         result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
-        uri = "twilio:account/read";
+        uri = "twilio:account/insert";
         result = catalog.validateEndpointProperties(uri);
         assertFalse(result.isSuccess());
-        assertEquals(2, result.getEnumChoices("methodName").size());
+        assertEquals(4, result.getEnumChoices("methodName").size());
+        assertTrue(result.getEnumChoices("methodName").contains("create"));
         assertTrue(result.getEnumChoices("methodName").contains("fetch"));
+        assertTrue(result.getEnumChoices("methodName").contains("read"));
         assertTrue(result.getEnumChoices("methodName").contains("update"));
 
         uri = "twilio:account/read?pathSid=123";
