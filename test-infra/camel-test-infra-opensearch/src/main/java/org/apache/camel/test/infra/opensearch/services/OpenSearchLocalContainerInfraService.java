@@ -23,19 +23,19 @@ import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.opensearch.common.OpenSearchProperties;
-import org.opensearch.testcontainers.OpensearchContainer;
+import org.opensearch.testcontainers.OpenSearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.utility.DockerImageName;
 
-public class OpenSearchLocalContainerInfraService implements OpenSearchInfraService, ContainerService<OpensearchContainer> {
+public class OpenSearchLocalContainerInfraService implements OpenSearchInfraService, ContainerService<OpenSearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(OpenSearchLocalContainerInfraService.class);
     private static final int OPEN_SEARCH_PORT = 9200;
     private static final String USER_NAME = "admin";
     private static final String PASSWORD = "admin";
-    private final OpensearchContainer container;
+    private final OpenSearchContainer container;
 
     public OpenSearchLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(OpenSearchLocalContainerInfraService.class,
@@ -46,13 +46,13 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
         container = initContainer(imageName);
     }
 
-    public OpenSearchLocalContainerInfraService(OpensearchContainer container) {
+    public OpenSearchLocalContainerInfraService(OpenSearchContainer container) {
         this.container = container;
     }
 
-    protected OpensearchContainer initContainer(String imageName) {
-        class TestInfraOpensearchContainer extends OpensearchContainer {
-            public TestInfraOpensearchContainer(boolean fixedPort) {
+    protected OpenSearchContainer initContainer(String imageName) {
+        class TestInfraOpenSearchContainer extends OpenSearchContainer {
+            public TestInfraOpenSearchContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName)
                         .asCompatibleSubstituteFor("opensearchproject/opensearch"));
 
@@ -71,7 +71,7 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
             }
         }
 
-        return new TestInfraOpensearchContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        return new TestInfraOpenSearchContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override
@@ -114,7 +114,7 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
     }
 
     @Override
-    public OpensearchContainer getContainer() {
+    public OpenSearchContainer getContainer() {
         return container;
     }
 
