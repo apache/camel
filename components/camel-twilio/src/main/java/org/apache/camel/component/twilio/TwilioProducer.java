@@ -18,6 +18,7 @@ package org.apache.camel.component.twilio;
 
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.twilio.internal.TwilioApiName;
 import org.apache.camel.component.twilio.internal.TwilioPropertiesHelper;
@@ -37,8 +38,8 @@ public class TwilioProducer extends AbstractApiProducer<TwilioApiName, TwilioCon
     }
 
     @Override
-    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
-        Object executor = super.doInvokeMethod(method, properties);
+    protected Object doInvokeMethod(Exchange exchange, ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
+        Object executor = super.doInvokeMethod(exchange, method, properties);
         return endpoint.execute(executor, method, properties);
     }
 }

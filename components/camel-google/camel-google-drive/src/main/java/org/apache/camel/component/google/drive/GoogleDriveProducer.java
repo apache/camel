@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.component.google.drive.internal.GoogleDriveConstants;
@@ -39,8 +40,8 @@ public class GoogleDriveProducer extends AbstractApiProducer<GoogleDriveApiName,
     }
 
     @Override
-    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
-        AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
+    protected Object doInvokeMethod(Exchange exchange, ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
+        AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(exchange, method, properties);
         try {
             BeanIntrospection beanIntrospection
                     = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
