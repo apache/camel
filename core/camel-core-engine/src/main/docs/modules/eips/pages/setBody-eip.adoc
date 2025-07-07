@@ -67,6 +67,22 @@ XML::
     <to uri="log:hello"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:cheese
+      steps:
+        - setBody:
+            simple:
+              expression: Hello ${body}
+        - to:
+            uri: log:hello
+----
+
 ====
 
 == What is the difference between Transform and Set Body?
