@@ -57,6 +57,9 @@ public enum ExchangePropertyKey {
     FILE_EXCHANGE_FILE(Exchange.FILE_EXCHANGE_FILE),
     GROUPED_EXCHANGE(Exchange.GROUPED_EXCHANGE),
     INTERCEPTED_ENDPOINT(Exchange.INTERCEPTED_ENDPOINT),
+    INTERCEPTED_NODE_ID(Exchange.INTERCEPTED_NODE_ID),
+    INTERCEPTED_PARENT_ENDPOINT_URI(Exchange.INTERCEPTED_PARENT_ENDPOINT_URI),
+    INTERCEPTED_ROUTE_ID(Exchange.INTERCEPTED_ROUTE_ID),
     INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED),
     LOOP_INDEX(Exchange.LOOP_INDEX),
     LOOP_SIZE(Exchange.LOOP_SIZE),
@@ -160,6 +163,12 @@ public enum ExchangePropertyKey {
                 return GROUPED_EXCHANGE;
             case Exchange.INTERCEPTED_ENDPOINT:
                 return INTERCEPTED_ENDPOINT;
+            case Exchange.INTERCEPTED_NODE_ID:
+                return INTERCEPTED_NODE_ID;
+            case Exchange.INTERCEPTED_PARENT_ENDPOINT_URI:
+                return INTERCEPTED_PARENT_ENDPOINT_URI;
+            case Exchange.INTERCEPTED_ROUTE_ID:
+                return INTERCEPTED_ROUTE_ID;
             case Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED:
                 return INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED;
             case Exchange.LOOP_INDEX:
