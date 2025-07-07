@@ -36,6 +36,7 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         map.put("MethodName", java.lang.String.class);
         map.put("MimeType", java.lang.String.class);
         map.put("ModifyLabelsRequest", com.google.api.services.drive.model.ModifyLabelsRequest.class);
+        map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
@@ -70,6 +71,7 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "mimeType": target.setMimeType(property(camelContext, java.lang.String.class, value)); return true;
         case "modifylabelsrequest":
         case "modifyLabelsRequest": target.setModifyLabelsRequest(property(camelContext, com.google.api.services.drive.model.ModifyLabelsRequest.class, value)); return true;
+        case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
@@ -111,6 +113,7 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "mimeType": return java.lang.String.class;
         case "modifylabelsrequest":
         case "modifyLabelsRequest": return com.google.api.services.drive.model.ModifyLabelsRequest.class;
+        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
@@ -148,6 +151,7 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "mimeType": return target.getMimeType();
         case "modifylabelsrequest":
         case "modifyLabelsRequest": return target.getModifyLabelsRequest();
+        case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();

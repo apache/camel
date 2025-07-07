@@ -23,7 +23,7 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(48);
+        Set<String> props = new HashSet<>(49);
         props.add("accessToken");
         props.add("apiName");
         props.add("applicationName");
@@ -56,6 +56,7 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
         props.add("pageToken");
         props.add("permissionId");
         props.add("pollStrategy");
+        props.add("q");
         props.add("refreshToken");
         props.add("repeatCount");
         props.add("replyId");

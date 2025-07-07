@@ -32,6 +32,7 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         map.put("Delegate", java.lang.String.class);
         map.put("FileId", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("ReplyId", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
@@ -61,6 +62,7 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         case "fileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "replyid":
@@ -98,6 +100,7 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         case "fileId": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "replyid":
@@ -131,6 +134,7 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         case "fileId": return target.getFileId();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "replyid":

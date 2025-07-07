@@ -30,6 +30,7 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         map.put("Content", com.google.api.services.drive.model.TeamDrive.class);
         map.put("Delegate", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("RequestId", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
@@ -56,6 +57,7 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "requestid":
@@ -91,6 +93,7 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "delegate": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "requestid":
@@ -122,6 +125,7 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "delegate": return target.getDelegate();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "requestid":

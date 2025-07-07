@@ -29,6 +29,7 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         map.put("ClientId", java.lang.String.class);
         map.put("Delegate", java.lang.String.class);
         map.put("InBody", java.lang.String.class);
+        map.put("Q", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("SendEmptyMessageWhenIdle", boolean.class);
         map.put("BridgeErrorHandler", boolean.class);
@@ -94,6 +95,7 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "q": target.getConfiguration().setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.getConfiguration().setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
@@ -161,6 +163,7 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": return boolean.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "repeatcount":
@@ -224,6 +227,7 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
+        case "q": return target.getConfiguration().getQ();
         case "refreshtoken":
         case "refreshToken": return target.getConfiguration().getRefreshToken();
         case "repeatcount":

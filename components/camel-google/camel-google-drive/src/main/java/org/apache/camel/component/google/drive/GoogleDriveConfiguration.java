@@ -54,6 +54,8 @@ public class GoogleDriveConfiguration {
     private String serviceAccountKey;
     @UriParam
     private String delegate;
+    @UriParam
+    private String q;
 
     public GoogleDriveApiName getApiName() {
         return apiName;
@@ -168,5 +170,16 @@ public class GoogleDriveConfiguration {
      */
     public void setDelegate(String delegate) {
         this.delegate = delegate;
+    }
+
+    public String getQ() {
+        return q;
+    }
+
+    /**
+     * Query string for API methods that support this parameter (such as drives list, files list)
+     */
+    public void setQ(String q) {
+        this.q = q;
     }
 }
