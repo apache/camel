@@ -192,7 +192,7 @@
         <google-api-services-drive-version>v3-rev20250701-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20250404-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20250616-2.0.0</google-api-services-sheets-version>
-        <google-api-services-mail-version>v1-rev20250616-2.0.0</google-api-services-mail-version>
+        <google-api-services-mail-version>v1-rev20250630-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
         <google-cloud-bigquery-version>2.52.0</google-cloud-bigquery-version>
         <google-cloud-core-version>2.58.0</google-cloud-core-version>
