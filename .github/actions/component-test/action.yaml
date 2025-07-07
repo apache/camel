@@ -68,7 +68,7 @@ runs:
         name: tests-${{ inputs.artifact-upload-suffix }}.log
         path: tests.log
     - name: Success comment
-      if: success() 
+      if: success()
       uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
       with:
         comment-id: ${{ inputs.comment-id }}
@@ -78,7 +78,7 @@ runs:
 
           **Result** :white_check_mark: The tests passed successfully
     - name: Failure comment
-      if: failure() 
+      if: failure()
       uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
       with:
         comment-id: ${{ inputs.comment-id }}

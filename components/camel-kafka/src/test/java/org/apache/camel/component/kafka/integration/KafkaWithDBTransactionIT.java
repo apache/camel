@@ -35,6 +35,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -55,6 +57,7 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
     private static final String INSERT_SQL_3 = "insert into foo3(name) values (:#word)";
     private static final String INSERT_SQL_4 = "insert into foo4(name) values (:#word)";
     private static final String INSERT_SQL_5 = "insert into foo5(name) values (:#word)";
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaWithDBTransactionIT.class);
     private static KafkaConsumer<String, String> stringsConsumerConn;
     private static EmbeddedDatabase db;
     private static JdbcTemplate jdbc;
@@ -62,7 +65,7 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
 
     @BeforeAll
     public static void before() {
-        stringsConsumerConn = createStringKafkaConsumer("DemoTransaction");
+        stringsConsumerConn = createStringKafkaConsumer(KafkaWithDBTransactionIT.class.getName());
     }
 
     @ContextFixture
@@ -299,6 +302,9 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
         for (int i = 0; i < 5; i++) {
             records = consumerConn.poll(Duration.ofMillis(100));
             if (records.count() > 0) {
+                LOG.trace("------| messages consumed from topic: " + topic);
+                records.forEach(r -> LOG.trace(r.toString()));
+                LOG.trace("------");
                 break;
             }
         }

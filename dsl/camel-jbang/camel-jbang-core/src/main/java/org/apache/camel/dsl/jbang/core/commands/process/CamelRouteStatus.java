@@ -207,7 +207,8 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                                     if (!match) {
                                         String from = StringHelper.before(row.from, "?", row.from);
                                         String w = f.endsWith("*") ? f : f + "*"; // use wildcard in matching url
-                                        match = PatternHelper.matchPattern(row.routeId, f) || PatternHelper.matchPattern(from, w);
+                                        match = PatternHelper.matchPattern(row.routeId, f)
+                                                || PatternHelper.matchPattern(from, w);
                                     }
                                 }
                                 if (!match) {
