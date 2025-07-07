@@ -42,7 +42,11 @@ public class InterceptFromReifier extends ProcessorReifier<InterceptFromDefiniti
             when = e -> true;
         }
         // set property before processing the child
+
         Processor p = exchange -> {
+            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID, route.getId());
+            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_PARENT_ENDPOINT_URI, route.getEndpoint().getEndpointUri());
+
             if (exchange.getFromEndpoint() != null) {
                 exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ENDPOINT, exchange.getFromEndpoint().getEndpointUri());
             }

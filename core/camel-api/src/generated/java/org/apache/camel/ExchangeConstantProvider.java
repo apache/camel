@@ -13,7 +13,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(158);
+        Map<String, String> map = new HashMap<>(161);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -99,6 +99,9 @@ public class ExchangeConstantProvider {
         map.put("HTTP_URL", "CamelHttpUrl");
         map.put("INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED", "CamelInterceptSendToEndpointWhenMatched");
         map.put("INTERCEPTED_ENDPOINT", "CamelInterceptedEndpoint");
+        map.put("INTERCEPTED_NODE_ID", "CamelInterceptedNodeId");
+        map.put("INTERCEPTED_PARENT_ENDPOINT_URI", "CamelInterceptedParentEndpointUri");
+        map.put("INTERCEPTED_ROUTE_ID", "CamelInterceptedRouteId");
         map.put("INTERRUPTED", "CamelInterrupted");
         map.put("LANGUAGE_SCRIPT", "CamelLanguageScript");
         map.put("LOG_DEBUG_BODY_MAX_CHARS", "CamelLogDebugBodyMaxChars");

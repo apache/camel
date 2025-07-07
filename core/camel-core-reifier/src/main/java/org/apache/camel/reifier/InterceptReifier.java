@@ -17,12 +17,14 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -61,11 +63,20 @@ public class InterceptReifier extends ProcessorReifier<InterceptDefinition> {
                 // store the target we are intercepting
                 this.interceptedTarget = target;
 
+                Processor p = exchange -> {
+                    exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID,
+                            ProcessorDefinitionHelper.getRouteId(definition.getParent()));
+                    exchange.setProperty(ExchangePropertyKey.INTERCEPTED_NODE_ID, definition.getId());
+                    exchange.setProperty(ExchangePropertyKey.INTERCEPTED_PARENT_ENDPOINT_URI,
+                            route.getEndpoint().getEndpointUri());
+                };
+
+                // wrap in a pipeline so we continue routing to the next
                 if (interceptedTarget != null) {
-                    // wrap in a pipeline so we continue routing to the next
-                    return Pipeline.newInstance(context, output, interceptedTarget);
+                    return Pipeline.newInstance(context, p, output, interceptedTarget);
                 } else {
-                    return output;
+                    return Pipeline.newInstance(context,
+                            p, output);
                 }
             }
 

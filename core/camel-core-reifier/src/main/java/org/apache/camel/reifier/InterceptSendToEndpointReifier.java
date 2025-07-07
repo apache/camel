@@ -29,6 +29,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.InterceptSendToEndpointCallback;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.support.PluginHelper;
 
 public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSendToEndpointDefinition> {
@@ -63,10 +64,20 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             when = new OnWhenPredicate(createPredicate(definition.getOnWhen().getExpression()));
         }
 
+        Processor p = exchange -> {
+            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID, route.getId());
+            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_NODE_ID, definition.getId());
+            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_PARENT_ENDPOINT_URI, route.getEndpoint().getEndpointUri());
+        };
+
         // register endpoint callback so we can proxy the endpoint
         camelContext.getCamelContextExtension()
                 .registerEndpointCallback(
-                        new InterceptSendToEndpointCallback(camelContext, before, after, matchURI, skip, when));
+                        new InterceptSendToEndpointCallback(
+                                camelContext,
+                                Pipeline.newInstance(camelContext, p, before),
+                                after,
+                                matchURI, skip, when));
 
         // remove the original intercepted route from the outputs as we do not
         // intercept as the regular interceptor
