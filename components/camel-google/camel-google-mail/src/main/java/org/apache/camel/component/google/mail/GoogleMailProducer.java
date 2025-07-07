@@ -39,7 +39,8 @@ public class GoogleMailProducer extends AbstractApiProducer<GoogleMailApiName, G
     }
 
     @Override
-    protected Object doInvokeMethod(Exchange exchange, ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
+    protected Object doInvokeMethod(Exchange exchange, ApiMethod method, Map<String, Object> properties)
+            throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(exchange, method, properties);
         try {
             BeanIntrospection beanIntrospection
