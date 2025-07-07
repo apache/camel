@@ -125,7 +125,7 @@ public class OpenApiRestClientResponseValidator implements RestClientResponseVal
             } else {
                 msg = SimpleValidationReportFormat.getInstance().apply(report);
             }
-            LOG.debug("Client Request Validation: {}", msg);
+            LOG.debug("Client Response Validation: {}", msg);
             if (report.hasErrors()) {
                 return new ValidationError(500, msg);
             }
