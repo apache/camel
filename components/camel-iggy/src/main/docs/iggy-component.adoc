@@ -1,0 +1,98 @@
+= Iggy Component
+:doctitle: Iggy
+:shortname: iggy
+:artifactid: camel-iggy
+:description: Camel Iggy component
+:since: 4.14
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: iggy
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Iggy component is used for communicating with
+https://iggy.incubator.apache.org/[Iggy] message broker.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-iggy</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+---------------------------
+iggy:topic[?options]
+---------------------------
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Iggy Headers
+
+The following headers are set on the exchange when consuming messages from Iggy:
+
+[width="100%",cols="2m,2m,5",options="header"]
+|===
+| Header | Type | Description
+| `CamelIggyMessageId` | `String` | The unique identifier of the message.
+| `CamelIggyMessageOffset` | `long` | The offset of the message in the partition.
+| `CamelIggyMessageTimestamp` | `long` | The timestamp of the message.
+| `CamelIggyMessageOriginTimestamp` | `long` | The original timestamp of the message.
+| `CamelIggyMessageChecksum` | `long` | The checksum of the message.
+| `CamelIggyMessageLength` | `int` | The length of the message.
+| `CamelIggyMessageSize` | `int` | The size of the message.
+|===
+
+== Examples
+
+=== Consuming messages from Iggy
+
+Here is a minimal route to read messages from an Iggy topic:
+
+[source,java]
+----
+from("iggy:my_topic?streamName=my_stream&consumerGroupName=my_consumer_group&host=localhost&port=8090")
+    .log("Message received from Iggy : ${body}")
+    .log("    with id ${headers[CamelIggyMessageId]}")
+    .log("    and offset ${headers[CamelIggyMessageOffset]}");
+----
+
+=== Producing messages to Iggy
+
+Here is a minimal route to produce messages to an Iggy topic:
+
+[source,java]
+----
+from("direct:start")
+    .setBody(constant("Message from Camel"))
+    .to("iggy:my_topic?streamName=my_stream&host=localhost&port=8090");
+----
+
+include::spring-boot:partial$starter.adoc[]
