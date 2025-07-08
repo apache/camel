@@ -97,7 +97,7 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                 }
 
                 parser = new JavaSourceParser();
-                parser.parse(inputStream, nestedClass);
+                parser.parse(inputStream, nestedClass, includeSetters != null && includeSetters);
             } catch (Exception e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }

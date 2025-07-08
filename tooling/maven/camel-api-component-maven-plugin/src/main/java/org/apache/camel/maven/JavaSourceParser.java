@@ -72,11 +72,15 @@ public class JavaSourceParser {
     private final Map<String, Map<String, String>> setterDocs = new LinkedHashMap<>();
 
     public void parse(InputStream in, String innerClass) throws IOException {
-        parse(new String(in.readAllBytes()), innerClass);
+        parse(new String(in.readAllBytes()), innerClass, false);
+    }
+
+    public void parse(InputStream in, String innerClass, boolean includeSetters) throws IOException {
+        parse(new String(in.readAllBytes()), innerClass, includeSetters);
     }
 
     @SuppressWarnings("unchecked")
-    public synchronized void parse(String in, String innerClass) {
+    public synchronized void parse(String in, String innerClass, boolean includeSetters) {
         AbstractGenericCapableJavaSource rootClazz = (AbstractGenericCapableJavaSource) Roaster.parse(in);
         AbstractGenericCapableJavaSource clazz = rootClazz;
 
@@ -168,50 +172,52 @@ public class JavaSourceParser {
 
             docs = new LinkedHashMap<>();
             args = new LinkedHashMap<>();
-            Type t = ms.getReturnType();
-            var nt = clazz.getNestedTypes();
-            for (var js : nt) {
-                AbstractGenericCapableJavaSource js2 = (AbstractGenericCapableJavaSource) js;
-                String qn = t.getSimpleName();
-                String qn2 = js2.getName();
-                if (qn.equals(qn2)) {
-                    List<PropertySource<?>> pl = js2.getProperties();
-                    for (PropertySource<?> ps : pl) {
-                        String propertyName = ps.getName();
-                        LOG.debug("Parsing property: {}", propertyName);
+            if (includeSetters) {
+                Type t = ms.getReturnType();
+                var nt = clazz.getNestedTypes();
+                for (var js : nt) {
+                    AbstractGenericCapableJavaSource js2 = (AbstractGenericCapableJavaSource) js;
+                    String qn = t.getSimpleName();
+                    String qn2 = js2.getName();
+                    if (qn.equals(qn2)) {
+                        List<PropertySource<?>> pl = js2.getProperties();
+                        for (PropertySource<?> ps : pl) {
+                            String propertyName = ps.getName();
+                            LOG.debug("Parsing property: {}", propertyName);
 
-                        // should have getter/setter and be public
-                        if (ps.getAccessor() == null || !ps.getAccessor().isPublic()) {
-                            continue;
-                        }
-                        String type = ps.getField().getType().getName();
-                        if (!ps.isMutable()) {
-                            String name = "set" + StringHelper.capitalize(propertyName);
-                            var m = js2.getMethod(name, type);
-                            if (m == null || !m.isPublic()) {
+                            // should have getter/setter and be public
+                            if (ps.getAccessor() == null || !ps.getAccessor().isPublic()) {
                                 continue;
                             }
-                        }
+                            String type = ps.getField().getType().getName();
+                            if (!ps.isMutable()) {
+                                String name = "set" + StringHelper.capitalize(propertyName);
+                                var m = js2.getMethod(name, type);
+                                if (m == null || !m.isPublic()) {
+                                    continue;
+                                }
+                            }
 
-                        // already known
-                        var oldArgs = parameterTypes.get(signature);
-                        if (oldArgs.containsKey(propertyName)) {
-                            LOG.debug("Duplicate property: {}", propertyName);
-                            continue;
-                        }
+                            // already known
+                            var oldArgs = parameterTypes.get(signature);
+                            if (oldArgs.containsKey(propertyName)) {
+                                LOG.debug("Duplicate property: {}", propertyName);
+                                continue;
+                            }
 
-                        LOG.debug("Adding new property: {}", propertyName);
+                            LOG.debug("Adding new property: {}", propertyName);
 
-                        // grab doc from getter
-                        doc = ps.getAccessor().getJavaDoc().getText();
-                        doc = sanitizeJavaDocValue(doc, true);
-                        if (doc != null && doc.indexOf('.') > 0) {
-                            doc = StringHelper.before(doc, ".");
+                            // grab doc from getter
+                            doc = ps.getAccessor().getJavaDoc().getText();
+                            doc = sanitizeJavaDocValue(doc, true);
+                            if (doc != null && doc.indexOf('.') > 0) {
+                                doc = StringHelper.before(doc, ".");
+                            }
+                            if (doc != null && !doc.isEmpty()) {
+                                docs.put(propertyName, doc);
+                            }
+                            args.put(propertyName, type);
                         }
-                        if (doc != null && !doc.isEmpty()) {
-                            docs.put(propertyName, doc);
-                        }
-                        args.put(propertyName, type);
                     }
                 }
             }
