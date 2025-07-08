@@ -173,6 +173,9 @@ public class JavaSourceParser {
             docs = new LinkedHashMap<>();
             args = new LinkedHashMap<>();
             if (includeSetters) {
+                // special for camel-google which has many API options as optional getter/setter pairs
+                // which we need special code to discover and parse due to complex nested class structure
+                // in the Google Java SDK.
                 Type t = ms.getReturnType();
                 var nt = clazz.getNestedTypes();
                 for (var js : nt) {
