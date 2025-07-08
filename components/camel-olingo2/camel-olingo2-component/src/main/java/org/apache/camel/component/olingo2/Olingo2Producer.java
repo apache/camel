@@ -102,7 +102,7 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
         }
 
         try {
-            doInvokeMethod(exchange, method, properties);
+            doInvokeMethod(method, properties);
         } catch (Exception e) {
             exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(e));
             callback.done(true);

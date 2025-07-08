@@ -8,5 +8,3 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 === camel-core
 
-Added `Exchange` as parameter to `org.apache.camel.support.component.AbstractApiProducer.doInvokeMethod` which
-allows components to have access to the exchange which gives more flexibility in the component implementations.

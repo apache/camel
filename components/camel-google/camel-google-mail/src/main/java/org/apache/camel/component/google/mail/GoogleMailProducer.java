@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
@@ -39,9 +38,9 @@ public class GoogleMailProducer extends AbstractApiProducer<GoogleMailApiName, G
     }
 
     @Override
-    protected Object doInvokeMethod(Exchange exchange, ApiMethod method, Map<String, Object> properties)
+    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
             throws RuntimeCamelException {
-        AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(exchange, method, properties);
+        AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
             BeanIntrospection beanIntrospection
                     = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
