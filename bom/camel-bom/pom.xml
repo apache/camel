@@ -1089,6 +1089,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-iggy</artifactId>
+        <version>4.14.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ignite</artifactId>
         <version>4.17.0-SNAPSHOT</version>
       </dependency>

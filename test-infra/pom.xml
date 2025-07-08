@@ -96,6 +96,7 @@
         <module>camel-test-infra-weaviate</module>
         <module>camel-test-infra-ibmmq</module>
         <module>camel-test-infra-docling</module>
+        <module>camel-test-infra-iggy</module>
         <module>camel-test-infra-all</module>
     </modules>
 
