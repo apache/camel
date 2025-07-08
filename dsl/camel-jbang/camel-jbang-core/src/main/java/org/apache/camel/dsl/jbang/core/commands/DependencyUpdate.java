@@ -292,6 +292,8 @@ public class DependencyUpdate extends DependencyList {
             } else {
                 outPrinter().println("No updates to pom.xml");
             }
+        } else {
+            outPrinter().println("pom.xml not found " + pom.toAbsolutePath());
         }
     }
 
