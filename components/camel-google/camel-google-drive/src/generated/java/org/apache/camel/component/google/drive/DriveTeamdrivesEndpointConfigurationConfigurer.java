@@ -30,12 +30,15 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         map.put("Content", com.google.api.services.drive.model.TeamDrive.class);
         map.put("Delegate", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("PageSize", java.lang.Integer.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("RequestId", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("TeamDriveId", java.lang.String.class);
+        map.put("UseDomainAdminAccess", java.lang.Boolean.class);
         ALL_OPTIONS = map;
     }
 
@@ -57,6 +60,10 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -67,6 +74,8 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "teamdriveid":
         case "teamDriveId": target.setTeamDriveId(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedomainadminaccess":
+        case "useDomainAdminAccess": target.setUseDomainAdminAccess(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -93,6 +102,10 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "delegate": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
@@ -103,6 +116,8 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "serviceAccountKey": return java.lang.String.class;
         case "teamdriveid":
         case "teamDriveId": return java.lang.String.class;
+        case "usedomainadminaccess":
+        case "useDomainAdminAccess": return java.lang.Boolean.class;
         default: return null;
         }
     }
@@ -125,6 +140,10 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "delegate": return target.getDelegate();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "pagesize":
+        case "pageSize": return target.getPageSize();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
@@ -135,6 +154,8 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "serviceAccountKey": return target.getServiceAccountKey();
         case "teamdriveid":
         case "teamDriveId": return target.getTeamDriveId();
+        case "usedomainadminaccess":
+        case "useDomainAdminAccess": return target.getUseDomainAdminAccess();
         default: return null;
         }
     }

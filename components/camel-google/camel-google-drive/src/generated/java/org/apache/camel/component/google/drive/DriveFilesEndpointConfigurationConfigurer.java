@@ -23,23 +23,50 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AccessToken", java.lang.String.class);
+        map.put("AcknowledgeAbuse", java.lang.Boolean.class);
+        map.put("AddParents", java.lang.String.class);
         map.put("ApiName", org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class);
         map.put("ApplicationName", java.lang.String.class);
         map.put("Channel", com.google.api.services.drive.model.Channel.class);
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.drive.model.File.class);
+        map.put("Corpora", java.lang.String.class);
+        map.put("Corpus", java.lang.String.class);
+        map.put("Count", java.lang.Integer.class);
         map.put("Delegate", java.lang.String.class);
+        map.put("DriveId", java.lang.String.class);
+        map.put("EnforceSingleParent", java.lang.Boolean.class);
         map.put("File", com.google.api.services.drive.model.File.class);
         map.put("FileId", java.lang.String.class);
+        map.put("IgnoreDefaultVisibility", java.lang.Boolean.class);
+        map.put("IncludeItemsFromAllDrives", java.lang.Boolean.class);
+        map.put("IncludeLabels", java.lang.String.class);
+        map.put("IncludePermissionsForView", java.lang.String.class);
+        map.put("IncludeTeamDriveItems", java.lang.Boolean.class);
+        map.put("KeepRevisionForever", java.lang.Boolean.class);
+        map.put("MaxResults", java.lang.Integer.class);
         map.put("MediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
         map.put("MethodName", java.lang.String.class);
         map.put("MimeType", java.lang.String.class);
         map.put("ModifyLabelsRequest", com.google.api.services.drive.model.ModifyLabelsRequest.class);
+        map.put("OcrLanguage", java.lang.String.class);
+        map.put("OrderBy", java.lang.String.class);
+        map.put("PageSize", java.lang.Integer.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
+        map.put("RemoveParents", java.lang.String.class);
+        map.put("RevisionId", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("Space", java.lang.String.class);
+        map.put("Spaces", java.lang.String.class);
+        map.put("SupportsAllDrives", java.lang.Boolean.class);
+        map.put("SupportsTeamDrives", java.lang.Boolean.class);
+        map.put("TeamDriveId", java.lang.String.class);
+        map.put("Type", java.lang.String.class);
+        map.put("UseContentAsIndexableText", java.lang.Boolean.class);
         ALL_OPTIONS = map;
     }
 
@@ -49,6 +76,10 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "acknowledgeabuse":
+        case "acknowledgeAbuse": target.setAcknowledgeAbuse(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "addparents":
+        case "addParents": target.setAddParents(property(camelContext, java.lang.String.class, value)); return true;
         case "apiname":
         case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class, value)); return true;
         case "applicationname":
@@ -59,10 +90,31 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "clientsecret":
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content": target.setContent(property(camelContext, com.google.api.services.drive.model.File.class, value)); return true;
+        case "corpora": target.setCorpora(property(camelContext, java.lang.String.class, value)); return true;
+        case "corpus": target.setCorpus(property(camelContext, java.lang.String.class, value)); return true;
+        case "count": target.setCount(property(camelContext, java.lang.Integer.class, value)); return true;
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "driveid":
+        case "driveId": target.setDriveId(property(camelContext, java.lang.String.class, value)); return true;
+        case "enforcesingleparent":
+        case "enforceSingleParent": target.setEnforceSingleParent(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "file": target.setFile(property(camelContext, com.google.api.services.drive.model.File.class, value)); return true;
         case "fileid":
         case "fileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
+        case "ignoredefaultvisibility":
+        case "ignoreDefaultVisibility": target.setIgnoreDefaultVisibility(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "includeitemsfromalldrives":
+        case "includeItemsFromAllDrives": target.setIncludeItemsFromAllDrives(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "includelabels":
+        case "includeLabels": target.setIncludeLabels(property(camelContext, java.lang.String.class, value)); return true;
+        case "includepermissionsforview":
+        case "includePermissionsForView": target.setIncludePermissionsForView(property(camelContext, java.lang.String.class, value)); return true;
+        case "includeteamdriveitems":
+        case "includeTeamDriveItems": target.setIncludeTeamDriveItems(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "keeprevisionforever":
+        case "keepRevisionForever": target.setKeepRevisionForever(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
         case "mediacontent":
         case "mediaContent": target.setMediaContent(property(camelContext, com.google.api.client.http.AbstractInputStreamContent.class, value)); return true;
         case "methodname":
@@ -71,12 +123,35 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "mimeType": target.setMimeType(property(camelContext, java.lang.String.class, value)); return true;
         case "modifylabelsrequest":
         case "modifyLabelsRequest": target.setModifyLabelsRequest(property(camelContext, com.google.api.services.drive.model.ModifyLabelsRequest.class, value)); return true;
+        case "ocrlanguage":
+        case "ocrLanguage": target.setOcrLanguage(property(camelContext, java.lang.String.class, value)); return true;
+        case "orderby":
+        case "orderBy": target.setOrderBy(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "removeparents":
+        case "removeParents": target.setRemoveParents(property(camelContext, java.lang.String.class, value)); return true;
+        case "revisionid":
+        case "revisionId": target.setRevisionId(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "space": target.setSpace(property(camelContext, java.lang.String.class, value)); return true;
+        case "spaces": target.setSpaces(property(camelContext, java.lang.String.class, value)); return true;
+        case "supportsalldrives":
+        case "supportsAllDrives": target.setSupportsAllDrives(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "supportsteamdrives":
+        case "supportsTeamDrives": target.setSupportsTeamDrives(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "teamdriveid":
+        case "teamDriveId": target.setTeamDriveId(property(camelContext, java.lang.String.class, value)); return true;
+        case "type": target.setType(property(camelContext, java.lang.String.class, value)); return true;
+        case "usecontentasindexabletext":
+        case "useContentAsIndexableText": target.setUseContentAsIndexableText(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -91,6 +166,10 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "acknowledgeabuse":
+        case "acknowledgeAbuse": return java.lang.Boolean.class;
+        case "addparents":
+        case "addParents": return java.lang.String.class;
         case "apiname":
         case "apiName": return org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class;
         case "applicationname":
@@ -101,10 +180,31 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "content": return com.google.api.services.drive.model.File.class;
+        case "corpora": return java.lang.String.class;
+        case "corpus": return java.lang.String.class;
+        case "count": return java.lang.Integer.class;
         case "delegate": return java.lang.String.class;
+        case "driveid":
+        case "driveId": return java.lang.String.class;
+        case "enforcesingleparent":
+        case "enforceSingleParent": return java.lang.Boolean.class;
         case "file": return com.google.api.services.drive.model.File.class;
         case "fileid":
         case "fileId": return java.lang.String.class;
+        case "ignoredefaultvisibility":
+        case "ignoreDefaultVisibility": return java.lang.Boolean.class;
+        case "includeitemsfromalldrives":
+        case "includeItemsFromAllDrives": return java.lang.Boolean.class;
+        case "includelabels":
+        case "includeLabels": return java.lang.String.class;
+        case "includepermissionsforview":
+        case "includePermissionsForView": return java.lang.String.class;
+        case "includeteamdriveitems":
+        case "includeTeamDriveItems": return java.lang.Boolean.class;
+        case "keeprevisionforever":
+        case "keepRevisionForever": return java.lang.Boolean.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
         case "mediacontent":
         case "mediaContent": return com.google.api.client.http.AbstractInputStreamContent.class;
         case "methodname":
@@ -113,12 +213,35 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "mimeType": return java.lang.String.class;
         case "modifylabelsrequest":
         case "modifyLabelsRequest": return com.google.api.services.drive.model.ModifyLabelsRequest.class;
+        case "ocrlanguage":
+        case "ocrLanguage": return java.lang.String.class;
+        case "orderby":
+        case "orderBy": return java.lang.String.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
+        case "removeparents":
+        case "removeParents": return java.lang.String.class;
+        case "revisionid":
+        case "revisionId": return java.lang.String.class;
         case "scopes": return java.util.List.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "space": return java.lang.String.class;
+        case "spaces": return java.lang.String.class;
+        case "supportsalldrives":
+        case "supportsAllDrives": return java.lang.Boolean.class;
+        case "supportsteamdrives":
+        case "supportsTeamDrives": return java.lang.Boolean.class;
+        case "teamdriveid":
+        case "teamDriveId": return java.lang.String.class;
+        case "type": return java.lang.String.class;
+        case "usecontentasindexabletext":
+        case "useContentAsIndexableText": return java.lang.Boolean.class;
         default: return null;
         }
     }
@@ -129,6 +252,10 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
+        case "acknowledgeabuse":
+        case "acknowledgeAbuse": return target.getAcknowledgeAbuse();
+        case "addparents":
+        case "addParents": return target.getAddParents();
         case "apiname":
         case "apiName": return target.getApiName();
         case "applicationname":
@@ -139,10 +266,31 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "clientsecret":
         case "clientSecret": return target.getClientSecret();
         case "content": return target.getContent();
+        case "corpora": return target.getCorpora();
+        case "corpus": return target.getCorpus();
+        case "count": return target.getCount();
         case "delegate": return target.getDelegate();
+        case "driveid":
+        case "driveId": return target.getDriveId();
+        case "enforcesingleparent":
+        case "enforceSingleParent": return target.getEnforceSingleParent();
         case "file": return target.getFile();
         case "fileid":
         case "fileId": return target.getFileId();
+        case "ignoredefaultvisibility":
+        case "ignoreDefaultVisibility": return target.getIgnoreDefaultVisibility();
+        case "includeitemsfromalldrives":
+        case "includeItemsFromAllDrives": return target.getIncludeItemsFromAllDrives();
+        case "includelabels":
+        case "includeLabels": return target.getIncludeLabels();
+        case "includepermissionsforview":
+        case "includePermissionsForView": return target.getIncludePermissionsForView();
+        case "includeteamdriveitems":
+        case "includeTeamDriveItems": return target.getIncludeTeamDriveItems();
+        case "keeprevisionforever":
+        case "keepRevisionForever": return target.getKeepRevisionForever();
+        case "maxresults":
+        case "maxResults": return target.getMaxResults();
         case "mediacontent":
         case "mediaContent": return target.getMediaContent();
         case "methodname":
@@ -151,12 +299,35 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "mimeType": return target.getMimeType();
         case "modifylabelsrequest":
         case "modifyLabelsRequest": return target.getModifyLabelsRequest();
+        case "ocrlanguage":
+        case "ocrLanguage": return target.getOcrLanguage();
+        case "orderby":
+        case "orderBy": return target.getOrderBy();
+        case "pagesize":
+        case "pageSize": return target.getPageSize();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
+        case "removeparents":
+        case "removeParents": return target.getRemoveParents();
+        case "revisionid":
+        case "revisionId": return target.getRevisionId();
         case "scopes": return target.getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "space": return target.getSpace();
+        case "spaces": return target.getSpaces();
+        case "supportsalldrives":
+        case "supportsAllDrives": return target.getSupportsAllDrives();
+        case "supportsteamdrives":
+        case "supportsTeamDrives": return target.getSupportsTeamDrives();
+        case "teamdriveid":
+        case "teamDriveId": return target.getTeamDriveId();
+        case "type": return target.getType();
+        case "usecontentasindexabletext":
+        case "useContentAsIndexableText": return target.getUseContentAsIndexableText();
         default: return null;
         }
     }

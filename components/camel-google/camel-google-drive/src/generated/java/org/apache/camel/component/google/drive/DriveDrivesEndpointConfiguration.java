@@ -20,14 +20,37 @@ import org.apache.camel.spi.UriParams;
 @Configurer(extended = true)
 public final class DriveDrivesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "delete", description="Whether any items inside the shared drive should also be deleted")})
+    private java.lang.Boolean allowItemDeletion;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The com.google.api.services.drive.model.Drive"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.Drive")})
     private com.google.api.services.drive.model.Drive content;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the shared drive"), @ApiMethod(methodName = "get", description="The ID of the shared drive"), @ApiMethod(methodName = "hide", description="The ID of the shared drive"), @ApiMethod(methodName = "unhide", description="The ID of the shared drive"), @ApiMethod(methodName = "update", description="The ID of the shared drive")})
     private String driveId;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Maximum number of shared drives to return per page")})
+    private java.lang.Integer pageSize;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Page token for shared drives")})
+    private java.lang.String pageToken;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Query string for searching shared drives")})
+    private java.lang.String q;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="Required. An ID, such as a random UUID, which uniquely identifies this user's request for idempotent creation of a shared drive. A repeated request by the same user and with the same request ID will avoid creating duplicates by attempting to create the same shared drive. If the shared drive already exists a 409 error will be returned.")})
     private String requestId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "delete", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the shared drive belongs"), @ApiMethod(methodName = "get", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the shared drive belongs"), @ApiMethod(methodName = "list", description="Issue the request as a domain administrator; if set to true, then all shared drives of the domain in which the requester is an administrator are returned"), @ApiMethod(methodName = "update", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the shared drive belongs")})
+    private java.lang.Boolean useDomainAdminAccess;
+
+    public java.lang.Boolean getAllowItemDeletion() {
+        return allowItemDeletion;
+    }
+
+    public void setAllowItemDeletion(java.lang.Boolean allowItemDeletion) {
+        this.allowItemDeletion = allowItemDeletion;
+    }
 
     public com.google.api.services.drive.model.Drive getContent() {
         return content;
@@ -45,11 +68,43 @@ public final class DriveDrivesEndpointConfiguration extends GoogleDriveConfigura
         this.driveId = driveId;
     }
 
+    public java.lang.Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(java.lang.Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
+    public java.lang.String getQ() {
+        return q;
+    }
+
+    public void setQ(java.lang.String q) {
+        this.q = q;
+    }
+
     public String getRequestId() {
         return requestId;
     }
 
     public void setRequestId(String requestId) {
         this.requestId = requestId;
+    }
+
+    public java.lang.Boolean getUseDomainAdminAccess() {
+        return useDomainAdminAccess;
+    }
+
+    public void setUseDomainAdminAccess(java.lang.Boolean useDomainAdminAccess) {
+        this.useDomainAdminAccess = useDomainAdminAccess;
     }
 }

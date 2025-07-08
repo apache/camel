@@ -30,7 +30,6 @@ public class DriveChannelsEndpointConfigurationConfigurer extends org.apache.cam
         map.put("ContentChannel", com.google.api.services.drive.model.Channel.class);
         map.put("Delegate", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
-        map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
@@ -56,7 +55,6 @@ public class DriveChannelsEndpointConfigurationConfigurer extends org.apache.cam
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
-        case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
@@ -89,7 +87,6 @@ public class DriveChannelsEndpointConfigurationConfigurer extends org.apache.cam
         case "delegate": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
-        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
@@ -118,7 +115,6 @@ public class DriveChannelsEndpointConfigurationConfigurer extends org.apache.cam
         case "delegate": return target.getDelegate();
         case "methodname":
         case "methodName": return target.getMethodName();
-        case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();

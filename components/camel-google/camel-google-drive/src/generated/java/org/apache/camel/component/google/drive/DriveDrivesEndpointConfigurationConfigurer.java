@@ -23,6 +23,7 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AccessToken", java.lang.String.class);
+        map.put("AllowItemDeletion", java.lang.Boolean.class);
         map.put("ApiName", org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class);
         map.put("ApplicationName", java.lang.String.class);
         map.put("ClientId", java.lang.String.class);
@@ -31,11 +32,14 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         map.put("Delegate", java.lang.String.class);
         map.put("DriveId", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("PageSize", java.lang.Integer.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("RequestId", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("UseDomainAdminAccess", java.lang.Boolean.class);
         ALL_OPTIONS = map;
     }
 
@@ -45,6 +49,8 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowitemdeletion":
+        case "allowItemDeletion": target.setAllowItemDeletion(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "apiname":
         case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class, value)); return true;
         case "applicationname":
@@ -59,6 +65,10 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "driveId": target.setDriveId(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -67,6 +77,8 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedomainadminaccess":
+        case "useDomainAdminAccess": target.setUseDomainAdminAccess(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -81,6 +93,8 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "allowitemdeletion":
+        case "allowItemDeletion": return java.lang.Boolean.class;
         case "apiname":
         case "apiName": return org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class;
         case "applicationname":
@@ -95,6 +109,10 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "driveId": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
@@ -103,6 +121,8 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "scopes": return java.util.List.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "usedomainadminaccess":
+        case "useDomainAdminAccess": return java.lang.Boolean.class;
         default: return null;
         }
     }
@@ -113,6 +133,8 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
+        case "allowitemdeletion":
+        case "allowItemDeletion": return target.getAllowItemDeletion();
         case "apiname":
         case "apiName": return target.getApiName();
         case "applicationname":
@@ -127,6 +149,10 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "driveId": return target.getDriveId();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "pagesize":
+        case "pageSize": return target.getPageSize();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
@@ -135,6 +161,8 @@ public class DriveDrivesEndpointConfigurationConfigurer extends org.apache.camel
         case "scopes": return target.getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "usedomainadminaccess":
+        case "useDomainAdminAccess": return target.getUseDomainAdminAccess();
         default: return null;
         }
     }

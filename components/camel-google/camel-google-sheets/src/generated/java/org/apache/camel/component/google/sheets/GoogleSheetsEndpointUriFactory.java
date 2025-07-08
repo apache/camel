@@ -23,7 +23,7 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(43);
+        Set<String> props = new HashSet<>(54);
         props.add("accessToken");
         props.add("apiName");
         props.add("applicationName");
@@ -40,20 +40,29 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         props.add("clientId");
         props.add("clientSecret");
         props.add("content");
+        props.add("dateTimeRenderOption");
         props.add("delay");
         props.add("delegate");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("excludeTablesInBandedRanges");
         props.add("getSpreadsheetByDataFilterRequest");
         props.add("greedy");
         props.add("inBody");
+        props.add("includeGridData");
+        props.add("includeValuesInResponse");
         props.add("initialDelay");
+        props.add("insertDataOption");
         props.add("lazyStartProducer");
+        props.add("majorDimension");
         props.add("methodName");
         props.add("pollStrategy");
         props.add("range");
+        props.add("ranges");
         props.add("refreshToken");
         props.add("repeatCount");
+        props.add("responseDateTimeRenderOption");
+        props.add("responseValueRenderOption");
         props.add("runLoggingLevel");
         props.add("scheduledExecutorService");
         props.add("scheduler");
@@ -66,6 +75,8 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         props.add("startScheduler");
         props.add("timeUnit");
         props.add("useFixedDelay");
+        props.add("valueInputOption");
+        props.add("valueRenderOption");
         props.add("values");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);

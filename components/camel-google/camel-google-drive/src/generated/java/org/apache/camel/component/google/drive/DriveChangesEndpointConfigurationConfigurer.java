@@ -29,12 +29,24 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         map.put("ClientSecret", java.lang.String.class);
         map.put("ContentChannel", com.google.api.services.drive.model.Channel.class);
         map.put("Delegate", java.lang.String.class);
+        map.put("DriveId", java.lang.String.class);
+        map.put("IncludeCorpusRemovals", java.lang.Boolean.class);
+        map.put("IncludeItemsFromAllDrives", java.lang.Boolean.class);
+        map.put("IncludeLabels", java.lang.String.class);
+        map.put("IncludePermissionsForView", java.lang.String.class);
+        map.put("IncludeRemoved", java.lang.Boolean.class);
+        map.put("IncludeTeamDriveItems", java.lang.Boolean.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("PageSize", java.lang.Integer.class);
         map.put("PageToken", java.lang.String.class);
-        map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
+        map.put("RestrictToMyDrive", java.lang.Boolean.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("Spaces", java.lang.String.class);
+        map.put("SupportsAllDrives", java.lang.Boolean.class);
+        map.put("SupportsTeamDrives", java.lang.Boolean.class);
+        map.put("TeamDriveId", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -55,16 +67,40 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "contentchannel":
         case "contentChannel": target.setContentChannel(property(camelContext, com.google.api.services.drive.model.Channel.class, value)); return true;
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "driveid":
+        case "driveId": target.setDriveId(property(camelContext, java.lang.String.class, value)); return true;
+        case "includecorpusremovals":
+        case "includeCorpusRemovals": target.setIncludeCorpusRemovals(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "includeitemsfromalldrives":
+        case "includeItemsFromAllDrives": target.setIncludeItemsFromAllDrives(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "includelabels":
+        case "includeLabels": target.setIncludeLabels(property(camelContext, java.lang.String.class, value)); return true;
+        case "includepermissionsforview":
+        case "includePermissionsForView": target.setIncludePermissionsForView(property(camelContext, java.lang.String.class, value)); return true;
+        case "includeremoved":
+        case "includeRemoved": target.setIncludeRemoved(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "includeteamdriveitems":
+        case "includeTeamDriveItems": target.setIncludeTeamDriveItems(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "pagetoken":
         case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "restricttomydrive":
+        case "restrictToMyDrive": target.setRestrictToMyDrive(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "spaces": target.setSpaces(property(camelContext, java.lang.String.class, value)); return true;
+        case "supportsalldrives":
+        case "supportsAllDrives": target.setSupportsAllDrives(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "supportsteamdrives":
+        case "supportsTeamDrives": target.setSupportsTeamDrives(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "teamdriveid":
+        case "teamDriveId": target.setTeamDriveId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -90,16 +126,40 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "contentchannel":
         case "contentChannel": return com.google.api.services.drive.model.Channel.class;
         case "delegate": return java.lang.String.class;
+        case "driveid":
+        case "driveId": return java.lang.String.class;
+        case "includecorpusremovals":
+        case "includeCorpusRemovals": return java.lang.Boolean.class;
+        case "includeitemsfromalldrives":
+        case "includeItemsFromAllDrives": return java.lang.Boolean.class;
+        case "includelabels":
+        case "includeLabels": return java.lang.String.class;
+        case "includepermissionsforview":
+        case "includePermissionsForView": return java.lang.String.class;
+        case "includeremoved":
+        case "includeRemoved": return java.lang.Boolean.class;
+        case "includeteamdriveitems":
+        case "includeTeamDriveItems": return java.lang.Boolean.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
         case "pagetoken":
         case "pageToken": return java.lang.String.class;
-        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
+        case "restricttomydrive":
+        case "restrictToMyDrive": return java.lang.Boolean.class;
         case "scopes": return java.util.List.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "spaces": return java.lang.String.class;
+        case "supportsalldrives":
+        case "supportsAllDrives": return java.lang.Boolean.class;
+        case "supportsteamdrives":
+        case "supportsTeamDrives": return java.lang.Boolean.class;
+        case "teamdriveid":
+        case "teamDriveId": return java.lang.String.class;
         default: return null;
         }
     }
@@ -121,16 +181,40 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "contentchannel":
         case "contentChannel": return target.getContentChannel();
         case "delegate": return target.getDelegate();
+        case "driveid":
+        case "driveId": return target.getDriveId();
+        case "includecorpusremovals":
+        case "includeCorpusRemovals": return target.getIncludeCorpusRemovals();
+        case "includeitemsfromalldrives":
+        case "includeItemsFromAllDrives": return target.getIncludeItemsFromAllDrives();
+        case "includelabels":
+        case "includeLabels": return target.getIncludeLabels();
+        case "includepermissionsforview":
+        case "includePermissionsForView": return target.getIncludePermissionsForView();
+        case "includeremoved":
+        case "includeRemoved": return target.getIncludeRemoved();
+        case "includeteamdriveitems":
+        case "includeTeamDriveItems": return target.getIncludeTeamDriveItems();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "pagesize":
+        case "pageSize": return target.getPageSize();
         case "pagetoken":
         case "pageToken": return target.getPageToken();
-        case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
+        case "restricttomydrive":
+        case "restrictToMyDrive": return target.getRestrictToMyDrive();
         case "scopes": return target.getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "spaces": return target.getSpaces();
+        case "supportsalldrives":
+        case "supportsAllDrives": return target.getSupportsAllDrives();
+        case "supportsteamdrives":
+        case "supportsTeamDrives": return target.getSupportsTeamDrives();
+        case "teamdriveid":
+        case "teamDriveId": return target.getTeamDriveId();
         default: return null;
         }
     }

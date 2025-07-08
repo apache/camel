@@ -31,8 +31,10 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         map.put("Content", com.google.api.services.drive.model.Reply.class);
         map.put("Delegate", java.lang.String.class);
         map.put("FileId", java.lang.String.class);
+        map.put("IncludeDeleted", java.lang.Boolean.class);
         map.put("MethodName", java.lang.String.class);
-        map.put("Q", java.lang.String.class);
+        map.put("PageSize", java.lang.Integer.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("ReplyId", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
@@ -60,9 +62,14 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "fileid":
         case "fileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
+        case "includedeleted":
+        case "includeDeleted": target.setIncludeDeleted(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
-        case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "replyid":
@@ -98,9 +105,14 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         case "delegate": return java.lang.String.class;
         case "fileid":
         case "fileId": return java.lang.String.class;
+        case "includedeleted":
+        case "includeDeleted": return java.lang.Boolean.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
-        case "q": return java.lang.String.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "replyid":
@@ -132,9 +144,14 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         case "delegate": return target.getDelegate();
         case "fileid":
         case "fileId": return target.getFileId();
+        case "includedeleted":
+        case "includeDeleted": return target.getIncludeDeleted();
         case "methodname":
         case "methodName": return target.getMethodName();
-        case "q": return target.getQ();
+        case "pagesize":
+        case "pageSize": return target.getPageSize();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "replyid":

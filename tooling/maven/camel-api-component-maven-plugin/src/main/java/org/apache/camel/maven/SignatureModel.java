@@ -29,6 +29,8 @@ public class SignatureModel {
     private String signature;
     private Map<String, String> parameterDescriptions;
     private Map<String, String> parameterTypes;
+    private Map<String, String> setterDescriptions;
+    private Map<String, String> setterTypes;
 
     public String getApiName() {
         return apiName;
@@ -76,5 +78,21 @@ public class SignatureModel {
 
     public void setParameterTypes(Map<String, String> parameterTypes) {
         this.parameterTypes = parameterTypes;
+    }
+
+    public Map<String, String> getSetterDescriptions() {
+        return setterDescriptions;
+    }
+
+    public void setSetterDescriptions(Map<String, String> setterDescriptions) {
+        this.setterDescriptions = setterDescriptions;
+    }
+
+    public Map<String, String> getSetterTypes() {
+        return setterTypes;
+    }
+
+    public void setSetterTypes(Map<String, String> setterTypes) {
+        this.setterTypes = setterTypes;
     }
 }

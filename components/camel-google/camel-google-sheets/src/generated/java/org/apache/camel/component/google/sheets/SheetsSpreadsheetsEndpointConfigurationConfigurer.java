@@ -30,8 +30,11 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.sheets.v4.model.Spreadsheet.class);
         map.put("Delegate", java.lang.String.class);
+        map.put("ExcludeTablesInBandedRanges", java.lang.Boolean.class);
         map.put("GetSpreadsheetByDataFilterRequest", com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class);
+        map.put("IncludeGridData", java.lang.Boolean.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("Ranges", java.util.List.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
@@ -58,10 +61,15 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content": target.setContent(property(camelContext, com.google.api.services.sheets.v4.model.Spreadsheet.class, value)); return true;
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "excludetablesinbandedranges":
+        case "excludeTablesInBandedRanges": target.setExcludeTablesInBandedRanges(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "getspreadsheetbydatafilterrequest":
         case "getSpreadsheetByDataFilterRequest": target.setGetSpreadsheetByDataFilterRequest(property(camelContext, com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class, value)); return true;
+        case "includegriddata":
+        case "includeGridData": target.setIncludeGridData(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "ranges": target.setRanges(property(camelContext, java.util.List.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
@@ -97,10 +105,15 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "clientSecret": return java.lang.String.class;
         case "content": return com.google.api.services.sheets.v4.model.Spreadsheet.class;
         case "delegate": return java.lang.String.class;
+        case "excludetablesinbandedranges":
+        case "excludeTablesInBandedRanges": return java.lang.Boolean.class;
         case "getspreadsheetbydatafilterrequest":
         case "getSpreadsheetByDataFilterRequest": return com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class;
+        case "includegriddata":
+        case "includeGridData": return java.lang.Boolean.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "ranges": return java.util.List.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.lang.String.class;
@@ -132,10 +145,15 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "clientSecret": return target.getClientSecret();
         case "content": return target.getContent();
         case "delegate": return target.getDelegate();
+        case "excludetablesinbandedranges":
+        case "excludeTablesInBandedRanges": return target.getExcludeTablesInBandedRanges();
         case "getspreadsheetbydatafilterrequest":
         case "getSpreadsheetByDataFilterRequest": return target.getGetSpreadsheetByDataFilterRequest();
+        case "includegriddata":
+        case "includeGridData": return target.getIncludeGridData();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "ranges": return target.getRanges();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();

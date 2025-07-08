@@ -20,11 +20,33 @@ import org.apache.camel.spi.UriParams;
 @Configurer(extended = true)
 public final class DriveFilesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="Whether the user is acknowledging the risk of downloading known malware or other abusive files"), @ApiMethod(methodName = "watch", description="Whether the user is acknowledging the risk of downloading known malware or other abusive files")})
+    private java.lang.Boolean acknowledgeAbuse;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "update", description="A comma-separated list of parent IDs to add")})
+    private java.lang.String addParents;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "watch", description="The com.google.api.services.drive.model.Channel")})
     private com.google.api.services.drive.model.Channel channel;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The com.google.api.services.drive.model.File media metadata or null if none")})
     private com.google.api.services.drive.model.File content;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Bodies of items (files/documents) to which the query applies")})
+    private java.lang.String corpora;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Deprecated: The source of files to list")})
+    @Deprecated
+    private java.lang.String corpus;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "generateIds", description="The number of IDs to return")})
+    private java.lang.Integer count;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "emptyTrash", description="If set, empties the trash of the provided shared drive"), @ApiMethod(methodName = "list", description="ID of the shared drive to search")})
+    private java.lang.String driveId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "copy", description="Deprecated"), @ApiMethod(methodName = "create", description="Deprecated"), @ApiMethod(methodName = "delete", description="Deprecated: If an item is not in a shared drive and its last parent is deleted but the item itself is not, the item will be placed under its owner's root"), @ApiMethod(methodName = "emptyTrash", description="Deprecated: If an item is not in a shared drive and its last parent is deleted but the item itself is not, the item will be placed under its owner's root"), @ApiMethod(methodName = "update", description="Deprecated: Adding files to multiple folders is no longer supported")})
+    private java.lang.Boolean enforceSingleParent;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "copy", description="The com.google.api.services.drive.model.File"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.File media metadata or null if none")})
     private com.google.api.services.drive.model.File file;
@@ -32,14 +54,96 @@ public final class DriveFilesEndpointConfiguration extends GoogleDriveConfigurat
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "copy", description="The ID of the file"), @ApiMethod(methodName = "delete", description="The ID of the file"), @ApiMethod(methodName = "download", description="Required. The ID of the file to download."), @ApiMethod(methodName = "export", description="The ID of the file"), @ApiMethod(methodName = "get", description="The ID of the file"), @ApiMethod(methodName = "listLabels", description="The ID for the file"), @ApiMethod(methodName = "modifyLabels", description="The ID of the file to which the labels belong"), @ApiMethod(methodName = "update", description="The ID of the file"), @ApiMethod(methodName = "watch", description="The ID of the file")})
     private String fileId;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "copy", description="Whether to ignore the domain's default visibility settings for the created file"), @ApiMethod(methodName = "create", description="Whether to ignore the domain's default visibility settings for the created file")})
+    private java.lang.Boolean ignoreDefaultVisibility;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Whether both My Drive and shared drive items should be included in results")})
+    private java.lang.Boolean includeItemsFromAllDrives;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "copy", description="A comma-separated list of IDs of labels to include in the labelInfo part of the response"), @ApiMethod(methodName = "create", description="A comma-separated list of IDs of labels to include in the labelInfo part of the response"), @ApiMethod(methodName = "get", description="A comma-separated list of IDs of labels to include in the labelInfo part of the response"), @ApiMethod(methodName = "list", description="A comma-separated list of IDs of labels to include in the labelInfo part of the response"), @ApiMethod(methodName = "update", description="A comma-separated list of IDs of labels to include in the labelInfo part of the response"), @ApiMethod(methodName = "watch", description="A comma-separated list of IDs of labels to include in the labelInfo part of the response")})
+    private java.lang.String includeLabels;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "copy", description="Specifies which additional view's permissions to include in the response"), @ApiMethod(methodName = "create", description="Specifies which additional view's permissions to include in the response"), @ApiMethod(methodName = "get", description="Specifies which additional view's permissions to include in the response"), @ApiMethod(methodName = "list", description="Specifies which additional view's permissions to include in the response"), @ApiMethod(methodName = "update", description="Specifies which additional view's permissions to include in the response"), @ApiMethod(methodName = "watch", description="Specifies which additional view's permissions to include in the response")})
+    private java.lang.String includePermissionsForView;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Deprecated: Use includeItemsFromAllDrives instead")})
+    @Deprecated
+    private java.lang.Boolean includeTeamDriveItems;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "copy", description="Whether to set the 'keepForever' field in the new head revision"), @ApiMethod(methodName = "create", description="Whether to set the 'keepForever' field in the new head revision"), @ApiMethod(methodName = "update", description="Whether to set the 'keepForever' field in the new head revision")})
+    private java.lang.Boolean keepRevisionForever;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "listLabels", description="The maximum number of labels to return per page")})
+    private java.lang.Integer maxResults;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The media HTTP content"), @ApiMethod(methodName = "update", description="The media HTTP content")})
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "export", description="Required. The MIME type of the format requested for this export.")})
-    private String mimeType;
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "download", description="Optional"), @ApiMethod(methodName = "export", description="Required. The MIME type of the format requested for this export.")})
+    private java.lang.String mimeType;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "modifyLabels", description="The com.google.api.services.drive.model.ModifyLabelsRequest")})
     private com.google.api.services.drive.model.ModifyLabelsRequest modifyLabelsRequest;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "copy", description="A language hint for OCR processing during image import (ISO 639-1 code)"), @ApiMethod(methodName = "create", description="A language hint for OCR processing during image import (ISO 639-1 code)"), @ApiMethod(methodName = "update", description="A language hint for OCR processing during image import (ISO 639-1 code)")})
+    private java.lang.String ocrLanguage;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="A comma-separated list of sort keys")})
+    private java.lang.String orderBy;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The maximum number of files to return per page")})
+    private java.lang.Integer pageSize;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The token for continuing a previous list request on the next page"), @ApiMethod(methodName = "listLabels", description="The token for continuing a previous list request on the next page")})
+    private java.lang.String pageToken;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="A query for filtering the file results")})
+    private java.lang.String q;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "update", description="A comma-separated list of parent IDs to remove")})
+    private java.lang.String removeParents;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "download", description="Optional")})
+    private java.lang.String revisionId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "generateIds", description="The space in which the IDs can be used to create new files")})
+    private java.lang.String space;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="A comma-separated list of spaces to query within the corpora")})
+    private java.lang.String spaces;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "copy", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "create", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "delete", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "get", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "list", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "update", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "watch", description="Whether the requesting application supports both My Drives and shared drives")})
+    private java.lang.Boolean supportsAllDrives;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "copy", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "create", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "delete", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "get", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "list", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "update", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "watch", description="Deprecated: Use supportsAllDrives instead")})
+    @Deprecated
+    private java.lang.Boolean supportsTeamDrives;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Deprecated: Use driveId instead")})
+    @Deprecated
+    private java.lang.String teamDriveId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "generateIds", description="The type of items which the IDs can be used for")})
+    private java.lang.String type;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="Whether to use the uploaded content as indexable text"), @ApiMethod(methodName = "update", description="Whether to use the uploaded content as indexable text")})
+    private java.lang.Boolean useContentAsIndexableText;
+
+    public java.lang.Boolean getAcknowledgeAbuse() {
+        return acknowledgeAbuse;
+    }
+
+    public void setAcknowledgeAbuse(java.lang.Boolean acknowledgeAbuse) {
+        this.acknowledgeAbuse = acknowledgeAbuse;
+    }
+
+    public java.lang.String getAddParents() {
+        return addParents;
+    }
+
+    public void setAddParents(java.lang.String addParents) {
+        this.addParents = addParents;
+    }
 
     public com.google.api.services.drive.model.Channel getChannel() {
         return channel;
@@ -55,6 +159,46 @@ public final class DriveFilesEndpointConfiguration extends GoogleDriveConfigurat
 
     public void setContent(com.google.api.services.drive.model.File content) {
         this.content = content;
+    }
+
+    public java.lang.String getCorpora() {
+        return corpora;
+    }
+
+    public void setCorpora(java.lang.String corpora) {
+        this.corpora = corpora;
+    }
+
+    public java.lang.String getCorpus() {
+        return corpus;
+    }
+
+    public void setCorpus(java.lang.String corpus) {
+        this.corpus = corpus;
+    }
+
+    public java.lang.Integer getCount() {
+        return count;
+    }
+
+    public void setCount(java.lang.Integer count) {
+        this.count = count;
+    }
+
+    public java.lang.String getDriveId() {
+        return driveId;
+    }
+
+    public void setDriveId(java.lang.String driveId) {
+        this.driveId = driveId;
+    }
+
+    public java.lang.Boolean getEnforceSingleParent() {
+        return enforceSingleParent;
+    }
+
+    public void setEnforceSingleParent(java.lang.Boolean enforceSingleParent) {
+        this.enforceSingleParent = enforceSingleParent;
     }
 
     public com.google.api.services.drive.model.File getFile() {
@@ -73,6 +217,62 @@ public final class DriveFilesEndpointConfiguration extends GoogleDriveConfigurat
         this.fileId = fileId;
     }
 
+    public java.lang.Boolean getIgnoreDefaultVisibility() {
+        return ignoreDefaultVisibility;
+    }
+
+    public void setIgnoreDefaultVisibility(java.lang.Boolean ignoreDefaultVisibility) {
+        this.ignoreDefaultVisibility = ignoreDefaultVisibility;
+    }
+
+    public java.lang.Boolean getIncludeItemsFromAllDrives() {
+        return includeItemsFromAllDrives;
+    }
+
+    public void setIncludeItemsFromAllDrives(java.lang.Boolean includeItemsFromAllDrives) {
+        this.includeItemsFromAllDrives = includeItemsFromAllDrives;
+    }
+
+    public java.lang.String getIncludeLabels() {
+        return includeLabels;
+    }
+
+    public void setIncludeLabels(java.lang.String includeLabels) {
+        this.includeLabels = includeLabels;
+    }
+
+    public java.lang.String getIncludePermissionsForView() {
+        return includePermissionsForView;
+    }
+
+    public void setIncludePermissionsForView(java.lang.String includePermissionsForView) {
+        this.includePermissionsForView = includePermissionsForView;
+    }
+
+    public java.lang.Boolean getIncludeTeamDriveItems() {
+        return includeTeamDriveItems;
+    }
+
+    public void setIncludeTeamDriveItems(java.lang.Boolean includeTeamDriveItems) {
+        this.includeTeamDriveItems = includeTeamDriveItems;
+    }
+
+    public java.lang.Boolean getKeepRevisionForever() {
+        return keepRevisionForever;
+    }
+
+    public void setKeepRevisionForever(java.lang.Boolean keepRevisionForever) {
+        this.keepRevisionForever = keepRevisionForever;
+    }
+
+    public java.lang.Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(java.lang.Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
     public com.google.api.client.http.AbstractInputStreamContent getMediaContent() {
         return mediaContent;
     }
@@ -81,11 +281,11 @@ public final class DriveFilesEndpointConfiguration extends GoogleDriveConfigurat
         this.mediaContent = mediaContent;
     }
 
-    public String getMimeType() {
+    public java.lang.String getMimeType() {
         return mimeType;
     }
 
-    public void setMimeType(String mimeType) {
+    public void setMimeType(java.lang.String mimeType) {
         this.mimeType = mimeType;
     }
 
@@ -95,5 +295,117 @@ public final class DriveFilesEndpointConfiguration extends GoogleDriveConfigurat
 
     public void setModifyLabelsRequest(com.google.api.services.drive.model.ModifyLabelsRequest modifyLabelsRequest) {
         this.modifyLabelsRequest = modifyLabelsRequest;
+    }
+
+    public java.lang.String getOcrLanguage() {
+        return ocrLanguage;
+    }
+
+    public void setOcrLanguage(java.lang.String ocrLanguage) {
+        this.ocrLanguage = ocrLanguage;
+    }
+
+    public java.lang.String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(java.lang.String orderBy) {
+        this.orderBy = orderBy;
+    }
+
+    public java.lang.Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(java.lang.Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
+    public java.lang.String getQ() {
+        return q;
+    }
+
+    public void setQ(java.lang.String q) {
+        this.q = q;
+    }
+
+    public java.lang.String getRemoveParents() {
+        return removeParents;
+    }
+
+    public void setRemoveParents(java.lang.String removeParents) {
+        this.removeParents = removeParents;
+    }
+
+    public java.lang.String getRevisionId() {
+        return revisionId;
+    }
+
+    public void setRevisionId(java.lang.String revisionId) {
+        this.revisionId = revisionId;
+    }
+
+    public java.lang.String getSpace() {
+        return space;
+    }
+
+    public void setSpace(java.lang.String space) {
+        this.space = space;
+    }
+
+    public java.lang.String getSpaces() {
+        return spaces;
+    }
+
+    public void setSpaces(java.lang.String spaces) {
+        this.spaces = spaces;
+    }
+
+    public java.lang.Boolean getSupportsAllDrives() {
+        return supportsAllDrives;
+    }
+
+    public void setSupportsAllDrives(java.lang.Boolean supportsAllDrives) {
+        this.supportsAllDrives = supportsAllDrives;
+    }
+
+    public java.lang.Boolean getSupportsTeamDrives() {
+        return supportsTeamDrives;
+    }
+
+    public void setSupportsTeamDrives(java.lang.Boolean supportsTeamDrives) {
+        this.supportsTeamDrives = supportsTeamDrives;
+    }
+
+    public java.lang.String getTeamDriveId() {
+        return teamDriveId;
+    }
+
+    public void setTeamDriveId(java.lang.String teamDriveId) {
+        this.teamDriveId = teamDriveId;
+    }
+
+    public java.lang.String getType() {
+        return type;
+    }
+
+    public void setType(java.lang.String type) {
+        this.type = type;
+    }
+
+    public java.lang.Boolean getUseContentAsIndexableText() {
+        return useContentAsIndexableText;
+    }
+
+    public void setUseContentAsIndexableText(java.lang.Boolean useContentAsIndexableText) {
+        this.useContentAsIndexableText = useContentAsIndexableText;
     }
 }

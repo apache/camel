@@ -23,11 +23,23 @@ public final class DriveTeamdrivesEndpointConfiguration extends GoogleDriveConfi
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The com.google.api.services.drive.model.TeamDrive"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.TeamDrive")})
     private com.google.api.services.drive.model.TeamDrive content;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Maximum number of Team Drives to return")})
+    private java.lang.Integer pageSize;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Page token for Team Drives")})
+    private java.lang.String pageToken;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Query string for searching Team Drives")})
+    private java.lang.String q;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="Required. An ID, such as a random UUID, which uniquely identifies this user's request for idempotent creation of a Team Drive. A repeated request by the same user and with the same request ID will avoid creating duplicates by attempting to create the same Team Drive. If the Team Drive already exists a 409 error will be returned.")})
     private String requestId;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the Team Drive"), @ApiMethod(methodName = "get", description="The ID of the Team Drive"), @ApiMethod(methodName = "update", description="The ID of the Team Drive")})
     private String teamDriveId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the Team Drive belongs"), @ApiMethod(methodName = "list", description="Issue the request as a domain administrator; if set to true, then all Team Drives of the domain in which the requester is an administrator are returned"), @ApiMethod(methodName = "update", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the Team Drive belongs")})
+    private java.lang.Boolean useDomainAdminAccess;
 
     public com.google.api.services.drive.model.TeamDrive getContent() {
         return content;
@@ -35,6 +47,30 @@ public final class DriveTeamdrivesEndpointConfiguration extends GoogleDriveConfi
 
     public void setContent(com.google.api.services.drive.model.TeamDrive content) {
         this.content = content;
+    }
+
+    public java.lang.Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(java.lang.Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
+    public java.lang.String getQ() {
+        return q;
+    }
+
+    public void setQ(java.lang.String q) {
+        this.q = q;
     }
 
     public String getRequestId() {
@@ -51,5 +87,13 @@ public final class DriveTeamdrivesEndpointConfiguration extends GoogleDriveConfi
 
     public void setTeamDriveId(String teamDriveId) {
         this.teamDriveId = teamDriveId;
+    }
+
+    public java.lang.Boolean getUseDomainAdminAccess() {
+        return useDomainAdminAccess;
+    }
+
+    public void setUseDomainAdminAccess(java.lang.Boolean useDomainAdminAccess) {
+        this.useDomainAdminAccess = useDomainAdminAccess;
     }
 }

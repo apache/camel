@@ -23,11 +23,26 @@ public final class GmailUsersDraftsEndpointConfiguration extends GoogleMailConfi
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The com.google.api.services.gmail.model.Draft media metadata or null if none"), @ApiMethod(methodName = "send", description="The com.google.api.services.gmail.model.Draft media metadata or null if none"), @ApiMethod(methodName = "update", description="The com.google.api.services.gmail.model.Draft media metadata or null if none")})
     private com.google.api.services.gmail.model.Draft content;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="The format to return the draft in")})
+    private java.lang.String format;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the draft to delete"), @ApiMethod(methodName = "get", description="The ID of the draft to retrieve"), @ApiMethod(methodName = "update")})
     private String id;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Include drafts from SPAM and TRASH in the results")})
+    private java.lang.Boolean includeSpamTrash;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Maximum number of drafts to return")})
+    private java.lang.Long maxResults;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The media HTTP content"), @ApiMethod(methodName = "send", description="The media HTTP content"), @ApiMethod(methodName = "update", description="The media HTTP content")})
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Page token to retrieve a specific page of results in the list")})
+    private java.lang.String pageToken;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Only return draft messages matching the specified query")})
+    private java.lang.String q;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "create", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "delete", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "get", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "list", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "send", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "send", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "update", description="The user's email address. The special value me can be used to indicate the authenticated user. default: meparam id The ID of the draft to update."), @ApiMethod(methodName = "update", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me")})
     private String userId;
@@ -40,6 +55,14 @@ public final class GmailUsersDraftsEndpointConfiguration extends GoogleMailConfi
         this.content = content;
     }
 
+    public java.lang.String getFormat() {
+        return format;
+    }
+
+    public void setFormat(java.lang.String format) {
+        this.format = format;
+    }
+
     public String getId() {
         return id;
     }
@@ -48,12 +71,44 @@ public final class GmailUsersDraftsEndpointConfiguration extends GoogleMailConfi
         this.id = id;
     }
 
+    public java.lang.Boolean getIncludeSpamTrash() {
+        return includeSpamTrash;
+    }
+
+    public void setIncludeSpamTrash(java.lang.Boolean includeSpamTrash) {
+        this.includeSpamTrash = includeSpamTrash;
+    }
+
+    public java.lang.Long getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(java.lang.Long maxResults) {
+        this.maxResults = maxResults;
+    }
+
     public com.google.api.client.http.AbstractInputStreamContent getMediaContent() {
         return mediaContent;
     }
 
     public void setMediaContent(com.google.api.client.http.AbstractInputStreamContent mediaContent) {
         this.mediaContent = mediaContent;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
+    public java.lang.String getQ() {
+        return q;
+    }
+
+    public void setQ(java.lang.String q) {
+        this.q = q;
     }
 
     public String getUserId() {

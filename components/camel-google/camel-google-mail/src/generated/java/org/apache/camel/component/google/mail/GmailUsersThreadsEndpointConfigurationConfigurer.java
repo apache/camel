@@ -29,8 +29,15 @@ public class GmailUsersThreadsEndpointConfigurationConfigurer extends org.apache
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.gmail.model.ModifyThreadRequest.class);
         map.put("Delegate", java.lang.String.class);
+        map.put("Format", java.lang.String.class);
         map.put("Id", java.lang.String.class);
+        map.put("IncludeSpamTrash", java.lang.Boolean.class);
+        map.put("LabelIds", java.util.List.class);
+        map.put("MaxResults", java.lang.Long.class);
+        map.put("MetadataHeaders", java.util.List.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("PageToken", java.lang.String.class);
+        map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.Collection.class);
         map.put("ServiceAccountKey", java.lang.String.class);
@@ -54,9 +61,21 @@ public class GmailUsersThreadsEndpointConfigurationConfigurer extends org.apache
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content": target.setContent(property(camelContext, com.google.api.services.gmail.model.ModifyThreadRequest.class, value)); return true;
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "format": target.setFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "includespamtrash":
+        case "includeSpamTrash": target.setIncludeSpamTrash(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "labelids":
+        case "labelIds": target.setLabelIds(property(camelContext, java.util.List.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, java.lang.Long.class, value)); return true;
+        case "metadataheaders":
+        case "metadataHeaders": target.setMetadataHeaders(property(camelContext, java.util.List.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
@@ -88,9 +107,21 @@ public class GmailUsersThreadsEndpointConfigurationConfigurer extends org.apache
         case "clientSecret": return java.lang.String.class;
         case "content": return com.google.api.services.gmail.model.ModifyThreadRequest.class;
         case "delegate": return java.lang.String.class;
+        case "format": return java.lang.String.class;
         case "id": return java.lang.String.class;
+        case "includespamtrash":
+        case "includeSpamTrash": return java.lang.Boolean.class;
+        case "labelids":
+        case "labelIds": return java.util.List.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Long.class;
+        case "metadataheaders":
+        case "metadataHeaders": return java.util.List.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
+        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.Collection.class;
@@ -118,9 +149,21 @@ public class GmailUsersThreadsEndpointConfigurationConfigurer extends org.apache
         case "clientSecret": return target.getClientSecret();
         case "content": return target.getContent();
         case "delegate": return target.getDelegate();
+        case "format": return target.getFormat();
         case "id": return target.getId();
+        case "includespamtrash":
+        case "includeSpamTrash": return target.getIncludeSpamTrash();
+        case "labelids":
+        case "labelIds": return target.getLabelIds();
+        case "maxresults":
+        case "maxResults": return target.getMaxResults();
+        case "metadataheaders":
+        case "metadataHeaders": return target.getMetadataHeaders();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
+        case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();

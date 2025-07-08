@@ -31,10 +31,21 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.gmail.model.Message.class);
         map.put("Delegate", java.lang.String.class);
+        map.put("Deleted", java.lang.Boolean.class);
+        map.put("Format", java.lang.String.class);
         map.put("Id", java.lang.String.class);
+        map.put("IncludeSpamTrash", java.lang.Boolean.class);
+        map.put("InternalDateSource", java.lang.String.class);
+        map.put("LabelIds", java.util.List.class);
+        map.put("MaxResults", java.lang.Long.class);
         map.put("MediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
+        map.put("MetadataHeaders", java.util.List.class);
         map.put("MethodName", java.lang.String.class);
         map.put("ModifyMessageRequest", com.google.api.services.gmail.model.ModifyMessageRequest.class);
+        map.put("NeverMarkSpam", java.lang.Boolean.class);
+        map.put("PageToken", java.lang.String.class);
+        map.put("ProcessForCalendar", java.lang.Boolean.class);
+        map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.Collection.class);
         map.put("ServiceAccountKey", java.lang.String.class);
@@ -62,13 +73,32 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content": target.setContent(property(camelContext, com.google.api.services.gmail.model.Message.class, value)); return true;
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "deleted": target.setDeleted(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "format": target.setFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
+        case "includespamtrash":
+        case "includeSpamTrash": target.setIncludeSpamTrash(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "internaldatesource":
+        case "internalDateSource": target.setInternalDateSource(property(camelContext, java.lang.String.class, value)); return true;
+        case "labelids":
+        case "labelIds": target.setLabelIds(property(camelContext, java.util.List.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, java.lang.Long.class, value)); return true;
         case "mediacontent":
         case "mediaContent": target.setMediaContent(property(camelContext, com.google.api.client.http.AbstractInputStreamContent.class, value)); return true;
+        case "metadataheaders":
+        case "metadataHeaders": target.setMetadataHeaders(property(camelContext, java.util.List.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "modifymessagerequest":
         case "modifyMessageRequest": target.setModifyMessageRequest(property(camelContext, com.google.api.services.gmail.model.ModifyMessageRequest.class, value)); return true;
+        case "nevermarkspam":
+        case "neverMarkSpam": target.setNeverMarkSpam(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "processforcalendar":
+        case "processForCalendar": target.setProcessForCalendar(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
@@ -104,13 +134,32 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         case "clientSecret": return java.lang.String.class;
         case "content": return com.google.api.services.gmail.model.Message.class;
         case "delegate": return java.lang.String.class;
+        case "deleted": return java.lang.Boolean.class;
+        case "format": return java.lang.String.class;
         case "id": return java.lang.String.class;
+        case "includespamtrash":
+        case "includeSpamTrash": return java.lang.Boolean.class;
+        case "internaldatesource":
+        case "internalDateSource": return java.lang.String.class;
+        case "labelids":
+        case "labelIds": return java.util.List.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Long.class;
         case "mediacontent":
         case "mediaContent": return com.google.api.client.http.AbstractInputStreamContent.class;
+        case "metadataheaders":
+        case "metadataHeaders": return java.util.List.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
         case "modifymessagerequest":
         case "modifyMessageRequest": return com.google.api.services.gmail.model.ModifyMessageRequest.class;
+        case "nevermarkspam":
+        case "neverMarkSpam": return java.lang.Boolean.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
+        case "processforcalendar":
+        case "processForCalendar": return java.lang.Boolean.class;
+        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.Collection.class;
@@ -142,13 +191,32 @@ public class GmailUsersMessagesEndpointConfigurationConfigurer extends org.apach
         case "clientSecret": return target.getClientSecret();
         case "content": return target.getContent();
         case "delegate": return target.getDelegate();
+        case "deleted": return target.getDeleted();
+        case "format": return target.getFormat();
         case "id": return target.getId();
+        case "includespamtrash":
+        case "includeSpamTrash": return target.getIncludeSpamTrash();
+        case "internaldatesource":
+        case "internalDateSource": return target.getInternalDateSource();
+        case "labelids":
+        case "labelIds": return target.getLabelIds();
+        case "maxresults":
+        case "maxResults": return target.getMaxResults();
         case "mediacontent":
         case "mediaContent": return target.getMediaContent();
+        case "metadataheaders":
+        case "metadataHeaders": return target.getMetadataHeaders();
         case "methodname":
         case "methodName": return target.getMethodName();
         case "modifymessagerequest":
         case "modifyMessageRequest": return target.getModifyMessageRequest();
+        case "nevermarkspam":
+        case "neverMarkSpam": return target.getNeverMarkSpam();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
+        case "processforcalendar":
+        case "processForCalendar": return target.getProcessForCalendar();
+        case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();

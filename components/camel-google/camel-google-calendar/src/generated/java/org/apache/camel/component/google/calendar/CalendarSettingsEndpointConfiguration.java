@@ -23,8 +23,17 @@ public final class CalendarSettingsEndpointConfiguration extends GoogleCalendarC
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "watch", description="The com.google.api.services.calendar.model.Channel")})
     private com.google.api.services.calendar.model.Channel contentChannel;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Maximum number of entries returned on one result page"), @ApiMethod(methodName = "watch", description="Maximum number of entries returned on one result page")})
+    private java.lang.Integer maxResults;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Token specifying which result page to return"), @ApiMethod(methodName = "watch", description="Token specifying which result page to return")})
+    private java.lang.String pageToken;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "get", description="The id of the user setting")})
     private String setting;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Token obtained from the nextSyncToken field returned on the last page of results from the previous list request"), @ApiMethod(methodName = "watch", description="Token obtained from the nextSyncToken field returned on the last page of results from the previous list request")})
+    private java.lang.String syncToken;
 
     public com.google.api.services.calendar.model.Channel getContentChannel() {
         return contentChannel;
@@ -34,11 +43,35 @@ public final class CalendarSettingsEndpointConfiguration extends GoogleCalendarC
         this.contentChannel = contentChannel;
     }
 
+    public java.lang.Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(java.lang.Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
     public String getSetting() {
         return setting;
     }
 
     public void setSetting(String setting) {
         this.setting = setting;
+    }
+
+    public java.lang.String getSyncToken() {
+        return syncToken;
+    }
+
+    public void setSyncToken(java.lang.String syncToken) {
+        this.syncToken = syncToken;
     }
 }

@@ -28,10 +28,15 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("Delegate", java.lang.String.class);
+        map.put("HistoryTypes", java.util.List.class);
+        map.put("LabelId", java.lang.String.class);
+        map.put("MaxResults", java.lang.Long.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.Collection.class);
         map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("StartHistoryId", java.math.BigInteger.class);
         map.put("UserId", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -51,13 +56,23 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         case "clientsecret":
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "historytypes":
+        case "historyTypes": target.setHistoryTypes(property(camelContext, java.util.List.class, value)); return true;
+        case "labelid":
+        case "labelId": target.setLabelId(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, java.lang.Long.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "starthistoryid":
+        case "startHistoryId": target.setStartHistoryId(property(camelContext, java.math.BigInteger.class, value)); return true;
         case "userid":
         case "userId": target.setUserId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -83,13 +98,23 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "delegate": return java.lang.String.class;
+        case "historytypes":
+        case "historyTypes": return java.util.List.class;
+        case "labelid":
+        case "labelId": return java.lang.String.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Long.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.Collection.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "starthistoryid":
+        case "startHistoryId": return java.math.BigInteger.class;
         case "userid":
         case "userId": return java.lang.String.class;
         default: return null;
@@ -111,13 +136,23 @@ public class GmailUsersHistoryEndpointConfigurationConfigurer extends org.apache
         case "clientsecret":
         case "clientSecret": return target.getClientSecret();
         case "delegate": return target.getDelegate();
+        case "historytypes":
+        case "historyTypes": return target.getHistoryTypes();
+        case "labelid":
+        case "labelId": return target.getLabelId();
+        case "maxresults":
+        case "maxResults": return target.getMaxResults();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "starthistoryid":
+        case "startHistoryId": return target.getStartHistoryId();
         case "userid":
         case "userId": return target.getUserId();
         default: return null;

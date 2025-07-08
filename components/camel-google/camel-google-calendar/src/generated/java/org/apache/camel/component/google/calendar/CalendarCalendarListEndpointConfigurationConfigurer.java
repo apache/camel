@@ -28,15 +28,22 @@ public class CalendarCalendarListEndpointConfigurationConfigurer extends org.apa
         map.put("CalendarId", java.lang.String.class);
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
+        map.put("ColorRgbFormat", java.lang.Boolean.class);
         map.put("Content", com.google.api.services.calendar.model.CalendarListEntry.class);
         map.put("ContentChannel", com.google.api.services.calendar.model.Channel.class);
         map.put("Delegate", java.lang.String.class);
         map.put("EmailAddress", java.lang.String.class);
+        map.put("MaxResults", java.lang.Integer.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("MinAccessRole", java.lang.String.class);
         map.put("P12FileName", java.lang.String.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("ShowDeleted", java.lang.Boolean.class);
+        map.put("ShowHidden", java.lang.Boolean.class);
+        map.put("SyncToken", java.lang.String.class);
         map.put("User", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -57,21 +64,35 @@ public class CalendarCalendarListEndpointConfigurationConfigurer extends org.apa
         case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "colorrgbformat":
+        case "colorRgbFormat": target.setColorRgbFormat(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "content": target.setContent(property(camelContext, com.google.api.services.calendar.model.CalendarListEntry.class, value)); return true;
         case "contentchannel":
         case "contentChannel": target.setContentChannel(property(camelContext, com.google.api.services.calendar.model.Channel.class, value)); return true;
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "emailaddress":
         case "emailAddress": target.setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "minaccessrole":
+        case "minAccessRole": target.setMinAccessRole(property(camelContext, java.lang.String.class, value)); return true;
         case "p12filename":
         case "p12FileName": target.setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "showdeleted":
+        case "showDeleted": target.setShowDeleted(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "showhidden":
+        case "showHidden": target.setShowHidden(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "synctoken":
+        case "syncToken": target.setSyncToken(property(camelContext, java.lang.String.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -97,21 +118,35 @@ public class CalendarCalendarListEndpointConfigurationConfigurer extends org.apa
         case "clientId": return java.lang.String.class;
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
+        case "colorrgbformat":
+        case "colorRgbFormat": return java.lang.Boolean.class;
         case "content": return com.google.api.services.calendar.model.CalendarListEntry.class;
         case "contentchannel":
         case "contentChannel": return com.google.api.services.calendar.model.Channel.class;
         case "delegate": return java.lang.String.class;
         case "emailaddress":
         case "emailAddress": return java.lang.String.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "minaccessrole":
+        case "minAccessRole": return java.lang.String.class;
         case "p12filename":
         case "p12FileName": return java.lang.String.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "showdeleted":
+        case "showDeleted": return java.lang.Boolean.class;
+        case "showhidden":
+        case "showHidden": return java.lang.Boolean.class;
+        case "synctoken":
+        case "syncToken": return java.lang.String.class;
         case "user": return java.lang.String.class;
         default: return null;
         }
@@ -133,21 +168,35 @@ public class CalendarCalendarListEndpointConfigurationConfigurer extends org.apa
         case "clientId": return target.getClientId();
         case "clientsecret":
         case "clientSecret": return target.getClientSecret();
+        case "colorrgbformat":
+        case "colorRgbFormat": return target.getColorRgbFormat();
         case "content": return target.getContent();
         case "contentchannel":
         case "contentChannel": return target.getContentChannel();
         case "delegate": return target.getDelegate();
         case "emailaddress":
         case "emailAddress": return target.getEmailAddress();
+        case "maxresults":
+        case "maxResults": return target.getMaxResults();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "minaccessrole":
+        case "minAccessRole": return target.getMinAccessRole();
         case "p12filename":
         case "p12FileName": return target.getP12FileName();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "showdeleted":
+        case "showDeleted": return target.getShowDeleted();
+        case "showhidden":
+        case "showHidden": return target.getShowHidden();
+        case "synctoken":
+        case "syncToken": return target.getSyncToken();
         case "user": return target.getUser();
         default: return null;
         }

@@ -34,9 +34,9 @@ import org.jboss.forge.roaster.model.TypeVariable;
 import org.jboss.forge.roaster.model.impl.AbstractGenericCapableJavaSource;
 import org.jboss.forge.roaster.model.impl.AbstractJavaSource;
 import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
-import org.jboss.forge.roaster.model.source.MethodHolderSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
+import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.source.TypeVariableSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +68,8 @@ public class JavaSourceParser {
     private final Map<String, String> methodDocs = new HashMap<>();
     private final Map<String, Map<String, String>> parameterTypes = new LinkedHashMap<>();
     private final Map<String, Map<String, String>> parameterDocs = new LinkedHashMap<>();
+    private final Map<String, Map<String, String>> setterMethods = new LinkedHashMap<>();
+    private final Map<String, Map<String, String>> setterDocs = new LinkedHashMap<>();
 
     public void parse(InputStream in, String innerClass) throws IOException {
         parse(new String(in.readAllBytes()), innerClass);
@@ -101,7 +103,7 @@ public class JavaSourceParser {
             classDoc = StringHelper.before(classDoc, ".");
         }
 
-        List<MethodSource> ml = ((MethodHolderSource) clazz).getMethods();
+        List<MethodSource> ml = clazz.getMethods();
         for (MethodSource ms : ml) {
             String methodName = ms.getName();
             LOG.debug("Parsing method: {}", methodName);
@@ -163,6 +165,58 @@ public class JavaSourceParser {
             String signature = sb.toString();
             methodSignatures.add(signature);
             parameterTypes.put(signature, args);
+
+            docs = new LinkedHashMap<>();
+            args = new LinkedHashMap<>();
+            Type t = ms.getReturnType();
+            var nt = clazz.getNestedTypes();
+            for (var js : nt) {
+                AbstractGenericCapableJavaSource js2 = (AbstractGenericCapableJavaSource) js;
+                String qn = t.getSimpleName();
+                String qn2 = js2.getName();
+                if (qn.equals(qn2)) {
+                    List<PropertySource<?>> pl = js2.getProperties();
+                    for (PropertySource<?> ps : pl) {
+                        String propertyName = ps.getName();
+                        LOG.debug("Parsing property: {}", propertyName);
+
+                        // should have getter/setter and be public
+                        if (ps.getAccessor() == null || !ps.getAccessor().isPublic()) {
+                            continue;
+                        }
+                        String type = ps.getField().getType().getName();
+                        if (!ps.isMutable()) {
+                            String name = "set" + StringHelper.capitalize(propertyName);
+                            var m = js2.getMethod(name, type);
+                            if (m == null || !m.isPublic()) {
+                                continue;
+                            }
+                        }
+
+                        // already known
+                        var oldArgs = parameterTypes.get(signature);
+                        if (oldArgs.containsKey(propertyName)) {
+                            LOG.debug("Duplicate property: {}", propertyName);
+                            continue;
+                        }
+
+                        LOG.debug("Adding new property: {}", propertyName);
+
+                        // grab doc from getter
+                        doc = ps.getAccessor().getJavaDoc().getText();
+                        doc = sanitizeJavaDocValue(doc, true);
+                        if (doc != null && doc.indexOf('.') > 0) {
+                            doc = StringHelper.before(doc, ".");
+                        }
+                        if (doc != null && !doc.isEmpty()) {
+                            docs.put(propertyName, doc);
+                        }
+                        args.put(propertyName, type);
+                    }
+                }
+            }
+            setterMethods.put(signature, args);
+            setterDocs.put(signature, docs);
         }
     }
 
@@ -456,6 +510,8 @@ public class JavaSourceParser {
         methodSignatures.clear();
         parameterDocs.clear();
         parameterTypes.clear();
+        setterDocs.clear();
+        setterMethods.clear();
         methodDocs.clear();
         errorMessage = null;
         classDoc = null;
@@ -507,5 +563,13 @@ public class JavaSourceParser {
      */
     public Map<String, String> getMethodDocs() {
         return methodDocs;
+    }
+
+    public Map<String, Map<String, String>> getSetterMethods() {
+        return setterMethods;
+    }
+
+    public Map<String, Map<String, String>> getSetterDocs() {
+        return setterDocs;
     }
 }

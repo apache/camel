@@ -26,7 +26,6 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         map.put("ClientId", java.lang.String.class);
         map.put("Configuration", org.apache.camel.component.google.drive.GoogleDriveConfiguration.class);
         map.put("Delegate", java.lang.String.class);
-        map.put("Q", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("BridgeErrorHandler", boolean.class);
         map.put("LazyStartProducer", boolean.class);
@@ -68,7 +67,6 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "q": getOrCreateConfiguration(target).setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
@@ -104,7 +102,6 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "delegate": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
@@ -136,7 +133,6 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "delegate": return getOrCreateConfiguration(target).getDelegate();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "q": return getOrCreateConfiguration(target).getQ();
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         case "scopes": return getOrCreateConfiguration(target).getScopes();
