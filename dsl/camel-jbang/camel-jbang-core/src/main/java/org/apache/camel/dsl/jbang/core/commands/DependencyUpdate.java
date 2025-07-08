@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -162,7 +161,7 @@ public class DependencyUpdate extends DependencyList {
         Node camelClone = null;
         int targetLineNumber = -1;
 
-        Path pom = Paths.get(file.getFileName().toString());
+        Path pom = file;
         if (Files.exists(pom)) {
             // use line number parser as we want to find where to add new Camel JARs after the existing Camel JARs
             Document dom = XmlLineNumberParser.parseXml(Files.newInputStream(pom));
