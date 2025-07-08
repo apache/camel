@@ -133,21 +133,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
-         * Query string for API methods that support this parameter (such as
-         * drives list, files list).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param q the value to set
-         * @return the dsl builder
-         */
-        default GoogleDriveEndpointConsumerBuilder q(String q) {
-            doSetProperty("q", q);
-            return this;
-        }
-        /**
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
@@ -996,21 +981,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
-         * Query string for API methods that support this parameter (such as
-         * drives list, files list).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param q the value to set
-         * @return the dsl builder
-         */
-        default GoogleDriveEndpointProducerBuilder q(String q) {
-            doSetProperty("q", q);
-            return this;
-        }
-        /**
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
@@ -1260,21 +1230,6 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * Query string for API methods that support this parameter (such as
-         * drives list, files list).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param q the value to set
-         * @return the dsl builder
-         */
-        default GoogleDriveEndpointBuilder q(String q) {
-            doSetProperty("q", q);
             return this;
         }
         /**

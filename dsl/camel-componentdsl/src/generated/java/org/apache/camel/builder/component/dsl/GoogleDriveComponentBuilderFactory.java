@@ -113,22 +113,6 @@ public interface GoogleDriveComponentBuilderFactory {
         }
     
         /**
-         * Query string for API methods that support this parameter (such as
-         * drives list, files list).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param q the value to set
-         * @return the dsl builder
-         */
-        default GoogleDriveComponentBuilder q(java.lang.String q) {
-            doSetProperty("q", q);
-            return this;
-        }
-    
-        /**
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
@@ -326,7 +310,6 @@ public interface GoogleDriveComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((GoogleDriveComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleDriveComponent) component).setConfiguration((org.apache.camel.component.google.drive.GoogleDriveConfiguration) value); return true;
             case "delegate": getOrCreateConfiguration((GoogleDriveComponent) component).setDelegate((java.lang.String) value); return true;
-            case "q": getOrCreateConfiguration((GoogleDriveComponent) component).setQ((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleDriveComponent) component).setScopes((java.util.List) value); return true;
             case "bridgeErrorHandler": ((GoogleDriveComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleDriveComponent) component).setLazyStartProducer((boolean) value); return true;
