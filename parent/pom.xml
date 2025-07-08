@@ -250,6 +250,7 @@
         <ibm-watson-sdk-version>16.1.0</ibm-watson-sdk-version>
         <ical4j-version>4.2.1</ical4j-version>
         <icu4j-version>78.1</icu4j-version>
+        <iggy-version>0.2.0-SNAPSHOT</iggy-version>
         <ignite-version>2.17.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
         <infinispan-version>16.0.3</infinispan-version>
@@ -1613,6 +1614,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-iec60870</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-iggy</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
