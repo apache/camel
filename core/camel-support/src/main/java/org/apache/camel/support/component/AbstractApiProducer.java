@@ -113,9 +113,9 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     /**
      * Invoke the API method. Derived classes can override, but MUST call super.doInvokeMethod().
      *
-     * @param method     API method to invoke.
-     * @param properties method arguments from endpoint properties and exchange In headers.
-     * @return API method invocation result.
+     * @param  method                API method to invoke.
+     * @param  properties            method arguments from endpoint properties and exchange In headers.
+     * @return                       API method invocation result.
      * @throws RuntimeCamelException on error. Exceptions thrown by API method are wrapped.
      */
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
