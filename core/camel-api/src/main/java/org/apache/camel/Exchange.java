@@ -207,9 +207,9 @@ public interface Exchange extends VariableAware {
               javaType = "String")
     String INTERCEPTED_NODE_ID = "CamelInterceptedNodeId";
     @Metadata(label = "intercept,interceptFrom,interceptSendToEndpoint",
-              description = "The parent's endpoint URI that was intercepted",
+              description = "The route's endpoint URI that was intercepted",
               javaType = "String")
-    String INTERCEPTED_PARENT_ENDPOINT_URI = "CamelInterceptedParentEndpointUri";
+    String INTERCEPTED_ROUTE_ENDPOINT_URI = "CamelInterceptedParentEndpointUri";
     @Metadata(label = "intercept,interceptFrom,interceptSendToEndpoint", description = "The intercepted route's ID",
               javaType = "String")
     String INTERCEPTED_ROUTE_ID = "CamelInterceptedRouteId";

@@ -44,7 +44,7 @@ public class InterceptPropertiesTest extends ContextTestSupport {
         getMockEndpoint("mock:intercept")
                 .expectedPropertyReceived(ExchangePropertyKey.INTERCEPTED_ROUTE_ID.getName(), "intercept-test");
         getMockEndpoint("mock:intercept")
-                .expectedPropertyReceived(ExchangePropertyKey.INTERCEPTED_PARENT_ENDPOINT_URI.getName(), "direct://start");
+                .expectedPropertyReceived(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI.getName(), "direct://start");
         // Node IDs are not always the same
         //        getMockEndpoint("mock:intercept")
         //                .expectedPropertyValuesReceivedInAnyOrder(ExchangePropertyKey.INTERCEPTED_NODE_ID.getName(), "to2", "process1",
@@ -73,7 +73,7 @@ public class InterceptPropertiesTest extends ContextTestSupport {
         getMockEndpoint("mock:interceptFrom")
                 .expectedPropertyReceived(ExchangePropertyKey.INTERCEPTED_ROUTE_ID.getName(), "intercept-from-test");
         getMockEndpoint("mock:interceptFrom")
-                .expectedPropertyReceived(ExchangePropertyKey.INTERCEPTED_PARENT_ENDPOINT_URI.getName(),
+                .expectedPropertyReceived(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI.getName(),
                         "direct://startInterceptFrom");
 
         template.sendBody("direct:startInterceptFrom", "");
@@ -101,7 +101,7 @@ public class InterceptPropertiesTest extends ContextTestSupport {
         getMockEndpoint("mock:interceptSendToEndpoint")
                 .expectedPropertyReceived(ExchangePropertyKey.INTERCEPTED_ROUTE_ID.getName(), "intercept-test");
         getMockEndpoint("mock:interceptSendToEndpoint")
-                .expectedPropertyReceived(ExchangePropertyKey.INTERCEPTED_PARENT_ENDPOINT_URI.getName(), "direct://start");
+                .expectedPropertyReceived(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI.getName(), "direct://start");
 
         template.sendBody("direct:start", "");
 

@@ -67,7 +67,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         Processor p = exchange -> {
             exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID, route.getId());
             exchange.setProperty(ExchangePropertyKey.INTERCEPTED_NODE_ID, definition.getId());
-            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_PARENT_ENDPOINT_URI, route.getEndpoint().getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI, route.getEndpoint().getEndpointUri());
         };
 
         // register endpoint callback so we can proxy the endpoint

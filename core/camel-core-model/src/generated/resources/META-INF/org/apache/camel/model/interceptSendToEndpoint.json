@@ -24,7 +24,7 @@
   "exchangeProperties": {
     "CamelInterceptedEndpoint": { "index": 0, "kind": "exchangeProperty", "displayName": "Intercepted Endpoint", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The endpoint URI that was intercepted" },
     "CamelInterceptedNodeId": { "index": 1, "kind": "exchangeProperty", "displayName": "Intercepted Node Id", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The intercepted route's node ID" },
-    "CamelInterceptedParentEndpointUri": { "index": 2, "kind": "exchangeProperty", "displayName": "Intercepted Parent Endpoint Uri", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The parent's endpoint URI that was intercepted" },
+    "CamelInterceptedRouteEndpointUri": { "index": 2, "kind": "exchangeProperty", "displayName": "Intercepted Route Endpoint Uri", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The route's endpoint URI that was intercepted" },
     "CamelInterceptedRouteId": { "index": 3, "kind": "exchangeProperty", "displayName": "Intercepted Route Id", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "autowired": false, "secret": false, "description": "The intercepted route's ID" }
   }
 }
