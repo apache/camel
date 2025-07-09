@@ -4,7 +4,7 @@
 :artifactid: camel-weaviate
 :description: Perform operations on the Weaviate Vector Database.
 :since: 4.12
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

@@ -4,7 +4,7 @@
 :artifactid: camel-dapr
 :description: Dapr component which interfaces with Dapr Building Blocks.
 :since: 4.12
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

@@ -4,7 +4,7 @@
 :artifactid: camel-spring-cloud-config
 :description: Camel Spring Cloud Config support
 :since: 4.12
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :group: Spring

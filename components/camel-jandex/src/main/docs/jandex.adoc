@@ -4,7 +4,7 @@
 :artifactid: camel-jandex
 :description: Custom class and resource loader using jandex.idx
 :since: 4.12
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 
 *Since Camel {since}*
