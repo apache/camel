@@ -40,6 +40,9 @@ public class CamelRouteTop extends CamelRouteStatus {
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
+                new Column().header("GROUP").visible(showGroup).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getGroup),
                 new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
                 new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)

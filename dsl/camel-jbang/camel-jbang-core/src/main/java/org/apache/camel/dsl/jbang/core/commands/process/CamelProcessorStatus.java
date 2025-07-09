@@ -28,6 +28,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.model.Strings;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -76,9 +77,21 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                         description = "Filter processors that must be slower than the given time (ms)")
     long mean;
 
+    @CommandLine.Option(names = { "--filter" },
+                        description = "Filter processors by id")
+    String[] filter;
+
+    @CommandLine.Option(names = { "--group" },
+                        description = "Filter processors by group")
+    String[] group;
+
     @CommandLine.Option(names = { "--description" },
                         description = "Include description in the ID column (if available)")
     boolean description;
+
+    @CommandLine.Option(names = { "--show-group" },
+                        description = "Include group column")
+    boolean showGroup;
 
     public CamelProcessorStatus(CamelJBangMain main) {
         super(main);
@@ -108,6 +121,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                             }
                             row.pid = Long.toString(ph.pid());
                             row.routeId = o.getString("routeId");
+                            row.group = o.getString("group");
                             row.description = o.getString("description");
                             row.nodePrefixId = o.getString("nodePrefixId");
                             row.processor = o.getString("from");
@@ -179,6 +193,29 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                     }
                 });
 
+        // filter rows
+        if (filter != null || group != null) {
+            rows.removeIf(r -> {
+                boolean keep = true;
+                if (filter != null) {
+                    keep = PatternHelper.matchPatterns(r.processorId, filter);
+                }
+                if (!keep && filter != null) {
+                    for (String f : filter) {
+                        if (!keep) {
+                            String w = f.endsWith("*") ? f : f + "*"; // use wildcard in matching processor
+                            keep = PatternHelper.matchPattern(r.processor, w);
+                        }
+                    }
+                }
+                // group take precedence
+                if (keep && group != null) {
+                    keep = PatternHelper.matchPatterns(r.group, group);
+                }
+                return !keep;
+            });
+        }
+
         // sort rows
         rows.sort(this::sortRow);
 
@@ -195,6 +232,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
             row.pid = route.pid;
             row.name = route.name;
             row.routeId = route.routeId;
+            row.group = route.group;
             rows.add(row);
             row.processorId = o.getString("id");
             row.nodePrefixId = o.getString("nodePrefixId");
@@ -254,6 +292,9 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(this::getPid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getName),
+                new Column().header("GROUP").visible(showGroup).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getGroup),
                 new Column().header("ID").visible(!description).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
@@ -336,6 +377,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         return r.processorId == null ? r.name : "";
     }
 
+    protected String getGroup(Row r) {
+        return r.group;
+    }
+
     protected String getId(Row r) {
         String answer;
         if (source && r.source != null) {
@@ -391,6 +436,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         String name;
         long uptime;
         String routeId;
+        String group;
         String nodePrefixId;
         String processorId;
         String processor;
