@@ -41,8 +41,8 @@ public interface QueueBrowseStrategy {
         long ts = 0;
         long ts2 = 0;
         if (!list.isEmpty()) {
-            ts = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0, long.class);
-            ts2 = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0, long.class);
+            ts = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
+            ts2 = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
         }
         return new BrowsableEndpoint.BrowseStatus(list.size(), ts, ts2);
     }
