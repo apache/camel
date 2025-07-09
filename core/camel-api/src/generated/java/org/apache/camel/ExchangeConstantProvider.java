@@ -100,7 +100,7 @@ public class ExchangeConstantProvider {
         map.put("INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED", "CamelInterceptSendToEndpointWhenMatched");
         map.put("INTERCEPTED_ENDPOINT", "CamelInterceptedEndpoint");
         map.put("INTERCEPTED_NODE_ID", "CamelInterceptedNodeId");
-        map.put("INTERCEPTED_PARENT_ENDPOINT_URI", "CamelInterceptedParentEndpointUri");
+        map.put("INTERCEPTED_ROUTE_ENDPOINT_URI", "CamelInterceptedParentEndpointUri");
         map.put("INTERCEPTED_ROUTE_ID", "CamelInterceptedRouteId");
         map.put("INTERRUPTED", "CamelInterrupted");
         map.put("LANGUAGE_SCRIPT", "CamelLanguageScript");

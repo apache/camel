@@ -67,7 +67,7 @@ public class InterceptReifier extends ProcessorReifier<InterceptDefinition> {
                     exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID,
                             ProcessorDefinitionHelper.getRouteId(definition.getParent()));
                     exchange.setProperty(ExchangePropertyKey.INTERCEPTED_NODE_ID, definition.getId());
-                    exchange.setProperty(ExchangePropertyKey.INTERCEPTED_PARENT_ENDPOINT_URI,
+                    exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI,
                             route.getEndpoint().getEndpointUri());
                 };
 
