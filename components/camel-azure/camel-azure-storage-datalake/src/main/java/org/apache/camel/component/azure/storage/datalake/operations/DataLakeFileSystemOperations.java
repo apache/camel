@@ -48,14 +48,11 @@ public class DataLakeFileSystemOperations {
     }
 
     public DataLakeOperationResponse createFileSystem(final Exchange exchange) {
-        LOG.info("inside create file system in operation");
         final Map<String, String> metadata = configurationProxy.getMetadata(exchange);
         final PublicAccessType publicAccessType = configurationProxy.getPublicAccessType(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
         final DataLakeExchangeHeaders dataLakeExchangeHeaders
                 = new DataLakeExchangeHeaders().httpHeaders(client.createFileSystem(metadata, publicAccessType, timeout));
-
-        LOG.info("DataLake exchange headers: {}", dataLakeExchangeHeaders);
 
         return new DataLakeOperationResponse(true, dataLakeExchangeHeaders.toMap());
     }
