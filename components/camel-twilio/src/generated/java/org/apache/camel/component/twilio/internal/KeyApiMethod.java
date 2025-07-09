@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.twilio.rest.api.v2010.account.Key
@@ -63,7 +64,7 @@ public enum KeyApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private KeyApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    KeyApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Key.class, resultType, name, args);
     }
 
@@ -75,6 +76,9 @@ public enum KeyApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

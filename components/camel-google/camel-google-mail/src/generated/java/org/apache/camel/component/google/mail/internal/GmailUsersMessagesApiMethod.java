@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.gmail.Gmail$Users$Messages
@@ -45,38 +46,57 @@ public enum GmailUsersMessagesApiMethod implements ApiMethod {
         com.google.api.services.gmail.Gmail.Users.Messages.Get.class,
         "get",
         arg("userId", String.class),
-        arg("id", String.class)),
+        arg("id", String.class),
+        setter("format", String.class),
+        setter("metadataHeaders", java.util.List.class)),
 
     GMAIL_IMPORT(
         com.google.api.services.gmail.Gmail.Users.Messages.GmailImport.class,
         "gmailImport",
         arg("userId", String.class),
-        arg("content", com.google.api.services.gmail.model.Message.class)),
+        arg("content", com.google.api.services.gmail.model.Message.class),
+        setter("deleted", Boolean.class),
+        setter("internalDateSource", String.class),
+        setter("neverMarkSpam", Boolean.class),
+        setter("processForCalendar", Boolean.class)),
 
     GMAIL_IMPORT_1(
         com.google.api.services.gmail.Gmail.Users.Messages.GmailImport.class,
         "gmailImport",
         arg("userId", String.class),
         arg("content", com.google.api.services.gmail.model.Message.class),
-        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class)),
+        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class),
+        setter("deleted", Boolean.class),
+        setter("internalDateSource", String.class),
+        setter("neverMarkSpam", Boolean.class),
+        setter("processForCalendar", Boolean.class)),
 
     INSERT(
         com.google.api.services.gmail.Gmail.Users.Messages.Insert.class,
         "insert",
         arg("userId", String.class),
-        arg("content", com.google.api.services.gmail.model.Message.class)),
+        arg("content", com.google.api.services.gmail.model.Message.class),
+        setter("deleted", Boolean.class),
+        setter("internalDateSource", String.class)),
 
     INSERT_1(
         com.google.api.services.gmail.Gmail.Users.Messages.Insert.class,
         "insert",
         arg("userId", String.class),
         arg("content", com.google.api.services.gmail.model.Message.class),
-        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class)),
+        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class),
+        setter("deleted", Boolean.class),
+        setter("internalDateSource", String.class)),
 
     LIST(
         com.google.api.services.gmail.Gmail.Users.Messages.List.class,
         "list",
-        arg("userId", String.class)),
+        arg("userId", String.class),
+        setter("includeSpamTrash", Boolean.class),
+        setter("labelIds", java.util.List.class),
+        setter("maxResults", Long.class),
+        setter("pageToken", String.class),
+        setter("q", String.class)),
 
     MODIFY(
         com.google.api.services.gmail.Gmail.Users.Messages.Modify.class,
@@ -112,7 +132,7 @@ public enum GmailUsersMessagesApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private GmailUsersMessagesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    GmailUsersMessagesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Messages.class, resultType, name, args);
     }
 
@@ -124,6 +144,9 @@ public enum GmailUsersMessagesApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

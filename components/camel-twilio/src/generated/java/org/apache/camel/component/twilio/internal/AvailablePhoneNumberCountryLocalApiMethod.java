@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local
@@ -32,7 +33,7 @@ public enum AvailablePhoneNumberCountryLocalApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private AvailablePhoneNumberCountryLocalApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    AvailablePhoneNumberCountryLocalApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Local.class, resultType, name, args);
     }
 
@@ -44,6 +45,9 @@ public enum AvailablePhoneNumberCountryLocalApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

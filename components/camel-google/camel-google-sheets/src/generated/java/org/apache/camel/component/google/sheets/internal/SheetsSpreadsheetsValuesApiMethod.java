@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.sheets.v4.Sheets$Spreadsheets$Values
@@ -24,7 +25,12 @@ public enum SheetsSpreadsheetsValuesApiMethod implements ApiMethod {
         "append",
         arg("spreadsheetId", String.class),
         arg("range", String.class),
-        arg("values", com.google.api.services.sheets.v4.model.ValueRange.class)),
+        arg("values", com.google.api.services.sheets.v4.model.ValueRange.class),
+        setter("includeValuesInResponse", Boolean.class),
+        setter("insertDataOption", String.class),
+        setter("responseDateTimeRenderOption", String.class),
+        setter("responseValueRenderOption", String.class),
+        setter("valueInputOption", String.class)),
 
     BATCH_CLEAR(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchClear.class,
@@ -41,7 +47,11 @@ public enum SheetsSpreadsheetsValuesApiMethod implements ApiMethod {
     BATCH_GET(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchGet.class,
         "batchGet",
-        arg("spreadsheetId", String.class)),
+        arg("spreadsheetId", String.class),
+        setter("dateTimeRenderOption", String.class),
+        setter("majorDimension", String.class),
+        setter("ranges", java.util.List.class),
+        setter("valueRenderOption", String.class)),
 
     BATCH_GET_BY_DATA_FILTER(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchGetByDataFilter.class,
@@ -72,18 +82,25 @@ public enum SheetsSpreadsheetsValuesApiMethod implements ApiMethod {
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.Get.class,
         "get",
         arg("spreadsheetId", String.class),
-        arg("range", String.class)),
+        arg("range", String.class),
+        setter("dateTimeRenderOption", String.class),
+        setter("majorDimension", String.class),
+        setter("valueRenderOption", String.class)),
 
     UPDATE(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.Update.class,
         "update",
         arg("spreadsheetId", String.class),
         arg("range", String.class),
-        arg("values", com.google.api.services.sheets.v4.model.ValueRange.class));
+        arg("values", com.google.api.services.sheets.v4.model.ValueRange.class),
+        setter("includeValuesInResponse", Boolean.class),
+        setter("responseDateTimeRenderOption", String.class),
+        setter("responseValueRenderOption", String.class),
+        setter("valueInputOption", String.class));
 
     private final ApiMethod apiMethod;
 
-    private SheetsSpreadsheetsValuesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    SheetsSpreadsheetsValuesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Values.class, resultType, name, args);
     }
 
@@ -95,6 +112,9 @@ public enum SheetsSpreadsheetsValuesApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

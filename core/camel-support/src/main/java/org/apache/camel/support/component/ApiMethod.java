@@ -46,6 +46,13 @@ public interface ApiMethod {
     List<String> getArgNames();
 
     /**
+     * Returns setter argument names.
+     *
+     * @return setter argument names
+     */
+    List<String> getSetterArgNames();
+
+    /**
      * Return method argument types.
      *
      * @return argument types

@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.twilio.rest.api.v2010.account.message.Feedback
@@ -32,7 +33,7 @@ public enum MessageFeedbackApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private MessageFeedbackApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    MessageFeedbackApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Feedback.class, resultType, name, args);
     }
 
@@ -44,6 +45,9 @@ public enum MessageFeedbackApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

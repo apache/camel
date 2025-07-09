@@ -22,6 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 class TestProxy {
+
+    public String byeMe(final String name) {
+        return "Bye " + name;
+    }
+
     public String sayHi() {
         return "Hello!";
     }

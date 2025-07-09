@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.drive.Drive$Permissions
@@ -23,35 +24,63 @@ public enum DrivePermissionsApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Permissions.Create.class,
         "create",
         arg("fileId", String.class),
-        arg("content", com.google.api.services.drive.model.Permission.class)),
+        arg("content", com.google.api.services.drive.model.Permission.class),
+        setter("emailMessage", String.class),
+        setter("enforceExpansiveAccess", Boolean.class),
+        setter("enforceSingleParent", Boolean.class),
+        setter("moveToNewOwnersRoot", Boolean.class),
+        setter("sendNotificationEmail", Boolean.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("transferOwnership", Boolean.class),
+        setter("useDomainAdminAccess", Boolean.class)),
 
     DELETE(
         com.google.api.services.drive.Drive.Permissions.Delete.class,
         "delete",
         arg("fileId", String.class),
-        arg("permissionId", String.class)),
+        arg("permissionId", String.class),
+        setter("enforceExpansiveAccess", Boolean.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("useDomainAdminAccess", Boolean.class)),
 
     GET(
         com.google.api.services.drive.Drive.Permissions.Get.class,
         "get",
         arg("fileId", String.class),
-        arg("permissionId", String.class)),
+        arg("permissionId", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("useDomainAdminAccess", Boolean.class)),
 
     LIST(
         com.google.api.services.drive.Drive.Permissions.List.class,
         "list",
-        arg("fileId", String.class)),
+        arg("fileId", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("pageSize", Integer.class),
+        setter("pageToken", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("useDomainAdminAccess", Boolean.class)),
 
     UPDATE(
         com.google.api.services.drive.Drive.Permissions.Update.class,
         "update",
         arg("fileId", String.class),
         arg("permissionId", String.class),
-        arg("content", com.google.api.services.drive.model.Permission.class));
+        arg("content", com.google.api.services.drive.model.Permission.class),
+        setter("enforceExpansiveAccess", Boolean.class),
+        setter("removeExpiration", Boolean.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("transferOwnership", Boolean.class),
+        setter("useDomainAdminAccess", Boolean.class));
 
     private final ApiMethod apiMethod;
 
-    private DrivePermissionsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    DrivePermissionsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Permissions.class, resultType, name, args);
     }
 
@@ -63,6 +92,9 @@ public enum DrivePermissionsApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.drive.Drive$Comments
@@ -35,12 +36,17 @@ public enum DriveCommentsApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Comments.Get.class,
         "get",
         arg("fileId", String.class),
-        arg("commentId", String.class)),
+        arg("commentId", String.class),
+        setter("includeDeleted", Boolean.class)),
 
     LIST(
         com.google.api.services.drive.Drive.Comments.List.class,
         "list",
-        arg("fileId", String.class)),
+        arg("fileId", String.class),
+        setter("includeDeleted", Boolean.class),
+        setter("pageSize", Integer.class),
+        setter("pageToken", String.class),
+        setter("startModifiedTime", String.class)),
 
     UPDATE(
         com.google.api.services.drive.Drive.Comments.Update.class,
@@ -51,7 +57,7 @@ public enum DriveCommentsApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private DriveCommentsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    DriveCommentsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Comments.class, resultType, name, args);
     }
 
@@ -63,6 +69,9 @@ public enum DriveCommentsApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

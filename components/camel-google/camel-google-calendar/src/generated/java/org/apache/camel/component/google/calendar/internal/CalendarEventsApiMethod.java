@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.calendar.Calendar$Events
@@ -23,73 +24,146 @@ public enum CalendarEventsApiMethod implements ApiMethod {
         com.google.api.services.calendar.Calendar.Events.CalendarImport.class,
         "calendarImport",
         arg("calendarId", String.class),
-        arg("content", com.google.api.services.calendar.model.Event.class)),
+        arg("content", com.google.api.services.calendar.model.Event.class),
+        setter("conferenceDataVersion", Integer.class),
+        setter("supportsAttachments", Boolean.class)),
 
     DELETE(
         com.google.api.services.calendar.Calendar.Events.Delete.class,
         "delete",
         arg("calendarId", String.class),
-        arg("eventId", String.class)),
+        arg("eventId", String.class),
+        setter("sendNotifications", Boolean.class),
+        setter("sendUpdates", String.class)),
 
     GET(
         com.google.api.services.calendar.Calendar.Events.Get.class,
         "get",
         arg("calendarId", String.class),
-        arg("eventId", String.class)),
+        arg("eventId", String.class),
+        setter("alwaysIncludeEmail", Boolean.class),
+        setter("maxAttendees", Integer.class),
+        setter("timeZone", String.class)),
 
     INSERT(
         com.google.api.services.calendar.Calendar.Events.Insert.class,
         "insert",
         arg("calendarId", String.class),
-        arg("content", com.google.api.services.calendar.model.Event.class)),
+        arg("content", com.google.api.services.calendar.model.Event.class),
+        setter("conferenceDataVersion", Integer.class),
+        setter("maxAttendees", Integer.class),
+        setter("sendNotifications", Boolean.class),
+        setter("sendUpdates", String.class),
+        setter("supportsAttachments", Boolean.class)),
 
     INSTANCES(
         com.google.api.services.calendar.Calendar.Events.Instances.class,
         "instances",
         arg("calendarId", String.class),
-        arg("eventId", String.class)),
+        arg("eventId", String.class),
+        setter("alwaysIncludeEmail", Boolean.class),
+        setter("maxAttendees", Integer.class),
+        setter("maxResults", Integer.class),
+        setter("originalStart", String.class),
+        setter("pageToken", String.class),
+        setter("showDeleted", Boolean.class),
+        setter("timeMax", com.google.api.client.util.DateTime.class),
+        setter("timeMin", com.google.api.client.util.DateTime.class),
+        setter("timeZone", String.class)),
 
     LIST(
         com.google.api.services.calendar.Calendar.Events.List.class,
         "list",
-        arg("calendarId", String.class)),
+        arg("calendarId", String.class),
+        setter("alwaysIncludeEmail", Boolean.class),
+        setter("eventTypes", java.util.List.class),
+        setter("iCalUID", String.class),
+        setter("maxAttendees", Integer.class),
+        setter("maxResults", Integer.class),
+        setter("orderBy", String.class),
+        setter("pageToken", String.class),
+        setter("privateExtendedProperty", java.util.List.class),
+        setter("q", String.class),
+        setter("sharedExtendedProperty", java.util.List.class),
+        setter("showDeleted", Boolean.class),
+        setter("showHiddenInvitations", Boolean.class),
+        setter("singleEvents", Boolean.class),
+        setter("syncToken", String.class),
+        setter("timeMax", com.google.api.client.util.DateTime.class),
+        setter("timeMin", com.google.api.client.util.DateTime.class),
+        setter("timeZone", String.class),
+        setter("updatedMin", com.google.api.client.util.DateTime.class)),
 
     MOVE(
         com.google.api.services.calendar.Calendar.Events.Move.class,
         "move",
         arg("calendarId", String.class),
         arg("eventId", String.class),
-        arg("destination", String.class)),
+        arg("destination", String.class),
+        setter("sendNotifications", Boolean.class),
+        setter("sendUpdates", String.class)),
 
     PATCH(
         com.google.api.services.calendar.Calendar.Events.Patch.class,
         "patch",
         arg("calendarId", String.class),
         arg("eventId", String.class),
-        arg("content", com.google.api.services.calendar.model.Event.class)),
+        arg("content", com.google.api.services.calendar.model.Event.class),
+        setter("alwaysIncludeEmail", Boolean.class),
+        setter("conferenceDataVersion", Integer.class),
+        setter("maxAttendees", Integer.class),
+        setter("sendNotifications", Boolean.class),
+        setter("sendUpdates", String.class),
+        setter("supportsAttachments", Boolean.class)),
 
     QUICK_ADD(
         com.google.api.services.calendar.Calendar.Events.QuickAdd.class,
         "quickAdd",
         arg("calendarId", String.class),
-        arg("text", String.class)),
+        arg("text", String.class),
+        setter("sendNotifications", Boolean.class),
+        setter("sendUpdates", String.class)),
 
     UPDATE(
         com.google.api.services.calendar.Calendar.Events.Update.class,
         "update",
         arg("calendarId", String.class),
         arg("eventId", String.class),
-        arg("content", com.google.api.services.calendar.model.Event.class)),
+        arg("content", com.google.api.services.calendar.model.Event.class),
+        setter("alwaysIncludeEmail", Boolean.class),
+        setter("conferenceDataVersion", Integer.class),
+        setter("maxAttendees", Integer.class),
+        setter("sendNotifications", Boolean.class),
+        setter("sendUpdates", String.class),
+        setter("supportsAttachments", Boolean.class)),
 
     WATCH(
         com.google.api.services.calendar.Calendar.Events.Watch.class,
         "watch",
         arg("calendarId", String.class),
-        arg("contentChannel", com.google.api.services.calendar.model.Channel.class));
+        arg("contentChannel", com.google.api.services.calendar.model.Channel.class),
+        setter("alwaysIncludeEmail", Boolean.class),
+        setter("eventTypes", java.util.List.class),
+        setter("iCalUID", String.class),
+        setter("maxAttendees", Integer.class),
+        setter("maxResults", Integer.class),
+        setter("orderBy", String.class),
+        setter("pageToken", String.class),
+        setter("privateExtendedProperty", java.util.List.class),
+        setter("q", String.class),
+        setter("sharedExtendedProperty", java.util.List.class),
+        setter("showDeleted", Boolean.class),
+        setter("showHiddenInvitations", Boolean.class),
+        setter("singleEvents", Boolean.class),
+        setter("syncToken", String.class),
+        setter("timeMax", com.google.api.client.util.DateTime.class),
+        setter("timeMin", com.google.api.client.util.DateTime.class),
+        setter("timeZone", String.class),
+        setter("updatedMin", com.google.api.client.util.DateTime.class));
 
     private final ApiMethod apiMethod;
 
-    private CalendarEventsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    CalendarEventsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Events.class, resultType, name, args);
     }
 
@@ -101,6 +175,9 @@ public enum CalendarEventsApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

@@ -30,6 +30,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for $proxyType.Name
@@ -39,13 +40,13 @@ public enum $enumName implements ApiMethod {
 #foreach ( $model in $models )
     ${model.UniqueName}(
         $helper.getType($model.ResultType),
-        "$model.Name"#foreach ( $arg in $model.Arguments ),
-        arg("$arg.Name", $helper.getType($arg.Type))#end)#if ( $foreach.hasNext ),$newLine#else;#end
+        "$model.Name"#foreach ( $arg in $model.ArgumentsAndProperties ),
+        $helper.argOrSetter($arg)("$arg.Name", $helper.getType($arg.Type))#end)#if ( $foreach.hasNext ),$newLine#else;#end
 #end
 
     private final ApiMethod apiMethod;
 
-    private ${enumName}(Class<?> resultType, String name, ApiMethodArg... args) {
+    ${enumName}(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(${proxyType.SimpleName}.class, resultType, name, args);
     }
 
@@ -57,6 +58,9 @@ public enum $enumName implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

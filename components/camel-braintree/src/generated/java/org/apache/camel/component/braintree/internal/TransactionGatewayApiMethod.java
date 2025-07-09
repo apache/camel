@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.braintreegateway.TransactionGateway
@@ -138,7 +139,7 @@ public enum TransactionGatewayApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private TransactionGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    TransactionGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(TransactionGateway.class, resultType, name, args);
     }
 
@@ -150,6 +151,9 @@ public enum TransactionGatewayApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.calendar.Calendar$Channels
@@ -26,7 +27,7 @@ public enum CalendarChannelsApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private CalendarChannelsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    CalendarChannelsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Channels.class, resultType, name, args);
     }
 
@@ -38,6 +39,9 @@ public enum CalendarChannelsApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

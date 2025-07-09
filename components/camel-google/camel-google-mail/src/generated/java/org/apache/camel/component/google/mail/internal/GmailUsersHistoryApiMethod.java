@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.gmail.Gmail$Users$History
@@ -22,11 +23,16 @@ public enum GmailUsersHistoryApiMethod implements ApiMethod {
     LIST(
         com.google.api.services.gmail.Gmail.Users.History.List.class,
         "list",
-        arg("userId", String.class));
+        arg("userId", String.class),
+        setter("historyTypes", java.util.List.class),
+        setter("labelId", String.class),
+        setter("maxResults", Long.class),
+        setter("pageToken", String.class),
+        setter("startHistoryId", java.math.BigInteger.class));
 
     private final ApiMethod apiMethod;
 
-    private GmailUsersHistoryApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    GmailUsersHistoryApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(History.class, resultType, name, args);
     }
 
@@ -38,6 +44,9 @@ public enum GmailUsersHistoryApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

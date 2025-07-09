@@ -22,7 +22,7 @@ public class ApiMethodArg {
     private final String typeArgs;
     private final String rawTypeArgs;
     private final String description;
-    private final boolean optional;
+    private final boolean setter;
 
     public ApiMethodArg(String name, Class<?> type, String typeArgs, String rawTypeArgs, String description) {
         this.name = name;
@@ -30,16 +30,16 @@ public class ApiMethodArg {
         this.typeArgs = typeArgs;
         this.rawTypeArgs = rawTypeArgs;
         this.description = description;
-        this.optional = false;
+        this.setter = false;
     }
 
-    public ApiMethodArg(String name, Class<?> type, String typeArgs, String rawTypeArgs, String description, boolean optional) {
+    public ApiMethodArg(String name, Class<?> type, String typeArgs, String rawTypeArgs, String description, boolean setter) {
         this.name = name;
         this.type = type;
         this.typeArgs = typeArgs;
         this.rawTypeArgs = rawTypeArgs;
         this.description = description;
-        this.optional = optional;
+        this.setter = setter;
     }
 
     public String getName() {
@@ -62,8 +62,8 @@ public class ApiMethodArg {
         return description;
     }
 
-    public boolean isOptional() {
-        return optional;
+    public boolean isSetter() {
+        return setter;
     }
 
     @Override
@@ -87,5 +87,9 @@ public class ApiMethodArg {
 
     public static ApiMethodArg arg(String name, Class<?> type, String typeArgs, String description) {
         return new ApiMethodArg(name, type, typeArgs, null, description);
+    }
+
+    public static ApiMethodArg setter(String name, Class<?> type) {
+        return new ApiMethodArg(name, type, null, null, null, true);
     }
 }

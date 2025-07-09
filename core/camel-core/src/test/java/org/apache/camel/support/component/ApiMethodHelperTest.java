@@ -27,6 +27,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ApiMethodHelperTest {
@@ -62,6 +63,12 @@ public class ApiMethodHelperTest {
 
         methods = apiMethodHelper.getCandidateMethods("greetInnerChild", List.of("child"));
         assertEquals(1, methods.size(), "Can't find greetInnerChild(child)");
+
+        methods = apiMethodHelper.getCandidateMethods("byeMe");
+        assertEquals(1, methods.size(), "Can't find byeMe(name)");
+
+        var setters = apiMethodHelper.getCandidateMethods("byeMe").get(0).getSetterArgNames();
+        assertEquals(1, setters.size(), "Should be 1 setter argument");
     }
 
     @Test
@@ -84,7 +91,7 @@ public class ApiMethodHelperTest {
 
         methods = apiMethodHelper.filterMethods(Arrays.asList(TestMethod.values()), ApiMethodHelper.MatchType.SUPER_SET,
                 List.of("name"));
-        assertEquals(2, methods.size(), "Super set match failed for sayHi(name)");
+        assertEquals(3, methods.size(), "Super set match failed for sayHi(name)");
 
         // test nullable names
         methods = apiMethodHelper.filterMethods(
@@ -196,7 +203,8 @@ public class ApiMethodHelperTest {
         GREETTIMES(String[].class, "greetTimes",
                    arg("name", String.class), arg("times", int.class)),
         GREETINNERCHILD(String[].class, "greetInnerChild",
-                        arg("child", TestProxy.InnerChild.class));
+                        arg("child", TestProxy.InnerChild.class)),
+        BYEME(String.class, "byeMe", arg("name", String.class), setter("verbose", Boolean.class));
 
         private final ApiMethod apiMethod;
 
@@ -217,6 +225,11 @@ public class ApiMethodHelperTest {
         @Override
         public List<String> getArgNames() {
             return apiMethod.getArgNames();
+        }
+
+        @Override
+        public List<String> getSetterArgNames() {
+            return apiMethod.getSetterArgNames();
         }
 
         @Override

@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.sheets.v4.Sheets$Spreadsheets
@@ -37,7 +38,10 @@ public enum SheetsSpreadsheetsApiMethod implements ApiMethod {
     GET(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Get.class,
         "get",
-        arg("spreadsheetId", String.class)),
+        arg("spreadsheetId", String.class),
+        setter("excludeTablesInBandedRanges", Boolean.class),
+        setter("includeGridData", Boolean.class),
+        setter("ranges", java.util.List.class)),
 
     GET_BY_DATA_FILTER(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.GetByDataFilter.class,
@@ -55,7 +59,7 @@ public enum SheetsSpreadsheetsApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private SheetsSpreadsheetsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    SheetsSpreadsheetsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Spreadsheets.class, resultType, name, args);
     }
 
@@ -67,6 +71,9 @@ public enum SheetsSpreadsheetsApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

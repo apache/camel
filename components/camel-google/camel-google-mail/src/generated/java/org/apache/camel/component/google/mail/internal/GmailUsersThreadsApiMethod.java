@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.gmail.Gmail$Users$Threads
@@ -29,12 +30,19 @@ public enum GmailUsersThreadsApiMethod implements ApiMethod {
         com.google.api.services.gmail.Gmail.Users.Threads.Get.class,
         "get",
         arg("userId", String.class),
-        arg("id", String.class)),
+        arg("id", String.class),
+        setter("format", String.class),
+        setter("metadataHeaders", java.util.List.class)),
 
     LIST(
         com.google.api.services.gmail.Gmail.Users.Threads.List.class,
         "list",
-        arg("userId", String.class)),
+        arg("userId", String.class),
+        setter("includeSpamTrash", Boolean.class),
+        setter("labelIds", java.util.List.class),
+        setter("maxResults", Long.class),
+        setter("pageToken", String.class),
+        setter("q", String.class)),
 
     MODIFY(
         com.google.api.services.gmail.Gmail.Users.Threads.Modify.class,
@@ -57,7 +65,7 @@ public enum GmailUsersThreadsApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private GmailUsersThreadsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    GmailUsersThreadsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Threads.class, resultType, name, args);
     }
 
@@ -69,6 +77,9 @@ public enum GmailUsersThreadsApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

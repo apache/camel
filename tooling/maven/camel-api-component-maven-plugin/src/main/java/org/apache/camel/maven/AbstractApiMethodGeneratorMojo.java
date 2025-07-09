@@ -519,7 +519,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                 }
             }
         }
-        return argument.isOptional();
+        return argument.isSetter();
+    }
+
+    public String argOrSetter(ApiMethodArg argument) {
+        return argument.isSetter() ? "setter" : "arg";
     }
 
     @SuppressWarnings("unused")

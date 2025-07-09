@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.drive.Drive$Files
@@ -23,32 +24,65 @@ public enum DriveFilesApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Files.Copy.class,
         "copy",
         arg("fileId", String.class),
-        arg("file", com.google.api.services.drive.model.File.class)),
+        arg("file", com.google.api.services.drive.model.File.class),
+        setter("enforceSingleParent", Boolean.class),
+        setter("ignoreDefaultVisibility", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("keepRevisionForever", Boolean.class),
+        setter("ocrLanguage", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class)),
 
     CREATE(
         com.google.api.services.drive.Drive.Files.Create.class,
         "create",
-        arg("content", com.google.api.services.drive.model.File.class)),
+        arg("content", com.google.api.services.drive.model.File.class),
+        setter("enforceSingleParent", Boolean.class),
+        setter("ignoreDefaultVisibility", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("keepRevisionForever", Boolean.class),
+        setter("ocrLanguage", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("useContentAsIndexableText", Boolean.class)),
 
     CREATE_1(
         com.google.api.services.drive.Drive.Files.Create.class,
         "create",
         arg("content", com.google.api.services.drive.model.File.class),
-        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class)),
+        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class),
+        setter("enforceSingleParent", Boolean.class),
+        setter("ignoreDefaultVisibility", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("keepRevisionForever", Boolean.class),
+        setter("ocrLanguage", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("useContentAsIndexableText", Boolean.class)),
 
     DELETE(
         com.google.api.services.drive.Drive.Files.Delete.class,
         "delete",
-        arg("fileId", String.class)),
+        arg("fileId", String.class),
+        setter("enforceSingleParent", Boolean.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class)),
 
     DOWNLOAD(
         com.google.api.services.drive.Drive.Files.Download.class,
         "download",
-        arg("fileId", String.class)),
+        arg("fileId", String.class),
+        setter("mimeType", String.class),
+        setter("revisionId", String.class)),
 
     EMPTY_TRASH(
         com.google.api.services.drive.Drive.Files.EmptyTrash.class,
-        "emptyTrash"),
+        "emptyTrash",
+        setter("driveId", String.class),
+        setter("enforceSingleParent", Boolean.class)),
 
     EXPORT(
         com.google.api.services.drive.Drive.Files.Export.class,
@@ -58,21 +92,46 @@ public enum DriveFilesApiMethod implements ApiMethod {
 
     GENERATE_IDS(
         com.google.api.services.drive.Drive.Files.GenerateIds.class,
-        "generateIds"),
+        "generateIds",
+        setter("count", Integer.class),
+        setter("space", String.class),
+        setter("type", String.class)),
 
     GET(
         com.google.api.services.drive.Drive.Files.Get.class,
         "get",
-        arg("fileId", String.class)),
+        arg("fileId", String.class),
+        setter("acknowledgeAbuse", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class)),
 
     LIST(
         com.google.api.services.drive.Drive.Files.List.class,
-        "list"),
+        "list",
+        setter("corpora", String.class),
+        setter("corpus", String.class),
+        setter("driveId", String.class),
+        setter("includeItemsFromAllDrives", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("includeTeamDriveItems", Boolean.class),
+        setter("orderBy", String.class),
+        setter("pageSize", Integer.class),
+        setter("pageToken", String.class),
+        setter("q", String.class),
+        setter("spaces", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("teamDriveId", String.class)),
 
     LIST_LABELS(
         com.google.api.services.drive.Drive.Files.ListLabels.class,
         "listLabels",
-        arg("fileId", String.class)),
+        arg("fileId", String.class),
+        setter("maxResults", Integer.class),
+        setter("pageToken", String.class)),
 
     MODIFY_LABELS(
         com.google.api.services.drive.Drive.Files.ModifyLabels.class,
@@ -84,24 +143,49 @@ public enum DriveFilesApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Files.Update.class,
         "update",
         arg("fileId", String.class),
-        arg("file", com.google.api.services.drive.model.File.class)),
+        arg("file", com.google.api.services.drive.model.File.class),
+        setter("addParents", String.class),
+        setter("enforceSingleParent", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("keepRevisionForever", Boolean.class),
+        setter("ocrLanguage", String.class),
+        setter("removeParents", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("useContentAsIndexableText", Boolean.class)),
 
     UPDATE_1(
         com.google.api.services.drive.Drive.Files.Update.class,
         "update",
         arg("fileId", String.class),
         arg("file", com.google.api.services.drive.model.File.class),
-        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class)),
+        arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class),
+        setter("addParents", String.class),
+        setter("enforceSingleParent", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("keepRevisionForever", Boolean.class),
+        setter("ocrLanguage", String.class),
+        setter("removeParents", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("useContentAsIndexableText", Boolean.class)),
 
     WATCH(
         com.google.api.services.drive.Drive.Files.Watch.class,
         "watch",
         arg("fileId", String.class),
-        arg("channel", com.google.api.services.drive.model.Channel.class));
+        arg("channel", com.google.api.services.drive.model.Channel.class),
+        setter("acknowledgeAbuse", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class));
 
     private final ApiMethod apiMethod;
 
-    private DriveFilesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    DriveFilesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Files.class, resultType, name, args);
     }
 
@@ -113,6 +197,9 @@ public enum DriveFilesApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

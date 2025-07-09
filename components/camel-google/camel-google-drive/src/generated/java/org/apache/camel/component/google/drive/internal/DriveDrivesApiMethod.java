@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.drive.Drive$Drives
@@ -28,12 +29,15 @@ public enum DriveDrivesApiMethod implements ApiMethod {
     DELETE(
         com.google.api.services.drive.Drive.Drives.Delete.class,
         "delete",
-        arg("driveId", String.class)),
+        arg("driveId", String.class),
+        setter("allowItemDeletion", Boolean.class),
+        setter("useDomainAdminAccess", Boolean.class)),
 
     GET(
         com.google.api.services.drive.Drive.Drives.Get.class,
         "get",
-        arg("driveId", String.class)),
+        arg("driveId", String.class),
+        setter("useDomainAdminAccess", Boolean.class)),
 
     HIDE(
         com.google.api.services.drive.Drive.Drives.Hide.class,
@@ -42,7 +46,11 @@ public enum DriveDrivesApiMethod implements ApiMethod {
 
     LIST(
         com.google.api.services.drive.Drive.Drives.List.class,
-        "list"),
+        "list",
+        setter("pageSize", Integer.class),
+        setter("pageToken", String.class),
+        setter("q", String.class),
+        setter("useDomainAdminAccess", Boolean.class)),
 
     UNHIDE(
         com.google.api.services.drive.Drive.Drives.Unhide.class,
@@ -53,11 +61,12 @@ public enum DriveDrivesApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Drives.Update.class,
         "update",
         arg("driveId", String.class),
-        arg("content", com.google.api.services.drive.model.Drive.class));
+        arg("content", com.google.api.services.drive.model.Drive.class),
+        setter("useDomainAdminAccess", Boolean.class));
 
     private final ApiMethod apiMethod;
 
-    private DriveDrivesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    DriveDrivesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Drives.class, resultType, name, args);
     }
 
@@ -69,6 +78,9 @@ public enum DriveDrivesApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

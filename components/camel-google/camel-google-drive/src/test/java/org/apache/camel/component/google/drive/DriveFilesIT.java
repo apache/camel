@@ -123,13 +123,13 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     @Test
     public void testList() {
         // upload a test file
-        File testFile = uploadTestFile();
+        //File testFile = uploadTestFile();
 
-        FileList result = requestBody("direct://LIST", null);
+        FileList result = requestBody("direct://LIST", "{}");
         assertNotNull(result, "list result");
         assertTrue(result.getFiles().size() >= 1);
 
-        File testFile2 = uploadTestFile();
+        //File testFile2 = uploadTestFile();
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("CamelGoogleDrive.maxResults", 1);
@@ -270,58 +270,9 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // test route for copy
-                from("direct://COPY")
-                        .to("google-drive://" + PATH_PREFIX + "/copy");
-
-                // test route for delete
-                from("direct://DELETE")
-                        .to("google-drive://" + PATH_PREFIX + "/delete?inBody=fileId");
-
-                // test route for get
-                from("direct://GET")
-                        .to("google-drive://" + PATH_PREFIX + "/get?inBody=fileId");
-
-                // test route for insert
-                from("direct://INSERT")
-                        .to("google-drive://" + PATH_PREFIX + "/insert?inBody=content");
-
-                // test route for insert
-                from("direct://INSERT_1")
-                        .to("google-drive://" + PATH_PREFIX + "/insert");
-
                 // test route for list
                 from("direct://LIST")
                         .to("google-drive://" + PATH_PREFIX + "/list");
-
-                // test route for patch
-                from("direct://PATCH")
-                        .to("google-drive://" + PATH_PREFIX + "/patch");
-
-                // test route for touch
-                from("direct://TOUCH")
-                        .to("google-drive://" + PATH_PREFIX + "/touch?inBody=fileId");
-
-                // test route for trash
-                from("direct://TRASH")
-                        .to("google-drive://" + PATH_PREFIX + "/trash?inBody=fileId");
-
-                // test route for untrash
-                from("direct://UNTRASH")
-                        .to("google-drive://" + PATH_PREFIX + "/untrash?inBody=fileId");
-
-                // test route for update
-                from("direct://UPDATE")
-                        .to("google-drive://" + PATH_PREFIX + "/update");
-
-                // test route for update
-                from("direct://UPDATE_1")
-                        .to("google-drive://" + PATH_PREFIX + "/update");
-
-                // test route for watch
-                from("direct://WATCH")
-                        .to("google-drive://" + PATH_PREFIX + "/watch");
-
             }
         };
     }

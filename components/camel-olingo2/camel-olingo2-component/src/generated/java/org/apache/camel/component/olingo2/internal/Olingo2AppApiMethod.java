@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for org.apache.camel.component.olingo2.api.Olingo2App
@@ -90,7 +91,7 @@ public enum Olingo2AppApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private Olingo2AppApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    Olingo2AppApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Olingo2App.class, resultType, name, args);
     }
 
@@ -102,6 +103,9 @@ public enum Olingo2AppApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

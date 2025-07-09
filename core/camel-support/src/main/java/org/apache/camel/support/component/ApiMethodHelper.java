@@ -289,16 +289,6 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      *                   ignored
      */
     public List<ApiMethod> filterMethods(List<? extends ApiMethod> methods, MatchType matchType, Collection<String> argNames) {
-        // original arguments
-        // supplied arguments with missing nullable arguments
-        final List<String> withNullableArgsList;
-        if (!nullableArguments.isEmpty()) {
-            withNullableArgsList = new ArrayList<>(argNames);
-            withNullableArgsList.addAll(nullableArguments);
-        } else {
-            withNullableArgsList = null;
-        }
-
         // list of methods that have all args in the given names
         List<ApiMethod> result = new ArrayList<>();
         List<ApiMethod> extraArgs = null;
@@ -308,24 +298,39 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             final List<String> methodArgs = method.getArgNames();
             final HashSet<String> stringHashSet = new HashSet<>(methodArgs);
 
+            // remove all the setter arguments from the input so we can match the mandatory arguments
+            // for selecting the correct api method based on its method signature
+            final Collection<String> methodArgNames = new ArrayList<>(argNames);
+            methodArgNames.removeAll(method.getSetterArgNames());
+
+            // original arguments
+            // supplied arguments with missing nullable arguments
+            final List<String> withNullableArgsList;
+            if (!nullableArguments.isEmpty()) {
+                withNullableArgsList = new ArrayList<>(methodArgNames);
+                withNullableArgsList.addAll(nullableArguments);
+            } else {
+                withNullableArgsList = null;
+            }
+
             switch (matchType) {
                 case EXACT:
                     // method must take all args, and no more
-                    if (stringHashSet.containsAll(argNames) && argNames.containsAll(methodArgs)) {
+                    if (stringHashSet.containsAll(methodArgNames) && methodArgNames.containsAll(methodArgs)) {
                         result.add(method);
                     }
                     break;
                 case SUBSET:
                     // all args are required, method may take more
-                    if (stringHashSet.containsAll(argNames)) {
+                    if (stringHashSet.containsAll(methodArgNames)) {
                         result.add(method);
                     }
                     break;
                 default:
                 case SUPER_SET:
                     // all method args must be present
-                    if (argNames.containsAll(methodArgs)) {
-                        if (stringHashSet.containsAll(argNames)) {
+                    if (methodArgNames.containsAll(methodArgs)) {
+                        if (stringHashSet.containsAll(methodArgNames)) {
                             // prefer exact match to avoid unused args
                             result.add(method);
                         } else if (result.isEmpty()) {

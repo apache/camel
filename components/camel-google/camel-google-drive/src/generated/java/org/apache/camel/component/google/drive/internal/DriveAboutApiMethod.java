@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.drive.Drive$About
@@ -25,7 +26,7 @@ public enum DriveAboutApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private DriveAboutApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    DriveAboutApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(About.class, resultType, name, args);
     }
 
@@ -37,6 +38,9 @@ public enum DriveAboutApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

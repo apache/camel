@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.drive.Drive$Changes
@@ -21,22 +22,52 @@ public enum DriveChangesApiMethod implements ApiMethod {
 
     GET_START_PAGE_TOKEN(
         com.google.api.services.drive.Drive.Changes.GetStartPageToken.class,
-        "getStartPageToken"),
+        "getStartPageToken",
+        setter("driveId", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("teamDriveId", String.class)),
 
     LIST(
         com.google.api.services.drive.Drive.Changes.List.class,
         "list",
-        arg("pageToken", String.class)),
+        arg("pageToken", String.class),
+        setter("driveId", String.class),
+        setter("includeCorpusRemovals", Boolean.class),
+        setter("includeItemsFromAllDrives", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("includeRemoved", Boolean.class),
+        setter("includeTeamDriveItems", Boolean.class),
+        setter("pageSize", Integer.class),
+        setter("restrictToMyDrive", Boolean.class),
+        setter("spaces", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("teamDriveId", String.class)),
 
     WATCH(
         com.google.api.services.drive.Drive.Changes.Watch.class,
         "watch",
         arg("pageToken", String.class),
-        arg("contentChannel", com.google.api.services.drive.model.Channel.class));
+        arg("contentChannel", com.google.api.services.drive.model.Channel.class),
+        setter("driveId", String.class),
+        setter("includeCorpusRemovals", Boolean.class),
+        setter("includeItemsFromAllDrives", Boolean.class),
+        setter("includeLabels", String.class),
+        setter("includePermissionsForView", String.class),
+        setter("includeRemoved", Boolean.class),
+        setter("includeTeamDriveItems", Boolean.class),
+        setter("pageSize", Integer.class),
+        setter("restrictToMyDrive", Boolean.class),
+        setter("spaces", String.class),
+        setter("supportsAllDrives", Boolean.class),
+        setter("supportsTeamDrives", Boolean.class),
+        setter("teamDriveId", String.class));
 
     private final ApiMethod apiMethod;
 
-    private DriveChangesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    DriveChangesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Changes.class, resultType, name, args);
     }
 
@@ -48,6 +79,9 @@ public enum DriveChangesApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

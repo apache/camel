@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.calendar.Calendar$Acl
@@ -35,36 +36,47 @@ public enum CalendarAclApiMethod implements ApiMethod {
         com.google.api.services.calendar.Calendar.Acl.Insert.class,
         "insert",
         arg("calendarId", String.class),
-        arg("content", com.google.api.services.calendar.model.AclRule.class)),
+        arg("content", com.google.api.services.calendar.model.AclRule.class),
+        setter("sendNotifications", Boolean.class)),
 
     LIST(
         com.google.api.services.calendar.Calendar.Acl.List.class,
         "list",
-        arg("calendarId", String.class)),
+        arg("calendarId", String.class),
+        setter("maxResults", Integer.class),
+        setter("pageToken", String.class),
+        setter("showDeleted", Boolean.class),
+        setter("syncToken", String.class)),
 
     PATCH(
         com.google.api.services.calendar.Calendar.Acl.Patch.class,
         "patch",
         arg("calendarId", String.class),
         arg("ruleId", String.class),
-        arg("content", com.google.api.services.calendar.model.AclRule.class)),
+        arg("content", com.google.api.services.calendar.model.AclRule.class),
+        setter("sendNotifications", Boolean.class)),
 
     UPDATE(
         com.google.api.services.calendar.Calendar.Acl.Update.class,
         "update",
         arg("calendarId", String.class),
         arg("ruleId", String.class),
-        arg("content", com.google.api.services.calendar.model.AclRule.class)),
+        arg("content", com.google.api.services.calendar.model.AclRule.class),
+        setter("sendNotifications", Boolean.class)),
 
     WATCH(
         com.google.api.services.calendar.Calendar.Acl.Watch.class,
         "watch",
         arg("calendarId", String.class),
-        arg("contentChannel", com.google.api.services.calendar.model.Channel.class));
+        arg("contentChannel", com.google.api.services.calendar.model.Channel.class),
+        setter("maxResults", Integer.class),
+        setter("pageToken", String.class),
+        setter("showDeleted", Boolean.class),
+        setter("syncToken", String.class));
 
     private final ApiMethod apiMethod;
 
-    private CalendarAclApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    CalendarAclApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Acl.class, resultType, name, args);
     }
 
@@ -76,6 +88,9 @@ public enum CalendarAclApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

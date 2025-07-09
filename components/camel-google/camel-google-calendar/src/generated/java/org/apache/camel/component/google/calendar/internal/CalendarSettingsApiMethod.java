@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.calendar.Calendar$Settings
@@ -26,16 +27,22 @@ public enum CalendarSettingsApiMethod implements ApiMethod {
 
     LIST(
         com.google.api.services.calendar.Calendar.Settings.List.class,
-        "list"),
+        "list",
+        setter("maxResults", Integer.class),
+        setter("pageToken", String.class),
+        setter("syncToken", String.class)),
 
     WATCH(
         com.google.api.services.calendar.Calendar.Settings.Watch.class,
         "watch",
-        arg("contentChannel", com.google.api.services.calendar.model.Channel.class));
+        arg("contentChannel", com.google.api.services.calendar.model.Channel.class),
+        setter("maxResults", Integer.class),
+        setter("pageToken", String.class),
+        setter("syncToken", String.class));
 
     private final ApiMethod apiMethod;
 
-    private CalendarSettingsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    CalendarSettingsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Settings.class, resultType, name, args);
     }
 
@@ -47,6 +54,9 @@ public enum CalendarSettingsApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

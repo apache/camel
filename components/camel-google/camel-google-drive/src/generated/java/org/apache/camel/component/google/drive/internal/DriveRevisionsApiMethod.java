@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.drive.Drive$Revisions
@@ -29,12 +30,15 @@ public enum DriveRevisionsApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Revisions.Get.class,
         "get",
         arg("fileId", String.class),
-        arg("revisionId", String.class)),
+        arg("revisionId", String.class),
+        setter("acknowledgeAbuse", Boolean.class)),
 
     LIST(
         com.google.api.services.drive.Drive.Revisions.List.class,
         "list",
-        arg("fileId", String.class)),
+        arg("fileId", String.class),
+        setter("pageSize", Integer.class),
+        setter("pageToken", String.class)),
 
     UPDATE(
         com.google.api.services.drive.Drive.Revisions.Update.class,
@@ -45,7 +49,7 @@ public enum DriveRevisionsApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private DriveRevisionsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    DriveRevisionsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Revisions.class, resultType, name, args);
     }
 
@@ -57,6 +61,9 @@ public enum DriveRevisionsApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

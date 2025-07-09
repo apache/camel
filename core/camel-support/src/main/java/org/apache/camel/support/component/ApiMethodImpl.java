@@ -54,6 +54,7 @@ public final class ApiMethodImpl implements ApiMethod {
     private final String name;
     private final Class<?> resultType;
     private final List<String> argNames;
+    private final List<String> setterArgNames;
     private final List<Class<?>> argTypes;
     private final Method method;
 
@@ -62,19 +63,25 @@ public final class ApiMethodImpl implements ApiMethod {
         this.name = name;
         this.resultType = resultType;
 
-        final List<String> tmpArgNames = new ArrayList<>(args.length);
-        final List<Class<?>> tmpArgTypes = new ArrayList<>(args.length);
+        final List<String> tmpSetterArgNames = new ArrayList<>();
+        final List<String> tmpArgNames = new ArrayList<>();
+        final List<Class<?>> tmpArgTypes = new ArrayList<>();
         for (ApiMethodArg arg : args) {
-            tmpArgTypes.add(arg.getType());
-            tmpArgNames.add(arg.getName());
+            if (arg.isSetter()) {
+                tmpSetterArgNames.add(arg.getName());
+            } else {
+                tmpArgTypes.add(arg.getType());
+                tmpArgNames.add(arg.getName());
+            }
         }
 
         this.argNames = Collections.unmodifiableList(tmpArgNames);
         this.argTypes = Collections.unmodifiableList(tmpArgTypes);
+        this.setterArgNames = Collections.unmodifiableList(tmpSetterArgNames);
 
         // find method in Proxy type
         try {
-            this.method = proxyType.getMethod(name, argTypes.toArray(new Class[args.length]));
+            this.method = proxyType.getMethod(name, argTypes.toArray(new Class[argNames.size()]));
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
                     String.format("Missing method %s %s", name, argTypes.toString().replace('[', '(').replace(']', ')')),
@@ -95,6 +102,11 @@ public final class ApiMethodImpl implements ApiMethod {
     @Override
     public List<String> getArgNames() {
         return argNames;
+    }
+
+    @Override
+    public List<String> getSetterArgNames() {
+        return setterArgNames;
     }
 
     @Override

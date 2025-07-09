@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.drive.Drive$Teamdrives
@@ -33,21 +34,27 @@ public enum DriveTeamdrivesApiMethod implements ApiMethod {
     GET(
         com.google.api.services.drive.Drive.Teamdrives.Get.class,
         "get",
-        arg("teamDriveId", String.class)),
+        arg("teamDriveId", String.class),
+        setter("useDomainAdminAccess", Boolean.class)),
 
     LIST(
         com.google.api.services.drive.Drive.Teamdrives.List.class,
-        "list"),
+        "list",
+        setter("pageSize", Integer.class),
+        setter("pageToken", String.class),
+        setter("q", String.class),
+        setter("useDomainAdminAccess", Boolean.class)),
 
     UPDATE(
         com.google.api.services.drive.Drive.Teamdrives.Update.class,
         "update",
         arg("teamDriveId", String.class),
-        arg("content", com.google.api.services.drive.model.TeamDrive.class));
+        arg("content", com.google.api.services.drive.model.TeamDrive.class),
+        setter("useDomainAdminAccess", Boolean.class));
 
     private final ApiMethod apiMethod;
 
-    private DriveTeamdrivesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    DriveTeamdrivesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Teamdrives.class, resultType, name, args);
     }
 
@@ -59,6 +66,9 @@ public enum DriveTeamdrivesApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

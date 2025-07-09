@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for org.apache.camel.component.box.api.BoxGroupsManager
@@ -79,7 +80,7 @@ public enum BoxGroupsManagerApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private BoxGroupsManagerApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    BoxGroupsManagerApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(BoxGroupsManager.class, resultType, name, args);
     }
 
@@ -91,6 +92,9 @@ public enum BoxGroupsManagerApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }

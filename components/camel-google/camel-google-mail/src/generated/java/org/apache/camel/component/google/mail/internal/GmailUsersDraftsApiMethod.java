@@ -13,6 +13,7 @@ import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.setter;
 
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.gmail.Gmail$Users$Drafts
@@ -42,12 +43,17 @@ public enum GmailUsersDraftsApiMethod implements ApiMethod {
         com.google.api.services.gmail.Gmail.Users.Drafts.Get.class,
         "get",
         arg("userId", String.class),
-        arg("id", String.class)),
+        arg("id", String.class),
+        setter("format", String.class)),
 
     LIST(
         com.google.api.services.gmail.Gmail.Users.Drafts.List.class,
         "list",
-        arg("userId", String.class)),
+        arg("userId", String.class),
+        setter("includeSpamTrash", Boolean.class),
+        setter("maxResults", Long.class),
+        setter("pageToken", String.class),
+        setter("q", String.class)),
 
     SEND(
         com.google.api.services.gmail.Gmail.Users.Drafts.Send.class,
@@ -79,7 +85,7 @@ public enum GmailUsersDraftsApiMethod implements ApiMethod {
 
     private final ApiMethod apiMethod;
 
-    private GmailUsersDraftsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+    GmailUsersDraftsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
         this.apiMethod = new ApiMethodImpl(Drafts.class, resultType, name, args);
     }
 
@@ -91,6 +97,9 @@ public enum GmailUsersDraftsApiMethod implements ApiMethod {
 
     @Override
     public List<String> getArgNames() { return apiMethod.getArgNames(); }
+
+    @Override
+    public List<String> getSetterArgNames() { return apiMethod.getSetterArgNames(); }
 
     @Override
     public List<Class<?>> getArgTypes() { return apiMethod.getArgTypes(); }
