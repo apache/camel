@@ -23,11 +23,32 @@ public final class CalendarCalendarListEndpointConfiguration extends GoogleCalen
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "get", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "patch", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "update", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword.")})
     private String calendarId;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "insert", description="Whether to use the foregroundColor and backgroundColor fields to write the calendar colors (RGB)"), @ApiMethod(methodName = "patch", description="Whether to use the foregroundColor and backgroundColor fields to write the calendar colors (RGB)"), @ApiMethod(methodName = "update", description="Whether to use the foregroundColor and backgroundColor fields to write the calendar colors (RGB)")})
+    private java.lang.Boolean colorRgbFormat;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "insert", description="The com.google.api.services.calendar.model.CalendarListEntry"), @ApiMethod(methodName = "patch", description="The com.google.api.services.calendar.model.CalendarListEntry"), @ApiMethod(methodName = "update", description="The com.google.api.services.calendar.model.CalendarListEntry")})
     private com.google.api.services.calendar.model.CalendarListEntry content;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "watch", description="The com.google.api.services.calendar.model.Channel")})
     private com.google.api.services.calendar.model.Channel contentChannel;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Maximum number of entries returned on one result page"), @ApiMethod(methodName = "watch", description="Maximum number of entries returned on one result page")})
+    private java.lang.Integer maxResults;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The minimum access role for the user in the returned entries"), @ApiMethod(methodName = "watch", description="The minimum access role for the user in the returned entries")})
+    private java.lang.String minAccessRole;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Token specifying which result page to return"), @ApiMethod(methodName = "watch", description="Token specifying which result page to return")})
+    private java.lang.String pageToken;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Whether to include deleted calendar list entries in the result"), @ApiMethod(methodName = "watch", description="Whether to include deleted calendar list entries in the result")})
+    private java.lang.Boolean showDeleted;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Whether to show hidden entries"), @ApiMethod(methodName = "watch", description="Whether to show hidden entries")})
+    private java.lang.Boolean showHidden;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Token obtained from the nextSyncToken field returned on the last page of results from the previous list request"), @ApiMethod(methodName = "watch", description="Token obtained from the nextSyncToken field returned on the last page of results from the previous list request")})
+    private java.lang.String syncToken;
 
     public String getCalendarId() {
         return calendarId;
@@ -35,6 +56,14 @@ public final class CalendarCalendarListEndpointConfiguration extends GoogleCalen
 
     public void setCalendarId(String calendarId) {
         this.calendarId = calendarId;
+    }
+
+    public java.lang.Boolean getColorRgbFormat() {
+        return colorRgbFormat;
+    }
+
+    public void setColorRgbFormat(java.lang.Boolean colorRgbFormat) {
+        this.colorRgbFormat = colorRgbFormat;
     }
 
     public com.google.api.services.calendar.model.CalendarListEntry getContent() {
@@ -51,5 +80,53 @@ public final class CalendarCalendarListEndpointConfiguration extends GoogleCalen
 
     public void setContentChannel(com.google.api.services.calendar.model.Channel contentChannel) {
         this.contentChannel = contentChannel;
+    }
+
+    public java.lang.Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(java.lang.Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public java.lang.String getMinAccessRole() {
+        return minAccessRole;
+    }
+
+    public void setMinAccessRole(java.lang.String minAccessRole) {
+        this.minAccessRole = minAccessRole;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
+    public java.lang.Boolean getShowDeleted() {
+        return showDeleted;
+    }
+
+    public void setShowDeleted(java.lang.Boolean showDeleted) {
+        this.showDeleted = showDeleted;
+    }
+
+    public java.lang.Boolean getShowHidden() {
+        return showHidden;
+    }
+
+    public void setShowHidden(java.lang.Boolean showHidden) {
+        this.showHidden = showHidden;
+    }
+
+    public java.lang.String getSyncToken() {
+        return syncToken;
+    }
+
+    public void setSyncToken(java.lang.String syncToken) {
+        this.syncToken = syncToken;
     }
 }

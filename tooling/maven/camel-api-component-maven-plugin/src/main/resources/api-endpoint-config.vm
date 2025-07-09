@@ -39,6 +39,9 @@ public final class $configName extends ${componentName}Configuration {
 #foreach( $parameter in $parameters.entrySet() )
     @UriParam
     @ApiParam(optional = $helper.isOptionalParameter($parameter.Value), apiMethods = $helper.getApiMethodsForParam($models, $parameter.Value))
+#if ($helper.isDeprecatedParameter($parameter.Value))
+    @Deprecated
+#end
     private $helper.getCanonicalName($parameter.Value) $parameter.Key;
 #end
 ## getters and setters

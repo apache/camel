@@ -20,8 +20,14 @@ import org.apache.camel.spi.UriParams;
 @Configurer(extended = true)
 public final class CalendarEventsEndpointConfiguration extends GoogleCalendarConfiguration {
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="Deprecated and ignored"), @ApiMethod(methodName = "instances", description="Deprecated and ignored"), @ApiMethod(methodName = "list", description="Deprecated and ignored"), @ApiMethod(methodName = "patch", description="Deprecated and ignored"), @ApiMethod(methodName = "update", description="Deprecated and ignored"), @ApiMethod(methodName = "watch", description="Deprecated and ignored")})
+    private java.lang.Boolean alwaysIncludeEmail;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "calendarImport", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "delete", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "get", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "insert", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "instances", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "list", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "move", description="Calendar identifier of the source calendar where the event currently is on"), @ApiMethod(methodName = "patch", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "quickAdd", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "update", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "watch", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword.")})
     private String calendarId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "calendarImport", description="Version number of conference data supported by the API client"), @ApiMethod(methodName = "insert", description="Version number of conference data supported by the API client"), @ApiMethod(methodName = "patch", description="Version number of conference data supported by the API client"), @ApiMethod(methodName = "update", description="Version number of conference data supported by the API client")})
+    private java.lang.Integer conferenceDataVersion;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "calendarImport", description="The com.google.api.services.calendar.model.Event"), @ApiMethod(methodName = "insert", description="The com.google.api.services.calendar.model.Event"), @ApiMethod(methodName = "patch", description="The com.google.api.services.calendar.model.Event"), @ApiMethod(methodName = "update", description="The com.google.api.services.calendar.model.Event")})
     private com.google.api.services.calendar.model.Event content;
@@ -35,8 +41,79 @@ public final class CalendarEventsEndpointConfiguration extends GoogleCalendarCon
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="Event identifier"), @ApiMethod(methodName = "get", description="Event identifier"), @ApiMethod(methodName = "instances", description="Recurring event identifier"), @ApiMethod(methodName = "move", description="Event identifier"), @ApiMethod(methodName = "patch", description="Event identifier"), @ApiMethod(methodName = "update", description="Event identifier")})
     private String eventId;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Event types to return"), @ApiMethod(methodName = "watch", description="Event types to return")})
+    private java.util.List eventTypes;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Specifies an event ID in the iCalendar format to be provided in the response"), @ApiMethod(methodName = "watch", description="Specifies an event ID in the iCalendar format to be provided in the response")})
+    private java.lang.String iCalUID;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="The maximum number of attendees to include in the response"), @ApiMethod(methodName = "insert", description="The maximum number of attendees to include in the response"), @ApiMethod(methodName = "instances", description="The maximum number of attendees to include in the response"), @ApiMethod(methodName = "list", description="The maximum number of attendees to include in the response"), @ApiMethod(methodName = "patch", description="The maximum number of attendees to include in the response"), @ApiMethod(methodName = "update", description="The maximum number of attendees to include in the response"), @ApiMethod(methodName = "watch", description="The maximum number of attendees to include in the response")})
+    private java.lang.Integer maxAttendees;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "instances", description="Maximum number of events returned on one result page"), @ApiMethod(methodName = "list", description="Maximum number of events returned on one result page"), @ApiMethod(methodName = "watch", description="Maximum number of events returned on one result page")})
+    private java.lang.Integer maxResults;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The order of the events returned in the result"), @ApiMethod(methodName = "watch", description="The order of the events returned in the result")})
+    private java.lang.String orderBy;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "instances", description="The original start time of the instance in the result")})
+    private java.lang.String originalStart;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "instances", description="Token specifying which result page to return"), @ApiMethod(methodName = "list", description="Token specifying which result page to return"), @ApiMethod(methodName = "watch", description="Token specifying which result page to return")})
+    private java.lang.String pageToken;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Extended properties constraint specified as propertyName=value"), @ApiMethod(methodName = "watch", description="Extended properties constraint specified as propertyName=value")})
+    private java.util.List privateExtendedProperty;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Free text search terms to find events that match these terms in the following fields: - summary - description - location - attendee's displayName - attendee's email - organizer's displayName - organizer's email - workingLocationProperties"), @ApiMethod(methodName = "watch", description="Free text search terms to find events that match these terms in the following fields: - summary - description - location - attendee's displayName - attendee's email - organizer's displayName - organizer's email - workingLocationProperties")})
+    private java.lang.String q;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "delete", description="Deprecated"), @ApiMethod(methodName = "insert", description="Deprecated"), @ApiMethod(methodName = "move", description="Deprecated"), @ApiMethod(methodName = "patch", description="Deprecated"), @ApiMethod(methodName = "quickAdd", description="Deprecated"), @ApiMethod(methodName = "update", description="Deprecated")})
+    private java.lang.Boolean sendNotifications;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "delete", description="Guests who should receive notifications about the deletion of the event"), @ApiMethod(methodName = "insert", description="Whether to send notifications about the creation of the new event"), @ApiMethod(methodName = "move", description="Guests who should receive notifications about the change of the event's organizer"), @ApiMethod(methodName = "patch", description="Guests who should receive notifications about the event update (for example, title changes, etc"), @ApiMethod(methodName = "quickAdd", description="Guests who should receive notifications about the creation of the new event"), @ApiMethod(methodName = "update", description="Guests who should receive notifications about the event update (for example, title changes, etc")})
+    private java.lang.String sendUpdates;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Extended properties constraint specified as propertyName=value"), @ApiMethod(methodName = "watch", description="Extended properties constraint specified as propertyName=value")})
+    private java.util.List sharedExtendedProperty;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "instances", description="Whether to include deleted events (with status equals cancelled) in the result"), @ApiMethod(methodName = "list", description="Whether to include deleted events (with status equals cancelled) in the result"), @ApiMethod(methodName = "watch", description="Whether to include deleted events (with status equals cancelled) in the result")})
+    private java.lang.Boolean showDeleted;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Whether to include hidden invitations in the result"), @ApiMethod(methodName = "watch", description="Whether to include hidden invitations in the result")})
+    private java.lang.Boolean showHiddenInvitations;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Whether to expand recurring events into instances and only return single one-off events and instances of recurring events, but not the underlying recurring events themselves"), @ApiMethod(methodName = "watch", description="Whether to expand recurring events into instances and only return single one-off events and instances of recurring events, but not the underlying recurring events themselves")})
+    private java.lang.Boolean singleEvents;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "calendarImport", description="Whether API client performing operation supports event attachments"), @ApiMethod(methodName = "insert", description="Whether API client performing operation supports event attachments"), @ApiMethod(methodName = "patch", description="Whether API client performing operation supports event attachments"), @ApiMethod(methodName = "update", description="Whether API client performing operation supports event attachments")})
+    private java.lang.Boolean supportsAttachments;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Token obtained from the nextSyncToken field returned on the last page of results from the previous list request"), @ApiMethod(methodName = "watch", description="Token obtained from the nextSyncToken field returned on the last page of results from the previous list request")})
+    private java.lang.String syncToken;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "quickAdd", description="The text describing the event to be created")})
     private String text;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "instances", description="Upper bound (exclusive) for an event's start time to filter by"), @ApiMethod(methodName = "list", description="Upper bound (exclusive) for an event's start time to filter by"), @ApiMethod(methodName = "watch", description="Upper bound (exclusive) for an event's start time to filter by")})
+    private com.google.api.client.util.DateTime timeMax;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "instances", description="Lower bound (inclusive) for an event's end time to filter by"), @ApiMethod(methodName = "list", description="Lower bound (exclusive) for an event's end time to filter by"), @ApiMethod(methodName = "watch", description="Lower bound (exclusive) for an event's end time to filter by")})
+    private com.google.api.client.util.DateTime timeMin;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="Time zone used in the response"), @ApiMethod(methodName = "instances", description="Time zone used in the response"), @ApiMethod(methodName = "list", description="Time zone used in the response"), @ApiMethod(methodName = "watch", description="Time zone used in the response")})
+    private java.lang.String timeZone;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Lower bound for an event's last modification time (as a RFC3339 timestamp) to filter by"), @ApiMethod(methodName = "watch", description="Lower bound for an event's last modification time (as a RFC3339 timestamp) to filter by")})
+    private com.google.api.client.util.DateTime updatedMin;
+
+    public java.lang.Boolean getAlwaysIncludeEmail() {
+        return alwaysIncludeEmail;
+    }
+
+    public void setAlwaysIncludeEmail(java.lang.Boolean alwaysIncludeEmail) {
+        this.alwaysIncludeEmail = alwaysIncludeEmail;
+    }
 
     public String getCalendarId() {
         return calendarId;
@@ -44,6 +121,14 @@ public final class CalendarEventsEndpointConfiguration extends GoogleCalendarCon
 
     public void setCalendarId(String calendarId) {
         this.calendarId = calendarId;
+    }
+
+    public java.lang.Integer getConferenceDataVersion() {
+        return conferenceDataVersion;
+    }
+
+    public void setConferenceDataVersion(java.lang.Integer conferenceDataVersion) {
+        this.conferenceDataVersion = conferenceDataVersion;
     }
 
     public com.google.api.services.calendar.model.Event getContent() {
@@ -78,11 +163,179 @@ public final class CalendarEventsEndpointConfiguration extends GoogleCalendarCon
         this.eventId = eventId;
     }
 
+    public java.util.List getEventTypes() {
+        return eventTypes;
+    }
+
+    public void setEventTypes(java.util.List eventTypes) {
+        this.eventTypes = eventTypes;
+    }
+
+    public java.lang.String getICalUID() {
+        return iCalUID;
+    }
+
+    public void setICalUID(java.lang.String iCalUID) {
+        this.iCalUID = iCalUID;
+    }
+
+    public java.lang.Integer getMaxAttendees() {
+        return maxAttendees;
+    }
+
+    public void setMaxAttendees(java.lang.Integer maxAttendees) {
+        this.maxAttendees = maxAttendees;
+    }
+
+    public java.lang.Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(java.lang.Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public java.lang.String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(java.lang.String orderBy) {
+        this.orderBy = orderBy;
+    }
+
+    public java.lang.String getOriginalStart() {
+        return originalStart;
+    }
+
+    public void setOriginalStart(java.lang.String originalStart) {
+        this.originalStart = originalStart;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
+    public java.util.List getPrivateExtendedProperty() {
+        return privateExtendedProperty;
+    }
+
+    public void setPrivateExtendedProperty(java.util.List privateExtendedProperty) {
+        this.privateExtendedProperty = privateExtendedProperty;
+    }
+
+    public java.lang.String getQ() {
+        return q;
+    }
+
+    public void setQ(java.lang.String q) {
+        this.q = q;
+    }
+
+    public java.lang.Boolean getSendNotifications() {
+        return sendNotifications;
+    }
+
+    public void setSendNotifications(java.lang.Boolean sendNotifications) {
+        this.sendNotifications = sendNotifications;
+    }
+
+    public java.lang.String getSendUpdates() {
+        return sendUpdates;
+    }
+
+    public void setSendUpdates(java.lang.String sendUpdates) {
+        this.sendUpdates = sendUpdates;
+    }
+
+    public java.util.List getSharedExtendedProperty() {
+        return sharedExtendedProperty;
+    }
+
+    public void setSharedExtendedProperty(java.util.List sharedExtendedProperty) {
+        this.sharedExtendedProperty = sharedExtendedProperty;
+    }
+
+    public java.lang.Boolean getShowDeleted() {
+        return showDeleted;
+    }
+
+    public void setShowDeleted(java.lang.Boolean showDeleted) {
+        this.showDeleted = showDeleted;
+    }
+
+    public java.lang.Boolean getShowHiddenInvitations() {
+        return showHiddenInvitations;
+    }
+
+    public void setShowHiddenInvitations(java.lang.Boolean showHiddenInvitations) {
+        this.showHiddenInvitations = showHiddenInvitations;
+    }
+
+    public java.lang.Boolean getSingleEvents() {
+        return singleEvents;
+    }
+
+    public void setSingleEvents(java.lang.Boolean singleEvents) {
+        this.singleEvents = singleEvents;
+    }
+
+    public java.lang.Boolean getSupportsAttachments() {
+        return supportsAttachments;
+    }
+
+    public void setSupportsAttachments(java.lang.Boolean supportsAttachments) {
+        this.supportsAttachments = supportsAttachments;
+    }
+
+    public java.lang.String getSyncToken() {
+        return syncToken;
+    }
+
+    public void setSyncToken(java.lang.String syncToken) {
+        this.syncToken = syncToken;
+    }
+
     public String getText() {
         return text;
     }
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public com.google.api.client.util.DateTime getTimeMax() {
+        return timeMax;
+    }
+
+    public void setTimeMax(com.google.api.client.util.DateTime timeMax) {
+        this.timeMax = timeMax;
+    }
+
+    public com.google.api.client.util.DateTime getTimeMin() {
+        return timeMin;
+    }
+
+    public void setTimeMin(com.google.api.client.util.DateTime timeMin) {
+        this.timeMin = timeMin;
+    }
+
+    public java.lang.String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(java.lang.String timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    public com.google.api.client.util.DateTime getUpdatedMin() {
+        return updatedMin;
+    }
+
+    public void setUpdatedMin(com.google.api.client.util.DateTime updatedMin) {
+        this.updatedMin = updatedMin;
     }
 }

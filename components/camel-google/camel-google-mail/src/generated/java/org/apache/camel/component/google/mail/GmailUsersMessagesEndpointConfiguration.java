@@ -29,14 +29,47 @@ public final class GmailUsersMessagesEndpointConfiguration extends GoogleMailCon
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "gmailImport", description="The com.google.api.services.gmail.model.Message media metadata or null if none"), @ApiMethod(methodName = "insert", description="The com.google.api.services.gmail.model.Message media metadata or null if none"), @ApiMethod(methodName = "send", description="The com.google.api.services.gmail.model.Message media metadata or null if none")})
     private com.google.api.services.gmail.model.Message content;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "gmailImport", description="Mark the email as permanently deleted (not TRASH) and only visible in Google Vault to a Vault administrator"), @ApiMethod(methodName = "insert", description="Mark the email as permanently deleted (not TRASH) and only visible in Google Vault to a Vault administrator")})
+    private java.lang.Boolean deleted;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="The format to return the message in")})
+    private java.lang.String format;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the message to delete"), @ApiMethod(methodName = "get", description="The ID of the message to retrieve. This ID is usually retrieved using messages.list. The ID is also contained in the result when a message is inserted (messages.insert) or imported (messages.import)."), @ApiMethod(methodName = "modify", description="The ID of the message to modify"), @ApiMethod(methodName = "trash", description="The ID of the message to Trash"), @ApiMethod(methodName = "untrash", description="The ID of the message to remove from Trash")})
     private String id;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Include messages from SPAM and TRASH in the results")})
+    private java.lang.Boolean includeSpamTrash;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "gmailImport", description="Source for Gmail's internal date of the message"), @ApiMethod(methodName = "insert", description="Source for Gmail's internal date of the message")})
+    private java.lang.String internalDateSource;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Only return messages with labels that match all of the specified label IDs")})
+    private java.util.List labelIds;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Maximum number of messages to return")})
+    private java.lang.Long maxResults;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "gmailImport", description="The media HTTP content"), @ApiMethod(methodName = "insert", description="The media HTTP content"), @ApiMethod(methodName = "send", description="The media HTTP content")})
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="When given and format is METADATA, only include headers specified")})
+    private java.util.List metadataHeaders;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "modify", description="The com.google.api.services.gmail.model.ModifyMessageRequest")})
     private com.google.api.services.gmail.model.ModifyMessageRequest modifyMessageRequest;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "gmailImport", description="Ignore the Gmail spam classifier decision and never mark this email as SPAM in the mailbox")})
+    private java.lang.Boolean neverMarkSpam;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Page token to retrieve a specific page of results in the list")})
+    private java.lang.String pageToken;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "gmailImport", description="Process calendar invites in the email and add any extracted meetings to the Google Calendar for this user")})
+    private java.lang.Boolean processForCalendar;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Only return messages matching the specified query")})
+    private java.lang.String q;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "batchDelete", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "batchModify", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "delete", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "get", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "gmailImport", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "insert", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "list", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "modify", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "send", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "trash", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "untrash", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me")})
     private String userId;
@@ -65,12 +98,60 @@ public final class GmailUsersMessagesEndpointConfiguration extends GoogleMailCon
         this.content = content;
     }
 
+    public java.lang.Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(java.lang.Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public java.lang.String getFormat() {
+        return format;
+    }
+
+    public void setFormat(java.lang.String format) {
+        this.format = format;
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public java.lang.Boolean getIncludeSpamTrash() {
+        return includeSpamTrash;
+    }
+
+    public void setIncludeSpamTrash(java.lang.Boolean includeSpamTrash) {
+        this.includeSpamTrash = includeSpamTrash;
+    }
+
+    public java.lang.String getInternalDateSource() {
+        return internalDateSource;
+    }
+
+    public void setInternalDateSource(java.lang.String internalDateSource) {
+        this.internalDateSource = internalDateSource;
+    }
+
+    public java.util.List getLabelIds() {
+        return labelIds;
+    }
+
+    public void setLabelIds(java.util.List labelIds) {
+        this.labelIds = labelIds;
+    }
+
+    public java.lang.Long getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(java.lang.Long maxResults) {
+        this.maxResults = maxResults;
     }
 
     public com.google.api.client.http.AbstractInputStreamContent getMediaContent() {
@@ -81,12 +162,52 @@ public final class GmailUsersMessagesEndpointConfiguration extends GoogleMailCon
         this.mediaContent = mediaContent;
     }
 
+    public java.util.List getMetadataHeaders() {
+        return metadataHeaders;
+    }
+
+    public void setMetadataHeaders(java.util.List metadataHeaders) {
+        this.metadataHeaders = metadataHeaders;
+    }
+
     public com.google.api.services.gmail.model.ModifyMessageRequest getModifyMessageRequest() {
         return modifyMessageRequest;
     }
 
     public void setModifyMessageRequest(com.google.api.services.gmail.model.ModifyMessageRequest modifyMessageRequest) {
         this.modifyMessageRequest = modifyMessageRequest;
+    }
+
+    public java.lang.Boolean getNeverMarkSpam() {
+        return neverMarkSpam;
+    }
+
+    public void setNeverMarkSpam(java.lang.Boolean neverMarkSpam) {
+        this.neverMarkSpam = neverMarkSpam;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
+    public java.lang.Boolean getProcessForCalendar() {
+        return processForCalendar;
+    }
+
+    public void setProcessForCalendar(java.lang.Boolean processForCalendar) {
+        this.processForCalendar = processForCalendar;
+    }
+
+    public java.lang.String getQ() {
+        return q;
+    }
+
+    public void setQ(java.lang.String q) {
+        this.q = q;
     }
 
     public String getUserId() {

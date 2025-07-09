@@ -28,6 +28,18 @@ public final class DriveCommentsEndpointConfiguration extends GoogleDriveConfigu
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The ID of the file"), @ApiMethod(methodName = "delete", description="The ID of the file"), @ApiMethod(methodName = "get", description="The ID of the file"), @ApiMethod(methodName = "list", description="The ID of the file"), @ApiMethod(methodName = "update", description="The ID of the file")})
     private String fileId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="Whether to return deleted comments"), @ApiMethod(methodName = "list", description="Whether to include deleted comments")})
+    private java.lang.Boolean includeDeleted;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The maximum number of comments to return per page")})
+    private java.lang.Integer pageSize;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The token for continuing a previous list request on the next page")})
+    private java.lang.String pageToken;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The minimum value of 'modifiedTime' for the result comments (RFC 3339 date-time)")})
+    private java.lang.String startModifiedTime;
 
     public String getCommentId() {
         return commentId;
@@ -51,5 +63,37 @@ public final class DriveCommentsEndpointConfiguration extends GoogleDriveConfigu
 
     public void setFileId(String fileId) {
         this.fileId = fileId;
+    }
+
+    public java.lang.Boolean getIncludeDeleted() {
+        return includeDeleted;
+    }
+
+    public void setIncludeDeleted(java.lang.Boolean includeDeleted) {
+        this.includeDeleted = includeDeleted;
+    }
+
+    public java.lang.Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(java.lang.Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
+    public java.lang.String getStartModifiedTime() {
+        return startModifiedTime;
+    }
+
+    public void setStartModifiedTime(java.lang.String startModifiedTime) {
+        this.startModifiedTime = startModifiedTime;
     }
 }

@@ -23,23 +23,46 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AccessToken", java.lang.String.class);
+        map.put("AlwaysIncludeEmail", java.lang.Boolean.class);
         map.put("ApiName", org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName.class);
         map.put("ApplicationName", java.lang.String.class);
         map.put("CalendarId", java.lang.String.class);
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
+        map.put("ConferenceDataVersion", java.lang.Integer.class);
         map.put("Content", com.google.api.services.calendar.model.Event.class);
         map.put("ContentChannel", com.google.api.services.calendar.model.Channel.class);
         map.put("Delegate", java.lang.String.class);
         map.put("Destination", java.lang.String.class);
         map.put("EmailAddress", java.lang.String.class);
         map.put("EventId", java.lang.String.class);
+        map.put("EventTypes", java.util.List.class);
+        map.put("ICalUID", java.lang.String.class);
+        map.put("MaxAttendees", java.lang.Integer.class);
+        map.put("MaxResults", java.lang.Integer.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("OrderBy", java.lang.String.class);
+        map.put("OriginalStart", java.lang.String.class);
         map.put("P12FileName", java.lang.String.class);
+        map.put("PageToken", java.lang.String.class);
+        map.put("PrivateExtendedProperty", java.util.List.class);
+        map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
+        map.put("SendNotifications", java.lang.Boolean.class);
+        map.put("SendUpdates", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("SharedExtendedProperty", java.util.List.class);
+        map.put("ShowDeleted", java.lang.Boolean.class);
+        map.put("ShowHiddenInvitations", java.lang.Boolean.class);
+        map.put("SingleEvents", java.lang.Boolean.class);
+        map.put("SupportsAttachments", java.lang.Boolean.class);
+        map.put("SyncToken", java.lang.String.class);
         map.put("Text", java.lang.String.class);
+        map.put("TimeMax", com.google.api.client.util.DateTime.class);
+        map.put("TimeMin", com.google.api.client.util.DateTime.class);
+        map.put("TimeZone", java.lang.String.class);
+        map.put("UpdatedMin", com.google.api.client.util.DateTime.class);
         map.put("User", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -50,6 +73,8 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "alwaysincludeemail":
+        case "alwaysIncludeEmail": target.setAlwaysIncludeEmail(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "apiname":
         case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName.class, value)); return true;
         case "applicationname":
@@ -60,6 +85,8 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "conferencedataversion":
+        case "conferenceDataVersion": target.setConferenceDataVersion(property(camelContext, java.lang.Integer.class, value)); return true;
         case "content": target.setContent(property(camelContext, com.google.api.services.calendar.model.Event.class, value)); return true;
         case "contentchannel":
         case "contentChannel": target.setContentChannel(property(camelContext, com.google.api.services.calendar.model.Channel.class, value)); return true;
@@ -69,16 +96,57 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "emailAddress": target.setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "eventid":
         case "eventId": target.setEventId(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventtypes":
+        case "eventTypes": target.setEventTypes(property(camelContext, java.util.List.class, value)); return true;
+        case "icaluid":
+        case "iCalUID": target.setICalUID(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxattendees":
+        case "maxAttendees": target.setMaxAttendees(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "orderby":
+        case "orderBy": target.setOrderBy(property(camelContext, java.lang.String.class, value)); return true;
+        case "originalstart":
+        case "originalStart": target.setOriginalStart(property(camelContext, java.lang.String.class, value)); return true;
         case "p12filename":
         case "p12FileName": target.setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "privateextendedproperty":
+        case "privateExtendedProperty": target.setPrivateExtendedProperty(property(camelContext, java.util.List.class, value)); return true;
+        case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "sendnotifications":
+        case "sendNotifications": target.setSendNotifications(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "sendupdates":
+        case "sendUpdates": target.setSendUpdates(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sharedextendedproperty":
+        case "sharedExtendedProperty": target.setSharedExtendedProperty(property(camelContext, java.util.List.class, value)); return true;
+        case "showdeleted":
+        case "showDeleted": target.setShowDeleted(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "showhiddeninvitations":
+        case "showHiddenInvitations": target.setShowHiddenInvitations(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "singleevents":
+        case "singleEvents": target.setSingleEvents(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "supportsattachments":
+        case "supportsAttachments": target.setSupportsAttachments(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "synctoken":
+        case "syncToken": target.setSyncToken(property(camelContext, java.lang.String.class, value)); return true;
         case "text": target.setText(property(camelContext, java.lang.String.class, value)); return true;
+        case "timemax":
+        case "timeMax": target.setTimeMax(property(camelContext, com.google.api.client.util.DateTime.class, value)); return true;
+        case "timemin":
+        case "timeMin": target.setTimeMin(property(camelContext, com.google.api.client.util.DateTime.class, value)); return true;
+        case "timezone":
+        case "timeZone": target.setTimeZone(property(camelContext, java.lang.String.class, value)); return true;
+        case "updatedmin":
+        case "updatedMin": target.setUpdatedMin(property(camelContext, com.google.api.client.util.DateTime.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -94,6 +162,8 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "alwaysincludeemail":
+        case "alwaysIncludeEmail": return java.lang.Boolean.class;
         case "apiname":
         case "apiName": return org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName.class;
         case "applicationname":
@@ -104,6 +174,8 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "clientId": return java.lang.String.class;
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
+        case "conferencedataversion":
+        case "conferenceDataVersion": return java.lang.Integer.class;
         case "content": return com.google.api.services.calendar.model.Event.class;
         case "contentchannel":
         case "contentChannel": return com.google.api.services.calendar.model.Channel.class;
@@ -113,16 +185,57 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "emailAddress": return java.lang.String.class;
         case "eventid":
         case "eventId": return java.lang.String.class;
+        case "eventtypes":
+        case "eventTypes": return java.util.List.class;
+        case "icaluid":
+        case "iCalUID": return java.lang.String.class;
+        case "maxattendees":
+        case "maxAttendees": return java.lang.Integer.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "orderby":
+        case "orderBy": return java.lang.String.class;
+        case "originalstart":
+        case "originalStart": return java.lang.String.class;
         case "p12filename":
         case "p12FileName": return java.lang.String.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
+        case "privateextendedproperty":
+        case "privateExtendedProperty": return java.util.List.class;
+        case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
+        case "sendnotifications":
+        case "sendNotifications": return java.lang.Boolean.class;
+        case "sendupdates":
+        case "sendUpdates": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "sharedextendedproperty":
+        case "sharedExtendedProperty": return java.util.List.class;
+        case "showdeleted":
+        case "showDeleted": return java.lang.Boolean.class;
+        case "showhiddeninvitations":
+        case "showHiddenInvitations": return java.lang.Boolean.class;
+        case "singleevents":
+        case "singleEvents": return java.lang.Boolean.class;
+        case "supportsattachments":
+        case "supportsAttachments": return java.lang.Boolean.class;
+        case "synctoken":
+        case "syncToken": return java.lang.String.class;
         case "text": return java.lang.String.class;
+        case "timemax":
+        case "timeMax": return com.google.api.client.util.DateTime.class;
+        case "timemin":
+        case "timeMin": return com.google.api.client.util.DateTime.class;
+        case "timezone":
+        case "timeZone": return java.lang.String.class;
+        case "updatedmin":
+        case "updatedMin": return com.google.api.client.util.DateTime.class;
         case "user": return java.lang.String.class;
         default: return null;
         }
@@ -134,6 +247,8 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
+        case "alwaysincludeemail":
+        case "alwaysIncludeEmail": return target.getAlwaysIncludeEmail();
         case "apiname":
         case "apiName": return target.getApiName();
         case "applicationname":
@@ -144,6 +259,8 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "clientId": return target.getClientId();
         case "clientsecret":
         case "clientSecret": return target.getClientSecret();
+        case "conferencedataversion":
+        case "conferenceDataVersion": return target.getConferenceDataVersion();
         case "content": return target.getContent();
         case "contentchannel":
         case "contentChannel": return target.getContentChannel();
@@ -153,16 +270,57 @@ public class CalendarEventsEndpointConfigurationConfigurer extends org.apache.ca
         case "emailAddress": return target.getEmailAddress();
         case "eventid":
         case "eventId": return target.getEventId();
+        case "eventtypes":
+        case "eventTypes": return target.getEventTypes();
+        case "icaluid":
+        case "iCalUID": return target.getICalUID();
+        case "maxattendees":
+        case "maxAttendees": return target.getMaxAttendees();
+        case "maxresults":
+        case "maxResults": return target.getMaxResults();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "orderby":
+        case "orderBy": return target.getOrderBy();
+        case "originalstart":
+        case "originalStart": return target.getOriginalStart();
         case "p12filename":
         case "p12FileName": return target.getP12FileName();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
+        case "privateextendedproperty":
+        case "privateExtendedProperty": return target.getPrivateExtendedProperty();
+        case "q": return target.getQ();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();
+        case "sendnotifications":
+        case "sendNotifications": return target.getSendNotifications();
+        case "sendupdates":
+        case "sendUpdates": return target.getSendUpdates();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "sharedextendedproperty":
+        case "sharedExtendedProperty": return target.getSharedExtendedProperty();
+        case "showdeleted":
+        case "showDeleted": return target.getShowDeleted();
+        case "showhiddeninvitations":
+        case "showHiddenInvitations": return target.getShowHiddenInvitations();
+        case "singleevents":
+        case "singleEvents": return target.getSingleEvents();
+        case "supportsattachments":
+        case "supportsAttachments": return target.getSupportsAttachments();
+        case "synctoken":
+        case "syncToken": return target.getSyncToken();
         case "text": return target.getText();
+        case "timemax":
+        case "timeMax": return target.getTimeMax();
+        case "timemin":
+        case "timeMin": return target.getTimeMin();
+        case "timezone":
+        case "timeZone": return target.getTimeZone();
+        case "updatedmin":
+        case "updatedMin": return target.getUpdatedMin();
         case "user": return target.getUser();
         default: return null;
         }

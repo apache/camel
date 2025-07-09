@@ -158,32 +158,44 @@
                                 <api>
                                     <apiName>drive-about</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$About</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>drive-changes</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Changes</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>drive-channels</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Channels</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>drive-comments</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Comments</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>drive-drives</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Drives</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>drive-files</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Files</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                     <substitutions>
                                         <substitution>
                                             <method>watch|stop</method>
@@ -226,22 +238,30 @@
                                 <api>
                                     <apiName>drive-permissions</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Permissions</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>drive-replies</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Replies</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>drive-revisions</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Revisions</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>drive-teamdrives</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Teamdrives</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                             </apis>
                             <substitutions>

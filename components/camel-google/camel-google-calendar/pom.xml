@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -129,7 +130,7 @@
             <artifactId>google-oauth-client-jetty</artifactId>
             <version>${google-oauth-client-version}</version>
         </dependency>
-        
+
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -158,42 +159,58 @@
                                 <api>
                                     <apiName>acl</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Acl</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>list</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$CalendarList</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>calendars</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Calendars</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>channels</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Channels</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>colors</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Colors</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>freebusy</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Freebusy</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>events</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Events</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>settings</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Settings</proxyClass>
-                                    <fromJavasource />
+                                    <fromJavasource>
+                                        <includeSetters>true</includeSetters>
+                                    </fromJavasource>
                                 </api>
                             </apis>
                             <substitutions>

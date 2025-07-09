@@ -77,7 +77,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
         }
 
         // create a runnable invocation task to be submitted on a background thread pool
-        // this way we avoid blocking the current thread for long running methods
+        // this way we avoid blocking the current thread for long-running methods
         Runnable invocation = new Runnable() {
             @Override
             public void run() {
@@ -118,7 +118,8 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
      * @return                       API method invocation result.
      * @throws RuntimeCamelException on error. Exceptions thrown by API method are wrapped.
      */
-    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
+    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
+            throws RuntimeCamelException {
         return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(method, properties), method, properties);
     }
 

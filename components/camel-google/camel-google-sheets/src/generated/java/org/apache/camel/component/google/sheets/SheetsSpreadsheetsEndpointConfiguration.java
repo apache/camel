@@ -26,8 +26,17 @@ public final class SheetsSpreadsheetsEndpointConfiguration extends GoogleSheetsC
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The com.google.api.services.sheets.v4.model.Spreadsheet")})
     private com.google.api.services.sheets.v4.model.Spreadsheet content;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="True if tables should be excluded in the banded ranges")})
+    private java.lang.Boolean excludeTablesInBandedRanges;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "getByDataFilter", description="The com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest")})
     private com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest getSpreadsheetByDataFilterRequest;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="True if grid data should be returned")})
+    private java.lang.Boolean includeGridData;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="The ranges to retrieve from the spreadsheet")})
+    private java.util.List ranges;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "batchUpdate", description="The spreadsheet to apply the updates to"), @ApiMethod(methodName = "get", description="The spreadsheet to request"), @ApiMethod(methodName = "getByDataFilter", description="The spreadsheet to request")})
     private String spreadsheetId;
@@ -48,12 +57,36 @@ public final class SheetsSpreadsheetsEndpointConfiguration extends GoogleSheetsC
         this.content = content;
     }
 
+    public java.lang.Boolean getExcludeTablesInBandedRanges() {
+        return excludeTablesInBandedRanges;
+    }
+
+    public void setExcludeTablesInBandedRanges(java.lang.Boolean excludeTablesInBandedRanges) {
+        this.excludeTablesInBandedRanges = excludeTablesInBandedRanges;
+    }
+
     public com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest getGetSpreadsheetByDataFilterRequest() {
         return getSpreadsheetByDataFilterRequest;
     }
 
     public void setGetSpreadsheetByDataFilterRequest(com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest getSpreadsheetByDataFilterRequest) {
         this.getSpreadsheetByDataFilterRequest = getSpreadsheetByDataFilterRequest;
+    }
+
+    public java.lang.Boolean getIncludeGridData() {
+        return includeGridData;
+    }
+
+    public void setIncludeGridData(java.lang.Boolean includeGridData) {
+        this.includeGridData = includeGridData;
+    }
+
+    public java.util.List getRanges() {
+        return ranges;
+    }
+
+    public void setRanges(java.util.List ranges) {
+        this.ranges = ranges;
     }
 
     public String getSpreadsheetId() {

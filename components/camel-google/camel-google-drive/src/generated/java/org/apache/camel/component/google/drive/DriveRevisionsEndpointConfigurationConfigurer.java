@@ -23,6 +23,7 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AccessToken", java.lang.String.class);
+        map.put("AcknowledgeAbuse", java.lang.Boolean.class);
         map.put("ApiName", org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class);
         map.put("ApplicationName", java.lang.String.class);
         map.put("ClientId", java.lang.String.class);
@@ -31,6 +32,8 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
         map.put("Delegate", java.lang.String.class);
         map.put("FileId", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("PageSize", java.lang.Integer.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("RevisionId", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
@@ -44,6 +47,8 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "acknowledgeabuse":
+        case "acknowledgeAbuse": target.setAcknowledgeAbuse(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "apiname":
         case "apiName": target.setApiName(property(camelContext, org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class, value)); return true;
         case "applicationname":
@@ -58,6 +63,10 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
         case "fileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "revisionid":
@@ -79,6 +88,8 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "acknowledgeabuse":
+        case "acknowledgeAbuse": return java.lang.Boolean.class;
         case "apiname":
         case "apiName": return org.apache.camel.component.google.drive.internal.GoogleDriveApiName.class;
         case "applicationname":
@@ -93,6 +104,10 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
         case "fileId": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "revisionid":
@@ -110,6 +125,8 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
+        case "acknowledgeabuse":
+        case "acknowledgeAbuse": return target.getAcknowledgeAbuse();
         case "apiname":
         case "apiName": return target.getApiName();
         case "applicationname":
@@ -124,6 +141,10 @@ public class DriveRevisionsEndpointConfigurationConfigurer extends org.apache.ca
         case "fileId": return target.getFileId();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "pagesize":
+        case "pageSize": return target.getPageSize();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "revisionid":

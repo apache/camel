@@ -30,12 +30,15 @@ public class CalendarSettingsEndpointConfigurationConfigurer extends org.apache.
         map.put("ContentChannel", com.google.api.services.calendar.model.Channel.class);
         map.put("Delegate", java.lang.String.class);
         map.put("EmailAddress", java.lang.String.class);
+        map.put("MaxResults", java.lang.Integer.class);
         map.put("MethodName", java.lang.String.class);
         map.put("P12FileName", java.lang.String.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("Setting", java.lang.String.class);
+        map.put("SyncToken", java.lang.String.class);
         map.put("User", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -59,16 +62,22 @@ public class CalendarSettingsEndpointConfigurationConfigurer extends org.apache.
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "emailaddress":
         case "emailAddress": target.setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "p12filename":
         case "p12FileName": target.setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "setting": target.setSetting(property(camelContext, java.lang.String.class, value)); return true;
+        case "synctoken":
+        case "syncToken": target.setSyncToken(property(camelContext, java.lang.String.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -97,16 +106,22 @@ public class CalendarSettingsEndpointConfigurationConfigurer extends org.apache.
         case "delegate": return java.lang.String.class;
         case "emailaddress":
         case "emailAddress": return java.lang.String.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
         case "p12filename":
         case "p12FileName": return java.lang.String.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "setting": return java.lang.String.class;
+        case "synctoken":
+        case "syncToken": return java.lang.String.class;
         case "user": return java.lang.String.class;
         default: return null;
         }
@@ -131,16 +146,22 @@ public class CalendarSettingsEndpointConfigurationConfigurer extends org.apache.
         case "delegate": return target.getDelegate();
         case "emailaddress":
         case "emailAddress": return target.getEmailAddress();
+        case "maxresults":
+        case "maxResults": return target.getMaxResults();
         case "methodname":
         case "methodName": return target.getMethodName();
         case "p12filename":
         case "p12FileName": return target.getP12FileName();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
         case "setting": return target.getSetting();
+        case "synctoken":
+        case "syncToken": return target.getSyncToken();
         case "user": return target.getUser();
         default: return null;
         }

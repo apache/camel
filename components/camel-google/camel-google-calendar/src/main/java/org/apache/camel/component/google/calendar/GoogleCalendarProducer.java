@@ -38,7 +38,8 @@ public class GoogleCalendarProducer extends AbstractApiProducer<GoogleCalendarAp
     }
 
     @Override
-    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
+    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
+            throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
             BeanIntrospection beanIntrospection

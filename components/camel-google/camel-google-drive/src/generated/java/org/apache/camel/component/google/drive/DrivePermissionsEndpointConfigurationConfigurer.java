@@ -29,12 +29,25 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.drive.model.Permission.class);
         map.put("Delegate", java.lang.String.class);
+        map.put("EmailMessage", java.lang.String.class);
+        map.put("EnforceExpansiveAccess", java.lang.Boolean.class);
+        map.put("EnforceSingleParent", java.lang.Boolean.class);
         map.put("FileId", java.lang.String.class);
+        map.put("IncludePermissionsForView", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("MoveToNewOwnersRoot", java.lang.Boolean.class);
+        map.put("PageSize", java.lang.Integer.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("PermissionId", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
+        map.put("RemoveExpiration", java.lang.Boolean.class);
         map.put("Scopes", java.util.List.class);
+        map.put("SendNotificationEmail", java.lang.Boolean.class);
         map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("SupportsAllDrives", java.lang.Boolean.class);
+        map.put("SupportsTeamDrives", java.lang.Boolean.class);
+        map.put("TransferOwnership", java.lang.Boolean.class);
+        map.put("UseDomainAdminAccess", java.lang.Boolean.class);
         ALL_OPTIONS = map;
     }
 
@@ -54,17 +67,43 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content": target.setContent(property(camelContext, com.google.api.services.drive.model.Permission.class, value)); return true;
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "emailmessage":
+        case "emailMessage": target.setEmailMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "enforceexpansiveaccess":
+        case "enforceExpansiveAccess": target.setEnforceExpansiveAccess(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "enforcesingleparent":
+        case "enforceSingleParent": target.setEnforceSingleParent(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "fileid":
         case "fileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
+        case "includepermissionsforview":
+        case "includePermissionsForView": target.setIncludePermissionsForView(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "movetonewownersroot":
+        case "moveToNewOwnersRoot": target.setMoveToNewOwnersRoot(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "permissionid":
         case "permissionId": target.setPermissionId(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "removeexpiration":
+        case "removeExpiration": target.setRemoveExpiration(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "sendnotificationemail":
+        case "sendNotificationEmail": target.setSendNotificationEmail(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "supportsalldrives":
+        case "supportsAllDrives": target.setSupportsAllDrives(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "supportsteamdrives":
+        case "supportsTeamDrives": target.setSupportsTeamDrives(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "transferownership":
+        case "transferOwnership": target.setTransferOwnership(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "usedomainadminaccess":
+        case "useDomainAdminAccess": target.setUseDomainAdminAccess(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -89,17 +128,43 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         case "clientSecret": return java.lang.String.class;
         case "content": return com.google.api.services.drive.model.Permission.class;
         case "delegate": return java.lang.String.class;
+        case "emailmessage":
+        case "emailMessage": return java.lang.String.class;
+        case "enforceexpansiveaccess":
+        case "enforceExpansiveAccess": return java.lang.Boolean.class;
+        case "enforcesingleparent":
+        case "enforceSingleParent": return java.lang.Boolean.class;
         case "fileid":
         case "fileId": return java.lang.String.class;
+        case "includepermissionsforview":
+        case "includePermissionsForView": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "movetonewownersroot":
+        case "moveToNewOwnersRoot": return java.lang.Boolean.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "permissionid":
         case "permissionId": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
+        case "removeexpiration":
+        case "removeExpiration": return java.lang.Boolean.class;
         case "scopes": return java.util.List.class;
+        case "sendnotificationemail":
+        case "sendNotificationEmail": return java.lang.Boolean.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "supportsalldrives":
+        case "supportsAllDrives": return java.lang.Boolean.class;
+        case "supportsteamdrives":
+        case "supportsTeamDrives": return java.lang.Boolean.class;
+        case "transferownership":
+        case "transferOwnership": return java.lang.Boolean.class;
+        case "usedomainadminaccess":
+        case "useDomainAdminAccess": return java.lang.Boolean.class;
         default: return null;
         }
     }
@@ -120,17 +185,43 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         case "clientSecret": return target.getClientSecret();
         case "content": return target.getContent();
         case "delegate": return target.getDelegate();
+        case "emailmessage":
+        case "emailMessage": return target.getEmailMessage();
+        case "enforceexpansiveaccess":
+        case "enforceExpansiveAccess": return target.getEnforceExpansiveAccess();
+        case "enforcesingleparent":
+        case "enforceSingleParent": return target.getEnforceSingleParent();
         case "fileid":
         case "fileId": return target.getFileId();
+        case "includepermissionsforview":
+        case "includePermissionsForView": return target.getIncludePermissionsForView();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "movetonewownersroot":
+        case "moveToNewOwnersRoot": return target.getMoveToNewOwnersRoot();
+        case "pagesize":
+        case "pageSize": return target.getPageSize();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "permissionid":
         case "permissionId": return target.getPermissionId();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
+        case "removeexpiration":
+        case "removeExpiration": return target.getRemoveExpiration();
         case "scopes": return target.getScopes();
+        case "sendnotificationemail":
+        case "sendNotificationEmail": return target.getSendNotificationEmail();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "supportsalldrives":
+        case "supportsAllDrives": return target.getSupportsAllDrives();
+        case "supportsteamdrives":
+        case "supportsTeamDrives": return target.getSupportsTeamDrives();
+        case "transferownership":
+        case "transferOwnership": return target.getTransferOwnership();
+        case "usedomainadminaccess":
+        case "useDomainAdminAccess": return target.getUseDomainAdminAccess();
         default: return null;
         }
     }

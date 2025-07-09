@@ -29,6 +29,15 @@ public final class DriveRepliesEndpointConfiguration extends GoogleDriveConfigur
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The ID of the file"), @ApiMethod(methodName = "delete", description="The ID of the file"), @ApiMethod(methodName = "get", description="The ID of the file"), @ApiMethod(methodName = "list", description="The ID of the file"), @ApiMethod(methodName = "update", description="The ID of the file")})
     private String fileId;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="Whether to return deleted replies"), @ApiMethod(methodName = "list", description="Whether to include deleted replies")})
+    private java.lang.Boolean includeDeleted;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The maximum number of replies to return per page")})
+    private java.lang.Integer pageSize;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The token for continuing a previous list request on the next page")})
+    private java.lang.String pageToken;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the reply"), @ApiMethod(methodName = "get", description="The ID of the reply"), @ApiMethod(methodName = "update", description="The ID of the reply")})
     private String replyId;
 
@@ -54,6 +63,30 @@ public final class DriveRepliesEndpointConfiguration extends GoogleDriveConfigur
 
     public void setFileId(String fileId) {
         this.fileId = fileId;
+    }
+
+    public java.lang.Boolean getIncludeDeleted() {
+        return includeDeleted;
+    }
+
+    public void setIncludeDeleted(java.lang.Boolean includeDeleted) {
+        this.includeDeleted = includeDeleted;
+    }
+
+    public java.lang.Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(java.lang.Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
     }
 
     public String getReplyId() {

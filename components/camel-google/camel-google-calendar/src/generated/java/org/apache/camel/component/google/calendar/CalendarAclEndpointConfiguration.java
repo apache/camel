@@ -29,8 +29,23 @@ public final class CalendarAclEndpointConfiguration extends GoogleCalendarConfig
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "watch", description="The com.google.api.services.calendar.model.Channel")})
     private com.google.api.services.calendar.model.Channel contentChannel;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Maximum number of entries returned on one result page"), @ApiMethod(methodName = "watch", description="Maximum number of entries returned on one result page")})
+    private java.lang.Integer maxResults;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Token specifying which result page to return"), @ApiMethod(methodName = "watch", description="Token specifying which result page to return")})
+    private java.lang.String pageToken;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="ACL rule identifier"), @ApiMethod(methodName = "get", description="ACL rule identifier"), @ApiMethod(methodName = "patch", description="ACL rule identifier"), @ApiMethod(methodName = "update", description="ACL rule identifier")})
     private String ruleId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "insert", description="Whether to send notifications about the calendar sharing change"), @ApiMethod(methodName = "patch", description="Whether to send notifications about the calendar sharing change"), @ApiMethod(methodName = "update", description="Whether to send notifications about the calendar sharing change")})
+    private java.lang.Boolean sendNotifications;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Whether to include deleted ACLs in the result"), @ApiMethod(methodName = "watch", description="Whether to include deleted ACLs in the result")})
+    private java.lang.Boolean showDeleted;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Token obtained from the nextSyncToken field returned on the last page of results from the previous list request"), @ApiMethod(methodName = "watch", description="Token obtained from the nextSyncToken field returned on the last page of results from the previous list request")})
+    private java.lang.String syncToken;
 
     public String getCalendarId() {
         return calendarId;
@@ -56,11 +71,51 @@ public final class CalendarAclEndpointConfiguration extends GoogleCalendarConfig
         this.contentChannel = contentChannel;
     }
 
+    public java.lang.Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(java.lang.Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
     public String getRuleId() {
         return ruleId;
     }
 
     public void setRuleId(String ruleId) {
         this.ruleId = ruleId;
+    }
+
+    public java.lang.Boolean getSendNotifications() {
+        return sendNotifications;
+    }
+
+    public void setSendNotifications(java.lang.Boolean sendNotifications) {
+        this.sendNotifications = sendNotifications;
+    }
+
+    public java.lang.Boolean getShowDeleted() {
+        return showDeleted;
+    }
+
+    public void setShowDeleted(java.lang.Boolean showDeleted) {
+        this.showDeleted = showDeleted;
+    }
+
+    public java.lang.String getSyncToken() {
+        return syncToken;
+    }
+
+    public void setSyncToken(java.lang.String syncToken) {
+        this.syncToken = syncToken;
     }
 }

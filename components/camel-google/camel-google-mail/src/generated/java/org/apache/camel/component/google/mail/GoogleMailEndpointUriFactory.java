@@ -23,7 +23,7 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(39);
+        Set<String> props = new HashSet<>(53);
         props.add("accessToken");
         props.add("apiName");
         props.add("applicationName");
@@ -38,18 +38,31 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("content");
         props.add("delay");
         props.add("delegate");
+        props.add("deleted");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("format");
         props.add("greedy");
+        props.add("historyTypes");
         props.add("id");
         props.add("inBody");
+        props.add("includeSpamTrash");
         props.add("initialDelay");
+        props.add("internalDateSource");
+        props.add("labelId");
+        props.add("labelIds");
         props.add("lazyStartProducer");
+        props.add("maxResults");
         props.add("mediaContent");
         props.add("messageId");
+        props.add("metadataHeaders");
         props.add("methodName");
         props.add("modifyMessageRequest");
+        props.add("neverMarkSpam");
+        props.add("pageToken");
         props.add("pollStrategy");
+        props.add("processForCalendar");
+        props.add("q");
         props.add("refreshToken");
         props.add("repeatCount");
         props.add("runLoggingLevel");
@@ -59,6 +72,7 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("scopes");
         props.add("sendEmptyMessageWhenIdle");
         props.add("serviceAccountKey");
+        props.add("startHistoryId");
         props.add("startScheduler");
         props.add("timeUnit");
         props.add("useFixedDelay");

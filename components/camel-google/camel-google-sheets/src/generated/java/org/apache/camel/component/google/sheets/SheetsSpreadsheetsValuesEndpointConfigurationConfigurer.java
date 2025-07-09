@@ -33,14 +33,23 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         map.put("ClientId", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("Content", com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class);
+        map.put("DateTimeRenderOption", java.lang.String.class);
         map.put("Delegate", java.lang.String.class);
+        map.put("IncludeValuesInResponse", java.lang.Boolean.class);
+        map.put("InsertDataOption", java.lang.String.class);
+        map.put("MajorDimension", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("Range", java.lang.String.class);
+        map.put("Ranges", java.util.List.class);
         map.put("RefreshToken", java.lang.String.class);
+        map.put("ResponseDateTimeRenderOption", java.lang.String.class);
+        map.put("ResponseValueRenderOption", java.lang.String.class);
         map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("SplitResult", boolean.class);
         map.put("SpreadsheetId", java.lang.String.class);
+        map.put("ValueInputOption", java.lang.String.class);
+        map.put("ValueRenderOption", java.lang.String.class);
         map.put("Values", com.google.api.services.sheets.v4.model.ValueRange.class);
         ALL_OPTIONS = map;
     }
@@ -70,12 +79,25 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "clientsecret":
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "content": target.setContent(property(camelContext, com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class, value)); return true;
+        case "datetimerenderoption":
+        case "dateTimeRenderOption": target.setDateTimeRenderOption(property(camelContext, java.lang.String.class, value)); return true;
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
+        case "includevaluesinresponse":
+        case "includeValuesInResponse": target.setIncludeValuesInResponse(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "insertdataoption":
+        case "insertDataOption": target.setInsertDataOption(property(camelContext, java.lang.String.class, value)); return true;
+        case "majordimension":
+        case "majorDimension": target.setMajorDimension(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "range": target.setRange(property(camelContext, java.lang.String.class, value)); return true;
+        case "ranges": target.setRanges(property(camelContext, java.util.List.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "responsedatetimerenderoption":
+        case "responseDateTimeRenderOption": target.setResponseDateTimeRenderOption(property(camelContext, java.lang.String.class, value)); return true;
+        case "responsevaluerenderoption":
+        case "responseValueRenderOption": target.setResponseValueRenderOption(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -83,6 +105,10 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "splitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
         case "spreadsheetid":
         case "spreadsheetId": target.setSpreadsheetId(property(camelContext, java.lang.String.class, value)); return true;
+        case "valueinputoption":
+        case "valueInputOption": target.setValueInputOption(property(camelContext, java.lang.String.class, value)); return true;
+        case "valuerenderoption":
+        case "valueRenderOption": target.setValueRenderOption(property(camelContext, java.lang.String.class, value)); return true;
         case "values": target.setValues(property(camelContext, com.google.api.services.sheets.v4.model.ValueRange.class, value)); return true;
         default: return false;
         }
@@ -117,12 +143,25 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "content": return com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class;
+        case "datetimerenderoption":
+        case "dateTimeRenderOption": return java.lang.String.class;
         case "delegate": return java.lang.String.class;
+        case "includevaluesinresponse":
+        case "includeValuesInResponse": return java.lang.Boolean.class;
+        case "insertdataoption":
+        case "insertDataOption": return java.lang.String.class;
+        case "majordimension":
+        case "majorDimension": return java.lang.String.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
         case "range": return java.lang.String.class;
+        case "ranges": return java.util.List.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
+        case "responsedatetimerenderoption":
+        case "responseDateTimeRenderOption": return java.lang.String.class;
+        case "responsevaluerenderoption":
+        case "responseValueRenderOption": return java.lang.String.class;
         case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
@@ -130,6 +169,10 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "splitResult": return boolean.class;
         case "spreadsheetid":
         case "spreadsheetId": return java.lang.String.class;
+        case "valueinputoption":
+        case "valueInputOption": return java.lang.String.class;
+        case "valuerenderoption":
+        case "valueRenderOption": return java.lang.String.class;
         case "values": return com.google.api.services.sheets.v4.model.ValueRange.class;
         default: return null;
         }
@@ -160,12 +203,25 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "clientsecret":
         case "clientSecret": return target.getClientSecret();
         case "content": return target.getContent();
+        case "datetimerenderoption":
+        case "dateTimeRenderOption": return target.getDateTimeRenderOption();
         case "delegate": return target.getDelegate();
+        case "includevaluesinresponse":
+        case "includeValuesInResponse": return target.getIncludeValuesInResponse();
+        case "insertdataoption":
+        case "insertDataOption": return target.getInsertDataOption();
+        case "majordimension":
+        case "majorDimension": return target.getMajorDimension();
         case "methodname":
         case "methodName": return target.getMethodName();
         case "range": return target.getRange();
+        case "ranges": return target.getRanges();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
+        case "responsedatetimerenderoption":
+        case "responseDateTimeRenderOption": return target.getResponseDateTimeRenderOption();
+        case "responsevaluerenderoption":
+        case "responseValueRenderOption": return target.getResponseValueRenderOption();
         case "scopes": return target.getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
@@ -173,6 +229,10 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "splitResult": return target.isSplitResult();
         case "spreadsheetid":
         case "spreadsheetId": return target.getSpreadsheetId();
+        case "valueinputoption":
+        case "valueInputOption": return target.getValueInputOption();
+        case "valuerenderoption":
+        case "valueRenderOption": return target.getValueRenderOption();
         case "values": return target.getValues();
         default: return null;
         }

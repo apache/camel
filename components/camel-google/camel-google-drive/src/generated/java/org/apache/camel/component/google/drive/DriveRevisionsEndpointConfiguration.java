@@ -20,14 +20,31 @@ import org.apache.camel.spi.UriParams;
 @Configurer(extended = true)
 public final class DriveRevisionsEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="Whether the user is acknowledging the risk of downloading known malware or other abusive files")})
+    private java.lang.Boolean acknowledgeAbuse;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.Revision")})
     private com.google.api.services.drive.model.Revision content;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the file"), @ApiMethod(methodName = "get", description="The ID of the file"), @ApiMethod(methodName = "list", description="The ID of the file"), @ApiMethod(methodName = "update", description="The ID of the file")})
     private String fileId;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The maximum number of revisions to return per page")})
+    private java.lang.Integer pageSize;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The token for continuing a previous list request on the next page")})
+    private java.lang.String pageToken;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the revision"), @ApiMethod(methodName = "get", description="The ID of the revision"), @ApiMethod(methodName = "update", description="The ID of the revision")})
     private String revisionId;
+
+    public java.lang.Boolean getAcknowledgeAbuse() {
+        return acknowledgeAbuse;
+    }
+
+    public void setAcknowledgeAbuse(java.lang.Boolean acknowledgeAbuse) {
+        this.acknowledgeAbuse = acknowledgeAbuse;
+    }
 
     public com.google.api.services.drive.model.Revision getContent() {
         return content;
@@ -43,6 +60,22 @@ public final class DriveRevisionsEndpointConfiguration extends GoogleDriveConfig
 
     public void setFileId(String fileId) {
         this.fileId = fileId;
+    }
+
+    public java.lang.Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(java.lang.Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
     }
 
     public String getRevisionId() {

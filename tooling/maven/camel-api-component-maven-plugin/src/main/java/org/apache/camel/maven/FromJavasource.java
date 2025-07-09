@@ -24,12 +24,10 @@ public class FromJavasource {
     protected String excludePackages = ApiComponentGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
 
     protected String excludeClasses;
-
     protected String includeMethods;
-
     protected String excludeMethods;
-
     protected Boolean includeStaticMethods;
+    protected Boolean includeSetters;
 
     public String getExcludePackages() {
         return excludePackages;
@@ -71,4 +69,11 @@ public class FromJavasource {
         this.includeStaticMethods = includeStaticMethods;
     }
 
+    public Boolean getIncludeSetters() {
+        return includeSetters;
+    }
+
+    public void setIncludeSetters(Boolean includeSetters) {
+        this.includeSetters = includeSetters;
+    }
 }

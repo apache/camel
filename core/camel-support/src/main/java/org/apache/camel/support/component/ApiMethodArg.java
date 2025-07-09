@@ -22,6 +22,7 @@ public class ApiMethodArg {
     private final String typeArgs;
     private final String rawTypeArgs;
     private final String description;
+    private final boolean optional;
 
     public ApiMethodArg(String name, Class<?> type, String typeArgs, String rawTypeArgs, String description) {
         this.name = name;
@@ -29,6 +30,16 @@ public class ApiMethodArg {
         this.typeArgs = typeArgs;
         this.rawTypeArgs = rawTypeArgs;
         this.description = description;
+        this.optional = false;
+    }
+
+    public ApiMethodArg(String name, Class<?> type, String typeArgs, String rawTypeArgs, String description, boolean optional) {
+        this.name = name;
+        this.type = type;
+        this.typeArgs = typeArgs;
+        this.rawTypeArgs = rawTypeArgs;
+        this.description = description;
+        this.optional = optional;
     }
 
     public String getName() {
@@ -49,6 +60,10 @@ public class ApiMethodArg {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean isOptional() {
+        return optional;
     }
 
     @Override

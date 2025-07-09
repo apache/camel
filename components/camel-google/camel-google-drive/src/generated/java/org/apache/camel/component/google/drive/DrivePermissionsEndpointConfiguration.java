@@ -23,11 +23,52 @@ public final class DrivePermissionsEndpointConfiguration extends GoogleDriveConf
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The com.google.api.services.drive.model.Permission"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.Permission")})
     private com.google.api.services.drive.model.Permission content;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="A plain text custom message to include in the notification email")})
+    private java.lang.String emailMessage;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="Whether the request should enforce expansive access rules"), @ApiMethod(methodName = "delete", description="Whether the request should enforce expansive access rules"), @ApiMethod(methodName = "update", description="Whether the request should enforce expansive access rules")})
+    private java.lang.Boolean enforceExpansiveAccess;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="Deprecated: See moveToNewOwnersRoot for details")})
+    @Deprecated
+    private java.lang.Boolean enforceSingleParent;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The ID of the file or shared drive"), @ApiMethod(methodName = "delete", description="The ID of the file or shared drive"), @ApiMethod(methodName = "get", description="The ID of the file"), @ApiMethod(methodName = "list", description="The ID of the file or shared drive"), @ApiMethod(methodName = "update", description="The ID of the file or shared drive")})
     private String fileId;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Specifies which additional view's permissions to include in the response")})
+    private java.lang.String includePermissionsForView;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="This parameter will only take effect if the item is not in a shared drive and the request is attempting to transfer the ownership of the item")})
+    private java.lang.Boolean moveToNewOwnersRoot;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The maximum number of permissions to return per page")})
+    private java.lang.Integer pageSize;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="The token for continuing a previous list request on the next page")})
+    private java.lang.String pageToken;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the permission"), @ApiMethod(methodName = "get", description="The ID of the permission"), @ApiMethod(methodName = "update", description="The ID of the permission")})
     private String permissionId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "update", description="Whether to remove the expiration date")})
+    private java.lang.Boolean removeExpiration;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="Whether to send a notification email when sharing to users or groups")})
+    private java.lang.Boolean sendNotificationEmail;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "delete", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "get", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "list", description="Whether the requesting application supports both My Drives and shared drives"), @ApiMethod(methodName = "update", description="Whether the requesting application supports both My Drives and shared drives")})
+    private java.lang.Boolean supportsAllDrives;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "delete", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "get", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "list", description="Deprecated: Use supportsAllDrives instead"), @ApiMethod(methodName = "update", description="Deprecated: Use supportsAllDrives instead")})
+    @Deprecated
+    private java.lang.Boolean supportsTeamDrives;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="Whether to transfer ownership to the specified user and downgrade the current owner to a writer"), @ApiMethod(methodName = "update", description="Whether to transfer ownership to the specified user and downgrade the current owner to a writer")})
+    private java.lang.Boolean transferOwnership;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "create", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if the file ID parameter refers to a shared drive and the requester is an administrator of the domain to which the shared drive belongs"), @ApiMethod(methodName = "delete", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if the file ID parameter refers to a shared drive and the requester is an administrator of the domain to which the shared drive belongs"), @ApiMethod(methodName = "get", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if the file ID parameter refers to a shared drive and the requester is an administrator of the domain to which the shared drive belongs"), @ApiMethod(methodName = "list", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if the file ID parameter refers to a shared drive and the requester is an administrator of the domain to which the shared drive belongs"), @ApiMethod(methodName = "update", description="Issue the request as a domain administrator; if set to true, then the requester will be granted access if the file ID parameter refers to a shared drive and the requester is an administrator of the domain to which the shared drive belongs")})
+    private java.lang.Boolean useDomainAdminAccess;
 
     public com.google.api.services.drive.model.Permission getContent() {
         return content;
@@ -35,6 +76,30 @@ public final class DrivePermissionsEndpointConfiguration extends GoogleDriveConf
 
     public void setContent(com.google.api.services.drive.model.Permission content) {
         this.content = content;
+    }
+
+    public java.lang.String getEmailMessage() {
+        return emailMessage;
+    }
+
+    public void setEmailMessage(java.lang.String emailMessage) {
+        this.emailMessage = emailMessage;
+    }
+
+    public java.lang.Boolean getEnforceExpansiveAccess() {
+        return enforceExpansiveAccess;
+    }
+
+    public void setEnforceExpansiveAccess(java.lang.Boolean enforceExpansiveAccess) {
+        this.enforceExpansiveAccess = enforceExpansiveAccess;
+    }
+
+    public java.lang.Boolean getEnforceSingleParent() {
+        return enforceSingleParent;
+    }
+
+    public void setEnforceSingleParent(java.lang.Boolean enforceSingleParent) {
+        this.enforceSingleParent = enforceSingleParent;
     }
 
     public String getFileId() {
@@ -45,11 +110,91 @@ public final class DrivePermissionsEndpointConfiguration extends GoogleDriveConf
         this.fileId = fileId;
     }
 
+    public java.lang.String getIncludePermissionsForView() {
+        return includePermissionsForView;
+    }
+
+    public void setIncludePermissionsForView(java.lang.String includePermissionsForView) {
+        this.includePermissionsForView = includePermissionsForView;
+    }
+
+    public java.lang.Boolean getMoveToNewOwnersRoot() {
+        return moveToNewOwnersRoot;
+    }
+
+    public void setMoveToNewOwnersRoot(java.lang.Boolean moveToNewOwnersRoot) {
+        this.moveToNewOwnersRoot = moveToNewOwnersRoot;
+    }
+
+    public java.lang.Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(java.lang.Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
     public String getPermissionId() {
         return permissionId;
     }
 
     public void setPermissionId(String permissionId) {
         this.permissionId = permissionId;
+    }
+
+    public java.lang.Boolean getRemoveExpiration() {
+        return removeExpiration;
+    }
+
+    public void setRemoveExpiration(java.lang.Boolean removeExpiration) {
+        this.removeExpiration = removeExpiration;
+    }
+
+    public java.lang.Boolean getSendNotificationEmail() {
+        return sendNotificationEmail;
+    }
+
+    public void setSendNotificationEmail(java.lang.Boolean sendNotificationEmail) {
+        this.sendNotificationEmail = sendNotificationEmail;
+    }
+
+    public java.lang.Boolean getSupportsAllDrives() {
+        return supportsAllDrives;
+    }
+
+    public void setSupportsAllDrives(java.lang.Boolean supportsAllDrives) {
+        this.supportsAllDrives = supportsAllDrives;
+    }
+
+    public java.lang.Boolean getSupportsTeamDrives() {
+        return supportsTeamDrives;
+    }
+
+    public void setSupportsTeamDrives(java.lang.Boolean supportsTeamDrives) {
+        this.supportsTeamDrives = supportsTeamDrives;
+    }
+
+    public java.lang.Boolean getTransferOwnership() {
+        return transferOwnership;
+    }
+
+    public void setTransferOwnership(java.lang.Boolean transferOwnership) {
+        this.transferOwnership = transferOwnership;
+    }
+
+    public java.lang.Boolean getUseDomainAdminAccess() {
+        return useDomainAdminAccess;
+    }
+
+    public void setUseDomainAdminAccess(java.lang.Boolean useDomainAdminAccess) {
+        this.useDomainAdminAccess = useDomainAdminAccess;
     }
 }

@@ -23,8 +23,29 @@ public final class GmailUsersThreadsEndpointConfiguration extends GoogleMailConf
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "modify", description="The com.google.api.services.gmail.model.ModifyThreadRequest")})
     private com.google.api.services.gmail.model.ModifyThreadRequest content;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="The format to return the messages in")})
+    private java.lang.String format;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="ID of the Thread to delete"), @ApiMethod(methodName = "get", description="The ID of the thread to retrieve"), @ApiMethod(methodName = "modify", description="The ID of the thread to modify"), @ApiMethod(methodName = "trash", description="The ID of the thread to Trash"), @ApiMethod(methodName = "untrash", description="The ID of the thread to remove from Trash")})
     private String id;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Include threads from SPAM and TRASH in the results")})
+    private java.lang.Boolean includeSpamTrash;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Only return threads with labels that match all of the specified label IDs")})
+    private java.util.List labelIds;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Maximum number of threads to return")})
+    private java.lang.Long maxResults;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="When given and format is METADATA, only include headers specified")})
+    private java.util.List metadataHeaders;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Page token to retrieve a specific page of results in the list")})
+    private java.lang.String pageToken;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Only return threads matching the specified query")})
+    private java.lang.String q;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "get", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "list", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "modify", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "trash", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "untrash", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me")})
     private String userId;
@@ -37,12 +58,68 @@ public final class GmailUsersThreadsEndpointConfiguration extends GoogleMailConf
         this.content = content;
     }
 
+    public java.lang.String getFormat() {
+        return format;
+    }
+
+    public void setFormat(java.lang.String format) {
+        this.format = format;
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public java.lang.Boolean getIncludeSpamTrash() {
+        return includeSpamTrash;
+    }
+
+    public void setIncludeSpamTrash(java.lang.Boolean includeSpamTrash) {
+        this.includeSpamTrash = includeSpamTrash;
+    }
+
+    public java.util.List getLabelIds() {
+        return labelIds;
+    }
+
+    public void setLabelIds(java.util.List labelIds) {
+        this.labelIds = labelIds;
+    }
+
+    public java.lang.Long getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(java.lang.Long maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public java.util.List getMetadataHeaders() {
+        return metadataHeaders;
+    }
+
+    public void setMetadataHeaders(java.util.List metadataHeaders) {
+        this.metadataHeaders = metadataHeaders;
+    }
+
+    public java.lang.String getPageToken() {
+        return pageToken;
+    }
+
+    public void setPageToken(java.lang.String pageToken) {
+        this.pageToken = pageToken;
+    }
+
+    public java.lang.String getQ() {
+        return q;
+    }
+
+    public void setQ(java.lang.String q) {
+        this.q = q;
     }
 
     public String getUserId() {

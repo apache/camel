@@ -274,6 +274,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                     ? apiFromJavasource.getExcludeMethods() : fromJavasource.getExcludeMethods();
             mojo.includeStaticMethods = apiFromJavasource.getIncludeStaticMethods() != null
                     ? apiFromJavasource.getIncludeStaticMethods() : fromJavasource.getIncludeStaticMethods();
+            mojo.includeSetters = apiFromJavasource.getIncludeSetters() != null
+                    ? apiFromJavasource.getIncludeSetters() : fromJavasource.getIncludeSetters();
             mojo.aliases = api.getAliases().isEmpty() ? aliases : api.getAliases();
             mojo.nullableOptions = api.getNullableOptions() != null ? api.getNullableOptions() : nullableOptions;
             apiMethodGenerator = mojo;

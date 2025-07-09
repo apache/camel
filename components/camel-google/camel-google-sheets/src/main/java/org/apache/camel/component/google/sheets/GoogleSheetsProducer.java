@@ -38,8 +38,10 @@ public class GoogleSheetsProducer extends AbstractApiProducer<GoogleSheetsApiNam
     }
 
     @Override
-    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
-        AbstractGoogleClientRequest<?> request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
+    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
+            throws RuntimeCamelException {
+        AbstractGoogleClientRequest<?> request
+                = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
             BeanIntrospection beanIntrospection
                     = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());

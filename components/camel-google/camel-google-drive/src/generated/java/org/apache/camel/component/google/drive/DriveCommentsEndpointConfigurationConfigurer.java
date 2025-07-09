@@ -31,10 +31,14 @@ public class DriveCommentsEndpointConfigurationConfigurer extends org.apache.cam
         map.put("Content", com.google.api.services.drive.model.Comment.class);
         map.put("Delegate", java.lang.String.class);
         map.put("FileId", java.lang.String.class);
+        map.put("IncludeDeleted", java.lang.Boolean.class);
         map.put("MethodName", java.lang.String.class);
+        map.put("PageSize", java.lang.Integer.class);
+        map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.List.class);
         map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("StartModifiedTime", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -58,13 +62,21 @@ public class DriveCommentsEndpointConfigurationConfigurer extends org.apache.cam
         case "delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "fileid":
         case "fileId": target.setFileId(property(camelContext, java.lang.String.class, value)); return true;
+        case "includedeleted":
+        case "includeDeleted": target.setIncludeDeleted(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "methodname":
         case "methodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "pagetoken":
+        case "pageToken": target.setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "startmodifiedtime":
+        case "startModifiedTime": target.setStartModifiedTime(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -93,13 +105,21 @@ public class DriveCommentsEndpointConfigurationConfigurer extends org.apache.cam
         case "delegate": return java.lang.String.class;
         case "fileid":
         case "fileId": return java.lang.String.class;
+        case "includedeleted":
+        case "includeDeleted": return java.lang.Boolean.class;
         case "methodname":
         case "methodName": return java.lang.String.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "pagetoken":
+        case "pageToken": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "startmodifiedtime":
+        case "startModifiedTime": return java.lang.String.class;
         default: return null;
         }
     }
@@ -124,13 +144,21 @@ public class DriveCommentsEndpointConfigurationConfigurer extends org.apache.cam
         case "delegate": return target.getDelegate();
         case "fileid":
         case "fileId": return target.getFileId();
+        case "includedeleted":
+        case "includeDeleted": return target.getIncludeDeleted();
         case "methodname":
         case "methodName": return target.getMethodName();
+        case "pagesize":
+        case "pageSize": return target.getPageSize();
+        case "pagetoken":
+        case "pageToken": return target.getPageToken();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "scopes": return target.getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "startmodifiedtime":
+        case "startModifiedTime": return target.getStartModifiedTime();
         default: return null;
         }
     }

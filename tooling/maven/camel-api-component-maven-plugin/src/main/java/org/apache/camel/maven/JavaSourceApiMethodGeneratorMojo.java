@@ -58,6 +58,9 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
     @Parameter(property = PREFIX + "includeStaticMethods")
     protected Boolean includeStaticMethods;
 
+    @Parameter(property = PREFIX + "includeSetters")
+    protected Boolean includeSetters;
+
     @Override
     public List<SignatureModel> getSignatureList() throws MojoExecutionException {
         // signatures as map from signature with no arg names to arg names from JavadocParser
@@ -94,7 +97,7 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                 }
 
                 parser = new JavaSourceParser();
-                parser.parse(inputStream, nestedClass);
+                parser.parse(inputStream, nestedClass, includeSetters != null && includeSetters);
             } catch (Exception e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
@@ -123,6 +126,18 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                     model.setMethodDescription(parser.getMethodDocs().get(name));
                     model.setParameterDescriptions(parser.getParameterDocs().get(name));
                     model.setParameterTypes(parser.getParameterTypes().get(signature));
+
+                    // include getter/setters
+                    if (includeSetters != null && includeSetters && !parser.getSetterMethods().isEmpty()) {
+                        var m = parser.getSetterMethods().get(signature);
+                        var d = parser.getSetterDocs().get(signature);
+                        if (getLog().isDebugEnabled()) {
+                            getLog().debug("There are " + m.size() + " optional properties as setters for: " + name);
+                            getLog().debug("" + m);
+                        }
+                        model.setSetterTypes(m);
+                        model.setSetterDescriptions(d);
+                    }
 
                     result.put(method, model);
                 }

@@ -59,6 +59,7 @@ public abstract class ApiMethodParser<T> {
     private final Class<T> proxyType;
     private List<String> signatures;
     private final Map<String, Map<String, String>> signaturesArguments = new HashMap<>();
+    private final Map<String, Map<String, String>> signaturesProperties = new HashMap<>();
     private Map<String, Map<String, String>> parameters;
     private final Map<String, String> descriptions = new HashMap<>();
     private ClassLoader classLoader = ApiMethodParser.class.getClassLoader();
@@ -86,6 +87,14 @@ public abstract class ApiMethodParser<T> {
 
     public void addSignatureArguments(String name, Map<String, String> arguments) {
         this.signaturesArguments.put(name, arguments);
+    }
+
+    public Map<String, Map<String, String>> getSignaturesProperties() {
+        return signaturesProperties;
+    }
+
+    public void addSignatureProperties(String name, Map<String, String> properties) {
+        this.signaturesProperties.put(name, properties);
     }
 
     public Map<String, String> getDescriptions() {
@@ -137,6 +146,7 @@ public abstract class ApiMethodParser<T> {
             log.debug("Processing {}", signature);
 
             final List<ApiMethodArg> arguments = new ArrayList<>();
+            final List<ApiMethodArg> properties = new ArrayList<>();
             final List<Class<?>> argTypes = new ArrayList<>();
 
             // Map<String, Map<XXX, Bla>> foo(
@@ -193,6 +203,37 @@ public abstract class ApiMethodParser<T> {
                     arguments.add(new ApiMethodArg(argName, type, typeArg, rawTypeArg, typeDesc));
                 }
             }
+            args = signaturesProperties.get(signature);
+            if (args != null) {
+                for (Map.Entry<String, String> entry : args.entrySet()) {
+                    String argName = entry.getKey();
+                    String rawTypeArg = entry.getValue();
+                    String shortTypeArgs = rawTypeArg;
+                    String typeArg = null;
+                    // handle generics
+                    pos = shortTypeArgs.indexOf('<');
+                    if (pos != -1) {
+                        typeArg = shortTypeArgs.substring(pos);
+                        // remove leading and trailing < > as that is what the old way was doing
+                        if (typeArg.startsWith("<")) {
+                            typeArg = typeArg.substring(1);
+                        }
+                        if (typeArg.endsWith(">")) {
+                            typeArg = typeArg.substring(0, typeArg.length() - 1);
+                        }
+                        shortTypeArgs = shortTypeArgs.substring(0, pos);
+                    }
+                    final Class<?> type = forName(shortTypeArgs);
+                    String typeDesc = null;
+                    if (parameters != null && argName != null) {
+                        Map<String, String> params = parameters.get(name);
+                        if (params != null) {
+                            typeDesc = params.get(argName);
+                        }
+                    }
+                    properties.add(new ApiMethodArg(argName, type, typeArg, rawTypeArg, typeDesc, true));
+                }
+            }
 
             Method method;
             try {
@@ -200,7 +241,7 @@ public abstract class ApiMethodParser<T> {
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException("Method not found [" + signature + "] in type " + proxyType.getName());
             }
-            result.add(new ApiMethodModel(name, resultType, arguments, method, descriptions.get(name), signature));
+            result.add(new ApiMethodModel(name, resultType, arguments, properties, method, descriptions.get(name), signature));
         }
 
         // allow derived classes to post process
@@ -342,28 +383,32 @@ public abstract class ApiMethodParser<T> {
         private final String name;
         private final Class<?> resultType;
         private final List<ApiMethodArg> arguments;
+        private final List<ApiMethodArg> properties;
         private final Method method;
         private final String description;
         private final String signature;
 
         private String uniqueName;
 
-        ApiMethodModel(String name, Class<?> resultType, List<ApiMethodArg> arguments, Method method,
+        ApiMethodModel(String name, Class<?> resultType, List<ApiMethodArg> arguments, List<ApiMethodArg> properties,
+                       Method method,
                        String description, String signature) {
             this.name = name;
             this.resultType = resultType;
             this.arguments = arguments;
+            this.properties = properties;
             this.method = method;
             this.description = description;
             this.signature = signature;
         }
 
         ApiMethodModel(String uniqueName, String name, Class<?> resultType, List<ApiMethodArg> arguments,
-                       Method method, String description, String signature) {
+                       List<ApiMethodArg> properties, Method method, String description, String signature) {
             this.name = name;
             this.uniqueName = uniqueName;
             this.resultType = resultType;
             this.arguments = arguments;
+            this.properties = properties;
             this.method = method;
             this.description = description;
             this.signature = signature;
@@ -387,6 +432,21 @@ public abstract class ApiMethodParser<T> {
 
         public List<ApiMethodArg> getArguments() {
             return arguments;
+        }
+
+        public List<ApiMethodArg> getProperties() {
+            return properties;
+        }
+
+        public List<ApiMethodArg> getArgumentsAndProperties() {
+            List<ApiMethodArg> answer = new ArrayList<>();
+            if (arguments != null && !arguments.isEmpty()) {
+                answer.addAll(arguments);
+            }
+            if (properties != null && !properties.isEmpty()) {
+                answer.addAll(properties);
+            }
+            return answer;
         }
 
         public String getDescription() {

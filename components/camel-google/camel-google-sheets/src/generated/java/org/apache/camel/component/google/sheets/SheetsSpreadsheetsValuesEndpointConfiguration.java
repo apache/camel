@@ -38,11 +38,38 @@ public final class SheetsSpreadsheetsValuesEndpointConfiguration extends GoogleS
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "batchClearByDataFilter", description="The com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest")})
     private com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest content;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "batchGet", description="How dates, times, and durations should be represented in the output"), @ApiMethod(methodName = "get", description="How dates, times, and durations should be represented in the output")})
+    private java.lang.String dateTimeRenderOption;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "append", description="Determines if the update response should include the values of the cells that were appended"), @ApiMethod(methodName = "update", description="Determines if the update response should include the values of the cells that were updated")})
+    private java.lang.Boolean includeValuesInResponse;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "append", description="How the input data should be inserted")})
+    private java.lang.String insertDataOption;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "batchGet", description="The major dimension that results should use"), @ApiMethod(methodName = "get", description="The major dimension that results should use")})
+    private java.lang.String majorDimension;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "append", description="The A1 notation(https://developers.google.com/workspace/sheets/api/guides/concepts#cell) of a range to search for a logical table of data. Values are appended after the last row of the table."), @ApiMethod(methodName = "clear", description="The A1 notation or R1C1 notation(https://developers.google.com/workspace/sheets/api/guides/concepts#cell) of the values to clear."), @ApiMethod(methodName = "get", description="The A1 notation or R1C1 notation(https://developers.google.com/workspace/sheets/api/guides/concepts#cell) of the range to retrieve values from."), @ApiMethod(methodName = "update", description="The A1 notation(https://developers.google.com/workspace/sheets/api/guides/concepts#cell) of the values to update.")})
     private String range;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "batchGet", description="The A1 notation or R1C1 notation(https://developers")})
+    private java.util.List ranges;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "append", description="Determines how dates, times, and durations in the response should be rendered"), @ApiMethod(methodName = "update", description="Determines how dates, times, and durations in the response should be rendered")})
+    private java.lang.String responseDateTimeRenderOption;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "append", description="Determines how values in the response should be rendered"), @ApiMethod(methodName = "update", description="Determines how values in the response should be rendered")})
+    private java.lang.String responseValueRenderOption;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "append", description="The ID of the spreadsheet to update"), @ApiMethod(methodName = "batchClear", description="The ID of the spreadsheet to update"), @ApiMethod(methodName = "batchClearByDataFilter", description="The ID of the spreadsheet to update"), @ApiMethod(methodName = "batchGet", description="The ID of the spreadsheet to retrieve data from"), @ApiMethod(methodName = "batchGetByDataFilter", description="The ID of the spreadsheet to retrieve data from"), @ApiMethod(methodName = "batchUpdate", description="The ID of the spreadsheet to update"), @ApiMethod(methodName = "batchUpdateByDataFilter", description="The ID of the spreadsheet to update"), @ApiMethod(methodName = "clear", description="The ID of the spreadsheet to update"), @ApiMethod(methodName = "get", description="The ID of the spreadsheet to retrieve data from"), @ApiMethod(methodName = "update", description="The ID of the spreadsheet to update")})
     private String spreadsheetId;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "append", description="How the input data should be interpreted"), @ApiMethod(methodName = "update", description="How the input data should be interpreted")})
+    private java.lang.String valueInputOption;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "batchGet", description="How values should be represented in the output"), @ApiMethod(methodName = "get", description="How values should be represented in the output")})
+    private java.lang.String valueRenderOption;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "append", description="The com.google.api.services.sheets.v4.model.ValueRange"), @ApiMethod(methodName = "update", description="The com.google.api.services.sheets.v4.model.ValueRange")})
     private com.google.api.services.sheets.v4.model.ValueRange values;
@@ -95,6 +122,38 @@ public final class SheetsSpreadsheetsValuesEndpointConfiguration extends GoogleS
         this.content = content;
     }
 
+    public java.lang.String getDateTimeRenderOption() {
+        return dateTimeRenderOption;
+    }
+
+    public void setDateTimeRenderOption(java.lang.String dateTimeRenderOption) {
+        this.dateTimeRenderOption = dateTimeRenderOption;
+    }
+
+    public java.lang.Boolean getIncludeValuesInResponse() {
+        return includeValuesInResponse;
+    }
+
+    public void setIncludeValuesInResponse(java.lang.Boolean includeValuesInResponse) {
+        this.includeValuesInResponse = includeValuesInResponse;
+    }
+
+    public java.lang.String getInsertDataOption() {
+        return insertDataOption;
+    }
+
+    public void setInsertDataOption(java.lang.String insertDataOption) {
+        this.insertDataOption = insertDataOption;
+    }
+
+    public java.lang.String getMajorDimension() {
+        return majorDimension;
+    }
+
+    public void setMajorDimension(java.lang.String majorDimension) {
+        this.majorDimension = majorDimension;
+    }
+
     public String getRange() {
         return range;
     }
@@ -103,12 +162,52 @@ public final class SheetsSpreadsheetsValuesEndpointConfiguration extends GoogleS
         this.range = range;
     }
 
+    public java.util.List getRanges() {
+        return ranges;
+    }
+
+    public void setRanges(java.util.List ranges) {
+        this.ranges = ranges;
+    }
+
+    public java.lang.String getResponseDateTimeRenderOption() {
+        return responseDateTimeRenderOption;
+    }
+
+    public void setResponseDateTimeRenderOption(java.lang.String responseDateTimeRenderOption) {
+        this.responseDateTimeRenderOption = responseDateTimeRenderOption;
+    }
+
+    public java.lang.String getResponseValueRenderOption() {
+        return responseValueRenderOption;
+    }
+
+    public void setResponseValueRenderOption(java.lang.String responseValueRenderOption) {
+        this.responseValueRenderOption = responseValueRenderOption;
+    }
+
     public String getSpreadsheetId() {
         return spreadsheetId;
     }
 
     public void setSpreadsheetId(String spreadsheetId) {
         this.spreadsheetId = spreadsheetId;
+    }
+
+    public java.lang.String getValueInputOption() {
+        return valueInputOption;
+    }
+
+    public void setValueInputOption(java.lang.String valueInputOption) {
+        this.valueInputOption = valueInputOption;
+    }
+
+    public java.lang.String getValueRenderOption() {
+        return valueRenderOption;
+    }
+
+    public void setValueRenderOption(java.lang.String valueRenderOption) {
+        this.valueRenderOption = valueRenderOption;
     }
 
     public com.google.api.services.sheets.v4.model.ValueRange getValues() {
