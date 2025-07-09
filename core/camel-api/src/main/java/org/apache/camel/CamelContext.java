@@ -641,8 +641,28 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return                 the id of the route added (for example when an id was auto assigned)
      * @throws Exception       is thrown if error creating and adding the new route
      */
+    @Deprecated(since = "4.14.0")
     String addRouteFromTemplate(
             String routeId, String routeTemplateId, String prefixId,
+            Map<String, Object> parameters)
+            throws Exception;
+
+    /**
+     * Adds a new route from a given route template.
+     *
+     * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
+     * builder with more functionality than this API.
+     *
+     * @param  routeId         the id of the new route to add (optional)
+     * @param  routeTemplateId the id of the route template (mandatory)
+     * @param  prefixId        prefix to use for all node ids (not route id). Use null for no prefix. (optional)
+     * @param  group           route group name (optional)
+     * @param  parameters      parameters to use for the route template when creating the new route
+     * @return                 the id of the route added (for example when an id was auto assigned)
+     * @throws Exception       is thrown if error creating and adding the new route
+     */
+    String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, String group,
             Map<String, Object> parameters)
             throws Exception;
 
@@ -659,8 +679,27 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return                      the id of the route added (for example when an id was auto assigned)
      * @throws Exception            is thrown if error creating and adding the new route
      */
+    @Deprecated(since = "4.14.0")
     String addRouteFromTemplate(
             String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
+            throws Exception;
+
+    /**
+     * Adds a new route from a given route template.
+     *
+     * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
+     * builder with more functionality than this API.
+     *
+     * @param  routeId              the id of the new route to add (optional)
+     * @param  routeTemplateId      the id of the route template (mandatory)
+     * @param  prefixId             prefix to use for all node ids (not route id). Use null for no prefix. (optional)
+     * @param  group                route group name (optional)
+     * @param  routeTemplateContext the route template context (mandatory)
+     * @return                      the id of the route added (for example when an id was auto assigned)
+     * @throws Exception            is thrown if error creating and adding the new route
+     */
+    String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, String group, RouteTemplateContext routeTemplateContext)
             throws Exception;
 
     /**
@@ -675,8 +714,28 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return                   the id of the route added (for example when an id was auto assigned)
      * @throws Exception         is thrown if error creating and adding the new route
      */
+    @Deprecated(since = "4.14.0")
     String addRouteFromKamelet(
             String routeId, String routeTemplateId, String prefixId,
+            String parentRouteId, String parentProcessorId,
+            Map<String, Object> parameters)
+            throws Exception;
+
+    /**
+     * Adds a new route from a given kamelet
+     *
+     * @param  routeId           the id of the new route to add (optional)
+     * @param  routeTemplateId   the id of the kamelet route template (mandatory)
+     * @param  prefixId          prefix to use for all node ids (not route id). Use null for no prefix. (optional)
+     * @param  group             route group name (optional)
+     * @param  parentRouteId     the id of the route which is using the kamelet (such as from / to)
+     * @param  parentProcessorId the id of the processor which is using the kamelet (such as to)
+     * @param  parameters        parameters to use for the route template when creating the new route
+     * @return                   the id of the route added (for example when an id was auto assigned)
+     * @throws Exception         is thrown if error creating and adding the new route
+     */
+    String addRouteFromKamelet(
+            String routeId, String routeTemplateId, String prefixId, String group,
             String parentRouteId, String parentProcessorId,
             Map<String, Object> parameters)
             throws Exception;

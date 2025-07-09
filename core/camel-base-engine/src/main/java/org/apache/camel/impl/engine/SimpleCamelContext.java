@@ -782,6 +782,20 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     public String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, String group, Map<String, Object> parameters)
+            throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, String group, RouteTemplateContext routeTemplateContext)
+            throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String addRouteFromTemplate(
             String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
             throws Exception {
         throw new UnsupportedOperationException();
@@ -791,6 +805,14 @@ public class SimpleCamelContext extends AbstractCamelContext {
     public String addRouteFromKamelet(
             String routeId, String routeTemplateId, String prefixId, String parentRouteId, String parentProcessorId,
             Map<String, Object> parameters)
+            throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String addRouteFromKamelet(
+            String routeId, String routeTemplateId, String prefixId, String group, String parentRouteId,
+            String parentProcessorId, Map<String, Object> parameters)
             throws Exception {
         throw new UnsupportedOperationException();
     }

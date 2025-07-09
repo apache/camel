@@ -55,7 +55,11 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
     @XmlAttribute
     private String routeId;
     @XmlAttribute
+    @Metadata(label = "advanced")
     private String prefixId;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String group;
     @XmlElement(name = "parameter")
     @Metadata(description = "Adds an input parameter of the template to build the route")
     private List<TemplatedRouteParameterDefinition> parameters;
@@ -101,6 +105,14 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
 
     public void setPrefixId(String prefixId) {
         this.prefixId = prefixId;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     @Override
@@ -291,6 +303,16 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
      */
     public TemplatedRouteDefinition prefixId(String id) {
         setPrefixId(id);
+        return this;
+    }
+
+    /**
+     * The group name for the route built from this template. Multiple routes can belong to the same group.
+     *
+     * @param group the group name
+     */
+    public TemplatedRouteDefinition group(String group) {
+        setGroup(group);
         return this;
     }
 

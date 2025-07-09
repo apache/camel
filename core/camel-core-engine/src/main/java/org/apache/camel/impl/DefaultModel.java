@@ -412,46 +412,47 @@ public class DefaultModel implements Model {
         if (parameters != null) {
             parameters.forEach(rtc::setParameter);
         }
-        return addRouteFromTemplate(routeId, routeTemplateId, null, rtc);
+        return addRouteFromTemplate(routeId, routeTemplateId, null, null, rtc);
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, String prefixId, Map<String, Object> parameters)
+    public String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, String group, Map<String, Object> parameters)
             throws Exception {
         RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext);
         if (parameters != null) {
             parameters.forEach(rtc::setParameter);
         }
-        return addRouteFromTemplate(routeId, routeTemplateId, prefixId, rtc);
+        return addRouteFromTemplate(routeId, routeTemplateId, prefixId, group, rtc);
     }
 
     public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception {
-        return addRouteFromTemplate(routeId, routeTemplateId, null, routeTemplateContext);
+        return addRouteFromTemplate(routeId, routeTemplateId, null, null, routeTemplateContext);
     }
 
     @Override
     public String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId,
+            String routeId, String routeTemplateId, String prefixId, String group,
             RouteTemplateContext routeTemplateContext)
             throws Exception {
-        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, null, null, routeTemplateContext);
+        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, group, null, null, routeTemplateContext);
     }
 
     @Override
     public String addRouteFromKamelet(
-            String routeId, String routeTemplateId, String prefixId,
+            String routeId, String routeTemplateId, String prefixId, String group,
             String parentRouteId, String parentProcessorId, Map<String, Object> parameters)
             throws Exception {
         RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext);
         if (parameters != null) {
             parameters.forEach(rtc::setParameter);
         }
-        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, parentRouteId, parentProcessorId, rtc);
+        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, group, parentRouteId, parentProcessorId, rtc);
     }
 
     protected String doAddRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId,
+            String routeId, String routeTemplateId, String prefixId, String group,
             String parentRouteId, String parentProcessorId,
             RouteTemplateContext routeTemplateContext)
             throws Exception {
@@ -555,6 +556,9 @@ public class DefaultModel implements Model {
         if (prefixId != null) {
             def.setNodePrefixId(prefixId);
         }
+        if (group != null) {
+            def.setGroup(group);
+        }
         def.setTemplateParameters(prop);
         def.setTemplateDefaultParameters(propDefaultValues);
         def.setRouteTemplateContext(routeTemplateContext);
@@ -626,7 +630,7 @@ public class DefaultModel implements Model {
         }
         // Add the route
         addRouteFromTemplate(templatedRouteDefinition.getRouteId(), templatedRouteDefinition.getRouteTemplateRef(),
-                templatedRouteDefinition.getPrefixId(), routeTemplateContext);
+                templatedRouteDefinition.getPrefixId(), templatedRouteDefinition.getGroup(), routeTemplateContext);
     }
 
     private RouteTemplateContext toRouteTemplateContext(TemplatedRouteDefinition templatedRouteDefinition) {

@@ -1154,6 +1154,7 @@ public class ModelParser extends BaseParser {
     }
     protected TemplatedRouteDefinition doParseTemplatedRouteDefinition() throws IOException, XmlPullParserException {
         return doParse(new TemplatedRouteDefinition(), (def, key, val) -> switch (key) {
+                case "group": def.setGroup(val); yield true;
                 case "prefixId": def.setPrefixId(val); yield true;
                 case "routeId": def.setRouteId(val); yield true;
                 case "routeTemplateRef": def.setRouteTemplateRef(val); yield true;

@@ -13984,6 +13984,15 @@ Sets a prefix to use for all node ids (not route id).
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="group" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The group name for the route built from this template. Multiple routes can belong to the same group.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="templatedRouteParameterDefinition">
     <xs:sequence/>
