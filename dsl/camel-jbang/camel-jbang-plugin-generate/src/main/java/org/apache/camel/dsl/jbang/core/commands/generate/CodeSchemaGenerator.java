@@ -28,6 +28,7 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.github.victools.jsonschema.module.jackson.JacksonModule;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -61,8 +62,8 @@ public class CodeSchemaGenerator extends CamelCommand {
     private String fullyQualifiedName;
 
     @CommandLine.Option(names = { "--camel-version" },
-                        description = "Camel version to use (default: 4.12.0)")
-    private String camelVersion = "4.12.0"; // TODO get current version
+                        description = "Camel version to use")
+    private String camelVersion;
 
     @CommandLine.Option(names = { "--output" },
                         description = "Output file path (default: stdout)")
@@ -70,11 +71,15 @@ public class CodeSchemaGenerator extends CamelCommand {
 
     @CommandLine.Option(names = { "--verbose" },
                         description = "Enable verbose logging")
-    private boolean verbose = false;
+    private boolean verbose;
 
     @CommandLine.Option(names = { "--download" }, defaultValue = "true",
                         description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
+
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    String repositories;
 
     public CodeSchemaGenerator(CamelJBangMain main) {
         super(main);
@@ -83,8 +88,11 @@ public class CodeSchemaGenerator extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         try {
-            if (verbose) {
+            if (camelVersion == null) {
+                camelVersion = new DefaultCamelCatalog().getCatalogVersion();
+            }
 
+            if (verbose) {
                 printer().println("Generating JSON Schema for component: " + camelComponent);
                 printer().println("Class: " + fullyQualifiedName);
                 printer().println("Camel version: " + camelVersion);
@@ -190,6 +198,7 @@ public class CodeSchemaGenerator extends CamelCommand {
             MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setClassLoader(cl);
             downloader.setDownload(download);
+            downloader.setRepositories(repositories);
             downloader.start();
 
             if (verbose) {
