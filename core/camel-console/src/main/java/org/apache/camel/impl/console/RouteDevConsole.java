@@ -110,7 +110,6 @@ public class RouteDevConsole extends AbstractDevConsole {
                 Throwable cause = mrb.getLastError().getException();
                 if (cause != null) {
                     sb.append(String.format("\n    Error Message: %s", cause.getMessage()));
-
                     final String stackTrace = ExceptionHelper.stackTraceToString(cause);
                     sb.append("\n\n");
                     sb.append(stackTrace);
@@ -258,6 +257,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             JsonObject jo = new JsonObject();
             list.add(jo);
             jo.put("routeId", mrb.getRouteId());
+            if (mrb.getRouteGroup() != null) {
+                jo.put("group", mrb.getRouteGroup());
+            }
             if (mrb.getNodePrefixId() != null) {
                 jo.put("nodePrefixId", mrb.getNodePrefixId());
             }
@@ -447,6 +449,11 @@ public class RouteDevConsole extends AbstractDevConsole {
             return true;
         }
 
+        if (filter.startsWith("group:")) {
+            filter = filter.substring(6);
+            return PatternHelper.matchPattern(mrb.getRouteGroup(), filter);
+        }
+
         String onlyName = LoggerHelper.sourceNameOnly(mrb.getSourceLocation());
         return PatternHelper.matchPattern(mrb.getRouteId(), filter)
                 || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
@@ -529,16 +536,21 @@ public class RouteDevConsole extends AbstractDevConsole {
         String[] patterns = filter.split(",");
         // find matching IDs
         List<String> ids = camelContext.getRoutes()
-                .stream().map(Route::getRouteId)
-                .filter(routeId -> {
+                .stream()
+                .filter(r -> {
                     for (String p : patterns) {
-                        if (PatternHelper.matchPattern(routeId, p)) {
+                        String source = r.getRouteId();
+                        if (p.startsWith("group:")) {
+                            source = r.getGroup();
+                            p = p.substring(6);
+                        }
+                        if (PatternHelper.matchPattern(source, p)) {
                             return true;
                         }
                     }
                     return false;
                 })
-                .toList();
+                .map(Route::getRouteId).toList();
         for (String id : ids) {
             try {
                 if ("start".equals(command)) {

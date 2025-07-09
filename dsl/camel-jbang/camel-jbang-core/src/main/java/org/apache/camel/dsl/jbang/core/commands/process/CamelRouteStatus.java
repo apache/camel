@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.model.Strings;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -68,6 +69,14 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         description = "Filter routes that must be slower than the given time (ms)")
     long mean;
 
+    @CommandLine.Option(names = { "--filter" },
+                        description = "Filter routes by id, or url")
+    String[] filter;
+
+    @CommandLine.Option(names = { "--group" },
+                        description = "Filter routes by group")
+    String[] group;
+
     @CommandLine.Option(names = { "--error" },
                         description = "Shows detailed information for routes that has error status")
     boolean error;
@@ -75,6 +84,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     @CommandLine.Option(names = { "--description" },
                         description = "Include description in the ID column (if available)")
     boolean description;
+
+    @CommandLine.Option(names = { "--show-group" },
+                        description = "Include group column")
+    boolean showGroup;
 
     public CamelRouteStatus(CamelJBangMain main) {
         super(main);
@@ -105,6 +118,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             }
                             row.pid = Long.toString(ph.pid());
                             row.routeId = o.getString("routeId");
+                            row.group = o.getString("group");
                             row.description = o.getString("description");
                             row.from = o.getString("from");
                             Boolean bool = o.getBoolean("remote");
@@ -187,6 +201,22 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             if (limit > 0 && rows.size() >= limit) {
                                 add = false;
                             }
+                            if (add && filter != null) {
+                                boolean match = false;
+                                for (String f : filter) {
+                                    if (!match) {
+                                        String from = StringHelper.before(row.from, "?", row.from);
+                                        String w = f.endsWith("*") ? f : f + "*"; // use wildcard in matching url
+                                        match = PatternHelper.matchPattern(row.routeId, f) || PatternHelper.matchPattern(from, w);
+                                    }
+                                }
+                                if (!match) {
+                                    add = false;
+                                }
+                            }
+                            if (add && group != null) {
+                                add = PatternHelper.matchPatterns(row.group, group);
+                            }
                             if (add) {
                                 rows.add(row);
                             }
@@ -218,6 +248,9 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
+                new Column().header("GROUP").visible(showGroup).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getGroup),
                 new Column().header("ID").visible(!description).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
@@ -360,6 +393,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         return r.state;
     }
 
+    protected String getGroup(Row r) {
+        return r.group;
+    }
+
     protected String getId(Row r) {
         if (source && r.source != null) {
             return sourceLocLine(r.source);
@@ -409,6 +446,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         String name;
         long uptime;
         String routeId;
+        String group;
         String description;
         String from;
         boolean remote;
