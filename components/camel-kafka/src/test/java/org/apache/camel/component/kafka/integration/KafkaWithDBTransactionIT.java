@@ -62,7 +62,7 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
 
     @BeforeAll
     public static void before() {
-        stringsConsumerConn = createStringKafkaConsumer("DemoTransaction");
+        stringsConsumerConn = createStringKafkaConsumer("KafkaWithDBTransactionIT");
     }
 
     @ContextFixture
