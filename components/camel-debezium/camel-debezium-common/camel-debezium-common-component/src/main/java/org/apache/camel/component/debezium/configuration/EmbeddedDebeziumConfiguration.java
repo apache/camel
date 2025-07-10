@@ -21,7 +21,7 @@ import java.util.Map;
 
 import io.debezium.config.Configuration;
 import io.debezium.config.Field;
-import io.debezium.embedded.EmbeddedEngine;
+import io.debezium.embedded.async.AsyncEmbeddedEngine;
 import io.debezium.engine.spi.OffsetCommitPolicy;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.debezium.DebeziumConstants;
@@ -163,19 +163,19 @@ public abstract class EmbeddedDebeziumConfiguration implements Cloneable {
     private Configuration createDebeziumEmbeddedEngineConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
 
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.ENGINE_NAME, name);
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.CONNECTOR_CLASS, connectorClass.getName());
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.OFFSET_STORAGE, offsetStorage);
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.OFFSET_STORAGE_FILE_FILENAME,
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.ENGINE_NAME, name);
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.CONNECTOR_CLASS, connectorClass.getName());
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.OFFSET_STORAGE, offsetStorage);
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.OFFSET_STORAGE_FILE_FILENAME,
                 offsetStorageFileName);
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.OFFSET_STORAGE_KAFKA_TOPIC, offsetStorageTopic);
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.OFFSET_STORAGE_KAFKA_PARTITIONS,
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.OFFSET_STORAGE_KAFKA_TOPIC, offsetStorageTopic);
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.OFFSET_STORAGE_KAFKA_PARTITIONS,
                 offsetStoragePartitions);
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.OFFSET_STORAGE_KAFKA_REPLICATION_FACTOR,
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.OFFSET_STORAGE_KAFKA_REPLICATION_FACTOR,
                 offsetStorageReplicationFactor);
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.OFFSET_COMMIT_POLICY, offsetCommitPolicy);
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.OFFSET_FLUSH_INTERVAL_MS, offsetFlushIntervalMs);
-        addPropertyIfNotNull(configBuilder, EmbeddedEngine.OFFSET_COMMIT_TIMEOUT_MS, offsetCommitTimeoutMs);
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.OFFSET_COMMIT_POLICY, offsetCommitPolicy);
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.OFFSET_FLUSH_INTERVAL_MS, offsetFlushIntervalMs);
+        addPropertyIfNotNull(configBuilder, AsyncEmbeddedEngine.OFFSET_COMMIT_TIMEOUT_MS, offsetCommitTimeoutMs);
 
         if (internalKeyConverter != null && internalValueConverter != null) {
             configBuilder.with("internal.key.converter", internalKeyConverter);

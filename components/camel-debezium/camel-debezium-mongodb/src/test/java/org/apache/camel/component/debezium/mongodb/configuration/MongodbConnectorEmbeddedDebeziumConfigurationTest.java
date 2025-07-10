@@ -20,7 +20,7 @@ import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.connector.mongodb.MongoDbConnector;
 import io.debezium.connector.mongodb.MongoDbConnectorConfig;
-import io.debezium.embedded.EmbeddedEngine;
+import io.debezium.embedded.async.AsyncEmbeddedEngine;
 import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.junit.jupiter.api.Test;
@@ -40,12 +40,12 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
 
         final Configuration dbzConfigurations = configuration.createDebeziumConfiguration();
 
-        assertEquals("test_config", dbzConfigurations.getString(EmbeddedEngine.ENGINE_NAME));
+        assertEquals("test_config", dbzConfigurations.getString(AsyncEmbeddedEngine.ENGINE_NAME));
         assertEquals("test_user", dbzConfigurations.getString(MongoDbConnectorConfig.USER));
         assertEquals(1212, dbzConfigurations.getInteger(CommonConnectorConfig.MAX_QUEUE_SIZE));
-        assertEquals(MongoDbConnector.class.getName(), dbzConfigurations.getString(EmbeddedEngine.CONNECTOR_CLASS));
+        assertEquals(MongoDbConnector.class.getName(), dbzConfigurations.getString(AsyncEmbeddedEngine.CONNECTOR_CLASS));
         assertEquals(DebeziumConstants.DEFAULT_OFFSET_STORAGE,
-                dbzConfigurations.getString(EmbeddedEngine.OFFSET_STORAGE));
+                dbzConfigurations.getString(AsyncEmbeddedEngine.OFFSET_STORAGE));
     }
 
     @Test

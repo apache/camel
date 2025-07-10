@@ -20,7 +20,7 @@ import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.connector.mysql.MySqlConnector;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
-import io.debezium.embedded.EmbeddedEngine;
+import io.debezium.embedded.async.AsyncEmbeddedEngine;
 import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.junit.jupiter.api.Test;
@@ -41,16 +41,16 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
 
         final Configuration dbzMysqlConfigurations = configuration.createDebeziumConfiguration();
 
-        assertEquals("test_config", dbzMysqlConfigurations.getString(EmbeddedEngine.ENGINE_NAME));
+        assertEquals("test_config", dbzMysqlConfigurations.getString(AsyncEmbeddedEngine.ENGINE_NAME));
         assertEquals("test_user", dbzMysqlConfigurations.getString(MySqlConnectorConfig.USER));
         assertTrue(dbzMysqlConfigurations.getBoolean(MySqlConnectorConfig.INCLUDE_SQL_QUERY));
         assertEquals(1212, dbzMysqlConfigurations.getInteger(CommonConnectorConfig.MAX_QUEUE_SIZE));
         assertEquals(30000,
                 dbzMysqlConfigurations.getLong(MySqlConnectorConfig.CONNECTION_TIMEOUT_MS));
-        assertEquals(MySqlConnector.class.getName(), dbzMysqlConfigurations.getString(EmbeddedEngine.CONNECTOR_CLASS));
+        assertEquals(MySqlConnector.class.getName(), dbzMysqlConfigurations.getString(AsyncEmbeddedEngine.CONNECTOR_CLASS));
         assertTrue(dbzMysqlConfigurations.getBoolean(MySqlConnectorConfig.INCLUDE_SQL_QUERY));
         assertEquals(DebeziumConstants.DEFAULT_OFFSET_STORAGE,
-                dbzMysqlConfigurations.getString(EmbeddedEngine.OFFSET_STORAGE));
+                dbzMysqlConfigurations.getString(AsyncEmbeddedEngine.OFFSET_STORAGE));
         assertEquals(30000,
                 dbzMysqlConfigurations.getLong(MySqlConnectorConfig.CONNECTION_TIMEOUT_MS));
     }
