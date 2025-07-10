@@ -265,7 +265,7 @@ public class DependencyUpdate extends DependencyList {
                 // build GAVs to be added to pom.xml
                 StringJoiner sj = new StringJoiner("");
                 for (MavenGav gav : toBeUpdated) {
-                    sj.add(pad).add("<dependency>\n");
+                    sj.add("\n").add(pad).add("<dependency>\n");
                     sj.add(pad2).add("<groupId>" + gav.getGroupId() + "</groupId>\n");
                     sj.add(pad2).add("<artifactId>" + gav.getArtifactId() + "</artifactId>\n");
                     if (gav.getVersion() != null) {
