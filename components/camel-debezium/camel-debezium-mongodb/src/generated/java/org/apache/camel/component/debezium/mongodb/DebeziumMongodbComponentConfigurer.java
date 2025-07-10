@@ -43,6 +43,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "collectionincludelist":
         case "collectionIncludeList": getOrCreateConfiguration(target).setCollectionIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
+        case "connectionvalidationtimeoutms":
+        case "connectionValidationTimeoutMs": getOrCreateConfiguration(target).setConnectionValidationTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "cursormaxawaittimems":
         case "cursorMaxAwaitTimeMs": getOrCreateConfiguration(target).setCursorMaxAwaitTimeMs(property(camelContext, int.class, value)); return true;
@@ -56,6 +58,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "errorsMaxRetries": getOrCreateConfiguration(target).setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "executorshutdowntimeoutms":
+        case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "fieldexcludelist":
         case "fieldExcludeList": getOrCreateConfiguration(target).setFieldExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "fieldrenames":
@@ -118,6 +122,18 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "offsetStorageReplicationFactor": getOrCreateConfiguration(target).setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
         case "offsetstoragetopic":
         case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationconfigfilepath":
+        case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration(target).setOpenlineageIntegrationConfigFilePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationenabled":
+        case "openlineageIntegrationEnabled": getOrCreateConfiguration(target).setOpenlineageIntegrationEnabled(property(camelContext, boolean.class, value)); return true;
+        case "openlineageintegrationjobdescription":
+        case "openlineageIntegrationJobDescription": getOrCreateConfiguration(target).setOpenlineageIntegrationJobDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationjobnamespace":
+        case "openlineageIntegrationJobNamespace": getOrCreateConfiguration(target).setOpenlineageIntegrationJobNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationjobowners":
+        case "openlineageIntegrationJobOwners": getOrCreateConfiguration(target).setOpenlineageIntegrationJobOwners(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationjobtags":
+        case "openlineageIntegrationJobTags": getOrCreateConfiguration(target).setOpenlineageIntegrationJobTags(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "postprocessors":
@@ -196,6 +212,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "collectionincludelist":
         case "collectionIncludeList": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class;
+        case "connectionvalidationtimeoutms":
+        case "connectionValidationTimeoutMs": return long.class;
         case "converters": return java.lang.String.class;
         case "cursormaxawaittimems":
         case "cursorMaxAwaitTimeMs": return int.class;
@@ -209,6 +227,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "errorsMaxRetries": return int.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
+        case "executorshutdowntimeoutms":
+        case "executorShutdownTimeoutMs": return long.class;
         case "fieldexcludelist":
         case "fieldExcludeList": return java.lang.String.class;
         case "fieldrenames":
@@ -271,6 +291,18 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "offsetStorageReplicationFactor": return int.class;
         case "offsetstoragetopic":
         case "offsetStorageTopic": return java.lang.String.class;
+        case "openlineageintegrationconfigfilepath":
+        case "openlineageIntegrationConfigFilePath": return java.lang.String.class;
+        case "openlineageintegrationenabled":
+        case "openlineageIntegrationEnabled": return boolean.class;
+        case "openlineageintegrationjobdescription":
+        case "openlineageIntegrationJobDescription": return java.lang.String.class;
+        case "openlineageintegrationjobnamespace":
+        case "openlineageIntegrationJobNamespace": return java.lang.String.class;
+        case "openlineageintegrationjobowners":
+        case "openlineageIntegrationJobOwners": return java.lang.String.class;
+        case "openlineageintegrationjobtags":
+        case "openlineageIntegrationJobTags": return java.lang.String.class;
         case "pollintervalms":
         case "pollIntervalMs": return long.class;
         case "postprocessors":
@@ -350,6 +382,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "collectionincludelist":
         case "collectionIncludeList": return getOrCreateConfiguration(target).getCollectionIncludeList();
         case "configuration": return target.getConfiguration();
+        case "connectionvalidationtimeoutms":
+        case "connectionValidationTimeoutMs": return getOrCreateConfiguration(target).getConnectionValidationTimeoutMs();
         case "converters": return getOrCreateConfiguration(target).getConverters();
         case "cursormaxawaittimems":
         case "cursorMaxAwaitTimeMs": return getOrCreateConfiguration(target).getCursorMaxAwaitTimeMs();
@@ -363,6 +397,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "errorsMaxRetries": return getOrCreateConfiguration(target).getErrorsMaxRetries();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
+        case "executorshutdowntimeoutms":
+        case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
         case "fieldexcludelist":
         case "fieldExcludeList": return getOrCreateConfiguration(target).getFieldExcludeList();
         case "fieldrenames":
@@ -425,6 +461,18 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "offsetStorageReplicationFactor": return getOrCreateConfiguration(target).getOffsetStorageReplicationFactor();
         case "offsetstoragetopic":
         case "offsetStorageTopic": return getOrCreateConfiguration(target).getOffsetStorageTopic();
+        case "openlineageintegrationconfigfilepath":
+        case "openlineageIntegrationConfigFilePath": return getOrCreateConfiguration(target).getOpenlineageIntegrationConfigFilePath();
+        case "openlineageintegrationenabled":
+        case "openlineageIntegrationEnabled": return getOrCreateConfiguration(target).isOpenlineageIntegrationEnabled();
+        case "openlineageintegrationjobdescription":
+        case "openlineageIntegrationJobDescription": return getOrCreateConfiguration(target).getOpenlineageIntegrationJobDescription();
+        case "openlineageintegrationjobnamespace":
+        case "openlineageIntegrationJobNamespace": return getOrCreateConfiguration(target).getOpenlineageIntegrationJobNamespace();
+        case "openlineageintegrationjobowners":
+        case "openlineageIntegrationJobOwners": return getOrCreateConfiguration(target).getOpenlineageIntegrationJobOwners();
+        case "openlineageintegrationjobtags":
+        case "openlineageIntegrationJobTags": return getOrCreateConfiguration(target).getOpenlineageIntegrationJobTags();
         case "pollintervalms":
         case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
         case "postprocessors":

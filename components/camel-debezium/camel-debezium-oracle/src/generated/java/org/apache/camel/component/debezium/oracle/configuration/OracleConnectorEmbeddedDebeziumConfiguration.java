@@ -38,6 +38,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String converters;
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "1000000")
@@ -70,12 +72,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private boolean snapshotModeConfigurationBasedSnapshotData = false;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferEhcacheSchemachangesConfig;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobOwners;
+    @UriParam(label = LABEL_NAME, defaultValue = "./openlineage.yml")
+    private String openlineageIntegrationConfigFilePath = "./openlineage.yml";
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "online_catalog")
     private String logMiningStrategy = "online_catalog";
+    @UriParam(label = LABEL_NAME, defaultValue = "4s", javaType = "java.time.Duration")
+    private long executorShutdownTimeoutMs = 4000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotOnDataError = false;
     @UriParam(label = LABEL_NAME)
@@ -128,6 +136,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String logMiningBufferEhcacheProcessedtransactionsConfig;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long streamingDelayMs = 0;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobNamespace;
     @UriParam(label = LABEL_NAME, defaultValue = "10m", javaType = "java.time.Duration")
     private int databaseQueryTimeoutMs = 600000;
     @UriParam(label = LABEL_NAME, defaultValue = "10000")
@@ -139,7 +149,11 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
     private String unavailableValuePlaceholder = "__debezium_unavailable_value";
     @UriParam(label = LABEL_NAME)
+    private String logMiningClientidIncludeList;
+    @UriParam(label = LABEL_NAME)
     private String heartbeatActionQuery;
+    @UriParam(label = LABEL_NAME)
+    private String logMiningClientidExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
     @UriParam(label = LABEL_NAME)
@@ -187,6 +201,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String logMiningBufferInfinispanCacheEvents;
     @UriParam(label = LABEL_NAME, defaultValue = "t")
     private String skippedOperations = "t";
+    @UriParam(label = LABEL_NAME, defaultValue = "Debezium change data capture job")
+    private String openlineageIntegrationJobDescription = "Debezium change data capture job";
     @UriParam(label = LABEL_NAME)
     private String archiveDestinationName;
     @UriParam(label = LABEL_NAME, defaultValue = "20s", javaType = "java.time.Duration")
@@ -216,6 +232,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private boolean includeSchemaComments = false;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.oracle.OracleSourceInfoStructMaker")
     private String sourceinfoStructMaker = "io.debezium.connector.oracle.OracleSourceInfoStructMaker";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean openlineageIntegrationEnabled = false;
     @UriParam(label = LABEL_NAME)
     private int openlogreplicatorPort;
     @UriParam(label = LABEL_NAME)
@@ -246,6 +264,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String databaseHostname;
     @UriParam(label = LABEL_NAME, defaultValue = "1000")
     private long logMiningBatchSizeMin = 1000;
+    @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
+    private long connectionValidationTimeoutMs = 60000;
 
     /**
      * Controls how the connector holds locks on tables while performing the
@@ -410,6 +430,19 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public int getSnapshotFetchSize() {
         return snapshotFetchSize;
+    }
+
+    /**
+     * The job's tags emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
+     */
+    public void setOpenlineageIntegrationJobTags(
+            String openlineageIntegrationJobTags) {
+        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
+    }
+
+    public String getOpenlineageIntegrationJobTags() {
+        return openlineageIntegrationJobTags;
     }
 
     /**
@@ -648,6 +681,32 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's owners emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
+     */
+    public void setOpenlineageIntegrationJobOwners(
+            String openlineageIntegrationJobOwners) {
+        this.openlineageIntegrationJobOwners = openlineageIntegrationJobOwners;
+    }
+
+    public String getOpenlineageIntegrationJobOwners() {
+        return openlineageIntegrationJobOwners;
+    }
+
+    /**
+     * Path to OpenLineage file configuration. See
+     * https://openlineage.io/docs/client/java/configuration
+     */
+    public void setOpenlineageIntegrationConfigFilePath(
+            String openlineageIntegrationConfigFilePath) {
+        this.openlineageIntegrationConfigFilePath = openlineageIntegrationConfigFilePath;
+    }
+
+    public String getOpenlineageIntegrationConfigFilePath() {
+        return openlineageIntegrationConfigFilePath;
+    }
+
+    /**
      * Time to wait before restarting connector after retriable exception
      * occurs. Defaults to 10000ms.
      */
@@ -682,6 +741,17 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getLogMiningStrategy() {
         return logMiningStrategy;
+    }
+
+    /**
+     * The maximum time in milliseconds to wait for task executor to shut down.
+     */
+    public void setExecutorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+        this.executorShutdownTimeoutMs = executorShutdownTimeoutMs;
+    }
+
+    public long getExecutorShutdownTimeoutMs() {
+        return executorShutdownTimeoutMs;
     }
 
     /**
@@ -1043,6 +1113,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's namespace emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobNamespace(
+            String openlineageIntegrationJobNamespace) {
+        this.openlineageIntegrationJobNamespace = openlineageIntegrationJobNamespace;
+    }
+
+    public String getOpenlineageIntegrationJobNamespace() {
+        return openlineageIntegrationJobNamespace;
+    }
+
+    /**
      * Time to wait for a query to execute, given in milliseconds. Defaults to
      * 600 seconds (600,000 ms); zero means there is no limit.
      */
@@ -1108,6 +1190,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Comma separated list of client ids to include from LogMiner query.
+     */
+    public void setLogMiningClientidIncludeList(
+            String logMiningClientidIncludeList) {
+        this.logMiningClientidIncludeList = logMiningClientidIncludeList;
+    }
+
+    public String getLogMiningClientidIncludeList() {
+        return logMiningClientidIncludeList;
+    }
+
+    /**
      * The query executed with every heartbeat.
      */
     public void setHeartbeatActionQuery(String heartbeatActionQuery) {
@@ -1116,6 +1210,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getHeartbeatActionQuery() {
         return heartbeatActionQuery;
+    }
+
+    /**
+     * Comma separated list of client ids to exclude from LogMiner query.
+     */
+    public void setLogMiningClientidExcludeList(
+            String logMiningClientidExcludeList) {
+        this.logMiningClientidExcludeList = logMiningClientidExcludeList;
+    }
+
+    public String getLogMiningClientidExcludeList() {
+        return logMiningClientidExcludeList;
     }
 
     /**
@@ -1420,6 +1526,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's description emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobDescription(
+            String openlineageIntegrationJobDescription) {
+        this.openlineageIntegrationJobDescription = openlineageIntegrationJobDescription;
+    }
+
+    public String getOpenlineageIntegrationJobDescription() {
+        return openlineageIntegrationJobDescription;
+    }
+
+    /**
      * Sets the specific archive log destination as the source for reading
      * archive logs.When not set, the connector will automatically select the
      * first LOCAL and VALID destination.
@@ -1607,6 +1725,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getSourceinfoStructMaker() {
         return sourceinfoStructMaker;
+    }
+
+    /**
+     * Enable Debezium to emit data lineage metadata through OpenLineage API
+     */
+    public void setOpenlineageIntegrationEnabled(
+            boolean openlineageIntegrationEnabled) {
+        this.openlineageIntegrationEnabled = openlineageIntegrationEnabled;
+    }
+
+    public boolean isOpenlineageIntegrationEnabled() {
+        return openlineageIntegrationEnabled;
     }
 
     /**
@@ -1800,6 +1930,19 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         return logMiningBatchSizeMin;
     }
 
+    /**
+     * The maximum time in milliseconds to wait for connection validation to
+     * complete. Defaults to 60 seconds.
+     */
+    public void setConnectionValidationTimeoutMs(
+            long connectionValidationTimeoutMs) {
+        this.connectionValidationTimeoutMs = connectionValidationTimeoutMs;
+    }
+
+    public long getConnectionValidationTimeoutMs() {
+        return connectionValidationTimeoutMs;
+    }
+
     @Override
     protected Configuration createConnectorConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
@@ -1816,6 +1959,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
         addPropertyIfNotNull(configBuilder, "log.mining.scn.gap.detection.gap.size.min", logMiningScnGapDetectionGapSizeMin);
         addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
@@ -1832,9 +1976,12 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.schemachanges.config", logMiningBufferEhcacheSchemachangesConfig);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "log.mining.strategy", logMiningStrategy);
+        addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
@@ -1861,12 +2008,15 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.processedtransactions.config", logMiningBufferEhcacheProcessedtransactionsConfig);
         addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
         addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.global.config", logMiningBufferEhcacheGlobalConfig);
         addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.min.ms", logMiningSleepTimeMinMs);
         addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
+        addPropertyIfNotNull(configBuilder, "log.mining.clientid.include.list", logMiningClientidIncludeList);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
+        addPropertyIfNotNull(configBuilder, "log.mining.clientid.exclude.list", logMiningClientidExcludeList);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
         addPropertyIfNotNull(configBuilder, "log.mining.username.include.list", logMiningUsernameIncludeList);
         addPropertyIfNotNull(configBuilder, "lob.enabled", lobEnabled);
@@ -1890,6 +2040,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.events", logMiningBufferInfinispanCacheEvents);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
         addPropertyIfNotNull(configBuilder, "archive.destination.name", archiveDestinationName);
         addPropertyIfNotNull(configBuilder, "log.mining.scn.gap.detection.time.interval.max.ms", logMiningScnGapDetectionTimeIntervalMaxMs);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
@@ -1904,6 +2055,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "openlogreplicator.port", openlogreplicatorPort);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.events.config", logMiningBufferEhcacheEventsConfig);
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.max", logMiningBatchSizeMax);
@@ -1919,6 +2071,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "log.mining.session.max.ms", logMiningSessionMaxMs);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.min", logMiningBatchSizeMin);
+        addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
         
         return configBuilder.build();
     }

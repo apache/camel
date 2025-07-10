@@ -25,6 +25,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String mongodbPassword;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobNamespace;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private int queryFetchSize = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "source")
@@ -49,6 +51,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int mongodbConnectTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "30s", javaType = "java.time.Duration")
     private long mongodbPollIntervalMs = 30000;
     @UriParam(label = LABEL_NAME, defaultValue = "INSERT_INSERT")
@@ -71,6 +75,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int maxBatchSize = 2048;
     @UriParam(label = LABEL_NAME, defaultValue = "t")
     private String skippedOperations = "t";
+    @UriParam(label = LABEL_NAME, defaultValue = "Debezium change data capture job")
+    private String openlineageIntegrationJobDescription = "Debezium change data capture job";
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.schema.SchemaTopicNamingStrategy")
     private String topicNamingStrategy = "io.debezium.schema.SchemaTopicNamingStrategy";
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
@@ -81,12 +87,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME)
     private String collectionIncludeList;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobOwners;
+    @UriParam(label = LABEL_NAME, defaultValue = "./openlineage.yml")
+    private String openlineageIntegrationConfigFilePath = "./openlineage.yml";
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "change_streams_update_full")
     private String captureMode = "change_streams_update_full";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "4s", javaType = "java.time.Duration")
+    private long executorShutdownTimeoutMs = 4000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -104,6 +116,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String mongodbAuthsource = "admin";
     @UriParam(label = LABEL_NAME)
     private String collectionExcludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean openlineageIntegrationEnabled = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -134,6 +148,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private boolean mongodbSslInvalidHostnameAllowed = false;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private int mongodbHeartbeatFrequencyMs = 10000;
+    @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
+    private long connectionValidationTimeoutMs = 60000;
     @UriParam(label = LABEL_NAME)
     private String databaseIncludeList;
 
@@ -194,6 +210,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getMongodbPassword() {
         return mongodbPassword;
+    }
+
+    /**
+     * The job's namespace emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobNamespace(
+            String openlineageIntegrationJobNamespace) {
+        this.openlineageIntegrationJobNamespace = openlineageIntegrationJobNamespace;
+    }
+
+    public String getOpenlineageIntegrationJobNamespace() {
+        return openlineageIntegrationJobNamespace;
     }
 
     /**
@@ -347,6 +375,19 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's tags emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
+     */
+    public void setOpenlineageIntegrationJobTags(
+            String openlineageIntegrationJobTags) {
+        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
+    }
+
+    public String getOpenlineageIntegrationJobTags() {
+        return openlineageIntegrationJobTags;
+    }
+
+    /**
      * Interval for looking for new, removed, or changed replica sets, given in
      * milliseconds. Defaults to 30 seconds (30,000 ms).
      */
@@ -490,6 +531,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's description emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobDescription(
+            String openlineageIntegrationJobDescription) {
+        this.openlineageIntegrationJobDescription = openlineageIntegrationJobDescription;
+    }
+
+    public String getOpenlineageIntegrationJobDescription() {
+        return openlineageIntegrationJobDescription;
+    }
+
+    /**
      * The name of the TopicNamingStrategy class that should be used to
      * determine the topic name for data change, schema change, transaction,
      * heartbeat event etc.
@@ -559,6 +612,32 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's owners emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
+     */
+    public void setOpenlineageIntegrationJobOwners(
+            String openlineageIntegrationJobOwners) {
+        this.openlineageIntegrationJobOwners = openlineageIntegrationJobOwners;
+    }
+
+    public String getOpenlineageIntegrationJobOwners() {
+        return openlineageIntegrationJobOwners;
+    }
+
+    /**
+     * Path to OpenLineage file configuration. See
+     * https://openlineage.io/docs/client/java/configuration
+     */
+    public void setOpenlineageIntegrationConfigFilePath(
+            String openlineageIntegrationConfigFilePath) {
+        this.openlineageIntegrationConfigFilePath = openlineageIntegrationConfigFilePath;
+    }
+
+    public String getOpenlineageIntegrationConfigFilePath() {
+        return openlineageIntegrationConfigFilePath;
+    }
+
+    /**
      * Time to wait before restarting connector after retriable exception
      * occurs. Defaults to 10000ms.
      */
@@ -596,6 +675,17 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public long getSnapshotDelayMs() {
         return snapshotDelayMs;
+    }
+
+    /**
+     * The maximum time in milliseconds to wait for task executor to shut down.
+     */
+    public void setExecutorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+        this.executorShutdownTimeoutMs = executorShutdownTimeoutMs;
+    }
+
+    public long getExecutorShutdownTimeoutMs() {
+        return executorShutdownTimeoutMs;
     }
 
     /**
@@ -699,6 +789,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getCollectionExcludeList() {
         return collectionExcludeList;
+    }
+
+    /**
+     * Enable Debezium to emit data lineage metadata through OpenLineage API
+     */
+    public void setOpenlineageIntegrationEnabled(
+            boolean openlineageIntegrationEnabled) {
+        this.openlineageIntegrationEnabled = openlineageIntegrationEnabled;
+    }
+
+    public boolean isOpenlineageIntegrationEnabled() {
+        return openlineageIntegrationEnabled;
     }
 
     /**
@@ -899,6 +1001,19 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The maximum time in milliseconds to wait for connection validation to
+     * complete. Defaults to 60 seconds.
+     */
+    public void setConnectionValidationTimeoutMs(
+            long connectionValidationTimeoutMs) {
+        this.connectionValidationTimeoutMs = connectionValidationTimeoutMs;
+    }
+
+    public long getConnectionValidationTimeoutMs() {
+        return connectionValidationTimeoutMs;
+    }
+
+    /**
      * A comma-separated list of regular expressions or literals that match the
      * database names for which changes are to be captured
      */
@@ -919,6 +1034,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "mongodb.connection.string", mongodbConnectionString);
         addPropertyIfNotNull(configBuilder, "mongodb.password", mongodbPassword);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.enabled", mongodbSslEnabled);
@@ -931,6 +1047,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "mongodb.connect.timeout.ms", mongodbConnectTimeoutMs);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "mongodb.poll.interval.ms", mongodbPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.watermarking.strategy", incrementalSnapshotWatermarkingStrategy);
         addPropertyIfNotNull(configBuilder, "mongodb.user", mongodbUser);
@@ -942,14 +1059,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.exclude.list", databaseExcludeList);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
         addPropertyIfNotNull(configBuilder, "topic.naming.strategy", topicNamingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "collection.include.list", collectionIncludeList);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "capture.mode", captureMode);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
+        addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
@@ -958,6 +1079,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
         addPropertyIfNotNull(configBuilder, "mongodb.authsource", mongodbAuthsource);
         addPropertyIfNotNull(configBuilder, "collection.exclude.list", collectionExcludeList);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
@@ -973,6 +1095,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.invalid.hostname.allowed", mongodbSslInvalidHostnameAllowed);
         addPropertyIfNotNull(configBuilder, "mongodb.heartbeat.frequency.ms", mongodbHeartbeatFrequencyMs);
+        addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
         addPropertyIfNotNull(configBuilder, "database.include.list", databaseIncludeList);
         
         return configBuilder.build();

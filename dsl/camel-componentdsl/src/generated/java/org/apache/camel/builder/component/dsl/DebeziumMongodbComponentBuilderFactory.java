@@ -364,6 +364,24 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The maximum time in milliseconds to wait for connection validation to
+         * complete. Defaults to 60 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1m
+         * Group: mongodb
+         * 
+         * @param connectionValidationTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder connectionValidationTimeoutMs(long connectionValidationTimeoutMs) {
+            doSetProperty("connectionValidationTimeoutMs", connectionValidationTimeoutMs);
+            return this;
+        }
+    
         /**
          * Optional list of custom converters that would be used instead of
          * default ones. The converters are defined using '.type' config option
@@ -485,6 +503,24 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder eventProcessingFailureHandlingMode(java.lang.String eventProcessingFailureHandlingMode) {
             doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+    
+        
+        /**
+         * The maximum time in milliseconds to wait for task executor to shut
+         * down.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 4s
+         * Group: mongodb
+         * 
+         * @param executorShutdownTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder executorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+            doSetProperty("executorShutdownTimeoutMs", executorShutdownTimeoutMs);
             return this;
         }
     
@@ -847,6 +883,106 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder notificationSinkTopicName(java.lang.String notificationSinkTopicName) {
             doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
+            return this;
+        }
+    
+        
+        /**
+         * Path to OpenLineage file configuration. See
+         * https://openlineage.io/docs/client/java/configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ./openlineage.yml
+         * Group: mongodb
+         * 
+         * @param openlineageIntegrationConfigFilePath the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
+            doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        
+        /**
+         * Enable Debezium to emit data lineage metadata through OpenLineage
+         * API.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param openlineageIntegrationEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder openlineageIntegrationEnabled(boolean openlineageIntegrationEnabled) {
+            doSetProperty("openlineageIntegrationEnabled", openlineageIntegrationEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * The job's description emitted by Debezium.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: Debezium change data capture job
+         * Group: mongodb
+         * 
+         * @param openlineageIntegrationJobDescription the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder openlineageIntegrationJobDescription(java.lang.String openlineageIntegrationJobDescription) {
+            doSetProperty("openlineageIntegrationJobDescription", openlineageIntegrationJobDescription);
+            return this;
+        }
+    
+        /**
+         * The job's namespace emitted by Debezium.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param openlineageIntegrationJobNamespace the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder openlineageIntegrationJobNamespace(java.lang.String openlineageIntegrationJobNamespace) {
+            doSetProperty("openlineageIntegrationJobNamespace", openlineageIntegrationJobNamespace);
+            return this;
+        }
+    
+        /**
+         * The job's owners emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param openlineageIntegrationJobOwners the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder openlineageIntegrationJobOwners(java.lang.String openlineageIntegrationJobOwners) {
+            doSetProperty("openlineageIntegrationJobOwners", openlineageIntegrationJobOwners);
+            return this;
+        }
+    
+        /**
+         * The job's tags emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param openlineageIntegrationJobTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder openlineageIntegrationJobTags(java.lang.String openlineageIntegrationJobTags) {
+            doSetProperty("openlineageIntegrationJobTags", openlineageIntegrationJobTags);
             return this;
         }
     
@@ -1421,6 +1557,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "captureMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCaptureMode((java.lang.String) value); return true;
             case "collectionExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionExcludeList((java.lang.String) value); return true;
             case "collectionIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionIncludeList((java.lang.String) value); return true;
+            case "connectionValidationTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectionValidationTimeoutMs((long) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConverters((java.lang.String) value); return true;
             case "cursorMaxAwaitTimeMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCursorMaxAwaitTimeMs((int) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCustomMetricTags((java.lang.String) value); return true;
@@ -1428,6 +1565,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "databaseIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumMongodbComponent) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
+            case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "fieldExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldExcludeList((java.lang.String) value); return true;
             case "fieldRenames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldRenames((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatIntervalMs((int) value); return true;
@@ -1449,6 +1587,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "mongodbUser": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbUser((java.lang.String) value); return true;
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
+            case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
+            case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
+            case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;
+            case "openlineageIntegrationJobOwners": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationJobOwners((java.lang.String) value); return true;
+            case "openlineageIntegrationJobTags": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationJobTags((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setPollIntervalMs((long) value); return true;
             case "postProcessors": getOrCreateConfiguration((DebeziumMongodbComponent) component).setPostProcessors((java.lang.String) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumMongodbComponent) component).setProvideTransactionMetadata((boolean) value); return true;

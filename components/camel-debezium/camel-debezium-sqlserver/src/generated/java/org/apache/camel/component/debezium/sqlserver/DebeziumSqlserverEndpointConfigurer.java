@@ -35,6 +35,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "columnIncludeList": target.getConfiguration().setColumnIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": target.getConfiguration().setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectionvalidationtimeoutms":
+        case "connectionValidationTimeoutMs": target.getConfiguration().setConnectionValidationTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "custommetrictags":
         case "customMetricTags": target.getConfiguration().setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
@@ -66,6 +68,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "executorshutdowntimeoutms":
+        case "executorShutdownTimeoutMs": target.getConfiguration().setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": target.getConfiguration().setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
@@ -118,6 +122,18 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "offsetStorageReplicationFactor": target.getConfiguration().setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
         case "offsetstoragetopic":
         case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationconfigfilepath":
+        case "openlineageIntegrationConfigFilePath": target.getConfiguration().setOpenlineageIntegrationConfigFilePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationenabled":
+        case "openlineageIntegrationEnabled": target.getConfiguration().setOpenlineageIntegrationEnabled(property(camelContext, boolean.class, value)); return true;
+        case "openlineageintegrationjobdescription":
+        case "openlineageIntegrationJobDescription": target.getConfiguration().setOpenlineageIntegrationJobDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationjobnamespace":
+        case "openlineageIntegrationJobNamespace": target.getConfiguration().setOpenlineageIntegrationJobNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationjobowners":
+        case "openlineageIntegrationJobOwners": target.getConfiguration().setOpenlineageIntegrationJobOwners(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationjobtags":
+        case "openlineageIntegrationJobTags": target.getConfiguration().setOpenlineageIntegrationJobTags(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "postprocessors":
@@ -217,6 +233,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "columnIncludeList": return java.lang.String.class;
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": return java.lang.String.class;
+        case "connectionvalidationtimeoutms":
+        case "connectionValidationTimeoutMs": return long.class;
         case "converters": return java.lang.String.class;
         case "custommetrictags":
         case "customMetricTags": return java.lang.String.class;
@@ -248,6 +266,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "executorshutdowntimeoutms":
+        case "executorShutdownTimeoutMs": return long.class;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return java.lang.String.class;
         case "heartbeatintervalms":
@@ -300,6 +320,18 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "offsetStorageReplicationFactor": return int.class;
         case "offsetstoragetopic":
         case "offsetStorageTopic": return java.lang.String.class;
+        case "openlineageintegrationconfigfilepath":
+        case "openlineageIntegrationConfigFilePath": return java.lang.String.class;
+        case "openlineageintegrationenabled":
+        case "openlineageIntegrationEnabled": return boolean.class;
+        case "openlineageintegrationjobdescription":
+        case "openlineageIntegrationJobDescription": return java.lang.String.class;
+        case "openlineageintegrationjobnamespace":
+        case "openlineageIntegrationJobNamespace": return java.lang.String.class;
+        case "openlineageintegrationjobowners":
+        case "openlineageIntegrationJobOwners": return java.lang.String.class;
+        case "openlineageintegrationjobtags":
+        case "openlineageIntegrationJobTags": return java.lang.String.class;
         case "pollintervalms":
         case "pollIntervalMs": return long.class;
         case "postprocessors":
@@ -400,6 +432,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "columnIncludeList": return target.getConfiguration().getColumnIncludeList();
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": return target.getConfiguration().getColumnPropagateSourceType();
+        case "connectionvalidationtimeoutms":
+        case "connectionValidationTimeoutMs": return target.getConfiguration().getConnectionValidationTimeoutMs();
         case "converters": return target.getConfiguration().getConverters();
         case "custommetrictags":
         case "customMetricTags": return target.getConfiguration().getCustomMetricTags();
@@ -431,6 +465,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "executorshutdowntimeoutms":
+        case "executorShutdownTimeoutMs": return target.getConfiguration().getExecutorShutdownTimeoutMs();
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return target.getConfiguration().getHeartbeatActionQuery();
         case "heartbeatintervalms":
@@ -483,6 +519,18 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "offsetStorageReplicationFactor": return target.getConfiguration().getOffsetStorageReplicationFactor();
         case "offsetstoragetopic":
         case "offsetStorageTopic": return target.getConfiguration().getOffsetStorageTopic();
+        case "openlineageintegrationconfigfilepath":
+        case "openlineageIntegrationConfigFilePath": return target.getConfiguration().getOpenlineageIntegrationConfigFilePath();
+        case "openlineageintegrationenabled":
+        case "openlineageIntegrationEnabled": return target.getConfiguration().isOpenlineageIntegrationEnabled();
+        case "openlineageintegrationjobdescription":
+        case "openlineageIntegrationJobDescription": return target.getConfiguration().getOpenlineageIntegrationJobDescription();
+        case "openlineageintegrationjobnamespace":
+        case "openlineageIntegrationJobNamespace": return target.getConfiguration().getOpenlineageIntegrationJobNamespace();
+        case "openlineageintegrationjobowners":
+        case "openlineageIntegrationJobOwners": return target.getConfiguration().getOpenlineageIntegrationJobOwners();
+        case "openlineageintegrationjobtags":
+        case "openlineageIntegrationJobTags": return target.getConfiguration().getOpenlineageIntegrationJobTags();
         case "pollintervalms":
         case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
         case "postprocessors":
