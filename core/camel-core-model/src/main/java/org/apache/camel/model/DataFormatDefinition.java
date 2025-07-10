@@ -54,7 +54,7 @@ public class DataFormatDefinition extends IdentifiedType implements CopyableDefi
     }
 
     public DataFormatDefinition copyDefinition() {
-        throw new UnsupportedOperationException("Should be implemented in child classes");
+        return new DataFormatDefinition(this);
     }
 
     protected DataFormatDefinition(String dataFormatName) {
