@@ -379,6 +379,38 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum time in milliseconds to wait for connection validation to
+         * complete. Defaults to 60 seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1m
+         * Group: sqlserver
+         * 
+         * @param connectionValidationTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder connectionValidationTimeoutMs(long connectionValidationTimeoutMs) {
+            doSetProperty("connectionValidationTimeoutMs", connectionValidationTimeoutMs);
+            return this;
+        }
+        /**
+         * The maximum time in milliseconds to wait for connection validation to
+         * complete. Defaults to 60 seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1m
+         * Group: sqlserver
+         * 
+         * @param connectionValidationTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder connectionValidationTimeoutMs(String connectionValidationTimeoutMs) {
+            doSetProperty("connectionValidationTimeoutMs", connectionValidationTimeoutMs);
+            return this;
+        }
+        /**
          * Optional list of custom converters that would be used instead of
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
@@ -654,6 +686,38 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          */
         default DebeziumSqlserverEndpointBuilder eventProcessingFailureHandlingMode(String eventProcessingFailureHandlingMode) {
             doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+        /**
+         * The maximum time in milliseconds to wait for task executor to shut
+         * down.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 4s
+         * Group: sqlserver
+         * 
+         * @param executorShutdownTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder executorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+            doSetProperty("executorShutdownTimeoutMs", executorShutdownTimeoutMs);
+            return this;
+        }
+        /**
+         * The maximum time in milliseconds to wait for task executor to shut
+         * down.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 4s
+         * Group: sqlserver
+         * 
+         * @param executorShutdownTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder executorShutdownTimeoutMs(String executorShutdownTimeoutMs) {
+            doSetProperty("executorShutdownTimeoutMs", executorShutdownTimeoutMs);
             return this;
         }
         /**
@@ -1112,6 +1176,113 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          */
         default DebeziumSqlserverEndpointBuilder notificationSinkTopicName(String notificationSinkTopicName) {
             doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
+            return this;
+        }
+        /**
+         * Path to OpenLineage file configuration. See
+         * https://openlineage.io/docs/client/java/configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: ./openlineage.yml
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationConfigFilePath the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder openlineageIntegrationConfigFilePath(String openlineageIntegrationConfigFilePath) {
+            doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+        /**
+         * Enable Debezium to emit data lineage metadata through OpenLineage
+         * API.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder openlineageIntegrationEnabled(boolean openlineageIntegrationEnabled) {
+            doSetProperty("openlineageIntegrationEnabled", openlineageIntegrationEnabled);
+            return this;
+        }
+        /**
+         * Enable Debezium to emit data lineage metadata through OpenLineage
+         * API.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder openlineageIntegrationEnabled(String openlineageIntegrationEnabled) {
+            doSetProperty("openlineageIntegrationEnabled", openlineageIntegrationEnabled);
+            return this;
+        }
+        /**
+         * The job's description emitted by Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Debezium change data capture job
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationJobDescription the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder openlineageIntegrationJobDescription(String openlineageIntegrationJobDescription) {
+            doSetProperty("openlineageIntegrationJobDescription", openlineageIntegrationJobDescription);
+            return this;
+        }
+        /**
+         * The job's namespace emitted by Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationJobNamespace the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder openlineageIntegrationJobNamespace(String openlineageIntegrationJobNamespace) {
+            doSetProperty("openlineageIntegrationJobNamespace", openlineageIntegrationJobNamespace);
+            return this;
+        }
+        /**
+         * The job's owners emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationJobOwners the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder openlineageIntegrationJobOwners(String openlineageIntegrationJobOwners) {
+            doSetProperty("openlineageIntegrationJobOwners", openlineageIntegrationJobOwners);
+            return this;
+        }
+        /**
+         * The job's tags emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationJobTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder openlineageIntegrationJobTags(String openlineageIntegrationJobTags) {
+            doSetProperty("openlineageIntegrationJobTags", openlineageIntegrationJobTags);
             return this;
         }
         /**

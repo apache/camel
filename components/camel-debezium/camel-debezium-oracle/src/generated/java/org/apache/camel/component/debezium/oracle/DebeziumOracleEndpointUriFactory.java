@@ -23,7 +23,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(130);
+        Set<String> props = new HashSet<>(140);
         props.add("additionalProperties");
         props.add("archiveDestinationName");
         props.add("archiveLogHours");
@@ -32,6 +32,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("columnExcludeList");
         props.add("columnIncludeList");
         props.add("columnPropagateSourceType");
+        props.add("connectionValidationTimeoutMs");
         props.add("converters");
         props.add("customMetricTags");
         props.add("databaseConnectionAdapter");
@@ -50,6 +51,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("executorShutdownTimeoutMs");
         props.add("heartbeatActionQuery");
         props.add("heartbeatIntervalMs");
         props.add("heartbeatTopicsPrefix");
@@ -79,6 +81,8 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("logMiningBufferInfinispanCacheTransactions");
         props.add("logMiningBufferTransactionEventsThreshold");
         props.add("logMiningBufferType");
+        props.add("logMiningClientidExcludeList");
+        props.add("logMiningClientidIncludeList");
         props.add("logMiningFlushTableName");
         props.add("logMiningIncludeRedoSql");
         props.add("logMiningQueryFilterMode");
@@ -109,6 +113,12 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("offsetStoragePartitions");
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
+        props.add("openlineageIntegrationConfigFilePath");
+        props.add("openlineageIntegrationEnabled");
+        props.add("openlineageIntegrationJobDescription");
+        props.add("openlineageIntegrationJobNamespace");
+        props.add("openlineageIntegrationJobOwners");
+        props.add("openlineageIntegrationJobTags");
         props.add("openlogreplicatorHost");
         props.add("openlogreplicatorPort");
         props.add("openlogreplicatorSource");
