@@ -90,6 +90,10 @@ public class PQCComponent extends HealthCheckComponent {
                         configuration.setSigner(PQCDefaultSNOVAMaterial.signer);
                         configuration.setKeyPair(PQCDefaultSNOVAMaterial.keyPair);
                         break;
+                    case "MAYO":
+                        configuration.setSigner(PQCDefaultMAYOMaterial.signer);
+                        configuration.setKeyPair(PQCDefaultMAYOMaterial.keyPair);
+                        break;
                     default:
                         break;
                 }
