@@ -40,6 +40,14 @@ URI pattern matching by exact uri, wildcard and regular expression. See further 
 * The intercepted endpoint uri is stored as exchange property with the key
 `Exchange.INTERCEPTED_ENDPOINT`.
 
+=== Interceptors headers
+
+When using Apache Camel interceptors, the framework automatically populates exchange properties with contextual information about where the interception occurred:
+
+* `Exchange.INTERCEPTED_ROUTE_ENDPOINT`: The route's endpoint URI that was intercepted.
+* `Exchange.INTERCEPTED_ROUTE_ID`: The intercepted route's ID.
+* `Exchange.INTERCEPTED_NODE_ID`: The intercepted route's node ID.
+
 [[Intercept-Intercept]]
 == Using `intercept`
 
@@ -137,6 +145,63 @@ XML::
   </route>
 
 </camelContext>
+----
+
+====
+
+=== Controlling when to intercept using contextual informations
+
+[tabs]
+====
+
+Java::
++
+
+[source,java]
+----
+intercept().choice()
+    .when(header(Exchange.INTERCEPTED_ROUTE_ID).isEqualTo("criticalRoute"))
+        .to("direct:specialHandling")
+    .otherwise()
+        .to("direct:standardHandling");
+----
+
+XML::
++
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns="http://camel.apache.org/schema/spring">
+  <intercept>
+    <choice>
+      <when>
+        <simple>${header.CamelInterceptedRouteId} == 'criticalRoute'</simple>
+        <to uri="direct:specialHandling"/>
+      </when>
+      <otherwise>
+        <to uri="direct:standardHandling"/>
+      </otherwise>
+    </choice>
+  </intercept>
+</routes>
+----
+
+YAML::
++
+
+[source,xml]
+----
+- intercept:
+    steps:
+      - choice:
+          when:
+            - simple: "${header.CamelInterceptedRouteId} == 'criticalRoute'"
+              steps:
+                - to: "direct:specialHandling"
+          otherwise:
+            steps:
+              - to: "direct:standardHandling"
 ----
 
 ====
