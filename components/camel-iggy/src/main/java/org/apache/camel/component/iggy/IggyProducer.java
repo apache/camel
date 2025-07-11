@@ -79,6 +79,15 @@ public class IggyProducer extends DefaultAsyncProducer {
                         .singletonList(Message.of(exchange.getContext().getTypeConverter().convertTo(String.class, body)));
             }
 
+            // TODO Handle user header when they are implemented in the java client
+            /*
+            let message = IggyMessage::builder()
+                .payload(Bytes::from(json))
+                .user_headers(headers)
+                .build()
+                .unwrap();
+             */
+
             client.messages().sendMessages(
                     StreamId.of(iggyConfiguration.getStreamName()),
                     TopicId.of(endpoint.getTopicName()),
