@@ -70,6 +70,15 @@ public class IggyConfiguration implements Cloneable {
     private String pollingStrategy = "next";
     @UriParam(defaultValue = "TCP", description = "Polling strategy", enums = "TCP,HTTP")
     private String clientTransport = "TCP"; // There may be QUIC in the future
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Controls message acknowledgment behavior. " +
+                            "When true, messages are automatically marked as processed after consumption. " +
+                            "When false, enables manual offset management and allows setting a custom starting offset position")
+    private boolean autoCommit = true;
+    @UriParam(label = "consumer", defaultValue = "0",
+              description = "Defines the initial message offset position when autoCommit is disabled. " +
+                            "Use 0 to start from the beginning of the stream, or specify a custom offset to resume from a particular point")
+    private Long startingOffset;
 
     public IggyConfiguration copy() {
         try {
@@ -251,5 +260,21 @@ public class IggyConfiguration implements Cloneable {
 
     public void setClientTransport(String clientTransport) {
         this.clientTransport = clientTransport;
+    }
+
+    public boolean isAutoCommit() {
+        return autoCommit;
+    }
+
+    public void setAutoCommit(boolean autoCommit) {
+        this.autoCommit = autoCommit;
+    }
+
+    public Long getStartingOffset() {
+        return startingOffset;
+    }
+
+    public void setStartingOffset(Long startingOffset) {
+        this.startingOffset = startingOffset;
     }
 }
