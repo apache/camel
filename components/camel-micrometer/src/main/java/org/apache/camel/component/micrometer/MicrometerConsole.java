@@ -31,7 +31,9 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "micrometer", description = "Display runtime metrics")
@@ -42,6 +44,11 @@ public class MicrometerConsole extends AbstractDevConsole {
      */
     public static final String TAGS = "tags";
 
+    /**
+     * Filters matching metrics by name
+     */
+    public static final String FILTER = "filter";
+
     public MicrometerConsole() {
         super("camel", "micrometer", "Micrometer", "Display runtime metrics");
     }
@@ -49,14 +56,20 @@ public class MicrometerConsole extends AbstractDevConsole {
     @Override
     protected String doCallText(Map<String, Object> options) {
         final boolean tags = "true".equals(options.getOrDefault(TAGS, "true"));
+        final String filter = (String) options.get(FILTER);
 
         StringBuilder sb = new StringBuilder();
 
         MeterRegistry mr = lookupMeterRegistry();
         sb.append(String.format("MeterRegistry: %s\n\n", mr.getClass().getName()));
 
+        List<Meter> meters = mr.getMeters()
+                .stream()
+                .filter(meter -> accept(meter.getId().getName(), filter))
+                .toList();
+
         int i = 0;
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof Counter) {
                 Counter c = (Counter) m;
                 if (i == 0) {
@@ -76,7 +89,7 @@ public class MicrometerConsole extends AbstractDevConsole {
             }
         }
         i = 0;
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof Gauge) {
                 Gauge g = (Gauge) m;
                 if (i == 0) {
@@ -92,7 +105,7 @@ public class MicrometerConsole extends AbstractDevConsole {
             }
         }
         i = 0;
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof Timer) {
                 Timer t = (Timer) m;
                 if (i == 0) {
@@ -111,7 +124,7 @@ public class MicrometerConsole extends AbstractDevConsole {
             }
         }
         i = 0;
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof LongTaskTimer) {
                 LongTaskTimer t = (LongTaskTimer) m;
                 if (i == 0) {
@@ -131,7 +144,7 @@ public class MicrometerConsole extends AbstractDevConsole {
             }
         }
         i = 0;
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof DistributionSummary) {
                 DistributionSummary d = (DistributionSummary) m;
                 if (i == 0) {
@@ -166,15 +179,21 @@ public class MicrometerConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         final boolean tags = "true".equals(options.getOrDefault(TAGS, "true"));
+        final String filter = (String) options.get(FILTER);
 
         JsonObject root = new JsonObject();
 
         MeterRegistry mr = lookupMeterRegistry();
         root.put("meterRegistryClass", mr.getClass().getName());
 
+        List<Meter> meters = mr.getMeters()
+                .stream()
+                .filter(meter -> accept(meter.getId().getName(), filter))
+                .toList();
+
         int i = 0;
         List<JsonObject> list = new ArrayList<>();
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof Counter) {
                 Counter c = (Counter) m;
                 if (i == 0) {
@@ -204,7 +223,7 @@ public class MicrometerConsole extends AbstractDevConsole {
         list.sort(this::sortByName);
         i = 0;
         list = new ArrayList<>();
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof Gauge) {
                 Gauge g = (Gauge) m;
                 if (i == 0) {
@@ -226,7 +245,7 @@ public class MicrometerConsole extends AbstractDevConsole {
         list.sort(this::sortByName);
         i = 0;
         list = new ArrayList<>();
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof Timer) {
                 Timer t = (Timer) m;
                 if (i == 0) {
@@ -251,7 +270,7 @@ public class MicrometerConsole extends AbstractDevConsole {
         list.sort(this::sortByName);
         i = 0;
         list = new ArrayList<>();
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof LongTaskTimer) {
                 LongTaskTimer t = (LongTaskTimer) m;
                 if (i == 0) {
@@ -276,7 +295,7 @@ public class MicrometerConsole extends AbstractDevConsole {
         list.sort(this::sortByName);
         i = 0;
         list = new ArrayList<>();
-        for (Meter m : mr.getMeters()) {
+        for (Meter m : meters) {
             if (m instanceof DistributionSummary) {
                 DistributionSummary d = (DistributionSummary) m;
                 if (i == 0) {
@@ -324,4 +343,11 @@ public class MicrometerConsole extends AbstractDevConsole {
         return o1.getString("name").compareToIgnoreCase(o2.getString("name"));
     }
 
+    private static boolean accept(String name, String filter) {
+        if (ObjectHelper.isEmpty(filter)) {
+            return true;
+        }
+
+        return PatternHelper.matchPattern(name, filter);
+    }
 }
