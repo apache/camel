@@ -49,6 +49,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": getOrCreateConfiguration(target).setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
+        case "connectionvalidationtimeoutms":
+        case "connectionValidationTimeoutMs": getOrCreateConfiguration(target).setConnectionValidationTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "custommetrictags":
         case "customMetricTags": getOrCreateConfiguration(target).setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
@@ -80,6 +82,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "errorsMaxRetries": getOrCreateConfiguration(target).setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "executorshutdowntimeoutms":
+        case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": getOrCreateConfiguration(target).setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
@@ -138,6 +142,10 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningBufferTransactionEventsThreshold": getOrCreateConfiguration(target).setLogMiningBufferTransactionEventsThreshold(property(camelContext, long.class, value)); return true;
         case "logminingbuffertype":
         case "logMiningBufferType": getOrCreateConfiguration(target).setLogMiningBufferType(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingclientidexcludelist":
+        case "logMiningClientidExcludeList": getOrCreateConfiguration(target).setLogMiningClientidExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingclientidincludelist":
+        case "logMiningClientidIncludeList": getOrCreateConfiguration(target).setLogMiningClientidIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingflushtablename":
         case "logMiningFlushTableName": getOrCreateConfiguration(target).setLogMiningFlushTableName(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingincluderedosql":
@@ -196,6 +204,18 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "offsetStorageReplicationFactor": getOrCreateConfiguration(target).setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
         case "offsetstoragetopic":
         case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationconfigfilepath":
+        case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration(target).setOpenlineageIntegrationConfigFilePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationenabled":
+        case "openlineageIntegrationEnabled": getOrCreateConfiguration(target).setOpenlineageIntegrationEnabled(property(camelContext, boolean.class, value)); return true;
+        case "openlineageintegrationjobdescription":
+        case "openlineageIntegrationJobDescription": getOrCreateConfiguration(target).setOpenlineageIntegrationJobDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationjobnamespace":
+        case "openlineageIntegrationJobNamespace": getOrCreateConfiguration(target).setOpenlineageIntegrationJobNamespace(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationjobowners":
+        case "openlineageIntegrationJobOwners": getOrCreateConfiguration(target).setOpenlineageIntegrationJobOwners(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationjobtags":
+        case "openlineageIntegrationJobTags": getOrCreateConfiguration(target).setOpenlineageIntegrationJobTags(property(camelContext, java.lang.String.class, value)); return true;
         case "openlogreplicatorhost":
         case "openlogreplicatorHost": getOrCreateConfiguration(target).setOpenlogreplicatorHost(property(camelContext, java.lang.String.class, value)); return true;
         case "openlogreplicatorport":
@@ -312,6 +332,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration.class;
+        case "connectionvalidationtimeoutms":
+        case "connectionValidationTimeoutMs": return long.class;
         case "converters": return java.lang.String.class;
         case "custommetrictags":
         case "customMetricTags": return java.lang.String.class;
@@ -343,6 +365,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "errorsMaxRetries": return int.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
+        case "executorshutdowntimeoutms":
+        case "executorShutdownTimeoutMs": return long.class;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return java.lang.String.class;
         case "heartbeatintervalms":
@@ -401,6 +425,10 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningBufferTransactionEventsThreshold": return long.class;
         case "logminingbuffertype":
         case "logMiningBufferType": return java.lang.String.class;
+        case "logminingclientidexcludelist":
+        case "logMiningClientidExcludeList": return java.lang.String.class;
+        case "logminingclientidincludelist":
+        case "logMiningClientidIncludeList": return java.lang.String.class;
         case "logminingflushtablename":
         case "logMiningFlushTableName": return java.lang.String.class;
         case "logminingincluderedosql":
@@ -459,6 +487,18 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "offsetStorageReplicationFactor": return int.class;
         case "offsetstoragetopic":
         case "offsetStorageTopic": return java.lang.String.class;
+        case "openlineageintegrationconfigfilepath":
+        case "openlineageIntegrationConfigFilePath": return java.lang.String.class;
+        case "openlineageintegrationenabled":
+        case "openlineageIntegrationEnabled": return boolean.class;
+        case "openlineageintegrationjobdescription":
+        case "openlineageIntegrationJobDescription": return java.lang.String.class;
+        case "openlineageintegrationjobnamespace":
+        case "openlineageIntegrationJobNamespace": return java.lang.String.class;
+        case "openlineageintegrationjobowners":
+        case "openlineageIntegrationJobOwners": return java.lang.String.class;
+        case "openlineageintegrationjobtags":
+        case "openlineageIntegrationJobTags": return java.lang.String.class;
         case "openlogreplicatorhost":
         case "openlogreplicatorHost": return java.lang.String.class;
         case "openlogreplicatorport":
@@ -576,6 +616,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": return getOrCreateConfiguration(target).getColumnPropagateSourceType();
         case "configuration": return target.getConfiguration();
+        case "connectionvalidationtimeoutms":
+        case "connectionValidationTimeoutMs": return getOrCreateConfiguration(target).getConnectionValidationTimeoutMs();
         case "converters": return getOrCreateConfiguration(target).getConverters();
         case "custommetrictags":
         case "customMetricTags": return getOrCreateConfiguration(target).getCustomMetricTags();
@@ -607,6 +649,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "errorsMaxRetries": return getOrCreateConfiguration(target).getErrorsMaxRetries();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
+        case "executorshutdowntimeoutms":
+        case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return getOrCreateConfiguration(target).getHeartbeatActionQuery();
         case "heartbeatintervalms":
@@ -665,6 +709,10 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningBufferTransactionEventsThreshold": return getOrCreateConfiguration(target).getLogMiningBufferTransactionEventsThreshold();
         case "logminingbuffertype":
         case "logMiningBufferType": return getOrCreateConfiguration(target).getLogMiningBufferType();
+        case "logminingclientidexcludelist":
+        case "logMiningClientidExcludeList": return getOrCreateConfiguration(target).getLogMiningClientidExcludeList();
+        case "logminingclientidincludelist":
+        case "logMiningClientidIncludeList": return getOrCreateConfiguration(target).getLogMiningClientidIncludeList();
         case "logminingflushtablename":
         case "logMiningFlushTableName": return getOrCreateConfiguration(target).getLogMiningFlushTableName();
         case "logminingincluderedosql":
@@ -723,6 +771,18 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "offsetStorageReplicationFactor": return getOrCreateConfiguration(target).getOffsetStorageReplicationFactor();
         case "offsetstoragetopic":
         case "offsetStorageTopic": return getOrCreateConfiguration(target).getOffsetStorageTopic();
+        case "openlineageintegrationconfigfilepath":
+        case "openlineageIntegrationConfigFilePath": return getOrCreateConfiguration(target).getOpenlineageIntegrationConfigFilePath();
+        case "openlineageintegrationenabled":
+        case "openlineageIntegrationEnabled": return getOrCreateConfiguration(target).isOpenlineageIntegrationEnabled();
+        case "openlineageintegrationjobdescription":
+        case "openlineageIntegrationJobDescription": return getOrCreateConfiguration(target).getOpenlineageIntegrationJobDescription();
+        case "openlineageintegrationjobnamespace":
+        case "openlineageIntegrationJobNamespace": return getOrCreateConfiguration(target).getOpenlineageIntegrationJobNamespace();
+        case "openlineageintegrationjobowners":
+        case "openlineageIntegrationJobOwners": return getOrCreateConfiguration(target).getOpenlineageIntegrationJobOwners();
+        case "openlineageintegrationjobtags":
+        case "openlineageIntegrationJobTags": return getOrCreateConfiguration(target).getOpenlineageIntegrationJobTags();
         case "openlogreplicatorhost":
         case "openlogreplicatorHost": return getOrCreateConfiguration(target).getOpenlogreplicatorHost();
         case "openlogreplicatorport":

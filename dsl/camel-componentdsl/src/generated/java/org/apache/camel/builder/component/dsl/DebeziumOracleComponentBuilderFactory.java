@@ -414,6 +414,24 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The maximum time in milliseconds to wait for connection validation to
+         * complete. Defaults to 60 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1m
+         * Group: oracle
+         * 
+         * @param connectionValidationTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder connectionValidationTimeoutMs(long connectionValidationTimeoutMs) {
+            doSetProperty("connectionValidationTimeoutMs", connectionValidationTimeoutMs);
+            return this;
+        }
+    
         /**
          * Optional list of custom converters that would be used instead of
          * default ones. The converters are defined using '.type' config option
@@ -693,6 +711,24 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder eventProcessingFailureHandlingMode(java.lang.String eventProcessingFailureHandlingMode) {
             doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+    
+        
+        /**
+         * The maximum time in milliseconds to wait for task executor to shut
+         * down.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 4s
+         * Group: oracle
+         * 
+         * @param executorShutdownTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder executorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+            doSetProperty("executorShutdownTimeoutMs", executorShutdownTimeoutMs);
             return this;
         }
     
@@ -1191,6 +1227,36 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Comma separated list of client ids to exclude from LogMiner query.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningClientidExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningClientidExcludeList(java.lang.String logMiningClientidExcludeList) {
+            doSetProperty("logMiningClientidExcludeList", logMiningClientidExcludeList);
+            return this;
+        }
+    
+        /**
+         * Comma separated list of client ids to include from LogMiner query.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningClientidIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningClientidIncludeList(java.lang.String logMiningClientidIncludeList) {
+            doSetProperty("logMiningClientidIncludeList", logMiningClientidIncludeList);
+            return this;
+        }
+    
         
         /**
          * The name of the flush table used by the connector, defaults to
@@ -1580,6 +1646,106 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder notificationSinkTopicName(java.lang.String notificationSinkTopicName) {
             doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
+            return this;
+        }
+    
+        
+        /**
+         * Path to OpenLineage file configuration. See
+         * https://openlineage.io/docs/client/java/configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ./openlineage.yml
+         * Group: oracle
+         * 
+         * @param openlineageIntegrationConfigFilePath the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
+            doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        
+        /**
+         * Enable Debezium to emit data lineage metadata through OpenLineage
+         * API.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param openlineageIntegrationEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder openlineageIntegrationEnabled(boolean openlineageIntegrationEnabled) {
+            doSetProperty("openlineageIntegrationEnabled", openlineageIntegrationEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * The job's description emitted by Debezium.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: Debezium change data capture job
+         * Group: oracle
+         * 
+         * @param openlineageIntegrationJobDescription the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder openlineageIntegrationJobDescription(java.lang.String openlineageIntegrationJobDescription) {
+            doSetProperty("openlineageIntegrationJobDescription", openlineageIntegrationJobDescription);
+            return this;
+        }
+    
+        /**
+         * The job's namespace emitted by Debezium.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param openlineageIntegrationJobNamespace the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder openlineageIntegrationJobNamespace(java.lang.String openlineageIntegrationJobNamespace) {
+            doSetProperty("openlineageIntegrationJobNamespace", openlineageIntegrationJobNamespace);
+            return this;
+        }
+    
+        /**
+         * The job's owners emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param openlineageIntegrationJobOwners the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder openlineageIntegrationJobOwners(java.lang.String openlineageIntegrationJobOwners) {
+            doSetProperty("openlineageIntegrationJobOwners", openlineageIntegrationJobOwners);
+            return this;
+        }
+    
+        /**
+         * The job's tags emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param openlineageIntegrationJobTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder openlineageIntegrationJobTags(java.lang.String openlineageIntegrationJobTags) {
+            doSetProperty("openlineageIntegrationJobTags", openlineageIntegrationJobTags);
             return this;
         }
     
@@ -2479,6 +2645,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "columnExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
+            case "connectionValidationTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setConnectionValidationTimeoutMs((long) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumOracleComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumOracleComponent) component).setCustomMetricTags((java.lang.String) value); return true;
             case "databaseConnectionAdapter": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseConnectionAdapter((java.lang.String) value); return true;
@@ -2495,6 +2662,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumOracleComponent) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
+            case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
@@ -2522,6 +2690,8 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningBufferInfinispanCacheTransactions": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheTransactions((java.lang.String) value); return true;
             case "logMiningBufferTransactionEventsThreshold": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferTransactionEventsThreshold((long) value); return true;
             case "logMiningBufferType": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferType((java.lang.String) value); return true;
+            case "logMiningClientidExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningClientidExcludeList((java.lang.String) value); return true;
+            case "logMiningClientidIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningClientidIncludeList((java.lang.String) value); return true;
             case "logMiningFlushTableName": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningFlushTableName((java.lang.String) value); return true;
             case "logMiningIncludeRedoSql": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningIncludeRedoSql((boolean) value); return true;
             case "logMiningQueryFilterMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningQueryFilterMode((java.lang.String) value); return true;
@@ -2543,6 +2713,12 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumOracleComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
+            case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
+            case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
+            case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;
+            case "openlineageIntegrationJobOwners": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationJobOwners((java.lang.String) value); return true;
+            case "openlineageIntegrationJobTags": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationJobTags((java.lang.String) value); return true;
             case "openlogreplicatorHost": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlogreplicatorHost((java.lang.String) value); return true;
             case "openlogreplicatorPort": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlogreplicatorPort((int) value); return true;
             case "openlogreplicatorSource": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlogreplicatorSource((java.lang.String) value); return true;
