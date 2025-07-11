@@ -149,6 +149,11 @@ public class IggyEndpoint extends DefaultEndpoint {
                 StreamId.of(getConfiguration().getStreamName()),
                 TopicId.of(getTopicName()),
                 ConsumerId.of(getConfiguration().getConsumerGroupName()));
+
+        LOG.debug("The client joined the consumer group on the stream {}, topic {} and consumer {}",
+                getConfiguration().getStreamName(),
+                getTopicName(),
+                getConfiguration().getConsumerGroupName());
     }
 
     private IggyBaseClient createClient() {

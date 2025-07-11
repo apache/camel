@@ -23,6 +23,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IggyEndpoint target = (IggyEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autocommit":
+        case "autoCommit": target.getConfiguration().setAutoCommit(property(camelContext, boolean.class, value)); return true;
         case "autocreatestream":
         case "autoCreateStream": target.getConfiguration().setAutoCreateStream(property(camelContext, boolean.class, value)); return true;
         case "autocreatetopic":
@@ -63,6 +65,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replicationFactor": target.getConfiguration().setReplicationFactor(property(camelContext, java.lang.Short.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": target.getConfiguration().setShutdownTimeout(property(camelContext, int.class, value)); return true;
+        case "startingoffset":
+        case "startingOffset": target.getConfiguration().setStartingOffset(property(camelContext, java.lang.Long.class, value)); return true;
         case "streamid":
         case "streamId": target.getConfiguration().setStreamId(property(camelContext, java.lang.Long.class, value)); return true;
         case "streamname":
@@ -75,6 +79,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autocommit":
+        case "autoCommit": return boolean.class;
         case "autocreatestream":
         case "autoCreateStream": return boolean.class;
         case "autocreatetopic":
@@ -115,6 +121,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replicationFactor": return java.lang.Short.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return int.class;
+        case "startingoffset":
+        case "startingOffset": return java.lang.Long.class;
         case "streamid":
         case "streamId": return java.lang.Long.class;
         case "streamname":
@@ -128,6 +136,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         IggyEndpoint target = (IggyEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autocommit":
+        case "autoCommit": return target.getConfiguration().isAutoCommit();
         case "autocreatestream":
         case "autoCreateStream": return target.getConfiguration().isAutoCreateStream();
         case "autocreatetopic":
@@ -168,6 +178,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replicationFactor": return target.getConfiguration().getReplicationFactor();
         case "shutdowntimeout":
         case "shutdownTimeout": return target.getConfiguration().getShutdownTimeout();
+        case "startingoffset":
+        case "startingOffset": return target.getConfiguration().getStartingOffset();
         case "streamid":
         case "streamId": return target.getConfiguration().getStreamId();
         case "streamname":
