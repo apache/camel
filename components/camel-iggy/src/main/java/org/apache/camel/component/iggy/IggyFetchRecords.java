@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.iggy;
 
-import java.util.List;
+import java.math.BigInteger;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
@@ -27,6 +29,7 @@ import org.apache.iggy.consumergroup.Consumer;
 import org.apache.iggy.identifier.ConsumerId;
 import org.apache.iggy.identifier.StreamId;
 import org.apache.iggy.identifier.TopicId;
+import org.apache.iggy.message.PolledMessages;
 import org.apache.iggy.message.PollingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +46,7 @@ public class IggyFetchRecords implements Runnable {
 
     private volatile boolean running;
     private final AtomicBoolean polling = new AtomicBoolean(false);
+    private BigInteger offset;
 
     public IggyFetchRecords(IggyConsumer iggyConsumer, IggyEndpoint endpoint, IggyConfiguration configuration,
                             IggyBaseClient client, BridgeExceptionHandlerToErrorHandler bridgeExceptionHandlerToErrorHandler) {
@@ -51,6 +55,7 @@ public class IggyFetchRecords implements Runnable {
         this.configuration = configuration;
         this.client = client;
         this.bridgeExceptionHandlerToErrorHandler = bridgeExceptionHandlerToErrorHandler;
+        this.offset = configuration.getStartingOffset() == null ? null : BigInteger.valueOf(configuration.getStartingOffset());
     }
 
     @Override
@@ -85,17 +90,36 @@ public class IggyFetchRecords implements Runnable {
             TopicId topicId = TopicId.of(endpoint.getTopicName());
             ConsumerId consumerId = ConsumerId.of(configuration.getConsumerGroupName());
 
-            List<org.apache.iggy.message.Message> polledMessages = client.messages()
-                    .pollMessages(streamId,
-                            topicId,
-                            Optional.ofNullable(configuration.getPartitionId()),
-                            Consumer.group(consumerId),
-                            resolvePollingStrategy(),
-                            configuration.getPollBatchSize(),
-                            true)
-                    .messages();
+            PolledMessages polledMessages;
+            if (configuration.isAutoCommit()) {
+                polledMessages = client.messages()
+                        .pollMessages(streamId,
+                                topicId,
+                                Optional.ofNullable(configuration.getPartitionId()),
+                                Consumer.group(consumerId),
+                                resolvePollingStrategy(),
+                                configuration.getPollBatchSize(),
+                                configuration.isAutoCommit());
+            } else {
+                polledMessages = client.messages()
+                        .pollMessages(streamId,
+                                topicId,
+                                Optional.ofNullable(configuration.getPartitionId()),
+                                Consumer.group(consumerId),
+                                PollingStrategy.offset(offset),
+                                configuration.getPollBatchSize(),
+                                false);
 
-            for (org.apache.iggy.message.Message message : polledMessages) {
+                // Update offset
+                offset = offset.add(BigInteger.valueOf(polledMessages.count()));
+            }
+
+            LOG.debug("Fetched {} messages from partition {}, current offset {}",
+                    polledMessages.count(),
+                    polledMessages.partitionId(),
+                    configuration.isAutoCommit() ? polledMessages.currentOffset() : offset);
+
+            for (org.apache.iggy.message.Message message : polledMessages.messages()) {
                 Exchange exchange = createExchange(message);
                 try {
                     iggyConsumer.getProcessor().process(exchange);
@@ -130,6 +154,15 @@ public class IggyFetchRecords implements Runnable {
         exchange.getIn().setHeader(IggyConstants.MESSAGE_CHECKSUM, message.header().checksum());
         exchange.getIn().setHeader(IggyConstants.MESSAGE_LENGTH, message.header().payloadLength());
         exchange.getIn().setHeader(IggyConstants.MESSAGE_SIZE, message.getSize());
+
+        message.userHeaders().ifPresent(userHeaders -> {
+            Map<String, Object> stringUserHeaders = userHeaders.entrySet().stream().collect(Collectors.toMap(
+                    k -> k.getKey(),
+                    hv -> hv.getValue().value() // TODO this way `HeaderKind kind` will be lost
+            ));
+
+            exchange.getIn().setHeaders(stringUserHeaders);
+        });
 
         return exchange;
     }
