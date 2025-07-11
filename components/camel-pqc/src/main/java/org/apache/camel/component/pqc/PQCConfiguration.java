@@ -43,7 +43,7 @@ public class PQCConfiguration implements Cloneable {
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private Signature signer;
-    @UriParam(enums = "MLDSA,SLHDSA,LMS,XMSS,FALCON,PICNIC,RAINBOW,SNOVA,MAYO,DILITHIUM")
+    @UriParam(enums = "MLDSA,SLHDSA,LMS,XMSS,FALCON,PICNIC,RAINBOW,SNOVA,MAYO,DILITHIUM,SPHINCSPLUS")
     @Metadata(label = "advanced")
     private String signatureAlgorithm;
     @UriParam

@@ -98,6 +98,10 @@ public class PQCComponent extends HealthCheckComponent {
                         configuration.setSigner(PQCDefaultDILITHIUMMaterial.signer);
                         configuration.setKeyPair(PQCDefaultDILITHIUMMaterial.keyPair);
                         break;
+                    case "SPHINCSPLUS":
+                        configuration.setSigner(PQCDefaultSPHINCSPLUSMaterial.signer);
+                        configuration.setKeyPair(PQCDefaultSPHINCSPLUSMaterial.keyPair);
+                        break;
                     default:
                         break;
                 }
