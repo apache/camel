@@ -94,6 +94,10 @@ public class PQCComponent extends HealthCheckComponent {
                         configuration.setSigner(PQCDefaultMAYOMaterial.signer);
                         configuration.setKeyPair(PQCDefaultMAYOMaterial.keyPair);
                         break;
+                    case "DILITHIUM":
+                        configuration.setSigner(PQCDefaultDILITHIUMMaterial.signer);
+                        configuration.setKeyPair(PQCDefaultDILITHIUMMaterial.keyPair);
+                        break;
                     default:
                         break;
                 }
