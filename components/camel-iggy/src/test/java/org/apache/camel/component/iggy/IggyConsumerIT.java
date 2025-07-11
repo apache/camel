@@ -45,7 +45,17 @@ public class IggyConsumerIT extends IggyTestBase {
         contextExtension.getMockEndpoint("mock:result").expectedMessageCount(messages);
 
         for (int i = 0; i < messages; i++) {
-            sendMessage("Hello world");
+            sendMessage("First batch " + i);
+        }
+
+        contextExtension.getMockEndpoint("mock:result").assertIsSatisfied();
+
+        int nextBatch = 5;
+        contextExtension.getMockEndpoint("mock:result").reset();
+        contextExtension.getMockEndpoint("mock:result").expectedMessageCount(nextBatch);
+
+        for (int i = 0; i < nextBatch; i++) {
+            sendMessage("Next batch " + i);
         }
 
         contextExtension.getMockEndpoint("mock:result").assertIsSatisfied();
