@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.iggy.client.IggyClientConnectionPool;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.iggy.client.blocking.IggyBaseClient;
@@ -32,7 +33,7 @@ public class IggyConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(IggyConsumer.class);
     private final IggyEndpoint endpoint;
-    private IggyBaseClient client;
+    private IggyClientConnectionPool iggyClientConnectionPool;
     private ExecutorService executor;
     private final List<IggyFetchRecords> tasks = new ArrayList<>();
 
@@ -47,17 +48,29 @@ public class IggyConsumer extends DefaultConsumer {
         LOG.info("Starting Iggy consumer for stream {} and topic {}", endpoint.getConfiguration().getStreamId(),
                 endpoint.getTopicName());
 
-        client = endpoint.getIggyClient();
+        iggyClientConnectionPool = new IggyClientConnectionPool(
+                endpoint.getConfiguration().getHost(),
+                endpoint.getConfiguration().getPort(),
+                endpoint.getConfiguration().getUsername(),
+                endpoint.getConfiguration().getPassword(),
+                endpoint.getConfiguration().getClientTransport());
 
+        IggyBaseClient client = iggyClientConnectionPool.borrowObject();
         endpoint.initializeTopic(client);
         endpoint.initializeConsumerGroup(client);
+        iggyClientConnectionPool.returnClient(client);
 
         executor = endpoint.createExecutor();
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
 
         // For now, we'll just have one consumer task. This can be extended later if Iggy supports partitioned consumption.
         // TODO Handle streams, once tehy will be implemented in the java client
-        IggyFetchRecords task = new IggyFetchRecords(this, endpoint, endpoint.getConfiguration(), client, bridge);
+        IggyFetchRecords task = new IggyFetchRecords(
+                this,
+                endpoint,
+                endpoint.getConfiguration(),
+                iggyClientConnectionPool,
+                bridge);
         executor.submit(task);
         tasks.add(task);
     }
