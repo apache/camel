@@ -1400,13 +1400,12 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Directories to scan for groovy source to be pre-compiled.
-     * For example: scripts/*.groovy will scan inside the classpath folder scripts for all groovy source files.
+     * Directories to scan for groovy source to be pre-compiled. For example: scripts/*.groovy will scan inside the
+     * classpath folder scripts for all groovy source files.
      *
      * By default, sources are scanned from the classpath, but you can prefix with file: to use file system.
      *
-     * The directories are using Ant-path style pattern, and
-     * multiple directories can be specified separated by comma.
+     * The directories are using Ant-path style pattern, and multiple directories can be specified separated by comma.
      */
     public void setGroovyScriptPattern(String groovyScriptPattern) {
         this.groovyScriptPattern = groovyScriptPattern;
@@ -2787,13 +2786,12 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Directories to scan for groovy source to be pre-compiled.
-     * For example: scripts/*.groovy will scan inside the classpath folder scripts for all groovy source files.
+     * Directories to scan for groovy source to be pre-compiled. For example: scripts/*.groovy will scan inside the
+     * classpath folder scripts for all groovy source files.
      *
      * By default, sources are scanned from the classpath, but you can prefix with file: to use file system.
      *
-     * The directories are using Ant-path style pattern, and
-     * multiple directories can be specified separated by comma.
+     * The directories are using Ant-path style pattern, and multiple directories can be specified separated by comma.
      */
     public T withGroovyScriptPattern(String groovyScriptPattern) {
         this.groovyScriptPattern = groovyScriptPattern;
