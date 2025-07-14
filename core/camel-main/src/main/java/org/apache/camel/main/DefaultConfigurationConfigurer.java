@@ -97,6 +97,7 @@ import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
@@ -288,12 +289,6 @@ public final class DefaultConfigurationConfigurer {
             ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
             camelContext.addService(reloader);
         }
-        if (config.getGroovyScriptPattern() != null) {
-            GroovyScriptCompiler gsc = camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
-            gsc.setScriptPattern(config.getGroovyScriptPattern());
-            // force start compiler eager so Camel routes can load these pre-compiled classes
-            camelContext.addService(gsc, true, true);
-        }
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             camelContext.getManagementStrategy().getManagementAgent()
@@ -356,6 +351,13 @@ public final class DefaultConfigurationConfigurer {
                 ecc.addContextPlugin(CompileStrategy.class, cs);
             }
             cs.setWorkDir(config.getCompileWorkDir());
+        }
+        if (config.getGroovyScriptPattern() != null) {
+            GroovyScriptCompiler gsc = camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
+            gsc.setScriptPattern(config.getGroovyScriptPattern());
+            camelContext.addService(gsc);
+            // force start compiler eager so Camel routes can load these pre-compiled classes
+            ServiceHelper.startService(gsc);
         }
 
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
