@@ -43,12 +43,13 @@ public class GroovyScriptClassLoader extends ClassLoader implements Closeable {
     }
 
     @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return classes.get(name);
+    }
+
+    @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        Class<?> answer = classes.get(name);
-        if (answer == null) {
-            answer = super.findClass(name);
-        }
-        return answer;
+        return classes.get(name);
     }
 
     @Override
