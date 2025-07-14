@@ -18,19 +18,19 @@ package org.apache.camel.processor.groovy;
 
 import java.lang.reflect.Method;
 
-import org.apache.camel.language.groovy.GroovyScriptCompiler;
+import org.apache.camel.language.groovy.DefaultGroovyScriptCompiler;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class GroovyCompilerTest extends CamelTestSupport {
+public class DefaultGroovyCompilerTest extends CamelTestSupport {
 
     @Test
     public void testCompiler() throws Exception {
-        GroovyScriptCompiler compiler = new GroovyScriptCompiler();
+        DefaultGroovyScriptCompiler compiler = new DefaultGroovyScriptCompiler();
         compiler.setCamelContext(context);
-        compiler.setFolder("src/test/resources/myscript");
+        compiler.setScriptPattern("src/test/resources/myscript");
         compiler.start();
 
         Class<?> clazz = compiler.loadClass("Dude");

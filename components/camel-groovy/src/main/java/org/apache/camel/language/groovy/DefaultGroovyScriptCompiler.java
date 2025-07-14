@@ -23,19 +23,29 @@ import java.util.List;
 import groovy.lang.GroovyShell;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.GroovyScriptCompiler;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GroovyScriptCompiler extends ServiceSupport implements CamelContextAware {
+@JdkService(GroovyScriptCompiler.FACTORY)
+@ManagedResource(description = "Managed GroovyScriptCompiler")
+public class DefaultGroovyScriptCompiler extends ServiceSupport
+        implements CamelContextAware, GroovyScriptCompiler, StaticService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GroovyScriptCompiler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultGroovyScriptCompiler.class);
 
+    private long elapsed;
     private GroovyScriptClassLoader classLoader;
     private CamelContext camelContext;
-    private String folder;
+    private String scriptPattern;
 
     @Override
     public CamelContext getCamelContext() {
@@ -47,12 +57,20 @@ public class GroovyScriptCompiler extends ServiceSupport implements CamelContext
         this.camelContext = camelContext;
     }
 
-    public String getFolder() {
-        return folder;
+    @ManagedAttribute(description = "Total compilation time in millis")
+    public long getCompileTime() {
+        return elapsed;
     }
 
-    public void setFolder(String folder) {
-        this.folder = folder;
+    @ManagedAttribute(description = "Directories to scan for groovy source to be pre-compiled")
+    @Override
+    public String getScriptPattern() {
+        return scriptPattern;
+    }
+
+    @Override
+    public void setScriptPattern(String scriptPattern) {
+        this.scriptPattern = scriptPattern;
     }
 
     /**
@@ -74,8 +92,11 @@ public class GroovyScriptCompiler extends ServiceSupport implements CamelContext
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (folder != null) {
-            LOG.info("Pre compiling groovy scripts from: {}", folder);
+        if (scriptPattern != null) {
+            StopWatch watch = new StopWatch();
+
+            // TODO: ant path style
+            LOG.info("Pre compiling groovy scripts from: {}", scriptPattern);
 
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl == null) {
@@ -88,12 +109,12 @@ public class GroovyScriptCompiler extends ServiceSupport implements CamelContext
             camelContext.getCamelContextExtension().addContextPlugin(GroovyScriptClassLoader.class, classLoader);
 
             CompilerConfiguration cc = new CompilerConfiguration();
-            cc.setClasspathList(List.of(folder));
+            cc.setClasspathList(List.of(scriptPattern));
 
             GroovyShell shell = new GroovyShell(cl, cc);
 
             // discover each class from the folder
-            File[] files = new File(folder).listFiles();
+            File[] files = new File(scriptPattern).listFiles();
             if (files != null) {
                 for (File f : files) {
                     String code = IOHelper.loadText(new FileInputStream(f));
@@ -103,6 +124,7 @@ public class GroovyScriptCompiler extends ServiceSupport implements CamelContext
                     }
                 }
             }
+            elapsed = watch.taken();
         }
     }
 

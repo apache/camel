@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.language.groovy.GroovyScriptCompiler;
+import org.apache.camel.language.groovy.DefaultGroovyScriptCompiler;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -30,9 +30,9 @@ public class GroovyCompilerRouteTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        GroovyScriptCompiler compiler = new GroovyScriptCompiler();
+        DefaultGroovyScriptCompiler compiler = new DefaultGroovyScriptCompiler();
         compiler.setCamelContext(context);
-        compiler.setFolder("src/test/resources/myscript");
+        compiler.setScriptPattern("src/test/resources/myscript");
         context.addService(compiler);
 
         return context;

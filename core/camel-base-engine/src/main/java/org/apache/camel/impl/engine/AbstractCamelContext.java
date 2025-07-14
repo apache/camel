@@ -120,6 +120,7 @@ import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.GroovyScriptCompiler;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
@@ -387,6 +388,7 @@ public abstract class AbstractCamelContext extends BaseService
                 this::createAnnotationBasedProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(DumpRoutesStrategy.class, this::createDumpRoutesStrategy);
         camelContextExtension.lazyAddContextPlugin(BackOffTimerFactory.class, this::createBackOffTimerFactory);
+        camelContextExtension.lazyAddContextPlugin(GroovyScriptCompiler.class, this::createGroovyScriptCompiler);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -4300,6 +4302,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ManagementNameStrategy createManagementNameStrategy();
 
     protected abstract HeadersMapFactory createHeadersMapFactory();
+
+    protected abstract GroovyScriptCompiler createGroovyScriptCompiler();
 
     protected abstract BeanProxyFactory createBeanProxyFactory();
 

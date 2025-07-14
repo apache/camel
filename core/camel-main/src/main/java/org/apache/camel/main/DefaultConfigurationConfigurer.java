@@ -61,6 +61,7 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.GroovyScriptCompiler;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -286,6 +287,11 @@ public final class DefaultConfigurationConfigurer {
         if (config.isContextReloadEnabled() && camelContext.hasService(ContextReloadStrategy.class) == null) {
             ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
             camelContext.addService(reloader);
+        }
+        if (config.getGroovyScriptPattern() != null) {
+            GroovyScriptCompiler gsc = camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
+            gsc.setScriptPattern(config.getGroovyScriptPattern());
+            camelContext.addService(gsc);
         }
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {

@@ -67,6 +67,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("ExtraShutdownTimeout", int.class);
         map.put("FileConfigurations", java.lang.String.class);
         map.put("GlobalOptions", java.util.Map.class);
+        map.put("GroovyScriptPattern", java.lang.String.class);
         map.put("InflightRepositoryBrowseEnabled", boolean.class);
         map.put("JavaRoutesExcludePattern", java.lang.String.class);
         map.put("JavaRoutesIncludePattern", java.lang.String.class);
@@ -239,6 +240,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "fileConfigurations": target.setFileConfigurations(property(camelContext, java.lang.String.class, value)); return true;
         case "globaloptions":
         case "globalOptions": target.setGlobalOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "groovyscriptpattern":
+        case "groovyScriptPattern": target.setGroovyScriptPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "inflightrepositorybrowseenabled":
         case "inflightRepositoryBrowseEnabled": target.setInflightRepositoryBrowseEnabled(property(camelContext, boolean.class, value)); return true;
         case "javaroutesexcludepattern":
@@ -489,6 +492,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "fileConfigurations": return java.lang.String.class;
         case "globaloptions":
         case "globalOptions": return java.util.Map.class;
+        case "groovyscriptpattern":
+        case "groovyScriptPattern": return java.lang.String.class;
         case "inflightrepositorybrowseenabled":
         case "inflightRepositoryBrowseEnabled": return boolean.class;
         case "javaroutesexcludepattern":
@@ -735,6 +740,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "fileConfigurations": return target.getFileConfigurations();
         case "globaloptions":
         case "globalOptions": return target.getGlobalOptions();
+        case "groovyscriptpattern":
+        case "groovyScriptPattern": return target.getGroovyScriptPattern();
         case "inflightrepositorybrowseenabled":
         case "inflightRepositoryBrowseEnabled": return target.isInflightRepositoryBrowseEnabled();
         case "javaroutesexcludepattern":

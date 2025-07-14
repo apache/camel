@@ -129,6 +129,7 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
     private boolean routesReloadRestartDuration;
+    private String groovyScriptPattern;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
@@ -1394,6 +1395,18 @@ public abstract class DefaultConfigurationProperties<T> {
         this.jmxUpdateRouteEnabled = jmxUpdateRouteEnabled;
     }
 
+    public String getGroovyScriptPattern() {
+        return groovyScriptPattern;
+    }
+
+    /**
+     * Directories to scan for groovy source to be pre-compiled. The directories are using Ant-path style pattern, and
+     * multiple directories can be specified separated by comma.
+     */
+    public void setGroovyScriptPattern(String groovyScriptPattern) {
+        this.groovyScriptPattern = groovyScriptPattern;
+    }
+
     public String getExchangeFactory() {
         return exchangeFactory;
     }
@@ -1632,6 +1645,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setStartupRecorderDir(String startupRecorderDir) {
         this.startupRecorderDir = startupRecorderDir;
+    }
+
+    public String getCloudPropertiesLocation() {
+        return cloudPropertiesLocation;
+    }
+
+    /**
+     * Sets the locations (comma separated values) where to find properties configuration as defined for cloud native
+     * environments such as Kubernetes. You should only scan text based mounted configuration.
+     */
+    public void setCloudPropertiesLocation(String cloudPropertiesLocation) {
+        this.cloudPropertiesLocation = cloudPropertiesLocation;
     }
 
     // fluent builders
@@ -2756,16 +2781,13 @@ public abstract class DefaultConfigurationProperties<T> {
         return (T) this;
     }
 
-    public String getCloudPropertiesLocation() {
-        return cloudPropertiesLocation;
-    }
-
     /**
-     * Sets the locations (comma separated values) where to find properties configuration as defined for cloud native
-     * environments such as Kubernetes. You should only scan text based mounted configuration.
+     * Directories to scan for groovy source to be pre-compiled. The directories are using Ant-path style pattern, and
+     * multiple directories can be specified separated by comma.
      */
-    public void setCloudPropertiesLocation(String cloudPropertiesLocation) {
-        this.cloudPropertiesLocation = cloudPropertiesLocation;
+    public T withGroovyScriptPattern(String groovyScriptPattern) {
+        this.groovyScriptPattern = groovyScriptPattern;
+        return (T) this;
     }
 
     /**
