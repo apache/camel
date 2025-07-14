@@ -91,6 +91,20 @@ public class IggyProducerIT extends IggyTestBase {
                 .containsAnyElementsOf(List.of("{test=Character[name=pippo]}"));
     }
 
+    @Test
+    public void testStreamAndTopicOverride() throws Exception {
+        contextExtension.getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        contextExtension.getProducerTemplate().sendBodyAndHeaders("direct:start", "Hello World",
+                Map.of(IggyConstants.STREAM_OVERRIDE, "stream-override",
+                        IggyConstants.TOPIC_OVERRIDE, "topic-override"));
+
+        contextExtension.getMockEndpoint("mock:result").assertIsSatisfied();
+
+        Assertions.assertThat(pollMessagesPayloadsAsStringFromCustomStreamTopic("stream-override", "topic-override"))
+                .containsAnyElementsOf(List.of("Hello World"));
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
