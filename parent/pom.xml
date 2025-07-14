@@ -249,7 +249,7 @@
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
         <jackson-jq-version>1.3.0</jackson-jq-version>
         <jackson2-version>2.19.1</jackson2-version>
-        <jackrabbit-version>2.22.0</jackrabbit-version>
+        <jackrabbit-version>2.22.1</jackrabbit-version>
         <jasminb-jsonapi-version>0.14</jasminb-jsonapi-version>
         <jandex-version>3.3.2</jandex-version>
         <jansi-version>2.4.2</jansi-version>
