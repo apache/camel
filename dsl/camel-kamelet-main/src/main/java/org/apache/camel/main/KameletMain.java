@@ -440,6 +440,12 @@ public class KameletMain extends MainCommandLineSupport {
             pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, false));
         }
 
+        // groovy scripts
+        String groovyFiles = getInitialProperties().getProperty(getInstanceType() + ".groovyFiles");
+        if (groovyFiles != null) {
+            configure().withGroovyScriptPattern(groovyFiles);
+        }
+
         boolean prompt = "true".equals(getInitialProperties().get(getInstanceType() + ".prompt"));
         if (prompt) {
             answer.getPropertiesComponent().addPropertiesSource(new PromptPropertyPlaceholderSource());

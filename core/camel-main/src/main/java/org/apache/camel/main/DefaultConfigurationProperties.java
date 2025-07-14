@@ -129,7 +129,7 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
     private boolean routesReloadRestartDuration;
-    private String groovyScriptPattern;
+    private String groovyScriptPattern = "classpath:camel-groovy/*";
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
@@ -1406,6 +1406,8 @@ public abstract class DefaultConfigurationProperties<T> {
      * By default, sources are scanned from the classpath, but you can prefix with file: to use file system.
      *
      * The directories are using Ant-path style pattern, and multiple directories can be specified separated by comma.
+     *
+     * This requires having camel-groovy JAR on the classpath.
      */
     public void setGroovyScriptPattern(String groovyScriptPattern) {
         this.groovyScriptPattern = groovyScriptPattern;
@@ -2792,6 +2794,8 @@ public abstract class DefaultConfigurationProperties<T> {
      * By default, sources are scanned from the classpath, but you can prefix with file: to use file system.
      *
      * The directories are using Ant-path style pattern, and multiple directories can be specified separated by comma.
+     *
+     * This requires having camel-groovy JAR on the classpath.
      */
     public T withGroovyScriptPattern(String groovyScriptPattern) {
         this.groovyScriptPattern = groovyScriptPattern;

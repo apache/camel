@@ -354,10 +354,12 @@ public final class DefaultConfigurationConfigurer {
         }
         if (config.getGroovyScriptPattern() != null) {
             GroovyScriptCompiler gsc = camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
-            gsc.setScriptPattern(config.getGroovyScriptPattern());
-            camelContext.addService(gsc);
-            // force start compiler eager so Camel routes can load these pre-compiled classes
-            ServiceHelper.startService(gsc);
+            if (gsc != null) {
+                gsc.setScriptPattern(config.getGroovyScriptPattern());
+                camelContext.addService(gsc);
+                // force start compiler eager so Camel routes can load these pre-compiled classes
+                ServiceHelper.startService(gsc);
+            }
         }
 
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {

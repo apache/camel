@@ -76,6 +76,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
             "camel.component.kamelet.location",
             "camel.jbang.classpathFiles",
             "camel.jbang.localKameletDir",
+            "camel.jbang.groovyFiles",
             "camel.jbang.scriptFiles",
             "camel.jbang.tlsFiles",
             "camel.jbang.jkubeFiles",
@@ -616,6 +617,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     boolean camel = !kamelet && "camel.main.routesIncludePattern".equals(k);
                     boolean jkube = "camel.jbang.jkubeFiles".equals(k);
                     boolean script = "camel.jbang.scriptFiles".equals(k);
+                    boolean groovy = "camel.jbang.groovyFiles".equals(k);
                     boolean tls = "camel.jbang.tlsFiles".equals(k);
                     boolean web = ext != null && List.of("css", "html", "ico", "jpeg", "jpg", "js", "png").contains(ext);
                     Path targetDir;
@@ -627,6 +629,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         targetDir = srcKameletsResourcesDir;
                     } else if (script) {
                         targetDir = srcJavaDirRoot.getParent().resolve("scripts");
+                    } else if (groovy) {
+                        targetDir = srcResourcesDir.resolve("camel-groovy");
                     } else if (tls) {
                         targetDir = srcJavaDirRoot.getParent().resolve("tls");
                     } else if (web) {

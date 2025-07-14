@@ -481,11 +481,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 GroovyScriptCompiler.FACTORY,
                 GroovyScriptCompiler.class);
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException("Cannot find GroovyScriptCompiler on classpath. Add camel-groovy to classpath.");
-        }
+        // camel-groovy is optional
+        return result.orElse(null);
     }
 
     private CliConnectorFactory createCliConnectorFactory() {

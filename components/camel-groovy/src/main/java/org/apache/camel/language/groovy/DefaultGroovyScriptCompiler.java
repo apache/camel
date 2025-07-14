@@ -31,8 +31,10 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,8 +137,17 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                             loc = resource.getLocation();
                         }
                         if (loc != null) {
-                            cps.add(loc);
                             String code = IOHelper.loadText(resource.getInputStream());
+                            loc = StringHelper.after(loc, ":", loc);
+
+                            String cp = FileUtil.onlyPath(loc);
+                            if (cp == null) {
+                                cp = ".";
+                            }
+                            if (!cps.contains(cp)) {
+                                cps.add(cp);
+                            }
+
                             codes.add(code);
                         }
                     }

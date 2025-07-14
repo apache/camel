@@ -32,7 +32,9 @@ public class GroovyCompilerRouteTest extends CamelTestSupport {
 
         DefaultGroovyScriptCompiler compiler = new DefaultGroovyScriptCompiler();
         compiler.setCamelContext(context);
-        compiler.setScriptPattern("file:src/test/resources/myscript/*.groovy");
+        // test with file instead of default
+        //        compiler.setScriptPattern("classpath:camel-groovy/*");
+        compiler.setScriptPattern("file:src/test/resources/camel-groovy/*");
         context.addService(compiler);
 
         return context;

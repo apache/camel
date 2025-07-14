@@ -30,7 +30,7 @@ public class DefaultGroovyCompilerTest extends CamelTestSupport {
     public void testCompiler() throws Exception {
         DefaultGroovyScriptCompiler compiler = new DefaultGroovyScriptCompiler();
         compiler.setCamelContext(context);
-        compiler.setScriptPattern("myscript/*.groovy");
+        compiler.setScriptPattern("camel-groovy/*");
         compiler.start();
 
         Class<?> clazz = compiler.loadClass("Dude");
