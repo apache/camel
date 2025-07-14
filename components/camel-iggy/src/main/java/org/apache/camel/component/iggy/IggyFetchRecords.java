@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.iggy.client.IggyClientConnectionPool;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.iggy.client.blocking.IggyBaseClient;
 import org.apache.iggy.consumergroup.Consumer;
@@ -41,7 +42,7 @@ public class IggyFetchRecords implements Runnable {
     private final IggyConsumer iggyConsumer;
     private final IggyEndpoint endpoint;
     private final IggyConfiguration configuration;
-    private final IggyBaseClient client;
+    private final IggyClientConnectionPool iggyClientConnectionPool;
     private final BridgeExceptionHandlerToErrorHandler bridgeExceptionHandlerToErrorHandler;
 
     private volatile boolean running;
@@ -49,11 +50,12 @@ public class IggyFetchRecords implements Runnable {
     private BigInteger offset;
 
     public IggyFetchRecords(IggyConsumer iggyConsumer, IggyEndpoint endpoint, IggyConfiguration configuration,
-                            IggyBaseClient client, BridgeExceptionHandlerToErrorHandler bridgeExceptionHandlerToErrorHandler) {
+                            IggyClientConnectionPool iggyClientConnectionPool,
+                            BridgeExceptionHandlerToErrorHandler bridgeExceptionHandlerToErrorHandler) {
         this.iggyConsumer = iggyConsumer;
         this.endpoint = endpoint;
         this.configuration = configuration;
-        this.client = client;
+        this.iggyClientConnectionPool = iggyClientConnectionPool;
         this.bridgeExceptionHandlerToErrorHandler = bridgeExceptionHandlerToErrorHandler;
         this.offset = configuration.getStartingOffset() == null ? null : BigInteger.valueOf(configuration.getStartingOffset());
     }
@@ -91,6 +93,7 @@ public class IggyFetchRecords implements Runnable {
             ConsumerId consumerId = ConsumerId.of(configuration.getConsumerGroupName());
 
             PolledMessages polledMessages;
+            IggyBaseClient client = iggyClientConnectionPool.borrowObject();
             if (configuration.isAutoCommit()) {
                 polledMessages = client.messages()
                         .pollMessages(streamId,
@@ -113,6 +116,8 @@ public class IggyFetchRecords implements Runnable {
                 // Update offset
                 offset = offset.add(BigInteger.valueOf(polledMessages.count()));
             }
+
+            iggyClientConnectionPool.returnClient(client);
 
             LOG.debug("Fetched {} messages from partition {}, current offset {}",
                     polledMessages.count(),

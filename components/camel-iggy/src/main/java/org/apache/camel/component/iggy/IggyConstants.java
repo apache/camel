@@ -25,6 +25,8 @@ public final class IggyConstants {
     public static final String MESSAGE_CHECKSUM = "CamelIggyMessageChecksum";
     public static final String MESSAGE_LENGTH = "CamelIggyMessageLength";
     public static final String MESSAGE_SIZE = "CamelIggyMessageSize";
+    public static final String TOPIC_OVERRIDE = "CamelIggyTopicOverride";
+    public static final String STREAM_OVERRIDE = "CamelIggyStreamOverride";
 
     private IggyConstants() {
         // Constants class
