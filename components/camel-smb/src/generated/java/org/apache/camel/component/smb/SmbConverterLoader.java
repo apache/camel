@@ -45,13 +45,7 @@ public final class SmbConverterLoader implements TypeConverterLoader, CamelConte
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.InputStream.class, org.apache.camel.component.smb.SmbFile.class, true,
-            (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.smb.SmbConverter.smbToInputStream((org.apache.camel.component.smb.SmbFile) value, exchange);
-                if (true && answer == null) {
-                    answer = Void.class;
-                }
-                return answer;
-            });
+            (type, exchange, value) -> org.apache.camel.component.smb.SmbConverter.smbToInputStream((org.apache.camel.component.smb.SmbFile) value, exchange));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {
