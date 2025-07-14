@@ -29,7 +29,8 @@ public enum PQCSignatureAlgorithms {
     FALCON("FALCON", "BCPQC"),
     PICNIC("PICNIC", "BCPQC"),
     SNOVA("Snova", "BCPQC"),
-    MAYO("Mayo", "BCPQC");
+    MAYO("Mayo", "BCPQC"),
+    SPHINCSPLUS("SPHINCSPLUS", "BCPQC");
 
     private final String algorithm;
     private final String bcProvider;
