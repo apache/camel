@@ -96,6 +96,20 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        // register Groovy classloader to camel, so we are able to load classes we have compiled
+        CamelContext context = getCamelContext();
+        if (context != null) {
+            // use existing class loader if available
+            classLoader = (GroovyScriptClassLoader) context.getClassResolver().getClassLoader("GroovyScriptClassLoader");
+            if (classLoader == null) {
+                classLoader = new GroovyScriptClassLoader();
+                context.getClassResolver().addClassLoader(classLoader);
+            }
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
@@ -103,13 +117,6 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             StopWatch watch = new StopWatch();
 
             LOG.info("Pre-compiling Groovy sources from: {}", scriptPattern);
-
-            ClassLoader cl = camelContext.getApplicationContextClassLoader();
-            if (cl == null) {
-                cl = GroovyShell.class.getClassLoader();
-            }
-            classLoader = new GroovyScriptClassLoader(cl);
-            camelContext.getClassResolver().addClassLoader(classLoader);
 
             // make classloader available for groovy language
             camelContext.getCamelContextExtension().addContextPlugin(GroovyScriptClassLoader.class, classLoader);
@@ -139,6 +146,11 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             // setup compiler via groovy shell
             CompilerConfiguration cc = new CompilerConfiguration();
             cc.setClasspathList(cps);
+
+            ClassLoader cl = camelContext.getApplicationContextClassLoader();
+            if (cl == null) {
+                cl = GroovyShell.class.getClassLoader();
+            }
             GroovyShell shell = new GroovyShell(cl, cc);
 
             // parse code into classes and add to classloader

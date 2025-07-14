@@ -27,8 +27,8 @@ public class GroovyScriptClassLoader extends ClassLoader implements Closeable {
 
     private final Map<String, Class<?>> classes = new HashMap<>();
 
-    public GroovyScriptClassLoader(ClassLoader parent) {
-        super(parent);
+    public GroovyScriptClassLoader() {
+        super(GroovyScriptClassLoader.class.getClassLoader());
     }
 
     @Override
@@ -48,13 +48,21 @@ public class GroovyScriptClassLoader extends ClassLoader implements Closeable {
     }
 
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return classes.get(name);
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        Class<?> clazz = classes.get(name);
+        if (clazz != null) {
+            return clazz;
+        }
+        throw new ClassNotFoundException(name);
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        return classes.get(name);
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        Class<?> clazz = classes.get(name);
+        if (clazz != null) {
+            return clazz;
+        }
+        throw new ClassNotFoundException(name);
     }
 
     @Override
