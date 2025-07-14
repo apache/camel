@@ -168,7 +168,6 @@ public class SmbOperations implements SmbFileOperations {
             try (File f = share.openFile(name, EnumSet.of(AccessMask.GENERIC_ALL), null,
                     SMB2ShareAccess.ALL,
                     SMB2CreateDisposition.FILE_OPEN, null)) {
-
                 f.deleteOnClose();
             }
         }
@@ -199,10 +198,8 @@ public class SmbOperations implements SmbFileOperations {
 
             src.deleteOnClose();
         } catch (SMBRuntimeException smbre) {
-            if (smbre.getCause() instanceof TransportException) {
-                disconnect();
-                throw smbre;
-            }
+            safeDisconnect(smbre);
+            throw smbre;
         }
         return true;
     }
@@ -211,14 +208,11 @@ public class SmbOperations implements SmbFileOperations {
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         connectIfNecessary();
         SmbFiles files = new SmbFiles();
-
         try {
             files.mkdirs(share, normalize(directory));
         } catch (SMBRuntimeException smbre) {
-            if (smbre.getCause() instanceof TransportException) {
-                disconnect();
-                throw smbre;
-            }
+            safeDisconnect(smbre);
+            throw smbre;
         }
         return true;
     }
@@ -237,16 +231,12 @@ public class SmbOperations implements SmbFileOperations {
 
     public boolean existsFolder(String name) {
         connectIfNecessary();
-        boolean result = false;
         try {
-            result = share.folderExists(name);
+            return share.folderExists(name);
         } catch (SMBRuntimeException smbre) {
-            if (smbre.getCause() instanceof TransportException) {
-                disconnect();
-                throw smbre;
-            }
+            safeDisconnect(smbre);
+            throw smbre;
         }
-        return result;
     }
 
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
@@ -274,10 +264,8 @@ public class SmbOperations implements SmbFileOperations {
 
             exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
         } catch (SMBRuntimeException smbre) {
-            if (smbre.getCause() instanceof TransportException) {
-                disconnect();
-                throw smbre;
-            }
+            safeDisconnect(smbre);
+            throw smbre;
         }
         return true;
     }
@@ -526,16 +514,12 @@ public class SmbOperations implements SmbFileOperations {
     public FileIdBothDirectoryInformation[] listFiles(String path, String searchPattern)
             throws GenericFileOperationFailedException {
         connectIfNecessary();
-        FileIdBothDirectoryInformation[] result = null;
         try {
-            result = share.list(path, searchPattern).toArray(FileIdBothDirectoryInformation[]::new);
+            return share.list(path, searchPattern).toArray(FileIdBothDirectoryInformation[]::new);
         } catch (SMBRuntimeException smbre) {
-            if (smbre.getCause() instanceof TransportException) {
-                disconnect();
-                throw smbre;
-            }
+            safeDisconnect(smbre);
+            throw smbre;
         }
-        return result;
     }
 
     public byte[] getBody(String path) {
@@ -549,17 +533,14 @@ public class SmbOperations implements SmbFileOperations {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
         } catch (SMBRuntimeException smbre) {
-            if (smbre.getCause() instanceof TransportException) {
-                disconnect();
-                throw smbre;
-            }
+            safeDisconnect(smbre);
+            throw smbre;
         }
-        return null;
     }
 
     public InputStream getBodyAsInputStream(Exchange exchange, String path) {
         connectIfNecessary();
-        InputStream is = null;
+        InputStream is;
         try {
             File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null,
                     SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
@@ -567,12 +548,20 @@ public class SmbOperations implements SmbFileOperations {
             exchange.getIn().setHeader(SmbComponent.SMB_FILE_INPUT_STREAM, is);
             exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
         } catch (SMBRuntimeException smbre) {
-            if (smbre.getCause() instanceof TransportException) {
-                disconnect();
-                throw smbre;
-            }
+            safeDisconnect(smbre);
+            throw smbre;
         }
         return is;
+    }
+
+    private void safeDisconnect(SMBRuntimeException smbre) {
+        if (smbre.getCause() instanceof TransportException) {
+            try {
+                disconnect();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
     }
 
     /*
