@@ -249,6 +249,9 @@ class ExportSpringBoot extends Export {
             if (gav.getVersion() != null) {
                 sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
             }
+            if (gav.getScope() != null) {
+                sb.append("            <scope>").append(gav.getScope()).append("</scope>\n");
+            }
             if ("lib".equals(gav.getPackaging())) {
                 // special for lib JARs
                 sb.append("            <scope>system</scope>\n");

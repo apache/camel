@@ -1915,6 +1915,21 @@ The plugin uses the project export functionality to build and deploy the applica
 
 Read about it in the xref:camel-jbang-kubernetes.adoc[Camel Kubernetes plugin] documentation.
 
+==== Automated tests for Camel integrations
+
+Testing is essential, from the very first line of code!
+When prototyping a Camel route locally with JBang, you can also start prototyping an automated test from the very beginning.
+
+Camel JBang provides a plugin for writing and executing automated tests.
+The plugin uses the capabilities of the Open Source test framework https://citrusframework.org[Citrus] to develop fully self-contained tests that verify your Camel integrations.
+
+The automated test is able to prepare required infrastructure (e.g. PostgreSQL database, Kafka message broker) using containers and Camel infra services. Also, the test is able to automatically start the Camel integration locally with Camel JBang. Following from that the test is able to invoke exposed services of the Camel integration and verify its outcome.
+
+Once the prototyping phase with Camel JBang is complete you can include the automated tests into the project export.
+Usually, the export creates a Maven/Gradle project on top of Quarkus or SpringBoot and the automated tests become part of this project, so the tests are run with the project build lifecycle.
+
+Read about the plugin in the xref:camel-jbang-test.adoc[Camel Testing plugin] documentation.
+
 ==== Configuring logging levels
 
 You can see the current logging levels of the running Camel integrations by:
@@ -4214,7 +4229,7 @@ $ camel infra log service
 Apache Camel applications can be automatically updated using Camel JBang. The update command provides two main operations:
 
 - `list`: Shows available Apache Camel versions for updating
-- `run`: Executes the actual update process 
+- `run`: Executes the actual update process
 
 The update process leverages the https://github.com/apache/camel-upgrade-recipes[Apache Camel Open Rewrite recipes] and supports three application types:
 
@@ -4222,7 +4237,7 @@ The update process leverages the https://github.com/apache/camel-upgrade-recipes
 - Camel Quarkus
 - Camel Spring Boot
 
-While Camel and Camel Spring Boot updates primarily use camel-upgrade-recipes, 
+While Camel and Camel Spring Boot updates primarily use camel-upgrade-recipes,
 Camel Quarkus updates involve both the Quarkus runtime (via https://github.com/openrewrite/rewrite-quarkus[Rewrite Quarkus]) and Apache Camel recipes.
 
 === Listing Available Updates
@@ -4233,11 +4248,11 @@ To see which versions are available for updating, use:
 ----
 $ camel update list
 
- VERSION                       RUNTIME            RUNTIME VERSION  DESCRIPTION                                                                    
- 4.4.4                         Camel Quarkus      3.8.x            Migrates `camel 4.0` quarkus application to `camel 4.4`.                       
- 4.8.0                         Camel                               Migrates Apache Camel 4 application to Apache Camel 4.8.0                      
- 4.8.3                         Camel Quarkus      3.15.x           Migrates `camel 4.4` quarkus application to `camel 4.8`.                       
- 4.9.0                         Camel                               Migrates Apache Camel 4 application to Apache Camel 4.9.0                      
+ VERSION                       RUNTIME            RUNTIME VERSION  DESCRIPTION
+ 4.4.4                         Camel Quarkus      3.8.x            Migrates `camel 4.0` quarkus application to `camel 4.4`.
+ 4.8.0                         Camel                               Migrates Apache Camel 4 application to Apache Camel 4.8.0
+ 4.8.3                         Camel Quarkus      3.15.x           Migrates `camel 4.4` quarkus application to `camel 4.8`.
+ 4.9.0                         Camel                               Migrates Apache Camel 4 application to Apache Camel 4.9.0
  4.9.0                         Camel Spring Boot  3.4.0            Migrates Apache Camel Spring Boot 4 application to Apache Camel Spring Boot 4.9.0
 ----
 

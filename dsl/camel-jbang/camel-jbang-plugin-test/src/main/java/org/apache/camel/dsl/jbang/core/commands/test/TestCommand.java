@@ -14,32 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.common;
+package org.apache.camel.dsl.jbang.core.commands.test;
 
-import java.util.Optional;
-
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@FunctionalInterface
-public interface Plugin {
+@CommandLine.Command(name = "test",
+                     description = "Manage tests for Camel applications (use test --help to see sub commands)")
+public class TestCommand extends CamelCommand {
 
-    /**
-     * Customize given command line adding sub-commands in particular.
-     *
-     * @param commandLine the command line to adjust.
-     * @param main        the current JBang main.
-     */
-    void customize(CommandLine commandLine, CamelJBangMain main);
+    public TestCommand(CamelJBangMain main) {
+        super(main);
+    }
 
-    /**
-     * The plugin may provide an optional project exporter implementation that is able to participate in an export
-     * performed by Camel JBang. Project exporter implementations may add properties and dependencies to the generated
-     * export.
-     *
-     * @return the plugin specific exporter implementation, otherwise empty
-     */
-    default Optional<PluginExporter> getExporter() {
-        return Optional.empty();
+    @Override
+    public Integer doCall() throws Exception {
+        // defaults to printing the help message
+        return new CommandLine(new CommandLine.HelpCommand()).execute();
     }
 }

@@ -374,6 +374,7 @@ class ExportQuarkus extends Export {
                 gav.setGroupId(to.getGroupId());
                 gav.setArtifactId(to.getArtifactId());
                 gav.setVersion(to.getVersion());
+                gav.setScope(to.getScope());
             });
         }
     }
@@ -488,6 +489,9 @@ class ExportQuarkus extends Export {
             sb.append("            <artifactId>").append(gav.getArtifactId()).append("</artifactId>\n");
             if (gav.getVersion() != null) {
                 sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
+            }
+            if (gav.getScope() != null) {
+                sb.append("            <scope>").append(gav.getScope()).append("</scope>\n");
             }
             if ("lib".equals(gav.getPackaging())) {
                 // special for lib JARs

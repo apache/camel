@@ -35,6 +35,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Export;
 import org.apache.camel.dsl.jbang.core.commands.ExportBaseCommand;
+import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
@@ -174,6 +175,7 @@ public class KubernetesExport extends Export {
         gradleWrapper = configurer.gradleWrapper;
         fresh = configurer.fresh;
         download = configurer.download;
+        skipPlugins = configurer.skipPlugins;
         packageScanJars = configurer.packageScanJars;
         quiet = configurer.quiet;
         logging = configurer.logging;
@@ -367,7 +369,7 @@ public class KubernetesExport extends Export {
         for (var map : kubeFragments) {
             var ymlFragment = KubernetesHelper.dumpYaml(map);
             var kind = map.get("kind").toString().toLowerCase();
-            safeCopy(new ByteArrayInputStream(ymlFragment.getBytes(StandardCharsets.UTF_8)),
+            ExportHelper.safeCopy(new ByteArrayInputStream(ymlFragment.getBytes(StandardCharsets.UTF_8)),
                     Paths.get(exportDir, "src/main/jkube", kind + ".yml"));
 
         }
@@ -378,7 +380,7 @@ public class KubernetesExport extends Export {
                 if (Files.exists(targetPath)) {
                     Files.writeString(targetPath, "%n%s".formatted(content), StandardOpenOption.APPEND);
                 } else {
-                    safeCopy(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), targetPath);
+                    ExportHelper.safeCopy(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), targetPath);
                 }
             } catch (Exception e) {
                 printer().printf("Failed to create configuration resource %s - %s%n",
@@ -602,6 +604,7 @@ public class KubernetesExport extends Export {
             boolean quiet,
             boolean logging,
             String loggingLevel,
-            boolean verbose) {
+            boolean verbose,
+            boolean skipPlugins) {
     }
 }

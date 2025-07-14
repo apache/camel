@@ -49,6 +49,9 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.Plugin;
+import org.apache.camel.dsl.jbang.core.common.PluginExporter;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -261,6 +264,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to use lazy bean initialization (can help with complex classloading issues")
     protected boolean lazyBean = true;
 
+    @CommandLine.Option(names = { "--skip-plugins" }, defaultValue = "false",
+                        description = "Skip plugins during export")
+    protected boolean skipPlugins;
+
     protected boolean symbolicLink;     // copy source files using symbolic link
     protected boolean javaLiveReload; // reload java codes in dev
     public String pomTemplateName;   // support for specialised pom templates
@@ -373,16 +380,29 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected String replaceBuildProperties(String context) {
-        String properties = buildProperties.stream()
-                .filter(item -> !item.isEmpty())
+        Properties properties = mapBuildProperties();
+
+        if (!skipPlugins) {
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
+                    .stream()
+                    .map(Plugin::getExporter)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+
+            for (PluginExporter exporter : exporters) {
+                exporter.getBuildProperties().forEach(properties::putIfAbsent);
+            }
+        }
+
+        String mavenProperties = properties.entrySet().stream()
                 .map(item -> {
-                    String[] keyValueProperty = item.split("=");
-                    return String.format("        <%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
-                            keyValueProperty[0]);
+                    return String.format("        <%s>%s</%s>", item.getKey(), item.getValue(), item.getKey());
                 })
                 .collect(Collectors.joining(System.lineSeparator()));
-        if (!properties.isEmpty()) {
-            context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), Matcher.quoteReplacement(properties));
+
+        if (!mavenProperties.isEmpty()) {
+            context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), Matcher.quoteReplacement(mavenProperties));
         } else {
             context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), "");
         }
@@ -548,6 +568,19 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
+        if (!skipPlugins) {
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
+                    .stream()
+                    .map(Plugin::getExporter)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+
+            for (PluginExporter exporter : exporters) {
+                answer.addAll(exporter.getDependencies());
+            }
+        }
+
         // remove duplicate versions (keep first)
         Map<String, String> versions = new HashMap<>();
         Set<String> toBeRemoved = new HashSet<>();
@@ -651,17 +684,17 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     }
                     if (!java) {
                         if (kamelet) {
-                            safeCopy(source, out, true);
+                            ExportHelper.safeCopy(source, out, true, symbolicLink);
                         } else if (jkube) {
                             // file should be renamed and moved into src/main/jkube
                             f = f.replace(".jkube.yaml", ".yaml");
                             f = f.replace(".jkube.yml", ".yml");
                             out = srcCamelResourcesDir.getParent().getParent().resolve("jkube/" + f);
                             Files.createDirectories(out.getParent());
-                            safeCopy(source, out, true);
+                            ExportHelper.safeCopy(source, out, true, symbolicLink);
                         } else {
                             Files.createDirectories(out.getParent());
-                            safeCopy(scheme, source, out, true);
+                            ExportHelper.safeCopy(getClass().getClassLoader(), scheme, source, out, true, symbolicLink);
                         }
                     } else {
                         // need to append package name in java source file
@@ -689,7 +722,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             }
                         }
                         if (javaLiveReload) {
-                            safeCopy(source, out, true);
+                            ExportHelper.safeCopy(source, out, true, symbolicLink);
                         } else {
                             fos = Files.newOutputStream(out);
                             for (String line : lines) {
@@ -701,6 +734,20 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         }
                     }
                 }
+            }
+        }
+
+        if (!skipPlugins) {
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
+                    .stream()
+                    .map(Plugin::getExporter)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+
+            for (PluginExporter exporter : exporters) {
+                exporter.addSourceFiles(srcJavaDirRoot.getParent().getParent().getParent(),
+                        packageName, getMain().getOut());
             }
         }
     }
@@ -836,7 +883,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected Properties mapBuildProperties() {
         var answer = new Properties();
-        buildProperties.stream().map(item -> item.split("=")).forEach(toks -> answer.setProperty(toks[0], toks[1]));
+        buildProperties.stream()
+                .filter(item -> !item.isEmpty())
+                .map(item -> item.split("="))
+                .forEach(toks -> answer.setProperty(toks[0], toks[1]));
         return answer;
     }
 
@@ -1011,85 +1061,16 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return answer != null ? answer : "1.18.1";
     }
 
-    private void safeCopy(String scheme, Path source, Path target, boolean override) throws Exception {
-        if ("classpath".equals(scheme)) {
-            try (var ins = getClass().getClassLoader().getResourceAsStream(source.toString());
-                 var outs = Files.newOutputStream(target)) {
-                IOHelper.copy(ins, outs);
-            }
-        } else {
-            safeCopy(source, target, override);
-        }
-    }
-
-    protected void safeCopy(Path source, Path target, boolean override) throws Exception {
-        if (!Files.exists(source)) {
-            return;
-        }
-
-        if (Files.isDirectory(source)) {
-            // flatten files if they are from a directory
-            try (var stream = Files.list(source)) {
-                stream.filter(Files::isRegularFile)
-                        .forEach(child -> {
-                            try {
-                                safeCopy(child, target.resolve(child.getFileName()), override);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-            }
-            return;
-        }
-
-        if (symbolicLink) {
-            try {
-                // must use absolute paths
-                Path link = target.toAbsolutePath();
-                Path src = source.toAbsolutePath();
-                if (Files.exists(link)) {
-                    Files.delete(link);
-                }
-                Files.createSymbolicLink(link, src);
-                return; // success
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-
-        if (!Files.exists(target)) {
-            Files.copy(source, target);
-        } else if (override) {
-            Files.copy(source, target,
-                    StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
-
     // This method is kept for backward compatibility with derived classes
     @Deprecated
     protected void safeCopy(java.io.File source, java.io.File target, boolean override) throws Exception {
-        safeCopy(source.toPath(), target.toPath(), override);
-    }
-
-    protected void safeCopy(InputStream source, Path target) throws Exception {
-        if (source == null) {
-            return;
-        }
-
-        Path dir = target.getParent();
-        if (!Files.exists(dir)) {
-            Files.createDirectories(dir);
-        }
-
-        if (!Files.exists(target)) {
-            Files.copy(source, target);
-        }
+        ExportHelper.safeCopy(source.toPath(), target.toPath(), override, symbolicLink);
     }
 
     // This method is kept for backward compatibility with derived classes
     @Deprecated
     protected void safeCopy(InputStream source, java.io.File target) throws Exception {
-        safeCopy(source, target.toPath());
+        ExportHelper.safeCopy(source, target.toPath());
     }
 
     private static String determinePackageName(String content) {
@@ -1185,7 +1166,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 String n = d.substring(4);
                 Path sourcePath = Paths.get(n);
                 Path targetPath = libDirPath.resolve(n);
-                safeCopy(sourcePath, targetPath, true);
+                ExportHelper.safeCopy(sourcePath, targetPath, true, symbolicLink);
             }
         }
     }
@@ -1245,7 +1226,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     })
                     .forEach(p -> {
                         try {
-                            safeCopy(p, srcResourcesDir.resolve(p.getFileName()), true);
+                            ExportHelper.safeCopy(p, srcResourcesDir.resolve(p.getFileName()), true, symbolicLink);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
