@@ -59,17 +59,17 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         this.camelContext = camelContext;
     }
 
-    @ManagedAttribute(description = "Total compilation time in millis")
+    @ManagedAttribute(description = "Total Groovy compilation time in millis")
     public long getCompileTime() {
         return elapsed;
     }
 
-    @ManagedAttribute(description = "Number of groovy sources that has been compiled")
+    @ManagedAttribute(description = "Number of Groovy sources that has been compiled")
     public int getClassesSize() {
         return classLoader.size();
     }
 
-    @ManagedAttribute(description = "Directories to scan for groovy source to be pre-compiled")
+    @ManagedAttribute(description = "Directories to scan for Groovy source to be pre-compiled")
     @Override
     public String getScriptPattern() {
         return scriptPattern;
@@ -102,7 +102,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         if (scriptPattern != null) {
             StopWatch watch = new StopWatch();
 
-            LOG.info("Pre compiling groovy scripts from: {}", scriptPattern);
+            LOG.info("Pre-compiling Groovy source from: {}", scriptPattern);
 
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl == null) {
@@ -143,8 +143,12 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
 
             // parse code into classes and add to classloader
             for (String code : codes) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Pre-compiling Groovy source:\n{}", code);
+                }
                 Class<?> clazz = shell.getClassLoader().parseClass(code);
                 if (clazz != null) {
+                    LOG.debug("Pre-compiled Groovy class: {}", clazz.getName());
                     classLoader.addClass(clazz.getName(), clazz);
                 }
             }
