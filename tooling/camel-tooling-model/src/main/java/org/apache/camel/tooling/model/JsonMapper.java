@@ -397,6 +397,15 @@ public final class JsonMapper {
             parseOption(mp, option, entry.getKey());
             model.addOption(option);
         }
+        JsonObject mprf = (JsonObject) obj.get("functions");
+        if (mprf != null) {
+            for (Map.Entry<String, Object> entry : mprf.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                LanguageModel.LanguageFunctionModel func = new LanguageModel.LanguageFunctionModel();
+                parseFunction(mp, func, entry.getKey());
+                model.addFunction(func);
+            }
+        }
         return model;
     }
 
@@ -593,6 +602,27 @@ public final class JsonMapper {
         option.setName(mp.getString("name"));
         option.setDescription(mp.getString("description"));
         option.setSourceType(mp.getString("sourceType"));
+    }
+
+    private static void parseFunction(JsonObject mp, LanguageModel.LanguageFunctionModel func, String name) {
+        func.setName(name);
+        func.setConstantName(name);
+        Integer idx = mp.getInteger("index");
+        if (idx != null) {
+            func.setIndex(idx);
+        }
+        func.setKind(mp.getString("kind"));
+        func.setDisplayName(mp.getString("displayName"));
+        func.setGroup(mp.getString("group"));
+        func.setLabel(mp.getString("label"));
+        func.setRequired(mp.getBooleanOrDefault("required", false));
+        func.setJavaType(mp.getString("javaType"));
+        func.setPrefix(mp.getString("prefix"));
+        func.setDeprecated(mp.getBooleanOrDefault("deprecated", false));
+        func.setDeprecationNote(mp.getString("deprecationNote"));
+        func.setDescription(mp.getString("description"));
+        func.setOgnl(mp.getBoolean("ognl"));
+        func.setSuffix(mp.getString("suffix"));
     }
 
     public static JsonObject asJsonObject(List<? extends BaseOptionModel> options) {
