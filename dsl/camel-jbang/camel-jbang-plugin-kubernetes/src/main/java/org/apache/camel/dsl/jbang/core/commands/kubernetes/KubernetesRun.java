@@ -271,6 +271,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Disable automatic cluster type detection and automatic settings for cluster.")
     boolean disableAuto = false;
 
+    @CommandLine.Option(names = { "--skip-plugins" }, defaultValue = "false",
+                        description = "Skip plugins during export")
+    boolean skipPlugins = false;
+
     // DevMode/Reload state
     private CamelContext devModeContext;
     private Thread devModeShutdownTask;
@@ -415,7 +419,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 (quiet || output != null),
                 true,
                 "info",
-                verbose);
+                verbose,
+                skipPlugins);
         KubernetesExport export = new KubernetesExport(getMain(), configurer);
 
         export.image = image;

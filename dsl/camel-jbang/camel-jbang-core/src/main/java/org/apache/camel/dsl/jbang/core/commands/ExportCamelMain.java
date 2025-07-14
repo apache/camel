@@ -228,6 +228,9 @@ class ExportCamelMain extends Export {
             if (gav.getVersion() != null) {
                 sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
             }
+            if (gav.getScope() != null) {
+                sb.append("            <scope>").append(gav.getScope()).append("</scope>\n");
+            }
             // special for lib JARs
             if ("lib".equals(gav.getPackaging())) {
                 sb.append("            <scope>system</scope>\n");
@@ -397,11 +400,11 @@ class ExportCamelMain extends Export {
 
         // log4j configuration
         InputStream is = ExportCamelMain.class.getResourceAsStream("/log4j2-main.properties");
-        safeCopy(is, srcResourcesDir.resolve("log4j2.properties"));
+        ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.properties"));
         is = ExportCamelMain.class.getResourceAsStream("/log4j2.component.properties");
-        safeCopy(is, srcResourcesDir.resolve("log4j2.component.properties"));
+        ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.component.properties"));
         // assembly for runner jar
         is = ExportCamelMain.class.getResourceAsStream("/assembly/runner.xml");
-        safeCopy(is, srcResourcesDir.resolve("assembly/runner.xml"));
+        ExportHelper.safeCopy(is, srcResourcesDir.resolve("assembly/runner.xml"));
     }
 }

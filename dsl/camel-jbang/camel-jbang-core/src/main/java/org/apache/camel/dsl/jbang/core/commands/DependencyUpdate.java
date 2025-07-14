@@ -285,6 +285,9 @@ public class DependencyUpdate extends DependencyList {
                     if (gav.getVersion() != null) {
                         sj.add(pad2).add("<version>" + gav.getVersion() + "</version>\n");
                     }
+                    if (gav.getScope() != null) {
+                        sj.add(pad2).add("<scope>" + gav.getScope() + "</scope>\n");
+                    }
                     sj.add(pad).add("</dependency>");
                 }
 

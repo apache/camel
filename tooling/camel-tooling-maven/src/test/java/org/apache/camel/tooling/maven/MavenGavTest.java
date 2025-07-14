@@ -51,6 +51,16 @@ class MavenGavTest {
     }
 
     @Test
+    void parseTestScopedGav() {
+        MavenGav gav = MavenGav.parseGav("mvn@test:org.junit:junit-api:99.99");
+
+        assertEquals("org.junit", gav.getGroupId());
+        assertEquals("junit-api", gav.getArtifactId());
+        assertEquals("99.99", gav.getVersion());
+        assertEquals("test", gav.getScope());
+    }
+
+    @Test
     void parseAgentGav() {
         MavenGav gav = MavenGav.parseGav("agent:io.opentelemetry.javaagent:opentelemetry-javaagent:1.31.0");
 

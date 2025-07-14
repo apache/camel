@@ -1,0 +1,12 @@
+{{ .PackageDeclaration }}import org.citrusframework.annotations.CitrusTestSource;
+import org.citrusframework.junit.jupiter.CitrusSupport;
+
+import org.junit.jupiter.api.Test;
+
+@CitrusSupport
+public class {{ .Name }} {
+
+    @Test
+    @CitrusTestSource(type = "{{ .Type }}", sources = "classpath:{{ .ResourcePath }}")
+    void {{ .MethodName }}() {}
+}

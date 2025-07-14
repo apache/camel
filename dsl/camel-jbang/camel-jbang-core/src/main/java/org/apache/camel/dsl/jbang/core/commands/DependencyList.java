@@ -200,6 +200,9 @@ public class DependencyList extends Export {
             outPrinter().printf("    <groupId>%s</groupId>%n", gav.getGroupId());
             outPrinter().printf("    <artifactId>%s</artifactId>%n", gav.getArtifactId());
             outPrinter().printf("    <version>%s</version>%n", gav.getVersion());
+            if (gav.getScope() != null) {
+                outPrinter().printf("    <scope>%s</scope>%n", gav.getScope());
+            }
             outPrinter().println("</dependency>");
         } else if ("jbang".equals(output)) {
             if (index == 0) {

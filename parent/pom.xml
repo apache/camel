@@ -2839,6 +2839,11 @@
                 <artifactId>camel-jbang-plugin-kubernetes</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jbang-plugin-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- camel catalog -->
             <dependency>

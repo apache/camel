@@ -254,6 +254,9 @@ public class CatalogDoc extends CamelCommand {
                 if (v != null) {
                     printer().println("        <version>" + v + "</version>");
                 }
+                if (gav.getScope() != null) {
+                    printer().println("        <scope>" + gav.getScope() + "</scope>");
+                }
                 printer().println("    </dependency>");
             }
             printer().println("");

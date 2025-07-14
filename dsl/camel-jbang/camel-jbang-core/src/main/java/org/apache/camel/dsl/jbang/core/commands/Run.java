@@ -337,6 +337,10 @@ public class Run extends CamelCommand {
             description = "Allow user to type in required parameters in prompt if not present in application")
     boolean prompt;
 
+    @Option(names = { "--skip-plugins" }, defaultValue = "false",
+            description = "Skip plugins during export")
+    boolean skipPlugins;
+
     public Run(CamelJBangMain main) {
         super(main);
     }
@@ -1086,6 +1090,7 @@ public class Run extends CamelCommand {
         eq.addDependencies("camel:cli-connector");
         eq.fresh = this.fresh;
         eq.download = this.download;
+        eq.skipPlugins = this.skipPlugins;
         eq.packageScanJars = this.packageScanJars;
         eq.quiet = true;
         eq.logging = false;
@@ -1196,6 +1201,7 @@ public class Run extends CamelCommand {
         }
         eq.fresh = this.fresh;
         eq.download = this.download;
+        eq.skipPlugins = this.skipPlugins;
         eq.packageScanJars = this.packageScanJars;
         eq.quiet = true;
         eq.logging = false;

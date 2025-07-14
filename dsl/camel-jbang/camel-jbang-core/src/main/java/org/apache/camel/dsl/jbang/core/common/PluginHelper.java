@@ -23,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
@@ -82,7 +84,7 @@ public final class PluginHelper {
             // Ignore errors in embedded plugin loading
         }
 
-        // If we found embedded plugins and we're looking for a specific target,
+        // If we found embedded plugins, and we're looking for a specific target,
         // check if it was satisfied by embedded plugins
         if (foundEmbeddedPlugins && target != null && !"shell".equals(target)) {
             // Check if the target command was added by embedded plugins
@@ -92,6 +94,31 @@ public final class PluginHelper {
         }
 
         // Fall back to JSON configuration for additional or missing plugins
+        Map<String, Plugin> plugins = getActivePlugins(main);
+        for (Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
+            // only load the plugin if the command-line is calling this plugin
+            if (target != null && !"shell".equals(target) && !target.equals(plugin.getKey())) {
+                continue;
+            }
+
+            // Skip if this plugin was already loaded from embedded plugins
+            if (foundEmbeddedPlugins && commandLine.getSubcommands().containsKey(plugin.getKey())) {
+                continue;
+            }
+
+            plugin.getValue().customize(commandLine, main);
+        }
+    }
+
+    /**
+     * Gets the active plugins according to the local plugin configuration file. Performs version check to make sure
+     * that the current Camel JBang version is able to execute the plugin.
+     *
+     * @param  main to exit the CLI process in case of error
+     * @return      map of plugins where key represents the plugin command and value the plugin instance.
+     */
+    public static Map<String, Plugin> getActivePlugins(CamelJBangMain main) {
+        Map<String, Plugin> activePlugins = new HashMap<>();
         JsonObject config = getPluginConfig();
         if (config != null) {
             CamelCatalog catalog = new DefaultCamelCatalog();
@@ -104,47 +131,45 @@ public final class PluginHelper {
                 final String name = properties.getOrDefault("name", pluginKey).toString();
                 final String command = properties.getOrDefault("command", name).toString();
                 final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
-
-                // only load the plugin if the command-line is calling this plugin
-                if (target != null && !"shell".equals(target) && !target.equals(command)) {
-                    continue;
-                }
-
-                // Skip if this plugin was already loaded from embedded plugins
-                if (foundEmbeddedPlugins && commandLine.getSubcommands().containsKey(command)) {
-                    continue;
-                }
+                final String gav = properties.getOrDefault("dependency", "").toString();
 
                 // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
                 if (!version.isBlank() && !firstVersion.isBlank()) {
                     versionCheck(main, version, firstVersion, command);
                 }
 
-                Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + command, Plugin.class);
-                if (plugin.isEmpty()) {
-                    final MavenGav mavenGav = dependencyAsMavenGav(properties);
-                    final String group = extractGroup(mavenGav, "org.apache.camel");
-                    final String depVersion = extractVersion(mavenGav, version);
-
-                    plugin = downloadPlugin(command, main, depVersion, group);
-                }
+                Optional<Plugin> plugin = getPlugin(command, version, gav, main.getOut());
                 if (plugin.isPresent()) {
-                    plugin.get().customize(commandLine, main);
+                    activePlugins.put(command, plugin.get());
                 } else {
                     main.getOut().println("camel-jbang-plugin-" + command + " not found. Exit");
                     main.quit(1);
                 }
             }
         }
+
+        return activePlugins;
     }
 
-    private static MavenGav dependencyAsMavenGav(JsonObject properties) {
-        final Object dependency = properties.get("dependency");
-        if (dependency == null) {
+    public static Optional<Plugin> getPlugin(String name, String defaultVersion, String gav, Printer printer) {
+        Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + name, Plugin.class);
+        if (plugin.isEmpty()) {
+            final MavenGav mavenGav = dependencyAsMavenGav(gav);
+            final String group = extractGroup(mavenGav, "org.apache.camel");
+            final String depVersion = extractVersion(mavenGav, defaultVersion);
+
+            plugin = downloadPlugin(name, depVersion, group, printer);
+        }
+
+        return plugin;
+    }
+
+    private static MavenGav dependencyAsMavenGav(String gav) {
+        if (gav == null || gav.isEmpty()) {
             return null;
         }
 
-        return MavenGav.parseGav(dependency.toString());
+        return MavenGav.parseGav(gav);
     }
 
     static void versionCheck(CamelJBangMain main, String version, String firstVersion, String command) {
@@ -161,7 +186,7 @@ public final class PluginHelper {
         }
     }
 
-    private static Optional<Plugin> downloadPlugin(String command, CamelJBangMain main, String version, String group) {
+    private static Optional<Plugin> downloadPlugin(String command, String version, String group, Printer printer) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
         DependencyDownloaderClassLoader ddlcl = new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
         downloader.setClassLoader(ddlcl);
@@ -184,7 +209,7 @@ public final class PluginHelper {
                 instance = Optional.of(Plugin.class.cast(ObjectHelper.newInstance(pluginClass)));
             } else {
                 String gav = String.join(":", group, "camel-jbang-plugin-" + command, version);
-                main.getOut().printf(String.format("ERROR: Failed to read file %s in dependency %s%n", path, gav));
+                printer.printf(String.format("ERROR: Failed to read file %s in dependency %s%n", path, gav));
             }
         } catch (IOException e) {
             throw new RuntimeCamelException(String.format("Failed to read the file %s.", path), e);
@@ -302,17 +327,14 @@ public final class PluginHelper {
         boolean foundAny = false;
         try {
             ClassLoader classLoader = PluginHelper.class.getClassLoader();
-            String serviceDir = PLUGIN_SERVICE_DIR;
 
-            // If we didn't find individual services, try scanning jar
-            if (!foundAny) {
-                Enumeration<URL> resources = classLoader.getResources(serviceDir);
-                while (resources.hasMoreElements()) {
-                    URL url = resources.nextElement();
-                    if (url.getProtocol().equals("jar")) {
-                        foundAny = scanJarForPlugins(commandLine, main, target, classLoader, url);
-                        break; // Found jar, no need to continue
-                    }
+            // Try scanning jar
+            Enumeration<URL> resources = classLoader.getResources(PLUGIN_SERVICE_DIR);
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                if (url.getProtocol().equals("jar")) {
+                    foundAny = scanJarForPlugins(commandLine, main, target, classLoader, url);
+                    break; // Found jar, no need to continue
                 }
             }
         } catch (Exception e) {
