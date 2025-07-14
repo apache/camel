@@ -79,7 +79,8 @@ public class GroovyExpression extends ExpressionSupport {
         final String key = fileName != null ? fileName + text : text;
         Class<Script> scriptClass = language.getScriptFromCache(key);
         if (scriptClass == null) {
-            ClassLoader cl = exchange.getContext().getApplicationContextClassLoader();
+            // prefer to use classloader from groovy script compiler, and if not fallback to app context
+            ClassLoader cl = exchange.getContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
             GroovyShell shell = shellFactory != null ? shellFactory.createGroovyShell(exchange)
                     : cl != null ? new GroovyShell(cl) : new GroovyShell();
             scriptClass = fileName != null
