@@ -62,6 +62,11 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         return elapsed;
     }
 
+    @ManagedAttribute(description = "Number of groovy sources that has been compiled")
+    public int getClassesSize() {
+        return classLoader.size();
+    }
+
     @ManagedAttribute(description = "Directories to scan for groovy source to be pre-compiled")
     @Override
     public String getScriptPattern() {
