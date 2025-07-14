@@ -31,7 +31,7 @@ public class MainGroovyCompilerRouteTest {
     public void testCompilerRoute() throws Exception {
         Main main = new Main();
         main.configure().addRoutesBuilder(createRouteBuilder());
-        main.configure().withGroovyScriptPattern("src/test/resources/myscript");
+        main.configure().withGroovyScriptPattern("myscript/*.groovy");
         main.start();
 
         CamelContext context = main.getCamelContext();
@@ -45,7 +45,7 @@ public class MainGroovyCompilerRouteTest {
 
         DefaultGroovyScriptCompiler compiler = context.hasService(DefaultGroovyScriptCompiler.class);
         Assertions.assertNotNull(compiler);
-        Assertions.assertEquals("src/test/resources/myscript", compiler.getScriptPattern());
+        Assertions.assertEquals("myscript/*.groovy", compiler.getScriptPattern());
         Assertions.assertEquals(2, compiler.getClassesSize());
         Assertions.assertTrue(compiler.getCompileTime() > 0, "Should take time to compile, was: " + compiler.getCompileTime());
 

@@ -16,8 +16,7 @@
  */
 package org.apache.camel.language.groovy;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import groovy.lang.GroovyShell;
@@ -27,7 +26,10 @@ import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.GroovyScriptCompiler;
+import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
@@ -100,7 +102,6 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         if (scriptPattern != null) {
             StopWatch watch = new StopWatch();
 
-            // TODO: ant path style
             LOG.info("Pre compiling groovy scripts from: {}", scriptPattern);
 
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
@@ -113,20 +114,38 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             // make classloader available for groovy language
             camelContext.getCamelContextExtension().addContextPlugin(GroovyScriptClassLoader.class, classLoader);
 
-            CompilerConfiguration cc = new CompilerConfiguration();
-            cc.setClasspathList(List.of(scriptPattern));
+            // scan for groovy source files to include
+            List<String> cps = new ArrayList<>();
+            List<String> codes = new ArrayList<>();
+            PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
+            for (String pattern : scriptPattern.split(",")) {
+                for (Resource resource : resolver.findResources(pattern)) {
+                    if (resource.exists()) {
+                        String loc = null;
+                        if ("classpath".equals(resource.getScheme())) {
+                            loc = resource.getLocation();
+                        } else if ("file".equals(resource.getScheme())) {
+                            loc = resource.getLocation();
+                        }
+                        if (loc != null) {
+                            cps.add(loc);
+                            String code = IOHelper.loadText(resource.getInputStream());
+                            codes.add(code);
+                        }
+                    }
+                }
+            }
 
+            // setup compiler via groovy shell
+            CompilerConfiguration cc = new CompilerConfiguration();
+            cc.setClasspathList(cps);
             GroovyShell shell = new GroovyShell(cl, cc);
 
-            // discover each class from the folder
-            File[] files = new File(scriptPattern).listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    String code = IOHelper.loadText(new FileInputStream(f));
-                    Class<?> clazz = shell.getClassLoader().parseClass(code);
-                    if (clazz != null) {
-                        classLoader.addClass(clazz.getName(), clazz);
-                    }
+            // parse code into classes and add to classloader
+            for (String code : codes) {
+                Class<?> clazz = shell.getClassLoader().parseClass(code);
+                if (clazz != null) {
+                    classLoader.addClass(clazz.getName(), clazz);
                 }
             }
             elapsed = watch.taken();
