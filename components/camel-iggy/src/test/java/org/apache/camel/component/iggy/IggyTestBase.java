@@ -78,16 +78,22 @@ public abstract class IggyTestBase {
                 Collections.singletonList(Message.of(message)));
     }
 
-    protected Stream<String> pollMessagesPayloadsAsString() {
-        return pollMessages().stream().map(message -> new String(message.payload()));
+    protected Stream<String> pollMessagesPayloadsAsStringFromCustomStreamTopic(String stream, String topic) {
+        return pollMessages(stream, topic).stream().map(message -> new String(message.payload()));
     }
 
-    protected List<Message> pollMessages() {
+    protected Stream<String> pollMessagesPayloadsAsString() {
+        return pollMessages(null, null).stream().map(message -> new String(message.payload()));
+    }
+
+    protected List<Message> pollMessages(String stream, String topic) {
         // Create consumer group if needed
+        stream = stream == null ? STREAM : stream;
+        topic = topic == null ? TOPIC : topic;
         try {
             client.consumerGroups().createConsumerGroup(
-                    StreamId.of(STREAM),
-                    TopicId.of(TOPIC),
+                    StreamId.of(stream),
+                    TopicId.of(topic),
                     empty(),
                     CONSUMER_GROUP);
         } catch (Exception e) {
@@ -95,14 +101,14 @@ public abstract class IggyTestBase {
         }
 
         client.consumerGroups().joinConsumerGroup(
-                StreamId.of(STREAM),
-                TopicId.of(TOPIC),
+                StreamId.of(stream),
+                TopicId.of(topic),
                 ConsumerId.of(CONSUMER_GROUP));
 
         List<Message> polledMessages = client.messages()
                 .pollMessages(
-                        StreamId.of(STREAM),
-                        TopicId.of(TOPIC),
+                        StreamId.of(stream),
+                        TopicId.of(topic),
                         Optional.empty(),
                         Consumer.group(ConsumerId.of(CONSUMER_GROUP)),
                         PollingStrategy.next(),

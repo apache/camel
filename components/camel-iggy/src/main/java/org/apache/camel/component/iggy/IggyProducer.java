@@ -18,11 +18,13 @@ package org.apache.camel.component.iggy;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.iggy.client.IggyClientConnectionPool;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.iggy.client.blocking.IggyBaseClient;
 import org.apache.iggy.identifier.StreamId;
@@ -35,7 +37,7 @@ public class IggyProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(IggyProducer.class);
 
     private final IggyEndpoint endpoint;
-    private IggyBaseClient client;
+    private IggyClientConnectionPool iggyClientConnectionPool;
 
     public IggyProducer(IggyEndpoint endpoint) {
         super(endpoint);
@@ -45,14 +47,20 @@ public class IggyProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        client = endpoint.getIggyClient();
+        iggyClientConnectionPool = new IggyClientConnectionPool(
+                endpoint.getConfiguration().getHost(),
+                endpoint.getConfiguration().getPort(),
+                endpoint.getConfiguration().getUsername(),
+                endpoint.getConfiguration().getPassword(),
+                endpoint.getConfiguration().getClientTransport());
 
+        IggyBaseClient client = iggyClientConnectionPool.borrowObject();
         endpoint.initializeTopic(client);
+        iggyClientConnectionPool.returnClient(client);
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // TODO overrides from headers and reinitialize topic if topic/stream was updated
         IggyConfiguration iggyConfiguration = endpoint.getConfiguration();
 
         try {
@@ -88,11 +96,28 @@ public class IggyProducer extends DefaultAsyncProducer {
                 .unwrap();
              */
 
+            IggyBaseClient client = iggyClientConnectionPool.borrowObject();
+
+            Optional<String> topicOverride
+                    = Optional.ofNullable(exchange.getMessage().getHeader(IggyConstants.TOPIC_OVERRIDE, String.class));
+            Optional<String> streamOverride
+                    = Optional.ofNullable(exchange.getMessage().getHeader(IggyConstants.STREAM_OVERRIDE, String.class));
+
+            String topic = topicOverride.orElse(endpoint.getTopicName());
+            String stream = streamOverride.orElse(iggyConfiguration.getStreamName());
+            if (topicOverride.isPresent() || streamOverride.isPresent()) {
+                endpoint.initializeTopic(client,
+                        topic,
+                        stream);
+            }
+
             client.messages().sendMessages(
-                    StreamId.of(iggyConfiguration.getStreamName()),
-                    TopicId.of(endpoint.getTopicName()),
+                    StreamId.of(stream),
+                    TopicId.of(topic),
                     iggyConfiguration.getPartitioning(),
                     messages);
+
+            iggyClientConnectionPool.returnClient(client);
         } catch (Exception e) {
             exchange.setException(e);
         }
