@@ -44,7 +44,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultGroovyScriptCompiler.class);
 
-    private long elapsed;
+    private long taken;
     private GroovyScriptClassLoader classLoader;
     private CamelContext camelContext;
     private String scriptPattern;
@@ -61,7 +61,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
 
     @ManagedAttribute(description = "Total Groovy compilation time in millis")
     public long getCompileTime() {
-        return elapsed;
+        return taken;
     }
 
     @ManagedAttribute(description = "Number of Groovy sources that has been compiled")
@@ -102,7 +102,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         if (scriptPattern != null) {
             StopWatch watch = new StopWatch();
 
-            LOG.info("Pre-compiling Groovy source from: {}", scriptPattern);
+            LOG.info("Pre-compiling Groovy sources from: {}", scriptPattern);
 
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl == null) {
@@ -152,13 +152,18 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                     classLoader.addClass(clazz.getName(), clazz);
                 }
             }
-            elapsed = watch.taken();
+            taken += watch.taken();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+
+        if (classLoader.size() > 0) {
+            LOG.info("Pre-compiled {} Groovy sources in {} millis", classLoader.size(), taken);
+        }
+
         IOHelper.close(classLoader);
     }
 }
