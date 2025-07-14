@@ -25,16 +25,12 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.iggy.client.blocking.IggyBaseClient;
-import org.apache.iggy.client.blocking.IggyClientBuilder;
-import org.apache.iggy.client.blocking.http.IggyHttpClient;
-import org.apache.iggy.client.blocking.tcp.IggyTcpClient;
 import org.apache.iggy.consumergroup.ConsumerGroupDetails;
 import org.apache.iggy.identifier.ConsumerId;
 import org.apache.iggy.identifier.StreamId;
@@ -74,9 +70,11 @@ public class IggyEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    public void initializeTopic(IggyBaseClient client) {
+    public void initializeTopic(IggyBaseClient client, String topicName, String streamName) throws Exception {
         IggyConfiguration iggyConfiguration = getConfiguration();
         Objects.requireNonNull(iggyConfiguration.getStreamName(), "The stream name is required");
+        String topic = topicName != null ? topicName : getTopicName();
+        String stream = streamName != null ? streamName : iggyConfiguration.getStreamName();
 
         if (iggyConfiguration.isAutoCreateStream()) {
             if (iggyConfiguration.getStreamId() != null) {
@@ -91,9 +89,9 @@ public class IggyEndpoint extends DefaultEndpoint {
                     return streamDetails;
                 });
             } else {
-                client.streams().getStream(StreamId.of(iggyConfiguration.getStreamName())).orElseGet(() -> {
-                    LOG.debug("Creating stream with name {}", iggyConfiguration.getStreamName());
-                    StreamDetails streamDetails = client.streams().createStream(empty(), iggyConfiguration.getStreamName());
+                client.streams().getStream(StreamId.of(stream)).orElseGet(() -> {
+                    LOG.debug("Creating stream with name {}", stream);
+                    StreamDetails streamDetails = client.streams().createStream(empty(), stream);
                     LOG.debug("Stream created with details: {}", streamDetails.toString());
 
                     return streamDetails;
@@ -104,23 +102,27 @@ public class IggyEndpoint extends DefaultEndpoint {
 
         if (iggyConfiguration.isAutoCreateTopic()) {
             client.topics()
-                    .getTopic(StreamId.of(iggyConfiguration.getStreamName()), TopicId.of(getTopicName()))
+                    .getTopic(StreamId.of(stream), TopicId.of(topic))
                     .orElseGet(() -> {
-                        LOG.debug("Creating topic with name {}", getTopicName());
-                        TopicDetails topicDetails = client.topics().createTopic(StreamId.of(iggyConfiguration.getStreamName()),
+                        LOG.debug("Creating topic with name {}", topic);
+                        TopicDetails topicDetails = client.topics().createTopic(StreamId.of(stream),
                                 empty(),
                                 iggyConfiguration.getPartitionsCount(),
                                 iggyConfiguration.getCompressionAlgorithm(),
                                 BigInteger.valueOf(iggyConfiguration.getMessageExpiry()),
                                 BigInteger.valueOf(iggyConfiguration.getMaxTopicSize()),
                                 Optional.ofNullable(iggyConfiguration.getReplicationFactor()),
-                                getTopicName());
+                                topic);
 
                         LOG.debug("Topic created or retrieved with details: {}", topicDetails.toString());
 
                         return topicDetails;
                     });
         }
+    }
+
+    public void initializeTopic(IggyBaseClient client) throws Exception {
+        initializeTopic(client, null, null);
     }
 
     public void initializeConsumerGroup(IggyBaseClient client) {
@@ -154,29 +156,6 @@ public class IggyEndpoint extends DefaultEndpoint {
                 getConfiguration().getStreamName(),
                 getTopicName(),
                 getConfiguration().getConsumerGroupName());
-    }
-
-    private IggyBaseClient createClient() {
-        return switch (getConfiguration().getClientTransport()) {
-            case "HTTP" ->
-                new IggyHttpClient(String.format("http://%s:%d", getConfiguration().getHost(), getConfiguration().getPort()));
-            case "TCP" -> new IggyTcpClient(getConfiguration().getHost(), getConfiguration().getPort());
-            default -> throw new RuntimeCamelException("Only HTTP or TCP transports are supported");
-        };
-    }
-
-    public IggyBaseClient getIggyClient() {
-        IggyBaseClient iggyBaseClient = new IggyClientBuilder().withBaseClient(createClient()).build().getBaseClient();
-
-        loginIggyClient(iggyBaseClient);
-
-        return iggyBaseClient;
-    }
-
-    private void loginIggyClient(IggyBaseClient client) {
-        if (getConfiguration().getUsername() != null) {
-            client.users().login(getConfiguration().getUsername(), getConfiguration().getPassword());
-        }
     }
 
     public ExecutorService createExecutor() {
