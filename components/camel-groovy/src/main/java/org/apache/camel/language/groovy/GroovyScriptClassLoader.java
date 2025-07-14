@@ -31,6 +31,11 @@ public class GroovyScriptClassLoader extends ClassLoader implements Closeable {
         super(parent);
     }
 
+    @Override
+    public String getName() {
+        return "GroovyScriptClassLoader";
+    }
+
     public void addClass(String name, Class<?> clazz) {
         classes.put(name, clazz);
     }
