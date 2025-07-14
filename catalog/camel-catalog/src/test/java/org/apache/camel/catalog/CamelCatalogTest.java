@@ -1641,4 +1641,24 @@ public class CamelCatalogTest {
         assertEquals(7, model.getOptions().size());
     }
 
+    @Test
+    public void testSimpleFunctions() {
+        LanguageModel model = catalog.languageModel("simple");
+        assertNotNull(model);
+
+        assertTrue(model.getFunctions().size() > 50);
+
+        assertEquals("body", model.getFunctions().get(0).getConstantName());
+        assertEquals("${", model.getFunctions().get(0).getPrefix());
+        assertEquals("}", model.getFunctions().get(0).getSuffix());
+        assertEquals("The message body", model.getFunctions().get(0).getDescription());
+
+        assertEquals("pretty(exp)", model.getFunctions().get(36).getConstantName());
+        assertEquals("${", model.getFunctions().get(36).getPrefix());
+        assertEquals("}", model.getFunctions().get(36).getSuffix());
+        assertEquals(
+                "Converts the expression to a String, and attempts to pretty print if JSon or XML, otherwise the expression is returned as the String value.",
+                model.getFunctions().get(36).getDescription());
+    }
+
 }
