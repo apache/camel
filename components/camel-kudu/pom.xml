@@ -93,6 +93,13 @@
             <version>${yetus-audience-annotations-version}</version>
         </dependency>
 
+        <!-- TODO: Remove this and associated version property - https://issues.apache.org/jira/browse/KUDU-3677 -->
+        <dependency>
+            <groupId>com.stumbleupon</groupId>
+            <artifactId>async</artifactId>
+            <version>${stumbleupon-async-version}</version>
+        </dependency>
+
         <!-- TESTING -->
         <dependency>
             <groupId>org.apache.camel</groupId>
