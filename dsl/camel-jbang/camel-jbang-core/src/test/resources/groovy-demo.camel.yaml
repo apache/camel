@@ -27,6 +27,6 @@
             uri: language
             parameters:
               languageName: groovy
-              resourceUri: classpath:demo.groovy
+              resourceUri: demo.groovy
         - log:
             message: ${variable.var1}

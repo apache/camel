@@ -163,7 +163,38 @@ XML DSL::
     </filter>
 </route>
 ----
-
 ====
+
+== Pre compiling shared groovy scripts
+
+*Preview* support level.
+
+In *Camel 4.14* we have added support for loading groovy source files and pre-compile
+on startup. This allows to have a common set of groovy classes and functions which can be
+used by Camel and Java.
+
+By default, scripts can be placed in `src/main/resources/camel-groovy` folder, but
+can be fully configured via ANT path style such as:
+
+[source,properties]
+----
+camel.main.groovyScriptPattern = myscript/*.groovy
+----
+
+Then in the `src/main/resources/camel-groovy` folder you can have groovy source files that Camel
+will pre-compile on startup, and make global available via a special `GroovyScriptClassLoader`.
+
+Because this class-loader is required to be in use for being able to load the groovy pre-compiled
+classes, then this feature will only work via Camel which has control of classloading when used
+with Camel features that would support this such as in the route DSL and elsewhere.
+
+However, there may be some features in Camel where this may not work (yet).
+
+IMPORTANT: This feature is only intended to include smaller groovy sources as small functions, DTOs
+that makes it easier to use together with Camel for low-code integrations. It is not
+intended to support Groovy as a general purpose programming language for Camel. For this kind
+then you can use groovy and Java together and follow best practices for this, such as
+using the joint-compilation via Maven / Gradle plugins during build.
+
 
 include::spring-boot:partial$starter.adoc[]

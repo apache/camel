@@ -143,8 +143,9 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         }
         Class<Script> clazz = getScriptFromCache(script);
         if (clazz == null) {
-            ClassLoader cl = getCamelContext().getApplicationContextClassLoader();
-            GroovyShell shell = new GroovyShell(cl);
+            // prefer to use classloader from groovy script compiler, and if not fallback to app context
+            ClassLoader cl = getCamelContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
+            GroovyShell shell = cl != null ? new GroovyShell(cl) : new GroovyShell();
             clazz = shell.getClassLoader().parseClass(script);
             addScriptToCache(script, clazz);
         }

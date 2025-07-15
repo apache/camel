@@ -716,6 +716,7 @@ public class Run extends CamelCommand {
         StringJoiner sjReload = new StringJoiner(",");
         StringJoiner sjClasspathFiles = new StringJoiner(",");
         StringJoiner sjScriptFiles = new StringJoiner(",");
+        StringJoiner sjGroovyFiles = new StringJoiner(",");
         StringJoiner sjTlsFiles = new StringJoiner(",");
         StringJoiner sjKamelets = new StringJoiner(",");
         StringJoiner sjJKubeFiles = new StringJoiner(",");
@@ -754,6 +755,10 @@ public class Run extends CamelCommand {
             } else if (isScriptFile(file)) {
                 // script files
                 sjScriptFiles.add(file);
+                continue;
+            } else if (isGroovyFile(file)) {
+                // groovy files
+                sjGroovyFiles.add("file:" + file);
                 continue;
             } else if (isTlsFile(file)) {
                 // tls files
@@ -868,6 +873,12 @@ public class Run extends CamelCommand {
             writeSettings("camel.jbang.scriptFiles", sjScriptFiles.toString());
         } else {
             writeSetting(main, profileProperties, "camel.jbang.scriptFiles", () -> null);
+        }
+        if (sjGroovyFiles.length() > 0) {
+            main.addInitialProperty("camel.jbang.groovyFiles", sjGroovyFiles.toString());
+            writeSettings("camel.jbang.groovyFiles", sjGroovyFiles.toString());
+        } else {
+            writeSetting(main, profileProperties, "camel.jbang.groovyFiles", () -> null);
         }
         if (sjTlsFiles.length() > 0) {
             main.addInitialProperty("camel.jbang.tlsFiles", sjTlsFiles.toString());
@@ -1944,6 +1955,10 @@ public class Run extends CamelCommand {
             }
         }
         return false;
+    }
+
+    private boolean isGroovyFile(String name) {
+        return name.endsWith(".groovy");
     }
 
     private boolean isScriptFile(String name) {

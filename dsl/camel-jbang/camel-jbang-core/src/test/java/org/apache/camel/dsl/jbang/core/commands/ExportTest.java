@@ -581,7 +581,7 @@ class ExportTest {
                     containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-groovy", null));
         }
 
-        File f = workingDir.toPath().resolve("src/main/resources/demo.groovy").toFile();
+        File f = workingDir.toPath().resolve("src/main/resources/camel-groovy/demo.groovy").toFile();
         Assertions.assertTrue(f.isFile());
         Assertions.assertTrue(f.exists());
     }

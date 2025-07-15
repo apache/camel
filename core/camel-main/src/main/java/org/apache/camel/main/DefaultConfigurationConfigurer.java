@@ -61,6 +61,7 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.GroovyScriptCompiler;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -96,6 +97,7 @@ import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
@@ -349,6 +351,15 @@ public final class DefaultConfigurationConfigurer {
                 ecc.addContextPlugin(CompileStrategy.class, cs);
             }
             cs.setWorkDir(config.getCompileWorkDir());
+        }
+        if (config.getGroovyScriptPattern() != null) {
+            GroovyScriptCompiler gsc = camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
+            if (gsc != null) {
+                gsc.setScriptPattern(config.getGroovyScriptPattern());
+                camelContext.addService(gsc);
+                // force start compiler eager so Camel routes can load these pre-compiled classes
+                ServiceHelper.startService(gsc);
+            }
         }
 
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {

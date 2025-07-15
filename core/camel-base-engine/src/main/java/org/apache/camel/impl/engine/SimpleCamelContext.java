@@ -56,6 +56,7 @@ import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.GroovyScriptCompiler;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
@@ -471,6 +472,17 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 HeadersMapFactory.class);
 
         return result.orElseGet(DefaultHeadersMapFactory::new);
+    }
+
+    @Override
+    protected GroovyScriptCompiler createGroovyScriptCompiler() {
+        Optional<GroovyScriptCompiler> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getCamelContextExtension().getBootstrapFactoryFinder(),
+                GroovyScriptCompiler.FACTORY,
+                GroovyScriptCompiler.class);
+        // camel-groovy is optional
+        return result.orElse(null);
     }
 
     private CliConnectorFactory createCliConnectorFactory() {

@@ -129,6 +129,7 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
     private boolean routesReloadRestartDuration;
+    private String groovyScriptPattern = "classpath:camel-groovy/*";
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
@@ -1394,6 +1395,24 @@ public abstract class DefaultConfigurationProperties<T> {
         this.jmxUpdateRouteEnabled = jmxUpdateRouteEnabled;
     }
 
+    public String getGroovyScriptPattern() {
+        return groovyScriptPattern;
+    }
+
+    /**
+     * Directories to scan for groovy source to be pre-compiled. For example: scripts/*.groovy will scan inside the
+     * classpath folder scripts for all groovy source files.
+     *
+     * By default, sources are scanned from the classpath, but you can prefix with file: to use file system.
+     *
+     * The directories are using Ant-path style pattern, and multiple directories can be specified separated by comma.
+     *
+     * This requires having camel-groovy JAR on the classpath.
+     */
+    public void setGroovyScriptPattern(String groovyScriptPattern) {
+        this.groovyScriptPattern = groovyScriptPattern;
+    }
+
     public String getExchangeFactory() {
         return exchangeFactory;
     }
@@ -1632,6 +1651,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setStartupRecorderDir(String startupRecorderDir) {
         this.startupRecorderDir = startupRecorderDir;
+    }
+
+    public String getCloudPropertiesLocation() {
+        return cloudPropertiesLocation;
+    }
+
+    /**
+     * Sets the locations (comma separated values) where to find properties configuration as defined for cloud native
+     * environments such as Kubernetes. You should only scan text based mounted configuration.
+     */
+    public void setCloudPropertiesLocation(String cloudPropertiesLocation) {
+        this.cloudPropertiesLocation = cloudPropertiesLocation;
     }
 
     // fluent builders
@@ -2756,16 +2787,19 @@ public abstract class DefaultConfigurationProperties<T> {
         return (T) this;
     }
 
-    public String getCloudPropertiesLocation() {
-        return cloudPropertiesLocation;
-    }
-
     /**
-     * Sets the locations (comma separated values) where to find properties configuration as defined for cloud native
-     * environments such as Kubernetes. You should only scan text based mounted configuration.
+     * Directories to scan for groovy source to be pre-compiled. For example: scripts/*.groovy will scan inside the
+     * classpath folder scripts for all groovy source files.
+     *
+     * By default, sources are scanned from the classpath, but you can prefix with file: to use file system.
+     *
+     * The directories are using Ant-path style pattern, and multiple directories can be specified separated by comma.
+     *
+     * This requires having camel-groovy JAR on the classpath.
      */
-    public void setCloudPropertiesLocation(String cloudPropertiesLocation) {
-        this.cloudPropertiesLocation = cloudPropertiesLocation;
+    public T withGroovyScriptPattern(String groovyScriptPattern) {
+        this.groovyScriptPattern = groovyScriptPattern;
+        return (T) this;
     }
 
     /**
