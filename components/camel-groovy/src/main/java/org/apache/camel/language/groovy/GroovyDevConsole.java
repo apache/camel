@@ -38,6 +38,9 @@ public class GroovyDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Groovy Script Pattern: %s", compiler.getScriptPattern()));
             sb.append(String.format("\n    Total Compiled Classes: %s", compiler.getClassesSize()));
             sb.append(String.format("\n    Total Compiled Time: %s (ms)", compiler.getCompileTime()));
+            if (compiler.getWorkDir() != null) {
+                sb.append(String.format("\n    Work Directory: %s (ms)", compiler.getWorkDir()));
+            }
         }
 
         return sb.toString();
@@ -53,6 +56,9 @@ public class GroovyDevConsole extends AbstractDevConsole {
             jo.put("groovyScriptPattern", compiler.getScriptPattern());
             jo.put("compiledClasses", compiler.getClassesSize());
             jo.put("compiledTime", compiler.getCompileTime());
+            if (compiler.getWorkDir() != null) {
+                jo.put("workDir", compiler.getWorkDir());
+            }
             root.put("compiler", jo);
         }
 

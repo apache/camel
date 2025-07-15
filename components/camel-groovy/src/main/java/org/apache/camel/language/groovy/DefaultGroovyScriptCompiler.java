@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.GroovyScriptCompiler;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.Resource;
@@ -50,6 +51,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     private GroovyScriptClassLoader classLoader;
     private CamelContext camelContext;
     private String scriptPattern;
+    private String workDir;
 
     @Override
     public CamelContext getCamelContext() {
@@ -80,6 +82,11 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     @Override
     public void setScriptPattern(String scriptPattern) {
         this.scriptPattern = scriptPattern;
+    }
+
+    @ManagedAttribute(description = "Directory for storing compiled Groovy sources as class files")
+    public String getWorkDir() {
+        return workDir;
     }
 
     /**
@@ -154,9 +161,19 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                 }
             }
 
+            // use work dir for writing compiled classes
+            CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
+            if (cs != null && cs.getWorkDir() != null) {
+                workDir = cs.getWorkDir();
+            }
+
             // setup compiler via groovy shell
             CompilerConfiguration cc = new CompilerConfiguration();
             cc.setClasspathList(cps);
+            if (workDir != null) {
+                LOG.debug("Writing compiled Groovy classes to directory: {}", workDir);
+                cc.setTargetDirectory(workDir);
+            }
 
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl == null) {

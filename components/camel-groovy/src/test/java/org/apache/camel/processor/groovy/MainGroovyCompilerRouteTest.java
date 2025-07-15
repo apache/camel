@@ -16,12 +16,15 @@
  */
 package org.apache.camel.processor.groovy;
 
+import java.io.File;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.groovy.DefaultGroovyScriptCompiler;
 import org.apache.camel.main.Main;
+import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,8 +32,11 @@ public class MainGroovyCompilerRouteTest {
 
     @Test
     public void testCompilerRoute() throws Exception {
+        FileUtil.removeDir(new File("target/workdir"));
+
         Main main = new Main();
         main.configure().addRoutesBuilder(createRouteBuilder());
+        main.configure().withCompileWorkDir("target/workdir");
         main.start();
 
         CamelContext context = main.getCamelContext();
@@ -46,7 +52,11 @@ public class MainGroovyCompilerRouteTest {
         Assertions.assertNotNull(compiler);
         Assertions.assertEquals("classpath:camel-groovy/*", compiler.getScriptPattern());
         Assertions.assertEquals(2, compiler.getClassesSize());
+        Assertions.assertEquals("target/workdir", compiler.getWorkDir());
         Assertions.assertTrue(compiler.getCompileTime() > 0, "Should take time to compile, was: " + compiler.getCompileTime());
+
+        Assertions.assertTrue(new File("target/workdir/Cheese.class").exists());
+        Assertions.assertTrue(new File("target/workdir/Dude.class").exists());
 
         main.stop();
     }
