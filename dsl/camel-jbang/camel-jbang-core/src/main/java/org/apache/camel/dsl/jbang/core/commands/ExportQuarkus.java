@@ -207,9 +207,6 @@ class ExportQuarkus extends Export {
             if (sj.length() > 0) {
                 properties.setProperty("quarkus.native.resources.includes", sj.toString());
             }
-            if (routes != null) {
-                properties.setProperty("camel.main.routes-include-pattern", routes);
-            }
         }
 
         // CAMEL-20911 workaround due to a bug in CEQ 3.11 and 3.12
