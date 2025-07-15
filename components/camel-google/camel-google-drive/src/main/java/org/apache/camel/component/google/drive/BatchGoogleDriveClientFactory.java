@@ -94,13 +94,13 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
             CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
             String delegate) {
         if (serviceAccountKey == null) {
-            throw new IllegalArgumentException("serviceAccountKey is required to create Gmail client.");
+            throw new IllegalArgumentException("serviceAccountKey is required to create Drive client.");
         }
         try {
             Credential credential = authorizeServiceAccount(camelContext, serviceAccountKey, delegate, scopes);
             return new Drive.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
-            throw new RuntimeCamelException("Could not create Gmail client.", e);
+            throw new RuntimeCamelException("Could not create Drive client.", e);
         }
     }
 
