@@ -251,7 +251,7 @@ public interface GoogleMailComponentBuilderFactory {
         }
     
         /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * OAuth 2 refresh token. Using this, the Google Mail component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
