@@ -399,12 +399,11 @@ class ExportTest {
         try (FileInputStream fis = new FileInputStream(appProps)) {
             String content = IOHelper.loadText(fis);
             if (rt == RuntimeType.quarkus) {
-                Assertions.assertTrue(content.contains("camel.main.routes-include-pattern=camel/route.yaml"),
-                        "should contain camel.main.routes-include-pattern property, was " + content);
-            } else {
-                Assertions.assertFalse(content.contains("camel.main.routes-include-pattern"),
-                        "should not contain camel.main.routes-include-pattern property, was " + content);
+                Assertions.assertTrue(content.contains("quarkus.native.resources.includes=camel/route.yaml"),
+                        "should contain quarkus.native.resources.includes property, was " + content);
             }
+            Assertions.assertFalse(content.contains("camel.main.routes-include-pattern"),
+                    "should not contain camel.main.routes-include-pattern property, was " + content);
             if (rt == RuntimeType.springBoot) {
                 Assertions.assertTrue(content.contains("camel.main.run-controller=true"),
                         "should contain camel.main.run-controller property, was " + content);

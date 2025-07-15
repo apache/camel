@@ -731,15 +731,16 @@ public class Run extends CamelCommand {
         }
 
         // if we only run pom.xml/build.gradle then auto discover from the Maven/Gradle based project
-        if (files.size() == 1 && ("pom.xml".equals(files.get(0)) || "build.gradle".equals(files.get(0)))) {
+        if (files.size() == 1 && (files.get(0).endsWith("pom.xml") || files.get(0).endsWith("build.gradle"))) {
+            Path projectDescriptorPath = Path.of(files.get(0));
             // use a better name when running
             if (name == null || "CamelJBang".equals(name)) {
-                name = RunHelper.mavenArtifactId();
+                name = RunHelper.mavenArtifactId(projectDescriptorPath);
             }
             // find source files
-            files = RunHelper.scanMavenOrGradleProject();
+            files = RunHelper.scanMavenOrGradleProject(projectDescriptorPath.getParent());
             // include extra dependencies from pom.xml
-            var pomDependencies = RunHelper.scanMavenDependenciesFromPom(Paths.get("pom.xml"));
+            var pomDependencies = RunHelper.scanMavenDependenciesFromPom(projectDescriptorPath);
             addDependencies(pomDependencies.toArray(new String[0]));
         }
 
