@@ -201,7 +201,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         super.doStop();
 
         if (classLoader.size() > 0) {
-            LOG.info("Pre-compiled {} Groovy sources in {} millis", classLoader.size(), taken);
+            LOG.debug("Pre-compiled {} Groovy sources in {} millis", classLoader.size(), taken);
         }
 
         IOHelper.close(classLoader);

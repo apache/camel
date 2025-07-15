@@ -100,7 +100,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
     @Override
     protected void doStop() throws Exception {
         if (counter > 0) {
-            LOG.info("Java language compiled {} scripts in {} millis", counter, taken);
+            LOG.debug("Java language compiled {} scripts in {} millis", counter, taken);
         }
     }
 
