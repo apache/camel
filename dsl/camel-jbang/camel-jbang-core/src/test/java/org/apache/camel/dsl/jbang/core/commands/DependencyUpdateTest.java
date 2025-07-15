@@ -57,16 +57,15 @@ class DependencyUpdateTest extends CamelCommandBaseTest {
     void shouldDependencyUpdate(RuntimeType rt) throws Exception {
         prepareMavenProject(rt);
 
-        checkNoUpdateOnFreshlyGeneratedproject(rt);
+        checkNoUpdateOnFreshlyGeneratedproject();
 
         //TODO: check content of pom.xml after a new component is provided
     }
 
-    private void checkNoUpdateOnFreshlyGeneratedproject(RuntimeType rt) throws Exception {
+    private void checkNoUpdateOnFreshlyGeneratedproject() throws Exception {
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(printer));
         CommandLine.populateCommand(command,
                 "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), // This parameter to be removed when the runtime type will be auto-detected to compute dependencies
                 new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();
         Assertions.assertEquals(0, exit, printer.getLines().toString());

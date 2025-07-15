@@ -28,6 +28,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -69,6 +70,20 @@ public class DependencyUpdate extends DependencyList {
         if (clean && !maven) {
             // remove DEPS in source file first
             updateJBangSource();
+        }
+
+        if (maven && this.runtime == null) {
+            // Basic heuristic to determine if the project is a Quarkus or Spring Boot one.
+            String pomContent = new String(Files.readAllBytes(file));
+            if (pomContent.contains("quarkus")) {
+                runtime = RuntimeType.quarkus;
+            } else if (pomContent.contains("spring-boot")) {
+                runtime = RuntimeType.springBoot;
+            } else if (pomContent.contains("camel-main")) {
+                runtime = RuntimeType.main;
+            } else {
+                // In case no specific word found, we keep the runtime type unset even if the fallback is currently on Main Runtime type
+            }
         }
 
         return super.doCall();
