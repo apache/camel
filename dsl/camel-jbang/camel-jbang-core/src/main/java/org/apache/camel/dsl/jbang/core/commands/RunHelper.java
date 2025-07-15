@@ -44,8 +44,7 @@ public final class RunHelper {
     private RunHelper() {
     }
 
-    public static String mavenArtifactId() {
-        Path pomPath = Paths.get("pom.xml");
+    public static String mavenArtifactId(Path pomPath) {
         if (Files.exists(pomPath) && Files.isRegularFile(pomPath)) {
             // find additional dependencies form pom.xml
             MavenXpp3Reader mavenReader = new MavenXpp3Reader();
@@ -77,12 +76,13 @@ public final class RunHelper {
     public static List<String> scanMavenDependenciesFromPom(Path pomPath) throws Exception {
         Model model = loadMavenModel(pomPath);
         if (model != null) {
-            return scanMavenDependenciesFromModel(pomPath, model);
+            return scanMavenDependenciesFromModel(pomPath, model, false);
         }
         return Collections.EMPTY_LIST;
     }
 
-    public static List<String> scanMavenDependenciesFromModel(Path pomPath, Model model) throws Exception {
+    public static List<String> scanMavenDependenciesFromModel(Path pomPath, Model model, boolean includeDependencyManagement)
+            throws Exception {
         String camelVersion = null;
         String camelSpringBootVersion = null;
         String springBootVersion = null;
@@ -116,9 +116,11 @@ public final class RunHelper {
                     } else if ("quarkus-bom".equals(a)) {
                         quarkusVersion = v;
                     }
-                    String gav = "mvn:" + g + ":" + a + ":" + v;
-                    if (!answer.contains(gav)) {
-                        answer.add(gav);
+                    if (includeDependencyManagement) {
+                        String gav = "mvn:" + g + ":" + a + ":" + v;
+                        if (!answer.contains(gav)) {
+                            answer.add(gav);
+                        }
                     }
                 }
             }
@@ -161,11 +163,12 @@ public final class RunHelper {
         return value;
     }
 
-    public static List<String> scanMavenOrGradleProject() {
+    public static List<String> scanMavenOrGradleProject(Path parentPath) {
         List<String> answer = new ArrayList<>();
 
         // scan as maven based project
-        Stream<Path> s = Stream.concat(walk(Path.of("src/main/java")), walk(Path.of("src/main/resources")));
+        Stream<Path> s = Stream.concat(walk(Path.of(parentPath.toFile().getAbsolutePath(), "src/main/java")),
+                walk(Path.of(parentPath.toFile().getAbsolutePath(), "src/main/resources")));
         s.filter(Files::isRegularFile)
                 .map(Path::toString)
                 .forEach(answer::add);

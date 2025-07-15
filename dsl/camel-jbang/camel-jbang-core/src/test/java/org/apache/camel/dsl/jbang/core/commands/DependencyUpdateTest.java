@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +34,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class DependencyUpdateTest extends CamelCommandBaseTest {
 
@@ -56,10 +59,51 @@ class DependencyUpdateTest extends CamelCommandBaseTest {
     @MethodSource("runtimeProvider")
     void shouldDependencyUpdate(RuntimeType rt) throws Exception {
         prepareMavenProject(rt);
-
         checkNoUpdateOnFreshlyGeneratedproject();
+        addArangodbToCamelFile();
+        checkOneDependencyAddedForArangoDb(rt);
+    }
 
-        //TODO: check content of pom.xml after a new component is provided
+    private void checkOneDependencyAddedForArangoDb(RuntimeType rt) throws Exception, IOException {
+        StringPrinter secondUpdateCommandPrinter = new StringPrinter();
+        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(secondUpdateCommandPrinter));
+        CommandLine.populateCommand(command,
+                "--dir=" + workingDir,
+                new File(workingDir, "pom.xml").getAbsolutePath());
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit, secondUpdateCommandPrinter.getLines().toString());
+
+        List<String> lines = secondUpdateCommandPrinter.getLines();
+        Assertions.assertEquals(1, lines.size(), secondUpdateCommandPrinter.getLines().toString());
+        Assertions.assertEquals("Updating pom.xml with 1 dependency added", lines.get(0));
+
+        String pomContent = new String(Files.readAllBytes(new File(workingDir, "pom.xml").toPath()));
+        switch (rt) {
+            case quarkus: {
+                assertThat(pomContent).contains("camel-quarkus-arangodb");
+                break;
+            }
+            case springBoot: {
+                assertThat(pomContent).contains("camel-arangodb-starter");
+                break;
+            }
+            case main: {
+                assertThat(pomContent).contains("camel-arangodb<");
+                break;
+            }
+        }
+    }
+
+    private void addArangodbToCamelFile() throws IOException {
+        File camelFile = new File(workingDir, "src/main/resources/camel/my.camel.yaml");
+        String camelFileContent = new String(Files.readAllBytes(camelFile.toPath()));
+        camelFileContent = camelFileContent.replace("- log: ${body}", """
+                - to:
+                             uri: arangodb
+                             parameters:
+                               database: demo
+                """);
+        Files.writeString(camelFile.toPath(), camelFileContent);
     }
 
     private void checkNoUpdateOnFreshlyGeneratedproject() throws Exception {
