@@ -35,11 +35,11 @@ public class GroovyDevConsole extends AbstractDevConsole {
 
         DefaultGroovyScriptCompiler compiler = getCamelContext().hasService(DefaultGroovyScriptCompiler.class);
         if (compiler != null) {
-            sb.append(String.format("\n    Groovy Script Pattern: %s", compiler.getScriptPattern()));
+            sb.append(String.format("    Groovy Script Pattern: %s", compiler.getScriptPattern()));
             sb.append(String.format("\n    Total Compiled Classes: %s", compiler.getClassesSize()));
             sb.append(String.format("\n    Total Compiled Time: %s (ms)", compiler.getCompileTime()));
             if (compiler.getWorkDir() != null) {
-                sb.append(String.format("\n    Work Directory: %s (ms)", compiler.getWorkDir()));
+                sb.append(String.format("\n    Work Directory: %s", compiler.getWorkDir()));
             }
         }
 

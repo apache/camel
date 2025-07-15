@@ -4044,6 +4044,27 @@ Notice, that to refer to the configuration value the syntax is `#optionName` eg 
 NOTE: The placeholder substitution only works for every option that a given Camel command has.
 You can see all the options a command has via the help, eg `camel run --help`.
 
+== Running Camel with Groovy Sources
+
+*Available as of Camel 4.14*
+
+In Camel 4.14 then support for using Groovy source together with Camel JBang has been improved.
+You can now include `.groovy` source files when you use `camel run` and let the Groovy source files be pre-compiled during startup.
+This allows to have a common set of groovy classes and functions which can be used by Camel and Java.
+
+Because this class-loader is required to be in use for being able to load the groovy pre-compiled
+classes, then this feature will only work via Camel which has control of classloading when used
+with Camel features that would support this such as in the route DSL and elsewhere.
+
+However, there may be some features in Camel where this may not work (yet).
+
+You can find an example at: https://github.com/apache/camel-kamelets-examples/tree/main/jbang/groovy
+
+IMPORTANT: This feature is only intended to include smaller groovy sources as small functions, DTOs
+that makes it easier to use together with Camel for low-code integrations. It is not
+intended to support Groovy as a general purpose programming language for Camel. For this kind
+then you can use groovy and Java together and follow best practices for this, such as
+using the joint-compilation via Maven / Gradle plugins during build.
 
 == Troubleshooting
 
