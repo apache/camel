@@ -65,7 +65,7 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "syncflow":
@@ -113,7 +113,7 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "query": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "syncflow":
@@ -168,14 +168,6 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "syncflow":
         case "syncFlow": return getOrCreateConfiguration(target).isSyncFlow();
         case "user": return getOrCreateConfiguration(target).getUser();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

@@ -211,27 +211,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Specifies the level of permissions you want a calendar application to
          * have to a user account. See
-         * https://developers.google.com/calendar/auth for more info.
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: consumer
-         * 
-         * @param scopes the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarStreamEndpointBuilder scopes(List<java.lang.String> scopes) {
-            doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * Specifies the level of permissions you want a calendar application to
-         * have to a user account. See
-         * https://developers.google.com/calendar/auth for more info.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 

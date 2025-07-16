@@ -74,7 +74,7 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "scopes": target.getConfiguration().setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": target.getConfiguration().setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "serviceaccountkey":
@@ -146,7 +146,7 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "scheduler": return java.lang.Object.class;
         case "schedulerproperties":
         case "schedulerProperties": return java.util.Map.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "serviceaccountkey":
@@ -242,7 +242,6 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "schedulerproperties":
         case "schedulerProperties": return java.lang.Object.class;
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }
