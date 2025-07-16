@@ -119,7 +119,9 @@ public final class CatalogLoader {
                 throw new IOException("Cannot download org.apache.camel:camel-catalog:" + camelCatalogVersion);
             }
 
-            ma = downloader.downloadArtifact("org.apache.camel.springboot", "camel-catalog-provider-springboot", version);
+            final String camelVersion = version;
+            ma = downloader.downloadArtifact("org.apache.camel.springboot", "camel-catalog-provider-springboot",
+                    VersionHelper.getSpringBootVersion(() -> camelVersion));
             if (ma != null) {
                 cl.addFile(ma.getFile());
             } else {
