@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
@@ -28,11 +32,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-@Command(name = "groovy", description = "Groovy Sources used of Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(name = "groovy", description = "Groovy Sources used of Camel integrations", sortOptions = false,
+         showDefaultValues = true)
 public class ListGroovy extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
