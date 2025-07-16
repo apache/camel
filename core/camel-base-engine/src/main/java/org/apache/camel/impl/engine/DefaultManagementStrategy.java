@@ -30,6 +30,7 @@ import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -81,9 +82,13 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     @Override
     public void addEventNotifier(EventNotifier eventNotifier) {
         this.eventNotifiers.add(eventNotifier);
+        // resort after adding
+        this.eventNotifiers.sort(OrderedComparator.get());
         if (isStarted()) {
             // already started
             this.startedEventNotifiers.add(eventNotifier);
+            // resort after adding
+            this.startedEventNotifiers.sort(OrderedComparator.get());
         }
         if (getCamelContext() != null) {
             // inject camel context if needed
