@@ -50,11 +50,12 @@ public class GoogleCalendarStreamComponent extends HealthCheckComponent {
     public Calendar getClient(GoogleCalendarStreamConfiguration config) {
         if (client == null) {
             if (config.getClientId() != null && config.getClientSecret() != null) {
-                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopes(),
+                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
                         config.getApplicationName(), config.getRefreshToken(),
                         config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
             } else if (config.getServiceAccountKey() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(), config.getScopes(),
+                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                        config.getScopesAsList(),
                         config.getApplicationName(), config.getDelegate());
             } else {
                 throw new IllegalArgumentException(

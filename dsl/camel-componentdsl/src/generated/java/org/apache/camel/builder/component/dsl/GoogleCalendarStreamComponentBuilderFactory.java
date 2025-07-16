@@ -227,17 +227,17 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         /**
          * Specifies the level of permissions you want a calendar application to
          * have to a user account. See
-         * https://developers.google.com/calendar/auth for more info.
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleCalendarStreamComponentBuilder scopes(java.util.List<java.lang.String> scopes) {
+        default GoogleCalendarStreamComponentBuilder scopes(java.lang.String scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -477,7 +477,7 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             case "delegate": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setDelegate((java.lang.String) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setMaxResults((int) value); return true;
             case "query": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setQuery((java.lang.String) value); return true;
-            case "scopes": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setScopes((java.util.List) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setScopes((java.lang.String) value); return true;
             case "syncFlow": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setSyncFlow((boolean) value); return true;
             case "autowiredEnabled": ((GoogleCalendarStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleCalendarStreamComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
