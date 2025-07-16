@@ -41,7 +41,7 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("RestrictToMyDrive", java.lang.Boolean.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("Spaces", java.lang.String.class);
         map.put("SupportsAllDrives", java.lang.Boolean.class);
@@ -91,7 +91,7 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "restricttomydrive":
         case "restrictToMyDrive": target.setRestrictToMyDrive(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "spaces": target.setSpaces(property(camelContext, java.lang.String.class, value)); return true;
@@ -150,7 +150,7 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "refreshToken": return java.lang.String.class;
         case "restricttomydrive":
         case "restrictToMyDrive": return java.lang.Boolean.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "spaces": return java.lang.String.class;
@@ -215,14 +215,6 @@ public class DriveChangesEndpointConfigurationConfigurer extends org.apache.came
         case "supportsTeamDrives": return target.getSupportsTeamDrives();
         case "teamdriveid":
         case "teamDriveId": return target.getTeamDriveId();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

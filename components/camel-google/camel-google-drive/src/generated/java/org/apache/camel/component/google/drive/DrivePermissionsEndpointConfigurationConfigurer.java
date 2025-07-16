@@ -41,7 +41,7 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         map.put("PermissionId", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("RemoveExpiration", java.lang.Boolean.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("SendNotificationEmail", java.lang.Boolean.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("SupportsAllDrives", java.lang.Boolean.class);
@@ -91,7 +91,7 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "removeexpiration":
         case "removeExpiration": target.setRemoveExpiration(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "sendnotificationemail":
         case "sendNotificationEmail": target.setSendNotificationEmail(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "serviceaccountkey":
@@ -152,7 +152,7 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         case "refreshToken": return java.lang.String.class;
         case "removeexpiration":
         case "removeExpiration": return java.lang.Boolean.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "sendnotificationemail":
         case "sendNotificationEmail": return java.lang.Boolean.class;
         case "serviceaccountkey":
@@ -222,14 +222,6 @@ public class DrivePermissionsEndpointConfigurationConfigurer extends org.apache.
         case "transferOwnership": return target.getTransferOwnership();
         case "usedomainadminaccess":
         case "useDomainAdminAccess": return target.getUseDomainAdminAccess();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

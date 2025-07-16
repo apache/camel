@@ -26,7 +26,7 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         map.put("ClientId", java.lang.String.class);
         map.put("Configuration", org.apache.camel.component.google.drive.GoogleDriveConfiguration.class);
         map.put("Delegate", java.lang.String.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("BridgeErrorHandler", boolean.class);
         map.put("LazyStartProducer", boolean.class);
         map.put("AutowiredEnabled", boolean.class);
@@ -69,7 +69,7 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -104,7 +104,7 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "lazyStartProducer": return boolean.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         default: return null;
@@ -138,14 +138,6 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "scopes": return getOrCreateConfiguration(target).getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return getOrCreateConfiguration(target).getServiceAccountKey();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

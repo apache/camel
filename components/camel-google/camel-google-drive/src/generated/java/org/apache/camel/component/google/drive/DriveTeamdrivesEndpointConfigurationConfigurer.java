@@ -35,7 +35,7 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("RequestId", java.lang.String.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("TeamDriveId", java.lang.String.class);
         map.put("UseDomainAdminAccess", java.lang.Boolean.class);
@@ -69,7 +69,7 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "requestid":
         case "requestId": target.setRequestId(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "teamdriveid":
@@ -111,7 +111,7 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "refreshToken": return java.lang.String.class;
         case "requestid":
         case "requestId": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "teamdriveid":
@@ -156,14 +156,6 @@ public class DriveTeamdrivesEndpointConfigurationConfigurer extends org.apache.c
         case "teamDriveId": return target.getTeamDriveId();
         case "usedomainadminaccess":
         case "useDomainAdminAccess": return target.getUseDomainAdminAccess();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

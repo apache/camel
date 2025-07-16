@@ -58,7 +58,7 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         map.put("RefreshToken", java.lang.String.class);
         map.put("RemoveParents", java.lang.String.class);
         map.put("RevisionId", java.lang.String.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("Space", java.lang.String.class);
         map.put("Spaces", java.lang.String.class);
@@ -138,7 +138,7 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "removeParents": target.setRemoveParents(property(camelContext, java.lang.String.class, value)); return true;
         case "revisionid":
         case "revisionId": target.setRevisionId(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "space": target.setSpace(property(camelContext, java.lang.String.class, value)); return true;
@@ -228,7 +228,7 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "removeParents": return java.lang.String.class;
         case "revisionid":
         case "revisionId": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "space": return java.lang.String.class;
@@ -328,14 +328,6 @@ public class DriveFilesEndpointConfigurationConfigurer extends org.apache.camel.
         case "type": return target.getType();
         case "usecontentasindexabletext":
         case "useContentAsIndexableText": return target.getUseContentAsIndexableText();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }
