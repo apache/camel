@@ -759,6 +759,10 @@ public class Run extends CamelCommand {
             } else if (isGroovyFile(file)) {
                 // groovy files
                 sjGroovyFiles.add("file:" + file);
+                if (dev) {
+                    // groovy files can also be reloaded
+                    sjReload.add(file);
+                }
                 continue;
             } else if (isTlsFile(file)) {
                 // tls files

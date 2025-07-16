@@ -65,6 +65,13 @@ public class GroovyScriptClassLoader extends ClassLoader implements Closeable {
         throw new ClassNotFoundException(name);
     }
 
+    public void removeClass(String name) {
+        Class<?> clazz = classes.get(name);
+        if (clazz != null) {
+            InvokerHelper.removeClass(clazz);
+        }
+    }
+
     @Override
     public void close() throws IOException {
         clear();

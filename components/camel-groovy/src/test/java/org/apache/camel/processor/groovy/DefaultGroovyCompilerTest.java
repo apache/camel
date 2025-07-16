@@ -33,12 +33,14 @@ public class DefaultGroovyCompilerTest extends CamelTestSupport {
         compiler.setScriptPattern("camel-groovy/*");
         compiler.start();
 
-        Class<?> clazz = compiler.loadClass("Dude");
+        Class<?> clazz = context.getClassResolver().resolveMandatoryClass("Dude");
         Object dude = ObjectHelper.newInstance(clazz);
+        Assertions.assertNotNull(dude);
+
         Method m = clazz.getMethod("order", int.class);
         Object o = ObjectHelper.newInstance(clazz);
-        Object out = m.invoke(o, 5);
 
+        Object out = m.invoke(o, 5);
         Assertions.assertEquals("I want to order 5 gauda", out);
     }
 

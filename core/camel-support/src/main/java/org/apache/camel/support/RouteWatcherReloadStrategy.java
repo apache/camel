@@ -32,6 +32,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupSummaryLevel;
+import org.apache.camel.spi.GroovyScriptCompiler;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesReload;
 import org.apache.camel.spi.PropertiesSource;
@@ -150,6 +151,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             setResourceReload((name, resource) -> {
                 if (name.endsWith(".properties")) {
                     onPropertiesReload(resource, true);
+                } else if (name.endsWith(".groovy")) {
+                    onGroovyReload(resource, true);
                 } else {
                     onRouteReload(List.of(resource), false);
                 }
@@ -225,6 +228,17 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             }
         }
         return null;
+    }
+
+    protected void onGroovyReload(Resource resource, boolean reloadRoutes) throws Exception {
+        GroovyScriptCompiler compiler
+                = getCamelContext().getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
+        if (compiler != null) {
+            // trigger all routes to be reloaded (which will also trigger reloading this resource)
+            if (reloadRoutes) {
+                onRouteReload(null, false);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

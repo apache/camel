@@ -17,6 +17,7 @@
 package org.apache.camel.language.groovy;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import groovy.lang.GroovyShell;
@@ -103,19 +104,9 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         return workDir;
     }
 
-    /**
-     * Loads the given class
-     *
-     * @param  name                   the FQN class name
-     * @return                        the loaded class
-     * @throws ClassNotFoundException is thrown if class is not found
-     */
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
-        if (classLoader != null) {
-            return classLoader.findClass(name);
-        } else {
-            throw new ClassNotFoundException(name);
-        }
+    @ManagedAttribute(description = "Whether re-compiling is enabled")
+    public boolean isRecompileEnabled() {
+        return reload;
     }
 
     @Override
@@ -149,48 +140,50 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
 
         if (scriptPattern != null) {
             LOG.info("Pre-compiling Groovy sources from: {}", scriptPattern);
-            doCompile();
+            doCompile(scanForGroovySources(scriptPattern));
         }
     }
 
-    protected void doCompile() throws Exception {
-        if (scriptPattern != null) {
-            StopWatch watch = new StopWatch();
+    protected Collection<Resource> scanForGroovySources(String scriptPattern) throws Exception {
+        List<Resource> list = new ArrayList<>();
 
-            // scan for groovy source files to include
-            List<String> cps = new ArrayList<>();
-            List<String> codes = new ArrayList<>();
-            PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
-            for (String pattern : scriptPattern.split(",")) {
-                for (Resource resource : resolver.findResources(pattern)) {
-                    if (resource.exists()) {
-                        String loc = null;
-                        if ("classpath".equals(resource.getScheme())) {
-                            loc = resource.getLocation();
-                        } else if ("file".equals(resource.getScheme())) {
-                            loc = resource.getLocation();
-                        }
-                        if (loc != null) {
-                            String code = IOHelper.loadText(resource.getInputStream());
-                            loc = StringHelper.after(loc, ":", loc);
-
-                            String cp = FileUtil.onlyPath(loc);
-                            if (cp == null) {
-                                cp = ".";
-                            }
-                            if (!cps.contains(cp)) {
-                                cps.add(cp);
-                            }
-
-                            codes.add(code);
-                        }
+        PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
+        for (String pattern : scriptPattern.split(",")) {
+            for (Resource resource : resolver.findResources(pattern)) {
+                if (resource.exists()) {
+                    if ("classpath".equals(resource.getScheme()) || "file".equals(resource.getScheme())) {
+                        list.add(resource);
                     }
                 }
+            }
+        }
+
+        return list;
+    }
+
+    protected void doCompile(Collection<Resource> resources) throws Exception {
+        List<String> cps = new ArrayList<>();
+        List<String> codes = new ArrayList<>();
+        for (Resource resource : resources) {
+            String loc = resource.getLocation();
+            if (loc != null) {
+                String code = IOHelper.loadText(resource.getInputStream());
+                loc = StringHelper.after(loc, ":", loc);
+                String cp = FileUtil.onlyPath(loc);
+                if (cp == null) {
+                    cp = ".";
+                }
+                if (!cps.contains(cp)) {
+                    cps.add(cp);
+                }
+                codes.add(code);
             }
             if (codes.isEmpty()) {
                 // nothing to compile
                 return;
             }
+
+            StopWatch watch = new StopWatch();
 
             // use work dir for writing compiled classes
             CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
@@ -218,13 +211,16 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             // parse code into classes and add to classloader
             for (String code : codes) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Pre-compiling Groovy source:\n{}", code);
+                    LOG.trace("Compiling Groovy source:\n{}", code);
                 }
                 counter++;
                 Class<?> clazz = shell.getClassLoader().parseClass(code);
                 if (clazz != null) {
-                    LOG.debug("Pre-compiled Groovy class: {}", clazz.getName());
-                    classLoader.addClass(clazz.getName(), clazz);
+                    String name = clazz.getName();
+                    LOG.debug("Compiled Groovy class: {}", name);
+                    // remove before adding in case it's recompiled
+                    classLoader.removeClass(name);
+                    classLoader.addClass(name, clazz);
                 }
             }
             taken += watch.taken();
@@ -236,11 +232,10 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         super.doStop();
 
         if (counter > 0) {
-            LOG.debug("Pre-compiled {} Groovy sources in {} millis", counter, taken);
+            LOG.debug("Compiled {} Groovy sources in {} millis", counter, taken);
         }
 
         IOHelper.close(classLoader);
-
     }
 
     @Override
@@ -265,7 +260,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                         classLoader.clear();
                     }
                     LOG.info("Re-compiling Groovy sources from: {}", scriptPattern);
-                    doCompile();
+                    doCompile(scanForGroovySources(scriptPattern));
                 }
             }
         }

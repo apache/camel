@@ -39,6 +39,7 @@ public class GroovyDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Compiled Size: %s", compiler.getCompileSize()));
             sb.append(String.format("\n    Compiled Classes: %s", compiler.getClassesSize()));
             sb.append(String.format("\n    Compiled Time: %s (ms)", compiler.getCompileTime()));
+            sb.append(String.format("\n    Re-compile Enabled: %b", compiler.isRecompileEnabled()));
             if (compiler.getWorkDir() != null) {
                 sb.append(String.format("\n    Work Directory: %s", compiler.getWorkDir()));
             }
@@ -58,6 +59,7 @@ public class GroovyDevConsole extends AbstractDevConsole {
             jo.put("compiledSize", compiler.getCompileSize());
             jo.put("compiledClasses", compiler.getClassesSize());
             jo.put("compiledTime", compiler.getCompileTime());
+            jo.put("recompileEnabled", compiler.isRecompileEnabled());
             if (compiler.getWorkDir() != null) {
                 jo.put("workDir", compiler.getWorkDir());
             }
