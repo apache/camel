@@ -202,7 +202,7 @@
         <google-cloud-pubsublite-version>1.15.11</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.68.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.53.3</google-cloud-storage-version>
-        <graaljs-version>24.2.1</graaljs-version>
+        <graaljs-version>24.2.2</graaljs-version>
         <graphql-java-version>24.1</graphql-java-version>
         <greenmail-version>2.1.4</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
