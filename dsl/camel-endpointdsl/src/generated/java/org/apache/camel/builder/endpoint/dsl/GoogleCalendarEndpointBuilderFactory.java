@@ -102,31 +102,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Specifies the level of permissions you want a calendar application to
-         * have to a user account. You can separate multiple scopes by comma.
-         * See https://developers.google.com/google-apps/calendar/auth for more
-         * info.
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Default: https://www.googleapis.com/auth/calendar
-         * Group: common
-         * 
-         * @param scopes the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointConsumerBuilder scopes(List<java.lang.String> scopes) {
-            doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * Specifies the level of permissions you want a calendar application to
-         * have to a user account. You can separate multiple scopes by comma.
-         * See https://developers.google.com/google-apps/calendar/auth for more
-         * info.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
@@ -966,31 +946,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Specifies the level of permissions you want a calendar application to
-         * have to a user account. You can separate multiple scopes by comma.
-         * See https://developers.google.com/google-apps/calendar/auth for more
-         * info.
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Default: https://www.googleapis.com/auth/calendar
-         * Group: common
-         * 
-         * @param scopes the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointProducerBuilder scopes(List<java.lang.String> scopes) {
-            doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * Specifies the level of permissions you want a calendar application to
-         * have to a user account. You can separate multiple scopes by comma.
-         * See https://developers.google.com/google-apps/calendar/auth for more
-         * info.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
@@ -1234,31 +1194,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Specifies the level of permissions you want a calendar application to
-         * have to a user account. You can separate multiple scopes by comma.
-         * See https://developers.google.com/google-apps/calendar/auth for more
-         * info.
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Default: https://www.googleapis.com/auth/calendar
-         * Group: common
-         * 
-         * @param scopes the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointBuilder scopes(List<java.lang.String> scopes) {
-            doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * Specifies the level of permissions you want a calendar application to
-         * have to a user account. You can separate multiple scopes by comma.
-         * See https://developers.google.com/google-apps/calendar/auth for more
-         * info.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common

@@ -33,7 +33,7 @@ public class CalendarFreebusyEndpointConfigurationConfigurer extends org.apache.
         map.put("MethodName", java.lang.String.class);
         map.put("P12FileName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("User", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -63,7 +63,7 @@ public class CalendarFreebusyEndpointConfigurationConfigurer extends org.apache.
         case "p12FileName": target.setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
@@ -99,7 +99,7 @@ public class CalendarFreebusyEndpointConfigurationConfigurer extends org.apache.
         case "p12FileName": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "user": return java.lang.String.class;
@@ -135,14 +135,6 @@ public class CalendarFreebusyEndpointConfigurationConfigurer extends org.apache.
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
         case "user": return target.getUser();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

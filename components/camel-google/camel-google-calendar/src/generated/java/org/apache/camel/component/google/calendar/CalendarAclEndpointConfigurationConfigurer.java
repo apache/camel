@@ -38,7 +38,7 @@ public class CalendarAclEndpointConfigurationConfigurer extends org.apache.camel
         map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("RuleId", java.lang.String.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("SendNotifications", java.lang.Boolean.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("ShowDeleted", java.lang.Boolean.class);
@@ -81,7 +81,7 @@ public class CalendarAclEndpointConfigurationConfigurer extends org.apache.camel
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "ruleid":
         case "ruleId": target.setRuleId(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "sendnotifications":
         case "sendNotifications": target.setSendNotifications(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "serviceaccountkey":
@@ -133,7 +133,7 @@ public class CalendarAclEndpointConfigurationConfigurer extends org.apache.camel
         case "refreshToken": return java.lang.String.class;
         case "ruleid":
         case "ruleId": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "sendnotifications":
         case "sendNotifications": return java.lang.Boolean.class;
         case "serviceaccountkey":
@@ -191,14 +191,6 @@ public class CalendarAclEndpointConfigurationConfigurer extends org.apache.camel
         case "synctoken":
         case "syncToken": return target.getSyncToken();
         case "user": return target.getUser();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

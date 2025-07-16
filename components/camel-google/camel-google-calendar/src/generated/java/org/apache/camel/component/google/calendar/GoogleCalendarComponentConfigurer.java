@@ -26,7 +26,7 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         map.put("ClientId", java.lang.String.class);
         map.put("Configuration", org.apache.camel.component.google.calendar.GoogleCalendarConfiguration.class);
         map.put("Delegate", java.lang.String.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("BridgeErrorHandler", boolean.class);
         map.put("LazyStartProducer", boolean.class);
         map.put("AutowiredEnabled", boolean.class);
@@ -76,7 +76,7 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         case "p12FileName": getOrCreateConfiguration(target).setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "user": getOrCreateConfiguration(target).setUser(property(camelContext, java.lang.String.class, value)); return true;
@@ -116,7 +116,7 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         case "p12FileName": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "user": return java.lang.String.class;
@@ -156,14 +156,6 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         case "serviceaccountkey":
         case "serviceAccountKey": return getOrCreateConfiguration(target).getServiceAccountKey();
         case "user": return getOrCreateConfiguration(target).getUser();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

@@ -115,12 +115,11 @@ public interface GoogleCalendarComponentBuilderFactory {
         
         /**
          * Specifies the level of permissions you want a calendar application to
-         * have to a user account. You can separate multiple scopes by comma.
-         * See https://developers.google.com/google-apps/calendar/auth for more
-         * info.
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
@@ -128,7 +127,7 @@ public interface GoogleCalendarComponentBuilderFactory {
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleCalendarComponentBuilder scopes(java.util.List<java.lang.String> scopes) {
+        default GoogleCalendarComponentBuilder scopes(java.lang.String scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -360,7 +359,7 @@ public interface GoogleCalendarComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((GoogleCalendarComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleCalendarComponent) component).setConfiguration((org.apache.camel.component.google.calendar.GoogleCalendarConfiguration) value); return true;
             case "delegate": getOrCreateConfiguration((GoogleCalendarComponent) component).setDelegate((java.lang.String) value); return true;
-            case "scopes": getOrCreateConfiguration((GoogleCalendarComponent) component).setScopes((java.util.List) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleCalendarComponent) component).setScopes((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleCalendarComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleCalendarComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((GoogleCalendarComponent) component).setAutowiredEnabled((boolean) value); return true;
