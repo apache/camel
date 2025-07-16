@@ -23,6 +23,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.Exchange;
+import org.apache.camel.Ordered;
 import org.apache.camel.Service;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
@@ -42,6 +43,8 @@ import org.slf4j.LoggerFactory;
 public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroovyLanguage.class);
+
+    static final int RELOAD_ORDER = 100;
 
     /**
      * In case the expression is referring to an external resource, it indicates whether it is still needed to load the
@@ -89,7 +92,7 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         }
     }
 
-    private final class ReloadNotifier extends SimpleEventNotifierSupport {
+    private final class ReloadNotifier extends SimpleEventNotifierSupport implements Ordered {
 
         @Override
         public void notify(CamelEvent event) throws Exception {
@@ -98,6 +101,11 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
                 ServiceHelper.stopService(scriptCache.values());
                 scriptCache.clear();
             }
+        }
+
+        @Override
+        public int getOrder() {
+            return RELOAD_ORDER;
         }
     }
 

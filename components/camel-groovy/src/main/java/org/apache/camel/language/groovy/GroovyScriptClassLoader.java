@@ -67,6 +67,10 @@ public class GroovyScriptClassLoader extends ClassLoader implements Closeable {
 
     @Override
     public void close() throws IOException {
+        clear();
+    }
+
+    void clear() {
         for (Class<?> clazz : classes.values()) {
             InvokerHelper.removeClass(clazz);
         }

@@ -22,15 +22,19 @@ import java.util.List;
 import groovy.lang.GroovyShell;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Ordered;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CompileStrategy;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.GroovyScriptCompiler;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -40,6 +44,8 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.language.groovy.GroovyLanguage.RELOAD_ORDER;
+
 @JdkService(GroovyScriptCompiler.FACTORY)
 @ManagedResource(description = "Managed GroovyScriptCompiler")
 public class DefaultGroovyScriptCompiler extends ServiceSupport
@@ -47,11 +53,14 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultGroovyScriptCompiler.class);
 
-    private long taken;
     private GroovyScriptClassLoader classLoader;
     private CamelContext camelContext;
+    private EventNotifier notifier;
     private String scriptPattern;
     private String workDir;
+    private long taken;
+    private int counter;
+    private boolean reload;
 
     @Override
     public CamelContext getCamelContext() {
@@ -71,6 +80,11 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     @ManagedAttribute(description = "Number of Groovy sources that has been compiled")
     public int getClassesSize() {
         return classLoader.size();
+    }
+
+    @ManagedAttribute(description = "Number of times Groovy compiler has executed")
+    public int getCompileSize() {
+        return counter;
     }
 
     @ManagedAttribute(description = "Directories to scan for Groovy source to be pre-compiled")
@@ -114,6 +128,17 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             if (classLoader == null) {
                 classLoader = new GroovyScriptClassLoader();
                 context.getClassResolver().addClassLoader(classLoader);
+                // make classloader available for groovy language
+                context.getCamelContextExtension().addContextPlugin(GroovyScriptClassLoader.class, classLoader);
+            }
+
+            String profile = context.getCamelContextExtension().getProfile();
+            if ("dev".equals(profile)) {
+                reload = true;
+                if (notifier == null) {
+                    notifier = new ReloadNotifier();
+                    getCamelContext().getManagementStrategy().addEventNotifier(notifier);
+                }
             }
         }
     }
@@ -123,12 +148,14 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         super.doStart();
 
         if (scriptPattern != null) {
-            StopWatch watch = new StopWatch();
-
             LOG.info("Pre-compiling Groovy sources from: {}", scriptPattern);
+            doCompile();
+        }
+    }
 
-            // make classloader available for groovy language
-            camelContext.getCamelContextExtension().addContextPlugin(GroovyScriptClassLoader.class, classLoader);
+    protected void doCompile() throws Exception {
+        if (scriptPattern != null) {
+            StopWatch watch = new StopWatch();
 
             // scan for groovy source files to include
             List<String> cps = new ArrayList<>();
@@ -160,6 +187,10 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                     }
                 }
             }
+            if (codes.isEmpty()) {
+                // nothing to compile
+                return;
+            }
 
             // use work dir for writing compiled classes
             CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
@@ -170,6 +201,9 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             // setup compiler via groovy shell
             CompilerConfiguration cc = new CompilerConfiguration();
             cc.setClasspathList(cps);
+            if (reload) {
+                cc.setRecompileGroovySource(true);
+            }
             if (workDir != null) {
                 LOG.debug("Writing compiled Groovy classes to directory: {}", workDir);
                 cc.setTargetDirectory(workDir);
@@ -186,6 +220,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Pre-compiling Groovy source:\n{}", code);
                 }
+                counter++;
                 Class<?> clazz = shell.getClassLoader().parseClass(code);
                 if (clazz != null) {
                     LOG.debug("Pre-compiled Groovy class: {}", clazz.getName());
@@ -200,10 +235,35 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (classLoader.size() > 0) {
-            LOG.debug("Pre-compiled {} Groovy sources in {} millis", classLoader.size(), taken);
+        if (counter > 0) {
+            LOG.debug("Pre-compiled {} Groovy sources in {} millis", counter, taken);
         }
 
         IOHelper.close(classLoader);
     }
+
+    private final class ReloadNotifier extends SimpleEventNotifierSupport implements Ordered {
+
+        @Override
+        public void notify(CamelEvent event) throws Exception {
+            // if context or route is reloading then clear classloader to ensure old scripts are removed from memory.
+            if (event instanceof CamelEvent.CamelContextReloadingEvent || event instanceof CamelEvent.RouteReloadedEvent) {
+                if (classLoader != null) {
+                    classLoader.clear();
+                    // trigger re-compilation
+                    if (scriptPattern != null) {
+                        LOG.info("Re-compiling Groovy sources from: {}", scriptPattern);
+                        doCompile();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public int getOrder() {
+            // ensure this is triggered before groovy language reloader (we want first)
+            return RELOAD_ORDER - 100;
+        }
+    }
+
 }
