@@ -53,11 +53,12 @@ public class GoogleCalendarComponent
         if (client == null) {
             if (config.getClientId() != null && !config.getClientId().isBlank()
                     && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopes(),
+                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
                         config.getApplicationName(), config.getRefreshToken(),
                         config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
             } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(), config.getScopes(),
+                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                        config.getScopesAsList(),
                         config.getApplicationName(), config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
