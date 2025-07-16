@@ -118,6 +118,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("rest", new CommandLine(new ListRest(main)))
                         .addSubcommand("platform-http", new CommandLine(new ListPlatformHttp(main)))
                         .addSubcommand("kafka", new CommandLine(new ListKafka(main)))
+                        .addSubcommand("groovy", new CommandLine(new ListGroovy(main)))
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(main)))
                         .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(main)))
                         .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(main)))

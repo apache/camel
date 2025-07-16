@@ -20,6 +20,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
 
@@ -45,6 +47,13 @@ public class GroovyScriptClassLoader extends ClassLoader implements Closeable {
      */
     public int size() {
         return classes.size();
+    }
+
+    /**
+     * The names of the classes that has been compiled and added to this classloader.
+     */
+    public Set<String> getCompiledClassNames() {
+        return new TreeSet<>(classes.keySet());
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.apache.camel.language.groovy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import groovy.lang.GroovyShell;
 import org.apache.camel.CamelContext;
@@ -26,6 +27,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Ordered;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CompileStrategy;
@@ -61,6 +63,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     private String workDir;
     private long taken;
     private int counter;
+    private long last;
     private boolean reload;
 
     @Override
@@ -84,7 +87,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     }
 
     @ManagedAttribute(description = "Number of times Groovy compiler has executed")
-    public int getCompileSize() {
+    public int getCompileCounter() {
         return counter;
     }
 
@@ -107,6 +110,23 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     @ManagedAttribute(description = "Whether re-compiling is enabled")
     public boolean isRecompileEnabled() {
         return reload;
+    }
+
+    @ManagedOperation(description = "The class names for the compiled Groovy sources")
+    public Set<String> compiledClassNames() {
+        return classLoader.getCompiledClassNames();
+    }
+
+    @ManagedAttribute(description = "Last time the Groovy compiler was used")
+    public long getLastCompilationTimestamp() {
+        return last;
+    }
+
+    @Override
+    public void recompile(Resource resource) throws Exception {
+        if (resource.exists()) {
+            doCompile(List.of(resource));
+        }
     }
 
     @Override
@@ -224,6 +244,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                 }
             }
             taken += watch.taken();
+            last = System.currentTimeMillis();
         }
     }
 

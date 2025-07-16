@@ -230,15 +230,18 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         return null;
     }
 
-    protected void onGroovyReload(Resource resource, boolean reloadRoutes) throws Exception {
+    protected boolean onGroovyReload(Resource resource, boolean reloadRoutes) throws Exception {
         GroovyScriptCompiler compiler
                 = getCamelContext().getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
         if (compiler != null) {
+            compiler.recompile(resource);
             // trigger all routes to be reloaded (which will also trigger reloading this resource)
             if (reloadRoutes) {
                 onRouteReload(null, false);
             }
+            return true;
         }
+        return false;
     }
 
     @SuppressWarnings("unchecked")

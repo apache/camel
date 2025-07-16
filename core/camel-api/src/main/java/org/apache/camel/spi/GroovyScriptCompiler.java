@@ -37,4 +37,12 @@ public interface GroovyScriptCompiler {
      * multiple directories can be specified separated by comma.
      */
     String getScriptPattern();
+
+    /**
+     * Compiles or re-compiles the given groovy source
+     *
+     * @param  resource  the groovy source
+     * @throws Exception is thrown if compilation error
+     */
+    void recompile(Resource resource) throws Exception;
 }

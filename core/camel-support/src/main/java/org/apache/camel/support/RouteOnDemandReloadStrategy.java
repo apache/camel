@@ -87,6 +87,7 @@ public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
 
     protected void doOnReload(Object source) throws Exception {
         List<Resource> properties = new ArrayList<>();
+        List<Resource> groovy = new ArrayList<>();
         List<Resource> routes = new ArrayList<>();
 
         File dir = new File(getFolder());
@@ -95,20 +96,25 @@ public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
             String ext = FileUtil.onlyExt(path.getFileName().toString());
             if ("properties".equals(ext)) {
                 properties.add(res);
+            } else if ("groovy".equals(ext)) {
+                groovy.add(res);
             } else {
                 routes.add(res);
             }
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("On-demand reload scanned {} files (properties: {}, routes: {})",
-                    properties.size() + routes.size(), properties.size(), routes.size());
+            LOG.debug("On-demand reload scanned {} files (properties: {}, routes: {}, groovy: {})",
+                    properties.size() + routes.size(), properties.size(), routes.size(), groovy.size());
         }
 
         // reload properties first
         boolean reloaded = false;
         for (Resource res : properties) {
             reloaded |= onPropertiesReload(res, false);
+        }
+        for (Resource res : groovy) {
+            reloaded |= onGroovyReload(res, false);
         }
         boolean removeEverything = routes.isEmpty();
         if (reloaded || !routes.isEmpty()) {

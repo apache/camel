@@ -20,6 +20,8 @@ import java.util.Map;
 
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "groovy", displayName = "Groovy", description = "Groovy Language")
@@ -36,12 +38,21 @@ public class GroovyDevConsole extends AbstractDevConsole {
         DefaultGroovyScriptCompiler compiler = getCamelContext().hasService(DefaultGroovyScriptCompiler.class);
         if (compiler != null) {
             sb.append(String.format("    Groovy Script Pattern: %s", compiler.getScriptPattern()));
-            sb.append(String.format("\n    Compiled Size: %s", compiler.getCompileSize()));
+            long last = compiler.getLastCompilationTimestamp();
+            if (last != 0) {
+                sb.append(String.format("\n    Last Compilation Ago: %s",
+                        TimeUtils.printSince(compiler.getLastCompilationTimestamp())));
+            }
+            sb.append(String.format("\n    Compiled Counter: %s", compiler.getCompileCounter()));
             sb.append(String.format("\n    Compiled Classes: %s", compiler.getClassesSize()));
             sb.append(String.format("\n    Compiled Time: %s (ms)", compiler.getCompileTime()));
             sb.append(String.format("\n    Re-compile Enabled: %b", compiler.isRecompileEnabled()));
             if (compiler.getWorkDir() != null) {
                 sb.append(String.format("\n    Work Directory: %s", compiler.getWorkDir()));
+            }
+            sb.append("\n    Classes");
+            for (String name : compiler.compiledClassNames()) {
+                sb.append(String.format("\n        %s", name));
             }
         }
 
@@ -56,12 +67,17 @@ public class GroovyDevConsole extends AbstractDevConsole {
         if (compiler != null) {
             JsonObject jo = new JsonObject();
             jo.put("groovyScriptPattern", compiler.getScriptPattern());
-            jo.put("compiledSize", compiler.getCompileSize());
+            jo.put("compiledCounter", compiler.getCompileCounter());
             jo.put("compiledClasses", compiler.getClassesSize());
             jo.put("compiledTime", compiler.getCompileTime());
             jo.put("recompileEnabled", compiler.isRecompileEnabled());
+            jo.put("lastCompilationTimestamp", compiler.getLastCompilationTimestamp());
             if (compiler.getWorkDir() != null) {
                 jo.put("workDir", compiler.getWorkDir());
+            }
+            JsonArray arr = new JsonArray(compiler.compiledClassNames());
+            if (!arr.isEmpty()) {
+                jo.put("classes", arr);
             }
             root.put("compiler", jo);
         }
