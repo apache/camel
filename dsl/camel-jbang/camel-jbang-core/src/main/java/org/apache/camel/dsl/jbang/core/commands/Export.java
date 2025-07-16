@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
@@ -113,7 +114,8 @@ public class Export extends ExportBaseCommand {
             this.quarkusGroupId = props.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
             this.quarkusArtifactId = props.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
             this.quarkusVersion = props.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
-            this.camelSpringBootVersion = props.getProperty("camel.jbang.camelSpringBootVersion", this.camelSpringBootVersion);
+            this.camelSpringBootVersion = VersionHelper.getSpringBootVersion(
+                    () -> props.getProperty("camel.jbang.camelSpringBootVersion", this.camelSpringBootVersion));
             this.springBootVersion = props.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
             this.mavenWrapper
                     = "true".equals(props.getProperty("camel.jbang.mavenWrapper", this.mavenWrapper ? "true" : "false"));
