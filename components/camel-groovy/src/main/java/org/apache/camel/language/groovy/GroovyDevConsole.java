@@ -36,8 +36,9 @@ public class GroovyDevConsole extends AbstractDevConsole {
         DefaultGroovyScriptCompiler compiler = getCamelContext().hasService(DefaultGroovyScriptCompiler.class);
         if (compiler != null) {
             sb.append(String.format("    Groovy Script Pattern: %s", compiler.getScriptPattern()));
-            sb.append(String.format("\n    Total Compiled Classes: %s", compiler.getClassesSize()));
-            sb.append(String.format("\n    Total Compiled Time: %s (ms)", compiler.getCompileTime()));
+            sb.append(String.format("\n    Compiled Size: %s", compiler.getCompileSize()));
+            sb.append(String.format("\n    Compiled Classes: %s", compiler.getClassesSize()));
+            sb.append(String.format("\n    Compiled Time: %s (ms)", compiler.getCompileTime()));
             if (compiler.getWorkDir() != null) {
                 sb.append(String.format("\n    Work Directory: %s", compiler.getWorkDir()));
             }
@@ -54,6 +55,7 @@ public class GroovyDevConsole extends AbstractDevConsole {
         if (compiler != null) {
             JsonObject jo = new JsonObject();
             jo.put("groovyScriptPattern", compiler.getScriptPattern());
+            jo.put("compiledSize", compiler.getCompileSize());
             jo.put("compiledClasses", compiler.getClassesSize());
             jo.put("compiledTime", compiler.getCompileTime());
             if (compiler.getWorkDir() != null) {

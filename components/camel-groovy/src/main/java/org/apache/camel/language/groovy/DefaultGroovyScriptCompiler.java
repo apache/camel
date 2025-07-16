@@ -240,6 +240,17 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         }
 
         IOHelper.close(classLoader);
+
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+
+        if (notifier != null) {
+            getCamelContext().getManagementStrategy().removeEventNotifier(notifier);
+            notifier = null;
+        }
     }
 
     private final class ReloadNotifier extends SimpleEventNotifierSupport implements Ordered {
@@ -248,13 +259,13 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         public void notify(CamelEvent event) throws Exception {
             // if context or route is reloading then clear classloader to ensure old scripts are removed from memory.
             if (event instanceof CamelEvent.CamelContextReloadingEvent || event instanceof CamelEvent.RouteReloadedEvent) {
-                if (classLoader != null) {
-                    classLoader.clear();
+                if (scriptPattern != null) {
                     // trigger re-compilation
-                    if (scriptPattern != null) {
-                        LOG.info("Re-compiling Groovy sources from: {}", scriptPattern);
-                        doCompile();
+                    if (classLoader != null) {
+                        classLoader.clear();
                     }
+                    LOG.info("Re-compiling Groovy sources from: {}", scriptPattern);
+                    doCompile();
                 }
             }
         }
