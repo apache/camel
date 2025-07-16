@@ -113,19 +113,19 @@ public interface GoogleDriveComponentBuilderFactory {
         }
     
         /**
-         * Specifies the level of permissions you want a drive application to
+         * Specifies the level of permissions you want a calendar application to
          * have to a user account. See
-         * https://developers.google.com/drive/web/scopes for more info.
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleDriveComponentBuilder scopes(java.util.List<java.lang.String> scopes) {
+        default GoogleDriveComponentBuilder scopes(java.lang.String scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -310,7 +310,7 @@ public interface GoogleDriveComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((GoogleDriveComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleDriveComponent) component).setConfiguration((org.apache.camel.component.google.drive.GoogleDriveConfiguration) value); return true;
             case "delegate": getOrCreateConfiguration((GoogleDriveComponent) component).setDelegate((java.lang.String) value); return true;
-            case "scopes": getOrCreateConfiguration((GoogleDriveComponent) component).setScopes((java.util.List) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleDriveComponent) component).setScopes((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleDriveComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleDriveComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((GoogleDriveComponent) component).setAutowiredEnabled((boolean) value); return true;

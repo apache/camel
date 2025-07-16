@@ -37,7 +37,7 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         map.put("PageToken", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("ReplyId", java.lang.String.class);
-        map.put("Scopes", java.util.List.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -74,7 +74,7 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "replyid":
         case "replyId": target.setReplyId(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -117,7 +117,7 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         case "refreshToken": return java.lang.String.class;
         case "replyid":
         case "replyId": return java.lang.String.class;
-        case "scopes": return java.util.List.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         default: return null;
@@ -159,14 +159,6 @@ public class DriveRepliesEndpointConfigurationConfigurer extends org.apache.came
         case "scopes": return target.getScopes();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

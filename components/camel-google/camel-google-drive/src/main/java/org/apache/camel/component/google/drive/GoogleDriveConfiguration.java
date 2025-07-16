@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
@@ -38,7 +39,7 @@ public class GoogleDriveConfiguration {
     @Metadata(required = true)
     private String methodName;
     @UriParam
-    private List<String> scopes;
+    private String scopes;
     @UriParam
     private String clientId;
     @UriParam(label = "security", secret = true)
@@ -133,15 +134,26 @@ public class GoogleDriveConfiguration {
         this.applicationName = applicationName;
     }
 
-    public List<String> getScopes() {
+    public String getScopes() {
         return scopes;
     }
 
+    public Collection<String> getScopesAsList() {
+        if (scopes != null) {
+            return List.of(scopes.split(","));
+        } else {
+            return null;
+        }
+    }
+
     /**
-     * Specifies the level of permissions you want a drive application to have to a user account. See
-     * https://developers.google.com/drive/web/scopes for more info.
+     * Specifies the level of permissions you want a calendar application to have to a user account. See
+     * https://developers.google.com/identity/protocols/googlescopes for more info. Multiple scopes can be separated by
+     * comma.
+     *
+     * @see com.google.api.services.drive.DriveScopes
      */
-    public void setScopes(List<String> scopes) {
+    public void setScopes(String scopes) {
         this.scopes = scopes;
     }
 
