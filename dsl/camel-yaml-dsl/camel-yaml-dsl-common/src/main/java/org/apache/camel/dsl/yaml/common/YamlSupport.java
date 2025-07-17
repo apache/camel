@@ -63,6 +63,10 @@ public final class YamlSupport {
     }
 
     public static String createEndpointUri(CamelContext context, Node node, String uri, Map<String, Object> parameters) {
+        if (uri == null) {
+            throw new InvalidEndpointException(node, "Uri is mandatory");
+        }
+
         String answer = uri;
 
         if (parameters == null || parameters.isEmpty()) {
@@ -185,7 +189,6 @@ public final class YamlSupport {
                         throw new UnsupportedFieldException(val, key);
                 }
             }
-
             answer = YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, parameters);
         }
 
