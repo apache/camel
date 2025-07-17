@@ -16,12 +16,24 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
+import org.apache.camel.util.IOHelper;
+import org.citrusframework.CitrusVersion;
 import org.citrusframework.jbang.JBangSettings;
 import org.citrusframework.jbang.JBangSupport;
 import org.citrusframework.jbang.ProcessAndOutput;
@@ -44,29 +56,106 @@ public class TestPlugin implements Plugin {
     }
 
     /**
-     * Command execution strategy delegates to Citrus JBang for subcommands like init or run.
+     * Command execution strategy delegates to Citrus JBang for subcommands like init or run. Performs special command
+     * preparations and makes sure to run the proper Citrus version for this Camel release.
      *
      * @param main Camel JBang main that provides the output printer.
      */
     private record CitrusExecutionStrategy(CamelJBangMain main) implements CommandLine.IExecutionStrategy {
 
+        public static final String TEST_DIR = "test";
+
         @Override
         public int execute(CommandLine.ParseResult parseResult)
                 throws CommandLine.ExecutionException, CommandLine.ParameterException {
-            ProcessAndOutput pao;
+
+            String command;
+            List<String> args = Collections.emptyList();
+
             if (parseResult.originalArgs().size() > 2) {
-                pao = JBangSupport.jbang().app(JBangSettings.getApp())
-                        .run(parseResult.originalArgs().get(1),
-                                parseResult.originalArgs().subList(2, parseResult.originalArgs().size()));
+                command = parseResult.originalArgs().get(1);
+                args = parseResult.originalArgs().subList(2, parseResult.originalArgs().size());
             } else if (parseResult.originalArgs().size() == 2) {
-                pao = JBangSupport.jbang().app(JBangSettings.getApp()).run(parseResult.originalArgs().get(1));
+                command = parseResult.originalArgs().get(1);
             } else {
                 // run help command by default
-                pao = JBangSupport.jbang().app(JBangSettings.getApp()).run("-h");
+                command = "--help";
             }
 
+            JBangSupport citrus = JBangSupport.jbang().app(JBangSettings.getApp())
+                    .withSystemProperty("citrus.jbang.version", CitrusVersion.version());
+
+            // Prepare commands
+            if ("init".equals(command)) {
+                prepareInitCommand(citrus);
+            } else if ("run".equals(command)) {
+                args = prepareRunCommand(citrus, args);
+            }
+
+            ProcessAndOutput pao = citrus.run(command, args);
             main.getOut().print(pao.getOutput());
             return pao.getProcess().exitValue();
+        }
+
+        /**
+         * Prepare init command. Automatically uses test subfolder as a working directory for creating new tests.
+         * Automatically adds a jbang.properties configuration to add required Camel Citrus dependencies.
+         */
+        private void prepareInitCommand(JBangSupport citrus) {
+            Path currentDir = Paths.get(".");
+            Path workingDir;
+            // Automatically set test subfolder as a working directory
+            if (TEST_DIR.equals(currentDir.getFileName().toString())) {
+                // current directory is already the test subfolder
+                workingDir = currentDir;
+            } else if (currentDir.resolve(TEST_DIR).toFile().exists()) {
+                // navigate to existing test subfolder
+                workingDir = currentDir.resolve(TEST_DIR);
+                citrus.workingDir(workingDir);
+            } else if (currentDir.resolve(TEST_DIR).toFile().mkdirs()) {
+                // create test subfolder and navigate to it
+                workingDir = currentDir.resolve(TEST_DIR);
+                citrus.workingDir(workingDir);
+            } else {
+                throw new RuntimeCamelException("Cannot create test working directory in: " + currentDir);
+            }
+
+            // Create jbang properties with default dependencies if not present
+            if (!workingDir.resolve("jbang.properties").toFile().exists()) {
+                Path jbangProperties = workingDir.resolve("jbang.properties");
+                try (InputStream is
+                        = TestPlugin.class.getClassLoader().getResourceAsStream("templates/jbang-properties.tmpl")) {
+                    String context = IOHelper.loadText(is);
+
+                    context = context.replaceAll("\\{\\{ \\.CitrusVersion }}", CitrusVersion.version());
+
+                    ExportHelper.safeCopy(new ByteArrayInputStream(context.getBytes(StandardCharsets.UTF_8)), jbangProperties);
+                } catch (Exception e) {
+                    main.getOut().println("Failed to create jbang.properties for tests in:" + jbangProperties);
+                }
+            }
+        }
+
+        /**
+         * Prepare run command. Automatically navigates to test subfolder if it is present and uses this as a working
+         * directory.
+         */
+        private List<String> prepareRunCommand(JBangSupport citrus, List<String> args) {
+            Path currentDir = Paths.get(".");
+            // automatically navigate to test subfolder for test execution
+            if (currentDir.resolve(TEST_DIR).toFile().exists()) {
+                // set test subfolder as working directory
+                citrus.workingDir(currentDir.resolve(TEST_DIR));
+
+                // remove test folder prefix in test file path if present
+                if (!args.isEmpty() && args.get(0).startsWith(TEST_DIR + "/")) {
+                    List<String> newArgs = new ArrayList<>(args.subList(1, args.size()));
+                    newArgs.add(0, args.get(0).substring((TEST_DIR + "/").length()));
+                    return newArgs;
+                }
+            }
+
+            return args;
         }
     }
 }
