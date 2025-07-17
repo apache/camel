@@ -64,6 +64,7 @@ import org.apache.camel.main.download.ExportPropertiesParser;
 import org.apache.camel.main.download.ExportTypeConverter;
 import org.apache.camel.main.download.JavaKnownImportsDownloader;
 import org.apache.camel.main.download.KameletAutowiredLifecycleStrategy;
+import org.apache.camel.main.download.KameletFallbackResourceResolver;
 import org.apache.camel.main.download.KameletMainInjector;
 import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.KnownReposResolver;
@@ -97,6 +98,7 @@ import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.spi.ResourceResolver;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.TransformerResolver;
 import org.apache.camel.spi.UriFactoryResolver;
@@ -630,6 +632,9 @@ public class KameletMain extends MainCommandLineSupport {
                     new DependencyDownloaderStrategy(answer));
             // add support for automatic downloaded needed JARs from java imports
             new JavaKnownImportsDownloader(answer, knownDeps);
+
+            // resource resolver fallback that can load from file and classpath
+            answer.getRegistry().bind(ResourceResolver.FALLBACK_RESOURCE_RESOLVER, new KameletFallbackResourceResolver(answer));
 
             // download class-resolver
             ClassResolver classResolver = new DependencyDownloaderClassResolver(answer, knownDeps, silent);

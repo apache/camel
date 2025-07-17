@@ -85,8 +85,9 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     }
 
     private void doHandleHangup() {
-        LOG.info("JVM shutdown hook triggered by SIGTERM (PID {}). Shutting down {} {}", getPid(), getAppName(),
-                getAppVersion());
+        // you can get a weird log4j exception so build string without placeholders
+        LOG.info("JVM shutdown hook triggered by SIGTERM (PID " + getPid() + "). Shutting down " + getAppName() + " "
+                 + getAppVersion());
         // and shutdown listener to allow camel context to graceful shutdown if JVM shutdown hook is triggered
         // as otherwise the JVM terminates before Camel is graceful shutdown
         addShutdownListener(() -> {
@@ -130,12 +131,12 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                 }
                 boolean success = done || main.getCamelContext().isStopped();
                 if (!success) {
-                    LOG.warn("CamelContext not yet shutdown completely after: {}. Forcing shutdown.",
-                            TimeUtils.printDuration(watch.taken(), true));
+                    LOG.warn("CamelContext not yet shutdown completely after: " + TimeUtils.printDuration(watch.taken(), true)
+                             + ". Forcing shutdown.");
                 }
                 tracker.close();
             }
-            LOG.info("{} {} is shutdown", getAppName(), getAppVersion());
+            LOG.info(getAppName() + " " + getAppVersion() + " is shutdown");
         });
 
         shutdown();

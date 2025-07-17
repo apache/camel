@@ -30,6 +30,11 @@ public interface ResourceResolver extends StaticService, CamelContextAware {
     String FACTORY_PATH = "META-INF/services/org/apache/camel/resource-resolver/";
 
     /**
+     * Key for a custom fallback resource resolver.
+     */
+    String FALLBACK_RESOURCE_RESOLVER = "fallback-resource-resolver";
+
+    /**
      * The supported resource scheme.
      * <p/>
      * Implementations should support a single scheme only.
