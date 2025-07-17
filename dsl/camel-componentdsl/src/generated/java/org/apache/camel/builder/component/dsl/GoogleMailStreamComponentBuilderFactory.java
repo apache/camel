@@ -209,17 +209,19 @@ public interface GoogleMailStreamComponentBuilderFactory {
         }
     
         /**
-         * GMail scopes.
+         * Specifies the level of permissions you want a calendar application to
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleMailStreamComponentBuilder scopes(java.util.List<java.lang.String> scopes) {
+        default GoogleMailStreamComponentBuilder scopes(java.lang.String scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -408,7 +410,7 @@ public interface GoogleMailStreamComponentBuilderFactory {
             case "maxResults": getOrCreateConfiguration((GoogleMailStreamComponent) component).setMaxResults((long) value); return true;
             case "query": getOrCreateConfiguration((GoogleMailStreamComponent) component).setQuery((java.lang.String) value); return true;
             case "raw": getOrCreateConfiguration((GoogleMailStreamComponent) component).setRaw((boolean) value); return true;
-            case "scopes": getOrCreateConfiguration((GoogleMailStreamComponent) component).setScopes((java.util.List) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleMailStreamComponent) component).setScopes((java.lang.String) value); return true;
             case "autowiredEnabled": ((GoogleMailStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleMailStreamComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
             case "configuration": ((GoogleMailStreamComponent) component).setConfiguration((org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration) value); return true;

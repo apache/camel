@@ -53,12 +53,12 @@ public class GoogleMailStreamComponent extends HealthCheckComponent {
         if (client == null) {
             if (googleMailConfiguration.getClientSecret() != null) {
                 client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
-                        googleMailConfiguration.getClientSecret(), googleMailConfiguration.getScopes(),
+                        googleMailConfiguration.getClientSecret(), googleMailConfiguration.getScopesAsList(),
                         googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
                         googleMailConfiguration.getAccessToken());
             } else if (googleMailConfiguration.getServiceAccountKey() != null) {
                 client = getClientFactory().makeClient(getCamelContext(), googleMailConfiguration.getServiceAccountKey(),
-                        googleMailConfiguration.getScopes(), googleMailConfiguration.getApplicationName(),
+                        googleMailConfiguration.getScopesAsList(), googleMailConfiguration.getApplicationName(),
                         googleMailConfiguration.getDelegate());
             }
         }
