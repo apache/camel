@@ -55,16 +55,22 @@ The `init` command creates an empty test file that you can use as a starting poi
 camel test init route-test.yaml
 ----
 
-The command creates an empty test that uses YAML as a specification language.
+The command creates an empty test that uses the given test specification language derived from the file name extension.
+In the example above the test uses YAML as a domain specific language.
+
 The plugin supports the following languages to write automated tests:
 
 * YAML
 * Groovy
 * Java
 * XML
-* Cucumber
+* Cucumber (.feature file extension)
 
 Whatever language you choose, the result will be a new file that represents the test.
+
+NOTE: The plugin automatically uses a `test` subfolder to create and run tests. This is because it is a good design to separate test-scoped and runtime source files.
+
+TIP: You do not need to navigate to the `test` subfolder when running the test. The plugin will automatically set the proper working directory for you so you do not have to switch folders all the time.
 
 You can directly run the test and start implementing the test logic.
 
