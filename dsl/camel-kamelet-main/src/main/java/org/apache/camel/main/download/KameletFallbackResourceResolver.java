@@ -24,9 +24,8 @@ import org.apache.camel.support.ResourceResolverSupport;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * A fallback {@link ResourceResolver} that camel-jbang uses to be able to load
- * resources from both classpath and file, which is needed when users use camel run *
- * and have files that should be loaded via Camels resource loader.
+ * A fallback {@link ResourceResolver} that camel-jbang uses to be able to load resources from both classpath and file,
+ * which is needed when users use camel run * and have files that should be loaded via Camels resource loader.
  */
 public class KameletFallbackResourceResolver extends ResourceResolverSupport {
 
