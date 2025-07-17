@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -34,11 +35,13 @@ import org.apache.camel.tooling.model.OtherModel;
  */
 public final class DependencyDownloaderComponentResolver extends DefaultComponentResolver {
 
-    private static final String ACCEPTED_STUB_NAMES
-            = "stub,bean,class,direct,kamelet,log,platform-http,rest,seda,vertx-http";
+    private static final String[] ACCEPTED_STUB_NAMES = {
+            "stub", "bean", "class", "direct", "kamelet", "log", "platform-http", "rest", "seda"
+    };
 
-    private static final String ACCEPTED_TRANSFORM_NAMES
-            = "stub,direct,kamelet,log,seda";
+    private static final String[] ACCEPTED_TRANSFORM_NAMES = {
+            "stub", "direct", "kamelet", "log", "seda"
+    };
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final CamelContext camelContext;
@@ -126,14 +129,14 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
 
     private boolean accept(String name) {
         if (transform) {
-            return ACCEPTED_TRANSFORM_NAMES.contains(name);
+            return Arrays.stream(ACCEPTED_TRANSFORM_NAMES).anyMatch(n -> n.equals(name));
         }
         if (stubPattern == null) {
             return true;
         }
 
         // we are stubbing but need to accept the following
-        return ACCEPTED_STUB_NAMES.contains(name);
+        return Arrays.stream(ACCEPTED_STUB_NAMES).anyMatch(n -> n.equals(name));
     }
 
 }
