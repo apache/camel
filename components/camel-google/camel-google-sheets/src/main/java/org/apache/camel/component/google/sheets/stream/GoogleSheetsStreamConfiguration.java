@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.sheets.stream;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -34,7 +35,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     @Metadata(required = true)
     private String spreadsheetId;
     @UriParam
-    private Collection<String> scopes;
+    private String scopes;
     @UriParam
     private String clientId;
     @UriParam(label = "security", secret = true)
@@ -119,17 +120,26 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
         this.applicationName = applicationName;
     }
 
-    public Collection<String> getScopes() {
+    public String getScopes() {
         return scopes;
+    }
+
+    public Collection<String> getScopesAsList() {
+        if (scopes != null) {
+            return List.of(scopes.split(","));
+        } else {
+            return null;
+        }
     }
 
     /**
      * Specifies the level of permissions you want a sheets application to have to a user account. See
-     * https://developers.google.com/identity/protocols/googlescopes for more info.
+     * https://developers.google.com/identity/protocols/googlescopes for more info. Multiple scopes can be separated by
+     * comma.
      *
      * @see com.google.api.services.sheets.v4.SheetsScopes
      */
-    public void setScopes(Collection<String> scopes) {
+    public void setScopes(String scopes) {
         this.scopes = scopes;
     }
 

@@ -59,7 +59,7 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "range": getOrCreateConfiguration(target).setRange(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.Collection.class, value)); return true;
+        case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "splitresults":
@@ -102,7 +102,7 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "range": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.Collection.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "splitresults":
@@ -153,14 +153,6 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "splitResults": return getOrCreateConfiguration(target).isSplitResults();
         case "valuerenderoption":
         case "valueRenderOption": return getOrCreateConfiguration(target).getValueRenderOption();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }
