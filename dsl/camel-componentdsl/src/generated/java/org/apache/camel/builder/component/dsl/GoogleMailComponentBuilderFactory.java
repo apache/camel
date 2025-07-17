@@ -112,17 +112,19 @@ public interface GoogleMailComponentBuilderFactory {
         }
     
         /**
-         * GMail scopes.
+         * Specifies the level of permissions you want a calendar application to
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleMailComponentBuilder scopes(java.util.Collection<java.lang.String> scopes) {
+        default GoogleMailComponentBuilder scopes(java.lang.String scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -307,7 +309,7 @@ public interface GoogleMailComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((GoogleMailComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleMailComponent) component).setConfiguration((org.apache.camel.component.google.mail.GoogleMailConfiguration) value); return true;
             case "delegate": getOrCreateConfiguration((GoogleMailComponent) component).setDelegate((java.lang.String) value); return true;
-            case "scopes": getOrCreateConfiguration((GoogleMailComponent) component).setScopes((java.util.Collection) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleMailComponent) component).setScopes((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleMailComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleMailComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((GoogleMailComponent) component).setAutowiredEnabled((boolean) value); return true;

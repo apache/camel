@@ -38,7 +38,7 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         map.put("PageToken", java.lang.String.class);
         map.put("Q", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
-        map.put("Scopes", java.util.Collection.class);
+        map.put("Scopes", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
         map.put("UserId", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -75,7 +75,7 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "q": target.setQ(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
+        case "scopes": target.setScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "userid":
@@ -119,7 +119,7 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "q": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
-        case "scopes": return java.util.Collection.class;
+        case "scopes": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
         case "userid":
@@ -164,14 +164,6 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "serviceAccountKey": return target.getServiceAccountKey();
         case "userid":
         case "userId": return target.getUserId();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }
