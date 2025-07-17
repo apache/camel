@@ -508,8 +508,10 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     }
 
     /**
-     * Jackson. Sets the maximum string length (in chars or bytes, depending on input context).
-     * The default is 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid.
+     * Jackson. Sets the maximum string length (in chars or bytes, depending on input context). The default is
+     * 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception
+     * will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be
+     * treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid.
      */
     public void setMaxStringLength(String maxStringLength) {
         this.maxStringLength = maxStringLength;
@@ -994,8 +996,11 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Jackson. Sets the maximum string length (in chars or bytes, depending on input context).
-         * The default is 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid.
+         * Jackson. Sets the maximum string length (in chars or bytes, depending on input context). The default is
+         * 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an
+         * exception will happen at sizes greater than this limit. Some text values that are a little bigger than the
+         * limit may be treated as valid but no text values with sizes less than or equal to this limit will be treated
+         * as invalid.
          */
         public Builder maxStringLength(String maxStringLength) {
             this.maxStringLength = maxStringLength;
