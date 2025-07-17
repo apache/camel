@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.mail;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.spi.Configurer;
@@ -53,7 +54,7 @@ public class GoogleMailConfiguration {
     @UriParam
     private String delegate;
     @UriParam
-    private Collection<String> scopes;
+    private String scopes;
 
     public GoogleMailApiName getApiName() {
         return apiName;
@@ -158,16 +159,26 @@ public class GoogleMailConfiguration {
         this.delegate = delegate;
     }
 
-    public Collection<String> getScopes() {
+    public String getScopes() {
         return scopes;
     }
 
+    public Collection<String> getScopesAsList() {
+        if (scopes != null) {
+            return List.of(scopes.split(","));
+        } else {
+            return null;
+        }
+    }
+
     /**
-     * GMail scopes
+     * Specifies the level of permissions you want a calendar application to have to a user account. See
+     * https://developers.google.com/identity/protocols/googlescopes for more info. Multiple scopes can be separated by
+     * comma.
      *
      * @see com.google.api.services.gmail.GmailScopes
      */
-    public void setScopes(Collection<String> scopes) {
+    public void setScopes(String scopes) {
         this.scopes = scopes;
     }
 }
