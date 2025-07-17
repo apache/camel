@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.mail.stream;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
@@ -58,7 +59,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     @UriParam
     private String delegate;
     @UriParam
-    private List<String> scopes;
+    private String scopes;
 
     public String getClientId() {
         return clientId;
@@ -207,16 +208,26 @@ public class GoogleMailStreamConfiguration implements Cloneable {
         this.delegate = delegate;
     }
 
-    public List<String> getScopes() {
+    public String getScopes() {
         return scopes;
     }
 
+    public Collection<String> getScopesAsList() {
+        if (scopes != null) {
+            return List.of(scopes.split(","));
+        } else {
+            return null;
+        }
+    }
+
     /**
-     * GMail scopes
+     * Specifies the level of permissions you want a calendar application to have to a user account. See
+     * https://developers.google.com/identity/protocols/googlescopes for more info. Multiple scopes can be separated by
+     * comma.
      *
      * @see com.google.api.services.gmail.GmailScopes
      */
-    public void setScopes(List<String> scopes) {
+    public void setScopes(String scopes) {
         this.scopes = scopes;
     }
 
