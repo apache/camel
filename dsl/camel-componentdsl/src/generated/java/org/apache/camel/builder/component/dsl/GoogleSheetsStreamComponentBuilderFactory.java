@@ -210,17 +210,16 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * Specifies the level of permissions you want a sheets application to
          * have to a user account. See
          * https://developers.google.com/identity/protocols/googlescopes for
-         * more info.
+         * more info. Multiple scopes can be separated by comma.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.Collection&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param scopes the value to set
          * @return the dsl builder
          */
-        default GoogleSheetsStreamComponentBuilder scopes(java.util.Collection<java.lang.String> scopes) {
+        default GoogleSheetsStreamComponentBuilder scopes(java.lang.String scopes) {
             doSetProperty("scopes", scopes);
             return this;
         }
@@ -431,7 +430,7 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             case "majorDimension": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setMajorDimension((java.lang.String) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setMaxResults((int) value); return true;
             case "range": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setRange((java.lang.String) value); return true;
-            case "scopes": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setScopes((java.util.Collection) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setScopes((java.lang.String) value); return true;
             case "splitResults": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setSplitResults((boolean) value); return true;
             case "valueRenderOption": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setValueRenderOption((java.lang.String) value); return true;
             case "autowiredEnabled": ((GoogleSheetsStreamComponent) component).setAutowiredEnabled((boolean) value); return true;

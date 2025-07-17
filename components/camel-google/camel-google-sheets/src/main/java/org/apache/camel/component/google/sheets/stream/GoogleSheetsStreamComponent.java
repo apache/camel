@@ -51,11 +51,11 @@ public class GoogleSheetsStreamComponent extends HealthCheckComponent {
         if (client == null) {
             if (config.getClientId() != null && config.getClientSecret() != null) {
                 client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopes(),
+                        config.getClientSecret(), config.getScopesAsList(),
                         config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
             } else if (config.getServiceAccountKey() != null) {
                 client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopes(), config.getApplicationName(), config.getDelegate());
+                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
                         "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
