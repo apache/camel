@@ -39,7 +39,6 @@
         <supportLevel>preview</supportLevel>
 
         <!-- LRA coordinator container is only available for x86 -->
-        <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
         <skipITs.aarch64>true</skipITs.aarch64>
     </properties>
