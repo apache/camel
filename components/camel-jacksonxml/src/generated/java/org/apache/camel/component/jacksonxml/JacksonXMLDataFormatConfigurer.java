@@ -50,6 +50,8 @@ public class JacksonXMLDataFormatConfigurer extends PropertyConfigurerSupport im
         case "contenttypeheader":
         case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         case "timezone": dataformat.setTimezone(property(camelContext, java.util.TimeZone.class, value)); return true;
+        case "maxstringlength":
+        case "maxStringLength": dataformat.setMaxStringLength(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }

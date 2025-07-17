@@ -7833,6 +7833,18 @@ value: true
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="maxStringLength" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the maximum string length (in chars or bytes, depending on input context). The default is 20,000,000. This limit is
+not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater
+than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values
+with sizes less than or equal to this limit will be treated as invalid.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -8264,6 +8276,18 @@ value: true
             <xs:documentation xml:lang="en">
 <![CDATA[
 To configure the date format while marshall or unmarshall Date fields in JSON using Gson.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="maxStringLength" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Jackson. Sets the maximum string length (in chars or bytes, depending on input context). The default is 20,000,000. This
+limit is not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes
+greater than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text
+values with sizes less than or equal to this limit will be treated as invalid.
 ]]>
             </xs:documentation>
           </xs:annotation>

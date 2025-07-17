@@ -60,6 +60,8 @@ public class JacksonDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "autoDiscoverSchemaResolver": dataformat.setAutoDiscoverSchemaResolver(property(camelContext, boolean.class, value)); return true;
         case "namingstrategy":
         case "namingStrategy": dataformat.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxstringlength":
+        case "maxStringLength": dataformat.setMaxStringLength(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }

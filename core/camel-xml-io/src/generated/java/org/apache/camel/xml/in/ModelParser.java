@@ -1979,6 +1979,7 @@ public class ModelParser extends BaseParser {
                 case "enableJaxbAnnotationModule": def.setEnableJaxbAnnotationModule(val); yield true;
                 case "include": def.setInclude(val); yield true;
                 case "jsonView": def.setJsonViewTypeName(val); yield true;
+                case "maxStringLength": def.setMaxStringLength(val); yield true;
                 case "moduleClassNames": def.setModuleClassNames(val); yield true;
                 case "moduleRefs": def.setModuleRefs(val); yield true;
                 case "prettyPrint": def.setPrettyPrint(val); yield true;
@@ -2036,6 +2037,7 @@ public class ModelParser extends BaseParser {
                 case "include": def.setInclude(val); yield true;
                 case "jsonView": def.setJsonViewTypeName(val); yield true;
                 case "library": def.setLibrary(JsonLibrary.valueOf(val)); yield true;
+                case "maxStringLength": def.setMaxStringLength(val); yield true;
                 case "moduleClassNames": def.setModuleClassNames(val); yield true;
                 case "moduleRefs": def.setModuleRefs(val); yield true;
                 case "namingStrategy": def.setNamingStrategy(val); yield true;

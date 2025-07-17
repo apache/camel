@@ -61,6 +61,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             properties.put("autoDiscoverSchemaResolver", definition.getAutoDiscoverSchemaResolver());
             properties.put("namingStrategy", definition.getNamingStrategy());
             properties.put("timezone", definition.getTimezone());
+            properties.put("maxStringLength", definition.getMaxStringLength());
         }
         if (definition.getLibrary() == JsonLibrary.Fastjson || definition.getLibrary() == JsonLibrary.Gson) {
             properties.put("dateFormatPattern", definition.getDateFormatPattern());

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.StreamReadConstraints;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -86,6 +87,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
     private boolean allowUnmarshallType;
     private boolean contentTypeHeader = true;
     private TimeZone timezone;
+    private int maxStringLength;
 
     /**
      * Use the default Jackson {@link XmlMapper} and {@link Map}
@@ -443,6 +445,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
         this.timezone = timezone;
     }
 
+    public int getMaxStringLength() {
+        return maxStringLength;
+    }
+
+    public void setMaxStringLength(int maxStringLength) {
+        this.maxStringLength = maxStringLength;
+    }
+
     public String getEnableFeatures() {
         return enableFeatures;
     }
@@ -531,6 +541,16 @@ public class JacksonXMLDataFormat extends ServiceSupport
         }
     }
 
+    protected XmlMapper createNewXmlMapper() {
+        XmlMapper xm = new XmlMapper();
+        int len = getMaxStringLength();
+        if (len > 0) {
+            LOG.debug("Creating XmlMapper with maxStringLength: {}", len);
+            xm.getFactory().setStreamReadConstraints(StreamReadConstraints.builder().maxStringLength(len).build());
+        }
+        return xm;
+    }
+
     @Override
     protected void doInit() throws Exception {
         if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == LinkedHashMap.class)) {
@@ -548,7 +568,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
     @Override
     protected void doStart() throws Exception {
         if (xmlMapper == null) {
-            xmlMapper = new XmlMapper();
+            xmlMapper = createNewXmlMapper();
         }
 
         if (enableJaxbAnnotationModule) {

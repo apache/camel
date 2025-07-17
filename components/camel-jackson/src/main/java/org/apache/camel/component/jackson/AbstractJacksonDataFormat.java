@@ -91,6 +91,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     private SchemaResolver schemaResolver;
     private boolean autoDiscoverSchemaResolver = true;
     private String namingStrategy;
+    private int maxStringLength;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Object}
@@ -340,6 +341,14 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
 
     public void setNamingStrategy(String namingStrategy) {
         this.namingStrategy = namingStrategy;
+    }
+
+    public int getMaxStringLength() {
+        return maxStringLength;
+    }
+
+    public void setMaxStringLength(int maxStringLength) {
+        this.maxStringLength = maxStringLength;
     }
 
     /**

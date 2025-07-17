@@ -112,6 +112,9 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute
     @Metadata(description = "To configure the date format while marshall or unmarshall Date fields in JSON using Gson")
     private String dateFormatPattern;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    private String maxStringLength;
 
     public JsonDataFormat() {
         super("json");
@@ -150,6 +153,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.namingStrategy = source.namingStrategy;
         this.contentTypeHeader = source.contentTypeHeader;
         this.dateFormatPattern = source.dateFormatPattern;
+        this.maxStringLength = source.maxStringLength;
     }
 
     private JsonDataFormat(Builder builder) {
@@ -180,6 +184,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.namingStrategy = builder.namingStrategy;
         this.contentTypeHeader = builder.contentTypeHeader;
         this.dateFormatPattern = builder.dateFormatPattern;
+        this.maxStringLength = builder.maxStringLength;
     }
 
     @Override
@@ -498,6 +503,20 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.namingStrategy = namingStrategy;
     }
 
+    public String getMaxStringLength() {
+        return maxStringLength;
+    }
+
+    /**
+     * Jackson. Sets the maximum string length (in chars or bytes, depending on input context). The default is
+     * 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception
+     * will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be
+     * treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid.
+     */
+    public void setMaxStringLength(String maxStringLength) {
+        this.maxStringLength = maxStringLength;
+    }
+
     //
     // Fluent builders
     //
@@ -658,6 +677,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         private String namingStrategy;
         private String contentTypeHeader;
         private String dateFormatPattern;
+        private String maxStringLength;
 
         /**
          * Whether the data format should set the Content-Type header with the type from the data format. For example
@@ -972,6 +992,18 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder namingStrategy(String namingStrategy) {
             this.namingStrategy = namingStrategy;
+            return this;
+        }
+
+        /**
+         * Jackson. Sets the maximum string length (in chars or bytes, depending on input context). The default is
+         * 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an
+         * exception will happen at sizes greater than this limit. Some text values that are a little bigger than the
+         * limit may be treated as valid but no text values with sizes less than or equal to this limit will be treated
+         * as invalid.
+         */
+        public Builder maxStringLength(String maxStringLength) {
+            this.maxStringLength = maxStringLength;
             return this;
         }
 
