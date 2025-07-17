@@ -2678,6 +2678,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
         doWriteAttribute("enableFeatures", def.getEnableFeatures(), null);
         doWriteAttribute("useList", def.getUseList(), null);
+        doWriteAttribute("maxStringLength", def.getMaxStringLength(), null);
         doWriteAttribute("disableFeatures", def.getDisableFeatures(), null);
         doWriteAttribute("moduleRefs", def.getModuleRefs(), null);
         doWriteAttribute("enableJaxbAnnotationModule", def.getEnableJaxbAnnotationModule(), null);
@@ -2735,6 +2736,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
         doWriteAttribute("useList", def.getUseList(), null);
+        doWriteAttribute("maxStringLength", def.getMaxStringLength(), null);
         doWriteAttribute("disableFeatures", def.getDisableFeatures(), null);
         doWriteAttribute("moduleRefs", def.getModuleRefs(), null);
         doWriteAttribute("schemaResolver", def.getSchemaResolver(), null);

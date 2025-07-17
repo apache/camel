@@ -86,6 +86,9 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
               description = "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    private String maxStringLength;
 
     public JacksonXMLDataFormat() {
         super("jacksonXml");
@@ -112,6 +115,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         this.enableFeatures = builder.enableFeatures;
         this.disableFeatures = builder.disableFeatures;
         this.contentTypeHeader = builder.contentTypeHeader;
+        this.maxStringLength = builder.maxStringLength;
     }
 
     private JacksonXMLDataFormat(Builder builder) {
@@ -135,6 +139,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         this.enableFeatures = builder.enableFeatures;
         this.disableFeatures = builder.disableFeatures;
         this.contentTypeHeader = builder.contentTypeHeader;
+        this.maxStringLength = builder.maxStringLength;
     }
 
     @Override
@@ -371,6 +376,18 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         this.timezone = timezone;
     }
 
+    public String getMaxStringLength() {
+        return maxStringLength;
+    }
+
+    /**
+     * Sets the maximum string length (in chars or bytes, depending on input context).
+     * The default is 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid.
+     */
+    public void setMaxStringLength(String maxStringLength) {
+        this.maxStringLength = maxStringLength;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link JacksonXMLDataFormat}.
      */
@@ -396,6 +413,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         private String enableFeatures;
         private String disableFeatures;
         private String contentTypeHeader;
+        private String maxStringLength;
 
         /**
          * Lookup and use the existing XmlMapper with the given id.
@@ -620,6 +638,15 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
          */
         public Builder timezone(String timezone) {
             this.timezone = timezone;
+            return this;
+        }
+
+        /**
+         * Sets the maximum string length (in chars or bytes, depending on input context).
+         * The default is 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid.
+         */
+        public Builder maxStringLength(String maxStringLength) {
+            this.maxStringLength = maxStringLength;
             return this;
         }
 

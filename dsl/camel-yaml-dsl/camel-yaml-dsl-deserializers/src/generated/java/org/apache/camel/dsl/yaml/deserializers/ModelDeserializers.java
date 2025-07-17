@@ -7555,6 +7555,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "include", type = "string", description = "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL", displayName = "Include"),
                     @YamlProperty(name = "jsonView", type = "string", description = "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations", displayName = "Json View"),
+                    @YamlProperty(name = "maxStringLength", type = "number", description = "Sets the maximum string length (in chars or bytes, depending on input context). The default is 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid.", displayName = "Max String Length"),
                     @YamlProperty(name = "moduleClassNames", type = "string", description = "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.", displayName = "Module Class Names"),
                     @YamlProperty(name = "moduleRefs", type = "string", description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.", displayName = "Module Refs"),
                     @YamlProperty(name = "prettyPrint", type = "boolean", description = "To enable pretty printing output nicely formatted. Is by default false.", displayName = "Pretty Print"),
@@ -7627,6 +7628,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "jsonView": {
                     String val = asText(node);
                     target.setJsonViewTypeName(val);
+                    break;
+                }
+                case "maxStringLength": {
+                    String val = asText(node);
+                    target.setMaxStringLength(val);
                     break;
                 }
                 case "moduleClassNames": {
@@ -8222,6 +8228,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "include", type = "string", description = "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL", displayName = "Include"),
                     @YamlProperty(name = "jsonView", type = "string", description = "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations", displayName = "Json View"),
                     @YamlProperty(name = "library", type = "enum:Fastjson,Gson,Jackson,Jsonb", defaultValue = "Jackson", description = "Which json library to use.", displayName = "Library"),
+                    @YamlProperty(name = "maxStringLength", type = "number", description = "Jackson. Sets the maximum string length (in chars or bytes, depending on input context). The default is 20,000,000. This limit is not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values with sizes less than or equal to this limit will be treated as invalid.", displayName = "Max String Length"),
                     @YamlProperty(name = "moduleClassNames", type = "string", description = "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.", displayName = "Module Class Names"),
                     @YamlProperty(name = "moduleRefs", type = "string", description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.", displayName = "Module Refs"),
                     @YamlProperty(name = "namingStrategy", type = "string", description = "If set then Jackson will use the the defined Property Naming Strategy.Possible values are: LOWER_CAMEL_CASE, LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE", displayName = "Naming Strategy"),
@@ -8316,6 +8323,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "library": {
                     target.setLibrary(asEnum(node, org.apache.camel.model.dataformat.JsonLibrary.class));
+                    break;
+                }
+                case "maxStringLength": {
+                    String val = asText(node);
+                    target.setMaxStringLength(val);
                     break;
                 }
                 case "moduleClassNames": {

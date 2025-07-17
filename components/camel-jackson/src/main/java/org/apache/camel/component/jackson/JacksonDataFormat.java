@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.jackson;
 
+import com.fasterxml.jackson.core.StreamReadConstraints;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Marshal POJOs to JSON and back using Jackson.
@@ -26,6 +29,8 @@ import org.apache.camel.spi.annotations.Dataformat;
 @Dataformat("jackson")
 @Metadata(excludeProperties = "library,permissions,dateFormatPattern")
 public class JacksonDataFormat extends AbstractJacksonDataFormat {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Object}
@@ -80,7 +85,13 @@ public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
     @Override
     protected ObjectMapper createNewObjectMapper() {
-        return new ObjectMapper();
+        ObjectMapper om = new ObjectMapper();
+        int len = getMaxStringLength();
+        if (len > 0) {
+            LOG.debug("Creating ObjectMapper with maxStringLength: {}", len);
+            om.getFactory().setStreamReadConstraints(StreamReadConstraints.builder().maxStringLength(len).build());
+        }
+        return om;
     }
 
     @Override
