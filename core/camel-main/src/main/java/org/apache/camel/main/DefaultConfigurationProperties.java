@@ -1420,8 +1420,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to preload existing compiled Groovy sources from the compileWorkDir option on startup.
-     * This can be enabled to avoid compiling sources that already has been compiled during a build phase.
+     * Whether to preload existing compiled Groovy sources from the compileWorkDir option on startup. This can be
+     * enabled to avoid compiling sources that already has been compiled during a build phase.
      */
     public void setGroovyPreloadCompiled(boolean groovyPreloadCompiled) {
         this.groovyPreloadCompiled = groovyPreloadCompiled;
@@ -2817,14 +2817,13 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to preload existing compiled Groovy sources from the compileWorkDir option on startup.
-     * This can be enabled to avoid compiling sources that already has been compiled during a build phase.
+     * Whether to preload existing compiled Groovy sources from the compileWorkDir option on startup. This can be
+     * enabled to avoid compiling sources that already has been compiled during a build phase.
      */
     public T withGroovyPreloadCompiled(boolean groovyPreloadCompiled) {
         this.groovyPreloadCompiled = groovyPreloadCompiled;
         return (T) this;
     }
-
 
     /**
      * Whether to use cloud properties location setting. Default is none.

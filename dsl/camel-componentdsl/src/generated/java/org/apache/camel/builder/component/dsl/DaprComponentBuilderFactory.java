@@ -53,15 +53,14 @@ public interface DaprComponentBuilderFactory {
         /**
          * List of keys for configuration operation.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param configKeys the value to set
          * @return the dsl builder
          */
-        default DaprComponentBuilder configKeys(java.util.List<java.lang.String> configKeys) {
+        default DaprComponentBuilder configKeys(java.lang.String configKeys) {
             doSetProperty("configKeys", configKeys);
             return this;
         }
@@ -468,7 +467,7 @@ public interface DaprComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configKeys": getOrCreateConfiguration((DaprComponent) component).setConfigKeys((java.util.List) value); return true;
+            case "configKeys": getOrCreateConfiguration((DaprComponent) component).setConfigKeys((java.lang.String) value); return true;
             case "configStore": getOrCreateConfiguration((DaprComponent) component).setConfigStore((java.lang.String) value); return true;
             case "configuration": ((DaprComponent) component).setConfiguration((org.apache.camel.component.dapr.DaprConfiguration) value); return true;
             case "contentType": getOrCreateConfiguration((DaprComponent) component).setContentType((java.lang.String) value); return true;

@@ -40,7 +40,7 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrency": getOrCreateConfiguration(target).setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
         case "configkeys":
-        case "configKeys": getOrCreateConfiguration(target).setConfigKeys(property(camelContext, java.util.List.class, value)); return true;
+        case "configKeys": getOrCreateConfiguration(target).setConfigKeys(property(camelContext, java.lang.String.class, value)); return true;
         case "configstore":
         case "configStore": getOrCreateConfiguration(target).setConfigStore(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.dapr.DaprConfiguration.class, value)); return true;
@@ -92,7 +92,7 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeErrorHandler": return boolean.class;
         case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
         case "configkeys":
-        case "configKeys": return java.util.List.class;
+        case "configKeys": return java.lang.String.class;
         case "configstore":
         case "configStore": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.dapr.DaprConfiguration.class;
@@ -170,15 +170,6 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "stateStore": return getOrCreateConfiguration(target).getStateStore();
         case "topic": return getOrCreateConfiguration(target).getTopic();
         case "verb": return getOrCreateConfiguration(target).getVerb();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "configkeys":
-        case "configKeys": return java.lang.String.class;
         default: return null;
         }
     }
