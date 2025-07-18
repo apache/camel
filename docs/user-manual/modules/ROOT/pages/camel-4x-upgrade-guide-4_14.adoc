@@ -12,3 +12,15 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 The scopes parameter for camel-google-calendar, camel-google-calendar-streams, camel-google-drive, camel-google-mail, camel-google-mail-streams and camel-google-sheets-streams has been defined as String instead of Collection<String>. For the migration users will need to, eventually, define scopes as a comma separated list of scopes instead of a Collection instance. For more information the related issue is CAMEL-22247.
 
+=== camel-consul
+
+The nodeMeta parameter for camel-consul has been defined as String instead of List<String>. For the migration users will need to, eventually, define nodeMeta as a comma separated list of nodeMeta instead of a List instance. For more information the related issue is CAMEL-17339.
+
+=== camel-dapr
+
+The configKeys parameter for camel-dapr has been defined as String instead of List<String>. For the migration users will need to, eventually, define configKeys as a comma separated list of config Keys instead of a List instance. For more information the related issue is CAMEL-17339.
+
+=== camel-huawei-dms
+
+The availableZones parameter for camel-huawei-dms has been defined as String instead of List<String>. For the migration users will need to, eventually, define availableZones as a comma separated list of available zones instead of a List instance. For more information the related issue is CAMEL-17339.
+
