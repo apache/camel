@@ -20,10 +20,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
@@ -43,7 +40,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private String nearNode;
     @UriParam(label = "advanced")
-    private List<String> nodeMeta;
+    private String nodeMeta;
     @UriParam(label = "advanced", defaultValue = "DEFAULT", enums = "DEFAULT,STALE,CONSISTENT")
     private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
     @UriParam(javaType = "java.lang.String")
@@ -128,14 +125,22 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         this.nearNode = nearNode;
     }
 
-    public List<String> getNodeMeta() {
+    public String getNodeMeta() {
         return nodeMeta;
     }
 
+    public Collection<String> getNodeMetasAsList() {
+        if (nodeMeta != null) {
+            return List.of(nodeMeta.split(","));
+        } else {
+            return null;
+        }
+    }
+
     /**
-     * The note meta-data to use for queries.
+     * The comma separated node meta-data to use for queries.
      */
-    public void setNodeMeta(List<String> nodeMeta) {
+    public void setNodeMeta(String nodeMeta) {
         this.nodeMeta = nodeMeta;
     }
 
