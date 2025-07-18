@@ -28,7 +28,7 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessuser":
         case "accessUser": target.setAccessUser(property(camelContext, java.lang.String.class, value)); return true;
         case "availablezones":
-        case "availableZones": target.setAvailableZones(property(camelContext, java.util.List.class, value)); return true;
+        case "availableZones": target.setAvailableZones(property(camelContext, java.lang.String.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "engine": target.setEngine(property(camelContext, java.lang.String.class, value)); return true;
         case "engineversion":
@@ -87,7 +87,7 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessuser":
         case "accessUser": return java.lang.String.class;
         case "availablezones":
-        case "availableZones": return java.util.List.class;
+        case "availableZones": return java.lang.String.class;
         case "endpoint": return java.lang.String.class;
         case "engine": return java.lang.String.class;
         case "engineversion":
@@ -194,15 +194,6 @@ public class DMSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "subnetId": return target.getSubnetId();
         case "vpcid":
         case "vpcId": return target.getVpcId();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "availablezones":
-        case "availableZones": return java.lang.String.class;
         default: return null;
         }
     }
