@@ -67,7 +67,7 @@ public class DependencyRuntime extends CamelCommand {
             return 0;
         }
 
-        List<String> deps = RunHelper.scanMavenDependenciesFromModel(pomXml, model);
+        List<String> deps = RunHelper.scanMavenDependenciesFromModel(pomXml, model, true);
         if (deps.isEmpty()) {
             return 0;
         }
