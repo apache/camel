@@ -62,8 +62,8 @@ public class DefaultGroovyCompilerTest extends CamelTestSupport {
         compiler.start();
 
         Assertions.assertEquals(0, compiler.getPreloadedCounter());
-        Assertions.assertTrue(new File("target/compiled/Cheese.class").exists());
-        Assertions.assertTrue(new File("target/compiled/Dude.class").exists());
+        Assertions.assertTrue(new File("target/compiled/groovy/Cheese.class").exists());
+        Assertions.assertTrue(new File("target/compiled/groovy/Dude.class").exists());
 
         compiler.stop();
 

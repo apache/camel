@@ -208,6 +208,7 @@ public class Export extends ExportBaseCommand {
         cmd.lazyBean = this.lazyBean;
         cmd.verbose = this.verbose;
         cmd.applicationProperties = this.applicationProperties;
+        cmd.groovyPrecompiled = this.groovyPrecompiled;
         // run export
         return cmd.export();
     }

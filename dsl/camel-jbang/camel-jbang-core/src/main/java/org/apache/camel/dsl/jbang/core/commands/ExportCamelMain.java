@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +38,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 class ExportCamelMain extends Export {
+
+    protected static final String GROOVY_COMPILE_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/compile/groovy";
 
     public ExportCamelMain(CamelJBangMain main) {
         super(main);
@@ -107,6 +110,9 @@ class ExportCamelMain extends Export {
         // copy from settings to profile
         copySettingsAndProfile(settings, profile,
                 srcResourcesDir, prop -> {
+                    if (groovyPrecompiled && !prop.containsKey("camel.main.groovyPreloadCompiled")) {
+                        prop.put("camel.main.groovyPreloadCompiled", "true");
+                    }
                     if (!prop.containsKey("camel.main.basePackageScan")
                             && !prop.containsKey("camel.main.base-package-scan")) {
                         // use dot as root package if no package are in use
@@ -141,6 +147,10 @@ class ExportCamelMain extends Export {
         createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
         // copy local lib JARs
         copyLocalLibDependencies(deps);
+        // copy local lib JARs
+        if (groovyPrecompiled) {
+            copyGroovyPrecompiled(srcResourcesDir);
+        }
         // copy agent JARs and remove as dependency
         copyAgentDependencies(deps);
         deps.removeIf(d -> d.startsWith("agent:"));
@@ -407,4 +417,24 @@ class ExportCamelMain extends Export {
         is = ExportCamelMain.class.getResourceAsStream("/assembly/runner.xml");
         ExportHelper.safeCopy(is, srcResourcesDir.resolve("assembly/runner.xml"));
     }
+
+    protected void copyGroovyPrecompiled(Path srcResourcesDir) throws Exception {
+        // are there any pre-compiled groovy code
+        File gc = new File(GROOVY_COMPILE_DIR);
+        if (gc.exists() && gc.isDirectory()) {
+            File[] files = gc.listFiles();
+            if (files != null) {
+                Path targetDir = srcResourcesDir.resolve("camel-groovy-compiled");
+                for (File file : files) {
+                    // skip anonymous scripts
+                    if (file.getName().endsWith(".class") && !file.getName().startsWith("Script_")) {
+                        Files.createDirectories(targetDir);
+                        Path out = targetDir.resolve(file.getName());
+                        ExportHelper.safeCopy(file.toPath(), out, true);
+                    }
+                }
+            }
+        }
+    }
+
 }

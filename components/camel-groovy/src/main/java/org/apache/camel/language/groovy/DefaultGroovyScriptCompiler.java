@@ -184,7 +184,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         // use work dir for writing compiled classes
         CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
         if (cs != null && cs.getWorkDir() != null) {
-            workDir = cs.getWorkDir();
+            workDir = cs.getWorkDir() + "/groovy";
         }
 
         if (scriptPattern != null) {
@@ -315,7 +315,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             cc.setRecompileGroovySource(true);
         }
         if (workDir != null) {
-            LOG.info("Writing compiled Groovy classes to directory: {}", workDir);
+            LOG.debug("Writing compiled Groovy classes to directory: {}", workDir);
             cc.setTargetDirectory(workDir);
         }
 

@@ -129,7 +129,7 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
     private boolean routesReloadRestartDuration;
-    private String groovyScriptPattern = "classpath:camel-groovy/*";
+    private String groovyScriptPattern = "classpath:camel-groovy/*,classpath:camel-groovy-compiled/*";
     @Metadata(label = "advanced")
     private boolean groovyPreloadCompiled;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")

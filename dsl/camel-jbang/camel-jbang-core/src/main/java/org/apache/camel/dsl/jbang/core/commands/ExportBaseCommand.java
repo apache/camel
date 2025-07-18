@@ -269,6 +269,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Skip plugins during export")
     protected boolean skipPlugins;
 
+    @CommandLine.Option(names = { "--groovy-pre-compiled" }, defaultValue = "false",
+                        description = "Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main)")
+    protected boolean groovyPrecompiled;
+
     protected boolean symbolicLink;     // copy source files using symbolic link
     protected boolean javaLiveReload; // reload java codes in dev
     public String pomTemplateName;   // support for specialised pom templates

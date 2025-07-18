@@ -50,13 +50,13 @@ public class MainGroovyCompilerRouteTest {
 
         DefaultGroovyScriptCompiler compiler = context.hasService(DefaultGroovyScriptCompiler.class);
         Assertions.assertNotNull(compiler);
-        Assertions.assertEquals("classpath:camel-groovy/*", compiler.getScriptPattern());
+        Assertions.assertEquals("classpath:camel-groovy/*,classpath:camel-groovy-compiled/*", compiler.getScriptPattern());
         Assertions.assertEquals(2, compiler.getClassesSize());
-        Assertions.assertEquals("target/workdir", compiler.getWorkDir());
+        Assertions.assertEquals("target/workdir/groovy", compiler.getWorkDir());
         Assertions.assertTrue(compiler.getCompileTime() > 0, "Should take time to compile, was: " + compiler.getCompileTime());
 
-        Assertions.assertTrue(new File("target/workdir/Cheese.class").exists());
-        Assertions.assertTrue(new File("target/workdir/Dude.class").exists());
+        Assertions.assertTrue(new File("target/workdir/groovy/Cheese.class").exists());
+        Assertions.assertTrue(new File("target/workdir/groovy/Dude.class").exists());
 
         main.stop();
     }
