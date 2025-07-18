@@ -18,13 +18,12 @@ package org.apache.camel.spi;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.camel.StaticService;
 
 /**
  * A resolver that can find resources based on package scanning.
- *
- * OSGi is not supported as this is intended for standalone Camel runtimes such as Camel Main, or Camel Quarkus.
  *
  * @see PackageScanClassResolver
  */
@@ -57,9 +56,9 @@ public interface PackageScanResourceResolver extends StaticService {
      * Finds the resources from the given location.
      *
      * The location can be prefixed with either file: or classpath: to look in either file system or classpath. By
-     * default classpath is assumed if no prefix is specified.
+     * default, classpath is assumed if no prefix is specified.
      *
-     * Wildcards is supported using an ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     * Wildcards are supported using an ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
      *
      * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
      * specific the exact name for each XML file is faster as no classpath scanning is needed.
@@ -69,5 +68,23 @@ public interface PackageScanResourceResolver extends StaticService {
      * @throws Exception can be thrown during scanning for resources.
      */
     Collection<Resource> findResources(String location) throws Exception;
+
+    /**
+     * Finds the resources from the given location.
+     *
+     * The location can be prefixed with either file: or classpath: to look in either file system or classpath. By
+     * default, classpath is assumed if no prefix is specified.
+     *
+     * Wildcards are supported using an ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you
+     * specific the exact name for each XML file is faster as no classpath scanning is needed.
+     *
+     * @param  location  the location (support ANT style patterns, eg routes/camel-*.xml)
+     * @param  filter    a custom filter to include or exclude matched file names
+     * @return           the found resources, or an empty collection if no resources found
+     * @throws Exception can be thrown during scanning for resources.
+     */
+    Collection<Resource> findResources(String location, Predicate<String> filter) throws Exception;
 
 }

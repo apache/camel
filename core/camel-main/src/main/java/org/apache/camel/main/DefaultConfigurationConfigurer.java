@@ -356,6 +356,7 @@ public final class DefaultConfigurationConfigurer {
             GroovyScriptCompiler gsc = camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
             if (gsc != null) {
                 gsc.setScriptPattern(config.getGroovyScriptPattern());
+                gsc.setPreloadCompiled(config.isGroovyPreloadCompiled());
                 camelContext.addService(gsc);
                 // force start compiler eager so Camel routes can load these pre-compiled classes
                 ServiceHelper.startService(gsc);

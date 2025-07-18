@@ -16,9 +16,13 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import groovy.lang.GroovyShell;
@@ -56,13 +60,16 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultGroovyScriptCompiler.class);
 
+    private GroovyPreCompiledClassLoader groovyPreCompiledClassLoader;
     private GroovyScriptClassLoader classLoader;
     private CamelContext camelContext;
     private EventNotifier notifier;
     private String scriptPattern;
+    private boolean preloadCompiled;
     private String workDir;
     private long taken;
     private int counter;
+    private int preloadCounter;
     private long last;
     private boolean reload;
 
@@ -91,6 +98,11 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         return counter;
     }
 
+    @ManagedAttribute(description = "Number of pre-compiled Groovy sources on startup")
+    public int getPreloadedCounter() {
+        return preloadCounter;
+    }
+
     @ManagedAttribute(description = "Directories to scan for Groovy source to be pre-compiled")
     @Override
     public String getScriptPattern() {
@@ -100,6 +112,16 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     @Override
     public void setScriptPattern(String scriptPattern) {
         this.scriptPattern = scriptPattern;
+    }
+
+    @ManagedAttribute(description = "Whether to preload existing compiled Groovy sources from the workdir directory on startup")
+    public boolean isPreloadCompiled() {
+        return preloadCompiled;
+    }
+
+    @Override
+    public void setPreloadCompiled(boolean preloadCompiled) {
+        this.preloadCompiled = preloadCompiled;
     }
 
     @ManagedAttribute(description = "Directory for storing compiled Groovy sources as class files")
@@ -125,7 +147,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     @Override
     public void recompile(Resource resource) throws Exception {
         if (resource.exists()) {
-            doCompile(List.of(resource));
+            doCompile(List.of(resource), false);
         }
     }
 
@@ -142,6 +164,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                 // make classloader available for groovy language
                 context.getCamelContextExtension().addContextPlugin(GroovyScriptClassLoader.class, classLoader);
             }
+            groovyPreCompiledClassLoader = new GroovyPreCompiledClassLoader(classLoader);
 
             String profile = context.getCamelContextExtension().getProfile();
             if ("dev".equals(profile)) {
@@ -158,9 +181,17 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     protected void doStart() throws Exception {
         super.doStart();
 
+        // use work dir for writing compiled classes
+        CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
+        if (cs != null && cs.getWorkDir() != null) {
+            workDir = cs.getWorkDir();
+        }
+
         if (scriptPattern != null) {
-            LOG.info("Pre-compiling Groovy sources from: {}", scriptPattern);
-            doCompile(scanForGroovySources(scriptPattern));
+            LOG.debug("Loading Groovy sources from: {}", scriptPattern);
+            doCompile(scanForGroovySources(scriptPattern), true);
+            LOG.info("Loaded Groovy sources from: {} (pre-loaded:{} compiled:{} time:{}ms)", scriptPattern,
+                    preloadCounter, counter, taken);
         }
     }
 
@@ -169,7 +200,8 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
 
         PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
         for (String pattern : scriptPattern.split(",")) {
-            for (Resource resource : resolver.findResources(pattern)) {
+            // include all kind of resources
+            for (Resource resource : resolver.findResources(pattern, n -> true)) {
                 if (resource.exists()) {
                     if ("classpath".equals(resource.getScheme()) || "file".equals(resource.getScheme())) {
                         list.add(resource);
@@ -181,71 +213,135 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         return list;
     }
 
-    protected void doCompile(Collection<Resource> resources) throws Exception {
+    protected void doCompile(Collection<Resource> resources, boolean bootstrap) throws Exception {
         List<String> cps = new ArrayList<>();
-        List<String> codes = new ArrayList<>();
+        Map<String, String> codes = new LinkedHashMap<>();
+        Map<String, byte[]> classes = new LinkedHashMap<>();
         for (Resource resource : resources) {
             String loc = resource.getLocation();
             if (loc != null) {
-                String code = IOHelper.loadText(resource.getInputStream());
                 loc = StringHelper.after(loc, ":", loc);
-                String cp = FileUtil.onlyPath(loc);
-                if (cp == null) {
-                    cp = ".";
+                String name = FileUtil.onlyName(loc);
+                boolean found = false;
+                if (loc.endsWith(".groovy")) {
+                    found = true;
+                    String code = IOHelper.loadText(resource.getInputStream());
+                    codes.put(name, code);
+                } else if (loc.endsWith(".class") && isPreloadCompiled() && bootstrap) {
+                    found = true;
+                    byte[] data = camelContext.getTypeConverter().convertTo(byte[].class, resource.getInputStream());
+                    if (data != null) {
+                        classes.put(name, data);
+                    }
                 }
-                if (!cps.contains(cp)) {
-                    cps.add(cp);
-                }
-                codes.add(code);
-            }
-            if (codes.isEmpty()) {
-                // nothing to compile
-                return;
-            }
-
-            StopWatch watch = new StopWatch();
-
-            // use work dir for writing compiled classes
-            CompileStrategy cs = camelContext.getCamelContextExtension().getContextPlugin(CompileStrategy.class);
-            if (cs != null && cs.getWorkDir() != null) {
-                workDir = cs.getWorkDir();
-            }
-
-            // setup compiler via groovy shell
-            CompilerConfiguration cc = new CompilerConfiguration();
-            cc.setClasspathList(cps);
-            if (reload) {
-                cc.setRecompileGroovySource(true);
-            }
-            if (workDir != null) {
-                LOG.debug("Writing compiled Groovy classes to directory: {}", workDir);
-                cc.setTargetDirectory(workDir);
-            }
-
-            ClassLoader cl = camelContext.getApplicationContextClassLoader();
-            if (cl == null) {
-                cl = GroovyShell.class.getClassLoader();
-            }
-            GroovyShell shell = new GroovyShell(cl, cc);
-
-            // parse code into classes and add to classloader
-            for (String code : codes) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Compiling Groovy source:\n{}", code);
-                }
-                counter++;
-                Class<?> clazz = shell.getClassLoader().parseClass(code);
-                if (clazz != null) {
-                    String name = clazz.getName();
-                    LOG.debug("Compiled Groovy class: {}", name);
-                    // remove before adding in case it's recompiled
-                    classLoader.removeClass(name);
-                    classLoader.addClass(name, clazz);
+                if (found) {
+                    String cp = FileUtil.onlyPath(loc);
+                    if (cp == null) {
+                        cp = ".";
+                    }
+                    if (!cps.contains(cp)) {
+                        cps.add(cp);
+                    }
                 }
             }
-            taken += watch.taken();
-            last = System.currentTimeMillis();
         }
+        // also check work-dir for pre-compiled classes
+        if (workDir != null && isPreloadCompiled() && bootstrap) {
+            File dir = new File(workDir);
+            if (dir.exists() && dir.isDirectory()) {
+                File[] files = dir.listFiles();
+                if (files != null) {
+                    for (File f : files) {
+                        if (f.isFile() && f.exists()) {
+                            String name = f.getName();
+                            if (name.endsWith(".class")) {
+                                byte[] data = camelContext.getTypeConverter().convertTo(byte[].class, f);
+                                if (data != null) {
+                                    classes.put(FileUtil.onlyName(name), data);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (classes.isEmpty() && codes.isEmpty()) {
+            // nothing to compile
+            return;
+        }
+
+        if (bootstrap && isPreloadCompiled() && !classes.isEmpty()) {
+            // preload classes and do not compile from source
+            Set<String> loaded = doPreloadClasses(classes);
+            if (!loaded.isEmpty()) {
+                LOG.debug("Loaded {} pre-compiled Groovy sources", loaded.size());
+            }
+            for (String load : loaded) {
+                codes.remove(load);
+            }
+        }
+
+        if (!codes.isEmpty()) {
+            doCompileCode(codes, cps);
+        }
+    }
+
+    private Set<String> doPreloadClasses(Map<String, byte[]> classes) {
+        Set<String> answer = new HashSet<>();
+        for (var entry : classes.entrySet()) {
+            String name = entry.getKey();
+            groovyPreCompiledClassLoader.addClass(name, entry.getValue());
+            try {
+                Class<?> clazz = groovyPreCompiledClassLoader.findClass(name);
+                classLoader.addClass(clazz.getName(), clazz);
+                answer.add(name);
+            } catch (ClassNotFoundException e) {
+                LOG.debug("Error loading pre-compiled class: {}. This exception is ignored.", name, e);
+            }
+        }
+        IOHelper.close(groovyPreCompiledClassLoader);
+        preloadCounter = answer.size();
+        return answer;
+    }
+
+    private void doCompileCode(Map<String, String> codes, List<String> cps) throws Exception {
+        StopWatch watch = new StopWatch();
+
+        // setup compiler via groovy shell
+        CompilerConfiguration cc = new CompilerConfiguration();
+        cc.setClasspathList(cps);
+        if (reload) {
+            cc.setRecompileGroovySource(true);
+        }
+        if (workDir != null) {
+            LOG.info("Writing compiled Groovy classes to directory: {}", workDir);
+            cc.setTargetDirectory(workDir);
+        }
+
+        ClassLoader cl = camelContext.getApplicationContextClassLoader();
+        if (cl == null) {
+            cl = GroovyShell.class.getClassLoader();
+        }
+        GroovyShell shell = new GroovyShell(cl, cc);
+
+        // parse code into classes and add to classloader
+        for (String code : codes.values()) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Compiling Groovy source:\n{}", code);
+            }
+            counter++;
+            Class<?> clazz = shell.getClassLoader().parseClass(code);
+            if (clazz != null) {
+                String name = clazz.getName();
+                LOG.debug("Compiled Groovy class: {}", name);
+                // remove before adding in case it's recompiled
+                classLoader.removeClass(name);
+                classLoader.addClass(name, clazz);
+            }
+        }
+        taken += watch.taken();
+        last = System.currentTimeMillis();
     }
 
     @Override
@@ -256,7 +352,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             LOG.debug("Compiled {} Groovy sources in {} millis", counter, taken);
         }
 
-        IOHelper.close(classLoader);
+        IOHelper.close(classLoader, groovyPreCompiledClassLoader);
     }
 
     @Override
@@ -281,7 +377,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                         classLoader.clear();
                     }
                     LOG.info("Re-compiling Groovy sources from: {}", scriptPattern);
-                    doCompile(scanForGroovySources(scriptPattern));
+                    doCompile(scanForGroovySources(scriptPattern), false);
                 }
             }
         }

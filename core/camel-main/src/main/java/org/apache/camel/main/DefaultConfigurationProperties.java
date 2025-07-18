@@ -130,6 +130,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean routesReloadRemoveAllRoutes = true;
     private boolean routesReloadRestartDuration;
     private String groovyScriptPattern = "classpath:camel-groovy/*";
+    @Metadata(label = "advanced")
+    private boolean groovyPreloadCompiled;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
@@ -1411,6 +1413,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setGroovyScriptPattern(String groovyScriptPattern) {
         this.groovyScriptPattern = groovyScriptPattern;
+    }
+
+    public boolean isGroovyPreloadCompiled() {
+        return groovyPreloadCompiled;
+    }
+
+    /**
+     * Whether to preload existing compiled Groovy sources from the compileWorkDir option on startup.
+     * This can be enabled to avoid compiling sources that already has been compiled during a build phase.
+     */
+    public void setGroovyPreloadCompiled(boolean groovyPreloadCompiled) {
+        this.groovyPreloadCompiled = groovyPreloadCompiled;
     }
 
     public String getExchangeFactory() {
@@ -2801,6 +2815,16 @@ public abstract class DefaultConfigurationProperties<T> {
         this.groovyScriptPattern = groovyScriptPattern;
         return (T) this;
     }
+
+    /**
+     * Whether to preload existing compiled Groovy sources from the compileWorkDir option on startup.
+     * This can be enabled to avoid compiling sources that already has been compiled during a build phase.
+     */
+    public T withGroovyPreloadCompiled(boolean groovyPreloadCompiled) {
+        this.groovyPreloadCompiled = groovyPreloadCompiled;
+        return (T) this;
+    }
+
 
     /**
      * Whether to use cloud properties location setting. Default is none.

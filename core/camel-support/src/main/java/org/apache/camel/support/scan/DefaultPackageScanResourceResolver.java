@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -55,35 +56,37 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
 
     @Override
     public Collection<Resource> findResources(String location) throws Exception {
-        Set<Resource> answer = new HashSet<>();
-        doFindResources(location, answer);
+        return findResources(location, null);
+    }
 
+    @Override
+    public Collection<Resource> findResources(String location, Predicate<String> filter) throws Exception {
+        Set<Resource> answer = new HashSet<>();
+        doFindResources(location, answer, filter);
         return answer;
     }
 
-    protected void doFindResources(String location, Set<Resource> resources)
+    protected void doFindResources(String location, Set<Resource> resources, Predicate<String> filter)
             throws Exception {
         // if its a pattern then we need to scan its root path and find
         // all matching resources using the sub pattern
         if (PATH_MATCHER.isPattern(location)) {
             String root = PATH_MATCHER.determineRootDir(location);
             String subPattern = location.substring(root.length());
-
             String scheme = ResourceHelper.getScheme(location);
             if ("file:".equals(scheme)) {
                 // file based scanning
                 root = root.substring(scheme.length());
-                findInFileSystem(new File(root), resources, subPattern);
+                findInFileSystem(new File(root), resources, subPattern, filter);
             } else {
                 if ("classpath:".equals(scheme)) {
                     root = root.substring(scheme.length());
                 }
                 // assume classpath based scan from root path and find all resources
-                findInClasspath(root, resources, subPattern);
+                findInClasspath(root, resources, subPattern, filter);
             }
         } else {
             final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
-
             // its a single resource so load it directly
             resources.add(loader.resolveResource(location));
         }
@@ -92,20 +95,25 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
     protected void findInFileSystem(
             File dir,
             Set<Resource> resources,
-            String subPattern)
+            String subPattern,
+            Predicate<String> filter)
             throws Exception {
 
         final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
-
         for (Path path : ResourceHelper.findInFileSystem(dir.toPath(), subPattern)) {
-            resources.add(loader.resolveResource("file:" + path.toString()));
+            String name = path.toString();
+            boolean accept = filter == null || filter.test(name);
+            if (accept) {
+                resources.add(loader.resolveResource("file:" + name));
+            }
         }
     }
 
     protected void findInClasspath(
             String packageName,
             Set<Resource> resources,
-            String subPattern) {
+            String subPattern,
+            Predicate<String> filter) {
 
         // special for root package
         if (".".equals(packageName)) {
@@ -121,9 +129,8 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
         }
 
         Set<ClassLoader> set = getClassLoaders();
-
         for (ClassLoader classLoader : set) {
-            doFind(packageName, classLoader, resources, subPattern);
+            doFind(packageName, classLoader, resources, subPattern, filter);
         }
     }
 
@@ -131,7 +138,8 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             String packageName,
             ClassLoader classLoader,
             Set<Resource> resources,
-            String subPattern) {
+            String subPattern,
+            Predicate<String> filter) {
 
         Enumeration<URL> urls = getUrls(packageName, classLoader);
         if (urls == null) {
@@ -156,12 +164,12 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
                     LOG.trace("Loading from directory using file: {}", file);
-                    loadImplementationsInDirectory(subPattern, packageName, file, resources);
+                    loadImplementationsInDirectory(subPattern, packageName, file, resources, filter);
                 } else {
                     InputStream stream;
                     if (urlPath.startsWith("http:") || urlPath.startsWith("https:")
-                            || urlPath.startsWith("sonicfs:")
-                            || isAcceptableScheme(urlPath)) {
+                        || urlPath.startsWith("sonicfs:")
+                        || isAcceptableScheme(urlPath)) {
                         // load resources using http/https, sonicfs and other acceptable scheme
                         // sonic ESB requires to be loaded using a regular URLConnection
                         LOG.trace("Loading from jar using url: {}", urlPath);
@@ -174,7 +182,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                         LOG.trace("Loading from jar using file: {}", file);
                         stream = new FileInputStream(file);
                     }
-                    loadImplementationsInJar(url, packageName, subPattern, stream, urlPath, resources);
+                    loadImplementationsInJar(url, packageName, subPattern, stream, urlPath, resources, filter);
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs
@@ -189,7 +197,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
      *
      * @param packageName the root package name
      * @param subPattern  optional pattern to use for matching resource names
-     * @param stream      the inputstream of the jar file to be examined for classes
+     * @param stream      the input stream of the jar file to be examined for classes
      * @param urlPath     the url of the jar file to be examined for classes
      * @param resources   the list to add loaded resources
      */
@@ -199,9 +207,10 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             String subPattern,
             InputStream stream,
             String urlPath,
-            Set<Resource> resources) {
+            Set<Resource> resources,
+            Predicate<String> filter) {
 
-        List<String> entries = doLoadImplementationsInJar(packageName, stream, urlPath);
+        List<String> entries = doLoadImplementationsInJar(packageName, stream, urlPath, filter);
         for (String name : entries) {
             String shortName = name.substring(packageName.length());
             boolean match = PATH_MATCHER.match(subPattern, shortName);
@@ -216,7 +225,8 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
     protected List<String> doLoadImplementationsInJar(
             String packageName,
             InputStream stream,
-            String urlPath) {
+            String urlPath,
+            Predicate<String> filter) {
 
         List<String> entries = new ArrayList<>();
 
@@ -227,10 +237,20 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             JarEntry entry;
             while ((entry = jarStream.getNextJarEntry()) != null) {
                 final String name = entry.getName().trim();
-                if (!entry.isDirectory() && !name.endsWith(".class")) {
-                    // name is FQN so it must start with package name
-                    if (name.startsWith(packageName)) {
-                        entries.add(name);
+                if (!entry.isDirectory()) {
+                    boolean accept;
+                    if (filter != null) {
+                        // use filter to accept or not
+                        accept = filter.test(name);
+                    } else {
+                        // skip class files by default
+                        accept = !name.endsWith(".class");
+                    }
+                    if (accept) {
+                        // name is FQN so it must start with package name
+                        if (name.startsWith(packageName)) {
+                            entries.add(name);
+                        }
                     }
                 }
 
@@ -244,22 +264,12 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
         return entries;
     }
 
-    /**
-     * Finds matches in a physical directory on a filesystem. Examines all files within a directory - if the File object
-     * is not a directory, and ends with <i>.class</i> the file is loaded and tested to see if it is acceptable
-     * according to the Test. Operates recursively to find classes within a folder structure matching the package
-     * structure.
-     *
-     * @param parent   the package name up to this directory in the package hierarchy. E.g. if /classes is in the
-     *                 classpath and we wish to examine files in /classes/org/apache then the values of <i>parent</i>
-     *                 would be <i>org/apache</i>
-     * @param location a File object representing a directory
-     */
     private void loadImplementationsInDirectory(
             String subPattern,
             String parent,
             File location,
-            Set<Resource> resources) {
+            Set<Resource> resources,
+            Predicate<String> filter) {
         File[] files = location.listFiles();
         if (files == null || files.length == 0) {
             return;
@@ -274,13 +284,23 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             String packageOrClass = parent == null ? name : builder.toString();
 
             if (file.isDirectory()) {
-                loadImplementationsInDirectory(subPattern, packageOrClass, file, resources);
-            } else if (file.isFile() && file.exists() && !name.endsWith(".class")) {
-                boolean match = PATH_MATCHER.match(subPattern, name);
-                LOG.debug("Found resource: {} matching pattern: {} -> {}", name, subPattern, match);
-                if (match) {
-                    final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
-                    resources.add(loader.resolveResource("file:" + file.getPath()));
+                loadImplementationsInDirectory(subPattern, packageOrClass, file, resources, filter);
+            } else if (file.isFile() && file.exists()) {
+                boolean accept;
+                if (filter != null) {
+                    // use filter to accept or not
+                    accept = filter.test(name);
+                } else {
+                    // skip class files by default
+                    accept = !name.endsWith(".class");
+                }
+                if (accept) {
+                    boolean match = PATH_MATCHER.match(subPattern, name);
+                    LOG.debug("Found resource: {} matching pattern: {} -> {}", name, subPattern, match);
+                    if (match) {
+                        final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
+                        resources.add(loader.resolveResource("file:" + file.getPath()));
+                    }
                 }
             }
         }

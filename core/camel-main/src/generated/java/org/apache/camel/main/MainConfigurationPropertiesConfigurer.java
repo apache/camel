@@ -67,6 +67,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("ExtraShutdownTimeout", int.class);
         map.put("FileConfigurations", java.lang.String.class);
         map.put("GlobalOptions", java.util.Map.class);
+        map.put("GroovyPreloadCompiled", boolean.class);
         map.put("GroovyScriptPattern", java.lang.String.class);
         map.put("InflightRepositoryBrowseEnabled", boolean.class);
         map.put("JavaRoutesExcludePattern", java.lang.String.class);
@@ -240,6 +241,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "fileConfigurations": target.setFileConfigurations(property(camelContext, java.lang.String.class, value)); return true;
         case "globaloptions":
         case "globalOptions": target.setGlobalOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "groovypreloadcompiled":
+        case "groovyPreloadCompiled": target.setGroovyPreloadCompiled(property(camelContext, boolean.class, value)); return true;
         case "groovyscriptpattern":
         case "groovyScriptPattern": target.setGroovyScriptPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "inflightrepositorybrowseenabled":
@@ -492,6 +495,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "fileConfigurations": return java.lang.String.class;
         case "globaloptions":
         case "globalOptions": return java.util.Map.class;
+        case "groovypreloadcompiled":
+        case "groovyPreloadCompiled": return boolean.class;
         case "groovyscriptpattern":
         case "groovyScriptPattern": return java.lang.String.class;
         case "inflightrepositorybrowseenabled":
@@ -740,6 +745,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "fileConfigurations": return target.getFileConfigurations();
         case "globaloptions":
         case "globalOptions": return target.getGlobalOptions();
+        case "groovypreloadcompiled":
+        case "groovyPreloadCompiled": return target.isGroovyPreloadCompiled();
         case "groovyscriptpattern":
         case "groovyScriptPattern": return target.getGroovyScriptPattern();
         case "inflightrepositorybrowseenabled":
