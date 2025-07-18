@@ -42,6 +42,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String databaseSslfactory;
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME)
@@ -72,10 +74,16 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String slotName = "debezium";
     @UriParam(label = LABEL_NAME, defaultValue = "1024")
     private int incrementalSnapshotChunkSize = 1024;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobOwners;
+    @UriParam(label = LABEL_NAME, defaultValue = "./openlineage.yml")
+    private String openlineageIntegrationConfigFilePath = "./openlineage.yml";
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "4s", javaType = "java.time.Duration")
+    private long executorShutdownTimeoutMs = 4000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotOnDataError = false;
     @UriParam(label = LABEL_NAME)
@@ -120,12 +128,16 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String slotStreamParams;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long streamingDelayMs = 0;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobNamespace;
     @UriParam(label = LABEL_NAME, defaultValue = "10m", javaType = "java.time.Duration")
     private int databaseQueryTimeoutMs = 600000;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private int queryFetchSize = 0;
     @UriParam(label = LABEL_NAME)
     private String schemaIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "30s", javaType = "java.time.Duration")
+    private long lsnFlushTimeoutMs = 30000;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
     private String unavailableValuePlaceholder = "__debezium_unavailable_value";
     @UriParam(label = LABEL_NAME)
@@ -165,6 +177,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String databasePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "t")
     private String skippedOperations = "t";
+    @UriParam(label = LABEL_NAME, defaultValue = "Debezium change data capture job")
+    private String openlineageIntegrationJobDescription = "Debezium change data capture job";
     @UriParam(label = LABEL_NAME)
     private String messagePrefixIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
@@ -188,12 +202,16 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String sourceinfoStructMaker = "io.debezium.connector.postgresql.PostgresSourceInfoStructMaker";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean flushLsnSource = true;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean openlineageIntegrationEnabled = false;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean databaseTcpkeepalive = true;
     @UriParam(label = LABEL_NAME, defaultValue = "all_tables")
     private String publicationAutocreateMode = "all_tables";
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean publishViaPartitionRoot = false;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long xminFetchIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -204,6 +222,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String messagePrefixExcludeList;
     @UriParam(label = LABEL_NAME)
     private String postProcessors;
+    @UriParam(label = LABEL_NAME, defaultValue = "fail")
+    private String lsnFlushTimeoutAction = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "5432")
     private int databasePort = 5432;
     @UriParam(label = LABEL_NAME)
@@ -212,6 +232,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private boolean includeUnknownDatatypes = false;
     @UriParam(label = LABEL_NAME)
     private String databaseHostname;
+    @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
+    private long connectionValidationTimeoutMs = 60000;
 
     /**
      * Controls how the connector holds locks on tables while performing the
@@ -419,6 +441,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public int getSnapshotFetchSize() {
         return snapshotFetchSize;
+    }
+
+    /**
+     * The job's tags emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
+     */
+    public void setOpenlineageIntegrationJobTags(
+            String openlineageIntegrationJobTags) {
+        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
+    }
+
+    public String getOpenlineageIntegrationJobTags() {
+        return openlineageIntegrationJobTags;
     }
 
     /**
@@ -634,6 +669,32 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's owners emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
+     */
+    public void setOpenlineageIntegrationJobOwners(
+            String openlineageIntegrationJobOwners) {
+        this.openlineageIntegrationJobOwners = openlineageIntegrationJobOwners;
+    }
+
+    public String getOpenlineageIntegrationJobOwners() {
+        return openlineageIntegrationJobOwners;
+    }
+
+    /**
+     * Path to OpenLineage file configuration. See
+     * https://openlineage.io/docs/client/java/configuration
+     */
+    public void setOpenlineageIntegrationConfigFilePath(
+            String openlineageIntegrationConfigFilePath) {
+        this.openlineageIntegrationConfigFilePath = openlineageIntegrationConfigFilePath;
+    }
+
+    public String getOpenlineageIntegrationConfigFilePath() {
+        return openlineageIntegrationConfigFilePath;
+    }
+
+    /**
      * Time to wait before restarting connector after retriable exception
      * occurs. Defaults to 10000ms.
      */
@@ -656,6 +717,17 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public long getSnapshotDelayMs() {
         return snapshotDelayMs;
+    }
+
+    /**
+     * The maximum time in milliseconds to wait for task executor to shut down.
+     */
+    public void setExecutorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+        this.executorShutdownTimeoutMs = executorShutdownTimeoutMs;
+    }
+
+    public long getExecutorShutdownTimeoutMs() {
+        return executorShutdownTimeoutMs;
     }
 
     /**
@@ -958,6 +1030,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's namespace emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobNamespace(
+            String openlineageIntegrationJobNamespace) {
+        this.openlineageIntegrationJobNamespace = openlineageIntegrationJobNamespace;
+    }
+
+    public String getOpenlineageIntegrationJobNamespace() {
+        return openlineageIntegrationJobNamespace;
+    }
+
+    /**
      * Time to wait for a query to execute, given in milliseconds. Defaults to
      * 600 seconds (600,000 ms); zero means there is no limit.
      */
@@ -990,6 +1074,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getSchemaIncludeList() {
         return schemaIncludeList;
+    }
+
+    /**
+     * Maximum time in milliseconds to wait for LSN flush operation to complete.
+     * If the flush operation does not complete within this timeout, the action
+     * specified by lsn.flush.timeout.action will be taken. Defaults to 30
+     * seconds.
+     */
+    public void setLsnFlushTimeoutMs(long lsnFlushTimeoutMs) {
+        this.lsnFlushTimeoutMs = lsnFlushTimeoutMs;
+    }
+
+    public long getLsnFlushTimeoutMs() {
+        return lsnFlushTimeoutMs;
     }
 
     /**
@@ -1250,6 +1348,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's description emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobDescription(
+            String openlineageIntegrationJobDescription) {
+        this.openlineageIntegrationJobDescription = openlineageIntegrationJobDescription;
+    }
+
+    public String getOpenlineageIntegrationJobDescription() {
+        return openlineageIntegrationJobDescription;
+    }
+
+    /**
      * A comma-separated list of regular expressions that match the logical
      * decoding message prefixes to be monitored. All prefixes are monitored by
      * default.
@@ -1396,6 +1506,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Enable Debezium to emit data lineage metadata through OpenLineage API
+     */
+    public void setOpenlineageIntegrationEnabled(
+            boolean openlineageIntegrationEnabled) {
+        this.openlineageIntegrationEnabled = openlineageIntegrationEnabled;
+    }
+
+    public boolean isOpenlineageIntegrationEnabled() {
+        return openlineageIntegrationEnabled;
+    }
+
+    /**
      * Enable or disable TCP keep-alive probe to avoid dropping TCP connection
      */
     public void setDatabaseTcpkeepalive(boolean databaseTcpkeepalive) {
@@ -1441,6 +1563,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public long getMaxQueueSizeInBytes() {
         return maxQueueSizeInBytes;
+    }
+
+    /**
+     * A boolean that determines whether the connector should publish changes
+     * via the partition root. When true, changes are published through
+     * partition root. When false, changes are published directly.
+     */
+    public void setPublishViaPartitionRoot(boolean publishViaPartitionRoot) {
+        this.publishViaPartitionRoot = publishViaPartitionRoot;
+    }
+
+    public boolean isPublishViaPartitionRoot() {
+        return publishViaPartitionRoot;
     }
 
     /**
@@ -1517,6 +1652,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Action to take when an LSN flush timeout occurs. Options include: 'fail'
+     * (default) to fail the connector; 'warn' to log a warning and continue
+     * processing; 'ignore' to continue processing and ignore the timeout.
+     */
+    public void setLsnFlushTimeoutAction(String lsnFlushTimeoutAction) {
+        this.lsnFlushTimeoutAction = lsnFlushTimeoutAction;
+    }
+
+    public String getLsnFlushTimeoutAction() {
+        return lsnFlushTimeoutAction;
+    }
+
+    /**
      * Port of the database server.
      */
     public void setDatabasePort(int databasePort) {
@@ -1562,6 +1710,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         return databaseHostname;
     }
 
+    /**
+     * The maximum time in milliseconds to wait for connection validation to
+     * complete. Defaults to 60 seconds.
+     */
+    public void setConnectionValidationTimeoutMs(
+            long connectionValidationTimeoutMs) {
+        this.connectionValidationTimeoutMs = connectionValidationTimeoutMs;
+    }
+
+    public long getConnectionValidationTimeoutMs() {
+        return connectionValidationTimeoutMs;
+    }
+
     @Override
     protected Configuration createConnectorConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
@@ -1580,6 +1741,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "database.sslfactory", databaseSslfactory);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
         addPropertyIfNotNull(configBuilder, "database.dbname", databaseDbname);
         addPropertyIfNotNull(configBuilder, "database.sslkey", databaseSslkey);
@@ -1595,8 +1757,11 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
         addPropertyIfNotNull(configBuilder, "slot.name", slotName);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.chunk.size", incrementalSnapshotChunkSize);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
+        addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
@@ -1619,9 +1784,11 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
         addPropertyIfNotNull(configBuilder, "slot.stream.params", slotStreamParams);
         addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
         addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "schema.include.list", schemaIncludeList);
+        addPropertyIfNotNull(configBuilder, "lsn.flush.timeout.ms", lsnFlushTimeoutMs);
         addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "replica.identity.autoset.values", replicaIdentityAutosetValues);
@@ -1641,6 +1808,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
         addPropertyIfNotNull(configBuilder, "message.prefix.include.list", messagePrefixIncludeList);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "hstore.handling.mode", hstoreHandlingMode);
@@ -1652,18 +1820,22 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
         addPropertyIfNotNull(configBuilder, "flush.lsn.source", flushLsnSource);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "database.tcpKeepAlive", databaseTcpkeepalive);
         addPropertyIfNotNull(configBuilder, "publication.autocreate.mode", publicationAutocreateMode);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
+        addPropertyIfNotNull(configBuilder, "publish.via.partition.root", publishViaPartitionRoot);
         addPropertyIfNotNull(configBuilder, "xmin.fetch.interval.ms", xminFetchIntervalMs);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "message.prefix.exclude.list", messagePrefixExcludeList);
         addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
+        addPropertyIfNotNull(configBuilder, "lsn.flush.timeout.action", lsnFlushTimeoutAction);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "include.unknown.datatypes", includeUnknownDatatypes);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
+        addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
         
         return configBuilder.build();
     }

@@ -23,7 +23,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(111);
+        Set<String> props = new HashSet<>(119);
         props.add("additionalProperties");
         props.add("bigintUnsignedHandlingMode");
         props.add("binlogBufferSize");
@@ -34,6 +34,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("connectKeepAlive");
         props.add("connectKeepAliveIntervalMs");
         props.add("connectTimeoutMs");
+        props.add("connectionValidationTimeoutMs");
         props.add("converters");
         props.add("customMetricTags");
         props.add("databaseExcludeList");
@@ -61,6 +62,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("executorShutdownTimeoutMs");
         props.add("gtidSourceExcludes");
         props.add("gtidSourceFilterDmlEvents");
         props.add("gtidSourceIncludes");
@@ -92,6 +94,12 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("offsetStoragePartitions");
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
+        props.add("openlineageIntegrationConfigFilePath");
+        props.add("openlineageIntegrationEnabled");
+        props.add("openlineageIntegrationJobDescription");
+        props.add("openlineageIntegrationJobNamespace");
+        props.add("openlineageIntegrationJobOwners");
+        props.add("openlineageIntegrationJobTags");
         props.add("pollIntervalMs");
         props.add("postProcessors");
         props.add("provideTransactionMetadata");
