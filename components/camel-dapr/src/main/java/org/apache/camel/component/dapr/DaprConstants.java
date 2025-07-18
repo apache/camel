@@ -122,7 +122,7 @@ public class DaprConstants {
     public static final String BINDING_NAME = HEADER_PREFIX + "BindingName";
     @Metadata(label = "producer", description = "The operation to perform on the binding", javaType = "String")
     public static final String BINDING_OPERATION = HEADER_PREFIX + "BindingOperation";
-    @Metadata(label = "producer", description = "List of keys for configuration operation", javaType = "List<String>")
+    @Metadata(label = "producer", description = "List of keys for configuration operation", javaType = "String")
     public static final String CONFIG_KEYS = HEADER_PREFIX + "ConfigKeys";
     @Metadata(label = "consumer", description = "The id for configuration change subscription", javaType = "String")
     public static final String SUBSCRIPTION_ID = HEADER_PREFIX + "SubscriptionId";

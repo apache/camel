@@ -17,7 +17,6 @@
 package org.apache.camel.component.dapr.consumer;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import io.dapr.client.DaprClient;
@@ -63,7 +62,7 @@ public class DaprConfigurationConsumerTest extends CamelTestSupport {
     private final ArgumentCaptor<AsyncCallback> callbackCaptor = ArgumentCaptor.forClass(AsyncCallback.class);
 
     private DaprConfigurationConsumer consumer;
-    private final List<String> configKeys = List.of("myKey1", "myKey2");
+    private final String configKeys = "myKey1,myKey2";
 
     @BeforeEach
     void beforeEach() throws Exception {

@@ -37,7 +37,7 @@ public class DaprConfigurationHandler implements DaprOperationHandler {
     @Override
     public DaprOperationResponse handle(Exchange exchange, DaprClient client) {
         String configStore = configurationOptionsProxy.getConfigStore(exchange);
-        List<String> configKeys = configurationOptionsProxy.getConfigKeys(exchange);
+        List<String> configKeys = configurationOptionsProxy.getConfigKeysAsList(exchange);
         Map<String, String> metadata = configurationOptionsProxy.getMetadata(exchange);
 
         GetConfigurationRequest configRequest = new GetConfigurationRequest(configStore, configKeys);
@@ -51,7 +51,7 @@ public class DaprConfigurationHandler implements DaprOperationHandler {
     @Override
     public void validateConfiguration(Exchange exchange) {
         String configStore = configurationOptionsProxy.getConfigStore(exchange);
-        List<String> configKeys = configurationOptionsProxy.getConfigKeys(exchange);
+        String configKeys = configurationOptionsProxy.getConfigKeys(exchange);
 
         if (ObjectHelper.isEmpty(configStore) || ObjectHelper.isEmpty(configKeys)) {
             throw new IllegalArgumentException("configStore and configKeys are mandatory for get configuration operation");

@@ -128,8 +128,8 @@ public class DaprExchangeHeaders {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<String> getConfigKeysFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, DaprConstants.CONFIG_KEYS, List.class);
+    public static String getConfigKeysFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.CONFIG_KEYS, String.class);
     }
 
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {

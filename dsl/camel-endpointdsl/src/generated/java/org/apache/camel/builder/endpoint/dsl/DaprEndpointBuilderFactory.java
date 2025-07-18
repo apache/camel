@@ -46,23 +46,7 @@ public interface DaprEndpointBuilderFactory {
         /**
          * List of keys for configuration operation.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param configKeys the value to set
-         * @return the dsl builder
-         */
-        default DaprEndpointConsumerBuilder configKeys(List<java.lang.String> configKeys) {
-            doSetProperty("configKeys", configKeys);
-            return this;
-        }
-        /**
-         * List of keys for configuration operation.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -305,23 +289,7 @@ public interface DaprEndpointBuilderFactory {
         /**
          * List of keys for configuration operation.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param configKeys the value to set
-         * @return the dsl builder
-         */
-        default DaprEndpointProducerBuilder configKeys(List<java.lang.String> configKeys) {
-            doSetProperty("configKeys", configKeys);
-            return this;
-        }
-        /**
-         * List of keys for configuration operation.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -724,23 +692,7 @@ public interface DaprEndpointBuilderFactory {
         /**
          * List of keys for configuration operation.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param configKeys the value to set
-         * @return the dsl builder
-         */
-        default DaprEndpointBuilder configKeys(List<java.lang.String> configKeys) {
-            doSetProperty("configKeys", configKeys);
-            return this;
-        }
-        /**
-         * List of keys for configuration operation.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1300,7 +1252,7 @@ public interface DaprEndpointBuilderFactory {
         /**
          * List of keys for configuration operation.
          * 
-         * The option is a: {@code List<String>} type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 

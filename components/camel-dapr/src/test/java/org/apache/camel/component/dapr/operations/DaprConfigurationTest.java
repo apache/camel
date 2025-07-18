@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.dapr.operations;
 
-import java.util.List;
 import java.util.Map;
 
 import io.dapr.client.DaprClient;
@@ -58,7 +57,7 @@ public class DaprConfigurationTest extends CamelTestSupport {
         DaprConfiguration configuration = new DaprConfiguration();
         configuration.setOperation(DaprOperation.configuration);
         configuration.setSecretStore("myStore");
-        configuration.setConfigKeys(List.of("myKey"));
+        configuration.setConfigKeys("myKey");
         DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
 
         final Exchange exchange = new DefaultExchange(context);
@@ -88,7 +87,7 @@ public class DaprConfigurationTest extends CamelTestSupport {
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));
 
         // case 3: valid configuration
-        configuration.setConfigKeys(List.of("myKey"));
+        configuration.setConfigKeys("myKey");
         assertDoesNotThrow(() -> operation.validateConfiguration(exchange));
     }
 }

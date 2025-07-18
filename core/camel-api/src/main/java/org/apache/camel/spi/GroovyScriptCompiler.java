@@ -40,15 +40,13 @@ public interface GroovyScriptCompiler {
 
     /**
      * Whether to preload existing compiled Groovy sources from classpath and the {@link CompileStrategy#getWorkDir()},
-     * on startup. This can be enabled to avoid compiling sources that already has been compiled during
-     * a build phase.
+     * on startup. This can be enabled to avoid compiling sources that already has been compiled during a build phase.
      */
     void setPreloadCompiled(boolean preloadCompiled);
 
     /**
-     * Whether to preload existing compiled Groovy sources from the {@link CompileStrategy#getWorkDir()},
-     * on startup. This can be enabled to avoid compiling sources that already has been compiled during
-     * a build phase.
+     * Whether to preload existing compiled Groovy sources from the {@link CompileStrategy#getWorkDir()}, on startup.
+     * This can be enabled to avoid compiling sources that already has been compiled during a build phase.
      */
     boolean isPreloadCompiled();
 

@@ -168,8 +168,8 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 } else {
                     InputStream stream;
                     if (urlPath.startsWith("http:") || urlPath.startsWith("https:")
-                        || urlPath.startsWith("sonicfs:")
-                        || isAcceptableScheme(urlPath)) {
+                            || urlPath.startsWith("sonicfs:")
+                            || isAcceptableScheme(urlPath)) {
                         // load resources using http/https, sonicfs and other acceptable scheme
                         // sonic ESB requires to be loaded using a regular URLConnection
                         LOG.trace("Loading from jar using url: {}", urlPath);

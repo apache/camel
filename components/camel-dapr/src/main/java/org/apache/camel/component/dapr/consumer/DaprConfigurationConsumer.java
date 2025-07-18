@@ -46,7 +46,7 @@ public class DaprConfigurationConsumer extends DefaultConsumer {
     public DaprConfigurationConsumer(final DaprEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
         configStore = endpoint.getConfiguration().getConfigStore();
-        configKeys = endpoint.getConfiguration().getConfigKeys();
+        configKeys = endpoint.getConfiguration().getConfigKeysAsList();
         client = endpoint.getClient();
     }
 

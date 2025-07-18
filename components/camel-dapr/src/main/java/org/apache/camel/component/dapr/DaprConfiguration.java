@@ -84,7 +84,7 @@ public class DaprConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "The operation to perform on the binding")
     private String bindingOperation;
     @UriParam(label = "common", description = "List of keys for configuration operation")
-    private List<String> configKeys;
+    private String configKeys;
 
     /**
      * The Dapr <b>building block operation</b> to perform with this component
@@ -335,13 +335,21 @@ public class DaprConfiguration implements Cloneable {
     }
 
     /**
-     * List of <b>keys</b> for configuration operation.
+     * Comma separated list of <b>keys</b> for configuration operation.
      */
-    public List<String> getConfigKeys() {
+    public String getConfigKeys() {
         return configKeys;
     }
 
-    public void setConfigKeys(List<String> configKeys) {
+    public List<String> getConfigKeysAsList() {
+        if (configKeys != null) {
+            return List.of(configKeys.split(","));
+        } else {
+            return null;
+        }
+    }
+
+    public void setConfigKeys(String configKeys) {
         this.configKeys = configKeys;
     }
 

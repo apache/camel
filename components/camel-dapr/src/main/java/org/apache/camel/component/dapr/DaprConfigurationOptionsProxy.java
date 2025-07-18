@@ -137,8 +137,12 @@ public class DaprConfigurationOptionsProxy {
         return getOption(DaprExchangeHeaders::getBindingOperationFromHeaders, configuration::getBindingOperation, exchange);
     }
 
-    public List<String> getConfigKeys(final Exchange exchange) {
+    public String getConfigKeys(final Exchange exchange) {
         return getOption(DaprExchangeHeaders::getConfigKeysFromHeaders, configuration::getConfigKeys, exchange);
+    }
+
+    public List<String> getConfigKeysAsList(final Exchange exchange) {
+        return configuration.getConfigKeysAsList();
     }
 
     private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {

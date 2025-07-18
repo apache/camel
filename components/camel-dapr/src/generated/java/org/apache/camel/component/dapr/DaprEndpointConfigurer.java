@@ -31,7 +31,7 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrency": target.getConfiguration().setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
         case "configkeys":
-        case "configKeys": target.getConfiguration().setConfigKeys(property(camelContext, java.util.List.class, value)); return true;
+        case "configKeys": target.getConfiguration().setConfigKeys(property(camelContext, java.lang.String.class, value)); return true;
         case "configstore":
         case "configStore": target.getConfiguration().setConfigStore(property(camelContext, java.lang.String.class, value)); return true;
         case "consistency": target.getConfiguration().setConsistency(property(camelContext, io.dapr.client.domain.StateOptions.Consistency.class, value)); return true;
@@ -84,7 +84,7 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": return boolean.class;
         case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
         case "configkeys":
-        case "configKeys": return java.util.List.class;
+        case "configKeys": return java.lang.String.class;
         case "configstore":
         case "configStore": return java.lang.String.class;
         case "consistency": return io.dapr.client.domain.StateOptions.Consistency.class;
@@ -166,15 +166,6 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "stateStore": return target.getConfiguration().getStateStore();
         case "topic": return target.getConfiguration().getTopic();
         case "verb": return target.getConfiguration().getVerb();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "configkeys":
-        case "configKeys": return java.lang.String.class;
         default: return null;
         }
     }
