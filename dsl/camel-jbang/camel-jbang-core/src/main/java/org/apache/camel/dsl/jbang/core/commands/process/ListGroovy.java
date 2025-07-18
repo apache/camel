@@ -75,8 +75,9 @@ public class ListGroovy extends ProcessWatchCommand {
                         }
                         if (jo != null) {
                             row = row.copy();
-                            row.counter = jo.getInteger("compiledCounter");
-                            row.classesSize = jo.getInteger("compiledClasses");
+                            row.compiledCounter = jo.getInteger("compiledCounter");
+                            row.preloaddCounter = jo.getInteger("preloadedCounter");
+                            row.classesSize = jo.getInteger("classesSize");
                             row.time = jo.getLong("compiledTime");
                             row.last = jo.getLong("lastCompilationTimestamp");
                             row.compiledClasses.clear();
@@ -97,7 +98,8 @@ public class ListGroovy extends ProcessWatchCommand {
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
-                    new Column().header("COMPILE").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.counter),
+                    new Column().header("PRELOAD").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.preloaddCounter),
+                    new Column().header("COMPILE").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.compiledCounter),
                     new Column().header("TIME").headerAlign(HorizontalAlign.CENTER).with(this::getTime),
                     new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).with(this::getLast),
                     new Column().header("CLASSES").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
@@ -145,7 +147,8 @@ public class ListGroovy extends ProcessWatchCommand {
     private static class Row implements Cloneable {
         String pid;
         String name;
-        int counter;
+        int compiledCounter;
+        int preloaddCounter;
         int classesSize;
         long time;
         long last;

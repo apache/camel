@@ -37,20 +37,20 @@ public class GroovyDevConsole extends AbstractDevConsole {
 
         DefaultGroovyScriptCompiler compiler = getCamelContext().hasService(DefaultGroovyScriptCompiler.class);
         if (compiler != null) {
-            sb.append(String.format("    Groovy Script Pattern: %s", compiler.getScriptPattern()));
+            sb.append(String.format("    Script Pattern: %s", compiler.getScriptPattern()));
+            sb.append(String.format("\n    Pre-loaded Counter: %s", compiler.getPreloadedCounter()));
+            sb.append(String.format("\n    Compile Counter: %s", compiler.getCompileCounter()));
+            sb.append(String.format("\n    Compile Time: %s (ms)", compiler.getCompileTime()));
             long last = compiler.getLastCompilationTimestamp();
             if (last != 0) {
-                sb.append(String.format("\n    Last Compilation Ago: %s",
+                sb.append(String.format("\n    Compile Ago: %s",
                         TimeUtils.printSince(compiler.getLastCompilationTimestamp())));
             }
-            sb.append(String.format("\n    Compiled Counter: %s", compiler.getCompileCounter()));
-            sb.append(String.format("\n    Compiled Classes: %s", compiler.getClassesSize()));
-            sb.append(String.format("\n    Compiled Time: %s (ms)", compiler.getCompileTime()));
             sb.append(String.format("\n    Re-compile Enabled: %b", compiler.isRecompileEnabled()));
             if (compiler.getWorkDir() != null) {
                 sb.append(String.format("\n    Work Directory: %s", compiler.getWorkDir()));
             }
-            sb.append("\n    Classes");
+            sb.append(String.format("\n    Classes: (%d)", compiler.getClassesSize()));
             for (String name : compiler.compiledClassNames()) {
                 sb.append(String.format("\n        %s", name));
             }
@@ -66,9 +66,10 @@ public class GroovyDevConsole extends AbstractDevConsole {
         DefaultGroovyScriptCompiler compiler = getCamelContext().hasService(DefaultGroovyScriptCompiler.class);
         if (compiler != null) {
             JsonObject jo = new JsonObject();
-            jo.put("groovyScriptPattern", compiler.getScriptPattern());
+            jo.put("scriptPattern", compiler.getScriptPattern());
             jo.put("compiledCounter", compiler.getCompileCounter());
-            jo.put("compiledClasses", compiler.getClassesSize());
+            jo.put("preloadedCounter", compiler.getPreloadedCounter());
+            jo.put("classesSize", compiler.getClassesSize());
             jo.put("compiledTime", compiler.getCompileTime());
             jo.put("recompileEnabled", compiler.isRecompileEnabled());
             jo.put("lastCompilationTimestamp", compiler.getLastCompilationTimestamp());
