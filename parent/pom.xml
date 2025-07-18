@@ -481,7 +481,7 @@
         <spring-data-redis-version>3.5.1</spring-data-redis-version>
         <spring-ldap-version>3.3.1</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
-        <spring-version>6.2.8</spring-version>
+        <spring-version>6.2.9</spring-version>
         <spring-rabbitmq-version>3.2.5</spring-rabbitmq-version>
         <spring-security-version>6.5.1</spring-security-version>
         <spring-ws-version>4.1.0</spring-ws-version>
