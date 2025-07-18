@@ -76,27 +76,10 @@ public interface DMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * The ID of an available zone. This option is mandatory when creating
-         * an instance and it cannot be an empty array.
+         * A comma separated String of Availability Zones. This option is
+         * mandatory when creating an instance and it cannot be an empty array.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param availableZones the value to set
-         * @return the dsl builder
-         */
-        default DMSEndpointBuilder availableZones(List<java.lang.String> availableZones) {
-            doSetProperty("availableZones", availableZones);
-            return this;
-        }
-        /**
-         * The ID of an available zone. This option is mandatory when creating
-         * an instance and it cannot be an empty array.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 

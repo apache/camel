@@ -188,7 +188,7 @@ public class DMSProducer extends DefaultProducer {
                     .withVpcId(clientConfigurations.getVpcId())
                     .withSecurityGroupId(clientConfigurations.getSecurityGroupId())
                     .withSubnetId(clientConfigurations.getSubnetId())
-                    .withAvailableZones(clientConfigurations.getAvailableZones())
+                    .withAvailableZones((List<String>) clientConfigurations.getAvailableZonesAsList())
                     .withProductId(clientConfigurations.getProductId())
                     .withKafkaManagerUser(clientConfigurations.getKafkaManagerUser())
                     .withKafkaManagerPassword(clientConfigurations.getKafkaManagerPassword())
@@ -386,7 +386,7 @@ public class DMSProducer extends DefaultProducer {
         // checking for available zones
         clientConfigurations.setAvailableZones(
                 ObjectHelper.isNotEmpty(exchange.getProperty(DMSProperties.AVAILABLE_ZONES))
-                        ? (List<String>) exchange.getProperty(DMSProperties.AVAILABLE_ZONES)
+                        ? exchange.getProperty(DMSProperties.AVAILABLE_ZONES, String.class)
                         : endpoint.getAvailableZones());
 
         // checking for product id

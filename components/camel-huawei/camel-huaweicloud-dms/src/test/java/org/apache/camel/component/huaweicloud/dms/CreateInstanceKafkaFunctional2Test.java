@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.huaweicloud.dms;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -57,7 +54,7 @@ public class CreateInstanceKafkaFunctional2Test extends CamelTestSupport {
     ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
     @BindToRegistry("availableZones")
-    List<String> availableZones = new ArrayList<>();
+    String availableZones = AVAILABLE_ZONE;
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -101,8 +98,6 @@ public class CreateInstanceKafkaFunctional2Test extends CamelTestSupport {
     public void testOperation() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);
-
-        availableZones.add(AVAILABLE_ZONE);
 
         template.sendBody("direct:operation", null);
         Exchange responseExchange = mock.getExchanges().get(0);

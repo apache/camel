@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.huaweicloud.dms;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
@@ -150,10 +151,10 @@ public class DMSEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String subnetId;
 
-    @UriParam(description = "The ID of an available zone. This option is mandatory when creating an instance and it cannot be an empty array.",
+    @UriParam(description = "A comma separated String of Availability Zones. This option is mandatory when creating an instance and it cannot be an empty array.",
               displayName = "Available zones")
     @Metadata(required = false)
-    private List<String> availableZones;
+    private String availableZones;
 
     @UriParam(description = "The product ID. This option is mandatory when creating an instance.", displayName = "Product ID")
     @Metadata(required = false)
@@ -384,11 +385,19 @@ public class DMSEndpoint extends DefaultEndpoint {
         this.subnetId = subnetId;
     }
 
-    public List<String> getAvailableZones() {
+    public String getAvailableZones() {
         return availableZones;
     }
 
-    public void setAvailableZones(List<String> availableZones) {
+    public Collection<String> getAvailableZonesAsList() {
+        if (availableZones != null) {
+            return List.of(availableZones.split(","));
+        } else {
+            return null;
+        }
+    }
+
+    public void setAvailableZones(String availableZones) {
         this.availableZones = availableZones;
     }
 
