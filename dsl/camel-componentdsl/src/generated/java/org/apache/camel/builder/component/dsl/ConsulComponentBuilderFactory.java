@@ -348,17 +348,16 @@ public interface ConsulComponentBuilderFactory {
         }
     
         /**
-         * The note meta-data to use for queries.
+         * The comma separated node meta-data to use for queries.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param nodeMeta the value to set
          * @return the dsl builder
          */
-        default ConsulComponentBuilder nodeMeta(java.util.List<java.lang.String> nodeMeta) {
+        default ConsulComponentBuilder nodeMeta(java.lang.String nodeMeta) {
             doSetProperty("nodeMeta", nodeMeta);
             return this;
         }
@@ -530,7 +529,7 @@ public interface ConsulComponentBuilderFactory {
             case "consistencyMode": getOrCreateConfiguration((ConsulComponent) component).setConsistencyMode((org.kiwiproject.consul.option.ConsistencyMode) value); return true;
             case "datacenter": getOrCreateConfiguration((ConsulComponent) component).setDatacenter((java.lang.String) value); return true;
             case "nearNode": getOrCreateConfiguration((ConsulComponent) component).setNearNode((java.lang.String) value); return true;
-            case "nodeMeta": getOrCreateConfiguration((ConsulComponent) component).setNodeMeta((java.util.List) value); return true;
+            case "nodeMeta": getOrCreateConfiguration((ConsulComponent) component).setNodeMeta((java.lang.String) value); return true;
             case "aclToken": getOrCreateConfiguration((ConsulComponent) component).setAclToken((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((ConsulComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((ConsulComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;

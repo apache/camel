@@ -93,7 +93,7 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         ObjectHelper.ifNotEmpty(
                 message.getHeader(ConsulConstants.CONSUL_CONSISTENCY_MODE, conf.getConsistencyMode(), ConsistencyMode.class),
                 builder::consistencyMode);
-        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_NODE_META, conf.getNodeMeta(), List.class),
+        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_NODE_META, conf.getNodeMetasAsList(), List.class),
                 builder::nodeMeta);
 
         return builder.build();

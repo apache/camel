@@ -590,25 +590,9 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * The note meta-data to use for queries.
+         * The comma separated node meta-data to use for queries.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param nodeMeta the value to set
-         * @return the dsl builder
-         */
-        default AdvancedConsulEndpointConsumerBuilder nodeMeta(List<java.lang.String> nodeMeta) {
-            doSetProperty("nodeMeta", nodeMeta);
-            return this;
-        }
-        /**
-         * The note meta-data to use for queries.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1060,25 +1044,9 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * The note meta-data to use for queries.
+         * The comma separated node meta-data to use for queries.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param nodeMeta the value to set
-         * @return the dsl builder
-         */
-        default AdvancedConsulEndpointProducerBuilder nodeMeta(List<java.lang.String> nodeMeta) {
-            doSetProperty("nodeMeta", nodeMeta);
-            return this;
-        }
-        /**
-         * The note meta-data to use for queries.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
@@ -1442,25 +1410,9 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * The note meta-data to use for queries.
+         * The comma separated node meta-data to use for queries.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param nodeMeta the value to set
-         * @return the dsl builder
-         */
-        default AdvancedConsulEndpointBuilder nodeMeta(List<java.lang.String> nodeMeta) {
-            doSetProperty("nodeMeta", nodeMeta);
-            return this;
-        }
-        /**
-         * The note meta-data to use for queries.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 

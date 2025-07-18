@@ -55,7 +55,7 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "nearnode":
         case "nearNode": getOrCreateConfiguration(target).setNearNode(property(camelContext, java.lang.String.class, value)); return true;
         case "nodemeta":
-        case "nodeMeta": getOrCreateConfiguration(target).setNodeMeta(property(camelContext, java.util.List.class, value)); return true;
+        case "nodeMeta": getOrCreateConfiguration(target).setNodeMeta(property(camelContext, java.lang.String.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pinginstance":
         case "pingInstance": getOrCreateConfiguration(target).setPingInstance(property(camelContext, boolean.class, value)); return true;
@@ -106,7 +106,7 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "nearnode":
         case "nearNode": return java.lang.String.class;
         case "nodemeta":
-        case "nodeMeta": return java.util.List.class;
+        case "nodeMeta": return java.lang.String.class;
         case "password": return java.lang.String.class;
         case "pinginstance":
         case "pingInstance": return boolean.class;
@@ -177,15 +177,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "valueAsString": return getOrCreateConfiguration(target).isValueAsString();
         case "writetimeout":
         case "writeTimeout": return getOrCreateConfiguration(target).getWriteTimeout();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "nodemeta":
-        case "nodeMeta": return java.lang.String.class;
         default: return null;
         }
     }

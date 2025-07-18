@@ -49,7 +49,7 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "nearnode":
         case "nearNode": target.getConfiguration().setNearNode(property(camelContext, java.lang.String.class, value)); return true;
         case "nodemeta":
-        case "nodeMeta": target.getConfiguration().setNodeMeta(property(camelContext, java.util.List.class, value)); return true;
+        case "nodeMeta": target.getConfiguration().setNodeMeta(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pinginstance":
         case "pingInstance": target.getConfiguration().setPingInstance(property(camelContext, boolean.class, value)); return true;
@@ -99,7 +99,7 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "nearnode":
         case "nearNode": return java.lang.String.class;
         case "nodemeta":
-        case "nodeMeta": return java.util.List.class;
+        case "nodeMeta": return java.lang.String.class;
         case "password": return java.lang.String.class;
         case "pinginstance":
         case "pingInstance": return boolean.class;
@@ -167,15 +167,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "valueAsString": return target.getConfiguration().isValueAsString();
         case "writetimeout":
         case "writeTimeout": return target.getConfiguration().getWriteTimeout();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "nodemeta":
-        case "nodeMeta": return java.lang.String.class;
         default: return null;
         }
     }
