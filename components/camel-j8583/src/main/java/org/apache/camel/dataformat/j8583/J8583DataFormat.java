@@ -35,7 +35,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * Create, edit and read ISO-8583 messages.
  */
 @Dataformat("j8583")
-@Metadata(firstVersion = "4.14.0", title = "J8583")
+@Metadata(firstVersion = "4.14.0", title = "ISO-8583")
 public class J8583DataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;

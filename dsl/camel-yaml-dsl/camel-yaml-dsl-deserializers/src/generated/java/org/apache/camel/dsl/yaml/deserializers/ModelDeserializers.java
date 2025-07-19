@@ -7559,7 +7559,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             nodes = "j8583",
             types = org.apache.camel.model.dataformat.J8583DataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "J8583",
+            displayName = "ISO-8583",
             description = "Create, edit and read ISO-8583 messages.",
             deprecated = false,
             properties = {

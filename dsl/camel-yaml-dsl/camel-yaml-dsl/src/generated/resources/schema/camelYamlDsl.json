@@ -11165,7 +11165,7 @@
         }
       },
       "org.apache.camel.model.dataformat.J8583DataFormat" : {
-        "title" : "J8583",
+        "title" : "ISO-8583",
         "description" : "Create, edit and read ISO-8583 messages.",
         "type" : "object",
         "additionalProperties" : false,
