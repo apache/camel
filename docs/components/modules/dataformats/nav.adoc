@@ -21,6 +21,7 @@
 ** xref:gzipDeflater-dataformat.adoc[GZip Deflater]
 ** xref:hl7-dataformat.adoc[HL7]
 ** xref:ical-dataformat.adoc[iCal]
+** xref:j8583-dataformat.adoc[J8583]
 ** xref:jacksonXml-dataformat.adoc[Jackson XML]
 ** xref:jaxb-dataformat.adoc[JAXB]
 ** xref:fastjson-dataformat.adoc[JSON Fastjson]

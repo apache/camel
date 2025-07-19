@@ -2870,6 +2870,8 @@
               }, {
                 "required" : [ "ical" ]
               }, {
+                "required" : [ "j8583" ]
+              }, {
                 "required" : [ "jacksonXml" ]
               }, {
                 "required" : [ "jaxb" ]
@@ -3063,6 +3065,14 @@
             "properties" : {
               "ical" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "j8583" ],
+            "properties" : {
+              "j8583" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.J8583DataFormat"
               }
             }
           }, {
@@ -3312,6 +3322,7 @@
           "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
+          "j8583" : { },
           "jacksonXml" : { },
           "jaxb" : { },
           "json" : { },
@@ -7791,6 +7802,7 @@
           "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
+          "j8583" : { },
           "jacksonXml" : { },
           "jaxb" : { },
           "json" : { },
@@ -7866,6 +7878,8 @@
                 "required" : [ "hl7" ]
               }, {
                 "required" : [ "ical" ]
+              }, {
+                "required" : [ "j8583" ]
               }, {
                 "required" : [ "jacksonXml" ]
               }, {
@@ -8060,6 +8074,14 @@
             "properties" : {
               "ical" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "j8583" ],
+            "properties" : {
+              "j8583" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.J8583DataFormat"
               }
             }
           }, {
@@ -10649,6 +10671,9 @@
           "ical" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
           },
+          "j8583" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.J8583DataFormat"
+          },
           "jacksonXml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
@@ -11136,6 +11161,35 @@
             "type" : "boolean",
             "title" : "Validating",
             "description" : "Whether to validate."
+          }
+        }
+      },
+      "org.apache.camel.model.dataformat.J8583DataFormat" : {
+        "title" : "J8583",
+        "description" : "Create, edit and read ISO-8583 messages.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "allowAutoWiredMessageFormat" : {
+            "type" : "boolean",
+            "title" : "Allow Auto Wired Message Format",
+            "description" : "Whether to auto-discover J8583 MessageFormat from the registry"
+          },
+          "configFile" : {
+            "type" : "string",
+            "title" : "Config File",
+            "description" : "The j8583 configuration file to load from classpath",
+            "default" : "j8583-config.xml"
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "isoType" : {
+            "type" : "string",
+            "title" : "Iso Type",
+            "description" : "The default ISO-Type to use"
           }
         }
       },
@@ -16408,6 +16462,8 @@
               }, {
                 "required" : [ "ical" ]
               }, {
+                "required" : [ "j8583" ]
+              }, {
                 "required" : [ "jacksonXml" ]
               }, {
                 "required" : [ "jaxb" ]
@@ -16593,6 +16649,14 @@
             "properties" : {
               "ical" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "j8583" ],
+            "properties" : {
+              "j8583" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.J8583DataFormat"
               }
             }
           }, {
@@ -16836,6 +16900,7 @@
           "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
+          "j8583" : { },
           "jacksonXml" : { },
           "jaxb" : { },
           "json" : { },
