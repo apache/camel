@@ -62,6 +62,7 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
             @XmlElement(name = "hl7", type = HL7DataFormat.class),
             @XmlElement(name = "ical", type = IcalDataFormat.class),
+            @XmlElement(name = "j8583", type = J8583DataFormat.class),
             @XmlElement(name = "jacksonXml", type = JacksonXMLDataFormat.class),
             @XmlElement(name = "jaxb", type = JaxbDataFormat.class),
             @XmlElement(name = "json", type = JsonDataFormat.class),

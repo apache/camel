@@ -166,6 +166,7 @@
         <module>camel-influxdb2</module>
         <module>camel-irc</module>
         <module>camel-ironmq</module>
+        <module>camel-j8583</module>
         <module>camel-jackson</module>
         <module>camel-jackson-avro</module>
         <module>camel-jackson-protobuf</module>

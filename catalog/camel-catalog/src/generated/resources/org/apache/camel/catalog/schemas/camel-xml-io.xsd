@@ -751,6 +751,15 @@ Intercepts messages being sent to an endpoint
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="j8583" type="tns:j8583DataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Create, edit and read ISO-8583 messages.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="jacksonXml" type="tns:jacksonXMLDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -6228,6 +6237,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
+            <xs:element ref="tns:j8583"/>
             <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
@@ -7663,6 +7673,40 @@ Whether to validate the HL7 message Is by default true. Default value: true
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to validate. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="j8583DataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="configFile" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The j8583 configuration file to load from classpath. Default value: j8583-config.xml
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="isoType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The default ISO-Type to use.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowAutoWiredMessageFormat" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to auto-discover J8583 MessageFormat from the registry. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13538,6 +13582,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
+            <xs:element ref="tns:j8583"/>
             <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
@@ -15811,6 +15856,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
         <xs:element ref="tns:ical"/>
+        <xs:element ref="tns:j8583"/>
         <xs:element ref="tns:jacksonXml"/>
         <xs:element ref="tns:jaxb"/>
         <xs:element ref="tns:json"/>
@@ -16661,6 +16707,7 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
+            <xs:element ref="tns:j8583"/>
             <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>

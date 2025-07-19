@@ -6,7 +6,7 @@
     "description": "Encode and decode SWIFT MT messages.",
     "deprecated": false,
     "firstVersion": "3.20.0",
-    "label": "dataformat,transformation,swift",
+    "label": "dataformat,transformation,finance",
     "javaType": "org.apache.camel.dataformat.swift.mt.SwiftMtDataFormat",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

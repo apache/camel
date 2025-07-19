@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE j8583-config PUBLIC "-//J8583//DTD CONFIG 1.0//EN"
+        "http://j8583.sourceforge.net/j8583.dtd">
+<j8583-config>
+    <!-- This is a test config file -->
+
+    <!-- These are the ISO headers to be prepended to the message types specified -->
+    <header type="0200">ISO015000050</header>
+    <header type="0210">ISO015000055</header>
+    <header type="0400" ref="0200" />
+    <header type="0410" ref="0210" />
+    <header type="0800">ISO015000015</header>
+    <header type="0810" ref="0800"/>
+    <header type="0280" binary="true">ffffffff</header>
+
+    <!-- The client example uses this to create requests -->
+    <template type="0200">
+        <field num="3" type="NUMERIC" length="6">650000</field>
+        <field num="32" type="LLVAR">456</field>
+        <field num="35" type="LLVAR">4591700012340000=</field>
+        <field num="43" type="ALPHA" length="40">SOLABTEST             TEST-3       DF MX</field>
+        <field num="48" type="LLLVAR">Life, the Universe, and Everything|42</field>
+        <field num="49" type="ALPHA" length="3">484</field>
+        <field num="60" type="LLLVAR">B456PRO1+000</field>
+        <field num="61" type="LLLVAR">        1234P vamos a meter más de 90 caracteres en este campo para comprobar si hay algun error en el parseo del mismo. Esta definido como un LLLVAR aqui por lo tanto esto debe caber sin problemas; las guias de parseo de 200 y 210 tienen LLLVAR en campo 61 tambien.</field>
+        <field num="100" type="LLVAR">999</field>
+        <field num="102" type="LLVAR">ABCD</field>
+    </template>
+
+    <template type="0300">
+        <field num="4" type="DATE4">0125</field>
+        <field num="5" type="DATE6">730125</field>
+        <field num="6" type="DATE10">0125213456</field>
+        <field num="7" type="DATE12">730125213456</field>
+        <field num="8" type="DATE14">19730125213456</field>
+        <field num="9" type="DATE_EXP">2506</field>
+        <field num="10" type="TIME">213456</field>
+        <field num="11" type="TIME" tz="America/Mexico_City">213456</field>
+        <field num="12" type="DATE10" tz="EET">0125213456</field>
+    </template>
+
+    <!-- The server example uses this to create the responses
+        we only need a few fields because the rest are copied from the request -->
+    <template type="0210">
+        <field num="60" type="LLLVAR">Fixed data from template</field>
+        <field num="70" type="ALPHA" length="3">ABC</field>
+        <field num="90" type="ALPHA" length="42">Field of length 42</field>
+        <field num="100" type="LLVAR">Fixed field</field>
+        <field num="102" type="LLVAR">Another fixed field</field>
+        <field num="126" type="LLLVAR">...and yet another fixed field.</field>
+    </template>
+
+    <template type="0400" extends="0200">
+        <field num="90" type="ALPHA" length="42">BLA</field>
+        <field num="102" type="exclude" />
+    </template>
+
+    <template type="0600">
+        <field num="4" type="AMOUNT">1234</field>
+        <field num="11" type="NUMERIC" length="6">123</field>
+        <field num="41" type="BINARY" length="8">abcdef</field>
+        <field num="42" type="BINARY" length="4">abcde</field>
+        <field num="43" type="ALPHA" length="40">Field of length 40</field>
+        <field num="62"  type="LLBIN">0123456789abcdef620123456789abcd</field>
+        <field num="63"  type="LLBIN">01234567863</field>
+        <field num="64" type="LLLBIN">0123456789abcdef640123456789abcd</field>
+        <field num="65" type="LLLBIN">01234567865</field>
+        <field num="102" type="LLLVAR">Field of type LLLVAR</field>
+    </template>
+    <template type="0280">
+        <field num="3" type="NUMERIC" length="2">99</field>
+    </template>
+
+    <!-- The server example uses this to read the requests -->
+    <parse type="0200">
+        <field num="3" type="NUMERIC" length="6" />
+        <field num="4" type="AMOUNT" />
+        <field num="7" type="DATE10" />
+        <field num="11" type="NUMERIC" length="6" />
+        <field num="12" type="TIME" />
+        <field num="13" type="DATE4" />
+        <field num="15" type="DATE4" />
+        <field num="17" type="DATE_EXP" />
+        <field num="32" type="LLVAR" />
+        <field num="35" type="LLVAR" />
+        <field num="37" type="NUMERIC" length="12" />
+        <field num="41" type="ALPHA" length="16" />
+        <field num="43" type="ALPHA" length="40" />
+        <field num="48" type="LLLVAR" />
+        <field num="49" type="ALPHA" length="3" />
+        <field num="60" type="LLLVAR" />
+        <field num="61" type="LLLVAR" />
+        <field num="100" type="LLVAR" />
+        <field num="102" type="LLVAR" />
+    </parse>
+
+    <!-- The client example uses this to read the responses -->
+    <parse type="0210">
+        <field num="3" type="NUMERIC" length="6" />
+        <field num="4" type="AMOUNT" />
+        <field num="7" type="DATE10" />
+        <field num="11" type="NUMERIC" length="6" />
+        <field num="12" type="TIME" />
+        <field num="13" type="DATE4" />
+        <field num="15" type="DATE4" />
+        <field num="17" type="DATE_EXP" />
+        <field num="32" type="LLVAR" />
+        <field num="35" type="LLVAR" />
+        <field num="37" type="NUMERIC" length="12" />
+        <field num="38" type="NUMERIC" length="6" />
+        <field num="39" type="NUMERIC" length="2" />
+        <field num="41" type="ALPHA" length="16" />
+        <field num="43" type="ALPHA" length="40" />
+        <field num="48" type="LLLVAR" />
+        <field num="49" type="ALPHA" length="3" />
+        <field num="60" type="LLLVAR" />
+        <field num="61" type="LLLVAR" />
+        <field num="70" type="ALPHA" length="3" />
+        <field num="90" type="ALPHA" length="42" />
+        <field num="100" type="LLVAR" />
+        <field num="102" type="LLVAR" />
+        <field num="126" type="LLLVAR" />
+    </parse>
+
+    <!-- this is for binary tests (message encoding AND fields) -->
+    <parse type="0600">
+        <field num="4" type="AMOUNT" />
+        <field num="7" type="DATE10" />
+        <field num="11" type="NUMERIC" length="6" />
+        <field num="41" type="BINARY" length="8" />
+        <field num="42" type="BINARY" length="4" />
+        <field num="43" type="ALPHA" length="40" />
+        <field num="62" type="LLBIN" />
+        <field num="63" type="LLBIN" />
+        <field num="64" type="LLLBIN" />
+        <field num="65" type="LLLBIN" />
+        <field num="102" type="LLLVAR" />
+    </parse>
+
+    <parse type="0800">
+        <field num="3" type="ALPHA" length="6">123456</field>
+        <field num="12" type="DATE4">1231</field>
+        <field num="17" type="DATE4">1231</field>
+    </parse>
+
+    <parse type="0810" extends="0800">
+        <field num="17" type="exclude"/>
+        <field num="39" type="ALPHA" length="2"/>
+    </parse>
+
+    <parse type="0201">
+        <field num="3" type="NUMERIC" length="19" />
+    </parse>
+    <parse type="0202">
+        <field num="3" type="NUMERIC" length="22" />
+    </parse>
+    <parse type="0280">
+        <field num="3" type="NUMERIC" length="2" />
+    </parse>
+    <parse type="0281">
+        <field num="3" type="LLBCDBIN"/>
+    </parse>
+    <parse type="0282">
+        <field num="3" type="LLLBCDBIN"/>
+    </parse>
+    <parse type="0283">
+        <field num="3" type="LLLLBCDBIN"/>
+    </parse>
+
+</j8583-config>
