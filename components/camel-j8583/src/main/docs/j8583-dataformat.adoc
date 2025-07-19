@@ -1,5 +1,5 @@
-= J8583 DataFormat
-:doctitle: J8583
+= ISO-8583 DataFormat
+:doctitle: ISO-8583
 :shortname: j8583
 :artifactid: camel-j8583
 :description: Create, edit and read ISO-8583 messages.
