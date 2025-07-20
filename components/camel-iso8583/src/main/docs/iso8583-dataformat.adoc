@@ -65,6 +65,30 @@ from("direct:payment")
   .to("bean:payment");
 ----
 
+== Example
+
+You can use this data format to unmarshal a ISO-8853 message such as a 0210 payment response, and then select the information
+from the message you need and covert this to JSon as shown below:
+
+[source,java]
+----
+from("jms:payment:response")
+        .unmarshal().iso8583("0210")
+        .transform().simple(
+            """
+                  {
+                    "op": "${body.getAt(3).value}",
+                    "amount": ${body.getAt(4).value.toPlainString},
+                    "ref": "${body.getAt(37).value}",
+                    "response": "${body.getAt(39).value}",
+                    "terminal": "${body.getAt(41).value}",
+                    "currency": "${body.getAt(49).value}"
+                  }
+            """)
+        .to("direct:payementResponse");
+----
+
+
 == More Information
 
 Find more information see the http://j8583.sourceforge.net/[J8583 project]
