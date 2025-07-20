@@ -16,21 +16,42 @@ This iso8583 data format supports reading and writing ISO-8583 messages (using t
 ISO-8583 is a message format used for credit card transactions, banking and other commercial interaction between different systems.
 It has an ASCII variant and a binary one, and it is somewhat convoluted and difficult to implement.
 
-== J8583 Options
+== ISO-8583 Options
 
 
 // dataformat options: START
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
-== Example
+== ISO-Types
+
+These are some of the most common message types.
+
+There is some logic to this, if you look at the message types as 2-byte hex values: The first byte states the type of operation: 02 are payments, 04 reversals, 08 tests; the second byte indicates if it's a request or a response.
+And sometimes repeated requests should end in 1 instead of 0, for example reversals are 0400 the first time but 0401 the next time you send them.
+
+|====
+| **ISO-Type** | **Description**
+| 0200 |	A payment or sale request
+| 0210 |	A payment or sale response
+| 0400 |	A reversal request (to undo a previous 0200 operation)
+| 0410 |	A reversal response
+| 0600 |	A query (to check the status of a previous operation, or check an account's balance, etc)
+| 0610 |	A query response
+| 0800 |	An echo request (just to keep the connection alive and make sure the other side is responsive)
+| 0810 |	An echo response
+|====
+
+See more information at the https://j8583.sourceforge.net/iso8583.html[j8583 docs].
+
+== Configuration
 
 The J8583 parser can be configured using `j8583-config.xml` configuration file that should be located
 in `src/main/resources` so it can be loaded from the classpath.
 
 This configuration file should contain the support ISO-8583 mappings.
 
-=== Specifying ISO-Type per message
+== Specifying ISO-Type per message
 
 The data format requires to know the ISO-Type of the message to understand how to parse the data.
 A default ISO-Type can be configured on the data format. However, you can use a custom header with id `CamelIso8583IsoType`
