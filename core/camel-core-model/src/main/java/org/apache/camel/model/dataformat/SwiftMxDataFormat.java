@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encode and decode SWIFT MX messages.
  */
-@Metadata(firstVersion = "3.20.0", label = "dataformat,transformation,swift", title = "SWIFT MX")
+@Metadata(firstVersion = "3.20.0", label = "dataformat,transformation,finance", title = "SWIFT MX")
 @XmlRootElement(name = "swiftMx")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SwiftMxDataFormat extends DataFormatDefinition {

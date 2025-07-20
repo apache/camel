@@ -42,6 +42,7 @@ import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
+import org.apache.camel.model.dataformat.Iso8583DataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonApiDataFormat;
@@ -380,6 +381,24 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         IcalDataFormat ical = new IcalDataFormat();
         ical.setValidating(Boolean.toString(validating));
         return dataFormat(ical);
+    }
+
+    /**
+     * Use the ISO-8583 data format
+     */
+    public T iso8583() {
+        return dataFormat(new Iso8583DataFormat());
+    }
+
+    /**
+     * Use the ISO-8583 data format
+     *
+     * @param isoType The default ISO-Type to use
+     */
+    public T iso8583(String isoType) {
+        Iso8583DataFormat df = new Iso8583DataFormat();
+        df.setIsoType(isoType);
+        return dataFormat(df);
     }
 
     /**

@@ -35,6 +35,7 @@ import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
+import org.apache.camel.model.dataformat.Iso8583DataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonApiDataFormat;
@@ -197,6 +198,13 @@ public final class DataFormatBuilderFactory {
      */
     public IcalDataFormat.Builder ical() {
         return new IcalDataFormat.Builder();
+    }
+
+    /**
+     * Uses the ISO-8583 data format
+     */
+    public Iso8583DataFormat.Builder iso8583() {
+        return new Iso8583DataFormat.Builder();
     }
 
     /**

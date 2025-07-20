@@ -155,6 +155,7 @@ import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
+import org.apache.camel.model.dataformat.Iso8583DataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonApiDataFormat;
@@ -3508,6 +3509,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "iso8583", type = "object:org.apache.camel.model.dataformat.Iso8583DataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "jacksonXml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat", oneOf = "dataFormatType"),
@@ -3645,6 +3647,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "ical": {
                     org.apache.camel.model.dataformat.IcalDataFormat val = asType(node, org.apache.camel.model.dataformat.IcalDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "iso8583": {
+                    org.apache.camel.model.dataformat.Iso8583DataFormat val = asType(node, org.apache.camel.model.dataformat.Iso8583DataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3827,6 +3834,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
+                    @YamlProperty(name = "iso8583", type = "object:org.apache.camel.model.dataformat.Iso8583DataFormat"),
                     @YamlProperty(name = "jacksonXml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
                     @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat"),
                     @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat"),
@@ -4046,6 +4054,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "ical": {
                     org.apache.camel.model.dataformat.IcalDataFormat val = asType(node, org.apache.camel.model.dataformat.IcalDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "iso8583": {
+                    org.apache.camel.model.dataformat.Iso8583DataFormat val = asType(node, org.apache.camel.model.dataformat.Iso8583DataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -7538,6 +7556,63 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "iso8583",
+            types = org.apache.camel.model.dataformat.Iso8583DataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "ISO-8583",
+            description = "Create, edit and read ISO-8583 messages.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "allowAutoWiredMessageFormat", type = "boolean", description = "Whether to auto-discover com.solab.iso8583.MessageFactory from the registry", displayName = "Allow Auto Wired Message Format"),
+                    @YamlProperty(name = "configFile", type = "string", defaultValue = "j8583-config.xml", description = "The j8583 configuration file to load from classpath", displayName = "Config File"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "isoType", type = "string", description = "The default ISO-Type to use", displayName = "Iso Type")
+            }
+    )
+    public static class Iso8583DataFormatDeserializer extends YamlDeserializerBase<Iso8583DataFormat> {
+        public Iso8583DataFormatDeserializer() {
+            super(Iso8583DataFormat.class);
+        }
+
+        @Override
+        protected Iso8583DataFormat newInstance() {
+            return new Iso8583DataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(Iso8583DataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "allowAutoWiredMessageFormat": {
+                    String val = asText(node);
+                    target.setAllowAutoWiredMessageFormat(val);
+                    break;
+                }
+                case "configFile": {
+                    String val = asText(node);
+                    target.setConfigFile(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "isoType": {
+                    String val = asText(node);
+                    target.setIsoType(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "jacksonXml",
             types = org.apache.camel.model.dataformat.JacksonXMLDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -9659,6 +9734,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "iso8583", type = "object:org.apache.camel.model.dataformat.Iso8583DataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "jacksonXml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat", oneOf = "dataFormatType"),
@@ -9800,6 +9876,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "ical": {
                     org.apache.camel.model.dataformat.IcalDataFormat val = asType(node, org.apache.camel.model.dataformat.IcalDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "iso8583": {
+                    org.apache.camel.model.dataformat.Iso8583DataFormat val = asType(node, org.apache.camel.model.dataformat.Iso8583DataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -19882,6 +19963,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "iso8583", type = "object:org.apache.camel.model.dataformat.Iso8583DataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "jacksonXml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat", oneOf = "dataFormatType"),
@@ -20028,6 +20110,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "ical": {
                     org.apache.camel.model.dataformat.IcalDataFormat val = asType(node, org.apache.camel.model.dataformat.IcalDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "iso8583": {
+                    org.apache.camel.model.dataformat.Iso8583DataFormat val = asType(node, org.apache.camel.model.dataformat.Iso8583DataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

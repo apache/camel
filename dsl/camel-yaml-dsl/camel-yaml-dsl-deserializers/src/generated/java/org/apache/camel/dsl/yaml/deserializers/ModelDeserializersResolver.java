@@ -175,6 +175,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.InterceptFromDefinition": return new ModelDeserializers.InterceptFromDefinitionDeserializer();
             case "interceptSendToEndpoint": return new ModelDeserializers.InterceptSendToEndpointDefinitionDeserializer();
             case "org.apache.camel.model.InterceptSendToEndpointDefinition": return new ModelDeserializers.InterceptSendToEndpointDefinitionDeserializer();
+            case "iso8583": return new ModelDeserializers.Iso8583DataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.Iso8583DataFormat": return new ModelDeserializers.Iso8583DataFormatDeserializer();
             case "jacksonXml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.JacksonXMLDataFormat": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "java": return new ModelDeserializers.JavaExpressionDeserializer();

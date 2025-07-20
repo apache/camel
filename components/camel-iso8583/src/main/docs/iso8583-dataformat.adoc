@@ -1,0 +1,71 @@
+= ISO-8583 DataFormat
+:doctitle: ISO-8583
+:shortname: iso8583
+:artifactid: camel-iso8583
+:description: Create, edit and read ISO-8583 messages.
+:since: 4.14
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: iso8583
+
+*Since Camel {since}*
+
+This iso8583 data format supports reading and writing ISO-8583 messages (using the j8583 parser library).
+
+ISO-8583 is a message format used for credit card transactions, banking and other commercial interaction between different systems.
+It has an ASCII variant and a binary one, and it is somewhat convoluted and difficult to implement.
+
+== J8583 Options
+
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== Example
+
+The J8583 parser can be configured using `j8583-config.xml` configuration file that should be located
+in `src/main/resources` so it can be loaded from the classpath.
+
+This configuration file should contain the support ISO-8583 mappings.
+
+=== Specifying ISO-Type per message
+
+The data format requires to know the ISO-Type of the message to understand how to parse the data.
+A default ISO-Type can be configured on the data format. However, you can use a custom header with id `CamelIso8583IsoType`
+on the Exchange message to override and specify another ISO-Type, such as:
+
+[source,java]
+----
+from("direct:payment")
+  .setHeader("CamelIso8583IsoType", constant("0200"))
+  .unmarshal().iso8583()
+  .to("bean:payment");
+----
+
+== More Information
+
+Find more information see the http://j8583.sourceforge.net/[J8583 project]
+and the https://bitbucket.org/chochos/j8583/src/master/[J8583 source code].
+
+== Dependencies
+
+To use ISO-8583 in your camel routes, you need to add the dependency
+on *camel-iso8583* which implements this data format.
+
+If you use maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest and greatest release.
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-iso8583</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+
+include::spring-boot:partial$starter.adoc[]

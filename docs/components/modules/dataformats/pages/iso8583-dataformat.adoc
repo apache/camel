@@ -1,0 +1,1 @@
+../../../../../components/camel-iso8583/src/main/docs/iso8583-dataformat.adoc
