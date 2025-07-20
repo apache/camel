@@ -174,8 +174,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new HL7DataFormatReifier(camelContext, definition);
         } else if (definition instanceof IcalDataFormat) {
             return new IcalDataFormatReifier(camelContext, definition);
-        } else if (definition instanceof J8583DataFormat) {
-            return new J8583DataFormatReifier(camelContext, definition);
+        } else if (definition instanceof Iso8583DataFormat) {
+            return new Iso8583DataFormatReifier(camelContext, definition);
         } else if (definition instanceof JacksonXMLDataFormat) {
             return new JacksonXMLDataFormatReifier(camelContext, definition);
         } else if (definition instanceof JaxbDataFormat) {

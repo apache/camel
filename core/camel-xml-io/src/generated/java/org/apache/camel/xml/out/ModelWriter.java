@@ -499,8 +499,8 @@ public class ModelWriter extends BaseWriter {
     public void writeIcalDataFormat(IcalDataFormat def) throws IOException {
         doWriteIcalDataFormat("ical", def);
     }
-    public void writeJ8583DataFormat(J8583DataFormat def) throws IOException {
-        doWriteJ8583DataFormat("j8583", def);
+    public void writeIso8583DataFormat(Iso8583DataFormat def) throws IOException {
+        doWriteIso8583DataFormat("iso8583", def);
     }
     public void writeJacksonXMLDataFormat(JacksonXMLDataFormat def) throws IOException {
         doWriteJacksonXMLDataFormat("jacksonXml", def);
@@ -1223,7 +1223,7 @@ public class ModelWriter extends BaseWriter {
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
                 case "IcalDataFormat" -> doWriteIcalDataFormat("ical", (IcalDataFormat) v);
-                case "J8583DataFormat" -> doWriteJ8583DataFormat("j8583", (J8583DataFormat) v);
+                case "Iso8583DataFormat" -> doWriteIso8583DataFormat("iso8583", (Iso8583DataFormat) v);
                 case "JacksonXMLDataFormat" -> doWriteJacksonXMLDataFormat("jacksonXml", (JacksonXMLDataFormat) v);
                 case "JaxbDataFormat" -> doWriteJaxbDataFormat("jaxb", (JaxbDataFormat) v);
                 case "JsonDataFormat" -> doWriteJsonDataFormat("json", (JsonDataFormat) v);
@@ -1984,7 +1984,7 @@ public class ModelWriter extends BaseWriter {
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
                 case "IcalDataFormat" -> doWriteIcalDataFormat("ical", (IcalDataFormat) v);
-                case "J8583DataFormat" -> doWriteJ8583DataFormat("j8583", (J8583DataFormat) v);
+                case "Iso8583DataFormat" -> doWriteIso8583DataFormat("iso8583", (Iso8583DataFormat) v);
                 case "JacksonXMLDataFormat" -> doWriteJacksonXMLDataFormat("jacksonXml", (JacksonXMLDataFormat) v);
                 case "JaxbDataFormat" -> doWriteJaxbDataFormat("jaxb", (JaxbDataFormat) v);
                 case "JsonDataFormat" -> doWriteJsonDataFormat("json", (JsonDataFormat) v);
@@ -2547,7 +2547,7 @@ public class ModelWriter extends BaseWriter {
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
                 case "IcalDataFormat" -> doWriteIcalDataFormat("ical", (IcalDataFormat) v);
-                case "J8583DataFormat" -> doWriteJ8583DataFormat("j8583", (J8583DataFormat) v);
+                case "Iso8583DataFormat" -> doWriteIso8583DataFormat("iso8583", (Iso8583DataFormat) v);
                 case "JacksonXMLDataFormat" -> doWriteJacksonXMLDataFormat("jacksonXml", (JacksonXMLDataFormat) v);
                 case "JaxbDataFormat" -> doWriteJaxbDataFormat("jaxb", (JaxbDataFormat) v);
                 case "JsonDataFormat" -> doWriteJsonDataFormat("json", (JsonDataFormat) v);
@@ -2669,7 +2669,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("validating", def.getValidating(), null);
         endElement(name);
     }
-    protected void doWriteJ8583DataFormat(String name, J8583DataFormat def) throws IOException {
+    protected void doWriteIso8583DataFormat(String name, Iso8583DataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("allowAutoWiredMessageFormat", def.getAllowAutoWiredMessageFormat(), "true");
@@ -3691,7 +3691,7 @@ public class ModelWriter extends BaseWriter {
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
                 case "IcalDataFormat" -> doWriteIcalDataFormat("ical", (IcalDataFormat) v);
-                case "J8583DataFormat" -> doWriteJ8583DataFormat("j8583", (J8583DataFormat) v);
+                case "Iso8583DataFormat" -> doWriteIso8583DataFormat("iso8583", (Iso8583DataFormat) v);
                 case "JacksonXMLDataFormat" -> doWriteJacksonXMLDataFormat("jacksonXml", (JacksonXMLDataFormat) v);
                 case "JaxbDataFormat" -> doWriteJaxbDataFormat("jaxb", (JaxbDataFormat) v);
                 case "JsonDataFormat" -> doWriteJsonDataFormat("json", (JsonDataFormat) v);

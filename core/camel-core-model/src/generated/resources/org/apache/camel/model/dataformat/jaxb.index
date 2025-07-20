@@ -21,7 +21,7 @@ GrokDataFormat
 GzipDeflaterDataFormat
 HL7DataFormat
 IcalDataFormat
-J8583DataFormat
+Iso8583DataFormat
 JacksonXMLDataFormat
 JaxbDataFormat
 JsonApiDataFormat

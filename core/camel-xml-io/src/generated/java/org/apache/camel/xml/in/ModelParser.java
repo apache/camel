@@ -1968,8 +1968,8 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
-    protected J8583DataFormat doParseJ8583DataFormat() throws IOException, XmlPullParserException {
-        return doParse(new J8583DataFormat(), (def, key, val) -> switch (key) {
+    protected Iso8583DataFormat doParseIso8583DataFormat() throws IOException, XmlPullParserException {
+        return doParse(new Iso8583DataFormat(), (def, key, val) -> switch (key) {
                 case "allowAutoWiredMessageFormat": def.setAllowAutoWiredMessageFormat(val); yield true;
                 case "configFile": def.setConfigFile(val); yield true;
                 case "isoType": def.setIsoType(val); yield true;
@@ -2966,7 +2966,7 @@ public class ModelParser extends BaseParser {
             case "gzipDeflater": return doParseGzipDeflaterDataFormat();
             case "hl7": return doParseHL7DataFormat();
             case "ical": return doParseIcalDataFormat();
-            case "j8583": return doParseJ8583DataFormat();
+            case "iso8583": return doParseIso8583DataFormat();
             case "jacksonXml": return doParseJacksonXMLDataFormat();
             case "jaxb": return doParseJaxbDataFormat();
             case "jsonApi": return doParseJsonApiDataFormat();

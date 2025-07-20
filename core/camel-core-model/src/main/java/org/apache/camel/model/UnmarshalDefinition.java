@@ -42,7 +42,7 @@ import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
-import org.apache.camel.model.dataformat.J8583DataFormat;
+import org.apache.camel.model.dataformat.Iso8583DataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonApiDataFormat;
@@ -98,7 +98,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
             @XmlElement(name = "hl7", type = HL7DataFormat.class),
             @XmlElement(name = "ical", type = IcalDataFormat.class),
-            @XmlElement(name = "j8583", type = J8583DataFormat.class),
+            @XmlElement(name = "iso8583", type = Iso8583DataFormat.class),
             @XmlElement(name = "jacksonXml", type = JacksonXMLDataFormat.class),
             @XmlElement(name = "jaxb", type = JaxbDataFormat.class),
             @XmlElement(name = "json", type = JsonDataFormat.class),

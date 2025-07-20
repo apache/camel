@@ -796,7 +796,7 @@ Intercepts messages being sent to an endpoint
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="j8583" type="tns:j8583DataFormat">
+  <xs:element name="iso8583" type="tns:iso8583DataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -7564,7 +7564,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
-            <xs:element ref="tns:j8583"/>
+            <xs:element ref="tns:iso8583"/>
             <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
@@ -9007,7 +9007,7 @@ Whether to validate. Default value: false
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="j8583DataFormat">
+  <xs:complexType name="iso8583DataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
@@ -9033,7 +9033,7 @@ The default ISO-Type to use.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to auto-discover J8583 MessageFormat from the registry. Default value: true
+Whether to auto-discover com.solab.iso8583.MessageFactory from the registry. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14888,7 +14888,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
-            <xs:element ref="tns:j8583"/>
+            <xs:element ref="tns:iso8583"/>
             <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>
@@ -17162,7 +17162,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
         <xs:element ref="tns:ical"/>
-        <xs:element ref="tns:j8583"/>
+        <xs:element ref="tns:iso8583"/>
         <xs:element ref="tns:jacksonXml"/>
         <xs:element ref="tns:jaxb"/>
         <xs:element ref="tns:json"/>
@@ -18013,7 +18013,7 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
-            <xs:element ref="tns:j8583"/>
+            <xs:element ref="tns:iso8583"/>
             <xs:element ref="tns:jacksonXml"/>
             <xs:element ref="tns:jaxb"/>
             <xs:element ref="tns:json"/>

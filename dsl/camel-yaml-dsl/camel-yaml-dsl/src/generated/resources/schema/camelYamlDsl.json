@@ -2870,7 +2870,7 @@
               }, {
                 "required" : [ "ical" ]
               }, {
-                "required" : [ "j8583" ]
+                "required" : [ "iso8583" ]
               }, {
                 "required" : [ "jacksonXml" ]
               }, {
@@ -3069,10 +3069,10 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "j8583" ],
+            "required" : [ "iso8583" ],
             "properties" : {
-              "j8583" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.J8583DataFormat"
+              "iso8583" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Iso8583DataFormat"
               }
             }
           }, {
@@ -3322,7 +3322,7 @@
           "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
-          "j8583" : { },
+          "iso8583" : { },
           "jacksonXml" : { },
           "jaxb" : { },
           "json" : { },
@@ -7802,7 +7802,7 @@
           "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
-          "j8583" : { },
+          "iso8583" : { },
           "jacksonXml" : { },
           "jaxb" : { },
           "json" : { },
@@ -7879,7 +7879,7 @@
               }, {
                 "required" : [ "ical" ]
               }, {
-                "required" : [ "j8583" ]
+                "required" : [ "iso8583" ]
               }, {
                 "required" : [ "jacksonXml" ]
               }, {
@@ -8078,10 +8078,10 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "j8583" ],
+            "required" : [ "iso8583" ],
             "properties" : {
-              "j8583" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.J8583DataFormat"
+              "iso8583" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Iso8583DataFormat"
               }
             }
           }, {
@@ -10671,8 +10671,8 @@
           "ical" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.IcalDataFormat"
           },
-          "j8583" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.J8583DataFormat"
+          "iso8583" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Iso8583DataFormat"
           },
           "jacksonXml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
@@ -11164,7 +11164,7 @@
           }
         }
       },
-      "org.apache.camel.model.dataformat.J8583DataFormat" : {
+      "org.apache.camel.model.dataformat.Iso8583DataFormat" : {
         "title" : "ISO-8583",
         "description" : "Create, edit and read ISO-8583 messages.",
         "type" : "object",
@@ -11173,7 +11173,7 @@
           "allowAutoWiredMessageFormat" : {
             "type" : "boolean",
             "title" : "Allow Auto Wired Message Format",
-            "description" : "Whether to auto-discover J8583 MessageFormat from the registry"
+            "description" : "Whether to auto-discover com.solab.iso8583.MessageFactory from the registry"
           },
           "configFile" : {
             "type" : "string",
@@ -16462,7 +16462,7 @@
               }, {
                 "required" : [ "ical" ]
               }, {
-                "required" : [ "j8583" ]
+                "required" : [ "iso8583" ]
               }, {
                 "required" : [ "jacksonXml" ]
               }, {
@@ -16653,10 +16653,10 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "j8583" ],
+            "required" : [ "iso8583" ],
             "properties" : {
-              "j8583" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.J8583DataFormat"
+              "iso8583" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Iso8583DataFormat"
               }
             }
           }, {
@@ -16900,7 +16900,7 @@
           "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
-          "j8583" : { },
+          "iso8583" : { },
           "jacksonXml" : { },
           "jaxb" : { },
           "json" : { },

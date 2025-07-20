@@ -933,7 +933,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-j8583</artifactId>
+            <artifactId>camel-iso8583</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
