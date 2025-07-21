@@ -172,6 +172,7 @@ public class Export extends ExportBaseCommand {
         cmd.name = this.name;
         cmd.port = this.port;
         cmd.managementPort = this.managementPort;
+        cmd.observe = this.observe;
         cmd.gav = this.gav;
         cmd.mavenSettings = this.mavenSettings;
         cmd.mavenSettingsSecurity = this.mavenSettingsSecurity;
