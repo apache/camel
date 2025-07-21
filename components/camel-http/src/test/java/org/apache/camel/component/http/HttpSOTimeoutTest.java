@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.DelayValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
-import org.apache.hc.core5.util.Timeout;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -79,7 +78,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
         assertExchange(exchange);
 
-        Assertions.assertEquals(Timeout.ofSeconds(5), endpoint.getResponseTimeout());
+        Assertions.assertEquals(5000, endpoint.getResponseTimeout());
     }
 
     @Test

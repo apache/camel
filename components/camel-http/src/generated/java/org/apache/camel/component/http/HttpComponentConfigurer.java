@@ -34,9 +34,9 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "clientconnectionmanager":
         case "clientConnectionManager": target.setClientConnectionManager(property(camelContext, org.apache.hc.client5.http.io.HttpClientConnectionManager.class, value)); return true;
         case "connecttimeout":
-        case "connectTimeout": target.setConnectTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
+        case "connectTimeout": target.setConnectTimeout(property(camelContext, long.class, value)); return true;
         case "connectionrequesttimeout":
-        case "connectionRequestTimeout": target.setConnectionRequestTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
+        case "connectionRequestTimeout": target.setConnectionRequestTimeout(property(camelContext, long.class, value)); return true;
         case "connectionstatedisabled":
         case "connectionStateDisabled": target.setConnectionStateDisabled(property(camelContext, boolean.class, value)); return true;
         case "connectiontimetolive":
@@ -94,7 +94,7 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": target.setResponsePayloadStreamingThreshold(property(camelContext, int.class, value)); return true;
         case "responsetimeout":
-        case "responseTimeout": target.setResponseTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
+        case "responseTimeout": target.setResponseTimeout(property(camelContext, long.class, value)); return true;
         case "skipcontrolheaders":
         case "skipControlHeaders": target.setSkipControlHeaders(property(camelContext, boolean.class, value)); return true;
         case "skiprequestheaders":
@@ -102,7 +102,7 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "skipresponseheaders":
         case "skipResponseHeaders": target.setSkipResponseHeaders(property(camelContext, boolean.class, value)); return true;
         case "sotimeout":
-        case "soTimeout": target.setSoTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
+        case "soTimeout": target.setSoTimeout(property(camelContext, long.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":
@@ -136,9 +136,9 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "clientconnectionmanager":
         case "clientConnectionManager": return org.apache.hc.client5.http.io.HttpClientConnectionManager.class;
         case "connecttimeout":
-        case "connectTimeout": return org.apache.hc.core5.util.Timeout.class;
+        case "connectTimeout": return long.class;
         case "connectionrequesttimeout":
-        case "connectionRequestTimeout": return org.apache.hc.core5.util.Timeout.class;
+        case "connectionRequestTimeout": return long.class;
         case "connectionstatedisabled":
         case "connectionStateDisabled": return boolean.class;
         case "connectiontimetolive":
@@ -196,7 +196,7 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": return int.class;
         case "responsetimeout":
-        case "responseTimeout": return org.apache.hc.core5.util.Timeout.class;
+        case "responseTimeout": return long.class;
         case "skipcontrolheaders":
         case "skipControlHeaders": return boolean.class;
         case "skiprequestheaders":
@@ -204,7 +204,7 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "skipresponseheaders":
         case "skipResponseHeaders": return boolean.class;
         case "sotimeout":
-        case "soTimeout": return org.apache.hc.core5.util.Timeout.class;
+        case "soTimeout": return long.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "useglobalsslcontextparameters":

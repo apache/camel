@@ -110,28 +110,24 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected CookieStore cookieStore;
 
     // timeout
-    @Metadata(label = "timeout", defaultValue = "3 minutes",
-              description = "Returns the connection lease request timeout used when requesting"
+    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
+              description = "Returns the connection lease request timeout (in millis) used when requesting"
                             + " a connection from the connection manager."
-                            + " A timeout value of zero is interpreted as a disabled timeout.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    protected Timeout connectionRequestTimeout = Timeout.ofMinutes(3);
-    @Metadata(label = "timeout", defaultValue = "3 minutes",
-              description = "Determines the timeout until a new connection is fully established."
-                            + " A timeout value of zero is interpreted as an infinite timeout.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    protected Timeout connectTimeout = Timeout.ofMinutes(3);
-    @Metadata(label = "timeout", defaultValue = "3 minutes",
-              description = "Determines the default socket timeout value for blocking I/O operations.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    protected Timeout soTimeout = Timeout.ofMinutes(3);
-    @Metadata(label = "timeout", defaultValue = "0",
-              description = "Determines the timeout until arrival of a response from the opposite"
+                            + " A timeout value of zero is interpreted as a disabled timeout.")
+    protected long connectionRequestTimeout = 3 * 60 * 1000L;
+    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
+              description = "Determines the timeout (in millis) until a new connection is fully established."
+                            + " A timeout value of zero is interpreted as an infinite timeout.")
+    protected long connectTimeout = 3 * 60 * 1000L;
+    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
+              description = "Determines the default socket timeout (in millis) value for blocking I/O operations.")
+    protected long soTimeout = 3 * 60 * 1000L;
+    @Metadata(label = "timeout",
+              description = "Determines the timeout (in millis) until arrival of a response from the opposite"
                             + " endpoint. A timeout value of zero is interpreted as an infinite timeout."
                             + " Please note that response timeout may be unsupported by HTTP transports "
-                            + "with message multiplexing.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    protected Timeout responseTimeout = Timeout.ofMilliseconds(0);
+                            + "with message multiplexing.")
+    protected long responseTimeout;
 
     // proxy
     @Metadata(label = "producer,proxy", enums = "http,https", description = "Proxy authentication protocol scheme")
@@ -353,20 +349,23 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
         // timeout values can be configured on both component and endpoint level, where endpoint takes priority
         Timeout valConnectionRequestTimeout
-                = getAndRemoveParameter(parameters, "connectionRequestTimeout", Timeout.class, connectionRequestTimeout);
+                = getAndRemoveParameter(parameters, "connectionRequestTimeout", Timeout.class,
+                        Timeout.ofMilliseconds(connectionRequestTimeout));
         if (!Timeout.ofMinutes(3).equals(valConnectionRequestTimeout)) {
             httpClientOptions.put("connectionRequestTimeout", valConnectionRequestTimeout);
         }
-        Timeout valResponseTimeout = getAndRemoveParameter(parameters, "responseTimeout", Timeout.class, responseTimeout);
+        Timeout valResponseTimeout
+                = getAndRemoveParameter(parameters, "responseTimeout", Timeout.class, Timeout.ofMilliseconds(responseTimeout));
         if (!Timeout.ofMilliseconds(0).equals(valResponseTimeout)) {
             httpClientOptions.put("responseTimeout", valResponseTimeout);
         }
-        Timeout valConnectTimeout = getAndRemoveParameter(parameters, "connectTimeout", Timeout.class, connectTimeout);
+        Timeout valConnectTimeout
+                = getAndRemoveParameter(parameters, "connectTimeout", Timeout.class, Timeout.ofMilliseconds(connectTimeout));
         if (!Timeout.ofMinutes(3).equals(valConnectTimeout)) {
             httpClientOptions.put("connectTimeout", valConnectTimeout);
         }
         final Map<String, Object> httpConnectionOptions = new HashMap<>();
-        Timeout valSoTimeout = getAndRemoveParameter(parameters, "soTimeout", Timeout.class, soTimeout);
+        Timeout valSoTimeout = getAndRemoveParameter(parameters, "soTimeout", Timeout.class, Timeout.ofMilliseconds(soTimeout));
         if (!Timeout.ofMinutes(3).equals(valSoTimeout)) {
             httpConnectionOptions.put("soTimeout", valSoTimeout);
         }
@@ -438,10 +437,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                 = createConnectionManager(parameters, sslContextParameters, httpConnectionOptions);
         final HttpClientBuilder clientBuilder = createHttpClientBuilder(uri, parameters, httpClientOptions);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
-        endpoint.setResponseTimeout(valResponseTimeout);
-        endpoint.setSoTimeout(valSoTimeout);
-        endpoint.setConnectTimeout(valConnectTimeout);
-        endpoint.setConnectionRequestTimeout(valConnectionRequestTimeout);
+        endpoint.setResponseTimeout(valResponseTimeout.toMilliseconds());
+        endpoint.setSoTimeout(valSoTimeout.toMilliseconds());
+        endpoint.setConnectTimeout(valConnectTimeout.toMilliseconds());
+        endpoint.setConnectionRequestTimeout(valConnectionRequestTimeout.toMilliseconds());
         endpoint.setCopyHeaders(copyHeaders);
         endpoint.setSkipControlHeaders(skipControlHeaders);
         endpoint.setSkipRequestHeaders(skipRequestHeaders);
@@ -813,7 +812,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         this.cookieStore = cookieStore;
     }
 
-    public Timeout getConnectionRequestTimeout() {
+    public long getConnectionRequestTimeout() {
         return connectionRequestTimeout;
     }
 
@@ -826,11 +825,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * Default: 3 minutes
      * </p>
      */
-    public void setConnectionRequestTimeout(Timeout connectionRequestTimeout) {
+    public void setConnectionRequestTimeout(long connectionRequestTimeout) {
         this.connectionRequestTimeout = connectionRequestTimeout;
     }
 
-    public Timeout getConnectTimeout() {
+    public long getConnectTimeout() {
         return connectTimeout;
     }
 
@@ -844,11 +843,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * Default: 3 minutes
      * </p>
      */
-    public void setConnectTimeout(Timeout connectTimeout) {
+    public void setConnectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
-    public Timeout getSoTimeout() {
+    public long getSoTimeout() {
         return soTimeout;
     }
 
@@ -858,11 +857,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * Default: 3 minutes
      * </p>
      */
-    public void setSoTimeout(Timeout soTimeout) {
+    public void setSoTimeout(long soTimeout) {
         this.soTimeout = soTimeout;
     }
 
-    public Timeout getResponseTimeout() {
+    public long getResponseTimeout() {
         return responseTimeout;
     }
 
@@ -878,7 +877,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * Default: {@code 0}
      * </p>
      */
-    public void setResponseTimeout(Timeout responseTimeout) {
+    public void setResponseTimeout(long responseTimeout) {
         this.responseTimeout = responseTimeout;
     }
 

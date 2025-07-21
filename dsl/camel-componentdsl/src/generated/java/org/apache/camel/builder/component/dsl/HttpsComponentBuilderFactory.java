@@ -771,79 +771,74 @@ public interface HttpsComponentBuilderFactory {
     
         
         /**
-         * Returns the connection lease request timeout used when requesting a
-         * connection from the connection manager. A timeout value of zero is
-         * interpreted as a disabled timeout.
+         * Returns the connection lease request timeout (in millis) used when
+         * requesting a connection from the connection manager. A timeout value
+         * of zero is interpreted as a disabled timeout.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.hc.core5.util.Timeout&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 3 minutes
+         * Default: 180000
          * Group: timeout
          * 
          * @param connectionRequestTimeout the value to set
          * @return the dsl builder
          */
-        default HttpsComponentBuilder connectionRequestTimeout(org.apache.hc.core5.util.Timeout connectionRequestTimeout) {
+        default HttpsComponentBuilder connectionRequestTimeout(long connectionRequestTimeout) {
             doSetProperty("connectionRequestTimeout", connectionRequestTimeout);
             return this;
         }
     
         
         /**
-         * Determines the timeout until a new connection is fully established. A
-         * timeout value of zero is interpreted as an infinite timeout.
+         * Determines the timeout (in millis) until a new connection is fully
+         * established. A timeout value of zero is interpreted as an infinite
+         * timeout.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.hc.core5.util.Timeout&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 3 minutes
+         * Default: 180000
          * Group: timeout
          * 
          * @param connectTimeout the value to set
          * @return the dsl builder
          */
-        default HttpsComponentBuilder connectTimeout(org.apache.hc.core5.util.Timeout connectTimeout) {
+        default HttpsComponentBuilder connectTimeout(long connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
     
-        
         /**
-         * Determines the timeout until arrival of a response from the opposite
-         * endpoint. A timeout value of zero is interpreted as an infinite
-         * timeout. Please note that response timeout may be unsupported by HTTP
-         * transports with message multiplexing.
+         * Determines the timeout (in millis) until arrival of a response from
+         * the opposite endpoint. A timeout value of zero is interpreted as an
+         * infinite timeout. Please note that response timeout may be
+         * unsupported by HTTP transports with message multiplexing.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.hc.core5.util.Timeout&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: timeout
          * 
          * @param responseTimeout the value to set
          * @return the dsl builder
          */
-        default HttpsComponentBuilder responseTimeout(org.apache.hc.core5.util.Timeout responseTimeout) {
+        default HttpsComponentBuilder responseTimeout(long responseTimeout) {
             doSetProperty("responseTimeout", responseTimeout);
             return this;
         }
     
         
         /**
-         * Determines the default socket timeout value for blocking I/O
-         * operations.
+         * Determines the default socket timeout (in millis) value for blocking
+         * I/O operations.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.hc.core5.util.Timeout&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 3 minutes
+         * Default: 180000
          * Group: timeout
          * 
          * @param soTimeout the value to set
          * @return the dsl builder
          */
-        default HttpsComponentBuilder soTimeout(org.apache.hc.core5.util.Timeout soTimeout) {
+        default HttpsComponentBuilder soTimeout(long soTimeout) {
             doSetProperty("soTimeout", soTimeout);
             return this;
         }
@@ -903,10 +898,10 @@ public interface HttpsComponentBuilderFactory {
             case "sslContextParameters": ((HttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((HttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "x509HostnameVerifier": ((HttpComponent) component).setX509HostnameVerifier((javax.net.ssl.HostnameVerifier) value); return true;
-            case "connectionRequestTimeout": ((HttpComponent) component).setConnectionRequestTimeout((org.apache.hc.core5.util.Timeout) value); return true;
-            case "connectTimeout": ((HttpComponent) component).setConnectTimeout((org.apache.hc.core5.util.Timeout) value); return true;
-            case "responseTimeout": ((HttpComponent) component).setResponseTimeout((org.apache.hc.core5.util.Timeout) value); return true;
-            case "soTimeout": ((HttpComponent) component).setSoTimeout((org.apache.hc.core5.util.Timeout) value); return true;
+            case "connectionRequestTimeout": ((HttpComponent) component).setConnectionRequestTimeout((long) value); return true;
+            case "connectTimeout": ((HttpComponent) component).setConnectTimeout((long) value); return true;
+            case "responseTimeout": ((HttpComponent) component).setResponseTimeout((long) value); return true;
+            case "soTimeout": ((HttpComponent) component).setSoTimeout((long) value); return true;
             default: return false;
             }
         }

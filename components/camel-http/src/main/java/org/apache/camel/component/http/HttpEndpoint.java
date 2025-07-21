@@ -62,7 +62,6 @@ import org.apache.hc.core5.http.HttpResponseInterceptor;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.pool.ConnPoolControl;
 import org.apache.hc.core5.pool.PoolStats;
-import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,28 +109,24 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     private boolean useSystemProperties;
 
     // timeout
-    @Metadata(label = "timeout", defaultValue = "3 minutes",
-              description = "Returns the connection lease request timeout used when requesting"
+    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
+              description = "Returns the connection lease request timeout (in millis) used when requesting"
                             + " a connection from the connection manager."
-                            + " A timeout value of zero is interpreted as a disabled timeout.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    private Timeout connectionRequestTimeout = Timeout.ofMinutes(3);
-    @Metadata(label = "timeout", defaultValue = "3 minutes",
-              description = "Determines the timeout until a new connection is fully established."
-                            + " A timeout value of zero is interpreted as an infinite timeout.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    private Timeout connectTimeout = Timeout.ofMinutes(3);
-    @Metadata(label = "timeout", defaultValue = "3 minutes",
-              description = "Determines the default socket timeout value for blocking I/O operations.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    private Timeout soTimeout = Timeout.ofMinutes(3);
+                            + " A timeout value of zero is interpreted as a disabled timeout.")
+    private long connectionRequestTimeout = 3 * 60 * 1000L;
+    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
+              description = "Determines the timeout (in millis) until a new connection is fully established."
+                            + " A timeout value of zero is interpreted as an infinite timeout.")
+    private long connectTimeout = 3 * 60 * 1000L;
+    @Metadata(label = "timeout", defaultValue = "" + 3 * 60 * 1000,
+              description = "Determines the default socket timeout (in millis) value for blocking I/O operations.")
+    private long soTimeout = 3 * 60 * 1000L;
     @Metadata(label = "timeout", defaultValue = "0",
-              description = "Determines the timeout until arrival of a response from the opposite"
-                            + " endpoint. A timeout value of zero is interpreted as an infinite timeout."
-                            + " Please note that response timeout may be unsupported by HTTP transports "
-                            + "with message multiplexing.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    private Timeout responseTimeout = Timeout.ofMilliseconds(0);
+              description = "Determines the timeout (in millis) until arrival of a response from the opposite endpoint."
+                            + " A timeout value of zero is interpreted as an infinite timeout."
+                            + " Please note that response " +
+                            " may be unsupported by HTTP transports with message multiplexing.")
+    private long responseTimeout;
     @UriParam(label = "producer,advanced", description = "To use a custom CookieStore."
                                                          + " By default the BasicCookieStore is used which is an in-memory only cookie store."
                                                          + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
@@ -602,7 +597,7 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         this.sslContextParameters = sslContextParameters;
     }
 
-    public Timeout getConnectionRequestTimeout() {
+    public long getConnectionRequestTimeout() {
         return connectionRequestTimeout;
     }
 
@@ -615,11 +610,11 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
      * Default: 3 minutes
      * </p>
      */
-    public void setConnectionRequestTimeout(Timeout connectionRequestTimeout) {
+    public void setConnectionRequestTimeout(long connectionRequestTimeout) {
         this.connectionRequestTimeout = connectionRequestTimeout;
     }
 
-    public Timeout getConnectTimeout() {
+    public long getConnectTimeout() {
         return connectTimeout;
     }
 
@@ -633,11 +628,11 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
      * Default: 3 minutes
      * </p>
      */
-    public void setConnectTimeout(Timeout connectTimeout) {
+    public void setConnectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
-    public Timeout getSoTimeout() {
+    public long getSoTimeout() {
         return soTimeout;
     }
 
@@ -647,11 +642,11 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
      * Default: 3 minutes
      * </p>
      */
-    public void setSoTimeout(Timeout soTimeout) {
+    public void setSoTimeout(long soTimeout) {
         this.soTimeout = soTimeout;
     }
 
-    public Timeout getResponseTimeout() {
+    public long getResponseTimeout() {
         return responseTimeout;
     }
 
@@ -667,7 +662,7 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
      * Default: {@code 0}
      * </p>
      */
-    public void setResponseTimeout(Timeout responseTimeout) {
+    public void setResponseTimeout(long responseTimeout) {
         this.responseTimeout = responseTimeout;
     }
 
