@@ -8,6 +8,13 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 === camel-core
 
+=== camel-jbang
+
+The `camel export` will not include `camel-observabilities-services` out of the box. To include this, then use `--observe` to enable
+this during export.
+
+Notice when exporting to kubernetes then `camel-observabilities-services` is always enabled.
+
 === camel-google
 
 The scopes parameter for camel-google-calendar, camel-google-calendar-streams, camel-google-drive, camel-google-mail, camel-google-mail-streams and camel-google-sheets-streams has been defined as String instead of Collection<String>. For the migration users will need to, eventually, define scopes as a comma separated list of scopes instead of a Collection instance. For more information the related issue is CAMEL-22247.

@@ -585,4 +585,33 @@ class ExportTest {
         Assertions.assertTrue(f.exists());
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportObserve(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportObserve {}", rt);
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--observe=true", "target/test-classes/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-observability-services", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot",
+                            "camel-observability-services-starter", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus",
+                            "camel-quarkus-observability-services", null));
+        }
+    }
+
 }

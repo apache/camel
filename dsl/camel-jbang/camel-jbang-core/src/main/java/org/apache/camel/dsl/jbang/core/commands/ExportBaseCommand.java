@@ -208,6 +208,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     protected String openapi;
 
+    @CommandLine.Option(names = { "--observe" }, defaultValue = "false",
+                        description = "Enable observability services")
+    protected boolean observe;
+
     @CommandLine.Option(names = {
             "--dir",
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
@@ -360,6 +364,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.managementPort = managementPort;
         run.excludes = excludes;
         run.openapi = openapi;
+        run.observe = observe;
         run.download = download;
         run.packageScanJars = packageScanJars;
         run.runtime = runtime;

@@ -40,6 +40,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Assertions;
@@ -150,4 +151,25 @@ public class KubernetesExportBaseTest extends KubernetesBaseTest {
         model.setPomFile(f);
         return model;
     }
+
+    boolean containsDependency(List<Dependency> deps, String group, String artifact, String version) {
+        Dependency dep = new Dependency();
+        dep.setGroupId(group);
+        dep.setArtifactId(artifact);
+        dep.setVersion(version);
+        boolean found = false;
+        for (int i = 0; i < deps.size() && !found; i++) {
+            Dependency d = deps.get(i);
+            if (version == null) {
+                d.setVersion(null);
+            }
+            found = toGAV(d).equals(toGAV(dep));
+        }
+        return found;
+    }
+
+    private String toGAV(Dependency d) {
+        return d.getGroupId() + ":" + d.getArtifactId() + ":" + d.getVersion();
+    }
+
 }

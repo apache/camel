@@ -673,4 +673,32 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals(8779, ports.get(1).getPort());
         Assertions.assertEquals("jolokia", ports.get(1).getTargetPort().getStrVal());
     }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldObserveByDefault(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-observability-services", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot",
+                            "camel-observability-services-starter", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus",
+                            "camel-quarkus-observability-services", null));
+        }
+    }
+
 }
