@@ -408,7 +408,6 @@ public final class JmsMessageHelper {
 
         if (mode != null) {
             message.setJMSDeliveryMode(mode);
-            message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
         }
     }
 
