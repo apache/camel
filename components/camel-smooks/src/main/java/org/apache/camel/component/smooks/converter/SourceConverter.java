@@ -19,7 +19,7 @@ package org.apache.camel.component.smooks.converter;
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 import org.apache.camel.Converter;
 import org.apache.camel.WrappedFile;
@@ -71,7 +71,7 @@ public class SourceConverter {
     public static Source toURISource(WrappedFile<File> genericFile) {
         String systemId = new javax.xml.transform.stream.StreamSource((File) genericFile.getBody()).getSystemId();
         try {
-            return new URLSource(new URL(systemId));
+            return new URLSource(URI.create(systemId).toURL());
         } catch (MalformedURLException e) {
             throw new SmooksException(e);
         }

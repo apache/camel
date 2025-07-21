@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -1244,7 +1245,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             if (p != null) {
                 for (Repository r : p.getRepositories()) {
                     try {
-                        URL url = new URL(r.getUrl());
+                        URL url = URI.create(r.getUrl()).toURL();
                         if (repositoryURLs.add(r.getUrl())) {
                             if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
                                     && url.getPath().startsWith("/snapshots")) {
@@ -1303,7 +1304,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             try {
                 repo = repositoryResolver.resolveRepository(repo);
                 if (repo != null && !repo.isBlank()) {
-                    URL url = new URL(repo);
+                    URL url = URI.create(repo).toURL();
                     if (mavenCentralEnabled && url.getHost().equals("repo1.maven.org")) {
                         // Maven Central is always used, so skip it
                         return;

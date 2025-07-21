@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -294,7 +295,7 @@ public final class Olingo2AppImpl implements Olingo2App {
         if (queryParams != null) {
             encodedQueryParams = new HashMap<>(queryParams.size());
             for (Map.Entry<String, String> entry : queryParams.entrySet()) {
-                encodedQueryParams.put(entry.getKey(), URLEncoder.encode(entry.getValue()));
+                encodedQueryParams.put(entry.getKey(), URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
             }
         }
         return encodedQueryParams;
