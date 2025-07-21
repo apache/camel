@@ -88,6 +88,25 @@ from("jms:payment:response")
         .to("direct:payementResponse");
 ----
 
+Instead of simple language you can also use Groovy which has a special support in J8583 library:
+
+[source,java]
+----
+from("jms:payment:response")
+        .unmarshal().iso8583("0210")
+        .transform().groovy(
+            """
+              [
+                "op": body[3].value,
+                "amount": body[4].value,
+                "ref": body[37].value,
+                "response": body[39].value,
+                "terminal": body[41].value,
+                "currency": body[49].value
+              ]
+            """)
+        .to("direct:payementResponse");
+----
 
 == More Information
 
