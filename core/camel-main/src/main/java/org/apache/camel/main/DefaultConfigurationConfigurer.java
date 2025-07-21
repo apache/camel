@@ -353,13 +353,17 @@ public final class DefaultConfigurationConfigurer {
             cs.setWorkDir(config.getCompileWorkDir());
         }
         if (config.getGroovyScriptPattern() != null) {
-            GroovyScriptCompiler gsc = camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
-            if (gsc != null) {
-                gsc.setScriptPattern(config.getGroovyScriptPattern());
-                gsc.setPreloadCompiled(config.isGroovyPreloadCompiled());
-                camelContext.addService(gsc);
-                // force start compiler eager so Camel routes can load these pre-compiled classes
-                ServiceHelper.startService(gsc);
+            // check if there is any groovy sources before demanding the GroovyScriptCompiler plugin (which is in camel-groovy JAR)
+            boolean exists = GroovyScriptCompiler.existsSourceFiles(camelContext, config.getGroovyScriptPattern());
+            if (exists || camelContext.getCamelContextExtension().isContextPluginInUse(GroovyScriptCompiler.class)) {
+                GroovyScriptCompiler gsc = camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
+                if (gsc != null) {
+                    gsc.setScriptPattern(config.getGroovyScriptPattern());
+                    gsc.setPreloadCompiled(config.isGroovyPreloadCompiled());
+                    camelContext.addService(gsc);
+                    // force start compiler eager so Camel routes can load these pre-compiled classes
+                    ServiceHelper.startService(gsc);
+                }
             }
         }
 

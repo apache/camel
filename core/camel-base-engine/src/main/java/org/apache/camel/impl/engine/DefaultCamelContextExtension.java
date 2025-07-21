@@ -1114,6 +1114,11 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
+    public boolean isContextPluginInUse(Class<?> type) {
+        return pluginManager.isContextPluginInUse(type);
+    }
+
+    @Override
     public <T> void addContextPlugin(Class<T> type, T module) {
         final T addedModule = camelContext.getInternalServiceManager().addService(camelContext, module);
         pluginManager.addContextPlugin(type, addedModule);

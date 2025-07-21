@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.CamelContext;
+
 /**
  * To let camel-groovy pre-compile script files during bootstrap.
  */
@@ -57,4 +59,27 @@ public interface GroovyScriptCompiler {
      * @throws Exception is thrown if compilation error
      */
     void recompile(Resource resource) throws Exception;
+
+    /**
+     * Checks whether any groovy sources exists?
+     *
+     * @param  context       the camel context
+     * @param  scriptPattern directories to scan
+     * @return               true if any resources exists, false otherwise
+     */
+    static boolean existsSourceFiles(CamelContext context, String scriptPattern) throws Exception {
+        boolean exists = false;
+        PackageScanResourceResolver resolver
+                = context.getCamelContextExtension().getContextPlugin(PackageScanResourceResolver.class);
+        for (String pattern : scriptPattern.split(",")) {
+            // include all kind of resources
+            for (Resource resource : resolver.findResources(pattern, n -> true)) {
+                if (resource.exists()) {
+                    exists = true;
+                    break;
+                }
+            }
+        }
+        return exists;
+    }
 }

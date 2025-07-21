@@ -536,6 +536,14 @@ public interface ExtendedCamelContext {
     <T> T getContextPlugin(Class<T> type);
 
     /**
+     * Whether a plugin of the given type is already in use
+     *
+     * @param  type the type of the extension
+     * @return      true if already in use, false otherwise
+     */
+    boolean isContextPluginInUse(Class<?> type);
+
+    /**
      * Allows installation of custom plugins to the Camel context.
      *
      * @param type   the type of the extension

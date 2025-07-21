@@ -195,8 +195,10 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         if (scriptPattern != null) {
             LOG.debug("Loading Groovy sources from: {}", scriptPattern);
             doCompile(scanForGroovySources(scriptPattern), true);
-            LOG.info("Loaded Groovy sources from: {} (pre-loaded:{} compiled:{} time:{}ms)", scriptPattern,
-                    preloadCounter, counter, taken);
+            if (preloadCounter > 0 || counter > 0) {
+                LOG.info("Loaded Groovy sources from: {} (pre-loaded:{} compiled:{} time:{}ms)", scriptPattern,
+                        preloadCounter, counter, taken);
+            }
         }
     }
 

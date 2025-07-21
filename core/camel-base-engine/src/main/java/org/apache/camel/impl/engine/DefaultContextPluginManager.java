@@ -47,6 +47,13 @@ public class DefaultContextPluginManager implements PluginManager {
     }
 
     @Override
+    public boolean isContextPluginInUse(Class<?> type) {
+        Object extension = extensions.get(type);
+        // a lazy plugin should not be regarded as true
+        return extension != null && (!(extension instanceof Supplier));
+    }
+
+    @Override
     public <T> void addContextPlugin(Class<T> type, T module) {
         if (module != null) {
             try {
