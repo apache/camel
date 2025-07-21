@@ -181,6 +181,7 @@ public class KubernetesExport extends Export {
         logging = configurer.logging;
         loggingLevel = configurer.loggingLevel;
         verbose = configurer.verbose;
+        observe = true; // always include observability-services for kubernetes
     }
 
     public Integer export() throws Exception {
