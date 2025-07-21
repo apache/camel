@@ -41,7 +41,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExceptionHelper;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.http.HttpUtil;
@@ -122,8 +121,6 @@ public final class VertxPlatformHttpSupport {
             message.setHeader(Exchange.CONTENT_TYPE, DEFAULT_CONTENT_TYPE_ON_EXCEPTION);
         }
 
-        // and mark the exception as failure handled, as we handled it by returning it as the response
-        ExchangeHelper.setFailureHandled(exchange);
         return body;
     }
 
