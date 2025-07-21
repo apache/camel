@@ -26,7 +26,8 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 public class JettyEventNotifierTest extends BaseJettyTest {
 
@@ -48,9 +49,13 @@ public class JettyEventNotifierTest extends BaseJettyTest {
 
             context.start();
 
-            String out = template.requestBodyAndHeader("http://localhost:{{port}}/camel/ok", "Hello World",
-                    Exchange.HTTP_METHOD, "GET", String.class);
-            assertEquals("Bye World", out);
+            given()
+                    .port(getPort())
+                    .body("Hello World")
+                    .post("/camel/ok")
+                    .then()
+                    .statusCode(200)
+                    .body(is("Bye World"));
 
             Assertions.assertEquals(2, events.size());
             Assertions.assertEquals("ExchangeCreated (failed:false)", events.get(0));
@@ -76,10 +81,13 @@ public class JettyEventNotifierTest extends BaseJettyTest {
 
             context.start();
 
-            String out = template.requestBodyAndHeader("http://localhost:{{port}}/camel/fail?throwExceptionOnFailure=false",
-                    "Hello World",
-                    Exchange.HTTP_METHOD, "GET", String.class);
-            assertEquals("", out);
+            given()
+                    .port(getPort())
+                    .body("Hello World")
+                    .post("/camel/fail")
+                    .then()
+                    .statusCode(500)
+                    .body(is(""));
 
             Assertions.assertEquals(2, events.size());
             Assertions.assertEquals("ExchangeCreated (failed:false)", events.get(0));
@@ -94,9 +102,7 @@ public class JettyEventNotifierTest extends BaseJettyTest {
         public void notify(CamelEvent event) throws Exception {
             if (event.getSource() instanceof Exchange) {
                 Exchange ex = (Exchange) event.getSource();
-                if ("jetty".equals(ex.getFromRouteId())) {
-                    events.add(event.getType().name() + " (failed:" + ex.isFailed() + ")");
-                }
+                events.add(event.getType().name() + " (failed:" + ex.isFailed() + ")");
             }
         }
     }
