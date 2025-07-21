@@ -59,6 +59,9 @@ public class GooglePubsubProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         if (logger.isDebugEnabled()) {
+            // TODO update when basline is java 21
+            //            logger.debug("uploader thread/id: {} / {}. api call completed.", Thread.currentThread().threadId(),
+            //                    exchange.getExchangeId());
             logger.debug("uploader thread/id: {} / {}. api call completed.", Thread.currentThread().getId(),
                     exchange.getExchangeId());
         }

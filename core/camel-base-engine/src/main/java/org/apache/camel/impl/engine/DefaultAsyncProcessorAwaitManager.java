@@ -260,6 +260,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         sb.append(
                 "---------------------------------------------------------------------------------------------------------------------------------------\n");
 
+        // TODO once baseline is java 21
+        //        sb.append(style("Id:")).append(entry.getBlockedThread().threadId()).append("\n");
         sb.append(style("Id:")).append(entry.getBlockedThread().getId()).append("\n");
         sb.append(style("Name:")).append(entry.getBlockedThread().getName()).append("\n");
         sb.append(style("RouteId:")).append(safeNull(entry.getRouteId())).append("\n");

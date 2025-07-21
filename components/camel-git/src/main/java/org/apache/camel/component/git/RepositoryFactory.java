@@ -19,7 +19,7 @@ package org.apache.camel.component.git;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
@@ -107,7 +107,7 @@ public abstract class RepositoryFactory {
         Path tempFile = Files.createTempFile(null, null);
         FileOutputStream outputStream = new FileOutputStream(tempFile.toString());
         try {
-            ReadableByteChannel byteChannel = Channels.newChannel(new URL(url).openStream());
+            ReadableByteChannel byteChannel = Channels.newChannel(URI.create(url).toURL().openStream());
             outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
         } finally {
             IOHelper.close(outputStream);

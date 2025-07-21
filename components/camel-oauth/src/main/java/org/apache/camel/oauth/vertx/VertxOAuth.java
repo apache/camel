@@ -16,7 +16,7 @@
  */
 package org.apache.camel.oauth.vertx;
 
-import java.net.URL;
+import java.net.URI;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import io.vertx.core.Vertx;
@@ -81,7 +81,7 @@ public class VertxOAuth extends OAuth {
                         .setJwksPath(opts.getJwkPath());
                 var jwksPath = config.getJwksPath();
                 if (!jwksPath.isBlank()) {
-                    config.setJWKSet(JWKSet.load(new URL(jwksPath)));
+                    config.setJWKSet(JWKSet.load(URI.create(jwksPath).toURL()));
                 }
             } catch (Exception ex) {
                 throw new OAuthException("Cannot discover OAuth config from: " + wellKnownUri, ex);

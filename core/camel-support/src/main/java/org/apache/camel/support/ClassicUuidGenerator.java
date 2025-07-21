@@ -45,10 +45,7 @@ public class ClassicUuidGenerator implements UuidGenerator {
         String stub = "";
         boolean canAccessSystemProps = true;
         try {
-            SecurityManager sm = System.getSecurityManager();
-            if (sm != null) {
-                sm.checkPropertiesAccess();
-            }
+            System.getProperty("java.version");
         } catch (SecurityException se) {
             canAccessSystemProps = false;
         }
