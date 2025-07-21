@@ -29,19 +29,13 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.directory.api.ldap.model.constants.SupportedSaslMechanisms;
 import org.apache.directory.api.util.Network;
 import org.apache.directory.api.util.Strings;
-import org.apache.directory.server.annotations.CreateChngPwdServer;
 import org.apache.directory.server.annotations.CreateConsumer;
-import org.apache.directory.server.annotations.CreateKdcServer;
 import org.apache.directory.server.annotations.CreateLdapServer;
 import org.apache.directory.server.annotations.CreateTransport;
 import org.apache.directory.server.annotations.SaslMechanism;
 import org.apache.directory.server.core.annotations.AnnotationUtils;
 import org.apache.directory.server.core.api.DirectoryService;
 import org.apache.directory.server.i18n.I18n;
-import org.apache.directory.server.kerberos.ChangePasswordConfig;
-import org.apache.directory.server.kerberos.KerberosConfig;
-import org.apache.directory.server.kerberos.changepwd.ChangePasswordServer;
-import org.apache.directory.server.kerberos.kdc.KdcServer;
 import org.apache.directory.server.ldap.ExtendedOperationHandler;
 import org.apache.directory.server.ldap.LdapServer;
 import org.apache.directory.server.ldap.handlers.sasl.MechanismHandler;
@@ -313,81 +307,6 @@ public final class ServerAnnotationProcessor {
         return classCaller.getAnnotation(annotationClass);
     }
 
-    public static KdcServer getKdcServer(DirectoryService directoryService, int startPort) throws Exception {
-        CreateKdcServer createKdcServer = (CreateKdcServer) getAnnotation(CreateKdcServer.class);
-        return createKdcServer(createKdcServer, directoryService);
-    }
-
-    private static KdcServer createKdcServer(CreateKdcServer createKdcServer, DirectoryService directoryService) {
-        if (createKdcServer == null) {
-            return null;
-        }
-
-        KerberosConfig kdcConfig = new KerberosConfig();
-        kdcConfig.setServicePrincipal(createKdcServer.kdcPrincipal());
-        kdcConfig.setPrimaryRealm(createKdcServer.primaryRealm());
-        kdcConfig.setMaximumTicketLifetime(createKdcServer.maxTicketLifetime());
-        kdcConfig.setMaximumRenewableLifetime(createKdcServer.maxRenewableLifetime());
-
-        KdcServer kdcServer = new KdcServer(kdcConfig);
-
-        kdcServer.setSearchBaseDn(createKdcServer.searchBaseDn());
-
-        CreateTransport[] transportBuilders = createKdcServer.transports();
-
-        if (transportBuilders == null) {
-            // create only UDP transport if none specified
-            int port = 0;
-            try {
-                port = getFreePort();
-            } catch (IOException ioe) {
-                // Don't know what to do here...
-            }
-            UdpTransport defaultTransport = new UdpTransport(port);
-            kdcServer.addTransports(defaultTransport);
-        } else if (transportBuilders.length > 0) {
-            for (CreateTransport transportBuilder : transportBuilders) {
-                List<Transport> transports = createTransports(transportBuilder);
-                for (Transport t : transports) {
-                    kdcServer.addTransports(t);
-                }
-            }
-        }
-
-        CreateChngPwdServer[] createChngPwdServers = createKdcServer.chngPwdServer();
-
-        if (createChngPwdServers.length > 0) {
-
-            CreateChngPwdServer createChngPwdServer = createChngPwdServers[0];
-            ChangePasswordConfig config = new ChangePasswordConfig(kdcConfig);
-            config.setServicePrincipal(createChngPwdServer.srvPrincipal());
-
-            ChangePasswordServer chngPwdServer = new ChangePasswordServer(config);
-
-            for (CreateTransport transportBuilder : createChngPwdServer.transports()) {
-                List<Transport> transports = createTransports(transportBuilder);
-                for (Transport t : transports) {
-                    chngPwdServer.addTransports(t);
-                }
-            }
-
-            chngPwdServer.setDirectoryService(directoryService);
-
-            kdcServer.setChangePwdServer(chngPwdServer);
-        }
-
-        kdcServer.setDirectoryService(directoryService);
-
-        // Launch the server
-        try {
-            kdcServer.start();
-        } catch (Exception e) {
-            LOG.warn("Failed to start the KDC server: {}", e.getMessage(), e);
-        }
-
-        return kdcServer;
-    }
-
     private static List<Transport> createTransports(CreateTransport transportBuilder) {
         String protocol = transportBuilder.protocol();
         int port = transportBuilder.port();
@@ -436,12 +355,6 @@ public final class ServerAnnotationProcessor {
         ss.close();
 
         return port;
-    }
-
-    public static KdcServer getKdcServer(Description description, DirectoryService directoryService) {
-        CreateKdcServer createLdapServer = description.getAnnotation(CreateKdcServer.class);
-
-        return createKdcServer(createLdapServer, directoryService);
     }
 
 }

@@ -34,7 +34,6 @@ import org.apache.directory.server.core.factory.DefaultDirectoryServiceFactory;
 import org.apache.directory.server.core.factory.DirectoryServiceFactory;
 import org.apache.directory.server.core.factory.PartitionFactory;
 import org.apache.directory.server.core.security.TlsKeyGenerator;
-import org.apache.directory.server.kerberos.kdc.KdcServer;
 import org.apache.directory.server.ldap.LdapServer;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -68,11 +67,6 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
      */
     private static final String SET_LDAP_SERVER_METHOD_NAME = "setLdapServer";
 
-    /**
-     * The 'kdcServer' field in the run tests
-     */
-    private static final String SET_KDC_SERVER_METHOD_NAME = "setKdcServer";
-
     public static class State {
         DirectoryService classDirectoryService;
         DirectoryService methodDirectoryService;
@@ -80,11 +74,7 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
         LdapServer classLdapServer;
         LdapServer methodLdapServer;
         LdapServer ldapServer;
-        KdcServer classKdcServer;
-        KdcServer methodKdcServer;
-        KdcServer kdcServer;
         DirectoryService oldLdapServerDirService;
-        DirectoryService oldKdcServerDirService;
         long revision;
 
         public void beforeAll(ExtensionContext context) throws Exception {
@@ -111,8 +101,6 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
             // check if it has a LdapServerBuilder, then use the DS created above
             classLdapServer = ServerAnnotationProcessor.createLdapServer(description, classDirectoryService);
 
-            classKdcServer = ServerAnnotationProcessor.getKdcServer(description, classDirectoryService);
-
             // print out information which partition factory we use
             DirectoryServiceFactory dsFactory = new DefaultDirectoryServiceFactory();
             PartitionFactory partitionFactory = dsFactory.getPartitionFactory();
@@ -135,8 +123,6 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
                 directoryService = classDirectoryService;
             } else if (classLdapServer != null) {
                 directoryService = classLdapServer.getDirectoryService();
-            } else if (classKdcServer != null) {
-                directoryService = classKdcServer.getDirectoryService();
             }
             // apply the method LDIFs, and tag for reversion
             revision = getCurrentRevision(directoryService);
@@ -153,35 +139,17 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
                 ldapServer.setDirectoryService(directoryService);
             }
 
-            methodKdcServer = ServerAnnotationProcessor.getKdcServer(methodDescription, directoryService);
-            if (methodKdcServer != null) {
-                kdcServer = methodKdcServer;
-            } else if (classKdcServer != null) {
-                kdcServer = classKdcServer;
-            }
-            if (kdcServer != null) {
-                oldKdcServerDirService = kdcServer.getDirectoryService();
-                kdcServer.setDirectoryService(directoryService);
-            }
-
             // At this point, we know which services to use, so inject them into the test instance
             inject(context, SET_SERVICE_METHOD_NAME, DirectoryService.class, directoryService);
             inject(context, SET_LDAP_SERVER_METHOD_NAME, LdapServer.class, ldapServer);
-            inject(context, SET_KDC_SERVER_METHOD_NAME, KdcServer.class, kdcServer);
         }
 
         public void afterEach(ExtensionContext context) throws Exception {
             if (oldLdapServerDirService != null) {
                 ldapServer.setDirectoryService(oldLdapServerDirService);
             }
-            if (oldKdcServerDirService != null) {
-                kdcServer.setDirectoryService(oldKdcServerDirService);
-            }
             if (methodLdapServer != null) {
                 methodLdapServer.stop();
-            }
-            if (methodKdcServer != null) {
-                methodKdcServer.stop();
             }
             // Cleanup the methodDS if it has been created
             if (methodDirectoryService != null) {
@@ -197,9 +165,6 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
         public void afterAll(ExtensionContext context) throws Exception {
             if (classLdapServer != null) {
                 classLdapServer.stop();
-            }
-            if (classKdcServer != null) {
-                classKdcServer.stop();
             }
             if (classDirectoryService != null) {
                 LOG.debug("Shuting down DS for {}", classDirectoryService.getInstanceId());
