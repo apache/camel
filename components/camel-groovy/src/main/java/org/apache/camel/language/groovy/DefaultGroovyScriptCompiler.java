@@ -159,7 +159,12 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             // use existing class loader if available
             classLoader = (GroovyScriptClassLoader) context.getClassResolver().getClassLoader("GroovyScriptClassLoader");
             if (classLoader == null) {
-                classLoader = new GroovyScriptClassLoader();
+                ClassLoader applicationContextClassLoader = context.getApplicationContextClassLoader();
+                if (applicationContextClassLoader != null) {
+                    classLoader = new GroovyScriptClassLoader(applicationContextClassLoader);
+                } else {
+                    classLoader = new GroovyScriptClassLoader();
+                }
                 context.getClassResolver().addClassLoader(classLoader);
                 // make classloader available for groovy language
                 context.getCamelContextExtension().addContextPlugin(GroovyScriptClassLoader.class, classLoader);
