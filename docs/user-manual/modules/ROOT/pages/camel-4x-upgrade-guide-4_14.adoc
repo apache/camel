@@ -21,7 +21,7 @@ The scopes parameter for camel-google-calendar, camel-google-calendar-streams, c
 
 === camel-consul
 
-The nodeMeta parameter for camel-consul has been defined as String instead of List<String>. For the migration users will need to, eventually, define nodeMeta as a comma separated list of nodeMeta instead of a List instance. For more information the related issue is CAMEL-17339.
+The nodeMeta and the tags parameter for camel-consul has been defined as String instead of List<String>. For the migration users will need to, eventually, define nodeMeta as a comma separated list of nodeMeta instead of a List or Set instance. For more information the related issue is CAMEL-17339.
 
 === camel-dapr
 
