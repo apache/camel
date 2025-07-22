@@ -8,6 +8,17 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 === camel-core
 
+==== Splitter and Multicast EIPs
+
+When using `shareUnitOfWork=true` in Split or Multicast EIPs, then Camel will now use a single shared `UnitOfWork` instance (parent)
+for the entire body of work. So if the Splitter is splitting into 1000 sub messages, then each of them will now reuse
+the same `UnitOfWork` and any completion tasks that each sub messages, will now be executed later, when the parent `UnitOfWork`
+is complete, usually when the original message is completed.
+
+Previously, each sub-message was independent (despite the documentation refers to this not being the case). However this feature
+has been mistakenly for many years, as this feature is rarely in use. However, we had the opportunity to look into this as part
+of an issue, and felt it's better to fix this before for this LTS release.
+
 === camel-jbang
 
 The `camel export` will not include `camel-observabilities-services` out of the box. To include this, then use `--observe` to enable

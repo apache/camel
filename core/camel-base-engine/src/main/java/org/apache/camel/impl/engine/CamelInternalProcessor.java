@@ -893,26 +893,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     /**
-     * Advice when an EIP uses the <tt>shareUnitOfWork</tt> functionality.
-     */
-    public static class ChildUnitOfWorkProcessorAdvice extends UnitOfWorkProcessorAdvice {
-
-        private final UnitOfWork parent;
-
-        public ChildUnitOfWorkProcessorAdvice(Route route, CamelContext camelContext, UnitOfWork parent) {
-            super(route, camelContext);
-            this.parent = parent;
-        }
-
-        @Override
-        protected UnitOfWork createUnitOfWork(Exchange exchange) {
-            // let the parent create a child unit of work to be used
-            return parent.createChildUnitOfWork(exchange);
-        }
-
-    }
-
-    /**
      * Advice when Message History has been enabled.
      */
     @SuppressWarnings("unchecked")

@@ -32,7 +32,6 @@ import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.SharedInternalProcessor;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.annotations.JdkService;
 
 @JdkService(InternalProcessorFactory.FACTORY)
@@ -41,13 +40,6 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
     public InternalProcessor addUnitOfWorkProcessorAdvice(CamelContext camelContext, Processor processor, Route route) {
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
-        return internal;
-    }
-
-    public InternalProcessor addChildUnitOfWorkProcessorAdvice(
-            CamelContext camelContext, Processor processor, Route route, UnitOfWork parent) {
-        CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
-        internal.addAdvice(new CamelInternalProcessor.ChildUnitOfWorkProcessorAdvice(route, camelContext, parent));
         return internal;
     }
 

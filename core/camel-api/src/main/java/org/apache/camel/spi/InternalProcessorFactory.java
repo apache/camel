@@ -43,9 +43,6 @@ public interface InternalProcessorFactory {
 
     InternalProcessor addUnitOfWorkProcessorAdvice(CamelContext camelContext, Processor processor, Route route);
 
-    InternalProcessor addChildUnitOfWorkProcessorAdvice(
-            CamelContext camelContext, Processor processor, Route route, UnitOfWork parent);
-
     SharedInternalProcessor createSharedCamelInternalProcessor(CamelContext camelContext);
 
     Channel createChannel(CamelContext camelContext);
