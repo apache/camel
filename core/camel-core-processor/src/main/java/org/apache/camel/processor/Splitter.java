@@ -63,20 +63,20 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                     AggregationStrategy aggregationStrategy, boolean parallelProcessing,
                     ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
                     boolean stopOnException, long timeout, Processor onPrepare,
-                    boolean useSubUnitOfWork, boolean parallelAggregate) {
+                    boolean shareUnitOfWork, boolean parallelAggregate) {
         this(camelContext, route, expression, destination, aggregationStrategy, parallelProcessing, executorService,
              shutdownExecutorService, streaming, stopOnException, timeout,
-             onPrepare, useSubUnitOfWork, parallelAggregate, ",");
+             onPrepare, shareUnitOfWork, parallelAggregate, ",");
     }
 
     public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
                     AggregationStrategy aggregationStrategy, boolean parallelProcessing,
                     ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
                     boolean stopOnException, long timeout, Processor onPrepare,
-                    boolean useSubUnitOfWork, boolean parallelAggregate, String delimiter) {
+                    boolean shareUnitOfWork, boolean parallelAggregate, String delimiter) {
         super(camelContext, route, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
               shutdownExecutorService, streaming, stopOnException,
-              timeout, onPrepare, useSubUnitOfWork, parallelAggregate, 0);
+              timeout, onPrepare, shareUnitOfWork, parallelAggregate, 0);
         this.expression = expression;
         StringHelper.notEmpty(delimiter, "delimiter");
         this.delimiter = delimiter;
