@@ -38,36 +38,32 @@
     "schemas" : {
       "InnerClass" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
-          "type" : "string"
-        },
         "properties" : {
           "longField" : {
             "type" : "integer",
             "format" : "int64"
           }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
+          "type" : "string"
         }
       },
       "org.apache.camel.openapi.model.SampleComplexResponseType.InnerClass" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
-          "type" : "string"
-        },
         "properties" : {
           "doubleField" : {
             "type" : "number",
             "format" : "double"
           }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
+          "type" : "string"
         }
       },
       "SampleComplexResponseType" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexResponseType",
-          "type" : "string"
-        },
         "properties" : {
           "responseField1" : {
             "type" : "string"
@@ -89,7 +85,11 @@
             "$ref" : "org.apache.camel.openapi.model.SampleComplexResponseType.InnerClass"
           }
         },
-        "required" : [ "arrayOfStrings", "responseField1" ]
+        "required" : [ "arrayOfStrings", "responseField1" ],
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexResponseType",
+          "type" : "string"
+        }
       }
     },
     "securitySchemes" : {

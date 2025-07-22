@@ -38,23 +38,19 @@
     "schemas" : {
       "requestInner" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexRequestTypeWithSchemaAnnotation$InnerClass",
-          "type" : "string"
-        },
         "properties" : {
           "longField" : {
             "type" : "integer",
             "format" : "int64"
           }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestTypeWithSchemaAnnotation$InnerClass",
+          "type" : "string"
         }
       },
       "sampleRequestWithSchema" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexRequestTypeWithSchemaAnnotation",
-          "type" : "string"
-        },
         "properties" : {
           "data" : {
             "$ref" : "#/components/schemas/customData"
@@ -121,31 +117,35 @@
             "$ref" : "#/components/schemas/requestInner"
           }
         },
-        "required" : [ "mapOfStrings", "requestField1" ]
+        "required" : [ "mapOfStrings", "requestField1" ],
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestTypeWithSchemaAnnotation",
+          "type" : "string"
+        }
       },
       "customData" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.CustomDataWithSchemaAnnotation",
-          "type" : "string"
-        },
         "properties" : {
           "customDataField" : {
             "type" : "string"
           }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.CustomDataWithSchemaAnnotation",
+          "type" : "string"
         }
       },
       "responseInner" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation$InnerClass",
-          "type" : "string"
-        },
         "properties" : {
           "doubleField" : {
             "type" : "number",
             "format" : "double"
           }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation$InnerClass",
+          "type" : "string"
         }
       }
     },

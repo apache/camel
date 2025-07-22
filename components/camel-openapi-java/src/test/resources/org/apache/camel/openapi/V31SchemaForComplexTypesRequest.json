@@ -38,48 +38,44 @@
     "schemas" : {
       "InnerClass" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
-          "type" : "string"
-        },
         "properties" : {
           "longField" : {
             "type" : "integer",
             "format" : "int64"
           }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
+          "type" : "string"
         }
       },
       "CustomData" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.CustomData",
-          "type" : "string"
-        },
         "properties" : {
           "customDataField" : {
             "type" : "string"
           }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.CustomData",
+          "type" : "string"
         }
       },
       "org.apache.camel.openapi.model.SampleComplexResponseType.InnerClass" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
-          "type" : "string"
-        },
         "properties" : {
           "doubleField" : {
             "type" : "number",
             "format" : "double"
           }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
+          "type" : "string"
         }
       },
       "SampleComplexRequestType" : {
         "type" : "object",
-        "x-className" : {
-          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType",
-          "type" : "string"
-        },
         "properties" : {
           "data" : {
             "$ref" : "#/components/schemas/CustomData"
@@ -146,7 +142,11 @@
             "$ref" : "#/components/schemas/InnerClass"
           }
         },
-        "required" : [ "mapOfStrings", "requestField1" ]
+        "required" : [ "mapOfStrings", "requestField1" ],
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType",
+          "type" : "string"
+        }
       }
     },
     "securitySchemes" : {
