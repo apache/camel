@@ -36,6 +36,7 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -63,6 +64,7 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "name": return java.lang.String.class;
         case "parameters": return java.util.Map.class;
         case "tags": return java.lang.String.class;
         default: return null;
@@ -86,6 +88,7 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "name": return target.getName();
         case "parameters": return target.getParameters();
         case "tags": return target.getTags();
         default: return null;

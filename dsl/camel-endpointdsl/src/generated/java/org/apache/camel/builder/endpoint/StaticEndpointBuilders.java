@@ -9607,7 +9607,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>langchain4j-tools:toolId</code>
      * 
      * Path parameter: toolId (required)
-     * The tool name
+     * The tool id
      * 
      * @param path toolId
      * @return the dsl builder
@@ -9626,7 +9626,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>langchain4j-tools:toolId</code>
      * 
      * Path parameter: toolId (required)
-     * The tool name
+     * The tool id
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

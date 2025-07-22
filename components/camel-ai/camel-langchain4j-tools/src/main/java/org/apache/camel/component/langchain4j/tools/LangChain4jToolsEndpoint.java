@@ -50,7 +50,7 @@ import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHE
 public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
-    @UriPath(description = "The tool name")
+    @UriPath(description = "The tool id")
     private final String toolId;
 
     @Metadata(required = true)
@@ -63,6 +63,10 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
     @Metadata(label = "consumer")
     @UriParam(description = "Tool description")
     private String description;
+
+    @Metadata(label = "consumer")
+    @UriParam(description = "Tool name")
+    private String name;
 
     @Metadata(label = "consumer")
     @UriParam(description = "List of Tool parameters in the form of parameter.<name>=<type>", prefix = "parameter.",
@@ -122,13 +126,18 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
                     "In order to use the langchain4j component as a consumer, you need to specify at least description, or a camelToolParameter");
         }
 
-        String simpleDescription = null;
-        if (description != null) {
-            simpleDescription = StringHelper.dashToCamelCase(description.replace(" ", "-"));
+        final String toolName;
+
+        if (name != null) {
+            toolName = name;
+        } else if (description != null) {
+            toolName = StringHelper.dashToCamelCase(description.replace(" ", "-"));
+        } else {
+            toolName = null;
         }
 
         ToolSpecification toolSpecification = toolSpecificationBuilder
-                .name(simpleDescription)
+                .name(toolName)
                 .build();
 
         final LangChain4jToolsConsumer langChain4jToolsConsumer = new LangChain4jToolsConsumer(this, processor);
@@ -175,6 +184,19 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * The tool name. This is passed to the LLM, so it should conform to any LLM restrictions.
+     *
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

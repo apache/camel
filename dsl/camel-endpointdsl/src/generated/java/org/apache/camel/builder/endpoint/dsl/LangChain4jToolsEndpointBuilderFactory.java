@@ -73,6 +73,20 @@ public interface LangChain4jToolsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Tool name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param name the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jToolsEndpointConsumerBuilder name(String name) {
+            doSetProperty("name", name);
+            return this;
+        }
+        /**
          * List of Tool parameters in the form of parameter.=. This is a
          * multi-value option with prefix: parameter.
          * 
@@ -499,7 +513,7 @@ public interface LangChain4jToolsEndpointBuilderFactory {
          * Syntax: <code>langchain4j-tools:toolId</code>
          * 
          * Path parameter: toolId (required)
-         * The tool name
+         * The tool id
          * 
          * @param path toolId
          * @return the dsl builder
@@ -518,7 +532,7 @@ public interface LangChain4jToolsEndpointBuilderFactory {
          * Syntax: <code>langchain4j-tools:toolId</code>
          * 
          * Path parameter: toolId (required)
-         * The tool name
+         * The tool id
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
