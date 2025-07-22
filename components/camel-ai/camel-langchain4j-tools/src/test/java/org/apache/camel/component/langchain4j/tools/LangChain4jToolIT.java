@@ -94,6 +94,10 @@ public class LangChain4jToolIT extends CamelTestSupport {
 
                 from("langchain4j-tools:test1?tags=user&description=Does not really do anything")
                         .setBody(constant("Hello World"));
+
+                from("langchain4j-tools:test1?tags=user&name=DoesNothing&description=Also does not really do anything, but has a name")
+                        .setBody(constant("Hello World"));
+
             }
         };
     }
