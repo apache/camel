@@ -719,7 +719,7 @@ public class Run extends CamelCommand {
 
         // if we only run pom.xml/build.gradle then auto discover from the Maven/Gradle based project
         if (files.size() == 1 && (files.get(0).endsWith("pom.xml") || files.get(0).endsWith("build.gradle"))) {
-            Path projectDescriptorPath = Path.of(files.get(0));
+            Path projectDescriptorPath = Path.of(files.get(0)).toAbsolutePath();
             // use a better name when running
             if (name == null || "CamelJBang".equals(name)) {
                 name = RunHelper.mavenArtifactId(projectDescriptorPath);
