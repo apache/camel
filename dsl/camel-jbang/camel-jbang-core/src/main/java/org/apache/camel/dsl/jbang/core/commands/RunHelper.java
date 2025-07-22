@@ -281,4 +281,25 @@ public final class RunHelper {
             }
         }
     }
+
+    /**
+     * When using camel run . or camel export . then dot should include all the files in the current folder.
+     */
+    public static void dotToFiles(List<String> files) {
+        files.clear();
+        try {
+            Files.list(Paths.get("."))
+                    .filter(p -> {
+                        try {
+                            return Files.isRegularFile(p) && !Files.isHidden(p);
+                        } catch (IOException e) {
+                            return false;
+                        }
+                    })
+                    .forEach(p -> files.add(p.getFileName().toString()));
+        } catch (IOException e) {
+            // Ignore
+        }
+    }
+
 }

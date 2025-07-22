@@ -465,20 +465,7 @@ public class Run extends CamelCommand {
 
         // special if user type: camel run .
         if (sourceDir == null && (files != null && files.size() == 1 && ".".equals(files.get(0)))) {
-            files.clear();
-            try {
-                Files.list(Paths.get("."))
-                        .filter(p -> {
-                            try {
-                                return Files.isRegularFile(p) && !Files.isHidden(p);
-                            } catch (IOException e) {
-                                return false;
-                            }
-                        })
-                        .forEach(p -> files.add(p.getFileName().toString()));
-            } catch (IOException e) {
-                // Ignore
-            }
+            RunHelper.dotToFiles(files);
         }
 
         if (!exportRun) {

@@ -226,6 +226,11 @@ public class Export extends ExportBaseCommand {
             }
         }
 
+        // special if user type: camel export .
+        if (files.size() == 1 && ".".equals(files.get(0))) {
+            RunHelper.dotToFiles(files);
+        }
+
         if (!files.isEmpty()) {
             return FileUtil.onlyName(SourceScheme.onlyName(files.get(0)));
         }
