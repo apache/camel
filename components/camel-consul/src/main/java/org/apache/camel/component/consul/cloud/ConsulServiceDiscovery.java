@@ -53,7 +53,7 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
 
         ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
         ObjectHelper.ifNotEmpty(configuration.getDatacenter(), builder::datacenter);
-        ObjectHelper.ifNotEmpty(configuration.getTags(), builder::tag);
+        ObjectHelper.ifNotEmpty(configuration.getTagAsSet(), builder::tag);
 
         queryOptions = builder.build();
     }
