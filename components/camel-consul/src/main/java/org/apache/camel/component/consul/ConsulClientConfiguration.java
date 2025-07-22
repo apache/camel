@@ -44,7 +44,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "DEFAULT", enums = "DEFAULT,STALE,CONSISTENT")
     private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
     @UriParam(javaType = "java.lang.String")
-    private Set<String> tags;
+    private String tags;
 
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -155,23 +155,23 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         this.consistencyMode = consistencyMode;
     }
 
-    public Set<String> getTags() {
+    public String getTags() {
         return tags;
     }
 
-    /**
-     * Set tags. You can separate multiple tags by comma.
-     */
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
+    public Collection<String> getTagAsSet() {
+        if (tags != null) {
+            return Set.of(tags.split(","));
+        } else {
+            return null;
+        }
     }
 
     /**
      * Set tags. You can separate multiple tags by comma.
      */
-    public void setTags(String tagsAsString) {
-        this.tags = new HashSet<>();
-        Collections.addAll(tags, tagsAsString.split(","));
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public SSLContextParameters getSslContextParameters() {
