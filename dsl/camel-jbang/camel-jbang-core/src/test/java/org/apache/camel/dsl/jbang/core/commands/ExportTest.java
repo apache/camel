@@ -426,7 +426,7 @@ class ExportTest {
         File appProperties = new File(workingDir + "/src/main/resources", "application.properties");
         String content = IOHelper.loadText(new FileInputStream(appProperties));
         Assertions.assertTrue(content.contains("quarkus.native.resources.includes=camel/route.yaml"),
-                "should not contain quarkus.native.resources.includes property, was " + content);
+                "should contain quarkus.native.resources.includes property, was " + content);
     }
 
     @ParameterizedTest
