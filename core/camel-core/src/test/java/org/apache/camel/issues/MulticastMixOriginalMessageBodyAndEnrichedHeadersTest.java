@@ -36,9 +36,8 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersTest extends Conte
 
                 onException(Exception.class).handled(true)
                         // we want to preserve the real original message body and
-                        // then include other headers that have been
-                        // set later during routing
-                        .transform(simple("${exchangeProperty[CamelParentUnitOfWork].getOriginalInMessage().getBody()}"))
+                        // then include other headers that have been set later during routing
+                        .transform(simple("${originalBody}"))
                         .to("mock:b");
 
                 from("direct:start").setBody(constant("Changed body")).setHeader("foo", constant("bar")).multicast()

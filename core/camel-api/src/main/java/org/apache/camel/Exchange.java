@@ -255,6 +255,7 @@ public interface Exchange extends VariableAware {
     String OFFSET = "CamelOffset";
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 
+    @Deprecated(since = "4.14.0")
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
     String STREAM_CACHE_UNIT_OF_WORK = "CamelStreamCacheUnitOfWork";
 

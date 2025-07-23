@@ -302,7 +302,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 wrapInErrorHandler(route, exchange, processor);
             }
         }
-
         ServiceHelper.initService(processorExchangeFactory);
     }
 
@@ -1086,13 +1085,10 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
 
-                boolean child = exchange.getProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
-
                 // must start the error handler
                 ServiceHelper.startService(answer);
 
-                // here we don't cache the child unit of work
-                if (!child && errorHandlers != null) {
+                if (errorHandlers != null) {
                     errorHandlers.putIfAbsent(key, answer);
                 }
 
@@ -1125,25 +1121,21 @@ public class MulticastProcessor extends AsyncProcessorSupport
      */
     protected Processor createUnitOfWorkProcessor(Route route, Processor processor, Exchange exchange) {
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-        UnitOfWork parent = exchange.getProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, UnitOfWork.class);
-        if (parent != null) {
-            return internalProcessorFactory.addChildUnitOfWorkProcessorAdvice(camelContext, processor, route, parent);
-        } else {
-            return internalProcessorFactory.addUnitOfWorkProcessorAdvice(camelContext, processor, route);
-        }
+        return internalProcessorFactory.addUnitOfWorkProcessorAdvice(camelContext, processor, route);
     }
 
     /**
      * Prepares the exchange for participating in a shared unit of work
      * <p/>
-     * This ensures a child exchange can access its parent {@link UnitOfWork} when it participate in a shared unit of
+     * This ensures a child exchange can access its parent {@link UnitOfWork} when it participates in a shared unit of
      * work.
      *
      * @param childExchange  the child exchange
      * @param parentExchange the parent exchange
      */
     protected void prepareSharedUnitOfWork(Exchange childExchange, Exchange parentExchange) {
-        childExchange.setProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, parentExchange.getUnitOfWork());
+        // share the unit of work on the child
+        childExchange.getExchangeExtension().setUnitOfWork(parentExchange.getUnitOfWork());
     }
 
     @Override

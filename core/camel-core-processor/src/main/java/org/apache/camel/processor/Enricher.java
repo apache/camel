@@ -265,7 +265,6 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
 
         // if we share unit of work, we need to prepare the resource exchange
         if (isShareUnitOfWork()) {
-            target.setProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, source.getUnitOfWork());
             // and then share the unit of work
             target.getExchangeExtension().setUnitOfWork(source.getUnitOfWork());
         }
