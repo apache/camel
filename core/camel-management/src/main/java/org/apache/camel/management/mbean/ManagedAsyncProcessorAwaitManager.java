@@ -82,7 +82,7 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
 
     private static CompositeData toCompositeData(AsyncProcessorAwaitManager.AwaitThread entry, CompositeType ct)
             throws OpenDataException {
-        // TODO Once basline is Java 21
+        // TODO Update once baseline is Java 21
         //        String id = Long.toString(entry.getBlockedThread().threadId());
         String id = Long.toString(entry.getBlockedThread().getId());
         String name = entry.getBlockedThread().getName();

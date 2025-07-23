@@ -143,7 +143,7 @@ public class AS2ServerConnection {
             LOG.info("Incoming connection from {}", inSocket.getInetAddress());
             inConn.bind(inSocket);
 
-            // TODO Update once basline is Java 21
+            // TODO Update once baseline is Java 21
             // setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + threadId());
             setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + getId());
 

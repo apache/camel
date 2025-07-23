@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 
@@ -60,13 +59,34 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
         return load(classDesc.getName(), cl, inLoader);
     }
 
-    class NoopDynamicInvocationHandler implements InvocationHandler {
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    /**
+     * We only need to retrieve the proxy class, an invocation is not supposed to happen but let's handle primitives to
+     * avoid potential NPE
+     */
+    private static final InvocationHandler NOOP_HANDLER = (proxy, method, args) -> {
+        Class<?> returnType = method.getReturnType();
+        if (returnType == void.class) {
             return null;
+        } else if (returnType.isPrimitive()) {
+            if (returnType == boolean.class)
+                return Boolean.FALSE;
+            if (returnType == byte.class)
+                return (byte) 0;
+            if (returnType == short.class)
+                return (short) 0;
+            if (returnType == int.class)
+                return 0;
+            if (returnType == long.class)
+                return 0L;
+            if (returnType == float.class)
+                return 0.0f;
+            if (returnType == double.class)
+                return 0.0d;
+            if (returnType == char.class)
+                return '\0';
         }
-    }
+        return null;
+    };
 
     @Override
     protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
@@ -77,15 +97,15 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
         }
 
         try {
-            return Proxy.newProxyInstance(cl, cinterfaces, new NoopDynamicInvocationHandler()).getClass();
+            return Proxy.newProxyInstance(cl, cinterfaces, NOOP_HANDLER).getClass();
         } catch (IllegalArgumentException e) {
             try {
-                return Proxy.newProxyInstance(inLoader, cinterfaces, new NoopDynamicInvocationHandler()).getClass();
+                return Proxy.newProxyInstance(inLoader, cinterfaces, NOOP_HANDLER).getClass();
             } catch (IllegalArgumentException e1) {
                 // ignore
             }
             try {
-                return Proxy.newProxyInstance(FALLBACK_CLASS_LOADER, cinterfaces, new NoopDynamicInvocationHandler())
+                return Proxy.newProxyInstance(FALLBACK_CLASS_LOADER, cinterfaces, NOOP_HANDLER)
                         .getClass();
             } catch (IllegalArgumentException e2) {
                 // ignore

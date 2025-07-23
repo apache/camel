@@ -281,7 +281,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
                     if (contentLanguage != null) {
                         return Entity.entity(body, new Variant(
                                 MediaType.valueOf(contentType),
-                                // TODO Update when baseline java > 17
+                                // TODO Update once baseline is Java 21
                                 // Locale.of(contentLanguage),
                                 new Locale(contentLanguage),
                                 contentEncoding));
