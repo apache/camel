@@ -21,6 +21,9 @@ of an issue, and felt it's better to fix this before for this LTS release.
 
 === camel-jbang
 
+The `camel-jbang` has upgraded to Java 21 as the default java-version when running and exporting.
+To keep using java 17, you can use `--java-version=17` as parameter.
+
 The `camel export` will not include `camel-observabilities-services` out of the box. To include this, then use `--observe` to enable
 this during export.
 

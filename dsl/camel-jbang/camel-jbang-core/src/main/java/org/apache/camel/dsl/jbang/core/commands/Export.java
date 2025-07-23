@@ -327,7 +327,8 @@ public class Export extends ExportBaseCommand {
         Path docker = Path.of(buildDir).resolve("src/main/docker");
         Files.createDirectories(docker);
         String[] ids = gav.split(":");
-        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile.tmpl");
+        InputStream is
+                = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile" + javaVersion + ".tmpl");
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 

@@ -155,8 +155,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "CamelApplication")
     protected String mainClassname = "CamelApplication";
 
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version", defaultValue = "17")
-    protected String javaVersion = "17";
+    @CommandLine.Option(names = { "--java-version" }, description = "Java version", defaultValue = "21")
+    protected String javaVersion = "21";
 
     @CommandLine.Option(names = { "--camel-version" },
                         description = "To export using a different Camel version than the default version.")
