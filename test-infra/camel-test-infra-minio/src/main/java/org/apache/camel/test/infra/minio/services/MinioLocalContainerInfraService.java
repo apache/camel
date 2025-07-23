@@ -31,7 +31,7 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 @InfraService(service = MinioInfraService.class,
               description = "MinIO Object Storage, S3 compatible",
               serviceAlias = { "minio" })
-public class MinioLocalContainerInfraService implements MinioInfraService, ContainerService<GenericContainer> {
+public class MinioLocalContainerInfraService implements MinioInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "minio";
     private static final String ACCESS_KEY;
     private static final String SECRET_KEY;
@@ -44,7 +44,7 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
         SECRET_KEY = System.getProperty(MinioProperties.SECRET_KEY, "testSecretKey");
     }
 
-    private final GenericContainer container;
+    private final GenericContainer<?> container;
 
     public MinioLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(MinioLocalContainerInfraService.class, MinioProperties.MINIO_CONTAINER));
@@ -52,13 +52,14 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
 
     public MinioLocalContainerInfraService(String containerName) {
         container = initContainer(containerName, CONTAINER_NAME);
+        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
-    public MinioLocalContainerInfraService(GenericContainer container) {
+    public MinioLocalContainerInfraService(GenericContainer<?> container) {
         this.container = container;
     }
 
-    protected GenericContainer initContainer(String imageName, String containerName) {
+    protected GenericContainer<?> initContainer(String imageName, String containerName) {
 
         class MinioContainer extends GenericContainer<MinioContainer> {
             public MinioContainer(boolean fixedPort) {
@@ -108,7 +109,7 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public GenericContainer<?> getContainer() {
         return container;
     }
 

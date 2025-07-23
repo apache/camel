@@ -30,7 +30,7 @@ import org.testcontainers.utility.DockerImageName;
               serviceImplementationAlias = "sparkplug")
 public class LocalHiveMQSparkplugTCKInfraService extends AbstractLocalHiveMQService<LocalHiveMQSparkplugTCKInfraService> {
 
-    LocalHiveMQSparkplugTCKInfraService() {
+    public LocalHiveMQSparkplugTCKInfraService() {
         super(LocalPropertyResolver.getProperty(LocalHiveMQSparkplugTCKInfraService.class,
                 HiveMQProperties.HIVEMQ_SPARKPLUG_CONTAINER));
     }

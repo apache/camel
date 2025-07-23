@@ -35,12 +35,12 @@ import org.testcontainers.utility.DockerImageName;
               serviceAlias = { "microprofile" },
               serviceImplementationAlias = "lra")
 public class MicroprofileLRALocalContainerInfraService
-        implements MicroprofileLRAInfraService, ContainerService<GenericContainer> {
+        implements MicroprofileLRAInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "microprofile-lra";
 
     private static final Logger LOG = LoggerFactory.getLogger(MicroprofileLRALocalContainerInfraService.class);
 
-    private final GenericContainer container;
+    private final GenericContainer<?> container;
 
     public MicroprofileLRALocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
@@ -50,13 +50,14 @@ public class MicroprofileLRALocalContainerInfraService
 
     public MicroprofileLRALocalContainerInfraService(String imageName) {
         container = initContainer(imageName, CONTAINER_NAME);
+        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
-    public MicroprofileLRALocalContainerInfraService(GenericContainer container) {
+    public MicroprofileLRALocalContainerInfraService(GenericContainer<?> container) {
         this.container = container;
     }
 
-    public GenericContainer initContainer(String imageName, String networkAlias) {
+    public GenericContainer<?> initContainer(String imageName, String networkAlias) {
         class MicroprofileLRAContainer extends GenericContainer<MicroprofileLRAContainer> {
             public MicroprofileLRAContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName));
@@ -99,7 +100,7 @@ public class MicroprofileLRALocalContainerInfraService
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public GenericContainer<?> getContainer() {
         return container;
     }
 

@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.chatscript.services;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.chatscript.common.ChatScriptProperties;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class ChatScriptLocalContainerInfraService implements ChatScriptInfraServ
 
         container = new GenericContainer<>(containerName)
                 .withExposedPorts(SERVICE_PORT)
+                .withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())))
                 .withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withTty(true));
     }
 
