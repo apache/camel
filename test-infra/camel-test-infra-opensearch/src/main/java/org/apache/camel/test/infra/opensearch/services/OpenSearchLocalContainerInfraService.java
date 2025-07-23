@@ -24,7 +24,7 @@ import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.opensearch.common.OpenSearchProperties;
-import org.opensearch.testcontainers.OpensearchContainer;
+import org.opensearch.testcontainers.OpenSearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.Testcontainers;
@@ -36,7 +36,7 @@ import org.testcontainers.utility.DockerImageName;
 @InfraService(service = OpenSearchInfraService.class,
               description = "OpenSearch is a distributed search and analytics engine",
               serviceAlias = { "opensearch" }, uiSupported = true)
-public class OpenSearchLocalContainerInfraService implements OpenSearchInfraService, ContainerService<OpensearchContainer> {
+public class OpenSearchLocalContainerInfraService implements OpenSearchInfraService, ContainerService<OpenSearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(OpenSearchLocalContainerInfraService.class);
     private static final int OPEN_SEARCH_PORT = 9200;
     private static final String USER_NAME = "admin";
@@ -46,7 +46,7 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
     private static final String OPENSEARCH_DASHBOARDS_CONTAINER_IMAGE = "opensearch-dashboards.container.image";
     private static final int OPENSEARCH_DASHBOARDS_PORT = 5601;
 
-    private final OpensearchContainer container;
+    private final OpenSearchContainer container;
     private GenericContainer<?> uiContainer;
 
     public OpenSearchLocalContainerInfraService() {
@@ -58,13 +58,13 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
         container = initContainer(imageName);
     }
 
-    public OpenSearchLocalContainerInfraService(OpensearchContainer container) {
+    public OpenSearchLocalContainerInfraService(OpenSearchContainer container) {
         this.container = container;
     }
 
-    protected OpensearchContainer initContainer(String imageName) {
-        class TestInfraOpensearchContainer extends OpensearchContainer {
-            public TestInfraOpensearchContainer(boolean fixedPort) {
+    protected OpenSearchContainer initContainer(String imageName) {
+        class TestInfraOpenSearchContainer extends OpenSearchContainer {
+            public TestInfraOpenSearchContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName)
                         .asCompatibleSubstituteFor("opensearchproject/opensearch"));
 
@@ -89,7 +89,7 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
             }
         }
 
-        return new TestInfraOpensearchContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        return new TestInfraOpenSearchContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override
@@ -161,7 +161,7 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
     }
 
     @Override
-    public OpensearchContainer getContainer() {
+    public OpenSearchContainer getContainer() {
         return container;
     }
 
