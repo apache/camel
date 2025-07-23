@@ -1085,13 +1085,10 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
 
-                boolean child = exchange.getProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
-
                 // must start the error handler
                 ServiceHelper.startService(answer);
 
-                // here we don't cache the child unit of work
-                if (!child && errorHandlers != null) {
+                if (errorHandlers != null) {
                     errorHandlers.putIfAbsent(key, answer);
                 }
 
@@ -1137,8 +1134,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param parentExchange the parent exchange
      */
     protected void prepareSharedUnitOfWork(Exchange childExchange, Exchange parentExchange) {
-        childExchange.setProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, parentExchange.getUnitOfWork());
-        // and then share the unit of work
+        // share the unit of work on the child
         childExchange.getExchangeExtension().setUnitOfWork(parentExchange.getUnitOfWork());
     }
 

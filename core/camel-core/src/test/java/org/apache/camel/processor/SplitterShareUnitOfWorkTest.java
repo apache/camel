@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 public class SplitterShareUnitOfWorkTest extends ContextTestSupport {
 
     private final List<UnitOfWork> uows = new ArrayList<>();
-    private final List<UnitOfWork> parentUows = new ArrayList<>();
     private final List<UnitOfWork> doneUows = new ArrayList<>();
     private final List<String> doneBodies = new ArrayList<>();
 
@@ -45,22 +44,11 @@ public class SplitterShareUnitOfWorkTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Assertions.assertEquals(3, uows.size());
-        Assertions.assertEquals(3, parentUows.size());
 
-        // should all be same child uow
+        // all in-flight uows should be the same
         Assertions.assertSame(uows.get(0), uows.get(1));
         Assertions.assertSame(uows.get(1), uows.get(2));
         Assertions.assertSame(uows.get(2), uows.get(0));
-
-        // should all be same parent uow
-        Assertions.assertSame(parentUows.get(0), parentUows.get(1));
-        Assertions.assertSame(parentUows.get(1), parentUows.get(2));
-        Assertions.assertSame(parentUows.get(2), parentUows.get(0));
-
-        // and parent/child should also be same
-        Assertions.assertSame(uows.get(0), parentUows.get(0));
-        Assertions.assertSame(uows.get(1), parentUows.get(1));
-        Assertions.assertSame(uows.get(2), parentUows.get(2));
 
         // and done uow should be the same
         Assertions.assertSame(uows.get(0), doneUows.get(0));
@@ -80,9 +68,7 @@ public class SplitterShareUnitOfWorkTest extends ContextTestSupport {
                 from("direct:start").split(body(), new MyStrategy()).shareUnitOfWork()
                         .process(e -> {
                             var u = e.getUnitOfWork();
-                            var u2 = e.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
                             uows.add(u);
-                            parentUows.add(u2);
                             u.addSynchronization(new SynchronizationAdapter() {
                                 @Override
                                 public void onDone(Exchange exchange) {
