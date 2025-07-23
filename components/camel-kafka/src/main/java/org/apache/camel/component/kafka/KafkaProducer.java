@@ -41,6 +41,7 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
@@ -527,9 +528,22 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     }
 
     private void startKafkaTransaction(Exchange exchange) {
-        exchange.getUnitOfWork().beginTransactedBy(transactionId);
+        UnitOfWork uow = exchange.getUnitOfWork();
+
+        if (uow.isTransactedBy(transactionId)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Not starting kafka transaction {} with exchange {} (UOW hash code {}) since one is already started.",
+                        transactionId, exchange.getExchangeId(), uow.hashCode());
+            }
+            return;
+        } else if (LOG.isDebugEnabled()) {
+            LOG.debug("Starting kafka transaction {} with exchange {} (UOW hash code {})", transactionId,
+                    exchange.getExchangeId(), uow.hashCode());
+        }
+
+        uow.beginTransactedBy(transactionId);
         kafkaProducer.beginTransaction();
-        exchange.getUnitOfWork().addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
+        uow.addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
     }
 
     @Override
