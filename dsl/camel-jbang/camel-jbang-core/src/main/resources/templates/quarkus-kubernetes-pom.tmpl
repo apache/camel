@@ -18,6 +18,7 @@
         <quarkus.platform.group-id>{{ .QuarkusGroupId }}</quarkus.platform.group-id>
         <quarkus.platform.artifact-id>{{ .QuarkusArtifactId }}</quarkus.platform.artifact-id>
         <quarkus.platform.version>{{ .QuarkusVersion }}</quarkus.platform.version>
+        <quarkus.management.port>{{ .QuarkusManagementPort }}</quarkus.management.port>
 {{ .BuildProperties }}
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
@@ -139,6 +140,13 @@
                             </build>
                         </image>
                     </images>
+                    <enricher>
+                        <config>
+                            <jkube-healthcheck-quarkus>
+                                <port>${quarkus.management.port}</port>
+                            </jkube-healthcheck-quarkus>
+                        </config>
+                    </enricher>
                 </configuration>
                 <executions>
                     <execution>

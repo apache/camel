@@ -434,12 +434,18 @@ class ExportQuarkus extends Export {
             camelVersion = catalog.getCatalogVersion();
         }
 
+        String mp = prop.getProperty("quarkus.management.port");
+        if (mp == null) {
+            mp = "9876";
+        }
+
         context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
         context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceAll("\\{\\{ \\.QuarkusGroupId }}", quarkusGroupId);
         context = context.replaceAll("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
+        context = context.replaceAll("\\{\\{ \\.QuarkusManagementPort }}", mp);
         context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
         context = context.replaceAll("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());
