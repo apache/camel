@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.weather;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 
@@ -71,7 +68,7 @@ public class WeatherConfiguration {
     @UriParam(label = "filter")
     private String zip;
     @UriParam(label = "filter", javaType = "java.lang.String")
-    private List<String> ids;
+    private String ids;
     @UriParam(label = "filter")
     private Integer cnt;
     @UriParam(label = "security")
@@ -257,25 +254,22 @@ public class WeatherConfiguration {
         this.zip = zip;
     }
 
-    public List<String> getIds() {
+    public String getIds() {
         return ids;
+    }
+
+    public List<String> getIdsAsList() {
+        if (ids != null) {
+            return List.of(ids.split(","));
+        } else {
+            return null;
+        }
     }
 
     /**
      * List of id's of city/stations. You can separate multiple ids by comma.
      */
-    public void setIds(String id) {
-        if (ids == null) {
-            ids = new ArrayList<>();
-        }
-        Iterator<?> it = ObjectHelper.createIterator(id);
-        while (it.hasNext()) {
-            String myId = (String) it.next();
-            ids.add(myId);
-        }
-    }
-
-    public void setIds(List<String> ids) {
+    public void setIds(String ids) {
         this.ids = ids;
     }
 

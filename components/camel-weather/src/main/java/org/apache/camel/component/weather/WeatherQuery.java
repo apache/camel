@@ -50,7 +50,7 @@ public class WeatherQuery {
         } else if (!isEmpty(weatherConfiguration.getZip())) {
             location = "zip=" + weatherConfiguration.getZip();
         } else if (weatherConfiguration.getIds() != null && !weatherConfiguration.getIds().isEmpty()) {
-            location = "id=" + String.join(",", weatherConfiguration.getIds());
+            location = "id=" + weatherConfiguration.getIds();
         } else if (isEmpty(location) || "current".equals(location)) {
             GeoLocation geoLocation = getCurrentGeoLocation();
             weatherConfiguration.setLat(geoLocation.getLatitude());
@@ -104,7 +104,7 @@ public class WeatherQuery {
                 answer = "find?";
             }
         } else if (weatherConfiguration.getIds() != null && !weatherConfiguration.getIds().isEmpty()) {
-            if (weatherConfiguration.getIds().size() == 1) {
+            if (weatherConfiguration.getIdsAsList().size() == 1) {
                 if (!isEmpty(weatherConfiguration.getPeriod())) {
                     if (weatherConfiguration.getWeatherApi() == WeatherApi.Hourly) {
                         answer = "forecast?";

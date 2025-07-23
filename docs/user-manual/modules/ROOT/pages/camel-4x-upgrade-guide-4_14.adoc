@@ -42,3 +42,7 @@ The configKeys parameter for camel-dapr has been defined as String instead of Li
 
 The availableZones parameter for camel-huawei-dms has been defined as String instead of List<String>. For the migration users will need to, eventually, define availableZones as a comma separated list of available zones instead of a List instance. For more information the related issue is CAMEL-17339.
 
+=== camel-weather
+
+The ids parameter for camel-weather has been defined as String instead of List<String>. For the migration users will need to, eventually, define ids as a comma separated list of id instead of a List instance. For more information the related issue is CAMEL-17339.
+
