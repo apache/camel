@@ -123,16 +123,20 @@ class ExportSpringBoot extends Export {
                 prop.put("camel.main.run-controller", "true");
             }
             // are we using http then enable embedded HTTP server (if not explicit configured already)
-            int port = httpServerPort(settings);
-            if (port == -1 && http) {
-                port = 8080;
+            if (!prop.containsKey("server.port")) {
+                int port = httpServerPort(settings);
+                if (port == -1 && http) {
+                    port = 8080;
+                }
+                if (port != -1 && port != 8080) {
+                    prop.put("server.port", port);
+                }
             }
-            if (port != -1 && port != 8080) {
-                prop.put("server.port", port);
-            }
-            port = httpManagementPort(settings);
-            if (port != -1) {
-                prop.put("management.server.port", port);
+            if (!prop.containsKey("management.server.port")) {
+                port = httpManagementPort(settings);
+                if (port != -1) {
+                    prop.put("management.server.port", port);
+                }
             }
             return prop;
         });

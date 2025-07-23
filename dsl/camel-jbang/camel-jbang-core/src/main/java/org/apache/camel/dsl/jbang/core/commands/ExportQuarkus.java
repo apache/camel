@@ -107,16 +107,20 @@ class ExportQuarkus extends Export {
                 prop.remove("camel.main.modeline");
             }
             // are we using http then enable embedded HTTP server (if not explicit configured already)
-            int port = httpServerPort(settings);
-            if (port == -1) {
-                port = 8080;
+            if (!prop.containsKey("quarkus.http.port")) {
+                int port = httpServerPort(settings);
+                if (port == -1) {
+                    port = 8080;
+                }
+                if (port != 8080) {
+                    prop.put("quarkus.http.port", port);
+                }
             }
-            if (port != 8080) {
-                prop.put("quarkus.http.port", port);
-            }
-            port = httpManagementPort(settings);
-            if (port != -1) {
-                prop.put("quarkus.management.port", port);
+            if (!prop.containsKey("quarkus.management.port")) {
+                port = httpManagementPort(settings);
+                if (port != -1) {
+                    prop.put("quarkus.management.port", port);
+                }
             }
             return prop;
         });
