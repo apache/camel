@@ -204,13 +204,16 @@ class ExportQuarkus extends Export {
             if (extra != null) {
                 sj.add(extra);
             }
-            if (sj.length() > 0) {
-                properties.setProperty("quarkus.native.resources.includes", sj.toString());
+            if (extra != null || VersionHelper.isLE(quarkusVersion, "3.21.0")) {
+                // quarkus 3.21 or older need to have quarkus.native.resources.includes configured
+                if (sj.length() > 0) {
+                    properties.setProperty("quarkus.native.resources.includes", sj.toString());
+                }
             }
         }
 
         // CAMEL-20911 workaround due to a bug in CEQ 3.11 and 3.12
-        if (VersionHelper.isBetween(quarkusVersion, "3.11", "3.13")) {
+        if (VersionHelper.isBetween(quarkusVersion, "3.11.0", "3.13.0")) {
             if (!properties.containsKey("quarkus.camel.openapi.codegen.model-package")) {
                 properties.put("quarkus.camel.openapi.codegen.model-package", "org.apache.camel.quarkus");
             }
