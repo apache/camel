@@ -44,25 +44,9 @@ public interface Web3jEndpointBuilderFactory {
             return (AdvancedWeb3jEndpointConsumerBuilder) this;
         }
         /**
-         * Contract address or a list of addresses.
+         * Contract address or a comma separated list of addresses.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param addresses the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointConsumerBuilder addresses(List<java.lang.String> addresses) {
-            doSetProperty("addresses", addresses);
-            return this;
-        }
-        /**
-         * Contract address or a list of addresses.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -165,25 +149,10 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * A transaction privateFor nodes with public keys in a Quorum network.
+         * A comma separated transaction privateFor nodes with public keys in a
+         * Quorum network.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param privateFor the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointConsumerBuilder privateFor(List<java.lang.String> privateFor) {
-            doSetProperty("privateFor", privateFor);
-            return this;
-        }
-        /**
-         * A transaction privateFor nodes with public keys in a Quorum network.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -439,25 +408,9 @@ public interface Web3jEndpointBuilderFactory {
         }
 
         /**
-         * Contract address or a list of addresses.
+         * Contract address or a comma separated list of addresses.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param addresses the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointProducerBuilder addresses(List<java.lang.String> addresses) {
-            doSetProperty("addresses", addresses);
-            return this;
-        }
-        /**
-         * Contract address or a list of addresses.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -560,25 +513,10 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * A transaction privateFor nodes with public keys in a Quorum network.
+         * A comma separated transaction privateFor nodes with public keys in a
+         * Quorum network.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param privateFor the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointProducerBuilder privateFor(List<java.lang.String> privateFor) {
-            doSetProperty("privateFor", privateFor);
-            return this;
-        }
-        /**
-         * A transaction privateFor nodes with public keys in a Quorum network.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1198,25 +1136,9 @@ public interface Web3jEndpointBuilderFactory {
         }
 
         /**
-         * Contract address or a list of addresses.
+         * Contract address or a comma separated list of addresses.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param addresses the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointBuilder addresses(List<java.lang.String> addresses) {
-            doSetProperty("addresses", addresses);
-            return this;
-        }
-        /**
-         * Contract address or a list of addresses.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1319,25 +1241,10 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * A transaction privateFor nodes with public keys in a Quorum network.
+         * A comma separated transaction privateFor nodes with public keys in a
+         * Quorum network.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param privateFor the value to set
-         * @return the dsl builder
-         */
-        default Web3jEndpointBuilder privateFor(List<java.lang.String> privateFor) {
-            doSetProperty("privateFor", privateFor);
-            return this;
-        }
-        /**
-         * A transaction privateFor nodes with public keys in a Quorum network.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 

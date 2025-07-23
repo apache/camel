@@ -51,17 +51,16 @@ public interface Web3jComponentBuilderFactory {
     interface Web3jComponentBuilder extends ComponentBuilder<Web3jComponent> {
     
         /**
-         * Contract address or a list of addresses.
+         * Contract address or a comma separated list of addresses.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param addresses the value to set
          * @return the dsl builder
          */
-        default Web3jComponentBuilder addresses(java.util.List<java.lang.String> addresses) {
+        default Web3jComponentBuilder addresses(java.lang.String addresses) {
             doSetProperty("addresses", addresses);
             return this;
         }
@@ -149,17 +148,17 @@ public interface Web3jComponentBuilderFactory {
         }
     
         /**
-         * A transaction privateFor nodes with public keys in a Quorum network.
+         * A comma separated transaction privateFor nodes with public keys in a
+         * Quorum network.
          * 
-         * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param privateFor the value to set
          * @return the dsl builder
          */
-        default Web3jComponentBuilder privateFor(java.util.List<java.lang.String> privateFor) {
+        default Web3jComponentBuilder privateFor(java.lang.String privateFor) {
             doSetProperty("privateFor", privateFor);
             return this;
         }
@@ -696,13 +695,13 @@ public interface Web3jComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "addresses": getOrCreateConfiguration((Web3jComponent) component).setAddresses((java.util.List) value); return true;
+            case "addresses": getOrCreateConfiguration((Web3jComponent) component).setAddresses((java.lang.String) value); return true;
             case "configuration": ((Web3jComponent) component).setConfiguration((org.apache.camel.component.web3j.Web3jConfiguration) value); return true;
             case "fromAddress": getOrCreateConfiguration((Web3jComponent) component).setFromAddress((java.lang.String) value); return true;
             case "fromBlock": getOrCreateConfiguration((Web3jComponent) component).setFromBlock((java.lang.String) value); return true;
             case "fullTransactionObjects": getOrCreateConfiguration((Web3jComponent) component).setFullTransactionObjects((boolean) value); return true;
             case "gasLimit": getOrCreateConfiguration((Web3jComponent) component).setGasLimit((java.math.BigInteger) value); return true;
-            case "privateFor": getOrCreateConfiguration((Web3jComponent) component).setPrivateFor((java.util.List) value); return true;
+            case "privateFor": getOrCreateConfiguration((Web3jComponent) component).setPrivateFor((java.lang.String) value); return true;
             case "quorumAPI": getOrCreateConfiguration((Web3jComponent) component).setQuorumAPI((boolean) value); return true;
             case "toAddress": getOrCreateConfiguration((Web3jComponent) component).setToAddress((java.lang.String) value); return true;
             case "toBlock": getOrCreateConfiguration((Web3jComponent) component).setToBlock((java.lang.String) value); return true;
