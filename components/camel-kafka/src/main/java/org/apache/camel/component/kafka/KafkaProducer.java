@@ -530,20 +530,15 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     private void startKafkaTransaction(Exchange exchange) {
         UnitOfWork uow = exchange.getUnitOfWork();
 
-        if (uow.isTransactedBy(transactionId)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Not starting kafka transaction {} with exchange {} (UOW hash code {}) since one is already started.",
-                        transactionId, exchange.getExchangeId(), uow.hashCode());
-            }
-            return;
-        } else if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting kafka transaction {} with exchange {} (UOW hash code {})", transactionId,
-                    exchange.getExchangeId(), uow.hashCode());
+        if (!uow.isTransactedBy(transactionId)) {
+            LOG.debug("Starting kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
+            uow.beginTransactedBy(transactionId);
+            kafkaProducer.beginTransaction();
+            uow.addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
+        } else {
+            LOG.debug("Using existing kafka transaction {} with exchange {}.",
+                    transactionId, exchange.getExchangeId());
         }
-
-        uow.beginTransactedBy(transactionId);
-        kafkaProducer.beginTransaction();
-        uow.addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
     }
 
     @Override
