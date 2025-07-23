@@ -23,7 +23,6 @@ import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,16 +34,13 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static java.time.Duration.ofSeconds;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jToolMultipleCallsIT extends CamelTestSupport {
 
-    public static final String MODEL_NAME = "llama3.1:latest";
     private ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createServiceWithConfiguration(() -> MODEL_NAME);
+    static OllamaService OLLAMA = OllamaServiceFactory.createServiceWithConfiguration(() -> ToolsHelper.modelName());
 
     private volatile boolean intermediateCalled = false;
     private volatile boolean intermediateHasValidBody = false;
@@ -53,7 +49,7 @@ public class LangChain4jToolMultipleCallsIT extends CamelTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatModel = createModel();
+        chatModel = ToolsHelper.createModel(OLLAMA.getEndpoint());
     }
 
     @Override
@@ -66,20 +62,6 @@ public class LangChain4jToolMultipleCallsIT extends CamelTestSupport {
         component.getConfiguration().setChatModel(chatModel);
 
         return context;
-    }
-
-    protected ChatModel createModel() {
-        chatModel = OpenAiChatModel.builder()
-                .apiKey("NO_API_KEY")
-                .modelName(MODEL_NAME)
-                .baseUrl(OLLAMA.getEndpoint())
-                .temperature(0.0)
-                .timeout(ofSeconds(60))
-                .logRequests(true)
-                .logResponses(true)
-                .build();
-
-        return chatModel;
     }
 
     @Override
