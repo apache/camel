@@ -31,13 +31,13 @@ import org.testcontainers.containers.wait.strategy.Wait;
 @InfraService(service = FhirInfraService.class,
               description = "HAPI FHIR RESTful test server",
               serviceAlias = { "fhir" })
-public class FhirLocalContainerInfraService implements FhirInfraService, ContainerService<GenericContainer> {
+public class FhirLocalContainerInfraService implements FhirInfraService, ContainerService<GenericContainer<?>> {
     // needs https://github.com/hapifhir/hapi-fhir-jpaserver-starter/commit/54120f374eea5084634830d34c99a9137b22a310
     public static final String CONTAINER_NAME = "fhir";
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirLocalContainerInfraService.class);
 
-    private final GenericContainer container;
+    private final GenericContainer<?> container;
 
     public FhirLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
@@ -47,13 +47,14 @@ public class FhirLocalContainerInfraService implements FhirInfraService, Contain
 
     public FhirLocalContainerInfraService(String imageName) {
         container = initContainer(imageName, CONTAINER_NAME);
+        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
-    public FhirLocalContainerInfraService(GenericContainer container) {
+    public FhirLocalContainerInfraService(GenericContainer<?> container) {
         this.container = container;
     }
 
-    protected GenericContainer initContainer(String imageName, String containerName) {
+    protected GenericContainer<?> initContainer(String imageName, String containerName) {
         class FhirContainer extends GenericContainer<FhirContainer> {
             public FhirContainer(boolean fixedPort) {
                 super(imageName);
@@ -99,7 +100,7 @@ public class FhirLocalContainerInfraService implements FhirInfraService, Contain
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public GenericContainer<?> getContainer() {
         return container;
     }
 

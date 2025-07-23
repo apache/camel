@@ -58,6 +58,7 @@ public class ElasticSearchLocalContainerInfraService
 
     public ElasticSearchLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
+        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     public ElasticSearchLocalContainerInfraService(ElasticsearchContainer container) {

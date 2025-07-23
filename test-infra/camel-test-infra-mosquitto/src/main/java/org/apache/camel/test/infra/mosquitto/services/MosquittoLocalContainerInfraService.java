@@ -31,13 +31,13 @@ import org.testcontainers.containers.wait.strategy.Wait;
 @InfraService(service = MosquittoInfraService.class,
               description = "Mosquitto is a message broker that implements MQTT protocol",
               serviceAlias = { "mosquitto" })
-public class MosquittoLocalContainerInfraService implements MosquittoInfraService, ContainerService<GenericContainer> {
+public class MosquittoLocalContainerInfraService implements MosquittoInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "mosquitto";
     public static final int CONTAINER_PORT = 1883;
 
     private static final Logger LOG = LoggerFactory.getLogger(MosquittoLocalContainerInfraService.class);
 
-    private final GenericContainer container;
+    private final GenericContainer<?> container;
 
     public MosquittoLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(MosquittoLocalContainerInfraService.class,
@@ -60,19 +60,19 @@ public class MosquittoLocalContainerInfraService implements MosquittoInfraServic
         }
     }
 
-    public MosquittoLocalContainerInfraService(GenericContainer container) {
+    public MosquittoLocalContainerInfraService(GenericContainer<?> container) {
         this.container = container;
     }
 
-    protected GenericContainer initContainer(String imageName, Integer port) {
-        GenericContainer ret;
+    protected GenericContainer<?> initContainer(String imageName, Integer port) {
+        GenericContainer<?> ret;
 
         if (port == null) {
             ret = new GenericContainer(imageName)
                     .withExposedPorts(CONTAINER_PORT);
         } else {
             @SuppressWarnings("deprecation")
-            GenericContainer fixedPortContainer = new FixedHostPortGenericContainer(imageName)
+            GenericContainer<?> fixedPortContainer = new FixedHostPortGenericContainer(imageName)
                     .withFixedExposedPort(port, CONTAINER_PORT);
             ret = fixedPortContainer;
         }
@@ -81,7 +81,7 @@ public class MosquittoLocalContainerInfraService implements MosquittoInfraServic
                 .withClasspathResourceMapping("mosquitto.conf", "/mosquitto/config/mosquitto.conf", BindMode.READ_ONLY)
                 .waitingFor(Wait.forLogMessage(".* mosquitto version .* running", 1))
                 .waitingFor(Wait.forListeningPort());
-
+        ret.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
         return ret;
     }
 
@@ -106,7 +106,7 @@ public class MosquittoLocalContainerInfraService implements MosquittoInfraServic
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public GenericContainer<?> getContainer() {
         return container;
     }
 

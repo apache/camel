@@ -43,6 +43,7 @@ public class PulsarLocalContainerInfraService implements PulsarInfraService, Con
 
     public PulsarLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
+        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     public PulsarLocalContainerInfraService(PulsarContainer container) {

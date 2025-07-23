@@ -40,6 +40,7 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
 
     public ContainerLocalKafkaInfraService() {
         kafka = initContainer();
+        kafka.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     public ContainerLocalKafkaInfraService(KafkaContainer kafka) {

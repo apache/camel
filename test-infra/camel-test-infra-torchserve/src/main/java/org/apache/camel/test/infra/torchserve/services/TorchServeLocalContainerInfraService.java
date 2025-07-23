@@ -49,6 +49,7 @@ public class TorchServeLocalContainerInfraService implements TorchServeInfraServ
                 TorchServeProperties.TORCHSERVE_CONTAINER);
 
         container = initContainer(imageName);
+        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     @SuppressWarnings("resource")
