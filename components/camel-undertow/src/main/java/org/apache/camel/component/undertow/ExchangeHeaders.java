@@ -118,6 +118,7 @@ public final class ExchangeHeaders {
     public static final HttpString ON_COMPLETION = new HttpString("CamelOnCompletion");
     public static final HttpString OVERRULE_FILE_NAME = new HttpString("CamelOverruleFileName");
 
+    @Deprecated
     public static final HttpString PARENT_UNIT_OF_WORK = new HttpString("CamelParentUnitOfWork");
 
     public static final HttpString RECIPIENT_LIST_ENDPOINT = new HttpString("CamelRecipientListEndpoint");
