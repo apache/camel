@@ -36,7 +36,7 @@ public abstract class SmbServerTestSupport extends CamelTestSupport {
 
     // docker container shared by all tests using this service
     @RegisterExtension
-    public static SmbService service = SmbServiceFactory.createService();
+    public static SmbService service = SmbServiceFactory.createSingletonService();
 
     public byte[] copyFileContentFromContainer(String fileName) {
         return service.copyFileFromContainer(fileName, IOUtils::toByteArray);

@@ -39,7 +39,7 @@ public class SmbComponentIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SmbComponentIT.class);
 
     @RegisterExtension
-    public static SmbService service = SmbServiceFactory.createService();
+    public static SmbService service = SmbServiceFactory.createSingletonService();
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;

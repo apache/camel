@@ -27,11 +27,13 @@ import org.testcontainers.utility.DockerImageName;
               serviceAlias = "hive-mq")
 public class LocalHiveMQInfraService extends AbstractLocalHiveMQService<LocalHiveMQInfraService> {
 
-    LocalHiveMQInfraService() {
+    public LocalHiveMQInfraService() {
         super(LocalPropertyResolver.getProperty(LocalHiveMQInfraService.class, HiveMQProperties.HIVEMQ_CONTAINER));
     }
 
     protected HiveMQContainer initContainer(String imageName) {
-        return new HiveMQContainer(DockerImageName.parse(imageName));
+        return new HiveMQContainer(
+                DockerImageName.parse(imageName)
+                        .asCompatibleSubstituteFor("hivemq/hivemq-ce"));
     }
 }

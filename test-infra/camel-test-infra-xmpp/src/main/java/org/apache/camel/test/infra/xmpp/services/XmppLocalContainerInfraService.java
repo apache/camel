@@ -38,6 +38,10 @@ public class XmppLocalContainerInfraService implements XmppInfraService, Contain
 
     public XmppLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
     public XmppLocalContainerInfraService(XmppServerContainer container) {

@@ -32,7 +32,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.infra.mongodb.services.MongoDBLocalContainerService;
+import org.apache.camel.test.infra.mongodb.services.MongoDBService;
+import org.apache.camel.test.infra.mongodb.services.MongoDBServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang3.ObjectUtils;
@@ -43,7 +44,6 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.containers.wait.strategy.Wait;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MongoDbFindOperationIT extends CamelTestSupport {
 
     @RegisterExtension
-    public static MongoDBLocalContainerService service;
+    public static MongoDBService service = MongoDBServiceFactory.createSingletonService();
 
     protected static String dbName = "test";
     protected static String testCollectionName;
@@ -65,18 +65,6 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     private static MongoClient mongo;
     private static MongoDatabase db;
     private static MongoCollection<Document> testCollection;
-
-    static {
-        service = new MongoDBLocalContainerService();
-
-        service.getContainer()
-                .waitingFor(Wait.forListeningPort())
-                .withCommand(
-                        "--replSet", "replicationName",
-                        "--oplogSize", "5000",
-                        "--syncdelay", "0",
-                        "--noauth");
-    }
 
     @Override
     public void doPreSetup() throws Exception {

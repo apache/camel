@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.TestUtils;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
@@ -41,6 +42,10 @@ public class RedpandaInfraService implements KafkaInfraService, ContainerService
         Network network = Network.newNetwork();
 
         redpandaContainer = initRedpandaContainer(network, redpandaInstanceName);
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            redpandaContainer.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
     public RedpandaInfraService(RedpandaContainer redpandaContainer) {

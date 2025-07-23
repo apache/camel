@@ -27,6 +27,7 @@ import com.couchbase.client.java.manager.view.View;
 import com.couchbase.client.java.view.DesignDocumentNamespace;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.couchbase.common.CouchbaseProperties;
 import org.slf4j.Logger;
@@ -77,6 +78,10 @@ public class CouchbaseLocalContainerInfraService implements CouchbaseInfraServic
 
     public CouchbaseLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
     public CouchbaseLocalContainerInfraService(CouchbaseContainer container) {

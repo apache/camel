@@ -58,7 +58,7 @@ public class HashicorpVaultLocalContainerInfraService
 
     private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultLocalContainerInfraService.class);
 
-    private final GenericContainer container;
+    private final GenericContainer<?> container;
 
     public HashicorpVaultLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
@@ -68,13 +68,17 @@ public class HashicorpVaultLocalContainerInfraService
 
     public HashicorpVaultLocalContainerInfraService(String containerImage) {
         container = initContainer(containerImage, CONTAINER_NAME);
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
-    public HashicorpVaultLocalContainerInfraService(GenericContainer container) {
+    public HashicorpVaultLocalContainerInfraService(GenericContainer<?> container) {
         this.container = container;
     }
 
-    protected GenericContainer initContainer(String imageName, String containerName) {
+    protected GenericContainer<?> initContainer(String imageName, String containerName) {
         final Logger containerLog = LoggerFactory.getLogger("container." + containerName);
         final Consumer<OutputFrame> logConsumer = new Slf4jLogConsumer(containerLog);
 
@@ -127,7 +131,7 @@ public class HashicorpVaultLocalContainerInfraService
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public GenericContainer<?> getContainer() {
         return container;
     }
 

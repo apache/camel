@@ -21,14 +21,50 @@ import java.io.InputStream;
 
 import com.github.dockerjava.api.exception.NotFoundException;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 import org.testcontainers.utility.ThrowingFunction;
 
 public class SmbServiceFactory {
 
-    public static SmbService createService() {
-        SimpleTestServiceBuilder<SmbService> builder = new SimpleTestServiceBuilder<>("smb");
+    static class SingletonSmbService extends SingletonService<SmbService> implements SmbService {
+        public SingletonSmbService(SmbService service, String name) {
+            super(service, name);
+        }
 
-        return builder.addLocalMapping(SmbLocalContainerService::new)
+        @Override
+        public String address() {
+            return getService().address();
+        }
+
+        @Override
+        public String password() {
+            return getService().password();
+        }
+
+        @Override
+        public String shareName() {
+            return getService().shareName();
+        }
+
+        @Override
+        public String smbFile(String file) {
+            return getService().smbFile(file);
+        }
+
+        @Override
+        public String userName() {
+            return getService().userName();
+        }
+
+        @Override
+        public <T> T copyFileFromContainer(String fileName, ThrowingFunction<InputStream, T> function) {
+            return getService().copyFileFromContainer(fileName, function);
+        }
+    }
+
+    public static SmbService createService() {
+        return builder()
+                .addLocalMapping(SmbLocalContainerService::new)
                 .addRemoteMapping(SmbRemoteService::new)
                 .build();
     }
@@ -37,6 +73,24 @@ public class SmbServiceFactory {
         @Override
         public <T> T copyFileFromContainer(String fileName, ThrowingFunction<InputStream, T> function) {
             return null;
+        }
+    }
+
+    public static SimpleTestServiceBuilder<SmbService> builder() {
+        return new SimpleTestServiceBuilder<>("smb");
+    }
+
+    public static SmbService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final SmbService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<SmbService> instance = builder();
+            instance.addLocalMapping(() -> new SingletonSmbService(new SmbLocalContainerService(), "smb"))
+                    .addRemoteMapping(SmbRemoteService::new);
+            INSTANCE = instance.build();
         }
     }
 
@@ -50,27 +104,6 @@ public class SmbServiceFactory {
                 LOG.info("No file found with name {}:", fileName);
                 return null;
             }
-        }
-
-        @Override
-        public void registerProperties() {
-        }
-
-        @Override
-        public void initialize() {
-            container.start();
-            registerProperties();
-
-            LOG.info("SMB host running at address {}:", address());
-        }
-
-        @Override
-        public void shutdown() {
-        }
-
-        @Override
-        public void close() {
-
         }
     }
 }

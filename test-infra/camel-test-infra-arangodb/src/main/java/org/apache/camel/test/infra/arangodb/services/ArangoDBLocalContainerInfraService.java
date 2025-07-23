@@ -39,6 +39,10 @@ public class ArangoDBLocalContainerInfraService implements ArangoDBInfraService,
 
     public ArangoDBLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
     public ArangoDBLocalContainerInfraService(ArangoDbContainer container) {

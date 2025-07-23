@@ -46,7 +46,7 @@ public final class CouchDbServiceFactory {
     }
 
     public static SimpleTestServiceBuilder<CouchDbService> builder() {
-        return new SimpleTestServiceBuilder<>("consul");
+        return new SimpleTestServiceBuilder<>("couchdb");
     }
 
     public static CouchDbService createService() {
