@@ -17,7 +17,6 @@
 package org.apache.camel.component.web3j;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
@@ -41,13 +40,13 @@ public class Web3jConfiguration implements Cloneable {
     private String atBlock;
 
     @UriParam(label = "common")
-    private List<String> addresses;
+    private String addresses;
 
     @UriParam(label = "producer")
     private String address;
 
     @UriParam(label = "common", javaType = "java.lang.String")
-    private List<String> topics;
+    private String topics;
 
     @UriParam(label = "producer")
     private BigInteger position;
@@ -128,16 +127,24 @@ public class Web3jConfiguration implements Cloneable {
     private boolean quorumAPI;
 
     @UriParam(label = "common")
-    private List<String> privateFor;
+    private String privateFor;
 
-    public List<String> getPrivateFor() {
+    public String getPrivateFor() {
         return privateFor;
     }
 
+    public List<String> getPrivateForAsList() {
+        if (privateFor != null) {
+            return List.of(privateFor.split(","));
+        } else {
+            return null;
+        }
+    }
+
     /**
-     * A transaction privateFor nodes with public keys in a Quorum network
+     * A comma separated transaction privateFor nodes with public keys in a Quorum network
      */
-    public void setPrivateFor(List<String> privateFor) {
+    public void setPrivateFor(String privateFor) {
         this.privateFor = privateFor;
     }
 
@@ -452,31 +459,42 @@ public class Web3jConfiguration implements Cloneable {
         this.atBlock = atBlock;
     }
 
-    public List<String> getAddresses() {
+    public String getAddresses() {
         return addresses;
     }
 
+    public List<String> getAddressesAsList() {
+        if (addresses != null) {
+            return List.of(addresses.split(","));
+        } else {
+            return null;
+        }
+    }
+
     /**
-     * Contract address or a list of addresses.
+     * Contract address or a comma separated list of addresses.
      */
-    public void setAddresses(List<String> addresses) {
+    public void setAddresses(String addresses) {
         this.addresses = addresses;
     }
 
-    public List<String> getTopics() {
+    public String getTopics() {
         return topics;
+    }
+
+    public List<String> getTopicsAsList() {
+        if (topics != null) {
+            return List.of(topics.split(","));
+        } else {
+            return null;
+        }
     }
 
     /**
      * Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma.
      */
-    public void setTopics(List<String> topics) {
-        this.topics = topics;
-    }
-
     public void setTopics(String topics) {
-        String[] arr = topics.split(",");
-        this.topics = Arrays.asList(arr);
+        this.topics = topics;
     }
 
     public String getAddress() {
