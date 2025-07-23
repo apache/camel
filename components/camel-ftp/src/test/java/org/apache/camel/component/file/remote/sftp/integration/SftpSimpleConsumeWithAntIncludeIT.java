@@ -63,6 +63,37 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
     }
 
     @Test
+    public void testSftpSimpleConsumeWithTrailingSlash() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/"
+                     + "?username=admin&password=admin&delay=10000&disconnect=true"
+                     + "&recursive=true&antInclude=hello.txt"
+                     + "&knownHostsFile="
+                     + service.getKnownHostsFile()).to("mock:result");
+            }
+        });
+        context.start();
+
+        try {
+            String expected = "Hello World";
+
+            // create file using regular file
+            template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "hello.txt");
+
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedMessageCount(1);
+            mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
+            mock.expectedBodiesReceived(expected);
+
+            MockEndpoint.assertIsSatisfied(context);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
     public void testSftpSimpleConsumeWithSubdir() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
