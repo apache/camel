@@ -583,7 +583,7 @@ public class Debug extends Run {
                     // from camel 4.7 onwards then message history include current line as well
                     // so the history panel needs to output a bit different in this situation
                     boolean top = false;
-                    if (row.version != null && VersionHelper.isGE(row.version, "4.7")) {
+                    if (row.version != null && VersionHelper.isGE(row.version, "4.7.0")) {
                         top = h == row.history.get(row.history.size() - 1);
                     }
 

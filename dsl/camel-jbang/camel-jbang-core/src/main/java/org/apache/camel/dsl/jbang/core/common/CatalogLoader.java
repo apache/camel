@@ -159,7 +159,7 @@ public final class CatalogLoader {
             return answer;
         }
         // quarkus 3.2.x and older must have .Final
-        boolean finalSuffix = VersionHelper.isLE(quarkusVersion, "3.2");
+        boolean finalSuffix = VersionHelper.isLE(quarkusVersion, "3.2.0");
         if (finalSuffix && !quarkusVersion.endsWith(".Final")) {
             quarkusVersion += ".Final";
         }

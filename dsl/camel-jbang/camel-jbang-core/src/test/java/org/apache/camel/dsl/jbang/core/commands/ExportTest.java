@@ -36,6 +36,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -399,8 +400,8 @@ class ExportTest {
         try (FileInputStream fis = new FileInputStream(appProps)) {
             String content = IOHelper.loadText(fis);
             if (rt == RuntimeType.quarkus) {
-                Assertions.assertTrue(content.contains("quarkus.native.resources.includes=camel/route.yaml"),
-                        "should contain quarkus.native.resources.includes property, was " + content);
+                Assertions.assertFalse(content.contains("quarkus.native.resources.includes=camel/route.yaml"),
+                        "should not contain quarkus.native.resources.includes property, was " + content);
             }
             Assertions.assertFalse(content.contains("camel.main.routes-include-pattern"),
                     "should not contain camel.main.routes-include-pattern property, was " + content);
@@ -409,6 +410,23 @@ class ExportTest {
                         "should contain camel.main.run-controller property, was " + content);
             }
         }
+    }
+
+    @Test
+    public void olderQuarkusVersion() throws Exception {
+        LOG.info("olderQuarkusVersion");
+        // We need a real file as we want to test the generated content
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--quarkus-version=3.21.0");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+
+        // Application properties
+        File appProperties = new File(workingDir + "/src/main/resources", "application.properties");
+        String content = IOHelper.loadText(new FileInputStream(appProperties));
+        Assertions.assertTrue(content.contains("quarkus.native.resources.includes=camel/route.yaml"),
+                "should contain quarkus.native.resources.includes property, was " + content);
     }
 
     @ParameterizedTest

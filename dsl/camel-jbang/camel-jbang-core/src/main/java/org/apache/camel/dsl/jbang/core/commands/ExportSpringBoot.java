@@ -399,7 +399,7 @@ class ExportSpringBoot extends Export {
             // skip "camel.server." as this is for camel-main only
             return null;
         }
-        boolean camel44orOlder = camelSpringBootVersion != null && VersionHelper.isLE("4.4", camelSpringBootVersion);
+        boolean camel44orOlder = camelSpringBootVersion != null && VersionHelper.isLE("4.4.0", camelSpringBootVersion);
         if (camel44orOlder) {
             // camel.main.x should be renamed to camel.springboot.x (for camel 4.4.x or older)
             if (key.startsWith("camel.main.")) {
