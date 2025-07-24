@@ -113,10 +113,10 @@ public class KafkaProducerMultipleMessagesInTransactionWithLoopTest extends Came
                                 header("ThrowExceptionOnIndex").convertTo(Integer.class))
                         .loop(body().convertTo(Integer.class))
                         .choice().when(exchange -> {
-                            Integer throwExeptionOnIndex = exchange.getVariable("ThrowExceptionOnIndex", Integer.class);
+                            Integer throwExceptionOnIndex = exchange.getVariable("ThrowExceptionOnIndex", Integer.class);
                             Integer camelLoopIndex = exchange.getProperty("CamelLoopIndex", Integer.class);
 
-                            if (null != throwExeptionOnIndex && throwExeptionOnIndex == camelLoopIndex) {
+                            if (null != throwExceptionOnIndex && throwExceptionOnIndex.equals(camelLoopIndex)) {
                                 return true;
                             } else {
                                 log.info("***** Sending message to Kafka from Loop exchange with id '{}' and UnitOfWork: {}",
