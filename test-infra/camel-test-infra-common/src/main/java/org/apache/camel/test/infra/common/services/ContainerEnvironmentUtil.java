@@ -17,7 +17,6 @@
 
 package org.apache.camel.test.infra.common.services;
 
-import org.apache.camel.spi.annotations.InfraService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.DockerClientFactory;
@@ -58,7 +57,7 @@ public final class ContainerEnvironmentUtil {
         container.setStartupAttempts(startupAttempts);
     }
 
-    public static boolean isFixedPort(@SuppressWarnings("rawtypes") Class cls) {
+    public static boolean isFixedPort(Class cls) {
         for (Class<?> i : cls.getInterfaces()) {
             if (i.getName().contains("InfraService")) {
                 return true;
@@ -66,15 +65,5 @@ public final class ContainerEnvironmentUtil {
         }
 
         return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static String containerName(Class cls) {
-        InfraService annotation = (InfraService) cls.getAnnotation(InfraService.class);
-        String name = "camel-" + annotation.serviceAlias()[0];
-        if (annotation.serviceImplementationAlias().length > 0) {
-            name += "-" + annotation.serviceImplementationAlias()[0];
-        }
-        return name;
     }
 }

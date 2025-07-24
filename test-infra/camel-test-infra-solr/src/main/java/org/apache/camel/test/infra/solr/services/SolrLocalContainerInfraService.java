@@ -34,7 +34,6 @@ public class SolrLocalContainerInfraService implements SolrInfraService, Contain
     public SolrLocalContainerInfraService() {
         container = SolrContainer.initContainer(SolrContainer.CONTAINER_NAME,
                 ContainerEnvironmentUtil.isFixedPort(this.getClass()));
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     @Override

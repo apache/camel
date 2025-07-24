@@ -29,12 +29,12 @@ import org.testcontainers.containers.wait.strategy.Wait;
 @InfraService(service = NatsInfraService.class,
               description = "Messaging Platform NATS",
               serviceAlias = { "nats" })
-public class NatsLocalContainerInfraService implements NatsInfraService, ContainerService<GenericContainer<?>> {
+public class NatsLocalContainerInfraService implements NatsInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "nats";
     private static final int PORT = 4222;
 
     private static final Logger LOG = LoggerFactory.getLogger(NatsLocalContainerInfraService.class);
-    private final GenericContainer<?> container;
+    private final GenericContainer container;
 
     public NatsLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(NatsLocalContainerInfraService.class, NatsProperties.NATS_CONTAINER));
@@ -42,10 +42,9 @@ public class NatsLocalContainerInfraService implements NatsInfraService, Contain
 
     public NatsLocalContainerInfraService(String imageName) {
         container = initContainer(imageName, CONTAINER_NAME);
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
-    protected GenericContainer<?> initContainer(String imageName, String containerName) {
+    protected GenericContainer initContainer(String imageName, String containerName) {
         class NatsContainer extends GenericContainer<NatsContainer> {
             public NatsContainer(boolean fixedPort) {
                 super(imageName);
@@ -85,7 +84,7 @@ public class NatsLocalContainerInfraService implements NatsInfraService, Contain
     }
 
     @Override
-    public GenericContainer<?> getContainer() {
+    public GenericContainer getContainer() {
         return container;
     }
 

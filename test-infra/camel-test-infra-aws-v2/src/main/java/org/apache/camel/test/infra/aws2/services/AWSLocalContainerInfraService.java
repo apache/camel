@@ -24,7 +24,6 @@ import org.apache.camel.test.infra.aws.common.AWSConfigs;
 import org.apache.camel.test.infra.aws.common.AWSProperties;
 import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
-import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,7 @@ public abstract class AWSLocalContainerInfraService implements AWSInfraService, 
 
     public AWSLocalContainerInfraService(String imageName, Service... services) {
         container = initContainer(imageName);
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
+
         container.setupServices(services);
     }
 

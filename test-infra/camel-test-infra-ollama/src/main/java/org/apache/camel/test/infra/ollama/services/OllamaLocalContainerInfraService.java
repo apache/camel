@@ -50,6 +50,7 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
 
     public OllamaLocalContainerInfraService() {
         container = initContainer();
+
         configuration = new DefaultServiceConfiguration();
     }
 
@@ -67,8 +68,6 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
                 if (fixedPort) {
                     addFixedExposedPort(11434, 11434);
                 }
-                withCreateContainerCmdModifier(cmd -> cmd
-                        .withName(ContainerEnvironmentUtil.containerName(OllamaLocalContainerInfraService.this.getClass())));
             }
         }
 

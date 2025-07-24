@@ -54,6 +54,7 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
 
     private void setupContainer(String name, CreateContainerCmd createContainerCmd) {
         createContainerCmd.withHostName(name);
+        createContainerCmd.withName(name);
     }
 
     public int getKafkaPort() {

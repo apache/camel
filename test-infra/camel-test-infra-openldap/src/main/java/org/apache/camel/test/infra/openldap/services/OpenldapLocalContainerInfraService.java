@@ -36,7 +36,6 @@ public class OpenldapLocalContainerInfraService implements OpenldapInfraService,
 
     public OpenldapLocalContainerInfraService() {
         container = new OpenLdapContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     @Override

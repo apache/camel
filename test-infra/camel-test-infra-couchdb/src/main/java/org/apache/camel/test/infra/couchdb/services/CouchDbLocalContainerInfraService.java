@@ -30,12 +30,12 @@ import org.testcontainers.utility.DockerImageName;
 @InfraService(service = CouchDbInfraService.class,
               description = "SQL Clustered database CouchDB",
               serviceAlias = { "couchdb" })
-public class CouchDbLocalContainerInfraService implements CouchDbInfraService, ContainerService<GenericContainer<?>> {
+public class CouchDbLocalContainerInfraService implements CouchDbInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "couchdb";
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchDbLocalContainerInfraService.class);
 
-    private final GenericContainer<?> container;
+    private final GenericContainer container;
 
     public CouchDbLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
@@ -45,14 +45,13 @@ public class CouchDbLocalContainerInfraService implements CouchDbInfraService, C
 
     public CouchDbLocalContainerInfraService(String imageName) {
         container = initContainer(imageName, CONTAINER_NAME);
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
-    public CouchDbLocalContainerInfraService(GenericContainer<?> container) {
+    public CouchDbLocalContainerInfraService(GenericContainer container) {
         this.container = container;
     }
 
-    protected GenericContainer<?> initContainer(String imageName, String containerName) {
+    protected GenericContainer initContainer(String imageName, String containerName) {
         class CouchDBContainer extends GenericContainer<CouchDBContainer> {
             public CouchDBContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName));
@@ -93,7 +92,7 @@ public class CouchDbLocalContainerInfraService implements CouchDbInfraService, C
     }
 
     @Override
-    public GenericContainer<?> getContainer() {
+    public GenericContainer getContainer() {
         return container;
     }
 

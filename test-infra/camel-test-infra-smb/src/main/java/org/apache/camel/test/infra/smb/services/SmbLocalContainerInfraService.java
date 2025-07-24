@@ -30,7 +30,6 @@ public class SmbLocalContainerInfraService implements SmbInfraService {
     protected final SmbContainer container = new SmbContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
 
     public SmbLocalContainerInfraService() {
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     @Override

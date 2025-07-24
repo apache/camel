@@ -110,7 +110,7 @@ public class InfraRun extends InfraBaseCommand {
             printer().println("Starting service " + testService + prefix);
         }
 
-        Object actualService = cl.loadClass(serviceImpl).getDeclaredConstructor().newInstance();
+        Object actualService = cl.loadClass(serviceImpl).newInstance();
 
         // Make sure the actualService can be run with initialize method
         boolean actualServiceIsAnInfrastructureService = false;

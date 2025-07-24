@@ -52,7 +52,6 @@ public class GooglePubSubLocalContainerInfraService
 
     public GooglePubSubLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     public GooglePubSubLocalContainerInfraService(PubSubEmulatorContainer container) {
