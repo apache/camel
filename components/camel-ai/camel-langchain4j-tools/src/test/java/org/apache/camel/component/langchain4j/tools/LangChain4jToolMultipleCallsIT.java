@@ -26,8 +26,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.ollama.services.OllamaService;
-import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
+import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
@@ -40,7 +39,14 @@ public class LangChain4jToolMultipleCallsIT extends CamelTestSupport {
     private ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createServiceWithConfiguration(() -> ToolsHelper.modelName());
+    static OpenAIMock openAIMock = new OpenAIMock().builder()
+            .when("What is the weather in london ??\n")
+            .invokeTool("FindsTheLatitudeAndLongitudeOfAGivenCity")
+            .withParam("name", "London")
+            .andThenInvokeTool("ForecastsTheWeatherForTheGivenLatitudeAndLongitude")
+            .withParam("latitude", "51.50758961965397")
+            .withParam("longitude", "-0.13388057363742217")
+            .build();
 
     private volatile boolean intermediateCalled = false;
     private volatile boolean intermediateHasValidBody = false;
@@ -49,7 +55,7 @@ public class LangChain4jToolMultipleCallsIT extends CamelTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatModel = ToolsHelper.createModel(OLLAMA.getEndpoint());
+        chatModel = ToolsHelper.createModel(openAIMock.getBaseUrl());
     }
 
     @Override
@@ -76,12 +82,12 @@ public class LangChain4jToolMultipleCallsIT extends CamelTestSupport {
                 from("langchain4j-tools:test1?tags=geo&description=Forecasts the weather for the given latitude and longitude&parameter.latitude=integer&parameters.longitude=integer")
                         .log("intermediate body is: ${body}")
                         .process(exchange -> {
-                            intermediateCalled = true;
                             String body = exchange.getIn().getBody(String.class);
-                            if (body != null) {
-                                if (body.contains("51.50758961965397") && body.contains("-0.13388057363742217")) {
-                                    intermediateHasValidBody = true;
-                                }
+                            intermediateCalled = true;
+                            if (exchange.getIn().getHeader("longitude", String.class).contains("-0.13388057363742217") &&
+                                    exchange.getIn().getHeader("latitude", String.class).contains("51.50758961965397") &&
+                                    body.contains("51.50758961965397") && body.contains("-0.13388057363742217")) {
+                                intermediateHasValidBody = true;
                             }
                         })
                         .setBody(simple("""
