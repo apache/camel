@@ -1469,6 +1469,8 @@ public class Run extends CamelCommand {
             // store background output in a log file to capture any error on startup
             logPath = getRunBackgroundLogFile("" + new Random().nextLong());
             try {
+                Path logDir = CommandLineHelper.getCamelDir();
+                Files.createDirectories(logDir); //make sure the parent dir exists
                 Files.createFile(logPath);
                 logPath.toFile().deleteOnExit();
             } catch (IOException e) {

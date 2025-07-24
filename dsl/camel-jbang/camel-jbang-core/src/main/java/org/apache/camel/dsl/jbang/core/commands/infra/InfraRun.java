@@ -182,7 +182,9 @@ public class InfraRun extends InfraBaseCommand {
     }
 
     private static Path createFile(String name) throws IOException {
-        Path logFile = CommandLineHelper.getCamelDir().resolve(name);
+        Path logDir = CommandLineHelper.getCamelDir();
+        Files.createDirectories(logDir); //make sure the parent dir exists
+        Path logFile = logDir.resolve(name);
         Files.createFile(logFile);
         return logFile;
     }
