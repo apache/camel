@@ -35,7 +35,6 @@ public abstract class AzureStorageInfraService implements AzureInfraService, Con
 
     public AzureStorageInfraService(String imageName) {
         this.container = initContainer(imageName);
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     public AzureStorageInfraService(AzuriteContainer container) {

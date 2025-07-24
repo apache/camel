@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.infra.hivemq.services;
 
-import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.hivemq.common.HiveMQProperties;
 import org.slf4j.Logger;
@@ -39,8 +38,7 @@ public abstract class AbstractLocalHiveMQService<T extends AbstractLocalHiveMQSe
     protected AbstractLocalHiveMQService(String imageName) {
         container = initContainer(imageName)
                 .withExposedPorts(MQTT_PORT_DEFAULT, WEBSOCKET_PORT_DEFAULT)
-                .waitingFor(Wait.forListeningPort())
-                .withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
+                .waitingFor(Wait.forListeningPort());
     }
 
     @Override

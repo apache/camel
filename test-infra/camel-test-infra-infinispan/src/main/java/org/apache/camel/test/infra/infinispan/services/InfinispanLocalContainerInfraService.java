@@ -41,7 +41,7 @@ public class InfinispanLocalContainerInfraService implements InfinispanInfraServ
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanLocalContainerInfraService.class);
 
-    private final GenericContainer<?> container;
+    private final GenericContainer container;
     private final boolean isNetworkHost;
 
     public InfinispanLocalContainerInfraService() {
@@ -53,15 +53,14 @@ public class InfinispanLocalContainerInfraService implements InfinispanInfraServ
     public InfinispanLocalContainerInfraService(String containerImage) {
         isNetworkHost = isHostNetworkMode();
         container = initContainer(containerImage, CONTAINER_NAME);
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
-    public InfinispanLocalContainerInfraService(GenericContainer<?> container) {
+    public InfinispanLocalContainerInfraService(GenericContainer container) {
         isNetworkHost = isHostNetworkMode();
         this.container = container;
     }
 
-    protected GenericContainer<?> initContainer(String imageName, String containerName) {
+    protected GenericContainer initContainer(String imageName, String containerName) {
         final Logger containerLog = LoggerFactory.getLogger("container." + containerName);
         final Consumer<OutputFrame> logConsumer = new Slf4jLogConsumer(containerLog);
 
@@ -123,7 +122,7 @@ public class InfinispanLocalContainerInfraService implements InfinispanInfraServ
     }
 
     @Override
-    public GenericContainer<?> getContainer() {
+    public GenericContainer getContainer() {
         return container;
     }
 

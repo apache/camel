@@ -33,13 +33,11 @@ public class RedisLocalContainerInfraService implements RedisInfraService, Conta
 
     public RedisLocalContainerInfraService() {
         container = new RedisContainer();
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     public RedisLocalContainerInfraService(String imageName) {
         container = RedisContainer.initContainer(imageName, RedisContainer.CONTAINER_NAME,
                 ContainerEnvironmentUtil.isFixedPort(this.getClass()));
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     @Override

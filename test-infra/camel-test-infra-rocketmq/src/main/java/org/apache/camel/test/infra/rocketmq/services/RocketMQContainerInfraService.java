@@ -52,8 +52,6 @@ public class RocketMQContainerInfraService implements RocketMQInfraService, Cont
 
         brokerContainer1
                 = new RocketMQBrokerContainer(network, "broker1", ContainerEnvironmentUtil.isFixedPort(this.getClass()));
-        brokerContainer1
-                .withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     @Override

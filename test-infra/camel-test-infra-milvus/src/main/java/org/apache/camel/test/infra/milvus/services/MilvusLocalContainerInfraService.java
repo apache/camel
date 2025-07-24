@@ -45,7 +45,6 @@ public class MilvusLocalContainerInfraService implements MilvusInfraService, Con
 
     public MilvusLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
-        container.withCreateContainerCmdModifier(cmd -> cmd.withName(ContainerEnvironmentUtil.containerName(this.getClass())));
     }
 
     public MilvusLocalContainerInfraService(MilvusContainer container) {

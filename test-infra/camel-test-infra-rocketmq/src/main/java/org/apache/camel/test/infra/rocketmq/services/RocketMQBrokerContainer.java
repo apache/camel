@@ -50,5 +50,6 @@ public class RocketMQBrokerContainer extends GenericContainer<RocketMQBrokerCont
                 "-c", "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf");
 
         waitingFor(Wait.forListeningPort());
+        withCreateContainerCmdModifier(cmd -> cmd.withName(confName));
     }
 }
