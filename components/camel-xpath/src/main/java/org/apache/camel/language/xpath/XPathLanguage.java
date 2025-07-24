@@ -54,12 +54,31 @@ public class XPathLanguage extends SingleInputTypedLanguageSupport implements Pr
         return builder;
     }
 
+    public Expression validatePredicate(String expression) {
+        expression = loadResource(expression);
+
+        XPathBuilder builder = XPathBuilder.xpath(expression);
+        builder.setResultQName(XPathConstants.BOOLEAN); // use boolean for predicate mode
+        builder.setPreCompile(true);
+        builder.init(null);
+        return builder;
+    }
+
     @Override
     public Expression createExpression(Expression source, String expression, Object[] properties) {
         expression = loadResource(expression);
 
         XPathBuilder builder = XPathBuilder.xpath(expression);
         configureBuilder(builder, properties, source);
+        return builder;
+    }
+
+    public Expression validateExpression(String expression) {
+        expression = loadResource(expression);
+
+        XPathBuilder builder = XPathBuilder.xpath(expression);
+        builder.setPreCompile(true);
+        builder.init(null);
         return builder;
     }
 
