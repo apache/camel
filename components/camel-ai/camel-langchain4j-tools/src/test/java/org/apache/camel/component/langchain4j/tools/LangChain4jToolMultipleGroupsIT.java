@@ -26,8 +26,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.ollama.services.OllamaService;
-import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
+import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
@@ -41,13 +40,28 @@ public class LangChain4jToolMultipleGroupsIT extends CamelTestSupport {
     private ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createServiceWithConfiguration(() -> ToolsHelper.modelName());
+    static OpenAIMock openAIMock = new OpenAIMock().builder()
+            .when("What is the name of the user 1?\n")
+            .assertRequest(request -> {
+                // The tools has to be included in the request
+                Assertions.assertThat(request).contains(
+                        "QueryUserDatabaseByNumber",
+                        "DoesNotReallyDoAnything");
+
+                // The NOT included in the request
+                Assertions.assertThat(request).doesNotContain(
+                        "QueryCompanyUserDatabaseByNumber",
+                        "QuerySomethingelseUserDatabaseByNumber");
+            })
+            .invokeTool("{\"name\": \"pippo\"}")
+            .withParam("number", "1")
+            .build();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatModel = ToolsHelper.createModel(OLLAMA.getEndpoint());
+        chatModel = ToolsHelper.createModel(openAIMock.getBaseUrl());
     }
 
     @Override
@@ -77,10 +91,10 @@ public class LangChain4jToolMultipleGroupsIT extends CamelTestSupport {
                 from("langchain4j-tools:test1?tags=user&description=Does not really do anything")
                         .setBody(constant("Hello World"));
 
-                from("langchain4j-tools:test1?tags=companies&description=Query user database by number&parameter.number=integer")
+                from("langchain4j-tools:test1?tags=companies&description=Query company user database by number&parameter.number=integer")
                         .setBody(constant("Hello World"));
 
-                from("langchain4j-tools:test1?tags=somethingelse&description=Query user database by number&parameter.number=integer")
+                from("langchain4j-tools:test1?tags=somethingelse&description=Query somethingelse user database by number&parameter.number=integer")
                         .setBody(constant("Hello World"));
             }
         };
