@@ -240,7 +240,7 @@
         <icu4j-version>77.1</icu4j-version>
         <ignite-version>2.17.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
-        <infinispan-version>15.2.1.Final</infinispan-version>
+        <infinispan-version>15.2.5.Final</infinispan-version>
         <infinispan-protostream-version>15.0.13.Final</infinispan-protostream-version>
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>7.3.0</influx-client-java-driver-version>
@@ -396,7 +396,7 @@
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>5.28.9</neo4j-version>
-        <netty-version>4.1.119.Final</netty-version>
+        <netty-version>4.1.123.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.8</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.4</nimbus-jose-jwt>
