@@ -38,6 +38,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class KafkaProducerMultipleMessagesInTransactionWithLoopTest extends CamelTestSupport {
+
     @EndpointInject("mock:done")
     protected MockEndpoint doneEndpoint;
 
@@ -84,16 +85,17 @@ public class KafkaProducerMultipleMessagesInTransactionWithLoopTest extends Came
     @Test
     public void test02_OnExceptionWithLoop() throws Exception {
         Exception exceptionCaught = null;
-        int throwExeptionOnIndex = 4;
+        int throwExceptionOnIndex = 4;
         try {
-            template.sendBodyAndHeader("direct:loop", throwExeptionOnIndex + 1, "ThrowExeptionOnIndex", throwExeptionOnIndex);
+            template.sendBodyAndHeader("direct:loop", throwExceptionOnIndex + 1, "ThrowExceptionOnIndex",
+                    throwExceptionOnIndex);
         } catch (CamelExecutionException e) {
             exceptionCaught = e;
         }
 
         assertInstanceOf(CamelExecutionException.class, exceptionCaught);
         assertInstanceOf(RuntimeException.class, exceptionCaught.getCause());
-        assertEquals("Failing with Index: " + throwExeptionOnIndex, exceptionCaught.getCause().getMessage());
+        assertEquals("Failing with Index: " + throwExceptionOnIndex, exceptionCaught.getCause().getMessage());
 
         assertEquals(0, mockProducer.history().size());
         assertEquals(0, mockProducer.commitCount());
@@ -107,18 +109,17 @@ public class KafkaProducerMultipleMessagesInTransactionWithLoopTest extends Came
             public void configure() throws Exception {
                 from("direct:loop")
                         .id("loop")
-                        .setVariable("ThrowExeptionOnIndex",
-                                header("ThrowExeptionOnIndex").convertTo(Integer.class))
+                        .setVariable("ThrowExceptionOnIndex",
+                                header("ThrowExceptionOnIndex").convertTo(Integer.class))
                         .loop(body().convertTo(Integer.class))
                         .choice().when(exchange -> {
-                            Integer throwExeptionOnIndex = exchange.getVariable("ThrowExeptionOnIndex", Integer.class);
+                            Integer throwExeptionOnIndex = exchange.getVariable("ThrowExceptionOnIndex", Integer.class);
                             Integer camelLoopIndex = exchange.getProperty("CamelLoopIndex", Integer.class);
 
                             if (null != throwExeptionOnIndex && throwExeptionOnIndex == camelLoopIndex) {
                                 return true;
                             } else {
-                                System.out.printf(
-                                        "***** Sending message to Kafka from Loop exchange with id '%s' and UnitOfWork: %s%n",
+                                log.info("***** Sending message to Kafka from Loop exchange with id '{}' and UnitOfWork: {}",
                                         exchange.getExchangeId(), exchange.getUnitOfWork().hashCode());
 
                                 return false;
