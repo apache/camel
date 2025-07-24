@@ -24,6 +24,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -81,7 +82,7 @@ public class VersionList extends CamelCommand {
     String toVersion;
 
     @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by (version, or date)", defaultValue = "version")
+                        description = "Sort by (version, date, or days)", defaultValue = "version")
     String sort;
 
     @CommandLine.Option(names = { "--repo" }, description = "Maven repository for downloading available versions")
@@ -98,6 +99,9 @@ public class VersionList extends CamelCommand {
 
     @CommandLine.Option(names = { "--rc" }, description = "Include also milestone or RC releases", defaultValue = "false")
     boolean rc;
+
+    @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true")
+    boolean days;
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources",
                         defaultValue = "false")
@@ -191,7 +195,9 @@ public class VersionList extends CamelCommand {
                     new Column().header("RELEASED")
                             .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::releaseDate),
                     new Column().header("SUPPORTED UNTIL")
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::eolDate))));
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::eolDate),
+                    new Column().header("DAYS").visible(days)
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::daysAgo))));
         }
 
         return 0;
@@ -254,6 +260,7 @@ public class VersionList extends CamelCommand {
                     rows.add(row);
                     row.coreVersion = rm.getVersion();
                     row.releaseDate = rm.getDate();
+                    row.daysSince = daysSince(rm.getDate());
                     row.eolDate = rm.getEol();
                     row.jdks = rm.getJdk();
                     row.kind = rm.getKind();
@@ -278,11 +285,24 @@ public class VersionList extends CamelCommand {
                 }
                 if (rm != null) {
                     row.releaseDate = rm.getDate();
+                    row.daysSince = daysSince(rm.getDate());
                     row.eolDate = rm.getEol();
                     row.jdks = rm.getJdk();
                     row.kind = rm.getKind();
                 }
             }
+    }
+
+    private long daysSince(String date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD);
+            Date d = sdf.parse(date);
+            Date d2 = new Date();
+            return ChronoUnit.DAYS.between(d.toInstant(), d2.toInstant());
+        } catch (Exception e) {
+            // ignore
+        }
+        return -1;
     }
 
     private static Map<String, Object> mapOf(Row r) {
@@ -310,6 +330,8 @@ public class VersionList extends CamelCommand {
                 String d1 = o1.releaseDate != null ? o1.releaseDate : "";
                 String d2 = o2.releaseDate != null ? o2.releaseDate : "";
                 return d1.compareTo(d2) * negate;
+            case "days":
+                return Long.compare(o2.daysSince, o1.daysSince) * negate;
             default:
                 return 0;
         }
@@ -322,6 +344,13 @@ public class VersionList extends CamelCommand {
     private String kind(Row r) {
         if (r.kind != null && !"legacy".equalsIgnoreCase(r.kind)) {
             return r.kind.toUpperCase(Locale.ROOT);
+        }
+        return "";
+    }
+
+    private String daysAgo(Row r) {
+        if (r.daysSince > 0) {
+            return "" + r.daysSince;
         }
         return "";
     }
@@ -405,6 +434,7 @@ public class VersionList extends CamelCommand {
         String coreVersion;
         String runtimeVersion;
         String releaseDate;
+        long daysSince;
         String eolDate;
         String kind;
         String jdks;
