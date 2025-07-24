@@ -29,6 +29,7 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.producer.support.DelegatingCallback;
 import org.apache.camel.component.kafka.producer.support.KafkaProducerCallBack;
@@ -40,6 +41,7 @@ import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
@@ -520,8 +522,18 @@ public class KafkaProducer extends DefaultAsyncProducer {
     }
 
     private void startKafkaTransaction(Exchange exchange) {
-        exchange.getUnitOfWork().beginTransactedBy(transactionId);
-        kafkaProducer.beginTransaction();
-        exchange.getUnitOfWork().addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
+        // use parent uow to allow transaction to be grouped
+        UnitOfWork uow
+                = exchange.getProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, exchange.getUnitOfWork(), UnitOfWork.class);
+
+        if (!uow.isTransactedBy(transactionId)) {
+            LOG.debug("Starting kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
+            uow.beginTransactedBy(transactionId);
+            kafkaProducer.beginTransaction();
+            uow.addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
+        } else {
+            LOG.debug("Using existing kafka transaction {} with exchange {}.",
+                    transactionId, exchange.getExchangeId());
+        }
     }
 }
