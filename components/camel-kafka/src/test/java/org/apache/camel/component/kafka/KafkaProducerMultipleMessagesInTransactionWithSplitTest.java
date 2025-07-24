@@ -40,10 +40,11 @@ import static org.mockito.ArgumentMatchers.any;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class KafkaProducerMultipleMessagesInTransactionWithSplitTest extends CamelTestSupport {
+
     @EndpointInject("mock:done")
     protected MockEndpoint doneEndpoint;
 
-    private MockProducer<String, String> mockProducer
+    private final MockProducer<String, String> mockProducer
             = new MockProducer<>(true, new StringSerializer(), new StringSerializer());
 
     @Override
@@ -99,7 +100,7 @@ public class KafkaProducerMultipleMessagesInTransactionWithSplitTest extends Cam
         }
 
         try {
-            template.sendBodyAndHeader("direct:split", sb.toString(), "ThrowExeptionOnIndex", throwExeptionOnIndex);
+            template.sendBodyAndHeader("direct:split", sb.toString(), "ThrowExceptionOnIndex", throwExeptionOnIndex);
         } catch (CamelExecutionException e) {
             exceptionCaught = e;
         }
@@ -121,18 +122,17 @@ public class KafkaProducerMultipleMessagesInTransactionWithSplitTest extends Cam
             public void configure() throws Exception {
                 from("direct:split")
                         .id("split")
-                        .setVariable("ThrowExeptionOnIndex",
-                                header("ThrowExeptionOnIndex").convertTo(Integer.class))
+                        .setVariable("ThrowExceptionOnIndex",
+                                header("ThrowExceptionOnIndex").convertTo(Integer.class))
                         .split(body().tokenize("\n")).shareUnitOfWork(true).stopOnException()
                         .choice().when(exchange -> {
-                            Integer throwExeptionOnIndex = exchange.getVariable("ThrowExeptionOnIndex", Integer.class);
+                            Integer throwExceptionOnIndex = exchange.getVariable("ThrowExceptionOnIndex", Integer.class);
                             Integer camelSplitIndex = exchange.getProperty("CamelSplitIndex", Integer.class);
 
-                            if (null != throwExeptionOnIndex && throwExeptionOnIndex == camelSplitIndex) {
+                            if (null != throwExceptionOnIndex && throwExceptionOnIndex.equals(camelSplitIndex)) {
                                 return true;
                             } else {
-                                System.out.printf(
-                                        "***** Sending message to Kafka from Split exchange with id '%s' and UnitOfWork: %s%n",
+                                log.info("***** Sending message to Kafka from Split exchange with id '{}' and UnitOfWork: {}",
                                         exchange.getExchangeId(), exchange.getUnitOfWork().hashCode());
 
                                 return false;

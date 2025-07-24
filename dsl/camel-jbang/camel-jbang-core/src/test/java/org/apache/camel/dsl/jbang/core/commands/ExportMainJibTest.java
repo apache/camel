@@ -64,6 +64,36 @@ class ExportMainJibTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldGenerateJava17(RuntimeType rt) throws Exception {
+        // prepare as we need application.properties that contains jib settings
+        Files.copy(new File("src/test/resources/application-jib.properties").toPath(), profile.toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--java-version=17", "target/test-classes/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+        Assertions.assertEquals("17", model.getProperties().getProperty("java.version"));
+        Assertions.assertEquals("abc", model.getProperties().getProperty("jib.label"));
+        Assertions.assertEquals("eclipse-temurin:17-jre", model.getProperties().getProperty("jib.from.image"));
+
+        // should contain jib plugin
+        Assertions.assertEquals(4, model.getBuild().getPlugins().size());
+        Plugin p = model.getBuild().getPlugins().get(3);
+        Assertions.assertEquals("com.google.cloud.tools", p.getGroupId());
+        Assertions.assertEquals("jib-maven-plugin", p.getArtifactId());
+
+        command.printConfigurationValues("export command");
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldGenerateProjectWithJib(RuntimeType rt) throws Exception {
         // prepare as we need application.properties that contains jib settings
         Files.copy(new File("src/test/resources/application-jib.properties").toPath(), profile.toPath(),
@@ -79,9 +109,9 @@ class ExportMainJibTest {
         Assertions.assertEquals("examples", model.getGroupId());
         Assertions.assertEquals("route", model.getArtifactId());
         Assertions.assertEquals("1.0.0", model.getVersion());
-        Assertions.assertEquals("17", model.getProperties().getProperty("java.version"));
+        Assertions.assertEquals("21", model.getProperties().getProperty("java.version"));
         Assertions.assertEquals("abc", model.getProperties().getProperty("jib.label"));
-        Assertions.assertEquals("eclipse-temurin:17-jre", model.getProperties().getProperty("jib.from.image"));
+        Assertions.assertEquals("eclipse-temurin:21-jre", model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib plugin
         Assertions.assertEquals(4, model.getBuild().getPlugins().size());

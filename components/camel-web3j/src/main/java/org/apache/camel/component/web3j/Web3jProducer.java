@@ -975,7 +975,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         BigInteger gasLimit = message.getHeader(Web3jConstants.GAS_LIMIT, configuration::getGasLimit, BigInteger.class);
         BigInteger value = message.getHeader(Web3jConstants.VALUE, configuration::getValue, BigInteger.class);
         String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
-        List<String> privateFor = message.getHeader(Web3jConstants.PRIVATE_FOR, configuration::getPrivateFor, List.class);
+        List<String> privateFor = message.getHeader(Web3jConstants.PRIVATE_FOR, configuration::getPrivateForAsList, List.class);
         String privateFrom = message.getHeader(Web3jConstants.PRIVATE_FROM, String.class);
         PrivateTransaction transaction
                 = new PrivateTransaction(fromAddress, nonce, gasLimit, toAddress, value, data, privateFrom, privateFor);

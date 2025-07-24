@@ -64,7 +64,7 @@
         <angus-mail-version>2.0.3</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
-        <arangodb-java-version>7.20.0</arangodb-java-version>
+        <arangodb-java-version>7.21.0</arangodb-java-version>
         <as2-lib-version>5.1.5</as2-lib-version>
         <ascii-table-version>1.8.0</ascii-table-version>
         <asm-version>9.8</asm-version>
@@ -77,13 +77,13 @@
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.32.6</aws-java-sdk2-version>
-        <aws-xray-version>2.18.2</aws-xray-version>
+        <aws-java-sdk2-version>2.32.7</aws-java-sdk2-version>
+        <aws-xray-version>2.18.3</aws-xray-version>
         <azure-sdk-bom-version>1.2.36</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.31</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
         <bouncycastle-version>1.81</bouncycastle-version>
-        <box-java-sdk-version>4.16.2</box-java-sdk-version>
+        <box-java-sdk-version>4.16.3</box-java-sdk-version>
         <braintree-gateway-version>3.43.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.6.1</build-helper-maven-plugin-version>
         <bytebuddy-version>1.17.6</bytebuddy-version>
@@ -125,7 +125,7 @@
         <consul-client-version>1.5.1</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <couchbase-client-version>3.8.3</couchbase-client-version>
-        <curator-version>5.8.0</curator-version>
+        <curator-version>5.9.0</curator-version>
         <cxf-version>4.1.2</cxf-version>
         <cxf-codegen-plugin-version>4.1.2</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
@@ -207,7 +207,7 @@
         <graphql-java-version>24.1</graphql-java-version>
         <greenmail-version>2.1.4</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
-        <groovy-version>4.0.27</groovy-version>
+        <groovy-version>4.0.28</groovy-version>
         <grpc-version>1.73.0</grpc-version>
         <grpc-google-auth-library-version>1.37.1</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.5.0</grpc-java-jwt-version>
@@ -248,7 +248,7 @@
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
-        <jackson-jq-version>1.3.0</jackson-jq-version>
+        <jackson-jq-version>1.4.0</jackson-jq-version>
         <jackson2-version>2.19.2</jackson2-version>
         <jackrabbit-version>2.22.1</jackrabbit-version>
         <jasminb-jsonapi-version>0.14</jasminb-jsonapi-version>
@@ -439,7 +439,7 @@
         <prowide-version>SRU2024-10.2.7</prowide-version>
         <pubnub-version>10.5.4</pubnub-version>
         <pulsar-version>4.0.5</pulsar-version>
-        <qdrant-client-version>1.14.1</qdrant-client-version>
+        <qdrant-client-version>1.15.0</qdrant-client-version>
         <qpid-broker-version>9.2.1</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.7.0</qpid-jms-client-version>
@@ -465,7 +465,7 @@
         <slf4j-api-version>2.0.17</slf4j-api-version>
         <slf4j-version>2.0.17</slf4j-version>
         <smack-version>4.3.5</smack-version>
-        <smallrye-config-version>3.13.3</smallrye-config-version>
+        <smallrye-config-version>3.13.4</smallrye-config-version>
         <smallrye-health-version>4.2.0</smallrye-health-version>
         <smallrye-fault-tolerance-version>6.9.1</smallrye-fault-tolerance-version>
         <smbj-version>0.14.0</smbj-version>
@@ -513,7 +513,7 @@
         <velocity-version>2.4.1</velocity-version>
         <vertx-version>4.5.16</vertx-version>
         <vysper-version>0.7</vysper-version>
-        <weaviate-client-version>5.3.0</weaviate-client-version>
+        <weaviate-client-version>5.4.0</weaviate-client-version>
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
         <wildfly-elytron>2.2.2.Final</wildfly-elytron>

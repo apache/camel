@@ -21,6 +21,9 @@ of an issue, and felt it's better to fix this before for this LTS release.
 
 === camel-jbang
 
+The `camel-jbang` has upgraded to Java 21 as the default java-version when running and exporting.
+To keep using java 17, you can use `--java-version=17` as parameter.
+
 The `camel export` will not include `camel-observabilities-services` out of the box. To include this, then use `--observe` to enable
 this during export.
 
@@ -45,4 +48,8 @@ The availableZones parameter for camel-huawei-dms has been defined as String ins
 === camel-weather
 
 The ids parameter for camel-weather has been defined as String instead of List<String>. For the migration users will need to, eventually, define ids as a comma separated list of id instead of a List instance. For more information the related issue is CAMEL-17339.
+
+=== camel-web3j
+
+The addresses, privateFor and Topics parameters for camel-web3j have been defined as String instead of List<String>. For the migration users will need to, eventually, define addresses, privateFor or topics  as a comma separated list of addresses, privateFor or topics instead of a List instance. For more information the related issue is CAMEL-17339.
 

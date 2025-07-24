@@ -31,7 +31,7 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         Web3jComponent target = (Web3jComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "address": getOrCreateConfiguration(target).setAddress(property(camelContext, java.lang.String.class, value)); return true;
-        case "addresses": getOrCreateConfiguration(target).setAddresses(property(camelContext, java.util.List.class, value)); return true;
+        case "addresses": getOrCreateConfiguration(target).setAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "atblock":
         case "atBlock": getOrCreateConfiguration(target).setAtBlock(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -73,7 +73,7 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "position": getOrCreateConfiguration(target).setPosition(property(camelContext, java.math.BigInteger.class, value)); return true;
         case "priority": getOrCreateConfiguration(target).setPriority(property(camelContext, java.math.BigInteger.class, value)); return true;
         case "privatefor":
-        case "privateFor": getOrCreateConfiguration(target).setPrivateFor(property(camelContext, java.util.List.class, value)); return true;
+        case "privateFor": getOrCreateConfiguration(target).setPrivateFor(property(camelContext, java.lang.String.class, value)); return true;
         case "quorumapi":
         case "quorumAPI": getOrCreateConfiguration(target).setQuorumAPI(property(camelContext, boolean.class, value)); return true;
         case "sha3hashofdatatosign":
@@ -100,7 +100,7 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "address": return java.lang.String.class;
-        case "addresses": return java.util.List.class;
+        case "addresses": return java.lang.String.class;
         case "atblock":
         case "atBlock": return java.lang.String.class;
         case "autowiredenabled":
@@ -142,7 +142,7 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "position": return java.math.BigInteger.class;
         case "priority": return java.math.BigInteger.class;
         case "privatefor":
-        case "privateFor": return java.util.List.class;
+        case "privateFor": return java.lang.String.class;
         case "quorumapi":
         case "quorumAPI": return boolean.class;
         case "sha3hashofdatatosign":
@@ -231,16 +231,6 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "ttl": return getOrCreateConfiguration(target).getTtl();
         case "value": return getOrCreateConfiguration(target).getValue();
         case "web3j": return getOrCreateConfiguration(target).getWeb3j();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "addresses": return java.lang.String.class;
-        case "privatefor":
-        case "privateFor": return java.lang.String.class;
         default: return null;
         }
     }

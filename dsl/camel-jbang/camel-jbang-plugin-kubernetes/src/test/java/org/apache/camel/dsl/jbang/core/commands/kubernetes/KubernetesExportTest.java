@@ -65,6 +65,33 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Properties props = model.getProperties();
         Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
         Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("eclipse-temurin:21", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
+        Assertions.assertNull(props.get("jkube.docker.push.registry"));
+        Assertions.assertNull(props.get("jkube.container-image.registry"));
+        Assertions.assertNull(props.get("jkube.container-image.platforms"));
+
+        if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("/observe/health", props.get("quarkus.smallrye-health.root-path"));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateJava17Project(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime(), "--java-version=17");
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
         Assertions.assertEquals("eclipse-temurin:17", props.get("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
         Assertions.assertNull(props.get("jkube.docker.push.registry"));

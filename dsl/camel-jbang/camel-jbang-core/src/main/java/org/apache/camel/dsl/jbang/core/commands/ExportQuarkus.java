@@ -107,16 +107,20 @@ class ExportQuarkus extends Export {
                 prop.remove("camel.main.modeline");
             }
             // are we using http then enable embedded HTTP server (if not explicit configured already)
-            int port = httpServerPort(settings);
-            if (port == -1) {
-                port = 8080;
+            if (!prop.containsKey("quarkus.http.port")) {
+                int port = httpServerPort(settings);
+                if (port == -1) {
+                    port = 8080;
+                }
+                if (port != 8080) {
+                    prop.put("quarkus.http.port", port);
+                }
             }
-            if (port != 8080) {
-                prop.put("quarkus.http.port", port);
-            }
-            port = httpManagementPort(settings);
-            if (port != -1) {
-                prop.put("quarkus.management.port", port);
+            if (!prop.containsKey("quarkus.management.port")) {
+                port = httpManagementPort(settings);
+                if (port != -1) {
+                    prop.put("quarkus.management.port", port);
+                }
             }
             return prop;
         });
@@ -204,13 +208,16 @@ class ExportQuarkus extends Export {
             if (extra != null) {
                 sj.add(extra);
             }
-            if (sj.length() > 0) {
-                properties.setProperty("quarkus.native.resources.includes", sj.toString());
+            if (extra != null || VersionHelper.isLE(quarkusVersion, "3.21.0")) {
+                // quarkus 3.21 or older need to have quarkus.native.resources.includes configured
+                if (sj.length() > 0) {
+                    properties.setProperty("quarkus.native.resources.includes", sj.toString());
+                }
             }
         }
 
         // CAMEL-20911 workaround due to a bug in CEQ 3.11 and 3.12
-        if (VersionHelper.isBetween(quarkusVersion, "3.11", "3.13")) {
+        if (VersionHelper.isBetween(quarkusVersion, "3.11.0", "3.13.0")) {
             if (!properties.containsKey("quarkus.camel.openapi.codegen.model-package")) {
                 properties.put("quarkus.camel.openapi.codegen.model-package", "org.apache.camel.quarkus");
             }
@@ -427,12 +434,18 @@ class ExportQuarkus extends Export {
             camelVersion = catalog.getCatalogVersion();
         }
 
+        String mp = prop.getProperty("quarkus.management.port");
+        if (mp == null) {
+            mp = "9876";
+        }
+
         context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
         context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceAll("\\{\\{ \\.QuarkusGroupId }}", quarkusGroupId);
         context = context.replaceAll("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
+        context = context.replaceAll("\\{\\{ \\.QuarkusManagementPort }}", mp);
         context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
         context = context.replaceAll("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());

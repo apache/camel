@@ -24,7 +24,7 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         Web3jEndpoint target = (Web3jEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "address": target.getConfiguration().setAddress(property(camelContext, java.lang.String.class, value)); return true;
-        case "addresses": target.getConfiguration().setAddresses(property(camelContext, java.util.List.class, value)); return true;
+        case "addresses": target.getConfiguration().setAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "atblock":
         case "atBlock": target.getConfiguration().setAtBlock(property(camelContext, java.lang.String.class, value)); return true;
         case "blockhash":
@@ -67,7 +67,7 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "position": target.getConfiguration().setPosition(property(camelContext, java.math.BigInteger.class, value)); return true;
         case "priority": target.getConfiguration().setPriority(property(camelContext, java.math.BigInteger.class, value)); return true;
         case "privatefor":
-        case "privateFor": target.getConfiguration().setPrivateFor(property(camelContext, java.util.List.class, value)); return true;
+        case "privateFor": target.getConfiguration().setPrivateFor(property(camelContext, java.lang.String.class, value)); return true;
         case "quorumapi":
         case "quorumAPI": target.getConfiguration().setQuorumAPI(property(camelContext, boolean.class, value)); return true;
         case "sha3hashofdatatosign":
@@ -94,7 +94,7 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "address": return java.lang.String.class;
-        case "addresses": return java.util.List.class;
+        case "addresses": return java.lang.String.class;
         case "atblock":
         case "atBlock": return java.lang.String.class;
         case "blockhash":
@@ -137,7 +137,7 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "position": return java.math.BigInteger.class;
         case "priority": return java.math.BigInteger.class;
         case "privatefor":
-        case "privateFor": return java.util.List.class;
+        case "privateFor": return java.lang.String.class;
         case "quorumapi":
         case "quorumAPI": return boolean.class;
         case "sha3hashofdatatosign":
@@ -227,16 +227,6 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "ttl": return target.getConfiguration().getTtl();
         case "value": return target.getConfiguration().getValue();
         case "web3j": return target.getConfiguration().getWeb3j();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "addresses": return java.lang.String.class;
-        case "privatefor":
-        case "privateFor": return java.lang.String.class;
         default: return null;
         }
     }
