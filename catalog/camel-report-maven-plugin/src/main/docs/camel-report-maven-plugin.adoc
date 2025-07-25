@@ -226,6 +226,9 @@ such as by declaring the following Maven dependency in your pom.xml file:
 </dependency>
 ----
 
+IMPORTANT: Only regular `@Test` methods are supported.
+For example using `@ParameterizedTest` can lead to inaccurate results reported.
+
 === Enabling route coverage
 
 You can enable route coverage while running unit tests either by:
