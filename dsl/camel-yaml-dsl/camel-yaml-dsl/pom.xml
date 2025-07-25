@@ -239,7 +239,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.5</version>
+            <version>${pgjdbc-driver-version}</version>
             <scope>test</scope>
         </dependency>
 
