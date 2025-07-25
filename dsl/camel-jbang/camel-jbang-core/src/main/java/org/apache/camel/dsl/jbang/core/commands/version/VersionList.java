@@ -103,6 +103,10 @@ public class VersionList extends CamelCommand {
     @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true")
     boolean days;
 
+    @CommandLine.Option(names = { "--tail" },
+                        description = "The number of lines from the end of the table to show.")
+    int tail;
+
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources",
                         defaultValue = "false")
     boolean fresh;
@@ -175,6 +179,13 @@ public class VersionList extends CamelCommand {
 
         // sort rows
         rows.sort(this::sortRow);
+
+        if (tail > 0) {
+            int pos = rows.size() - tail;
+            if (pos > 0) {
+                rows = rows.subList(pos, rows.size());
+            }
+        }
 
         if (jsonOutput) {
             printer().println(
