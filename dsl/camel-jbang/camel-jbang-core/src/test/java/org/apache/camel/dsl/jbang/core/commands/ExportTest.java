@@ -44,6 +44,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class ExportTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);
@@ -108,11 +110,22 @@ class ExportTest {
         Assertions.assertNotNull(model.getProperties().get("project.build.outputTimestamp"));
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(containsDependency(model.getDependencyManagement().getDependencies(), "org.apache.camel",
-                    "camel-bom", "4.8.3"));
+            assertThat(model.getDependencyManagement().getDependencies())
+                    .as("Expected to find dependencyManagement entry: org.apache.camel:camel-bom:4.8.3")
+                    .anySatisfy(dep -> {
+                        assertThat(dep.getGroupId()).isEqualTo("org.apache.camel");
+                        assertThat(dep.getArtifactId()).isEqualTo("camel-bom");
+                        assertThat(dep.getVersion()).isEqualTo("4.8.3");
+                    });
+
         } else if (rt == RuntimeType.springBoot) {
-            Assertions.assertTrue(containsDependency(model.getDependencyManagement().getDependencies(),
-                    "org.apache.camel.springboot", "camel-spring-boot-bom", "4.8.3"));
+            assertThat(model.getDependencyManagement().getDependencies())
+                    .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.8.3")
+                    .anySatisfy(dep -> {
+                        assertThat(dep.getGroupId()).isEqualTo("org.apache.camel.springboot");
+                        assertThat(dep.getArtifactId()).isEqualTo("camel-spring-boot-bom");
+                        assertThat(dep.getVersion()).isEqualTo("4.8.3");
+                    });
         }
     }
 
@@ -243,10 +256,19 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         if (rt == RuntimeType.main) {
-            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
-            Assertions
-                    .assertTrue(
-                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            assertThat(model.getDependencies())
+                    .as("Expected to find dependency: org.apache.camel:camel-kamelet")
+                    .anySatisfy(dep -> {
+                        assertThat(dep.getGroupId()).isEqualTo("org.apache.camel");
+                        assertThat(dep.getArtifactId()).isEqualTo("camel-kamelet");
+                    });
+
+            assertThat(model.getDependencies())
+                    .as("Expected to find dependency: org.apache.camel.kamelets:camel-kamelets")
+                    .anySatisfy(dep -> {
+                        assertThat(dep.getGroupId()).isEqualTo("org.apache.camel.kamelets");
+                        assertThat(dep.getArtifactId()).isEqualTo("camel-kamelets");
+                    });
         } else if (rt == RuntimeType.springBoot) {
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
