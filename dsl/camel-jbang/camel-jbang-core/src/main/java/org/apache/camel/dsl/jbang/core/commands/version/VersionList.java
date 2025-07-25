@@ -66,6 +66,8 @@ public class VersionList extends CamelCommand {
     private static final String GIT_CAMEL_QUARKUS_URL
             = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/q/release-%s.md";
 
+    private static final String DEFAULT_DATE_FORMAT = "MMMM yyyy";
+
     @CommandLine.Option(names = { "--runtime" },
                         defaultValue = "camel-main",
                         completionCandidates = RuntimeCompletionCandidates.class,
@@ -102,6 +104,10 @@ public class VersionList extends CamelCommand {
 
     @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true")
     boolean days;
+
+    @CommandLine.Option(names = { "--date-format" }, description = "The format to show the date (such as dd-MM-yyyy)",
+                        defaultValue = DEFAULT_DATE_FORMAT)
+    String dateFormat;
 
     @CommandLine.Option(names = { "--tail" },
                         description = "The number of lines from the end of the table to show.")
@@ -371,7 +377,7 @@ public class VersionList extends CamelCommand {
             if (r.releaseDate != null) {
                 SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD);
                 Date d = sdf.parse(r.releaseDate);
-                SimpleDateFormat sdf2 = new SimpleDateFormat("MMMM yyyy", Locale.US);
+                SimpleDateFormat sdf2 = new SimpleDateFormat(dateFormat, Locale.US);
                 return sdf2.format(d);
             }
         } catch (Exception e) {
@@ -385,7 +391,7 @@ public class VersionList extends CamelCommand {
             if (r.eolDate != null) {
                 SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD);
                 Date d = sdf.parse(r.eolDate);
-                SimpleDateFormat sdf2 = new SimpleDateFormat("MMMM yyyy", Locale.US);
+                SimpleDateFormat sdf2 = new SimpleDateFormat(dateFormat, Locale.US);
                 return sdf2.format(d);
             }
         } catch (Exception e) {
