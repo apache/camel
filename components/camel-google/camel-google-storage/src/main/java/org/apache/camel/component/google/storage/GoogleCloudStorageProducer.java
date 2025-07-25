@@ -122,7 +122,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         }
         String cd = objectMetadata.remove("Content-Disposition");
         if (cd != null) {
-            builder.setContentDisposition(ct);
+            builder.setContentDisposition(cd);
         }
         String ce = objectMetadata.remove("Content-Encoding");
         if (ce != null) {
