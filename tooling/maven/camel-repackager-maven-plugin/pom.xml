@@ -39,7 +39,7 @@
         <firstVersion>4.13.0</firstVersion>
         <label>tooling</label>
         <supportLevel>Preview</supportLevel>
-        <spring-boot-version>3.5.3</spring-boot-version>
+        <spring-boot-version>3.5.4</spring-boot-version>
     </properties>
 
     <dependencies>
