@@ -212,14 +212,17 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
         }
         final long timeout = getEndpoint().getConfirmTimeout() <= 0 ? Long.MAX_VALUE : getEndpoint().getConfirmTimeout();
         try {
-            Boolean sent = getInOnlyTemplate().invoke(t -> {
-                t.send(ex, rk, msg);
-                if (confirm) {
+            boolean sent;
+            if (confirm) {
+                sent = getInOnlyTemplate().invoke(t -> {
+                    t.send(ex, rk, msg);
                     return t.waitForConfirms(timeout);
-                } else {
-                    return true;
-                }
-            });
+                });
+            } else {
+                getInOnlyTemplate().send(ex, rk, msg);
+                sent = true;
+            }
+
             if (Boolean.FALSE == sent) {
                 exchange.setException(new TimeoutException("Message not sent within " + timeout + " millis"));
             }
