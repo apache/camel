@@ -17,6 +17,8 @@
 package org.apache.camel.component.solr.integration;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -115,11 +117,13 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     }
 
     @Test
-    public void testInsertSolrInputDocumentAsXMLWithoutAddRoot() {
+    public void testInsertSolrInputDocumentAsXMLWithoutAddRoot() throws IOException {
 
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField("id", "MA147LL/A");
-        String docAsXml = ClientUtils.toXML(doc);
+        StringWriter writer = new StringWriter();
+        ClientUtils.writeXML(doc, writer);
+        String docAsXml = writer.toString();
         executeInsertFor(docAsXml);
 
         QueryResponse response = executeSolrQuery("id:MA147LL/A");
@@ -128,11 +132,14 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     }
 
     @Test
-    public void testInsertSolrInputDocumentAsXMLWithAddRoot() {
+    public void testInsertSolrInputDocumentAsXMLWithAddRoot() throws IOException {
 
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField("id", "MA147LL/A");
-        String docAsXml = "<add>" + ClientUtils.toXML(doc) + "</add>";
+        StringWriter writer = new StringWriter();
+        ClientUtils.writeXML(doc, writer);
+        String content = writer.toString();
+        String docAsXml = "<add>" + content + "</add>";
         Map<String, Object> headers = Map.of(Exchange.CONTENT_TYPE, "text/xml");
         executeInsertFor(docAsXml, headers);
 
