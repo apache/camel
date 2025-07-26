@@ -381,6 +381,24 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The maximum time in milliseconds to wait for connection validation to
+         * complete. Defaults to 60 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1m
+         * Group: sqlserver
+         * 
+         * @param connectionValidationTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder connectionValidationTimeoutMs(long connectionValidationTimeoutMs) {
+            doSetProperty("connectionValidationTimeoutMs", connectionValidationTimeoutMs);
+            return this;
+        }
+    
         /**
          * Optional list of custom converters that would be used instead of
          * default ones. The converters are defined using '.type' config option
@@ -628,6 +646,24 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          */
         default DebeziumSqlserverComponentBuilder eventProcessingFailureHandlingMode(java.lang.String eventProcessingFailureHandlingMode) {
             doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+    
+        
+        /**
+         * The maximum time in milliseconds to wait for task executor to shut
+         * down.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 4s
+         * Group: sqlserver
+         * 
+         * @param executorShutdownTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder executorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+            doSetProperty("executorShutdownTimeoutMs", executorShutdownTimeoutMs);
             return this;
         }
     
@@ -933,6 +969,106 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          */
         default DebeziumSqlserverComponentBuilder notificationSinkTopicName(java.lang.String notificationSinkTopicName) {
             doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
+            return this;
+        }
+    
+        
+        /**
+         * Path to OpenLineage file configuration. See
+         * https://openlineage.io/docs/client/java/configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ./openlineage.yml
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationConfigFilePath the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
+            doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        
+        /**
+         * Enable Debezium to emit data lineage metadata through OpenLineage
+         * API.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder openlineageIntegrationEnabled(boolean openlineageIntegrationEnabled) {
+            doSetProperty("openlineageIntegrationEnabled", openlineageIntegrationEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * The job's description emitted by Debezium.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: Debezium change data capture job
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationJobDescription the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder openlineageIntegrationJobDescription(java.lang.String openlineageIntegrationJobDescription) {
+            doSetProperty("openlineageIntegrationJobDescription", openlineageIntegrationJobDescription);
+            return this;
+        }
+    
+        /**
+         * The job's namespace emitted by Debezium.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationJobNamespace the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder openlineageIntegrationJobNamespace(java.lang.String openlineageIntegrationJobNamespace) {
+            doSetProperty("openlineageIntegrationJobNamespace", openlineageIntegrationJobNamespace);
+            return this;
+        }
+    
+        /**
+         * The job's owners emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationJobOwners the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder openlineageIntegrationJobOwners(java.lang.String openlineageIntegrationJobOwners) {
+            doSetProperty("openlineageIntegrationJobOwners", openlineageIntegrationJobOwners);
+            return this;
+        }
+    
+        /**
+         * The job's tags emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationJobTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder openlineageIntegrationJobTags(java.lang.String openlineageIntegrationJobTags) {
+            doSetProperty("openlineageIntegrationJobTags", openlineageIntegrationJobTags);
             return this;
         }
     
@@ -1751,6 +1887,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "columnExcludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
+            case "connectionValidationTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setConnectionValidationTimeoutMs((long) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setCustomMetricTags((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHostname((java.lang.String) value); return true;
@@ -1765,6 +1902,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
+            case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
@@ -1781,6 +1919,12 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
+            case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
+            case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
+            case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;
+            case "openlineageIntegrationJobOwners": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationJobOwners((java.lang.String) value); return true;
+            case "openlineageIntegrationJobTags": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationJobTags((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setPollIntervalMs((long) value); return true;
             case "postProcessors": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setPostProcessors((java.lang.String) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setProvideTransactionMetadata((boolean) value); return true;

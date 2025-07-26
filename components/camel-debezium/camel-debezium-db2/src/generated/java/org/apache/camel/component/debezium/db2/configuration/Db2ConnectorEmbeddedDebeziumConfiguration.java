@@ -22,6 +22,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private long streamingDelayMs = 0;
     @UriParam(label = LABEL_NAME)
     private String customMetricTags;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobNamespace;
     @UriParam(label = LABEL_NAME, defaultValue = "10000")
     private int queryFetchSize = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "source")
@@ -38,6 +40,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long snapshotLockTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "ASNCDC")
@@ -75,6 +79,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private int maxBatchSize = 2048;
     @UriParam(label = LABEL_NAME, defaultValue = "t")
     private String skippedOperations = "t";
+    @UriParam(label = LABEL_NAME, defaultValue = "Debezium change data capture job")
+    private String openlineageIntegrationJobDescription = "Debezium change data capture job";
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.schema.SchemaTopicNamingStrategy")
     private String topicNamingStrategy = "io.debezium.schema.SchemaTopicNamingStrategy";
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
@@ -85,10 +91,16 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "1024")
     private int incrementalSnapshotChunkSize = 1024;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobOwners;
+    @UriParam(label = LABEL_NAME, defaultValue = "./openlineage.yml")
+    private String openlineageIntegrationConfigFilePath = "./openlineage.yml";
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "4s", javaType = "java.time.Duration")
+    private long executorShutdownTimeoutMs = 4000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -112,6 +124,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private String cdcControlSchema = "ASNCDC";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean openlineageIntegrationEnabled = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -146,6 +160,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private String schemaNameAdjustmentMode = "none";
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
+    private long connectionValidationTimeoutMs = 60000;
     @UriParam(label = LABEL_NAME, defaultValue = "LUW")
     private String db2Platform = "LUW";
 
@@ -203,6 +219,18 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
 
     public String getCustomMetricTags() {
         return customMetricTags;
+    }
+
+    /**
+     * The job's namespace emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobNamespace(
+            String openlineageIntegrationJobNamespace) {
+        this.openlineageIntegrationJobNamespace = openlineageIntegrationJobNamespace;
+    }
+
+    public String getOpenlineageIntegrationJobNamespace() {
+        return openlineageIntegrationJobNamespace;
     }
 
     /**
@@ -305,6 +333,19 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
 
     public int getSnapshotFetchSize() {
         return snapshotFetchSize;
+    }
+
+    /**
+     * The job's tags emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
+     */
+    public void setOpenlineageIntegrationJobTags(
+            String openlineageIntegrationJobTags) {
+        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
+    }
+
+    public String getOpenlineageIntegrationJobTags() {
+        return openlineageIntegrationJobTags;
     }
 
     /**
@@ -551,6 +592,18 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's description emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobDescription(
+            String openlineageIntegrationJobDescription) {
+        this.openlineageIntegrationJobDescription = openlineageIntegrationJobDescription;
+    }
+
+    public String getOpenlineageIntegrationJobDescription() {
+        return openlineageIntegrationJobDescription;
+    }
+
+    /**
      * The name of the TopicNamingStrategy class that should be used to
      * determine the topic name for data change, schema change, transaction,
      * heartbeat event etc.
@@ -617,6 +670,32 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The job's owners emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
+     */
+    public void setOpenlineageIntegrationJobOwners(
+            String openlineageIntegrationJobOwners) {
+        this.openlineageIntegrationJobOwners = openlineageIntegrationJobOwners;
+    }
+
+    public String getOpenlineageIntegrationJobOwners() {
+        return openlineageIntegrationJobOwners;
+    }
+
+    /**
+     * Path to OpenLineage file configuration. See
+     * https://openlineage.io/docs/client/java/configuration
+     */
+    public void setOpenlineageIntegrationConfigFilePath(
+            String openlineageIntegrationConfigFilePath) {
+        this.openlineageIntegrationConfigFilePath = openlineageIntegrationConfigFilePath;
+    }
+
+    public String getOpenlineageIntegrationConfigFilePath() {
+        return openlineageIntegrationConfigFilePath;
+    }
+
+    /**
      * Time to wait before restarting connector after retriable exception
      * occurs. Defaults to 10000ms.
      */
@@ -639,6 +718,17 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
 
     public long getSnapshotDelayMs() {
         return snapshotDelayMs;
+    }
+
+    /**
+     * The maximum time in milliseconds to wait for task executor to shut down.
+     */
+    public void setExecutorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+        this.executorShutdownTimeoutMs = executorShutdownTimeoutMs;
+    }
+
+    public long getExecutorShutdownTimeoutMs() {
+        return executorShutdownTimeoutMs;
     }
 
     /**
@@ -788,6 +878,18 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
 
     public boolean isTableIgnoreBuiltin() {
         return tableIgnoreBuiltin;
+    }
+
+    /**
+     * Enable Debezium to emit data lineage metadata through OpenLineage API
+     */
+    public void setOpenlineageIntegrationEnabled(
+            boolean openlineageIntegrationEnabled) {
+        this.openlineageIntegrationEnabled = openlineageIntegrationEnabled;
+    }
+
+    public boolean isOpenlineageIntegrationEnabled() {
+        return openlineageIntegrationEnabled;
     }
 
     /**
@@ -1015,6 +1117,19 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The maximum time in milliseconds to wait for connection validation to
+     * complete. Defaults to 60 seconds.
+     */
+    public void setConnectionValidationTimeoutMs(
+            long connectionValidationTimeoutMs) {
+        this.connectionValidationTimeoutMs = connectionValidationTimeoutMs;
+    }
+
+    public long getConnectionValidationTimeoutMs() {
+        return connectionValidationTimeoutMs;
+    }
+
+    /**
      * Informs connector which Db2 implementation platform it is connected to.
      * The default is 'LUW', which means Windows, UNIX, Linux. Using a value of
      * 'Z' ensures that the Db2 for z/OS specific SQL statements are used.
@@ -1035,6 +1150,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "transaction.metadata.factory", transactionMetadataFactory);
         addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
@@ -1043,6 +1159,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
         addPropertyIfNotNull(configBuilder, "cdc.change.tables.schema", cdcChangeTablesSchema);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
@@ -1061,13 +1178,17 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
         addPropertyIfNotNull(configBuilder, "topic.naming.strategy", topicNamingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.chunk.size", incrementalSnapshotChunkSize);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
+        addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.databases.ddl", schemaHistoryInternalStoreOnlyCapturedDatabasesDdl);
@@ -1079,6 +1200,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
         addPropertyIfNotNull(configBuilder, "cdc.control.schema", cdcControlSchema);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
@@ -1096,6 +1218,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
+        addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
         addPropertyIfNotNull(configBuilder, "db2.platform", db2Platform);
         
         return configBuilder.build();

@@ -23,13 +23,14 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(89);
+        Set<String> props = new HashSet<>(97);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
         props.add("columnExcludeList");
         props.add("columnIncludeList");
         props.add("columnPropagateSourceType");
+        props.add("connectionValidationTimeoutMs");
         props.add("converters");
         props.add("customMetricTags");
         props.add("dataQueryMode");
@@ -46,6 +47,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("executorShutdownTimeoutMs");
         props.add("heartbeatActionQuery");
         props.add("heartbeatIntervalMs");
         props.add("heartbeatTopicsPrefix");
@@ -73,6 +75,12 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("offsetStoragePartitions");
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
+        props.add("openlineageIntegrationConfigFilePath");
+        props.add("openlineageIntegrationEnabled");
+        props.add("openlineageIntegrationJobDescription");
+        props.add("openlineageIntegrationJobNamespace");
+        props.add("openlineageIntegrationJobOwners");
+        props.add("openlineageIntegrationJobTags");
         props.add("pollIntervalMs");
         props.add("postProcessors");
         props.add("provideTransactionMetadata");
