@@ -26,8 +26,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.ollama.services.OllamaService;
-import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
+import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
@@ -41,13 +40,17 @@ public class LangChain4jToolIT extends CamelTestSupport {
     private ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createServiceWithConfiguration(() -> ToolsHelper.modelName());
+    static OpenAIMock openAIMock = new OpenAIMock().builder()
+            .when("What is the name of the user 1?\n")
+            .invokeTool("QueryUserByNumber")
+            .withParam("number", 1)
+            .build();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatModel = ToolsHelper.createModel(OLLAMA.getEndpoint());
+        chatModel = ToolsHelper.createModel(openAIMock.getBaseUrl());
     }
 
     @Override
@@ -84,7 +87,7 @@ public class LangChain4jToolIT extends CamelTestSupport {
         };
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(1)
     public void testSimpleInvocation() {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new SystemMessage(

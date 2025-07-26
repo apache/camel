@@ -26,8 +26,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.ollama.services.OllamaService;
-import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
+import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
@@ -40,13 +39,22 @@ public class LangChain4jToolNoToolsExistIT extends CamelTestSupport {
     private ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createServiceWithConfiguration(() -> ToolsHelper.modelName());
+    static OpenAIMock openAIMock = new OpenAIMock().builder()
+            .when("How can you help? DO NOT CALL TOOLS.\n")
+            .assertRequest(request -> {
+                // The tools should not be included in the request
+                Assertions.assertThat(request).doesNotContain(
+                        "QueryUserDatabaseByNumber",
+                        "DoesNotDoAnything,Really");
+            })
+            .replyWith("No tool is invoked")
+            .build();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatModel = ToolsHelper.createModel(OLLAMA.getEndpoint());
+        chatModel = ToolsHelper.createModel(openAIMock.getBaseUrl());
     }
 
     @Override
@@ -93,7 +101,7 @@ public class LangChain4jToolNoToolsExistIT extends CamelTestSupport {
                         """));
         messages.add(new UserMessage("""
                 How can you help? DO NOT CALL TOOLS.
-                 """));
+                """));
 
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
