@@ -86,7 +86,7 @@ class ExportTest {
         Assertions.assertEquals("route", model.getArtifactId());
         Assertions.assertEquals("1.0.0", model.getVersion());
         // Reproducible build
-        Assertions.assertNotNull(model.getProperties().get("project.build.outputTimestamp"));
+        Assertions.assertNotNull(model.getProperties().getProperty("project.build.outputTimestamp"));
     }
 
     @ParameterizedTest
@@ -107,7 +107,7 @@ class ExportTest {
         Assertions.assertEquals("route", model.getArtifactId());
         Assertions.assertEquals("1.0.0", model.getVersion());
         // Reproducible build
-        Assertions.assertNotNull(model.getProperties().get("project.build.outputTimestamp"));
+        Assertions.assertNotNull(model.getProperties().getProperty("project.build.outputTimestamp"));
 
         if (rt == RuntimeType.main) {
             assertThat(model.getDependencyManagement().getDependencies())
