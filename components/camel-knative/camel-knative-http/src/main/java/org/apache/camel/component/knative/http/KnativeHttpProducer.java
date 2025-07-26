@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.knative.http;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Map;
 
 import io.vertx.core.MultiMap;
@@ -211,12 +210,7 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
     }
 
     private String getHost(KnativeResource definition) {
-        String url = getUrl(definition);
-        try {
-            return new URL(url).getHost();
-        } catch (MalformedURLException e) {
-            throw new RuntimeCamelException("Unable to determine `host` for definition: " + definition, e);
-        }
+        return URI.create(getUrl(definition)).getHost();
     }
 
 }

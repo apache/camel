@@ -17,6 +17,7 @@
 package org.apache.camel.openapi;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -138,9 +139,10 @@ public class RestOpenApiSupport {
         if (openapi.getServers() != null
                 && openapi.getServers().get(0) != null) {
             try {
-                URL serverUrl = new URL(
+                URL serverUrl = URI.create(
                         parseVariables(openapi.getServers().get(0).getUrl(),
-                                openapi.getServers().get(0)));
+                                openapi.getServers().get(0)))
+                        .toURL();
                 host = serverUrl.getHost();
             } catch (MalformedURLException e) {
                 LOG.debug("Error when parsing OpenApi 3.0 doc server url. This exception is ignored.", e);
@@ -160,9 +162,10 @@ public class RestOpenApiSupport {
                 }
                 if (basePath == null) {
                     // parse server url as fallback
-                    URL serverUrl = new URL(
+                    URL serverUrl = URI.create(
                             parseVariables(openapi.getServers().get(0).getUrl(),
-                                    openapi.getServers().get(0)));
+                                    openapi.getServers().get(0)))
+                            .toURL();
                     // strip off the first "/" if double "/" exists
                     basePath = serverUrl.getPath().replace("//", "/");
                     if ("/".equals(basePath)) {

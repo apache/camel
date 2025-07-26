@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.it;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -87,8 +86,8 @@ public class OpenApiITCase extends JBangTestSupport {
         response = executeHttpRequest("/myapi/api-doc", true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
         final ObjectMapper objectMapper = new ObjectMapper();
-        Map expectedDoc = objectMapper.readValue(new URL(
-                openApiUrl),
+        Map expectedDoc = objectMapper.readValue(URI.create(
+                openApiUrl).toURL(),
                 Map.class);
         Map actualDoc = objectMapper.readValue(response.body(), Map.class);
         Assertions.assertThat(((Map) actualDoc.get("paths")).size())

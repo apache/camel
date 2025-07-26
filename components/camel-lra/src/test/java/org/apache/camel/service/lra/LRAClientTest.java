@@ -18,7 +18,6 @@ package org.apache.camel.service.lra;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 
@@ -88,7 +87,7 @@ public class LRAClientTest extends CamelTestSupport {
         };
         Exchange exchange = Mockito.mock(Exchange.class);
         Assertions.assertThrows(ExchangeRuntimeException.class,
-                () -> client.compensate(new URL("https://localhost/saga"), exchange));
+                () -> client.compensate(URI.create("https://localhost/saga").toURL(), exchange));
     }
 
     @DisplayName("Tests whether LRAClient is calling prepareRequest with exchange from complete()")
@@ -103,7 +102,7 @@ public class LRAClientTest extends CamelTestSupport {
         };
         Exchange exchange = Mockito.mock(Exchange.class);
         Assertions.assertThrows(ExchangeRuntimeException.class,
-                () -> client.complete(new URL("https://localhost/saga"), exchange));
+                () -> client.complete(URI.create("https://localhost/saga").toURL(), exchange));
     }
 
     @DisplayName("Tests prepare request works without exchange")

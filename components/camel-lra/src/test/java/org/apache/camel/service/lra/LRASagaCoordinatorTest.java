@@ -16,6 +16,7 @@
  */
 package org.apache.camel.service.lra;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
@@ -43,7 +44,7 @@ public class LRASagaCoordinatorTest extends CamelTestSupport {
 
     @BeforeEach
     public void setup() throws Exception {
-        url = new URL("https://localhost/saga");
+        url = URI.create("https://localhost/saga").toURL();
         sagaService = Mockito.mock(LRASagaService.class);
         client = Mockito.mock(LRAClient.class);
         Mockito.when(sagaService.getClient()).thenReturn(client);

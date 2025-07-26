@@ -298,7 +298,7 @@ public final class DefaultResourceResolvers {
         public boolean exists() {
             URLConnection connection = null;
             try {
-                connection = new URL(getLocation()).openConnection();
+                connection = URI.create(getLocation()).toURL().openConnection();
                 if (connection instanceof HttpURLConnection httpURLConnection) {
                     return httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK;
                 }
@@ -316,7 +316,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public InputStream getInputStream() throws IOException {
-            URLConnection con = new URL(getLocation()).openConnection();
+            URLConnection con = URI.create(getLocation()).toURL().openConnection();
             con.setUseCaches(false);
             try {
                 setContentType(con.getContentType());

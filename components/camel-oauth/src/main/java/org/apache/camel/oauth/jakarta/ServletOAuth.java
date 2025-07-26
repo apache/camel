@@ -16,8 +16,8 @@
  */
 package org.apache.camel.oauth.jakarta;
 
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -78,7 +78,7 @@ public class ServletOAuth extends OAuth {
                 }
                 var jwksPath = config.getJwksPath();
                 if (!jwksPath.isBlank()) {
-                    config.setJWKSet(JWKSet.load(new URL(jwksPath)));
+                    config.setJWKSet(JWKSet.load(URI.create(jwksPath).toURL()));
                 }
             } catch (Exception ex) {
                 throw new OAuthException("Cannot discover OAuth config from: " + wellKnownUri, ex);

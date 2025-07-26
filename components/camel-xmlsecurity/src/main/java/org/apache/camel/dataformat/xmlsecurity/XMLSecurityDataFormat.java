@@ -20,14 +20,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
-import java.security.AccessController;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
@@ -116,30 +113,24 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         boolean wasSet = false;
         try {
             // Don't override if it was set explicitly
-            wasSet = AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
-                public Boolean run() {
-                    String lineBreakPropName = "org.apache.xml.security.ignoreLineBreaks";
-                    if (System.getProperty(lineBreakPropName) == null) {
-                        System.setProperty(lineBreakPropName, "true");
-                        return false;
-                    }
-                    return true;
-                }
-            });
+            String lineBreakPropName = "org.apache.xml.security.ignoreLineBreaks";
+            if (System.getProperty(lineBreakPropName) == null) {
+                System.setProperty(lineBreakPropName, "true");
+                wasSet = false;
+            } else {
+                wasSet = true;
+            }
         } catch (Exception t) {
             //ignore
         }
+
         org.apache.xml.security.Init.init();
+
         if (!wasSet) {
             try {
-                AccessController.doPrivileged(new PrivilegedExceptionAction<Boolean>() {
-                    public Boolean run() throws Exception {
-                        Field f = XMLUtils.class.getDeclaredField("ignoreLineBreaks");
-                        f.setAccessible(true);
-                        f.set(null, Boolean.TRUE);
-                        return false;
-                    }
-                });
+                Field f = XMLUtils.class.getDeclaredField("ignoreLineBreaks");
+                f.setAccessible(true);
+                f.set(null, Boolean.TRUE);
             } catch (Exception t) {
                 //ignore
             }

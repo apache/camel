@@ -84,7 +84,7 @@ public final class SigningUtils {
         ASN1EncodableVector attributes = new ASN1EncodableVector();
         attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(
                 new IssuerAndSerialNumber(
-                        new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
+                        new X500Name(signingCert.getIssuerX500Principal().getName()), signingCert.getSerialNumber())));
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
 
         SignerInfoGenerator signerInfoGenerator = null;

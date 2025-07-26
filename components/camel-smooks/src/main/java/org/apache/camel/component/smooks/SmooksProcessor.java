@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -209,7 +209,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
                     = new javax.xml.transform.stream.StreamSource((File) exchange.getIn().getBody(WrappedFile.class).getFile())
                             .getSystemId();
             try {
-                return new URLSource(new URL(systemId));
+                return new URLSource(URI.create(systemId).toURL());
             } catch (MalformedURLException e) {
                 throw new SmooksException(e);
             }

@@ -19,7 +19,7 @@ package org.apache.camel.component.box.internal;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
@@ -151,7 +151,7 @@ public final class BoxConnectionHelper {
             final String location = response.header("Location");
 
             final Map<String, String> params = new HashMap<>();
-            final Matcher matcher = QUERY_PARAM_PATTERN.matcher(new URL(location).getQuery());
+            final Matcher matcher = QUERY_PARAM_PATTERN.matcher(URI.create(location).toURL().getQuery());
             while (matcher.find()) {
                 params.put(matcher.group(1), matcher.group(2));
             }

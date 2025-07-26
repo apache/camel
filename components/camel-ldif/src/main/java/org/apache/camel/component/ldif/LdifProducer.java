@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class LdifProducer extends DefaultProducer {
         } else {
             URL loc;
             try {
-                loc = new URL(body);
+                loc = URI.create(body).toURL();
                 LOG.debug("Reading from URL: {}", loc);
                 result = processLdif(new InputStreamReader(loc.openStream()));
             } catch (MalformedURLException e) {

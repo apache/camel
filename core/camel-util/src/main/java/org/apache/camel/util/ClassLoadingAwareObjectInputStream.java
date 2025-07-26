@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 
@@ -58,6 +60,14 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
         return load(classDesc.getName(), cl, inLoader);
     }
 
+    class NoopDynamicInvocationHandler implements InvocationHandler {
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            return null;
+        }
+    }
+
     @Override
     protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -67,15 +77,16 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
         }
 
         try {
-            return Proxy.getProxyClass(cl, cinterfaces);
+            return Proxy.newProxyInstance(cl, cinterfaces, new NoopDynamicInvocationHandler()).getClass();
         } catch (IllegalArgumentException e) {
             try {
-                return Proxy.getProxyClass(inLoader, cinterfaces);
+                return Proxy.newProxyInstance(inLoader, cinterfaces, new NoopDynamicInvocationHandler()).getClass();
             } catch (IllegalArgumentException e1) {
                 // ignore
             }
             try {
-                return Proxy.getProxyClass(FALLBACK_CLASS_LOADER, cinterfaces);
+                return Proxy.newProxyInstance(FALLBACK_CLASS_LOADER, cinterfaces, new NoopDynamicInvocationHandler())
+                        .getClass();
             } catch (IllegalArgumentException e2) {
                 // ignore
             }

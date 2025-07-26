@@ -270,6 +270,8 @@ public final class CSimpleHelper {
     }
 
     public static long threadId() {
+        // TODO Once basline is Java 21
+        //        return Thread.currentThread().threadId();
         return Thread.currentThread().getId();
     }
 

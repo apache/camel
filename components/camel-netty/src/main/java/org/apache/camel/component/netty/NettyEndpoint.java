@@ -158,11 +158,11 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, End
                 }
                 X509Certificate cert = (X509Certificate) certificates[0];
 
-                Principal subject = cert.getSubjectDN();
+                Principal subject = cert.getSubjectX500Principal();
                 if (subject != null) {
                     message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME, subject.getName());
                 }
-                Principal issuer = cert.getIssuerDN();
+                Principal issuer = cert.getIssuerX500Principal();
                 if (issuer != null) {
                     message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME, issuer.getName());
                 }

@@ -18,6 +18,7 @@
 package org.apache.camel.dsl.jbang.core.commands.bind;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class PipeProvider extends ObjectReferenceBindingProvider {
                 resolver.close();
             }
             loc = res.getLocation();
-            URL u = new URL(loc);
+            URL u = URI.create(loc).toURL();
             is = u.openStream();
         }
         if (is != null) {

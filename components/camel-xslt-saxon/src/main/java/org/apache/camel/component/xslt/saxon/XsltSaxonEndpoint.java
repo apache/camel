@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -33,7 +36,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
@@ -299,7 +301,10 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
 
     private Source createReaderForSource(Source source) {
         try {
-            XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
+            XMLReader xmlReader = saxParser.getXMLReader();
+
             for (Map.Entry<String, Object> entry : this.saxonReaderProperties.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
@@ -312,16 +317,15 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                         xmlReader.setProperty(uri.toString(), value);
                     }
                 } catch (URISyntaxException e) {
-                    LOG.debug("{} isn't a valid URI, so ingore it", key);
+                    LOG.debug("{} isn't a valid URI, so ignore it", key);
                 }
             }
             InputSource inputSource = SAXSource.sourceToInputSource(source);
             return new SAXSource(xmlReader, inputSource);
-        } catch (SAXException e) {
-            LOG.info("Can't created XMLReader for source ", e);
+        } catch (SAXException | ParserConfigurationException e) {
+            LOG.info("Can't create XMLReader for source ", e);
             return null;
         }
-
     }
 
 }

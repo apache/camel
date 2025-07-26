@@ -20,6 +20,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -497,7 +498,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         if (repositoryList != null) {
             for (String repo : repositoryList.split("\\s*,\\s*")) {
                 try {
-                    URL url = new URL(repo);
+                    URL url = URI.create(repo).toURL();
                     if (url.getHost().equals("repo1.maven.org")) {
                         continue;
                     }

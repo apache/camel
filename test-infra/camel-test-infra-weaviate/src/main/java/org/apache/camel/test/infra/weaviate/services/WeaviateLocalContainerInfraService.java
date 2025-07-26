@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.weaviate.services;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
 
@@ -106,7 +107,7 @@ public class WeaviateLocalContainerInfraService implements WeaviateInfraService,
     public String getWeaviateHost() {
         URL url = null;
         try {
-            url = new URL("http://" + container.getHttpHostAddress());
+            url = URI.create("http://" + container.getHttpHostAddress()).toURL();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -117,7 +118,7 @@ public class WeaviateLocalContainerInfraService implements WeaviateInfraService,
     public int getWeaviatePort() {
         URL url = null;
         try {
-            url = new URL("http://" + container.getHttpHostAddress());
+            url = URI.create("http://" + container.getHttpHostAddress()).toURL();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

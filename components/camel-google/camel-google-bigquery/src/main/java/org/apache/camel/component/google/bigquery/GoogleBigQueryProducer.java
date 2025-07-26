@@ -168,6 +168,8 @@ public class GoogleBigQueryProducer extends DefaultProducer {
                     apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
         if (LOG.isDebugEnabled()) {
+            // TODO Update once baseline is Java 21
+            //            LOG.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().threadId(), exchangeId);
             LOG.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
         }
         return insertAllRequest.getRows().size();

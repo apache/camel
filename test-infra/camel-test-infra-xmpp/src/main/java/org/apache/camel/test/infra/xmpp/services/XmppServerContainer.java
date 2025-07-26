@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.xmpp.services;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
@@ -64,8 +65,8 @@ public class XmppServerContainer extends GenericContainer<XmppServerContainer> {
     }
 
     private void get(String urlAppendix) throws IOException {
-        URL url = new URL(
-                String.format("http://%s:%d/%s", this.getHost(), getMappedPort(PORT_REST), urlAppendix));
+        URL url = URI.create(
+                String.format("http://%s:%d/%s", this.getHost(), getMappedPort(PORT_REST), urlAppendix)).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.getInputStream();

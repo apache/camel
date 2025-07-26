@@ -95,16 +95,16 @@ public class SBOMGenerator extends Export {
                 } else {
                     outputDirectoryParameter += "../../" + outputDirectory;
                 }
-                Process p = Runtime.getRuntime()
-                        .exec(mvnProgramCall + " org.cyclonedx:cyclonedx-maven-plugin:" + cyclonedxPluginVersion
-                              + ":makeAggregateBom "
-                              + outputDirectoryParameter
-                              + " -DoutputName="
-                              + outputName
-                              + " -DoutputFormat="
-                              + sbomOutputFormat,
-                                null,
-                                buildDir.toFile());
+                ProcessBuilder pb = new ProcessBuilder(
+                        mvnProgramCall,
+                        "org.cyclonedx:cyclonedx-maven-plugin:" + cyclonedxPluginVersion + ":makeAggregateBom",
+                        outputDirectoryParameter,
+                        "-DoutputName=" + outputName,
+                        "-DoutputFormat=" + sbomOutputFormat);
+
+                pb.directory(buildDir.toFile());
+
+                Process p = pb.start();
                 done = p.waitFor(60, TimeUnit.SECONDS);
                 if (!done) {
                     answer = 1;
@@ -125,13 +125,14 @@ public class SBOMGenerator extends Export {
                 } else if (sbomOutputFormat.equalsIgnoreCase(SBOM_XML_FORMAT)) {
                     outputFormat = "RDF/XML";
                 }
-                Process p = Runtime.getRuntime()
-                        .exec(mvnProgramCall + " org.spdx:spdx-maven-plugin:" + spdxPluginVersion
-                              + ":createSPDX -DspdxFileName="
-                              + Paths.get(outputDirectoryParameter, outputName + "." + sbomOutputFormat).toString()
-                              + " -DoutputFormat=" + outputFormat,
-                                null,
-                                buildDir.toFile());
+                ProcessBuilder pb = new ProcessBuilder(
+                        mvnProgramCall,
+                        "org.spdx:spdx-maven-plugin:" + spdxPluginVersion + ":createSPDX",
+                        "-DspdxFileName=" + Paths.get(outputDirectoryParameter, outputName + "." + sbomOutputFormat),
+                        "-DoutputFormat=" + outputFormat);
+                pb.directory(buildDir.toFile());
+
+                Process p = pb.start();
                 done = p.waitFor(60, TimeUnit.SECONDS);
                 if (!done) {
                     answer = 1;

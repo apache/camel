@@ -17,7 +17,6 @@
 package org.apache.camel.component.jira;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -192,7 +191,7 @@ public final class Utils {
         // avatar Id
         sb.append("avatarId=").append(avatarId);
         String relativeAvatarUrl = sb.toString();
-        URI avatarUrl = new URL(TEST_JIRA_URL + "/" + relativeAvatarUrl).toURI();
+        URI avatarUrl = URI.create(TEST_JIRA_URL + "/" + relativeAvatarUrl);
         return avatarUrl;
     }
 

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -461,7 +461,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         String url = endpoint.getHttpUrl();
         StringHelper.notEmpty(url, "httpUrl");
 
-        urlConnectionToClose = new URL(url).openConnection();
+        urlConnectionToClose = URI.create(url).toURL().openConnection();
         urlConnectionToClose.setUseCaches(false);
         String headers = endpoint.getHttpHeaders();
         if (headers != null) {
