@@ -36,6 +36,11 @@ public class InfraPs extends InfraBaseCommand {
     }
 
     @Override
+    protected boolean showPidColumn() {
+        return true;
+    }
+
+    @Override
     public Integer doCall() throws Exception {
         // retrieve running services to filter output
         Set<String> runningAliases = new HashSet<>();

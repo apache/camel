@@ -68,6 +68,10 @@ public abstract class InfraBaseCommand extends CamelCommand {
         jsonMapper.configure(MapperFeature.REQUIRE_HANDLERS_FOR_JAVA8_OPTIONALS, false);
     }
 
+    protected boolean showPidColumn() {
+        return false;
+    }
+
     protected List<TestInfraService> getMetadata() throws IOException {
         List<TestInfraService> metadata;
 
@@ -128,7 +132,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
                                     .collect(Collectors.toList())));
         } else {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                    new Column().header("PID").visible(showPidColumn()).headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("ALIAS").minWidth(width + 2).dataAlign(HorizontalAlign.LEFT)
                             .with(Row::alias),
                     new Column().header("IMPLEMENTATION").maxWidth(40, OverflowBehaviour.NEWLINE)
