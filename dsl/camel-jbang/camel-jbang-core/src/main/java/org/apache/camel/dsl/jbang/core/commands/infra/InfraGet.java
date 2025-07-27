@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -47,7 +46,7 @@ public class InfraGet extends InfraBaseCommand {
                         String name = p.getFileName().toString();
                         return name.startsWith("infra-" + serviceToGet + "-") && name.endsWith(".json");
                     })
-                    .collect(java.util.stream.Collectors.toList());
+                    .toList();
 
             if (!jsonFiles.isEmpty()) {
                 printer().println(Files.readString(jsonFiles.get(0)));
@@ -59,8 +58,7 @@ public class InfraGet extends InfraBaseCommand {
 
         if (!found) {
             printer().println("No running service found with alias " + serviceToGet);
-
-            return -1;
+            return 0;
         }
 
         return 0;

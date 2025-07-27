@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -60,7 +59,7 @@ public class InfraLog extends InfraBaseCommand {
                             String name = p.getFileName().toString();
                             return name.startsWith("infra-") && name.endsWith(".log");
                         })
-                        .collect(java.util.stream.Collectors.toList());
+                        .toList();
 
                 for (Path logFile : logFiles) {
                     String alias = logFile.getFileName().toString().split("-")[1];
@@ -72,7 +71,6 @@ public class InfraLog extends InfraBaseCommand {
 
             if (futures.isEmpty()) {
                 printer().println("There are no running services");
-
                 return -1;
             }
         } else {
@@ -93,7 +91,6 @@ public class InfraLog extends InfraBaseCommand {
 
             if (logFile == null) {
                 printer().println("Log not found for service " + alias);
-
                 return -1;
             }
 

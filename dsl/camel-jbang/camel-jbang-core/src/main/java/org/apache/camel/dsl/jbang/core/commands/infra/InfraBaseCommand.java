@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -26,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -42,6 +45,8 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
@@ -70,8 +75,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
         try (InputStream is
                 = catalog.loadResource("test-infra", "metadata.json")) {
             String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-
-            metadata = jsonMapper.readValue(json, new TypeReference<List<TestInfraService>>() {
+            metadata = jsonMapper.readValue(json, new TypeReference<>() {
             });
         }
 
@@ -90,7 +94,6 @@ public abstract class InfraBaseCommand extends CamelCommand {
                 if (!services.containsKey(alias)) {
                     services.put(alias, new InfraServiceAlias(service.description()));
                 }
-
                 if (service.aliasImplementation() != null) {
                     services.get(alias).getAliasImplementation().addAll(service.aliasImplementation());
                 }
@@ -100,8 +103,8 @@ public abstract class InfraBaseCommand extends CamelCommand {
         int width = 0;
         for (Map.Entry<String, InfraServiceAlias> entry : services.entrySet()) {
             width = Math.max(width, entry.getKey().length());
-
             rows.add(new InfraList.Row(
+                    findPid(entry.getKey()),
                     entry.getKey(),
                     entry.getValue().getAliasImplementation()
                             .stream()
@@ -125,14 +128,30 @@ public abstract class InfraBaseCommand extends CamelCommand {
                                     .collect(Collectors.toList())));
         } else {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("ALIAS").minWidth(width + 5).dataAlign(HorizontalAlign.LEFT)
-                            .with(r -> r.alias()),
+                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                    new Column().header("ALIAS").minWidth(width + 2).dataAlign(HorizontalAlign.LEFT)
+                            .with(Row::alias),
                     new Column().header("IMPLEMENTATION").maxWidth(40, OverflowBehaviour.NEWLINE)
-                            .dataAlign(HorizontalAlign.LEFT).with(r -> r.aliasImplementation()),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(r -> r.description()))));
+                            .dataAlign(HorizontalAlign.LEFT).with(Row::aliasImplementation),
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(Row::description))));
         }
 
         return 0;
+    }
+
+    private String findPid(String key) {
+        Path p = CommandLineHelper.getCamelDir();
+        try {
+            Files.createDirectories(p);
+            for (String s : Objects.requireNonNull(p.toFile().list())) {
+                if (s.startsWith("infra-" + key + "-") && s.endsWith(".json")) {
+                    return FileUtil.stripExt(s.split("-")[2]);
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
     }
 
     public String getLogFileName(String service, String pid) {
@@ -154,10 +173,10 @@ public abstract class InfraBaseCommand extends CamelCommand {
             String version) {
     }
 
-    record Row(String alias, String aliasImplementation, String description) {
+    record Row(String pid, String alias, String aliasImplementation, String description) {
     }
 
-    private class InfraServiceAlias {
+    private static class InfraServiceAlias {
         private final String description;
         private final Set<String> aliasImplementation = new HashSet<>();
 

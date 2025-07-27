@@ -49,7 +49,7 @@ public class InfraTest extends CamelCommandBaseTest {
         Awaitility.await().untilAsserted(() -> {
             List<String> lines = printer.getLines();
             Assertions.assertThat(lines).contains("Starting service ftp");
-            Assertions.assertThat(lines).contains("Press any key to stop the execution");
+            Assertions.assertThat(lines).contains("Press ENTER to stop the execution");
         });
 
         thread.interrupt();

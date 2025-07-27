@@ -16,14 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
+import java.io.Console;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -41,7 +43,7 @@ public class InfraRun extends InfraBaseCommand {
     private List<String> serviceName;
 
     @CommandLine.Option(names = { "--log" },
-                        description = "Log container's output to console")
+                        description = "Log container output to console")
     boolean logToStdout;
 
     public InfraRun(CamelJBangMain main) {
@@ -57,12 +59,10 @@ public class InfraRun extends InfraBaseCommand {
         String service = serviceName.get(0);
         String serviceImplementation = serviceName.size() > 1 ? serviceName.get(1) : null;
 
-        run(service, serviceImplementation);
-
-        return 0;
+        return run(service, serviceImplementation);
     }
 
-    private void run(String testService, String testServiceImplementation) throws Exception {
+    private Integer run(String testService, String testServiceImplementation) throws Exception {
         List<TestInfraService> services = getMetadata();
 
         TestInfraService testInfraService = services
@@ -87,11 +87,9 @@ public class InfraRun extends InfraBaseCommand {
             if (testServiceImplementation != null) {
                 printer().println("service " + testService + " with implementation " + testServiceImplementation + " not found"
                                   + message);
-
-                return;
             }
-
             printer().println("service " + testService + " not found" + message);
+            return 1;
         }
 
         DependencyDownloaderClassLoader cl = getDependencyDownloaderClassLoader(testInfraService);
@@ -104,7 +102,7 @@ public class InfraRun extends InfraBaseCommand {
 
         if (!jsonOutput) {
             String prefix = "";
-            if (testServiceImplementation != null && !testServiceImplementation.isEmpty()) {
+            if (testServiceImplementation != null) {
                 prefix = " with implementation " + testServiceImplementation;
             }
             printer().println("Starting service " + testService + prefix);
@@ -124,27 +122,24 @@ public class InfraRun extends InfraBaseCommand {
 
         if (!actualServiceIsAnInfrastructureService) {
             printer().println("Service " + serviceImpl + " is not an InfrastructureService");
-
-            return;
+            return 1;
         }
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (actualService != null) {
-                try {
-                    actualService.getClass().getMethod("shutdown").invoke(actualService);
-                } catch (Exception e) {
-                    printer().printErr(e);
-                }
-            }
-        }));
 
         actualService.getClass().getMethod("initialize").invoke(actualService);
 
         Method[] serviceMethods = cl.loadClass(serviceInterface).getDeclaredMethods();
-        HashMap properties = new HashMap();
+        Map<String, Object> properties = new TreeMap<>();
         for (Method method : serviceMethods) {
             if (method.getParameterCount() == 0 && !method.getName().contains("registerProperties")) {
-                properties.put(method.getName(), method.invoke(actualService));
+                Object value = null;
+                try {
+                    value = method.invoke(actualService);
+                } catch (Exception e) {
+                    // ignore
+                }
+                if (value != null) {
+                    properties.put(method.getName(), value);
+                }
             }
         }
 
@@ -158,27 +153,57 @@ public class InfraRun extends InfraBaseCommand {
         Path jsonFile = createFile(jsonName);
         Files.write(jsonFile, jsonProperties.getBytes());
 
-        if (Arrays.stream(actualService.getClass().getInterfaces()).filter(
-                c -> c.getName().contains("ContainerService")).count()
-            > 0) {
+        if (Arrays.stream(actualService.getClass().getInterfaces()).anyMatch(c -> c.getName().contains("ContainerService"))) {
             Object containerLogConsumer = cl.loadClass("org.apache.camel.test.infra.common.CamelLogConsumer")
                     .getConstructor(Path.class, boolean.class).newInstance(logFile, logToStdout);
-
             actualService.getClass()
                     .getMethod("followLog", cl.loadClass("org.testcontainers.containers.output.BaseConsumer"))
                     .invoke(actualService, containerLogConsumer);
         }
 
         if (!jsonOutput) {
-            printer().println("Press any key to stop the execution");
-        }
-        Scanner sc = new Scanner(System.in);
-
-        while (!sc.hasNext()) {
+            printer().println("Press ENTER to stop the execution");
         }
 
-        actualService.getClass().getMethod("shutdown").invoke(actualService);
-        sc.close();
+        AtomicBoolean closed = new AtomicBoolean();
+        // use shutdown hook as fallback to shut-down and delete files
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownInfra(closed, logFile, jsonFile, actualService)));
+
+        final Console c = System.console();
+        if (c != null) {
+            boolean quit = false;
+            do {
+                String line = c.readLine();
+                if (line != null) {
+                    quit = true;
+                }
+            } while (!quit);
+        }
+
+        shutdownInfra(closed, logFile, jsonFile, actualService);
+
+        return 0;
+    }
+
+    private static void shutdownInfra(AtomicBoolean closed, Path logFile, Path jsonFile, Object actualService) {
+        if (closed.compareAndSet(false, true)) {
+            try {
+                actualService.getClass().getMethod("shutdown").invoke(actualService);
+            } catch (Exception e) {
+                // ignore
+            }
+            try {
+                Files.deleteIfExists(logFile);
+            } catch (Exception e) {
+                // ignore
+            }
+            try {
+                Files.deleteIfExists(jsonFile);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+
     }
 
     private static Path createFile(String name) throws IOException {

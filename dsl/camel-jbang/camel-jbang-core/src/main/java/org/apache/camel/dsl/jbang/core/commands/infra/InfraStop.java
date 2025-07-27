@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -46,7 +45,7 @@ public class InfraStop extends InfraBaseCommand {
         try {
             List<Path> pidFiles = Files.list(CommandLineHelper.getCamelDir())
                     .filter(p -> p.getFileName().toString().startsWith("infra-" + serviceToStop + "-"))
-                    .collect(java.util.stream.Collectors.toList());
+                    .toList();
 
             for (Path pidFile : pidFiles) {
                 String name = pidFile.getFileName().toString();
@@ -61,13 +60,12 @@ public class InfraStop extends InfraBaseCommand {
         }
 
         if (!serviceStopped) {
-            printer().println("No Camel Infrastructure found with name " + serviceToStop + " found.");
-
-            return -1;
+            printer().println("No Camel Infrastructure found with name " + serviceToStop);
+            return 0;
         }
 
         printer().println("Shutting down service " + serviceToStop + " (PID: " + pid + ")");
-        ProcessHandle.of(Long.valueOf(pid)).ifPresent(ProcessHandle::destroy);
+        ProcessHandle.of(Long.parseLong(pid)).ifPresent(ProcessHandle::destroy);
 
         return 0;
     }
