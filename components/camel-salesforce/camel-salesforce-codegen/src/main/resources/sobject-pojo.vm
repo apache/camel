@@ -23,10 +23,20 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Generated;
-
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
+#set ( $hasBlobFields = false )
+#foreach ( $field in $desc.Fields )
+#if ( $utility.isBlobField($field) )
+#set ( $hasBlobFields = true )
+#break
+#end
+#end
+#if ( $hasBlobFields )
+import java.io.InputStream;
+#end
+import jakarta.annotation.Generated;
+
 #if ( $hasPicklists && !$useStringsForPicklists )
 #end
 #if ( $hasMultiSelectPicklists )
@@ -52,6 +62,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+#if ( $hasBlobFields )
+import com.fasterxml.jackson.annotation.JsonIgnore;
+#end
 import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 #if ( $hasMultiSelectPicklists )
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -77,6 +90,7 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
 #if ( ($utility.notBaseField($field.Name)) && ($fieldType) )
 #set ( $fieldName = $field.Name )
 #set ( $isMultiSelectPicklist = $utility.isMultiSelectPicklist($field) )
+#set ( $isBlobField = $utility.isBlobField($field) )
 #set ( $propertyName = $fieldName )
     private $fieldType $propertyName;
 
@@ -104,6 +118,21 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
         this.$propertyName = $propertyName;
     }
 
+#if ( $isBlobField )
+    @JsonIgnore
+    private InputStream ${propertyName}Binary;
+
+    @JsonIgnore
+    public InputStream get${propertyName}Binary() {
+        return this.${propertyName}Binary;
+    }
+
+    @JsonIgnore
+    public void set${propertyName}Binary(InputStream ${propertyName}Binary) {
+        this.${propertyName}Binary = ${propertyName}Binary;
+    }
+
+#end
 #end
 #if ( $field.type == "reference" && $utility.notNull($field.relationshipName) )## IS LOOKUP $hasDescription
 #if ( $field.getReferenceTo().size() > 1 )

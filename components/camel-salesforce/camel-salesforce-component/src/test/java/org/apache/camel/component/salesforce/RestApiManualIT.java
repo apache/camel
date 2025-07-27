@@ -51,10 +51,12 @@ import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.apache.camel.component.salesforce.dto.generated.ContentVersion;
 import org.apache.camel.component.salesforce.dto.generated.Document;
+import org.apache.camel.component.salesforce.dto.generated.Folder;
 import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsAccount;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsContact;
+import org.apache.camel.component.salesforce.dto.generated.QueryRecordsFolder;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Task;
 import org.apache.camel.component.salesforce.dto.generated.User;
@@ -281,6 +283,50 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
     }
 
     @Test
+    public void testCreateMultipart() {
+        final ContentVersion cv = new ContentVersion();
+        cv.setPathOnClient("camel-test-doc.pdf");
+        cv.setVersionDataBinary(getClass().getClassLoader().getResourceAsStream("camel-test-doc.pdf"));
+        final CreateSObjectResult result
+                = template.requestBody("salesforce:createSObject?sObjectName=ContentVersion",
+                        cv,
+                        CreateSObjectResult.class);
+        assertTrue(result.getSuccess());
+    }
+
+    @Test
+    public void testUpdateMultipart() {
+        final QueryRecordsFolder queryResult = template.requestBody("salesforce:query" +
+                                                                    "?sObjectQuery=SELECT Id FROM Folder WHERE Name = 'Test Documents'"
+                                                                    +
+                                                                    "&sObjectName=QueryRecordsFolder",
+                null, QueryRecordsFolder.class);
+        final Folder folder = queryResult.getRecords().get(0);
+
+        // Create a Document
+        final Document doc = new Document();
+        doc.setFolderId(folder.getId());
+        doc.setName("camel-test-doc.pdf");
+        doc.setBodyBinary(getClass().getClassLoader().getResourceAsStream("camel-test-doc.pdf"));
+        final CreateSObjectResult createResult = template.requestBody(
+                "salesforce:createSObject?sObjectName=Document",
+                doc,
+                CreateSObjectResult.class);
+        assertTrue(createResult.getSuccess());
+        assertNotNull(createResult.getId());
+
+        // Update the Document (e.g., change the name)
+        final Document updateDoc = new Document();
+        updateDoc.setId(createResult.getId());
+        updateDoc.setName("camel-test-doc-updated.pdf");
+        updateDoc.setBodyBinary(getClass().getClassLoader().getResourceAsStream("camel-test-doc.pdf"));
+        final Object updateResult = template.requestBody(
+                "salesforce:updateSObject?sObjectName=Document",
+                updateDoc);
+        assertNotNull(updateResult);
+    }
+
+    @Test
     public void testRelationshipCreateDelete() throws Exception {
         final Account account = new Account();
         account.setName("Account 1");
@@ -476,7 +522,7 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         ObjectMapper mapper = new ObjectMapper();
         String enc = mapper.convertValue(bytes, String.class);
         ContentVersion cv = new ContentVersion();
-        cv.setVersionDataUrl(enc);
+        cv.setVersionData(enc);
         cv.setPathOnClient("camel-test-doc.pdf");
         cv.setTitle("Camel Test Doc");
         final CreateSObjectResult result = template.requestBody("salesforce:createSObject", cv, CreateSObjectResult.class);

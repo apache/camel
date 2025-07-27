@@ -19,25 +19,20 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Generated;
-
-import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
-import org.apache.camel.component.salesforce.api.dto.Attributes;
-import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
-import org.apache.camel.component.salesforce.api.dto.InfoUrls;
-import org.apache.camel.component.salesforce.api.dto.NamedLayoutInfo;
-import org.apache.camel.component.salesforce.api.dto.RecordTypeInfo;
-import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
-import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
-import org.apache.camel.component.salesforce.api.dto.SObjectField;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import jakarta.annotation.Generated;
+import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
+import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 
 /**
@@ -370,14 +365,40 @@ public class ContentVersion extends AbstractDescribedSObjectBase {
         this.PublishStatus = PublishStatus;
     }
 
-    private String VersionDataUrl;
+
+    private String VersionData;
 
     @JsonProperty("VersionData")
+    public String getVersionData() {
+        return this.VersionData;
+    }
+
+    @JsonProperty("VersionData")
+    public void setVersionData(String VersionData) {
+        this.VersionData = VersionData;
+    }
+
+    @JsonIgnore
+    private InputStream VersionDataBinary;
+
+    @JsonIgnore
+    public InputStream getVersionDataBinary() {
+        return this.VersionDataBinary;
+    }
+
+    @JsonIgnore
+    public void setVersionDataBinary(InputStream VersionDataBinary) {
+        this.VersionDataBinary = VersionDataBinary;
+    }
+
+    @JsonProperty("VersionDataUrl")
     public String getVersionDataUrl() {
         return this.VersionDataUrl;
     }
 
-    @JsonProperty("VersionData")
+    private String VersionDataUrl;
+
+    @JsonProperty("VersionDataUrl")
     public void setVersionDataUrl(String VersionDataUrl) {
         this.VersionDataUrl = VersionDataUrl;
     }

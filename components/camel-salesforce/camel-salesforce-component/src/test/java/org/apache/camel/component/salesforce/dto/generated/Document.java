@@ -16,18 +16,26 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import jakarta.annotation.Generated;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
+import org.apache.camel.component.salesforce.api.utils.AsNestedPropertyResolver;
 
 /**
  * Salesforce DTO for SObject Document
  */
+@Generated("org.apache.camel.maven.CamelSalesforceMojo")
 public class Document extends AbstractDescribedSObjectBase {
 
     public Document() {
@@ -48,6 +56,22 @@ public class Document extends AbstractDescribedSObjectBase {
         this.FolderId = FolderId;
     }
 
+    @JsonTypeResolver(AsNestedPropertyResolver.class)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "attributes.type",
+            defaultImpl = AbstractDescribedSObjectBase.class)
+    @JsonSubTypes({
+    })
+    private AbstractDescribedSObjectBase Folder;
+
+    @JsonProperty("Folder")
+    public AbstractDescribedSObjectBase getFolder() {
+        return this.Folder;
+    }
+
+    @JsonProperty("Folder")
+    public void setFolder(AbstractDescribedSObjectBase Folder) {
+        this.Folder = Folder;
+    }
     private String DeveloperName;
 
     @JsonProperty("DeveloperName")
@@ -120,17 +144,29 @@ public class Document extends AbstractDescribedSObjectBase {
         this.BodyLength = BodyLength;
     }
 
-    // blob field url, use getBlobField to get the content
-    private String BodyUrl;
+    private String Body;
 
     @JsonProperty("Body")
-    public String getBodyUrl() {
-        return this.BodyUrl;
+    public String getBody() {
+        return this.Body;
     }
 
     @JsonProperty("Body")
-    public void setBodyUrl(String BodyUrl) {
-        this.BodyUrl = BodyUrl;
+    public void setBody(String Body) {
+        this.Body = Body;
+    }
+
+    @JsonIgnore
+    private InputStream bodyBinary;
+
+    @JsonIgnore
+    public InputStream getBodyBinary() {
+        return this.bodyBinary;
+    }
+
+    @JsonIgnore
+    public void setBodyBinary(InputStream bodyBinary) {
+        this.bodyBinary = bodyBinary;
     }
 
     private String Url;
@@ -193,6 +229,39 @@ public class Document extends AbstractDescribedSObjectBase {
         this.AuthorId = AuthorId;
     }
 
+    private AbstractDescribedSObjectBase Author;
+
+    @JsonProperty("Author")
+    public AbstractDescribedSObjectBase getAuthor() {
+        return this.Author;
+    }
+
+    @JsonProperty("Author")
+    public void setAuthor(AbstractDescribedSObjectBase Author) {
+        this.Author = Author;
+    }
+    private AbstractDescribedSObjectBase CreatedBy;
+
+    @JsonProperty("CreatedBy")
+    public AbstractDescribedSObjectBase getCreatedBy() {
+        return this.CreatedBy;
+    }
+
+    @JsonProperty("CreatedBy")
+    public void setCreatedBy(AbstractDescribedSObjectBase CreatedBy) {
+        this.CreatedBy = CreatedBy;
+    }
+    private AbstractDescribedSObjectBase LastModifiedBy;
+
+    @JsonProperty("LastModifiedBy")
+    public AbstractDescribedSObjectBase getLastModifiedBy() {
+        return this.LastModifiedBy;
+    }
+
+    @JsonProperty("LastModifiedBy")
+    public void setLastModifiedBy(AbstractDescribedSObjectBase LastModifiedBy) {
+        this.LastModifiedBy = LastModifiedBy;
+    }
     private Boolean IsBodySearchable;
 
     @JsonProperty("IsBodySearchable")
@@ -205,6 +274,7 @@ public class Document extends AbstractDescribedSObjectBase {
         this.IsBodySearchable = IsBodySearchable;
     }
 
+
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;
@@ -212,6 +282,8 @@ public class Document extends AbstractDescribedSObjectBase {
 
     private static SObjectDescription createSObjectDescription() {
         final SObjectDescription description = new SObjectDescription();
+
+
 
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);
@@ -258,13 +330,11 @@ public class Document extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField20);
         final SObjectField sObjectField21 = createField("SystemModstamp", "System Modstamp", "datetime", "xsd:dateTime", 0, false, false, false, false, false, false, false);
         fields1.add(sObjectField21);
-        final SObjectField sObjectField22 = createField("IsBodySearchable", "Document Content Searchable", "boolean", "xsd:boolean", 0, false, false, false, false, false, false,
-                                                        false);
+        final SObjectField sObjectField22 = createField("IsBodySearchable", "Document Content Searchable", "boolean", "xsd:boolean", 0, false, false, false, false, false, false, false);
         fields1.add(sObjectField22);
         final SObjectField sObjectField23 = createField("LastViewedDate", "Last Viewed Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField23);
-        final SObjectField sObjectField24 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false,
-                                                        false);
+        final SObjectField sObjectField24 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField24);
 
         description.setLabel("Document");
@@ -272,13 +342,11 @@ public class Document extends AbstractDescribedSObjectBase {
         description.setName("Document");
 
         final SObjectDescriptionUrls sObjectDescriptionUrls1 = new SObjectDescriptionUrls();
-        sObjectDescriptionUrls1.setDefaultValues("/services/data/v45.0/sobjects/Document/defaultValues?recordTypeId&fields");
-        sObjectDescriptionUrls1.setDescribe("/services/data/v45.0/sobjects/Document/describe");
-        sObjectDescriptionUrls1.setRowTemplate("/services/data/v45.0/sobjects/Document/{ID}");
-        sObjectDescriptionUrls1.setSobject("/services/data/v45.0/sobjects/Document");
+        sObjectDescriptionUrls1.setDescribe("/services/data/v59.0/sobjects/Document/describe");
+        sObjectDescriptionUrls1.setRowTemplate("/services/data/v59.0/sobjects/Document/{ID}");
+        sObjectDescriptionUrls1.setSobject("/services/data/v59.0/sobjects/Document");
         description.setUrls(sObjectDescriptionUrls1);
 
         return description;
     }
 }
-

@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -378,8 +379,44 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private void processCreateSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         String sObjectName = determineSObjectName(exchange);
 
-        restClient.createSObject(sObjectName, getRequestStream(exchange), determineHeaders(exchange),
-                processWithResponseCallback(exchange, callback));
+        Message in = exchange.getIn();
+        AbstractSObjectBase sObjectBase = in.getBody(AbstractSObjectBase.class);
+
+        if (sObjectBase != null && detectBinaryFields(sObjectBase)) {
+            restClient.createSObjectMultipart(sObjectName, sObjectBase, getRequestStream(exchange),
+                    determineHeaders(exchange),
+                    processWithResponseCallback(exchange, callback));
+        } else {
+            restClient.createSObject(sObjectName, getRequestStream(exchange), determineHeaders(exchange),
+                    processWithResponseCallback(exchange, callback));
+        }
+    }
+
+    private boolean detectBinaryFields(AbstractSObjectBase sObject) {
+        if (sObject == null) {
+            return false;
+        }
+
+        Class<?> clazz = sObject.getClass();
+        java.lang.reflect.Field[] fields = clazz.getDeclaredFields();
+
+        for (java.lang.reflect.Field field : fields) {
+            String fieldName = field.getName();
+
+            if (fieldName.endsWith("Binary") && field.isAnnotationPresent(JsonIgnore.class)) {
+                try {
+                    field.setAccessible(true);
+                    Object value = field.get(sObject);
+                    if (value instanceof InputStream) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    // Skip inaccessible fields
+                }
+            }
+        }
+
+        return false;
     }
 
     private void processUpdateSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -393,14 +430,29 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         }
 
         final String finalsObjectId = sObjectId;
-        restClient.updateSObject(sObjectName, sObjectId, getRequestStream(exchange), determineHeaders(exchange),
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, Map<String, String> headers, SalesforceException exception) {
-                        restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
-                        processResponse(exchange, response, headers, exception, callback);
-                    }
-                });
+
+        if (sObjectBase != null && detectBinaryFields(sObjectBase)) {
+            restClient.updateSObjectMultipart(sObjectName, sObjectId, sObjectBase, getRequestStream(exchange),
+                    determineHeaders(exchange),
+                    new RestClient.ResponseCallback() {
+                        @Override
+                        public void onResponse(
+                                InputStream response, Map<String, String> headers, SalesforceException exception) {
+                            restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
+                            processResponse(exchange, response, headers, exception, callback);
+                        }
+                    });
+        } else {
+            restClient.updateSObject(sObjectName, sObjectId, getRequestStream(exchange), determineHeaders(exchange),
+                    new RestClient.ResponseCallback() {
+                        @Override
+                        public void onResponse(
+                                InputStream response, Map<String, String> headers, SalesforceException exception) {
+                            restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
+                            processResponse(exchange, response, headers, exception, callback);
+                        }
+                    });
+        }
     }
 
     private void processDeleteSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {

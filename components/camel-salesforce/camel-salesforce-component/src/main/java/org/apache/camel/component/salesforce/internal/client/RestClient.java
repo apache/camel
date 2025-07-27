@@ -93,6 +93,19 @@ public interface RestClient {
     void createSObject(String sObjectName, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
+     * Creates multipart SObject using multipart/form-data for blob fields, with automatic binary field detection.
+     *
+     * @param sObjectName specified object name
+     * @param sObjectDto  original DTO object for binary field detection (AbstractSObjectBase or subclass)
+     * @param sObject     request entity as JSON
+     * @param headers     additional HTTP headers to send
+     * @param callback    {@link ResponseCallback} to handle response or exception
+     */
+    void createSObjectMultipart(
+            String sObjectName, Object sObjectDto, InputStream sObject,
+            Map<String, List<String>> headers, ResponseCallback callback);
+
+    /**
      * Updates a record for the specified object ID.
      *
      * @param sObjectName specified object name
@@ -103,6 +116,20 @@ public interface RestClient {
      */
     void updateSObject(
             String sObjectName, String id, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback);
+
+    /**
+     * Updates multipart SObject using multipart/form-data for blob fields, with automatic binary field detection.
+     *
+     * @param sObjectName specified object name
+     * @param id          object id
+     * @param sObjectDto  original DTO object for binary field detection (AbstractSObjectBase or subclass)
+     * @param sObject     request entity as JSON
+     * @param headers     additional HTTP headers to send
+     * @param callback    {@link ResponseCallback} to handle response or exception
+     */
+    void updateSObjectMultipart(
+            String sObjectName, String id, Object sObjectDto, InputStream sObject,
+            Map<String, List<String>> headers, ResponseCallback callback);
 
     /**
      * Deletes a record for the specified object ID.

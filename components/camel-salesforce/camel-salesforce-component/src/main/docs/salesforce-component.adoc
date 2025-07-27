@@ -457,6 +457,10 @@ Creates a record in salesforce.
 
 Type: `CreateSObjectResult`
 
+*Multipart Support*
+
+When creating records with blob/binary fields, you can use the automatic https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_insert_update_blob.htm[multipart encoding] feature by populating binary fields in your DTO. See <<BinaryFields,Binary Fields and Multipart Requests>> for details.
+
 [[updateSObject]]
 ===== Update SObject
 
@@ -471,6 +475,10 @@ Updates a record in salesforce.
 | `sObjectName` | `String` | Name of SObject, e.g. `Account`. Only used if Camel cannot determine from Body. | | If Body is a `String`
 | `sObjectId` | `String` | Id of record to update. Only used if Camel cannot determine from Body. | | If Body is a `String`
 |===
+
+*Multipart Support*
+
+When updating records with blob/binary fields, you can use the automatic https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_insert_update_blob.htm[multipart encoding] feature by populating binary fields in your DTO. See <<BinaryFields,Binary Fields and Multipart Requests>> for details.
 
 [[upsertSObject]]
 ===== Upsert SObject
@@ -1019,6 +1027,109 @@ Gets the definition of a Platform Event in JSON format. Other types of events su
 *Output*
 
 Type: `InputStream`
+
+[[BinaryFields]]
+==== Binary Fields and Multipart Requests
+
+The Salesforce component provides automatic support for handling binary fields (blob fields) in SObjects without requiring manual base64 encoding. This feature works with both `createSObject` and `updateSObject` operations.
+
+===== Binary Field Pattern
+
+For any SObject with blob fields, you can use binary fields that follow the naming pattern `pass:[***]Binary`, where `pass:[***]` is the original field name. For example:
+
+* `VersionData` field → `VersionDataBinary` field
+* `Body` field → `BodyBinary` field
+* `ContentData` field → `ContentDataBinary` field
+
+===== Automatic Multipart Detection
+
+When you populate a `pass:[***]Binary` field with an `InputStream`, the component automatically detects this and switches to multipart encoding for the request. This means that the binary data is sent directly as a stream, avoiding the overhead of base64 encoding.:
+
+===== Usage Examples
+
+*Creating a ContentVersion with binary data:*
+
+[source,java]
+----
+// Create ContentVersion with binary field
+ContentVersion cv = new ContentVersion();
+cv.setTitle("My Document");
+cv.setPathOnClient("document.pdf");
+
+// Use binary field instead of base64 encoded string
+InputStream fileData = new FileInputStream("document.pdf");
+cv.setVersionDataBinary(fileData);  // Automatically triggers multipart request
+
+// Send to Salesforce
+template.requestBody("salesforce:createSObject", cv);
+----
+
+*Updating a Document with binary content:*
+
+[source,java]
+----
+// Update Document with binary field
+Document doc = new Document();
+doc.setId("01234567890123456");
+doc.setName("Updated Document");
+
+// Use binary field for efficient upload
+InputStream content = getClass().getResourceAsStream("/updated-content.pdf");
+doc.setBodyBinary(content);  // Automatically triggers multipart request
+
+// Send to Salesforce
+template.requestBody("salesforce:updateSObject", doc);
+----
+
+===== DTO Generation
+
+When using the <<MavenPlugin,Camel Salesforce Maven Plugin>>, binary fields are automatically generated for blob fields:
+
+[source,java]
+----
+public class ContentVersion extends AbstractSObjectBase {
+    
+    // Standard base64 field (for backward compatibility)
+    private String VersionData;
+    
+    // Generated binary field (new efficient approach)
+    @JsonIgnore
+    private InputStream VersionDataBinary;
+    
+    // Getters and setters for both fields...
+}
+----
+
+===== Field Priority
+
+When both the standard field and binary field are populated:
+
+* **Binary field takes precedence** - The `pass:[***]Binary` field is used and a multipart request is made
+* **Standard field is ignored** - The base64 string field is not sent in the multipart request
+* **Automatic cleanup** - Binary field names are automatically removed from the JSON payload
+
+===== Performance Benefits
+
+Using binary fields provides significant performance improvements:
+
+* **No base64 encoding** required on the client side
+* **Direct streaming** of binary data to Salesforce
+* **Reduced memory usage** for large files
+* **Faster upload times** especially for large documents
+* **Higher salesforce limits** for multipart requests compared to base64 strings. Salesforce limits base64 strings to 50 MB of text data or 37.5 MB of base64–encoded data. Multipart uploads can handle 2 GB for ContentVersion records, and 500 MB for all other objects.
+
+===== Backward Compatibility
+
+The existing base64 string approach continues to work:
+
+[source,java]
+----
+// Still supported - base64 approach
+ContentVersion cv = new ContentVersion();
+cv.setVersionData(base64EncodedString);  // Uses standard JSON request
+----
+
+However, using binary fields is recommended for better performance when working with binary data.
 
 [[ApexRESTAPI]]
 ==== Apex REST API
@@ -2034,7 +2145,9 @@ The response is:
 
 === Uploading a document to a ContentWorkspace
 
-Create the ContentVersion in Java, using a Processor instance:
+==== Using Binary Fields (Recommended)
+
+For efficient document uploads without base64 encoding overhead, use the binary field approach:
 
 [source,java]
 ----
@@ -2047,10 +2160,10 @@ public class ContentProcessor implements Processor {
         cv.setFirstPublishLocationId(cw.getId());
         cv.setTitle("test document");
         cv.setPathOnClient("test_doc.html");
-        byte[] document = message.getBody(byte[].class);
-        ObjectMapper mapper = new ObjectMapper();
-        String enc = mapper.convertValue(document, String.class);
-        cv.setVersionDataUrl(enc);
+        
+        // Use binary field for efficient upload - no base64 encoding needed
+        InputStream document = message.getBody(InputStream.class);
+        cv.setVersionDataBinary(document);  // Automatically triggers multipart request
         message.setBody(cv);
     }
 
@@ -2067,9 +2180,39 @@ Give the output from the processor to the Salesforce component:
 [source,java]
 ----
 from("file:///home/camel/library")
-    .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject
-                                    // for the salesforce component
+    .to(new ContentProcessor())     // convert file stream into a ContentVersion SObject
+                                    // with binary field for efficient upload
     .to("salesforce:createSObject");
+----
+
+==== Using Base64 Encoding (Legacy)
+
+The traditional base64 encoding approach is still supported for backward compatibility:
+
+[source,java]
+----
+public class ContentProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        Message message = exchange.getIn();
+
+        ContentVersion cv = new ContentVersion();
+        ContentWorkspace cw = getWorkspace(exchange);
+        cv.setFirstPublishLocationId(cw.getId());
+        cv.setTitle("test document");
+        cv.setPathOnClient("test_doc.html");
+        byte[] document = message.getBody(byte[].class);
+        ObjectMapper mapper = new ObjectMapper();
+        String enc = mapper.convertValue(document, String.class);
+        cv.setVersionData(enc);  // Uses base64 encoding and standard JSON request
+        message.setBody(cv);
+    }
+
+    protected ContentWorkspace getWorkSpace(Exchange exchange) {
+        // Look up the content workspace somehow, maybe use enrich() to add it to a
+        // header that can be extracted here
+        ....
+    }
+}
 ----
 
 === Generating SOQL query strings
