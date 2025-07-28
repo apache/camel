@@ -30,31 +30,22 @@ import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
-public class LangChain4jToolMultipleGroupsIT extends CamelTestSupport {
+public class LangChain4jToolNoToolsToBeCalledTest extends CamelTestSupport {
 
-    private final String nameFromDB = "pippo";
-    private ChatModel chatModel;
+    protected ChatModel chatModel;
 
     @RegisterExtension
     static OpenAIMock openAIMock = new OpenAIMock().builder()
-            .when("What is the name of the user 1?\n")
+            .when("How can you help? DO NOT CALL TOOLS.\n")
             .assertRequest(request -> {
                 // The tools has to be included in the request
                 Assertions.assertThat(request).contains(
                         "QueryUserDatabaseByNumber",
-                        "DoesNotReallyDoAnything");
-
-                // The NOT included in the request
-                Assertions.assertThat(request).doesNotContain(
-                        "QueryCompanyUserDatabaseByNumber",
-                        "QuerySomethingelseUserDatabaseByNumber");
+                        "QueryUserDatabaseByNickname");
             })
-            .invokeTool("{\"name\": \"pippo\"}")
-            .withParam("number", "1")
+            .replyWith("No tool is invoked")
             .build();
 
     @Override
@@ -80,7 +71,6 @@ public class LangChain4jToolMultipleGroupsIT extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-
                 from("direct:test")
                         .to("langchain4j-tools:test1?tags=user")
                         .log("response is: ${body}");
@@ -88,33 +78,33 @@ public class LangChain4jToolMultipleGroupsIT extends CamelTestSupport {
                 from("langchain4j-tools:test1?tags=user&description=Query user database by number&parameter.number=integer")
                         .setBody(simple("{\"name\": \"pippo\"}"));
 
-                from("langchain4j-tools:test1?tags=user&description=Does not really do anything")
-                        .setBody(constant("Hello World"));
+                from("langchain4j-tools:test1?tags=user&description=Query user database by nickname&parameter.number=integer")
+                        .setBody(simple("{\"name\": \"pippo\"}"));
 
-                from("langchain4j-tools:test1?tags=companies&description=Query company user database by number&parameter.number=integer")
-                        .setBody(constant("Hello World"));
+                from("direct:noResponse")
+                        .log("there is no tool to be called for the request: ${body}")
+                        .setBody(constant("There was no tool to be called"))
+                        .to("mock:noResponse");
 
-                from("langchain4j-tools:test1?tags=somethingelse&description=Query somethingelse user database by number&parameter.number=integer")
-                        .setBody(constant("Hello World"));
             }
         };
     }
 
-    @RepeatedTest(10)
-    public void testSimpleInvocation() {
+    @RepeatedTest(1)
+    public void testSimpleInvocation() throws InterruptedException {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new SystemMessage(
                 """
-                        You provide the requested information using the functions you hava available. You can invoke the functions to obtain the information you need to complete the answer.
+                        Your job is to help me test my code. Your job is to NOT call any tool. YOU MUST NOT CALL A TOOL.
                         """));
         messages.add(new UserMessage("""
-                What is the name of the user 1?
+                How can you help? DO NOT CALL TOOLS.
                 """));
 
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
         Assertions.assertThat(message).isNotNull();
-        final String responseContent = message.getMessage().getBody().toString();
-        Assertions.assertThat(responseContent).containsIgnoringCase(nameFromDB);
+        Assertions.assertThat(message.getMessage().getHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER)).isEqualTo(Boolean.TRUE);
+        Assertions.assertThat(message.getMessage().getBody()).isNotNull();
     }
 }
