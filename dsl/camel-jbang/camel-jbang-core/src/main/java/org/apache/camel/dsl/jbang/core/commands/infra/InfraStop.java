@@ -26,11 +26,15 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "stop",
-                     description = "Stop an external service")
+        description = "Stop an external service")
 public class InfraStop extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Service name", arity = "1")
     private List<String> serviceName;
+
+    @CommandLine.Option(names = {"--kill"},
+            description = "To force killing the process (SIGKILL)")
+    boolean kill;
 
     public InfraStop(CamelJBangMain main) {
         super(main);
@@ -47,10 +51,10 @@ public class InfraStop extends InfraBaseCommand {
                     .filter(p -> p.getFileName().toString().startsWith("infra-" + serviceToStop + "-"))
                     .toList();
 
+            // we stop by deleting the marker files which makes the process self terminate
             for (Path pidFile : pidFiles) {
                 String name = pidFile.getFileName().toString();
                 pid = name.substring(name.lastIndexOf("-") + 1, name.lastIndexOf('.'));
-
                 Files.deleteIfExists(pidFile);
                 serviceStopped = true;
                 break;
@@ -63,9 +67,14 @@ public class InfraStop extends InfraBaseCommand {
             printer().println("No Camel Infrastructure found with name " + serviceToStop);
             return 0;
         }
-
-        printer().println("Shutting down service " + serviceToStop + " (PID: " + pid + ")");
-        ProcessHandle.of(Long.parseLong(pid)).ifPresent(ProcessHandle::destroy);
+        
+        if (kill) {
+            var p = ProcessHandle.of(Long.parseLong(pid));
+            if (p.isPresent()) {
+                printer().println("Killing service " + serviceToStop + " (PID: " + pid + ")");
+                p.get().destroyForcibly();
+            }
+        }
 
         return 0;
     }
