@@ -239,7 +239,9 @@ public class InfraRun extends InfraBaseCommand {
             t.start();
 
             // wait for this process to be stopped
-            printer().println("Running (use camel infra stop " + testService + " to stop the execution)");
+            printer().println("Running (use camel infra stop "
+                              + testService + (testServiceImplementation != null ? " " + testServiceImplementation : "")
+                              + " to stop the execution)");
             try {
                 latch.await();
             } catch (Exception e) {
