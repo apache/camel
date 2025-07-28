@@ -20,7 +20,7 @@ __metadata:
     eslint: ^9.32.0
     eslint-config-standard: ^17.1.0
     eslint-plugin-import: ^2.32.0
-    eslint-plugin-n: ^17.21.0
+    eslint-plugin-n: ^17.21.2
     eslint-plugin-node: ^11.1.0
     eslint-plugin-promise: ^6.6.0
     gulp: ~4.0
@@ -2406,22 +2406,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:^17.21.0":
-  version: 17.21.0
-  resolution: "eslint-plugin-n@npm:17.21.0"
+"eslint-plugin-n@npm:^17.21.2":
+  version: 17.21.2
+  resolution: "eslint-plugin-n@npm:17.21.2"
   dependencies:
     "@eslint-community/eslint-utils": ^4.5.0
     enhanced-resolve: ^5.17.1
     eslint-plugin-es-x: ^7.8.0
     get-tsconfig: ^4.8.1
     globals: ^15.11.0
+    globrex: ^0.1.2
     ignore: ^5.3.2
-    minimatch: ^9.0.5
     semver: ^7.6.3
     ts-declaration-location: ^1.0.6
   peerDependencies:
     eslint: ">=8.23.0"
-  checksum: 559d168ebc386bc2da6832caff32189feba8865fedebe8eebe4ccc47f77ca91dfa714ba60657f9f0cd3bab17bd4afc2bc9bb9d37df877168fb4df064434cd8b9
+  checksum: 1949cae3d09f641bf5dec8301aa3a68d548499c376be05d039700c5f17c1f0b79473ebcb6ec84a5a02a69e287832dadf1d432d5c940769545b3778ea3931f1a6
   languageName: node
   linkType: hard
 
@@ -3570,6 +3570,13 @@ __metadata:
     slash: ^5.1.0
     unicorn-magic: ^0.1.0
   checksum: 2cee79efefca4383a825fc2fcbdb37e5706728f2d39d4b63851927c128fff62e6334ef7d4d467949d411409ad62767dc2d214e0f837a0f6d4b7290b6711d485c
+  languageName: node
+  linkType: hard
+
+"globrex@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "globrex@npm:0.1.2"
+  checksum: adca162494a176ce9ecf4dd232f7b802956bb1966b37f60c15e49d2e7d961b66c60826366dc2649093cad5a0d69970cfa8875bd1695b5a1a2f33dcd2aa88da3c
   languageName: node
   linkType: hard
 
@@ -5174,15 +5181,6 @@ __metadata:
   dependencies:
     brace-expansion: ^2.0.1
   checksum: cf717f597ec3eed7dabc33153482a2e8d49f4fd3c26e58fd9c71a94c5029a0838728841b93f46bf1263b65a8010e2ee800d0dc9b004ab8ba8b6d1ec07cc115b5
-  languageName: node
-  linkType: hard
-
-"minimatch@npm:^9.0.5":
-  version: 9.0.5
-  resolution: "minimatch@npm:9.0.5"
-  dependencies:
-    brace-expansion: ^2.0.1
-  checksum: 2c035575eda1e50623c731ec6c14f65a85296268f749b9337005210bb2b34e2705f8ef1a358b188f69892286ab99dc42c8fb98a57bde55c8d81b3023c19cea28
   languageName: node
   linkType: hard
 
