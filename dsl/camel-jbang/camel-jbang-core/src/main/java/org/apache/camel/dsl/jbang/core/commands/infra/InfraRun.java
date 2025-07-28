@@ -17,14 +17,17 @@
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.io.Console;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -35,9 +38,14 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 
+import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelJBangCommand;
+
 @CommandLine.Command(name = "run",
                      description = "Run an external service")
 public class InfraRun extends InfraBaseCommand {
+
+    @CommandLine.Spec
+    CommandLine.Model.CommandSpec spec;
 
     @CommandLine.Parameters(description = "Service name", arity = "1")
     private List<String> serviceName;
@@ -45,6 +53,9 @@ public class InfraRun extends InfraBaseCommand {
     @CommandLine.Option(names = { "--log" },
                         description = "Log container output to console")
     boolean logToStdout;
+
+    @CommandLine.Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
+    boolean background;
 
     public InfraRun(CamelJBangMain main) {
         super(main);
@@ -92,6 +103,38 @@ public class InfraRun extends InfraBaseCommand {
             return 1;
         }
 
+        if (background) {
+            return runBackground(testService);
+        } else {
+            return doRun(testService, testServiceImplementation, testInfraService);
+        }
+    }
+
+    protected int runBackground(String testService) throws Exception {
+        List<String> cmds;
+        if (spec != null) {
+            cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        } else {
+            cmds = new ArrayList<>();
+            cmds.add("run");
+        }
+
+        cmds.remove("--background=true");
+        cmds.remove("--background");
+
+        addCamelJBangCommand(cmds);
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(cmds);
+
+        Process p = pb.start();
+        printer().println(
+                "Running " + testService + " in background with PID: " + p.pid());
+        return 0;
+    }
+
+    protected Integer doRun(String testService, String testServiceImplementation, TestInfraService testInfraService)
+            throws Exception {
         DependencyDownloaderClassLoader cl = getDependencyDownloaderClassLoader(testInfraService);
 
         // Update the class loader
@@ -99,14 +142,6 @@ public class InfraRun extends InfraBaseCommand {
 
         String serviceInterface = testInfraService.service();
         String serviceImpl = testInfraService.implementation();
-
-        if (!jsonOutput) {
-            String prefix = "";
-            if (testServiceImplementation != null) {
-                prefix = " with implementation " + testServiceImplementation;
-            }
-            printer().println("Starting service " + testService + prefix);
-        }
 
         Object actualService = cl.loadClass(serviceImpl).newInstance();
 
@@ -125,6 +160,13 @@ public class InfraRun extends InfraBaseCommand {
             return 1;
         }
 
+        if (!jsonOutput) {
+            String prefix = "";
+            if (testServiceImplementation != null) {
+                prefix = " with implementation " + testServiceImplementation;
+            }
+            printer().println("Starting service " + testService + prefix);
+        }
         actualService.getClass().getMethod("initialize").invoke(actualService);
 
         Method[] serviceMethods = cl.loadClass(serviceInterface).getDeclaredMethods();
@@ -161,16 +203,16 @@ public class InfraRun extends InfraBaseCommand {
                     .invoke(actualService, containerLogConsumer);
         }
 
-        if (!jsonOutput) {
-            printer().println("Press ENTER to stop the execution");
-        }
-
         AtomicBoolean closed = new AtomicBoolean();
         // use shutdown hook as fallback to shut-down and delete files
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownInfra(closed, logFile, jsonFile, actualService)));
 
+        // running in foreground then wait for user to exit
         final Console c = System.console();
         if (c != null) {
+            if (!jsonOutput) {
+                printer().println("Press ENTER to stop the execution");
+            }
             boolean quit = false;
             do {
                 String line = c.readLine();
@@ -178,6 +220,31 @@ public class InfraRun extends InfraBaseCommand {
                     quit = true;
                 }
             } while (!quit);
+        } else {
+            final CountDownLatch latch = new CountDownLatch(1);
+            // headless (running in background so wait until being signalled to stop)
+            Thread t = new Thread(() -> {
+                while (latch.getCount() > 0) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    File f = jsonFile.toFile();
+                    if (!f.exists()) {
+                        latch.countDown();
+                    }
+                }
+            }, "InfraWait");
+            t.start();
+
+            // wait for this process to be stopped
+            printer().println("Running (use camel infra stop " + testService + " to stop the execution)");
+            try {
+                latch.await();
+            } catch (Exception e) {
+                // ignore
+            }
         }
 
         shutdownInfra(closed, logFile, jsonFile, actualService);
@@ -203,7 +270,6 @@ public class InfraRun extends InfraBaseCommand {
                 // ignore
             }
         }
-
     }
 
     private static Path createFile(String name) throws IOException {
