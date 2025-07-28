@@ -30,14 +30,12 @@ import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
-public class LangChain4jToolIT extends CamelTestSupport {
+public class LangChain4jToolTest extends CamelTestSupport {
 
-    private final String nameFromDB = "pippo";
-    private ChatModel chatModel;
+    protected final String nameFromDB = "pippo";
+    protected ChatModel chatModel;
 
     @RegisterExtension
     static OpenAIMock openAIMock = new OpenAIMock().builder()

@@ -29,25 +29,30 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
-public class LangChain4jToolNoToolsToBeCalledIT extends CamelTestSupport {
+public class LangChain4jToolMultipleMatchingGroupsTest extends CamelTestSupport {
 
-    private ChatModel chatModel;
+    private final String nameFromDB = "Paul McFly";
+    protected ChatModel chatModel;
 
     @RegisterExtension
     static OpenAIMock openAIMock = new OpenAIMock().builder()
-            .when("How can you help? DO NOT CALL TOOLS.\n")
+            .when("What is the name of the user 1 and what department he is part of?\n")
             .assertRequest(request -> {
                 // The tools has to be included in the request
                 Assertions.assertThat(request).contains(
-                        "QueryUserDatabaseByNumber",
-                        "QueryUserDatabaseByNickname");
+                        "QueryUserByNumberUsingTheInternalDB",
+                        "QueryUserInformationByNumberUsingTheExternalDB");
+
+                // The NOT included in the request
+                Assertions.assertThat(request).doesNotContain(
+                        "DoesNotReallyDoAnything",
+                        "QueryCarInformationByPlate");
             })
-            .replyWith("No tool is invoked")
+            .invokeTool("{\"name\": \"Paul McFly\", \"department\": \"engineering\"}")
+            .withParam("number", 1)
             .build();
 
     @Override
@@ -73,40 +78,42 @@ public class LangChain4jToolNoToolsToBeCalledIT extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+
                 from("direct:test")
-                        .to("langchain4j-tools:test1?tags=user")
+                        .to("langchain4j-tools:test1?tags=internalDB,externalDB")
                         .log("response is: ${body}");
 
-                from("langchain4j-tools:test1?tags=user&description=Query user database by number&parameter.number=integer")
-                        .setBody(simple("{\"name\": \"pippo\"}"));
+                from("langchain4j-tools:test2?tags=internalDB&description=Query user by number using the internal DB&parameter.number=integer")
+                        .setBody(simple("{\"name\": \"Paul McFly\"}"));
 
-                from("langchain4j-tools:test1?tags=user&description=Query user database by nickname&parameter.number=integer")
-                        .setBody(simple("{\"name\": \"pippo\"}"));
+                from("langchain4j-tools:test3?tags=notApplicable&description=Does not really do anything")
+                        .setBody(constant("Hello World"));
 
-                from("direct:noResponse")
-                        .log("there is no tool to be called for the request: ${body}")
-                        .setBody(constant("There was no tool to be called"))
-                        .to("mock:noResponse");
+                from("langchain4j-tools:test4?tags=externalDB&description=Query user information by number using the external DB&parameter.number=integer")
+                        .setBody(simple("{\"name\": \"Paul McFly\", \"department\": \"engineering\"}"));
 
+                from("langchain4j-tools:test5?tags=notApplicable&description=Query car information by plate&parameter.number=integer")
+                        .setBody(constant("Hello World"));
             }
         };
     }
 
-    @RepeatedTest(1)
-    public void testSimpleInvocation() throws InterruptedException {
+    @Test
+    public void testSimpleInvocation() {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new SystemMessage(
                 """
-                        Your job is to help me test my code. Your job is to NOT call any tool. YOU MUST NOT CALL A TOOL.
+                        You provide the requested information using the functions you hava available. You can invoke the functions to obtain the information you need to complete the answer.
                         """));
         messages.add(new UserMessage("""
-                How can you help? DO NOT CALL TOOLS.
+                What is the name of the user 1 and what department he is part of?
                 """));
 
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
         Assertions.assertThat(message).isNotNull();
-        Assertions.assertThat(message.getMessage().getHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER)).isEqualTo(Boolean.TRUE);
-        Assertions.assertThat(message.getMessage().getBody()).isNotNull();
+        final String responseContent = message.getMessage().getBody().toString();
+        Assertions.assertThat(responseContent).containsIgnoringCase(nameFromDB);
+        Assertions.assertThat(responseContent).containsIgnoringCase("engineering");
     }
 }

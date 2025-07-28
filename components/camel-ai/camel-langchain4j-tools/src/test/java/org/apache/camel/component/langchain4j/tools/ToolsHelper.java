@@ -22,7 +22,7 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 
 import static java.time.Duration.ofSeconds;
 
-final class ToolsHelper {
+public final class ToolsHelper {
 
     private ToolsHelper() {
     }
