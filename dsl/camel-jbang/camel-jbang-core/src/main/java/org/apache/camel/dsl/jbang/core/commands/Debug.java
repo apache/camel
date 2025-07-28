@@ -259,7 +259,7 @@ public class Debug extends Run {
         cmds.add("--prop=camel.debug.loggingLevel=DEBUG");
         cmds.add("--prop=camel.debug.singleStepIncludeStartEnd=true");
 
-        addCamelCommand(cmds);
+        RunHelper.addCamelJBangCommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);

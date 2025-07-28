@@ -302,4 +302,16 @@ public final class RunHelper {
         }
     }
 
+    /**
+     * Adds camel to the start of the list of commands to make it possible to run camel-jbang using a spawned process
+     * (to run in background).
+     */
+    public static void addCamelJBangCommand(List<String> cmds) {
+        if (FileUtil.isWindows()) {
+            String jbangDir = System.getenv().getOrDefault("JBANG_DIR", System.getProperty("user.home") + "\\.jbang");
+            cmds.add(0, jbangDir + "\\bin\\camel.cmd");
+        } else {
+            cmds.add(0, "camel");
+        }
+    }
 }
