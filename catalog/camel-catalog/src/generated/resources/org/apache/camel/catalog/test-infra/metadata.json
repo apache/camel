@@ -216,7 +216,7 @@
   "version" : "4.14.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.microprofile.lra.services.MicroprofileLRAInfraService",
-  "description" : "MicroProfile LRA provides a simple, loosely coupled transaction model for microservices that is based on the SAGA pattern for distributed transaction.",
+  "description" : "Transaction Manager for microservices that is based on the SAGA pattern for distributed transaction.",
   "implementation" : "org.apache.camel.test.infra.microprofile.lra.services.MicroprofileLRALocalContainerInfraService",
   "alias" : [ "microprofile" ],
   "aliasImplementation" : [ "lra" ],

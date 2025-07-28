@@ -29,9 +29,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = MicroprofileLRAInfraService.class,
-              description = "MicroProfile LRA provides a simple, " +
-                            "loosely coupled transaction model for microservices that is based on the SAGA pattern" +
-                            " for distributed transaction.",
+              description = "Transaction Manager for microservices that is based on the SAGA pattern for distributed transaction.",
               serviceAlias = { "microprofile" },
               serviceImplementationAlias = "lra")
 public class MicroprofileLRALocalContainerInfraService

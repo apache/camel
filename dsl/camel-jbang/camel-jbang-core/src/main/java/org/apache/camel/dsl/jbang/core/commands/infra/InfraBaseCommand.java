@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
@@ -66,6 +68,40 @@ public abstract class InfraBaseCommand extends CamelCommand {
         jsonMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
         jsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
         jsonMapper.configure(MapperFeature.REQUIRE_HANDLERS_FOR_JAVA8_OPTIONALS, false);
+    }
+
+    protected static Map<Long, Path> findPids(String name) throws Exception {
+        Map<Long, Path> pids = new HashMap<>();
+
+        // we need to know the pids of the running camel integrations
+        if (!name.matches("\\d+")) {
+            if (name.endsWith("!")) {
+                // exclusive this name only
+                name = name.substring(0, name.length() - 1);
+            } else if (!name.endsWith("*")) {
+                // lets be open and match all that starts with this pattern
+                name = name + "*";
+            }
+        }
+
+        final String pattern = name;
+
+        List<Path> pidFiles = Files.list(CommandLineHelper.getCamelDir())
+                .filter(p -> {
+                    var n = p.getFileName().toString();
+                    return n.startsWith("infra-") && n.endsWith(".json");
+                })
+                .toList();
+        for (Path pidFile : pidFiles) {
+            String fn = pidFile.getFileName().toString();
+            String sn = fn.substring(fn.indexOf("-") + 1, fn.lastIndexOf('-'));
+            String pid = fn.substring(fn.lastIndexOf("-") + 1, fn.lastIndexOf('.'));
+            if (pid.equals(pattern) || PatternHelper.matchPattern(sn, pattern)) {
+                pids.put(Long.valueOf(pid), pidFile);
+            }
+        }
+
+        return pids;
     }
 
     protected boolean showPidColumn() {
@@ -135,7 +171,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
                     new Column().header("PID").visible(showPidColumn()).headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("ALIAS").minWidth(width + 2).dataAlign(HorizontalAlign.LEFT)
                             .with(Row::alias),
-                    new Column().header("IMPLEMENTATION").maxWidth(40, OverflowBehaviour.NEWLINE)
+                    new Column().header("IMPLEMENTATION").maxWidth(35, OverflowBehaviour.NEWLINE)
                             .dataAlign(HorizontalAlign.LEFT).with(Row::aliasImplementation),
                     new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(Row::description))));
         }

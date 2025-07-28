@@ -16,21 +16,19 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "get", description = "Displays running service information", sortOptions = false,
+@CommandLine.Command(name = "get", description = "Displays running service(s) information", sortOptions = false,
                      showDefaultValues = true)
 public class InfraGet extends InfraBaseCommand {
 
-    @CommandLine.Parameters(description = "Service name", arity = "1")
-    private List<String> serviceName;
+    @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")
+    String name = "*";
 
     public InfraGet(CamelJBangMain main) {
         super(main);
@@ -38,27 +36,19 @@ public class InfraGet extends InfraBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        String serviceToGet = serviceName.get(0);
-        boolean found = false;
-        try {
-            List<Path> jsonFiles = Files.list(CommandLineHelper.getCamelDir())
-                    .filter(p -> {
-                        String name = p.getFileName().toString();
-                        return name.startsWith("infra-" + serviceToGet + "-") && name.endsWith(".json");
-                    })
-                    .toList();
+        Map<Long, Path> pids = findPids(name);
 
-            if (!jsonFiles.isEmpty()) {
-                printer().println(Files.readString(jsonFiles.get(0)));
-                found = true;
+        int i = 0;
+        for (var e : pids.entrySet()) {
+            Path pidFile = e.getValue();
+            String fn = pidFile.getFileName().toString();
+            String sn = fn.substring(fn.indexOf("-") + 1, fn.lastIndexOf('-'));
+            if (i > 0) {
+                printer().println("");
             }
-        } catch (IOException e) {
-            // ignore
-        }
-
-        if (!found) {
-            printer().println("No running service found with alias " + serviceToGet);
-            return 0;
+            printer().println("Service " + sn + " (PID: " + e.getKey() + ")");
+            printer().println(Files.readString(pidFile));
+            i++;
         }
 
         return 0;
