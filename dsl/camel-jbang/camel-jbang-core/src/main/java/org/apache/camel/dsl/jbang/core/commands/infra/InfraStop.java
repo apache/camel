@@ -29,7 +29,7 @@ import org.apache.camel.support.PatternHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "stop",
-                     description = "Shuts down running infrastructure services", sortOptions = false, showDefaultValues = true)
+                     description = "Shuts down running external services", sortOptions = false, showDefaultValues = true)
 public class InfraStop extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")
@@ -52,14 +52,14 @@ public class InfraStop extends InfraBaseCommand {
         for (var entry : pids.entrySet()) {
             Path pidFile = entry.getValue();
             if (Files.exists(pidFile)) {
-                printer().println("Shutting down infrastructure services (PID: " + entry.getKey() + ")");
+                printer().println("Shutting down external services (PID: " + entry.getKey() + ")");
                 PathUtils.deleteFile(pidFile);
             }
         }
         if (kill) {
             for (Long pid : pids.keySet()) {
                 ProcessHandle.of(pid).ifPresent(ph -> {
-                    printer().println("Killing infrastructure service (PID: " + pid + ")");
+                    printer().println("Killing external service (PID: " + pid + ")");
                     ph.destroyForcibly();
                 });
             }
