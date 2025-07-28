@@ -16,24 +16,27 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.support.PatternHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "stop",
-        description = "Stop an external service")
+                     description = "Shuts down running infrastructure services", sortOptions = false, showDefaultValues = true)
 public class InfraStop extends InfraBaseCommand {
 
-    @CommandLine.Parameters(description = "Service name", arity = "1")
-    private List<String> serviceName;
+    @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")
+    String name = "*";
 
-    @CommandLine.Option(names = {"--kill"},
-            description = "To force killing the process (SIGKILL)")
+    @CommandLine.Option(names = { "--kill" },
+                        description = "To force killing the process (SIGKILL)")
     boolean kill;
 
     public InfraStop(CamelJBangMain main) {
@@ -42,40 +45,61 @@ public class InfraStop extends InfraBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        String serviceToStop = serviceName.get(0);
 
-        boolean serviceStopped = false;
-        String pid = null;
-        try {
-            List<Path> pidFiles = Files.list(CommandLineHelper.getCamelDir())
-                    .filter(p -> p.getFileName().toString().startsWith("infra-" + serviceToStop + "-"))
-                    .toList();
+        Map<Long, Path> pids = findPids(name);
 
-            // we stop by deleting the marker files which makes the process self terminate
-            for (Path pidFile : pidFiles) {
-                String name = pidFile.getFileName().toString();
-                pid = name.substring(name.lastIndexOf("-") + 1, name.lastIndexOf('.'));
-                Files.deleteIfExists(pidFile);
-                serviceStopped = true;
-                break;
+        // stop by deleting the pid file
+        for (var entry : pids.entrySet()) {
+            Path pidFile = entry.getValue();
+            if (Files.exists(pidFile)) {
+                printer().println("Shutting down infrastructure services (PID: " + entry.getKey() + ")");
+                PathUtils.deleteFile(pidFile);
             }
-        } catch (IOException e) {
-            // ignore
         }
-
-        if (!serviceStopped) {
-            printer().println("No Camel Infrastructure found with name " + serviceToStop);
-            return 0;
-        }
-        
         if (kill) {
-            var p = ProcessHandle.of(Long.parseLong(pid));
-            if (p.isPresent()) {
-                printer().println("Killing service " + serviceToStop + " (PID: " + pid + ")");
-                p.get().destroyForcibly();
+            for (Long pid : pids.keySet()) {
+                ProcessHandle.of(pid).ifPresent(ph -> {
+                    printer().println("Killing infrastructure service (PID: " + pid + ")");
+                    ph.destroyForcibly();
+                });
             }
         }
 
         return 0;
     }
+
+    private Map<Long, Path> findPids(String name) throws Exception {
+        Map<Long, Path> pids = new HashMap<>();
+
+        // we need to know the pids of the running camel integrations
+        if (!name.matches("\\d+")) {
+            if (name.endsWith("!")) {
+                // exclusive this name only
+                name = name.substring(0, name.length() - 1);
+            } else if (!name.endsWith("*")) {
+                // lets be open and match all that starts with this pattern
+                name = name + "*";
+            }
+        }
+
+        final String pattern = name;
+
+        List<Path> pidFiles = Files.list(CommandLineHelper.getCamelDir())
+                .filter(p -> {
+                    var n = p.getFileName().toString();
+                    return n.startsWith("infra-") && n.endsWith(".json");
+                })
+                .toList();
+        for (Path pidFile : pidFiles) {
+            String fn = pidFile.getFileName().toString();
+            String sn = fn.substring(fn.indexOf("-") + 1, fn.lastIndexOf('-'));
+            String pid = fn.substring(fn.lastIndexOf("-") + 1, fn.lastIndexOf('.'));
+            if (pid.equals(pattern) || PatternHelper.matchPattern(sn, pattern)) {
+                pids.put(Long.valueOf(pid), pidFile);
+            }
+        }
+
+        return pids;
+    }
+
 }
