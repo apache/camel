@@ -48,7 +48,7 @@ public class InfraTest extends CamelCommandBaseTest {
 
         Awaitility.await().untilAsserted(() -> {
             List<String> lines = printer.getLines();
-            Assertions.assertThat(lines).contains("Starting service ftp");
+            Assertions.assertThat(lines).anyMatch(l -> l.startsWith("Starting service ftp"));
             // because we run headless unit test then you would see this message instead of press ENTER to stop
             Assertions.assertThat(lines).contains("Running (use camel infra stop ftp to stop the execution)");
         });

@@ -165,7 +165,7 @@ public class InfraRun extends InfraBaseCommand {
             if (testServiceImplementation != null) {
                 prefix = " with implementation " + testServiceImplementation;
             }
-            printer().println("Starting service " + testService + prefix);
+            printer().println("Starting service " + testService + prefix + " (PID: " + RuntimeUtil.getPid() + ")");
         }
         actualService.getClass().getMethod("initialize").invoke(actualService);
 
@@ -207,46 +207,52 @@ public class InfraRun extends InfraBaseCommand {
         // use shutdown hook as fallback to shut-down and delete files
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownInfra(closed, logFile, jsonFile, actualService)));
 
+        final CountDownLatch latch = new CountDownLatch(1);
+
         // running in foreground then wait for user to exit
         final Console c = System.console();
         if (c != null) {
             if (!jsonOutput) {
                 printer().println("Press ENTER to stop the execution");
             }
-            boolean quit = false;
-            do {
-                String line = c.readLine();
-                if (line != null) {
-                    quit = true;
-                }
-            } while (!quit);
-        } else {
-            final CountDownLatch latch = new CountDownLatch(1);
-            // headless (running in background so wait until being signalled to stop)
             Thread t = new Thread(() -> {
-                while (latch.getCount() > 0) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                    File f = jsonFile.toFile();
-                    if (!f.exists()) {
+                boolean quit = false;
+                do {
+                    String line = c.readLine();
+                    if (line != null) {
+                        quit = true;
                         latch.countDown();
                     }
-                }
-            }, "InfraWait");
+                } while (!quit);
+            }, "WaitEnter");
             t.start();
-
+        } else {
             // wait for this process to be stopped
             printer().println("Running (use camel infra stop "
                               + testService + (testServiceImplementation != null ? " " + testServiceImplementation : "")
                               + " to stop the execution)");
-            try {
-                latch.await();
-            } catch (Exception e) {
-                // ignore
+        }
+
+        // always wait for external signal to stop if the json-file is deleted
+        Thread t = new Thread(() -> {
+            while (latch.getCount() > 0) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    // ignore
+                }
+                File f = jsonFile.toFile();
+                if (!f.exists()) {
+                    latch.countDown();
+                }
             }
+        }, "WaitShutdownSignal");
+        t.start();
+
+        try {
+            latch.await();
+        } catch (Exception e) {
+            // ignore
         }
 
         shutdownInfra(closed, logFile, jsonFile, actualService);
