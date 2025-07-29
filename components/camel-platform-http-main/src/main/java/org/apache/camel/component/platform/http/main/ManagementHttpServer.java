@@ -326,9 +326,15 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             consumer = camelContext.createConsumerTemplate();
         }
 
-        server = new VertxPlatformHttpServer(configuration);
-        // adding server to camel-context which will manage shutdown the server, so we should not do this here
-        camelContext.addService(server);
+        VertxPlatformHttpServer mainServer = camelContext.hasService(VertxPlatformHttpServer.class);
+        if (mainServer != null && mainServer.getPort() == configuration.getPort()) {
+            // reuse main server as we use same port
+            server = mainServer;
+        } else {
+            server = new VertxPlatformHttpServer(configuration);
+            // adding server to camel-context which will manage shutdown the server, so we should not do this here
+            camelContext.addService(server);
+        }
 
         pluginRegistry = getCamelContext().getCamelContextExtension().getContextPlugin(PlatformHttpPluginRegistry.class);
         if (pluginRegistry == null && pluginsEnabled()) {
