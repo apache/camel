@@ -58,7 +58,8 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
 
     public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
                                   String scope, boolean cacheTokens,
-                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds, boolean useBodyAuthentication) {
+                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds,
+                                  boolean useBodyAuthentication) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;

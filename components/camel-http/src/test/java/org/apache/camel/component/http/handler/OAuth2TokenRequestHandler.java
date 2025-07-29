@@ -58,7 +58,7 @@ public class OAuth2TokenRequestHandler implements HttpRequestHandler {
         Map<String, String> bodyCredentials = new HashMap<>();
         WWWFormCodec.parse(requestBody, StandardCharsets.UTF_8).stream()
                 .filter(pair -> pair.getName().equals("client_id") || pair.getName().equals("client_secret"))
-                .forEach( pair -> bodyCredentials.put(pair.getName(), pair.getValue()));
+                .forEach(pair -> bodyCredentials.put(pair.getName(), pair.getValue()));
 
         if (!hasValidHeaderAuthentication(request) && !hasValidBodyAuthentication(bodyCredentials))
             throw new HttpException("Invalid credentials");
@@ -73,7 +73,8 @@ public class OAuth2TokenRequestHandler implements HttpRequestHandler {
         return request.containsHeader(HttpHeaders.AUTHORIZATION) && request.getHeader(HttpHeaders.AUTHORIZATION).getValue()
                 .equals(HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
     }
-    private boolean hasValidBodyAuthentication(Map<String,String> credentials) {
+
+    private boolean hasValidBodyAuthentication(Map<String, String> credentials) {
         if (null == credentials || credentials.isEmpty())
             return false;
         return clientId.equals(credentials.get("client_id")) && clientSecret.equals(credentials.get("client_secret"));
