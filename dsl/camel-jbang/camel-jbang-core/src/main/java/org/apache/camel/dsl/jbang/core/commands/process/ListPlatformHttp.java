@@ -46,7 +46,7 @@ public class ListPlatformHttp extends ProcessWatchCommand {
     String sort;
 
     @CommandLine.Option(names = { "--all" },
-            description = "Include management endpoints")
+                        description = "Include management endpoints")
     boolean all;
 
     public ListPlatformHttp(CamelJBangMain main) {
