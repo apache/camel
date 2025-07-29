@@ -257,7 +257,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                 "oauth2CachedTokensExpirationMarginSeconds",
                 long.class,
                 configDefaults.getOauth2CachedTokensExpirationMarginSeconds());
-
+        boolean useBodyAuthentication = getParameter(
+                parameters,
+                "oauth2BodyAuthentication",
+                boolean.class,
+                configDefaults.isOauth2BodyAuthentication());
         if (clientId != null && clientSecret != null && tokenEndpoint != null) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new OAuth2ClientConfigurer(
@@ -268,7 +272,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             scope,
                             cacheTokens,
                             cachedTokensDefaultExpirySeconds,
-                            cachedTokensExpirationMarginSeconds));
+                            cachedTokensExpirationMarginSeconds,
+                            useBodyAuthentication));
         }
         return configurer;
     }

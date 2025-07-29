@@ -52,12 +52,13 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
     private final Long cachedTokensDefaultExpirySeconds;
     private final Long cachedTokensExpirationMarginSeconds;
     private final static ConcurrentMap<OAuth2URIAndCredentials, TokenCache> tokenCache = new ConcurrentHashMap<>();
+    private final boolean useBodyAuthentication;
     private final String resourceIndicator;
     private HttpClient httpClient;
 
     public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
                                   String scope, boolean cacheTokens,
-                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds) {
+                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds, boolean useBodyAuthentication) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;
@@ -66,6 +67,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         this.cacheTokens = cacheTokens;
         this.cachedTokensDefaultExpirySeconds = cachedTokensDefaultExpirySeconds;
         this.cachedTokensExpirationMarginSeconds = cachedTokensExpirationMarginSeconds;
+        this.useBodyAuthentication = useBodyAuthentication;
     }
 
     @Override
@@ -106,9 +108,13 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         }
 
         final HttpPost httpPost = new HttpPost(tokenEndpoint);
-
-        httpPost.addHeader(HttpHeaders.AUTHORIZATION,
-                HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
+        if (useBodyAuthentication) {
+            bodyStr += "&client_id=" + clientId;
+            bodyStr += "&client_secret=" + clientSecret;
+        } else {
+            httpPost.addHeader(HttpHeaders.AUTHORIZATION,
+                    HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
+        }
         if (null != resourceIndicator) {
             bodyStr = String.join(bodyStr, "&resource=" + resourceIndicator);
         }
