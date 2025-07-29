@@ -108,8 +108,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private String textFormatVersion = "0.0.4";
     @Metadata
     private String binders;
-    @Metadata(defaultValue = "/q/metrics")
-    private String path = "/q/metrics";
+    @Metadata(defaultValue = "/observe/metrics")
+    private String path = "/observe/metrics";
 
     @Override
     public CamelContext getCamelContext() {

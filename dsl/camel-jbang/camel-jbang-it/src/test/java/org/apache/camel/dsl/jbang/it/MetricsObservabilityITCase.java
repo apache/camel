@@ -28,9 +28,9 @@ public class MetricsObservabilityITCase extends JBangTestSupport {
     public void metricsTest() throws IOException {
         copyResourceInDataFolder(TestResources.SERVER_ROUTE);
         executeBackground(String.format("run %s/server.yaml --metrics", mountPoint()));
-        checkLogContains("http://0.0.0.0:8080/q/metrics");
+        checkLogContains("http://0.0.0.0:8080/observe/metrics");
         Assertions.assertThat(
-                execInHost(String.format("curl http://localhost:%s/q/metrics", containerService.getDevConsolePort())))
+                execInHost(String.format("curl http://localhost:%s/observe/metrics", containerService.getDevConsolePort())))
                 .as("server should list metrics")
                 .contains("# HELP camel_exchanges_total Total number of processed exchanges");
     }

@@ -249,7 +249,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     }
 
     /**
-     * Whether metrics is enabled (q/metrics)
+     * Whether metrics is enabled (observe/metrics)
      */
     public void setMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
