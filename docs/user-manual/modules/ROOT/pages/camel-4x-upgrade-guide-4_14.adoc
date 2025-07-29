@@ -19,23 +19,37 @@ Previously, each sub-message was independent (despite the documentation refers t
 has been mistakenly for many years, as this feature is rarely in use. However, we had the opportunity to look into this as part
 of an issue, and felt it's better to fix this before for this LTS release.
 
-=== camel-main / camel-platform-http-main
+=== camel-main
 
 The HTTP server for standalone `camel-main` applications has separated management services and business services.
-This means that configurations should be changed from `camel.server.xxx` to `camel.management.xxx` as shown:
-
+This means that configurations in `application.properties` should be changed
+from `camel.server.xxx` to `camel.management.xxx` as shown below:
 
 |===
-|Old Option |New Option
-
-|Column 1, row 1
-|Column 2, row 1
-
-|Column 1, row 2
-|Column 2, row 2
+|**Old Option** |**New Option**
+|camel.server.devConsoleEnabled | camel.management.devConsoleEnabled
+|camel.server.healthCheckEnabled | camel.management.healthCheckEnabled
+|camel.server.jolokiaEnabled | camel.management.jolokiaEnabled
+|camel.server.metricsEnabled | camel.management.metricsEnabled
+|camel.server.uploadEnabled | camel.management.uploadEnabled
+|camel.server.uploadSourceDir | camel.management.uploadSourceDir
+|camel.server.downloadEnabled | camel.management.downloadEnabled
+|camel.server.sendEnabled | camel.management.sendEnabled
+|camel.server.healthPath | camel.management.healthPath
+|camel.server.jolokiaPath | camel.management.jolokiaPath
 |===
 
+NOTE: Make sure if you use any of the managed HTTP services such as health-checks then enable the management server with `camel.management.enabled=true`.
 
+The default HTTP endpoints has changed in some management services as listed below:
+
+|===
+|**Old Path** |**New Path**
+| /q/health | /observe/health
+| /q/metrics | /observe/metrics
+| /q/info | /observe/info
+| /q/jolokia | /observe/jolokia
+|===
 
 === camel-jbang
 
