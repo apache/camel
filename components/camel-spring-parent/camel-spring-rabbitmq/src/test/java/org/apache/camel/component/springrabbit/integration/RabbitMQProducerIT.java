@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.springrabbit.SpringRabbitMQConstants;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -110,7 +111,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         AmqpTemplate rabbitConsumerTemplate = new RabbitTemplate(cf);
 
         int receivedCount = 0;
-        long lastMessageTime = System.currentTimeMillis();
+        StopWatch lastMessageStopWatch = new StopWatch();
         final long idleTimeoutMillis = 2000; // 2 seconds
         while (true) {
             Object receivedMessage = rabbitConsumerTemplate.receiveAndConvert("myqueue");
@@ -118,10 +119,10 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
             if (receivedMessage != null) {
                 // If we got a message, increment count and reset the idle timer.
                 receivedCount++;
-                lastMessageTime = System.currentTimeMillis();
+                lastMessageStopWatch.restart();
             } else {
                 // If we got no message, check if the idle timeout has been exceeded.
-                if (System.currentTimeMillis() - lastMessageTime > idleTimeoutMillis) {
+                if (lastMessageStopWatch.taken() > idleTimeoutMillis) {
                     LOG.info(
                             "No messages received for " + (idleTimeoutMillis / 1000) + " seconds. Exiting consumer loop.");
                     break; // Exit the loop
