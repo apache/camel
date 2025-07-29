@@ -787,9 +787,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     private static void healthCheckStatus(StringBuilder sb, boolean up) {
         if (up) {
-            sb.append("    \"status\": \"UP\"\n");
+            sb.append("    \"status\": \"UP\"");
         } else {
-            sb.append("    \"status\": \"DOWN\"\n");
+            sb.append("    \"status\": \"DOWN\"");
         }
     }
 
@@ -854,8 +854,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 }
                 sb.append("\n");
             }
-            sb.append("            }\n");
+            sb.append("            }");
         }
+        sb.append("\n");
     }
 
     private static String allCausedByErrorMessages(Throwable e) {
