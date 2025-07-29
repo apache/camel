@@ -50,7 +50,6 @@ import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyFa
 import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyNamingStrategy;
 import org.apache.camel.component.micrometer.spi.InstrumentedThreadPoolFactory;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
-import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.component.platform.http.main.ManagementHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.apache.camel.spi.CamelEvent;
@@ -77,14 +76,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private static final String CONTENT_TYPE_004 = "text/plain; version=0.0.4; charset=utf-8";
     private static final String CONTENT_TYPE_100 = "application/openmetrics-text; version=1.0.0; charset=utf-8";
 
-    @Deprecated
-    // Use managementServer instead
-    private MainHttpServer mainServer;
-    private ManagementHttpServer managementServer;
-    @Deprecated
-    // Use managementRouter instead
-    private VertxPlatformHttpRouter mainRouter;
-    private VertxPlatformHttpRouter managementRouter;
+    private ManagementHttpServer server;
+    private VertxPlatformHttpRouter router;
     private PlatformHttpComponent platformHttpComponent;
 
     private CamelContext camelContext;
@@ -426,24 +419,13 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         boolean enabled = false;
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
-        mainServer = camelContext.hasService(MainHttpServer.class);
-        if (mainServer != null && mainServer.isMetricsEnabled() && platformHttpComponent != null) {
-            mainRouter = mainServer.getRouter();
-            if (mainRouter != null) {
-                setupHttpScraper(mainRouter, false);
-                LOG.info("MicrometerPrometheus enabled with HTTP scraping on port {} on path {}",
-                        mainServer.getPort(), path);
-                enabled = true;
-            }
-        }
-
-        managementServer = camelContext.hasService(ManagementHttpServer.class);
-        if (managementServer != null && managementServer.isMetricsEnabled() && platformHttpComponent != null) {
-            managementRouter = managementServer.getRouter();
-            if (managementRouter != null) {
-                setupHttpScraper(managementRouter, true);
+        server = camelContext.hasService(ManagementHttpServer.class);
+        if (server != null && server.isMetricsEnabled() && platformHttpComponent != null) {
+            router = server.getRouter();
+            if (router != null) {
+                setupHttpScraper(router);
                 LOG.info("MicrometerPrometheus enabled with HTTP scraping on management port {} on path {}",
-                        managementServer.getPort(), path);
+                        server.getPort(), path);
                 enabled = true;
             }
         }
@@ -480,7 +462,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         createdBinders.clear();
     }
 
-    protected void setupHttpScraper(VertxPlatformHttpRouter router, boolean isManagementPort) {
+    protected void setupHttpScraper(VertxPlatformHttpRouter router) {
         Route metrics = router.route(path);
         metrics.method(HttpMethod.GET);
 
@@ -507,12 +489,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         // use blocking handler as the task can take longer time to complete
         metrics.handler(new BlockingHandlerDecorator(handler, true));
 
-        if (isManagementPort) {
-            platformHttpComponent.addHttpManagementEndpoint(path, "GET",
-                    null, format, null);
-        } else {
-            platformHttpComponent.addHttpEndpoint(path, "GET",
-                    null, format, null);
-        }
+        platformHttpComponent.addHttpManagementEndpoint(path, "GET",
+                null, format, null);
     }
 }

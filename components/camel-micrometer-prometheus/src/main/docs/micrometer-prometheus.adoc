@@ -21,9 +21,9 @@ and turn on metrics in `application.properties` such as:
 
 [source,properties]
 ----
-# enable HTTP server with metrics
-camel.server.enabled=true
-camel.server.metricsEnabled=true
+# enable management server with metrics
+camel.management.enabled=true
+camel.management.metricsEnabled=true
 
 # turn on micrometer metrics
 camel.metrics.enabled=true
