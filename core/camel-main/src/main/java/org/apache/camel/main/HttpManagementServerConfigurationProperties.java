@@ -36,8 +36,11 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private int port = 9876;
     @Metadata(defaultValue = "/")
     private String path = "/";
-    private Long maxBodySize;
-    private boolean useGlobalSslContextParameters;
+    @Metadata(defaultValue = "/observe/health")
+    private String healthPath = "/observe/health";
+    @Metadata(defaultValue = "/observe/jolokia")
+    private String jolokiaPath = "/observe/jolokia";
+
     private boolean infoEnabled;
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
@@ -45,6 +48,8 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private boolean metricsEnabled;
     private boolean sendEnabled;
 
+    @Metadata(label = "security")
+    private boolean useGlobalSslContextParameters;
     @Metadata(label = "security")
     private boolean authenticationEnabled;
     @Metadata(label = "security")
@@ -57,11 +62,6 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private String jwtKeystorePath;
     @Metadata(label = "security", secret = true)
     private String jwtKeystorePassword;
-
-    @Metadata(defaultValue = "/observe/health")
-    private String healthPath = "/observe/health";
-    @Metadata(defaultValue = "/observe/jolokia")
-    private String jolokiaPath = "/observe/jolokia";
 
     public HttpManagementServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -118,17 +118,6 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public Long getMaxBodySize() {
-        return maxBodySize;
-    }
-
-    /**
-     * Maximum HTTP body size the embedded HTTP server can accept.
-     */
-    public void setMaxBodySize(Long maxBodySize) {
-        this.maxBodySize = maxBodySize;
     }
 
     public boolean isUseGlobalSslContextParameters() {
@@ -331,14 +320,6 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public HttpManagementServerConfigurationProperties withPath(String path) {
         this.path = path;
-        return this;
-    }
-
-    /**
-     * Maximum HTTP body size the embedded HTTP management server can accept.
-     */
-    public HttpManagementServerConfigurationProperties withMaxBodySize(long maxBodySize) {
-        this.maxBodySize = maxBodySize;
         return this;
     }
 

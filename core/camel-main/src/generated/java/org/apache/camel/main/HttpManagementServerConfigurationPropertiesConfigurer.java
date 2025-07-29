@@ -36,7 +36,6 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         map.put("JwtKeystorePassword", java.lang.String.class);
         map.put("JwtKeystorePath", java.lang.String.class);
         map.put("JwtKeystoreType", java.lang.String.class);
-        map.put("MaxBodySize", java.lang.Long.class);
         map.put("MetricsEnabled", boolean.class);
         map.put("Path", java.lang.String.class);
         map.put("Port", int.class);
@@ -75,8 +74,6 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jwtKeystorePath": target.setJwtKeystorePath(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtkeystoretype":
         case "jwtKeystoreType": target.setJwtKeystoreType(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxbodysize":
-        case "maxBodySize": target.setMaxBodySize(property(camelContext, java.lang.Long.class, value)); return true;
         case "metricsenabled":
         case "metricsEnabled": target.setMetricsEnabled(property(camelContext, boolean.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
@@ -123,8 +120,6 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jwtKeystorePath": return java.lang.String.class;
         case "jwtkeystoretype":
         case "jwtKeystoreType": return java.lang.String.class;
-        case "maxbodysize":
-        case "maxBodySize": return java.lang.Long.class;
         case "metricsenabled":
         case "metricsEnabled": return boolean.class;
         case "path": return java.lang.String.class;
@@ -167,8 +162,6 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jwtKeystorePath": return target.getJwtKeystorePath();
         case "jwtkeystoretype":
         case "jwtKeystoreType": return target.getJwtKeystoreType();
-        case "maxbodysize":
-        case "maxBodySize": return target.getMaxBodySize();
         case "metricsenabled":
         case "metricsEnabled": return target.isMetricsEnabled();
         case "path": return target.getPath();
