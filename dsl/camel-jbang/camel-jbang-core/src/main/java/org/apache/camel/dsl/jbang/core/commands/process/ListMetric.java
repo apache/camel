@@ -150,10 +150,14 @@ public class ListMetric extends ProcessWatchCommand {
                                     JsonObject jo = (JsonObject) arr.get(i);
                                     row.type = "gauge";
                                     row.metricName = jo.getString("name");
+                                    if ("app.info".equals(row.metricName)) {
+                                        continue; // special camel info that hides in the metrics
+                                    }
                                     row.metricDescription = jo.getString("description");
                                     row.metricId = extractId(jo);
                                     row.tags = extractTags(jo);
-                                    row.count = jo.getDouble("value");
+                                    row.count = 0;
+                                    row.count = jo.getDoubleOrDefault("value", 0);
 
                                     if (custom && row.metricName.startsWith("Camel")) {
                                         continue; // skip internal camel metrics
