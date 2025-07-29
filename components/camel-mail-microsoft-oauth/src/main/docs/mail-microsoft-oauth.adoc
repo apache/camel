@@ -28,7 +28,11 @@ for this component:
 </dependency>
 ----
 
-Importing `camel-mail-microsoft-oauth` it will automatically import the camel-mail component.
+The Mail Microsoft OAuth2 provides an authenticator usable by xref:components::mail-component.adoc[Mail] component.
+Importing `camel-mail-microsoft-oauth` it will automatically import the `camel-mail` component.
+
+Parameters `authenticator` and `mail.imaps.auth.mechanisms` (with value `XOAUTH2`) are mandatory.
+See the example below for more information.
 
 == Usage
 
