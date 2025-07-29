@@ -56,6 +56,9 @@ public class HttpConfiguration implements Serializable {
                             +
                             "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
     private long oauth2CachedTokensExpirationMarginSeconds = 5L;
+    @UriParam(label = "producer,security", defaultValue = "false",
+              description = "Whether to use OAuth2 body authentication.")
+    private boolean oauth2BodyAuthentication;
     @Metadata(label = "producer,security", description = "Authentication domain to use with NTLM")
     @Deprecated
     private String authDomain;
@@ -345,5 +348,16 @@ public class HttpConfiguration implements Serializable {
      */
     public void setOauth2ResourceIndicator(final String oauth2ResourceIndicator) {
         this.oauth2ResourceIndicator = oauth2ResourceIndicator;
+    }
+
+    public boolean isOauth2BodyAuthentication() {
+        return oauth2BodyAuthentication;
+    }
+
+    /**
+     * Whether to use OAuth2 body authentication.
+     */
+    public void setOauth2BodyAuthentication(boolean oauth2BodyAuthentication) {
+        this.oauth2BodyAuthentication = oauth2BodyAuthentication;
     }
 }

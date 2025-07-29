@@ -98,6 +98,22 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
 
     }
 
+    @Test
+    public void bodyAuthenticationIsPresent() {
+        String tokenEndpoint = "http://localhost:" + localServer.getLocalPort() + "/token";
+
+        Exchange exchange
+                = template.request("http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
+                                   + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
+                                   +
+                                   "&oauth2BodyAuthentication=true",
+                        exchange1 -> {
+                        });
+
+        assertExchange(exchange);
+
+    }
+
     protected void assertHeaders(Map<String, Object> headers) {
         assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
     }
