@@ -28,6 +28,7 @@ import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.ProtocolException;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -54,14 +55,28 @@ public class OAuth2TokenRequestHandler implements HttpRequestHandler {
                 .filter(pair -> pair.getName().equals("grant_type") && pair.getValue().equals("client_credentials"))
                 .findAny().orElseThrow(() -> new HttpException("Invalid or missing grant_type"));
 
-        if (request.getHeader(HttpHeaders.AUTHORIZATION) == null || !request.getHeader(HttpHeaders.AUTHORIZATION).getValue()
-                .equals(HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret)))
+        Map<String, String> bodyCredentials = new HashMap<>();
+        WWWFormCodec.parse(requestBody, StandardCharsets.UTF_8).stream()
+                .filter(pair -> pair.getName().equals("client_id") || pair.getName().equals("client_secret"))
+                .forEach( pair -> bodyCredentials.put(pair.getName(), pair.getValue()));
+
+        if (!hasValidHeaderAuthentication(request) && !hasValidBodyAuthentication(bodyCredentials))
             throw new HttpException("Invalid credentials");
 
         Map<String, String> responseEntity = new HashMap<>();
         responseEntity.put("access_token", expectedToken);
 
         response.setEntity(new StringEntity(Jsoner.serialize(responseEntity), ContentType.APPLICATION_JSON));
+    }
+
+    private boolean hasValidHeaderAuthentication(ClassicHttpRequest request) throws ProtocolException {
+        return request.containsHeader(HttpHeaders.AUTHORIZATION) && request.getHeader(HttpHeaders.AUTHORIZATION).getValue()
+                .equals(HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
+    }
+    private boolean hasValidBodyAuthentication(Map<String,String> credentials) {
+        if (null == credentials || credentials.isEmpty())
+            return false;
+        return clientId.equals(credentials.get("client_id")) && clientSecret.equals(credentials.get("client_secret"));
     }
 
 }
