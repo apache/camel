@@ -215,7 +215,7 @@ The camel.server supports 17 options, which are listed below.
 
 
 === Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.management supports 22 options, which are listed below.
+The camel.management supports 23 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -226,16 +226,17 @@ The camel.management supports 22 options, which are listed below.
 | *camel.management.devConsole{zwsp}Enabled* | Whether to enable developer console (not intended for production use). Dev console must also be enabled on CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code camelContext.setDevConsole(true); If enabled then you can access a basic developer console on context-path: /q/dev. | false | boolean
 | *camel.management.download{zwsp}Enabled* | Whether to enable file download via HTTP. This makes it possible to browse and download resource source files such as Camel XML or YAML routes. Only enable this for development, troubleshooting or special situations for management and monitoring. | false | boolean
 | *camel.management.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
-| *camel.management.healthCheck{zwsp}Enabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /q/health (default) | false | boolean
+| *camel.management.healthCheck{zwsp}Enabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /observe/health | false | boolean
 | *camel.management.healthPath* | The path endpoint used to expose the health status | /observe/health | String
 | *camel.management.host* | Hostname to use for binding embedded HTTP server | 0.0.0.0 | String
-| *camel.management.infoEnabled* | Whether to enable info console. If enabled then you can see some basic Camel information at /q/info | false | boolean
-| *camel.management.jolokia{zwsp}Enabled* | Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia | false | boolean
+| *camel.management.infoEnabled* | Whether to enable info console. If enabled then you can see some basic Camel information at /observe/info | false | boolean
+| *camel.management.infoPath* | The path endpoint used to expose the info status | /observe/info | String
+| *camel.management.jolokia{zwsp}Enabled* | Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /observe/jolokia | false | boolean
 | *camel.management.jolokiaPath* | The path endpoint used to expose the jolokia data. | /observe/jolokia | String
 | *camel.management.jwtKeystore{zwsp}Password* | Password from the keystore used for JWT tokens validation. |  | String
 | *camel.management.jwtKeystore{zwsp}Path* | Path to the keystore file used for JWT tokens validation. |  | String
 | *camel.management.jwtKeystore{zwsp}Type* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
-| *camel.management.metrics{zwsp}Enabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics (default) | false | boolean
+| *camel.management.metrics{zwsp}Enabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /observe/metrics | false | boolean
 | *camel.management.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.management.port* | Port to use for binding embedded HTTP server | 8080 | int
 | *camel.management.sendEnabled* | Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to Camel endpoint URIs via HTTP. | false | boolean
@@ -574,7 +575,7 @@ The camel.metrics supports 14 options, which are listed below.
 | *camel.metrics.enableRouteEvent{zwsp}Notifier* | Set whether to enable the MicrometerRouteEventNotifier for capturing metrics on the total number of routes and total number of routes running. | true | boolean
 | *camel.metrics.enableRoute{zwsp}Policy* | Set whether to enable the MicrometerRoutePolicyFactory for capturing metrics on route processing times. | true | boolean
 | *camel.metrics.namingStrategy* | Controls the name style to use for metrics. Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase) | default | String
-| *camel.metrics.path* | The path endpoint used to expose the metrics. | /q/metrics | String
+| *camel.metrics.path* | The path endpoint used to expose the metrics. | /observe/metrics | String
 | *camel.metrics.routePolicyLevel* | Sets the level of information to capture. all = both context and routes. | all | String
 | *camel.metrics.skipCamelInfo* | Skip the evaluation of app.info metric which contains runtime provider information (default, false). | false | boolean
 | *camel.metrics.textFormat{zwsp}Version* | The text-format version to use with Prometheus scraping. 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8 | 0.0.4 | String

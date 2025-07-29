@@ -121,6 +121,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     private boolean healthCheckEnabled;
     private boolean jolokiaEnabled;
     private boolean metricsEnabled;
+    private String infoPath;
     private String healthPath;
     private String jolokiaPath;
     private boolean uploadEnabled;
@@ -207,6 +208,15 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
      */
     public void setJolokiaEnabled(boolean jolokiaEnabledEnabled) {
         this.jolokiaEnabled = jolokiaEnabledEnabled;
+    }
+
+    @ManagedAttribute(description = "The context-path for serving info status")
+    public String getInfoPath() {
+        return infoPath;
+    }
+
+    public void setInfoPath(String infoPath) {
+        this.infoPath = infoPath;
     }
 
     @ManagedAttribute(description = "The context-path for serving health check status")
@@ -447,7 +457,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     }
 
     protected void setupInfo() {
-        final Route info = router.route("/q/info");
+        final Route info = router.route(this.infoPath);
         info.method(HttpMethod.GET);
         info.produces("application/json");
 
@@ -563,7 +573,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         // use blocking handler as the task can take longer time to complete
         info.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpManagementEndpoint("/q/info", "GET", null,
+        platformHttpComponent.addHttpManagementEndpoint(this.infoPath, "GET", null,
                 "application/json", null);
     }
 

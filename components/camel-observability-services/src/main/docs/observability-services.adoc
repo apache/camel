@@ -119,9 +119,9 @@ In this case, it is recommended the usage of a JSR 160 compatible Java agent.
 
 ==== JMX Agent configuration
 
-When dealing with JMX,
-you may want
+When dealing with JMX, you may want
 to expose the information available via HTTP(S) protocol which would make JMX more suitable to cloud-based development.
 A possible way to expose the information is to use a JSR 160 compatible Java agent,
 whose goal is to interact as an adapter interface towards JMX, exposing an HTTP-based service instead.
+
 Follow the instructions provided in xref:manual::jmx.adoc#_how_to_use_a_java_agent[JMX Java Agent configuration].

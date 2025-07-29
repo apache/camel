@@ -32,6 +32,7 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         map.put("HealthPath", java.lang.String.class);
         map.put("Host", java.lang.String.class);
         map.put("InfoEnabled", boolean.class);
+        map.put("InfoPath", java.lang.String.class);
         map.put("JolokiaEnabled", boolean.class);
         map.put("JolokiaPath", java.lang.String.class);
         map.put("JwtKeystorePassword", java.lang.String.class);
@@ -69,6 +70,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "infoenabled":
         case "infoEnabled": target.setInfoEnabled(property(camelContext, boolean.class, value)); return true;
+        case "infopath":
+        case "infoPath": target.setInfoPath(property(camelContext, java.lang.String.class, value)); return true;
         case "jolokiaenabled":
         case "jolokiaEnabled": target.setJolokiaEnabled(property(camelContext, boolean.class, value)); return true;
         case "jolokiapath":
@@ -121,6 +124,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "host": return java.lang.String.class;
         case "infoenabled":
         case "infoEnabled": return boolean.class;
+        case "infopath":
+        case "infoPath": return java.lang.String.class;
         case "jolokiaenabled":
         case "jolokiaEnabled": return boolean.class;
         case "jolokiapath":
@@ -169,6 +174,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "host": return target.getHost();
         case "infoenabled":
         case "infoEnabled": return target.isInfoEnabled();
+        case "infopath":
+        case "infoPath": return target.getInfoPath();
         case "jolokiaenabled":
         case "jolokiaEnabled": return target.isJolokiaEnabled();
         case "jolokiapath":

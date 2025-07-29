@@ -36,6 +36,8 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private int port = 8080;
     @Metadata(defaultValue = "/")
     private String path = "/";
+    @Metadata(defaultValue = "/observe/info")
+    private String infoPath = "/observe/info";
     @Metadata(defaultValue = "/observe/health")
     private String healthPath = "/observe/health";
     @Metadata(defaultValue = "/observe/jolokia")
@@ -139,7 +141,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     }
 
     /**
-     * Whether to enable info console. If enabled then you can see some basic Camel information at /q/info
+     * Whether to enable info console. If enabled then you can see some basic Camel information at /observe/info
      */
     public void setInfoEnabled(boolean infoEnabled) {
         this.infoEnabled = infoEnabled;
@@ -165,7 +167,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
 
     /**
      * Whether to enable health-check console. If enabled then you can access health-check status on context-path:
-     * /q/health (default)
+     * /observe/health
      */
     public void setHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
@@ -176,7 +178,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     }
 
     /**
-     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia
+     * Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /observe/jolokia
      */
     public void setJolokiaEnabled(boolean jolokiaEnabled) {
         this.jolokiaEnabled = jolokiaEnabled;
@@ -187,10 +189,21 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     }
 
     /**
-     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics (default)
+     * Whether to enable metrics. If enabled then you can access metrics on context-path: /observe/metrics
      */
     public void setMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
+    }
+
+    public String getInfoPath() {
+        return infoPath;
+    }
+
+    /**
+     * The path endpoint used to expose the info status
+     */
+    public void setInfoPath(String infoPath) {
+        this.infoPath = infoPath;
     }
 
     public String getHealthPath() {
@@ -501,6 +514,14 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public HttpManagementServerConfigurationProperties withJwtKeystorePassword(String jwtKeystorePassword) {
         this.jwtKeystorePassword = jwtKeystorePassword;
+        return this;
+    }
+
+    /**
+     * The path endpoint used to expose the info status
+     */
+    public HttpManagementServerConfigurationProperties withInfoPath(String infoPath) {
+        this.infoPath = infoPath;
         return this;
     }
 
