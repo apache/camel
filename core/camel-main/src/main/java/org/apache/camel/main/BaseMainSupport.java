@@ -1444,16 +1444,16 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
             camelContext.setRestConfiguration(rest);
         }
+        if (!httpServerProperties.isEmpty() || mainConfigurationProperties.hasHttpServerConfiguration()) {
+            LOG.debug("Auto-configuring HTTP Server from loaded properties: {}", httpServerProperties.size());
+            setHttpServerProperties(camelContext, httpServerProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
         if (!httpManagementServerProperties.isEmpty() || mainConfigurationProperties.hasHttpManagementServerConfiguration()) {
             LOG.debug("Auto-configuring HTTP Management Server from loaded properties: {}",
                     httpManagementServerProperties.size());
             setHttpManagementServerProperties(camelContext, httpManagementServerProperties,
-                    mainConfigurationProperties.isAutoConfigurationFailFast(),
-                    autoConfiguredProperties);
-        }
-        if (!httpServerProperties.isEmpty() || mainConfigurationProperties.hasHttpServerConfiguration()) {
-            LOG.debug("Auto-configuring HTTP Server from loaded properties: {}", httpServerProperties.size());
-            setHttpServerProperties(camelContext, httpServerProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.platform.http.main;
 
 import java.util.Map;
@@ -23,6 +22,7 @@ import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 
 public class MainHttpFakeHealthCheck extends AbstractHealthCheck {
+
     protected MainHttpFakeHealthCheck() {
         super("camel", "consumer:fake");
     }

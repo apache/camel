@@ -26,6 +26,7 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         map.put("AuthenticationPath", java.lang.String.class);
         map.put("BasicPropertiesFile", java.lang.String.class);
         map.put("DevConsoleEnabled", boolean.class);
+        map.put("DownloadEnabled", boolean.class);
         map.put("Enabled", boolean.class);
         map.put("HealthCheckEnabled", boolean.class);
         map.put("HealthPath", java.lang.String.class);
@@ -40,6 +41,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         map.put("Path", java.lang.String.class);
         map.put("Port", int.class);
         map.put("SendEnabled", boolean.class);
+        map.put("UploadEnabled", boolean.class);
+        map.put("UploadSourceDir", java.lang.String.class);
         map.put("UseGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
     }
@@ -56,6 +59,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "basicPropertiesFile": target.setBasicPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
         case "devconsoleenabled":
         case "devConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
+        case "downloadenabled":
+        case "downloadEnabled": target.setDownloadEnabled(property(camelContext, boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckenabled":
         case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
@@ -80,6 +85,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
         case "sendenabled":
         case "sendEnabled": target.setSendEnabled(property(camelContext, boolean.class, value)); return true;
+        case "uploadenabled":
+        case "uploadEnabled": target.setUploadEnabled(property(camelContext, boolean.class, value)); return true;
+        case "uploadsourcedir":
+        case "uploadSourceDir": target.setUploadSourceDir(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -102,6 +111,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "basicPropertiesFile": return java.lang.String.class;
         case "devconsoleenabled":
         case "devConsoleEnabled": return boolean.class;
+        case "downloadenabled":
+        case "downloadEnabled": return boolean.class;
         case "enabled": return boolean.class;
         case "healthcheckenabled":
         case "healthCheckEnabled": return boolean.class;
@@ -126,6 +137,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "port": return int.class;
         case "sendenabled":
         case "sendEnabled": return boolean.class;
+        case "uploadenabled":
+        case "uploadEnabled": return boolean.class;
+        case "uploadsourcedir":
+        case "uploadSourceDir": return java.lang.String.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         default: return null;
@@ -144,6 +159,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "basicPropertiesFile": return target.getBasicPropertiesFile();
         case "devconsoleenabled":
         case "devConsoleEnabled": return target.isDevConsoleEnabled();
+        case "downloadenabled":
+        case "downloadEnabled": return target.isDownloadEnabled();
         case "enabled": return target.isEnabled();
         case "healthcheckenabled":
         case "healthCheckEnabled": return target.isHealthCheckEnabled();
@@ -168,6 +185,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "port": return target.getPort();
         case "sendenabled":
         case "sendEnabled": return target.isSendEnabled();
+        case "uploadenabled":
+        case "uploadEnabled": return target.isUploadEnabled();
+        case "uploadsourcedir":
+        case "uploadSourceDir": return target.getUploadSourceDir();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;

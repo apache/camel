@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.platform.http.main;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
@@ -28,12 +31,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -64,15 +69,23 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExceptionHelper;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.AntPathMatcher;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -110,6 +123,9 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     private boolean metricsEnabled;
     private String healthPath;
     private String jolokiaPath;
+    private boolean uploadEnabled;
+    private String uploadSourceDir;
+    private boolean downloadEnabled;
     private boolean sendEnabled;
 
     @Override
@@ -282,6 +298,42 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         configuration.setUseGlobalSslContextParameters(useGlobalSslContextParameters);
     }
 
+    @ManagedAttribute(description = "Whether file upload is enabled (only for development) (q/upload)")
+    public boolean isUploadEnabled() {
+        return uploadEnabled;
+    }
+
+    /**
+     * Whether file upload is enabled (only for development) (q/upload)
+     */
+    public void setUploadEnabled(boolean uploadEnabled) {
+        this.uploadEnabled = uploadEnabled;
+    }
+
+    @ManagedAttribute(description = "Directory for upload.")
+    public String getUploadSourceDir() {
+        return uploadSourceDir;
+    }
+
+    /**
+     * Directory for upload.
+     */
+    public void setUploadSourceDir(String uploadSourceDir) {
+        this.uploadSourceDir = uploadSourceDir;
+    }
+
+    @ManagedAttribute(description = "Whether file download is enabled (q/download)")
+    public boolean isDownloadEnabled() {
+        return downloadEnabled;
+    }
+
+    /**
+     * Whether file download is enabled (q/download)
+     */
+    public void setDownloadEnabled(boolean downloadEnabled) {
+        this.downloadEnabled = downloadEnabled;
+    }
+
     @ManagedAttribute(description = "Whether send message is enabled (q/send)")
     public boolean isSendEnabled() {
         return sendEnabled;
@@ -378,6 +430,15 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         }
         if (jolokiaEnabled) {
             setupJolokia();
+        }
+        if (uploadEnabled) {
+            if (uploadSourceDir == null) {
+                throw new IllegalArgumentException("UploadSourceDir must be configured when uploadEnabled=true");
+            }
+            setupUploadConsole(uploadSourceDir);
+        }
+        if (downloadEnabled) {
+            setupDownloadConsole();
         }
         if (sendEnabled) {
             setupSendConsole();
@@ -595,6 +656,199 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
 
         platformHttpComponent.addHttpManagementEndpoint(jolokiaPath, "GET,POST", null,
                 "text/plain,application/json", null);
+    }
+
+    protected void setupUploadConsole(final String dir) {
+        final Route upload = router.route("/q/upload/:filename")
+                .method(HttpMethod.PUT)
+                // need body handler to handle file uploads
+                .handler(BodyHandler.create(true));
+
+        final Route uploadDelete = router.route("/q/upload/:filename");
+        uploadDelete.method(HttpMethod.DELETE);
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                String name = ctx.pathParam("filename");
+                if (name == null) {
+                    ctx.response().setStatusCode(400);
+                    ctx.end();
+                    return;
+                }
+
+                int status = 200;
+                boolean delete = HttpMethod.DELETE == ctx.request().method();
+                if (delete) {
+                    if (name.contains("*")) {
+                        if (name.equals("*")) {
+                            name = "**";
+                        }
+                        AntPathMatcher match = AntPathMatcher.INSTANCE;
+                        File[] files = new File(dir).listFiles();
+                        if (files != null) {
+                            for (File f : files) {
+                                if (f.getName().startsWith(".") || f.isHidden()) {
+                                    continue;
+                                }
+                                if (match.match(name, f.getName())) {
+                                    LOG.info("Deleting file: {}/{}", dir, name);
+                                    FileUtil.deleteFile(f);
+                                }
+                            }
+                        }
+                    } else {
+                        File f = new File(dir, name);
+                        if (f.exists() && f.isFile()) {
+                            LOG.info("Deleting file: {}/{}", dir, name);
+                            FileUtil.deleteFile(f);
+                        }
+                    }
+                } else {
+                    File f = new File(dir, name);
+                    boolean exists = f.isFile() && f.exists();
+                    LOG.info("{} file: {}/{}", exists ? "Updating" : "Creating", dir, name);
+
+                    File tmp = new File(dir, name + ".tmp");
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(tmp, false);
+                        RequestBody rb = ctx.body();
+                        IOHelper.writeText(rb.asString(), fos);
+
+                        FileUtil.renameFileUsingCopy(tmp, f);
+                        FileUtil.deleteFile(tmp);
+                    } catch (Exception e) {
+                        // some kind of error
+                        LOG.warn("Error saving file: {}/{} due to: {}", dir, name, e.getMessage(), e);
+                        status = 500;
+                    } finally {
+                        IOHelper.close(fos);
+                        FileUtil.deleteFile(tmp);
+                    }
+                }
+
+                ctx.response().setStatusCode(status);
+                ctx.end();
+            }
+        };
+        // use blocking handler as the task can take longer time to complete
+        upload.handler(new BlockingHandlerDecorator(handler, true));
+        uploadDelete.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpManagementEndpoint("/q/upload", "PUT,DELETE",
+                "multipart/form-data", null, null);
+    }
+
+    protected void setupDownloadConsole() {
+        final Route download = router.route("/q/download/*")
+                .produces("text/plain")
+                .produces("application/octet-stream")
+                .method(HttpMethod.GET);
+
+        final AntPathMatcher matcher = AntPathMatcher.INSTANCE;
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                String name = StringHelper.after(ctx.normalizedPath(), "/q/download/");
+                boolean cp = "true".equals(ctx.queryParams().get("classpath"));
+                if (name == null || name.isBlank() || matcher.isPattern(name)) {
+                    Set<String> names = new TreeSet<>();
+                    if (cp) {
+                        // also look inside classpath
+                        PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
+                        resolver.addClassLoader(camelContext.getApplicationContextClassLoader());
+                        try {
+                            String pattern = "**/*";
+                            if (name != null && !name.isBlank()) {
+                                pattern = "**/" + name;
+                            }
+                            for (Resource res : resolver.findResources(pattern)) {
+                                String loc = res.getLocation();
+                                loc = LoggerHelper.sourceNameOnly(loc);
+                                names.add(loc);
+                            }
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+                    // always include routes
+                    for (org.apache.camel.Route route : camelContext.getRoutes()) {
+                        String loc = route.getSourceLocation();
+                        if (loc != null) {
+                            loc = LoggerHelper.sourceNameOnly(loc);
+                            if (name == null || name.isBlank() || matcher.match(name, loc)) {
+                                names.add(loc);
+                            }
+                        }
+                    }
+
+                    String acp = ctx.request().getHeader("Accept");
+                    boolean html = acp != null && acp.contains("html");
+                    StringJoiner sj;
+                    if (html) {
+                        String prefix = StringHelper.after(ctx.normalizedPath(), "/q/download/");
+                        if (prefix == null) {
+                            prefix = "/q/download/";
+                        } else {
+                            prefix = "";
+                        }
+                        ctx.response().putHeader("Content-Type", "text/html");
+                        sj = new StringJoiner("<br/>");
+                        for (String n : names) {
+                            sj.add("<a href=" + prefix + n + ">" + n + "</a>");
+                        }
+                    } else {
+                        ctx.response().putHeader("Content-Type", "text/plain");
+                        sj = new StringJoiner("\n");
+                        names.forEach(sj::add);
+                    }
+                    ctx.response().setStatusCode(200);
+                    ctx.end(sj.toString());
+                } else {
+                    // load file as resource (try both classpath and file)
+                    ResourceLoader loader = PluginHelper.getResourceLoader(camelContext);
+                    Resource res = loader.resolveResource("classpath:" + name);
+                    if (res == null || !res.exists()) {
+                        // attempt without path
+                        res = loader.resolveResource("classpath:" + FileUtil.stripPath(name));
+                    }
+                    if (res == null || !res.exists()) {
+                        for (org.apache.camel.Route route : camelContext.getRoutes()) {
+                            String loc = route.getSourceLocation();
+                            if (loc != null) {
+                                loc = LoggerHelper.sourceNameOnly(loc);
+                                if (matcher.match(name, loc)) {
+                                    res = route.getSourceResource();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (res != null && res.exists()) {
+                        ctx.response().putHeader("Content-Type", "application/octet-stream");
+                        ctx.response().putHeader("Content-Disposition",
+                                "attachment; filename=\"" + FileUtil.stripPath(name) + "\"");
+                        ctx.response().setStatusCode(200);
+                        String data = null;
+                        try {
+                            data = IOHelper.loadText(res.getInputStream());
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                        ctx.end(data);
+                    } else {
+                        ctx.response().setStatusCode(204);
+                        ctx.end();
+                    }
+                }
+            }
+        };
+        // use blocking handler as the task can take longer time to complete
+        download.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpManagementEndpoint("/q/download", "GET",
+                null, "text/plain,application/octet-stream", null);
     }
 
     protected void setupSendConsole() {

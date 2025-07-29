@@ -38,6 +38,7 @@ import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -214,6 +215,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
+        ServiceHelper.startService(server);
         String routerName = VertxPlatformHttpRouter.getRouterNameFromPort(getPort());
         router = VertxPlatformHttpRouter.lookup(camelContext, routerName);
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);

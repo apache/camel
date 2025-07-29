@@ -32,8 +32,8 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private boolean enabled;
     @Metadata(defaultValue = "0.0.0.0")
     private String host = "0.0.0.0";
-    @Metadata(defaultValue = "9876")
-    private int port = 9876;
+    @Metadata(defaultValue = "8080")
+    private int port = 8080;
     @Metadata(defaultValue = "/")
     private String path = "/";
     @Metadata(defaultValue = "/observe/health")
@@ -46,6 +46,9 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private boolean healthCheckEnabled;
     private boolean jolokiaEnabled;
     private boolean metricsEnabled;
+    private boolean uploadEnabled;
+    private String uploadSourceDir;
+    private boolean downloadEnabled;
     private boolean sendEnabled;
 
     @Metadata(label = "security")
@@ -212,6 +215,44 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
         this.jolokiaPath = jolokiaPath;
     }
 
+    public boolean isUploadEnabled() {
+        return uploadEnabled;
+    }
+
+    /**
+     * Whether to enable file upload via HTTP (not intended for production use). This functionality is for development
+     * to be able to reload Camel routes and code with source changes (if reload is enabled). If enabled then you can
+     * upload/delete files via HTTP PUT/DELETE on context-path: /q/upload/{name}. You must also configure the
+     * uploadSourceDir option.
+     */
+    public void setUploadEnabled(boolean uploadEnabled) {
+        this.uploadEnabled = uploadEnabled;
+    }
+
+    public String getUploadSourceDir() {
+        return uploadSourceDir;
+    }
+
+    /**
+     * Source directory when upload is enabled.
+     */
+    public void setUploadSourceDir(String uploadSourceDir) {
+        this.uploadSourceDir = uploadSourceDir;
+    }
+
+    public boolean isDownloadEnabled() {
+        return downloadEnabled;
+    }
+
+    /**
+     * Whether to enable file download via HTTP. This makes it possible to browse and download resource source files
+     * such as Camel XML or YAML routes. Only enable this for development, troubleshooting or special situations for
+     * management and monitoring.
+     */
+    public void setDownloadEnabled(boolean downloadEnabled) {
+        this.downloadEnabled = downloadEnabled;
+    }
+
     public boolean isSendEnabled() {
         return sendEnabled;
     }
@@ -373,6 +414,35 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public HttpManagementServerConfigurationProperties withMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
+        return this;
+    }
+
+    /**
+     * Whether to enable file upload via HTTP (not intended for production use). This functionality is for development
+     * to be able to reload Camel routes and code with source changes (if reload is enabled). If enabled then you can
+     * upload/delete files via HTTP PUT/DELETE on context-path: /q/upload/{name}. You must also configure the
+     * uploadSourceDir option.
+     */
+    public HttpManagementServerConfigurationProperties withUploadEnabled(boolean uploadEnabled) {
+        this.uploadEnabled = uploadEnabled;
+        return this;
+    }
+
+    /**
+     * Source directory when upload is enabled.
+     */
+    public HttpManagementServerConfigurationProperties withUploadSourceDir(String uploadSourceDir) {
+        this.uploadSourceDir = uploadSourceDir;
+        return this;
+    }
+
+    /**
+     * Whether to enable file download via HTTP. This makes it possible to browse and download resource source files
+     * such as Camel XML or YAML routes. Only enable this for development, troubleshooting or special situations for
+     * management and monitoring.
+     */
+    public HttpManagementServerConfigurationProperties withDownloadEnabled(boolean downloadEnabled) {
+        this.downloadEnabled = downloadEnabled;
         return this;
     }
 
