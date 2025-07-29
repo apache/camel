@@ -156,8 +156,7 @@ public class ListMetric extends ProcessWatchCommand {
                                     row.metricDescription = jo.getString("description");
                                     row.metricId = extractId(jo);
                                     row.tags = extractTags(jo);
-                                    row.count = 0;
-                                    row.count = jo.getDoubleOrDefault("value", 0);
+                                    row.count = jo.getDouble("value");
 
                                     if (custom && row.metricName.startsWith("Camel")) {
                                         continue; // skip internal camel metrics
