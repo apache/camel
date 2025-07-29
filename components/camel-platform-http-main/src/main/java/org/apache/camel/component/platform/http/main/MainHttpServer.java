@@ -175,7 +175,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         configuration.getBodyHandler().setUploadsDirectory(fileUploadDirectory);
     }
 
-    @ManagedAttribute(description = "Whether info is enabled (/q/info)")
+    @ManagedAttribute(description = "Whether info is enabled")
     @Deprecated(since = "4.12.0")
     public boolean isInfoEnabled() {
         return infoEnabled;
@@ -220,7 +220,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         return staticEnabled;
     }
 
-    @ManagedAttribute(description = "Whether dev console is enabled (/q/dev)")
+    @ManagedAttribute(description = "Whether dev console is enabled")
     @Deprecated(since = "4.12.0")
     public boolean isDevConsoleEnabled() {
         return devConsoleEnabled;
@@ -239,7 +239,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         return healthCheckEnabled;
     }
 
-    @ManagedAttribute(description = "Whether Jolokia is enabled (q/jolokia)")
+    @ManagedAttribute(description = "Whether Jolokia is enabled")
     @Deprecated(since = "4.12.0")
     public boolean isJolokiaEnabled() {
         return jolokiaEnabled;
@@ -296,7 +296,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.metricsEnabled = metricsEnabled;
     }
 
-    @ManagedAttribute(description = "Whether file upload is enabled (only for development) (q/upload)")
+    @ManagedAttribute(description = "Whether file upload is enabled (only for development)")
     public boolean isUploadEnabled() {
         return uploadEnabled;
     }
@@ -320,7 +320,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.uploadSourceDir = uploadSourceDir;
     }
 
-    @ManagedAttribute(description = "Whether file download is enabled (q/download)")
+    @ManagedAttribute(description = "Whether file download is enabled")
     public boolean isDownloadEnabled() {
         return downloadEnabled;
     }
@@ -332,7 +332,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.downloadEnabled = downloadEnabled;
     }
 
-    @ManagedAttribute(description = "Whether send message is enabled (q/send)")
+    @ManagedAttribute(description = "Whether send message is enabled")
     public boolean isSendEnabled() {
         return sendEnabled;
     }

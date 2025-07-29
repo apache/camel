@@ -148,7 +148,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         configuration.getBodyHandler().setUploadsDirectory(fileUploadDirectory);
     }
 
-    @ManagedAttribute(description = "Whether info is enabled (/observe/info)")
+    @ManagedAttribute(description = "Whether info is enabled")
     public boolean isInfoEnabled() {
         return infoEnabled;
     }
@@ -157,7 +157,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         this.infoEnabled = infoEnabled;
     }
 
-    @ManagedAttribute(description = "Whether dev console is enabled (/observe/dev)")
+    @ManagedAttribute(description = "Whether dev console is enabled")
     public boolean isDevConsoleEnabled() {
         return devConsoleEnabled;
     }
@@ -174,7 +174,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         return healthCheckEnabled;
     }
 
-    @ManagedAttribute(description = "Whether Jolokia is enabled (observe/jolokia)")
+    @ManagedAttribute(description = "Whether Jolokia is enabled")
     public boolean isJolokiaEnabled() {
         return jolokiaEnabled;
     }
