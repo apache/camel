@@ -167,7 +167,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
     @Override
     public Thread newThread(String name, Runnable runnable) {
-        ThreadFactory factory = createThreadFactory(name, true);
+        ThreadFactory factory = createThreadFactory(null, name, true);
         return factory.newThread(runnable);
     }
 
@@ -200,7 +200,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         ThreadPoolProfile defaultProfile = getDefaultThreadPoolProfile();
         profile.addDefaults(defaultProfile);
 
-        ThreadFactory threadFactory = createThreadFactory(sanitizedName, true);
+        ThreadFactory threadFactory = createThreadFactory(source, sanitizedName, true);
         ExecutorService executorService = threadPoolFactory.newThreadPool(profile, threadFactory);
         onThreadPoolCreated(executorService, source, profile.getId());
         if (LOG.isDebugEnabled()) {
@@ -226,7 +226,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     @Override
     public ExecutorService newCachedThreadPool(Object source, String name) {
         String sanitizedName = URISupport.sanitizeUri(name);
-        ExecutorService answer = threadPoolFactory.newCachedThreadPool(createThreadFactory(sanitizedName, true));
+        ExecutorService answer = threadPoolFactory.newCachedThreadPool(createThreadFactory(source, sanitizedName, true));
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
@@ -260,7 +260,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         String sanitizedName = URISupport.sanitizeUri(name);
         profile.addDefaults(getDefaultThreadPoolProfile());
         ScheduledExecutorService answer
-                = threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(sanitizedName, true));
+                = threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(source, sanitizedName, true));
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
@@ -474,6 +474,13 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         if (!threadFactoryListeners.isEmpty()) {
             threadFactoryListeners.sort(OrderedComparator.get());
         }
+
+        // enrich threads for MDC logging
+        boolean usedMDCLogging = getCamelContext().isUseMDCLogging() != null && getCamelContext().isUseMDCLogging();
+        if (usedMDCLogging) {
+            threadFactoryListeners.add(new MDCThreadFactoryListener());
+        }
+
         ServiceHelper.startService(threadPoolFactory);
     }
 
@@ -591,10 +598,10 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         onNewExecutorService(executorService);
     }
 
-    protected ThreadFactory createThreadFactory(String name, boolean daemon) {
+    protected ThreadFactory createThreadFactory(Object source, String name, boolean daemon) {
         ThreadFactory factory = new CamelThreadFactory(threadNamePattern, name, daemon);
         for (ThreadFactoryListener listener : threadFactoryListeners) {
-            factory = listener.onNewThreadFactory(factory);
+            factory = listener.onNewThreadFactory(source, factory);
         }
         return factory;
     }

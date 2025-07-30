@@ -26,7 +26,7 @@ import org.apache.camel.spi.annotations.JdkService;
 public class OpenTelemetryInstrumentedThreadFactoryListener implements ExecutorServiceManager.ThreadFactoryListener {
 
     @Override
-    public ThreadFactory onNewThreadFactory(ThreadFactory factory) {
+    public ThreadFactory onNewThreadFactory(Object source, ThreadFactory factory) {
         return runnable -> factory.newThread(Context.current().wrap(runnable));
     }
 }

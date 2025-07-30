@@ -572,7 +572,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         // custom thread factory
         ThreadFactory myFactory = r -> new Thread(r, "MyFactory");
         // hook custom factory into Camel
-        context.getExecutorServiceManager().addThreadFactoryListener(factory -> myFactory);
+        context.getExecutorServiceManager().addThreadFactoryListener(((source, factory) -> myFactory));
         // create thread
         Thread thread = context.getExecutorServiceManager().newThread("Cool", () -> {
             // noop
@@ -592,7 +592,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         // custom thread factory
         ThreadFactory myFactory = r -> new Thread(r, "MyFactory2");
         // hook custom factory into Camel via registry
-        ExecutorServiceManager.ThreadFactoryListener listener = factory -> myFactory;
+        ExecutorServiceManager.ThreadFactoryListener listener = (source, factory) -> myFactory;
         c.getRegistry().bind("myListener", listener);
         c.start();
 

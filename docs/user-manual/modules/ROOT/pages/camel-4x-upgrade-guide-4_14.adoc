@@ -8,6 +8,9 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 === camel-core
 
+The `org.apache.camel.spi.ExecutorServiceManager.ThreadFactoryListener` has changed the method signature to include the source,
+so the method is changed from `ThreadFactory onNewThreadFactory(ThreadFactory factory)` to `ThreadFactory onNewThreadFactory(Object source, ThreadFactory factory)`
+
 ==== Splitter and Multicast EIPs
 
 When using `shareUnitOfWork=true` in Split or Multicast EIPs, then Camel will now use a single shared `UnitOfWork` instance (parent)

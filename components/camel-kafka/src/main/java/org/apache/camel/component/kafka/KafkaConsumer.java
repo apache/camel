@@ -148,7 +148,7 @@ public class KafkaConsumer extends DefaultConsumer
             }
         }
 
-        executor = endpoint.createExecutor();
+        executor = endpoint.createExecutor(this);
 
         String topic = endpoint.getConfiguration().getTopic();
         Pattern pattern = null;
