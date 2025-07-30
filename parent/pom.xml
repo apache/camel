@@ -77,7 +77,7 @@
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.32.10</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.32.11</aws-java-sdk2-version>
         <aws-xray-version>2.18.3</aws-xray-version>
         <azure-sdk-bom-version>1.2.36</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.31</azure-storage-blob-changefeed-version>
@@ -106,7 +106,7 @@
         <commons-codec-version>1.19.0</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
         <commons-collections4-version>4.5.0</commons-collections4-version>
-        <commons-compress-version>1.27.1</commons-compress-version>
+        <commons-compress-version>1.28.0</commons-compress-version>
         <commons-csv-version>1.14.0</commons-csv-version>
         <commons-cli-version>1.4</commons-cli-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
@@ -148,12 +148,12 @@
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <ehcache3-version>3.10.8</ehcache3-version>
         <elasticsearch-java-client-version>9.0.4</elasticsearch-java-client-version>
-        <elasticsearch-java-client-sniffer-version>9.0.4</elasticsearch-java-client-sniffer-version>
+        <elasticsearch-java-client-sniffer-version>9.1.0</elasticsearch-java-client-sniffer-version>
         <elytron-web>4.1.2.Final</elytron-web>
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
         <exec-maven-plugin-version>3.5.1</exec-maven-plugin-version>
-        <fastjson-version>2.0.57</fastjson-version>
+        <fastjson-version>2.0.58</fastjson-version>
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
@@ -200,7 +200,7 @@
         <google-cloud-functions-version>2.68.0</google-cloud-functions-version>
         <google-cloud-http-client-version>1.47.1</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.141.1</google-cloud-pubsub-version>
-        <google-cloud-pubsublite-version>1.15.11</google-cloud-pubsublite-version>
+        <google-cloud-pubsublite-version>1.15.12</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.68.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.54.0</google-cloud-storage-version>
         <graaljs-version>24.2.2</graaljs-version>
@@ -335,7 +335,7 @@
         <kudu-version>1.18.0</kudu-version>
         <langchain4j-version>1.1.0</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
-        <langchain4j-rc-version>1.1.0-rc1</langchain4j-rc-version> <!-- dependencies in 1.1.0 -rc 1 should move to final with Langchain4j 1.2.0 -->
+        <langchain4j-rc-version>1.2.0</langchain4j-rc-version> <!-- dependencies in 1.1.0 -rc 1 should move to final with Langchain4j 1.2.0 -->
         <langchain4j-beta-version>1.2.0-beta8</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
         <langchain4j-community-version>1.1.0-beta7</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
         <leveldbjni-version>1.8</leveldbjni-version>

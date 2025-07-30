@@ -132,8 +132,12 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
             ListObjectsRequest.Builder listObjectsRequest = ListObjectsRequest.builder();
             listObjectsRequest.bucket(bucketName);
-            listObjectsRequest.prefix(getConfiguration().getPrefix());
-            listObjectsRequest.delimiter(getConfiguration().getDelimiter());
+            if (ObjectHelper.isNotEmpty(getConfiguration().getPrefix())) {
+                listObjectsRequest.prefix(getConfiguration().getPrefix());
+            }
+            if (ObjectHelper.isNotEmpty(getConfiguration().getDelimiter())) {
+                listObjectsRequest.delimiter(getConfiguration().getDelimiter());
+            }
 
             if (maxMessagesPerPoll > 0) {
                 listObjectsRequest.maxKeys(maxMessagesPerPoll);
@@ -148,7 +152,16 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             ListObjectsResponse listObjects = getAmazonS3Client().listObjects(listObjectsRequest.build());
 
             if (Boolean.TRUE.equals(listObjects.isTruncated())) {
-                marker = listObjects.nextMarker();
+                String next = listObjects.nextMarker();
+                if (next == null && listObjects.hasContents() && ObjectHelper.isEmpty(listObjects.prefix())) {
+                    // fallback to use last key from the returned list of objects
+                    int size = listObjects.contents().size();
+                    if (size > 0) {
+                        S3Object last = listObjects.contents().get(size - 1);
+                        next = last.key();
+                    }
+                }
+                marker = next;
                 LOG.trace("Returned list is truncated, so setting next marker: {}", marker);
             } else {
                 // no more data so clear marker
