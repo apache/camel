@@ -295,6 +295,12 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
+
+            // avoid duplicate context-path
+            if (basePath.equals(config.getContextPath())) {
+                basePath = "";
+            }
+
             Map<String, Object> copy = new HashMap<>(parameters); // defensive copy of the parameters
             Consumer consumer = factory.createConsumer(getCamelContext(), processor, basePath, config, copy);
             if (consumer instanceof PlatformHttpConsumerAware phca) {
