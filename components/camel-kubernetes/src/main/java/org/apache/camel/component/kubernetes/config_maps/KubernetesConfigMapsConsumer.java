@@ -57,7 +57,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
 
         configMapWatcher = new ConfigMapsConsumerTask();
         executor.submit(configMapWatcher);

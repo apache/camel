@@ -64,7 +64,7 @@ public class NatsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         LOG.debug("Starting Nats Consumer");
-        this.executor = this.getEndpoint().createExecutor();
+        this.executor = this.getEndpoint().createExecutor(this);
 
         LOG.debug("Getting Nats Connection");
         this.connection = this.getEndpoint().getConfiguration().getConnection() != null

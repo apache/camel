@@ -57,7 +57,7 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
 
         podsWatcher = new PodsConsumerTask();
         executor.submit(podsWatcher);

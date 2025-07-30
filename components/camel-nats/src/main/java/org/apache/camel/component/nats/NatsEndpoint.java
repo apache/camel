@@ -83,8 +83,8 @@ public class NatsEndpoint extends DefaultEndpoint
         return "nats";
     }
 
-    public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+    public ExecutorService createExecutor(Object source) {
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source,
                 "NatsTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
     }
 

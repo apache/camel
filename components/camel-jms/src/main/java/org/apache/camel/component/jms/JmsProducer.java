@@ -577,7 +577,7 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         String name = "JmsReplyManagerTimeoutChecker[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";
         ScheduledExecutorService replyManagerScheduledExecutorService
-                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, name);
         replyManager.setScheduledExecutorService(replyManagerScheduledExecutorService);
 
         name = "JmsReplyManagerOnTimeout[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";
@@ -610,7 +610,7 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         String name = "JmsReplyManagerTimeoutChecker[" + replyTo + "]";
         ScheduledExecutorService replyManagerScheduledExecutorService
-                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, name);
         replyManager.setScheduledExecutorService(replyManagerScheduledExecutorService);
 
         name = "JmsReplyManagerOnTimeout[" + replyTo + "]";

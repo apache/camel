@@ -63,7 +63,7 @@ public class PgEventConsumer extends DefaultConsumer {
         if (endpoint.getWorkerPool() != null) {
             workerPool = endpoint.getWorkerPool();
         } else {
-            workerPool = endpoint.createWorkerPool();
+            workerPool = endpoint.createWorkerPool(this);
             shutdownWorkerPool = true;
         }
         // used for re-connecting to the database

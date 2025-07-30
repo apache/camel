@@ -56,7 +56,7 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
 
         nsWatcher = new NamespacesConsumerTask();
         executor.submit(nsWatcher);

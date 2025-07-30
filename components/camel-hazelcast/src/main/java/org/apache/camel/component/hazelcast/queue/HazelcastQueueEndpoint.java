@@ -69,8 +69,8 @@ public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
         return new HazelcastQueueProducer(hazelcastInstance, this, cacheName);
     }
 
-    public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "QueueConsumer",
+    public ExecutorService createExecutor(Object source) {
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source, "QueueConsumer",
                 configuration.getPoolSize());
     }
 

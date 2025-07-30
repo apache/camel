@@ -68,10 +68,11 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
          * Listener when Camel has created a new {@link ThreadFactory} to be used by this
          * {@link ExecutorServiceManager}.
          *
+         * @param  source  optional source where the thread is being used (such as a {@link org.apache.camel.Consumer}.
          * @param  factory the created factory
          * @return         the factory to use by this {@link ExecutorServiceManager}.
          */
-        ThreadFactory onNewThreadFactory(ThreadFactory factory);
+        ThreadFactory onNewThreadFactory(Object source, ThreadFactory factory);
     }
 
     /**

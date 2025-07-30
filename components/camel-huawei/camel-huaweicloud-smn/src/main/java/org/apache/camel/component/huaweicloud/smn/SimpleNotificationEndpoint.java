@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.huaweicloud.smn;
 
-import java.util.concurrent.ExecutorService;
-
 import com.huaweicloud.sdk.smn.v2.SmnClient;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -246,8 +244,4 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
         this.smnClient = smnClient;
     }
 
-    public ExecutorService createExecutor() {
-        // TODO: Delete me when you implemented your custom component
-        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "SimpleNotificationConsumer");
-    }
 }

@@ -179,7 +179,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 workerPool = configuration.getWorkerPool();
                 shutdownWorkerPool = false;
             } else {
-                workerPool = endpoint.createProducerExecutor();
+                workerPool = endpoint.createProducerExecutor(this);
                 // we create a thread pool so we should also shut it down
                 shutdownWorkerPool = true;
             }

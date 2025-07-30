@@ -56,7 +56,7 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
 
         nodesWatcher = new NodesConsumerTask();
         executor.submit(nodesWatcher);

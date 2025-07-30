@@ -44,7 +44,7 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = ((HazelcastQueueEndpoint) getEndpoint()).createExecutor();
+        executor = ((HazelcastQueueEndpoint) getEndpoint()).createExecutor(this);
 
         CamelItemListener camelItemListener = new CamelItemListener(this, cacheName);
         queueConsumerTask = new QueueConsumerTask(camelItemListener);

@@ -142,8 +142,8 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
         return consumer;
     }
 
-    public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+    public ExecutorService createExecutor(Object source) {
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source,
                 "GooglePubsubConsumer[" + getDestinationName() + "]", concurrentConsumers);
     }
 

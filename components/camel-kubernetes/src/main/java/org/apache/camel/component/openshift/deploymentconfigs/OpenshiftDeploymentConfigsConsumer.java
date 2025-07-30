@@ -58,7 +58,7 @@ public class OpenshiftDeploymentConfigsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
 
         deploymentsWatcher = new DeploymentsConfigConsumerTask();
         executor.submit(deploymentsWatcher);

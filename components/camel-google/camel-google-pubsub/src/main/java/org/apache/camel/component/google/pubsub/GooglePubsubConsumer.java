@@ -78,7 +78,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
         super.doStart();
 
         localLog.info("Starting Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
-        executor = endpoint.createExecutor();
+        executor = endpoint.createExecutor(this);
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
             executor.submit(new SubscriberWrapper());
         }
