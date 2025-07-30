@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.huaweicloud.smn;
 
-import java.util.concurrent.ExecutorService;
-
 import com.huaweicloud.sdk.smn.v2.SmnClient;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
