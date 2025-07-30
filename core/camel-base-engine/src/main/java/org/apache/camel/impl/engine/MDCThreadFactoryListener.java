@@ -16,20 +16,19 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.concurrent.ThreadFactory;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.MDC;
 
-import java.util.concurrent.ThreadFactory;
-
 /**
- * MDC {@link org.apache.camel.spi.ExecutorServiceManager.ThreadFactoryListener} which will
- * include the MDC information for route id which allows MDC logging to pin-point to the route
- * that logs. This makes it possible to include this information earlier such as from the
- * internal work that a consumer performs before routing {@link org.apache.camel.Exchange}
- * where the {@link MDCUnitOfWork} would include this information.
+ * MDC {@link org.apache.camel.spi.ExecutorServiceManager.ThreadFactoryListener} which will include the MDC information
+ * for route id which allows MDC logging to pin-point to the route that logs. This makes it possible to include this
+ * information earlier such as from the internal work that a consumer performs before routing
+ * {@link org.apache.camel.Exchange} where the {@link MDCUnitOfWork} would include this information.
  */
 public class MDCThreadFactoryListener implements ExecutorServiceManager.ThreadFactoryListener {
 
