@@ -21,11 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.dashjoin.jsonata.Jsonata;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
@@ -146,14 +144,12 @@ public class JsonataEndpoint extends ResourceEndpoint {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
 
-        Map<String, Object> input;
+        Object input;
         if (getInputType() == JsonataInputOutputType.JsonString) {
             InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-            input = mapper.readValue(inputStream, new TypeReference<>() {
-            });
+            input = mapper.readValue(inputStream, Object.class);
         } else {
-            input = mapper.convertValue(exchange.getIn().getBody(), new TypeReference<>() {
-            });
+            input = mapper.convertValue(exchange.getIn().getBody(), Object.class);
         }
 
         InputStream is = getResourceAsInputStream();
