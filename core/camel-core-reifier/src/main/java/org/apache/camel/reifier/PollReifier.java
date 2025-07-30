@@ -37,7 +37,7 @@ public class PollReifier extends ProcessorReifier<PollDefinition> {
     public Processor createProcessor() throws Exception {
         String uri;
         if (definition.getEndpointConsumerBuilder() != null) {
-            uri = definition.getEndpointConsumerBuilder().getRawUri();
+            uri = definition.getEndpointConsumerBuilder().getUri(getCamelContext());
         } else {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
         }

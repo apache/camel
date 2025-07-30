@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.Metadata;
@@ -173,7 +174,9 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
 
     public String getEndpointUri() {
         if (endpointConsumerBuilder != null) {
-            return endpointConsumerBuilder.getUri();
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
+            CamelContext context = route != null ? route.getCamelContext() : null;
+            return endpointConsumerBuilder.getUri(context);
         } else if (endpoint != null) {
             return endpoint.getEndpointUri();
         } else {
