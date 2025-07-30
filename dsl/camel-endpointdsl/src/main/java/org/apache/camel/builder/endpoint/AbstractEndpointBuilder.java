@@ -17,10 +17,8 @@
 package org.apache.camel.builder.endpoint;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
@@ -40,7 +38,6 @@ public class AbstractEndpointBuilder {
     protected final String path;
     protected final Map<String, Object> properties = new LinkedHashMap<>();
     protected final Map<String, Map<String, Object>> multiValues = new HashMap<>();
-    private volatile Map<String, Object> originalProperties;
     private volatile Language simple;
 
     public AbstractEndpointBuilder(String scheme, String path) {
@@ -49,46 +46,8 @@ public class AbstractEndpointBuilder {
     }
 
     public Endpoint resolve(CamelContext context) throws NoSuchEndpointException {
-        // properties may contain property placeholder which should be resolved
-        if (originalProperties == null) {
-            originalProperties = new LinkedHashMap<>(properties);
-        } else {
-            // reload from original properties before resolving placeholder in case its updated
-            properties.putAll(originalProperties);
-        }
-        resolvePropertyPlaceholders(context, properties);
-
-        Map<String, Object> remaining = new LinkedHashMap<>();
-        // we should not bind complex objects to registry as we create the endpoint via the properties as-is
-        NormalizedEndpointUri uri = computeUri(remaining, context, false, true);
-        Endpoint endpoint = context.getCamelContextExtension().getEndpoint(uri, properties);
-        if (endpoint == null) {
-            throw new NoSuchEndpointException(uri.getUri());
-        }
-
-        return endpoint;
-    }
-
-    private static void resolvePropertyPlaceholders(CamelContext context, Map<String, Object> properties) {
-        Set<String> toRemove = new HashSet<>();
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            Object value = entry.getValue();
-            if (value instanceof String) {
-                String text = (String) value;
-                String changed = context.getCamelContextExtension().resolvePropertyPlaceholders(text, true);
-                if (changed.startsWith(PropertiesComponent.PREFIX_OPTIONAL_TOKEN)) {
-                    // unresolved then remove it
-                    toRemove.add(entry.getKey());
-                } else if (!changed.equals(text)) {
-                    entry.setValue(changed);
-                }
-            }
-        }
-        if (!toRemove.isEmpty()) {
-            for (String key : toRemove) {
-                properties.remove(key);
-            }
-        }
+        String uri = getUri(context);
+        return context.getEndpoint(uri);
     }
 
     public <T extends Endpoint> T resolve(CamelContext context, Class<T> endpointType) throws NoSuchEndpointException {
@@ -96,8 +55,8 @@ public class AbstractEndpointBuilder {
         return endpointType.cast(answer);
     }
 
-    public String getUri() {
-        return computeUri(new LinkedHashMap<>(), null, false, true).getUri();
+    public String getUri(CamelContext context) {
+        return computeUri(new LinkedHashMap<>(), context, true, true).getUri();
     }
 
     public String getRawUri() {
@@ -148,8 +107,15 @@ public class AbstractEndpointBuilder {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object val = entry.getValue();
-            if (val instanceof String) {
-                params.put(key, val);
+            if (val instanceof String text) {
+                String changed = text;
+                if (camelContext != null) {
+                    changed = camelContext.getCamelContextExtension().resolvePropertyPlaceholders(text, true);
+                }
+                if (changed != null && !changed.startsWith(PropertiesComponent.PREFIX_OPTIONAL_TOKEN)) {
+                    // resolve then use
+                    params.put(key, changed);
+                }
             } else if (val instanceof Number || val instanceof Boolean || val instanceof Enum<?>) {
                 params.put(key, val.toString());
             } else if (camelContext != null && bindToRegistry) {
@@ -164,7 +130,7 @@ public class AbstractEndpointBuilder {
 
     @Override
     public String toString() {
-        return getUri();
+        return getRawUri();
     }
 
     public void doSetProperty(String key, Object value) {

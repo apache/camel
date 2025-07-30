@@ -173,7 +173,7 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
 
     public String getEndpointUri() {
         if (endpointConsumerBuilder != null) {
-            return endpointConsumerBuilder.getUri();
+            return endpointConsumerBuilder.getRawUri();
         } else if (endpoint != null) {
             return endpoint.getEndpointUri();
         } else {

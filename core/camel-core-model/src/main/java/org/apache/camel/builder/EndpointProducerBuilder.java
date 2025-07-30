@@ -30,11 +30,6 @@ import org.apache.camel.Expression;
 public interface EndpointProducerBuilder extends EndpointProducerResolver {
 
     /**
-     * Builds the encoded url of this endpoint. This API is only intended for Camel internally.
-     */
-    String getUri();
-
-    /**
      * Builds the raw url of this endpoint. This API is only intended for Camel internally.
      */
     String getRawUri();
