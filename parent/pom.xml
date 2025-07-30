@@ -200,7 +200,7 @@
         <google-cloud-functions-version>2.68.0</google-cloud-functions-version>
         <google-cloud-http-client-version>1.47.1</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.141.1</google-cloud-pubsub-version>
-        <google-cloud-pubsublite-version>1.15.11</google-cloud-pubsublite-version>
+        <google-cloud-pubsublite-version>1.15.12</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.68.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.54.0</google-cloud-storage-version>
         <graaljs-version>24.2.2</graaljs-version>
