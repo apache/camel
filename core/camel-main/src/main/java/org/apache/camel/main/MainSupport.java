@@ -286,9 +286,15 @@ public abstract class MainSupport extends BaseMainSupport {
                 int max = durationMaxMessages;
                 long sec = durationMaxSeconds;
                 int exit = durationHitExitCode;
-                if (sec > 0) {
-                    LOG.info("Waiting until complete: Duration max {} seconds", sec);
-                    boolean zero = shutdownStrategy.await(sec, TimeUnit.SECONDS);
+                if (sec == -1 || sec > 0) {
+                    boolean zero;
+                    if (sec > 0) {
+                        LOG.info("Waiting until complete: Duration max {} seconds", sec);
+                        zero = shutdownStrategy.await(sec, TimeUnit.SECONDS);
+                    } else {
+                        LOG.info("Shutting down Camel immediately because duration max seconds is -1");
+                        zero = shutdownStrategy.await(1, TimeUnit.MILLISECONDS);
+                    }
                     if (!zero) {
                         if ("stop".equalsIgnoreCase(durationMaxAction)) {
                             LOG.info("Duration max seconds triggering stopping all routes");

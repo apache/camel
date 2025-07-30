@@ -667,7 +667,7 @@ public class Run extends CamelCommand {
             main.setStubPattern("*");
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
-            main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+            main.addInitialProperty("camel.main.durationMaxSeconds", "-1");
         } else if (debugRun) {
             main.addInitialProperty("camel.jbang.debug", "true");
         } else if (transformRun) {
@@ -676,7 +676,7 @@ public class Run extends CamelCommand {
             main.setStubPattern("*");
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
-            main.addInitialProperty("camel.main.durationMaxSeconds", "1");
+            main.addInitialProperty("camel.main.durationMaxSeconds", "-1");
         } else if (transformMessageRun) {
             // do not start any routes
             main.addInitialProperty("camel.main.autoStartup", "false");
