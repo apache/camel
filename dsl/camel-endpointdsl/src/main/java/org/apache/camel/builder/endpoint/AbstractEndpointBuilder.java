@@ -55,12 +55,8 @@ public class AbstractEndpointBuilder {
         return endpointType.cast(answer);
     }
 
-    public String getUri() {
-        return getUri(null);
-    }
-
     public String getUri(CamelContext context) {
-        return computeUri(new LinkedHashMap<>(), context, context != null, true).getUri();
+        return computeUri(new LinkedHashMap<>(), context, true, true).getUri();
     }
 
     public String getRawUri() {
@@ -134,7 +130,7 @@ public class AbstractEndpointBuilder {
 
     @Override
     public String toString() {
-        return getUri();
+        return getRawUri();
     }
 
     public void doSetProperty(String key, Object value) {
