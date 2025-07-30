@@ -21,7 +21,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
@@ -63,9 +62,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     @Override
     public String getEndpointUri() {
         if (endpointProducerBuilder != null) {
-            RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
-            CamelContext context = route != null ? route.getCamelContext() : null;
-            return endpointProducerBuilder.getUri(context);
+            return endpointProducerBuilder.getRawUri();
         } else if (endpoint != null) {
             return endpoint.getEndpointUri();
         } else {

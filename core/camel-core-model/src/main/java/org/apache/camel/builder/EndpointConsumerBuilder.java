@@ -33,11 +33,6 @@ public interface EndpointConsumerBuilder extends EndpointConsumerResolver {
      * Builds the encoded url of this endpoint. This API is only intended for Camel internally.
      */
     @Deprecated
-    String getUri();
-
-    /**
-     * Builds the encoded url of this endpoint. This API is only intended for Camel internally.
-     */
     String getUri(CamelContext camelContext);
 
     /**

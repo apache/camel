@@ -36,12 +36,14 @@ public class PollReifier extends ProcessorReifier<PollDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         String uri;
+        Expression exp;
         if (definition.getEndpointConsumerBuilder() != null) {
-            uri = definition.getEndpointConsumerBuilder().getUri(getCamelContext());
+            uri = definition.getEndpointConsumerBuilder().getRawUri();
+            exp = definition.getEndpointConsumerBuilder().expr(getCamelContext());
         } else {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
+            exp = createExpression(uri);
         }
-        Expression exp = createExpression(uri);
         long timeout = parseDuration(definition.getTimeout(), 20000);
         PollProcessor answer = new PollProcessor(exp, uri, timeout);
         answer.setVariableReceive(parseString(definition.getVariableReceive()));
