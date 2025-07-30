@@ -37,11 +37,13 @@ import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.spi.HttpResponseAware;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 /**
  * A useful base class for any consumer which is polling based
@@ -80,6 +82,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile Throwable lastError;
     private volatile Map<String, Object> lastErrorDetails;
     private final AtomicLong counter = new AtomicLong();
+    private boolean usedMDCLogging;
     private volatile boolean firstPollDone;
     private volatile boolean forceReady;
 
@@ -102,6 +105,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     public void run() {
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
         try {
+            if (usedMDCLogging) {
+                MDC.put(UnitOfWork.MDC_ROUTE_ID, getRouteId());
+                MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, getEndpoint().getCamelContext().getName());
+            }
             // log starting
             if (LoggingLevel.ERROR == runLoggingLevel) {
                 LOG.error("Scheduled task started on:   {}", this.getEndpoint());
@@ -139,6 +146,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             LOG.error("Error occurred during running scheduled task on: {}, due: {}."
                       + " This exception is ignored and the task will run again on next poll.",
                     this.getEndpoint(), e.getMessage(), e);
+        } finally {
+            if (usedMDCLogging) {
+                MDC.remove(UnitOfWork.MDC_ROUTE_ID);
+                MDC.remove(UnitOfWork.MDC_CAMEL_CONTEXT_ID);
+            }
         }
     }
 
@@ -638,6 +650,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        usedMDCLogging = getEndpoint().getCamelContext().isUseMDCLogging() != null && getEndpoint().getCamelContext().isUseMDCLogging();
 
         boolean newScheduler = false;
         if (scheduler == null) {
