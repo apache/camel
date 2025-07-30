@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.deflater;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
@@ -77,6 +78,36 @@ public class GzipDataFormatTest extends CamelTestSupport {
         result.expectedBodiesReceived(TEXT.getBytes(StandardCharsets.UTF_8));
 
         sendText();
+
+        result.assertIsSatisfied();
+    }
+
+    /* gzip file with two members, one containing the first 4 bytes of the uncompressed document
+     * and one containing the final 6 bytes of the payload.
+     * According to the RFC (https://www.rfc-editor.org/rfc/rfc1952#section-2.2) this is allowed.
+     */
+    @Test
+    public void testUnmarshalConcatenatedCompressedFiles() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start")
+                        .unmarshal().gzipDeflater()
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        byte[] gzBytes;
+        try (InputStream gzInput = getClass().getClassLoader().getResourceAsStream("concatenatedZippedFiles.gz")) {
+            assert gzInput != null : "concatenatedZippedFiles.gz not found in classpath";
+            gzBytes = gzInput.readAllBytes();
+        }
+
+        MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
+        result.expectedMessageCount(1);
+        result.expectedBodiesReceived("foo\nfoobar\n".getBytes(StandardCharsets.UTF_8));
+
+        template.sendBody("direct:start", gzBytes);
 
         result.assertIsSatisfied();
     }
