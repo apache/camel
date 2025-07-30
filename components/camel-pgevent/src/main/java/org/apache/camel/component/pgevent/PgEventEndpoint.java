@@ -195,8 +195,8 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
         return consumer;
     }
 
-    ExecutorService createWorkerPool() {
-        return getCamelContext().getExecutorServiceManager().newThreadPool(this,
+    ExecutorService createWorkerPool(Object source) {
+        return getCamelContext().getExecutorServiceManager().newThreadPool(source,
                 "PgEventConsumer[" + channel + "]", workerPoolCoreSize, workerPoolMaxSize);
     }
 

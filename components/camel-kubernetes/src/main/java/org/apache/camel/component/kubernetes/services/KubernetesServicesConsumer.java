@@ -57,7 +57,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
 
         servicesWatcher = new ServicesConsumerTask();
         executor.submit(servicesWatcher);

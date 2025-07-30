@@ -57,7 +57,7 @@ public class KubernetesHPAConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
 
         hpasWatcher = new HpaConsumerTask();
         executor.submit(hpasWatcher);

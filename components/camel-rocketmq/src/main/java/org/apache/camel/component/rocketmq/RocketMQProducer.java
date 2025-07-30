@@ -189,7 +189,7 @@ public class RocketMQProducer extends DefaultAsyncProducer {
         replyManager.setEndpoint(getEndpoint());
         String name = "RocketMQReplyManagerTimeoutChecker[" + getEndpoint().getTopicName() + "]";
         ScheduledExecutorService scheduledExecutorService
-                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, name);
         replyManager.setScheduledExecutorService(scheduledExecutorService);
         LOG.debug("Starting ReplyManager: {}", name);
         ServiceHelper.startService(replyManager);

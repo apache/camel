@@ -58,7 +58,7 @@ public class GooglePubsubLiteConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         localLog.info("Starting Google PubSub Lite consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
-        executor = endpoint.createExecutor();
+        executor = endpoint.createExecutor(this);
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
             executor.submit(new SubscriberWrapper());
         }

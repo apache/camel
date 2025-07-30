@@ -56,7 +56,7 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
 
         customResourcesWatcher = new CustomResourcesConsumerTask();
         executor.submit(customResourcesWatcher);

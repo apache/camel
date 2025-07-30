@@ -157,8 +157,8 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
         return null;
     }
 
-    public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+    public ExecutorService createExecutor(Object source) {
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source,
                 "KinesisStream[" + configuration.getStreamName() + "]", 1);
     }
 }

@@ -50,7 +50,7 @@ public class DebeziumConsumer extends DefaultConsumer {
         super.doStart();
 
         // start a single threaded pool to monitor events
-        executorService = endpoint.createExecutor();
+        executorService = endpoint.createExecutor(this);
 
         // create engine
         dbzEngine = createDbzEngine();

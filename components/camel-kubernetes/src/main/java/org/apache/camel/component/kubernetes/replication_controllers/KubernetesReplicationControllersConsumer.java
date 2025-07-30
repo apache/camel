@@ -58,7 +58,7 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
         rcWatcher = new ReplicationControllersConsumerTask();
         executor.submit(rcWatcher);
     }

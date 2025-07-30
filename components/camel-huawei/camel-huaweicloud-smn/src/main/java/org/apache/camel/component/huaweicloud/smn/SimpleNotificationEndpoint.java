@@ -246,8 +246,4 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
         this.smnClient = smnClient;
     }
 
-    public ExecutorService createExecutor() {
-        // TODO: Delete me when you implemented your custom component
-        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "SimpleNotificationConsumer");
-    }
 }

@@ -138,7 +138,7 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         } else {
             cloudWatchAsyncClient = getEndpoint().getConfiguration().getCloudWatchAsyncClient();
         }
-        this.executor = this.getEndpoint().createExecutor();
+        this.executor = this.getEndpoint().createExecutor(this);
         this.executor.submit(new KclKinesisConsumingTask(
                 configuration.getStreamName(), configuration.getApplicationName(), kinesisAsyncClient, dynamoDbAsyncClient,
                 cloudWatchAsyncClient, configuration.isKclDisableCloudwatchMetricsExport()));

@@ -59,8 +59,8 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
         return consumer;
     }
 
-    public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+    public ExecutorService createExecutor(Object source) {
+        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(source,
                 "DebeziumConsumer");
     }
 

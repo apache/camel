@@ -57,7 +57,7 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().createExecutor();
+        executor = getEndpoint().createExecutor(this);
 
         deploymentsWatcher = new DeploymentsConsumerTask();
         executor.submit(deploymentsWatcher);
