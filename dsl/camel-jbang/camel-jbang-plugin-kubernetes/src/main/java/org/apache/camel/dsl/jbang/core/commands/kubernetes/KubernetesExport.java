@@ -516,6 +516,15 @@ public class KubernetesExport extends Export {
                 newProps.addAll(Arrays.asList(applicationProperties));
                 applicationProperties = newProps.toArray(new String[newProps.size()]);
             }
+        } else if (RuntimeType.main == runtime) {
+            List<String> newProps = new ArrayList<>();
+            newProps.add("camel.management.port=" + (port > 0 ? "" + port : "9876"));
+            if (applicationProperties == null) {
+                applicationProperties = newProps.toArray(new String[newProps.size()]);
+            } else {
+                newProps.addAll(Arrays.asList(applicationProperties));
+                applicationProperties = newProps.toArray(new String[newProps.size()]);
+            }
         }
     }
 

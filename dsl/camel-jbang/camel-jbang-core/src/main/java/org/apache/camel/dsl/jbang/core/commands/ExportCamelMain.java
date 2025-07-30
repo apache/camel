@@ -133,7 +133,13 @@ class ExportCamelMain extends Export {
                             prop.put("camel.server.port", port);
                         }
                         if (!prop.containsKey("camel.server.health-check-enabled")) {
-                            prop.put("camel.server.health-check-enabled", "true");
+                            if (VersionHelper.isGE(camelVersion, "4.14.0")) {
+                                prop.put("camel.management.enabled", "true");
+                                prop.put("camel.management.health-check-enabled", "true");
+                            } else {
+                                // old option name for Camel 4.13 and older
+                                prop.put("camel.server.health-check-enabled", "true");
+                            }
                         }
                     }
                     port = httpManagementPort(settings);
@@ -356,7 +362,9 @@ class ExportCamelMain extends Export {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
             // if metrics is defined then include camel-micrometer-prometheus for camel-main runtime
-            if (prop.getProperty("camel.metrics.enabled") != null || prop.getProperty("camel.server.metricsEnabled") != null) {
+            if (prop.getProperty("camel.metrics.enabled") != null
+                    || prop.getProperty("camel.management.metricsEnabled") != null
+                    || prop.getProperty("camel.server.metricsEnabled") != null) {
                 answer.add("mvn:org.apache.camel:camel-micrometer-prometheus");
             }
         }

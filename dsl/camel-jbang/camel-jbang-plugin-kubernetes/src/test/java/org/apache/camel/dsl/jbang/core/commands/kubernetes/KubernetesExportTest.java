@@ -71,8 +71,18 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertNull(props.get("jkube.container-image.registry"));
         Assertions.assertNull(props.get("jkube.container-image.platforms"));
 
+        Properties applicationProperties = getApplicationProperties(workingDir);
+
         if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("9876", props.get("quarkus.management.port"));
+            Assertions.assertEquals("9876", applicationProperties.get("quarkus.management.port"));
             Assertions.assertEquals("/observe/health", props.get("quarkus.smallrye-health.root-path"));
+        } else if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("9876", applicationProperties.get("management.server.port"));
+            Assertions.assertEquals("/observe", applicationProperties.get("management.endpoints.web.base-path"));
+            Assertions.assertEquals("true", applicationProperties.get("management.health.probes.enabled"));
+        } else if (RuntimeType.main == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("9876", applicationProperties.get("camel.management.port"));
         }
     }
 

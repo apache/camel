@@ -67,20 +67,9 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
             dir = TempDirHelper.resolveTempDir(camelContext, null, dir);
             server.setFileUploadDirectory(dir);
         }
-        server.setInfoEnabled(configuration.isInfoEnabled());
         server.setStaticEnabled(configuration.isStaticEnabled());
         server.setStaticContextPath(configuration.getStaticContextPath());
         server.setStaticSourceDir(configuration.getStaticSourceDir());
-        server.setDevConsoleEnabled(configuration.isDevConsoleEnabled());
-        server.setHealthCheckEnabled(configuration.isHealthCheckEnabled());
-        server.setHealthPath(configuration.getHealthPath());
-        server.setJolokiaEnabled(configuration.isJolokiaEnabled());
-        server.setJolokiaPath(configuration.getJolokiaPath());
-        server.setMetricsEnabled(configuration.isMetricsEnabled());
-        server.setUploadEnabled(configuration.isUploadEnabled());
-        server.setUploadSourceDir(configuration.getUploadSourceDir());
-        server.setDownloadEnabled(configuration.isDownloadEnabled());
-        server.setSendEnabled(configuration.isSendEnabled());
 
         if (configuration.isAuthenticationEnabled()) {
             configureAuthentication(server, configuration);
@@ -98,17 +87,20 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         server.setHost(configuration.getHost());
         server.setPort(configuration.getPort());
         server.setPath(configuration.getPath());
-        if (configuration.getMaxBodySize() != null) {
-            server.setMaxBodySize(configuration.getMaxBodySize());
-        }
+
         server.setUseGlobalSslContextParameters(configuration.isUseGlobalSslContextParameters());
         server.setInfoEnabled(configuration.isInfoEnabled());
         server.setDevConsoleEnabled(configuration.isDevConsoleEnabled());
         server.setHealthCheckEnabled(configuration.isHealthCheckEnabled());
         server.setHealthPath(configuration.getHealthPath());
+        server.setInfoPath(configuration.getInfoPath());
         server.setJolokiaEnabled(configuration.isJolokiaEnabled());
         server.setJolokiaPath(configuration.getJolokiaPath());
         server.setMetricsEnabled(configuration.isMetricsEnabled());
+        server.setUploadEnabled(configuration.isUploadEnabled());
+        server.setUploadSourceDir(configuration.getUploadSourceDir());
+        server.setDownloadEnabled(configuration.isDownloadEnabled());
+        server.setSendEnabled(configuration.isSendEnabled());
 
         if (configuration.isAuthenticationEnabled()) {
             configureAuthentication(server, configuration);

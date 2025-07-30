@@ -385,8 +385,8 @@ class ExportQuarkus extends Export {
 
     @Override
     protected String applicationPropertyLine(String key, String value) {
-        if (key.startsWith("camel.server.")) {
-            // skip "camel.server." as this is for camel-main only
+        if (key.startsWith("camel.server.") || key.startsWith("camel.management.")) {
+            // skip "camel.server." or "camel.management." as this is for camel-main only
             return null;
         }
         // quarkus use dash cased properties and lets turn camel into dash as well (skip hawtio)

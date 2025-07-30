@@ -45,6 +45,10 @@ public class ListPlatformHttp extends ProcessWatchCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--all" },
+                        description = "Include management endpoints")
+    boolean all;
+
     public ListPlatformHttp(CamelJBangMain main) {
         super(main);
     }
@@ -88,6 +92,22 @@ public class ListPlatformHttp extends ProcessWatchCommand {
                                     row.consumes = jo.getString("consumes");
                                     row.produces = jo.getString("produces");
                                     rows.add(row);
+                                }
+                            }
+                            if (all) {
+                                arr = (JsonArray) jo.get("managementEndpoints");
+                                if (arr != null) {
+                                    for (int i = 0; i < arr.size(); i++) {
+                                        row = row.copy();
+                                        jo = (JsonObject) arr.get(i);
+                                        row.server = server;
+                                        row.url = jo.getString("url");
+                                        row.path = jo.getString("path");
+                                        row.verbs = jo.getString("verbs");
+                                        row.consumes = jo.getString("consumes");
+                                        row.produces = jo.getString("produces");
+                                        rows.add(row);
+                                    }
                                 }
                             }
                         }

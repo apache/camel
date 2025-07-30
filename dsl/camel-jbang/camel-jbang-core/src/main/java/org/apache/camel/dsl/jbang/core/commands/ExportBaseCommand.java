@@ -565,15 +565,18 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
             // automatic add needed dependencies when dev-console is enabled
             if ("true".equalsIgnoreCase(prop.getProperty("camel.main.devConsoleEnabled"))
+                    || "true".equalsIgnoreCase(prop.getProperty("camel.management.devConsoleEnabled"))
                     || "true".equalsIgnoreCase(prop.getProperty("camel.server.devConsoleEnabled"))) {
                 answer.add("camel:console");
                 answer.add("camel:management");
             }
             // automatic add needed dependencies when main server enabled plugins
-            if ("true".equalsIgnoreCase(prop.getProperty("camel.server.jolokiaEnabled"))) {
+            if ("true".equalsIgnoreCase(prop.getProperty("camel.management.jolokiaEnabled"))
+                    || "true".equalsIgnoreCase(prop.getProperty("camel.server.jolokiaEnabled"))) {
                 answer.add("camel:platform-http-jolokia");
             }
-            if ("true".equalsIgnoreCase(prop.getProperty("camel.server.metricsEnabled"))) {
+            if ("true".equalsIgnoreCase(prop.getProperty("camel.management.metricsEnabled"))
+                    || "true".equalsIgnoreCase(prop.getProperty("camel.server.metricsEnabled"))) {
                 answer.add("camel:micrometer-prometheus");
             }
         }

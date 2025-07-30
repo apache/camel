@@ -45,7 +45,17 @@ public class PlatformHttpConsole extends AbstractDevConsole {
             if (port > 0) {
                 server += ":" + port;
             }
+            sb.append("Endpoints:\n");
             Set<HttpEndpointModel> models = http.getHttpEndpoints();
+            for (HttpEndpointModel model : models) {
+                if (model.getVerbs() != null) {
+                    sb.append(String.format("    %s%s (%s)\n", server, model.getUri(), model.getVerbs()));
+                } else {
+                    sb.append(String.format("    %s%s\n", server, model.getUri()));
+                }
+            }
+            sb.append("\nManagement Endpoints:\n");
+            models = http.getHttpManagementEndpoints();
             for (HttpEndpointModel model : models) {
                 if (model.getVerbs() != null) {
                     sb.append(String.format("    %s%s (%s)\n", server, model.getUri(), model.getVerbs()));
@@ -73,17 +83,21 @@ public class PlatformHttpConsole extends AbstractDevConsole {
             }
             root.put("server", server);
 
-            final List<JsonObject> list = buildEndpointList(http, server);
+            List<JsonObject> list = buildEndpointList(http, server, false);
             if (!list.isEmpty()) {
                 root.put("endpoints", list);
+            }
+            list = buildEndpointList(http, server, true);
+            if (!list.isEmpty()) {
+                root.put("managementEndpoints", list);
             }
         }
 
         return root;
     }
 
-    private static List<JsonObject> buildEndpointList(PlatformHttpComponent http, String server) {
-        Set<HttpEndpointModel> models = http.getHttpEndpoints();
+    private static List<JsonObject> buildEndpointList(PlatformHttpComponent http, String server, boolean management) {
+        Set<HttpEndpointModel> models = management ? http.getHttpManagementEndpoints() : http.getHttpEndpoints();
         List<JsonObject> list = new ArrayList<>();
         for (HttpEndpointModel model : models) {
             JsonObject jo = new JsonObject();

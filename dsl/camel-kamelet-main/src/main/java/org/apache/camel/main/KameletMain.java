@@ -490,6 +490,7 @@ public class KameletMain extends MainCommandLineSupport {
         if (silent) {
             // silent should not include http server
             configure().httpServer().withEnabled(false);
+            configure().httpManagementServer().withEnabled(false);
         }
 
         if (silent || "*".equals(stubPattern)) {
@@ -544,12 +545,12 @@ public class KameletMain extends MainCommandLineSupport {
         boolean console = "true".equals(getInitialProperties().get(getInstanceType() + ".console"));
         if (console) {
             configure().setDevConsoleEnabled(true);
-            configure().httpServer().withEnabled(true);
-            configure().httpServer().withDevConsoleEnabled(true);
+            configure().httpManagementServer().withEnabled(true);
+            configure().httpManagementServer().withDevConsoleEnabled(true);
             // also include health,info and jolokia
-            configure().httpServer().withHealthCheckEnabled(true);
-            configure().httpServer().withInfoEnabled(true);
-            configure().httpServer().withJolokiaEnabled(true);
+            configure().httpManagementServer().withHealthCheckEnabled(true);
+            configure().httpManagementServer().withInfoEnabled(true);
+            configure().httpManagementServer().withJolokiaEnabled(true);
         }
         boolean tracing = "true".equals(getInitialProperties().get(getInstanceType() + ".backlogTracing"));
         if (tracing) {
@@ -557,15 +558,15 @@ public class KameletMain extends MainCommandLineSupport {
         }
         boolean infoConsole = "true".equals(getInitialProperties().get(getInstanceType() + ".info"));
         if (infoConsole) {
-            configure().httpServer().withEnabled(true);
-            configure().httpServer().withInfoEnabled(true);
+            configure().httpManagementServer().withEnabled(true);
+            configure().httpManagementServer().withInfoEnabled(true);
         }
         // Deprecated: to be replaced by observe flag
         boolean health = "true".equals(getInitialProperties().get(getInstanceType() + ".health"));
         if (health) {
             configure().health().withEnabled(true);
-            configure().httpServer().withEnabled(true);
-            configure().httpServer().withHealthCheckEnabled(true);
+            configure().httpManagementServer().withEnabled(true);
+            configure().httpManagementServer().withHealthCheckEnabled(true);
         }
         // Deprecated: to be replaced by observe flag
         boolean metrics = "true".equals(getInitialProperties().get(getInstanceType() + ".metrics"));
@@ -575,8 +576,8 @@ public class KameletMain extends MainCommandLineSupport {
                     .withEnableMessageHistory(true)
                     .withEnableExchangeEventNotifier(true)
                     .withEnableRoutePolicy(true).withEnabled(true);
-            configure().httpServer().withEnabled(true);
-            configure().httpServer().withMetricsEnabled(true);
+            configure().httpManagementServer().withEnabled(true);
+            configure().httpManagementServer().withMetricsEnabled(true);
         }
         boolean ignoreLoading = "true".equals(getInitialProperties().get(getInstanceType() + ".ignoreLoadingError"));
         if (ignoreLoading) {
@@ -683,14 +684,15 @@ public class KameletMain extends MainCommandLineSupport {
 
             // reloader
             if (sourceDir != null) {
+                configure().httpServer().withEnabled(true);
                 configure().httpServer().withStaticSourceDir(sourceDir);
-                configure().httpServer().withUploadSourceDir(sourceDir);
+                configure().httpManagementServer().withEnabled(true);
+                configure().httpManagementServer().withUploadSourceDir(sourceDir);
 
                 if (console || health) {
                     // allow to upload/download source (source-dir is intended to be dynamic) via http when HTTP console enabled
-                    configure().httpServer().withEnabled(true);
-                    configure().httpServer().withUploadEnabled(true);
-                    configure().httpServer().withDownloadEnabled(true);
+                    configure().httpManagementServer().withUploadEnabled(true);
+                    configure().httpManagementServer().withDownloadEnabled(true);
                 }
                 RouteOnDemandReloadStrategy reloader = new RouteOnDemandReloadStrategy(sourceDir, true);
                 reloader.setPattern("*");

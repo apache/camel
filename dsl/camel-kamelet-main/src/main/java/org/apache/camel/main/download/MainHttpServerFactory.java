@@ -19,6 +19,7 @@ package org.apache.camel.main.download;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
+import org.apache.camel.component.platform.http.main.ManagementHttpServer;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
 import org.apache.camel.main.util.CamelJBangSettingsHelper;
@@ -26,10 +27,12 @@ import org.apache.camel.main.util.CamelJBangSettingsHelper;
 public class MainHttpServerFactory {
 
     public static MainHttpServer setupHttpServer(CamelContext camelContext, boolean silent) {
-        // set up a default http server on configured port if not already done
+        // if we only use management then there is no main server already
         MainHttpServer server = camelContext.hasService(MainHttpServer.class);
-        if (server == null) {
-            // need to capture that we use a http-server
+        ManagementHttpServer managementHttpServer = camelContext.hasService(ManagementHttpServer.class);
+        // but if none has already been created, and we are using platform-http, then we need an embedded default http server
+        if (server == null && managementHttpServer == null) {
+            // set up a default http server on configured port if not already done
             HttpServerConfigurationProperties config = new HttpServerConfigurationProperties(null);
             CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.server.port",
                     String.valueOf(config.getPort()));

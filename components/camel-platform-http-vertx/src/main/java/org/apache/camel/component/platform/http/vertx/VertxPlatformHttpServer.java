@@ -307,7 +307,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                                     throw new RuntimeException(result.cause());
                                 }
 
-                                LOGGER.info("Vert.x stopped");
+                                LOGGER.debug("Vert.x stopped");
                             } finally {
                                 latch.countDown();
                             }

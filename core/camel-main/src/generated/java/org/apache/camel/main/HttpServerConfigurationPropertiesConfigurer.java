@@ -25,30 +25,19 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("AuthenticationEnabled", boolean.class);
         map.put("AuthenticationPath", java.lang.String.class);
         map.put("BasicPropertiesFile", java.lang.String.class);
-        map.put("DevConsoleEnabled", boolean.class);
-        map.put("DownloadEnabled", boolean.class);
         map.put("Enabled", boolean.class);
         map.put("FileUploadDirectory", java.lang.String.class);
         map.put("FileUploadEnabled", boolean.class);
-        map.put("HealthCheckEnabled", boolean.class);
-        map.put("HealthPath", java.lang.String.class);
         map.put("Host", java.lang.String.class);
-        map.put("InfoEnabled", boolean.class);
-        map.put("JolokiaEnabled", boolean.class);
-        map.put("JolokiaPath", java.lang.String.class);
         map.put("JwtKeystorePassword", java.lang.String.class);
         map.put("JwtKeystorePath", java.lang.String.class);
         map.put("JwtKeystoreType", java.lang.String.class);
         map.put("MaxBodySize", java.lang.Long.class);
-        map.put("MetricsEnabled", boolean.class);
         map.put("Path", java.lang.String.class);
         map.put("Port", int.class);
-        map.put("SendEnabled", boolean.class);
         map.put("StaticContextPath", java.lang.String.class);
         map.put("StaticEnabled", boolean.class);
         map.put("StaticSourceDir", java.lang.String.class);
-        map.put("UploadEnabled", boolean.class);
-        map.put("UploadSourceDir", java.lang.String.class);
         map.put("UseGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
     }
@@ -63,26 +52,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "authenticationPath": target.setAuthenticationPath(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertiesfile":
         case "basicPropertiesFile": target.setBasicPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "devconsoleenabled":
-        case "devConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
-        case "downloadenabled":
-        case "downloadEnabled": target.setDownloadEnabled(property(camelContext, boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "fileuploaddirectory":
         case "fileUploadDirectory": target.setFileUploadDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "fileuploadenabled":
         case "fileUploadEnabled": target.setFileUploadEnabled(property(camelContext, boolean.class, value)); return true;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
-        case "healthpath":
-        case "healthPath": target.setHealthPath(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "infoenabled":
-        case "infoEnabled": target.setInfoEnabled(property(camelContext, boolean.class, value)); return true;
-        case "jolokiaenabled":
-        case "jolokiaEnabled": target.setJolokiaEnabled(property(camelContext, boolean.class, value)); return true;
-        case "jolokiapath":
-        case "jolokiaPath": target.setJolokiaPath(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtkeystorepassword":
         case "jwtKeystorePassword": target.setJwtKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtkeystorepath":
@@ -91,22 +66,14 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": target.setJwtKeystoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbodysize":
         case "maxBodySize": target.setMaxBodySize(property(camelContext, java.lang.Long.class, value)); return true;
-        case "metricsenabled":
-        case "metricsEnabled": target.setMetricsEnabled(property(camelContext, boolean.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
-        case "sendenabled":
-        case "sendEnabled": target.setSendEnabled(property(camelContext, boolean.class, value)); return true;
         case "staticcontextpath":
         case "staticContextPath": target.setStaticContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "staticenabled":
         case "staticEnabled": target.setStaticEnabled(property(camelContext, boolean.class, value)); return true;
         case "staticsourcedir":
         case "staticSourceDir": target.setStaticSourceDir(property(camelContext, java.lang.String.class, value)); return true;
-        case "uploadenabled":
-        case "uploadEnabled": target.setUploadEnabled(property(camelContext, boolean.class, value)); return true;
-        case "uploadsourcedir":
-        case "uploadSourceDir": target.setUploadSourceDir(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -127,26 +94,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "authenticationPath": return java.lang.String.class;
         case "basicpropertiesfile":
         case "basicPropertiesFile": return java.lang.String.class;
-        case "devconsoleenabled":
-        case "devConsoleEnabled": return boolean.class;
-        case "downloadenabled":
-        case "downloadEnabled": return boolean.class;
         case "enabled": return boolean.class;
         case "fileuploaddirectory":
         case "fileUploadDirectory": return java.lang.String.class;
         case "fileuploadenabled":
         case "fileUploadEnabled": return boolean.class;
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return boolean.class;
-        case "healthpath":
-        case "healthPath": return java.lang.String.class;
         case "host": return java.lang.String.class;
-        case "infoenabled":
-        case "infoEnabled": return boolean.class;
-        case "jolokiaenabled":
-        case "jolokiaEnabled": return boolean.class;
-        case "jolokiapath":
-        case "jolokiaPath": return java.lang.String.class;
         case "jwtkeystorepassword":
         case "jwtKeystorePassword": return java.lang.String.class;
         case "jwtkeystorepath":
@@ -155,22 +108,14 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": return java.lang.String.class;
         case "maxbodysize":
         case "maxBodySize": return java.lang.Long.class;
-        case "metricsenabled":
-        case "metricsEnabled": return boolean.class;
         case "path": return java.lang.String.class;
         case "port": return int.class;
-        case "sendenabled":
-        case "sendEnabled": return boolean.class;
         case "staticcontextpath":
         case "staticContextPath": return java.lang.String.class;
         case "staticenabled":
         case "staticEnabled": return boolean.class;
         case "staticsourcedir":
         case "staticSourceDir": return java.lang.String.class;
-        case "uploadenabled":
-        case "uploadEnabled": return boolean.class;
-        case "uploadsourcedir":
-        case "uploadSourceDir": return java.lang.String.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         default: return null;
@@ -187,26 +132,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "authenticationPath": return target.getAuthenticationPath();
         case "basicpropertiesfile":
         case "basicPropertiesFile": return target.getBasicPropertiesFile();
-        case "devconsoleenabled":
-        case "devConsoleEnabled": return target.isDevConsoleEnabled();
-        case "downloadenabled":
-        case "downloadEnabled": return target.isDownloadEnabled();
         case "enabled": return target.isEnabled();
         case "fileuploaddirectory":
         case "fileUploadDirectory": return target.getFileUploadDirectory();
         case "fileuploadenabled":
         case "fileUploadEnabled": return target.isFileUploadEnabled();
-        case "healthcheckenabled":
-        case "healthCheckEnabled": return target.isHealthCheckEnabled();
-        case "healthpath":
-        case "healthPath": return target.getHealthPath();
         case "host": return target.getHost();
-        case "infoenabled":
-        case "infoEnabled": return target.isInfoEnabled();
-        case "jolokiaenabled":
-        case "jolokiaEnabled": return target.isJolokiaEnabled();
-        case "jolokiapath":
-        case "jolokiaPath": return target.getJolokiaPath();
         case "jwtkeystorepassword":
         case "jwtKeystorePassword": return target.getJwtKeystorePassword();
         case "jwtkeystorepath":
@@ -215,22 +146,14 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": return target.getJwtKeystoreType();
         case "maxbodysize":
         case "maxBodySize": return target.getMaxBodySize();
-        case "metricsenabled":
-        case "metricsEnabled": return target.isMetricsEnabled();
         case "path": return target.getPath();
         case "port": return target.getPort();
-        case "sendenabled":
-        case "sendEnabled": return target.isSendEnabled();
         case "staticcontextpath":
         case "staticContextPath": return target.getStaticContextPath();
         case "staticenabled":
         case "staticEnabled": return target.isStaticEnabled();
         case "staticsourcedir":
         case "staticSourceDir": return target.getStaticSourceDir();
-        case "uploadenabled":
-        case "uploadEnabled": return target.isUploadEnabled();
-        case "uploadsourcedir":
-        case "uploadSourceDir": return target.getUploadSourceDir();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;

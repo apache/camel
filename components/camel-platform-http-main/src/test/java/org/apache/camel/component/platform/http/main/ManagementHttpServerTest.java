@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.platform.http.main;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MainHttpServerTest {
+class ManagementHttpServerTest {
 
     private CamelContext camelContext;
 
@@ -38,7 +37,7 @@ class MainHttpServerTest {
 
     @Test
     public void statusIsNotSatisfied() throws IOException, InterruptedException {
-        MainHttpServer server = new MainHttpServer();
+        ManagementHttpServer server = new ManagementHttpServer();
 
         camelContext = new DefaultCamelContext();
         server.setCamelContext(camelContext);

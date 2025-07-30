@@ -2018,9 +2018,9 @@ You simply either run with `--metrics` option, or enable and have more control o
 
 [source,properties]
 ----
-# enable HTTP server with metrics
-camel.server.enabled=true
-camel.server.metricsEnabled=true
+# enable HTTP management server with metrics
+camel.management.enabled=true
+camel.management.metricsEnabled=true
 
 # turn on micrometer metrics
 camel.metrics.enabled=true
@@ -2030,7 +2030,7 @@ camel.metrics.enableMessageHistory=true
 camel.metrics.binders=processor,jvm-info,file-descriptor
 ----
 
-Then you can access metrics from the web browser at: http://localhost:8080/q/metrics[http://localhost:8080/q/metrics]
+Then you can access metrics from the web browser at: http://localhost:8080/observe/metrics[http://localhost:8080/observe/metrics]
 
 You can also see metrics from the CLI as shown below:
 
@@ -3920,13 +3920,13 @@ The follow options related to _exporting_, can be configured in `application.pro
 | Developer console at /q/dev on local HTTP server (port 8080 by default) when running standalone Camel
 
 |`camel.jbang.info`
-| Info console at /q/info on local HTTP server (port 8080 by default) when running standalone Camel
+| Info console at /observe/info on local HTTP server (port 8080 by default) when running standalone Camel
 
 |`camel.jbang.health`
-| Health check at /q/health on local HTTP server (port 8080 by default) when running standalone Camel
+| Health check at /observe/health on local HTTP server (port 8080 by default) when running standalone Camel
 
 |`camel.jbang.metrics`
-| Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default) when running standalone Camel
+| Metrics (Micrometer and Prometheus) at /observe/metrics on local HTTP server (port 8080 by default) when running standalone Camel
 
 |`camel.jbang.open-api`
 | File name of open-api spec file (JSON or YAML) that are used when using `--open-api` to generate routes from the swagger/openapi API spec file.
