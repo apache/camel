@@ -123,6 +123,8 @@ public class FormattingOptions {
         if (ObjectHelper.isNotEmpty(locale)) {
             String[] result = locale.split("-");
             if (result.length <= 2) {
+                // TODO Update once baseline is Java 21
+                // answer = result.length == 1 ? Locale.of(result[0]) : Locale.of(result[0], result[1]);
                 answer = result.length == 1 ? new Locale(result[0]) : new Locale(result[0], result[1]);
             }
         }

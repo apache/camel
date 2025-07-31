@@ -281,7 +281,10 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
                     if (contentLanguage != null) {
                         return Entity.entity(body, new Variant(
                                 MediaType.valueOf(contentType),
-                                new Locale(contentLanguage), contentEncoding));
+                                // TODO Update once baseline is Java 21
+                                // Locale.of(contentLanguage),
+                                new Locale(contentLanguage),
+                                contentEncoding));
                     }
                 }
             } catch (Exception ex) {
