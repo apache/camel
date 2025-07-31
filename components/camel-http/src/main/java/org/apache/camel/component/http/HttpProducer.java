@@ -164,8 +164,6 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
-            //to avoid to append raw http path to the bridged url
-            exchange.getIn().setHeader(HttpConstants.HTTP_PATH, "");
         }
 
         HttpUriRequest httpRequest = createMethod(exchange);
