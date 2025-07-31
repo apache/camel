@@ -655,7 +655,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         // load plugin
         jolokiaPlugin = pluginRegistry.resolvePluginById(JolokiaPlatformHttpPlugin.NAME, JolokiaPlatformHttpPlugin.class)
                 .orElseThrow(() -> new RuntimeException(
-                        "JolokiaPlatformHttpPlugin not found. Please add camel-platform-http-jolokia dependency."));
+                        "JolokiaPlatformHttpPlugin not found. Add camel-platform-http-jolokia dependency."));
 
         Route jolokia = router.route(jolokiaPath + "/*");
         jolokia.method(HttpMethod.GET);
