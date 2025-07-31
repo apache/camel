@@ -9517,6 +9517,46 @@ public class StaticEndpointBuilders {
         return KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * LangChain4j Agent (camel-langchain4j-agent)
+     * LangChain4j Agent component
+     * 
+     * Category: ai
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-langchain4j-agent
+     * 
+     * Syntax: <code>langchain4j-agent:agentId</code>
+     * 
+     * Path parameter: agentId (required)
+     * The Agent id
+     * 
+     * @param path agentId
+     * @return the dsl builder
+     */
+    public static LangChain4jAgentEndpointBuilderFactory.LangChain4jAgentEndpointBuilder langchain4jAgent(String path) {
+        return langchain4jAgent("langchain4j-agent", path);
+    }
+    /**
+     * LangChain4j Agent (camel-langchain4j-agent)
+     * LangChain4j Agent component
+     * 
+     * Category: ai
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-langchain4j-agent
+     * 
+     * Syntax: <code>langchain4j-agent:agentId</code>
+     * 
+     * Path parameter: agentId (required)
+     * The Agent id
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path agentId
+     * @return the dsl builder
+     */
+    public static LangChain4jAgentEndpointBuilderFactory.LangChain4jAgentEndpointBuilder langchain4jAgent(String componentName, String path) {
+        return LangChain4jAgentEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
