@@ -8,7 +8,7 @@
     "firstVersion": "4.8.0",
     "label": "ai",
     "javaType": "org.apache.camel.component.langchain4j.tools.LangChain4jToolsComponent",
-    "supportLevel": "Experimental",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-langchain4j-tools",
     "version": "4.14.0-SNAPSHOT",
