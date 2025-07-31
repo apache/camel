@@ -16,7 +16,7 @@
  */
 package org.apache.camel.service.lra;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,7 +70,7 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     public CompletableFuture<CamelSagaCoordinator> getSaga(String id) {
         CompletableFuture<CamelSagaCoordinator> coordinator;
         try {
-            coordinator = CompletableFuture.completedFuture(new LRASagaCoordinator(this, new URL(id)));
+            coordinator = CompletableFuture.completedFuture(new LRASagaCoordinator(this, URI.create(id).toURL()));
         } catch (Exception ex) {
             coordinator = CompletableFuture.failedFuture(ex);
         }

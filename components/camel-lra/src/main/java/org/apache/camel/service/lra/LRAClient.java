@@ -193,7 +193,7 @@ public class LRAClient implements Closeable {
         }
 
         try {
-            return new URL(url.toString());
+            return URI.create(url.toString()).toURL();
         } catch (Exception ex) {
             throw new RuntimeCamelException(ex);
         }

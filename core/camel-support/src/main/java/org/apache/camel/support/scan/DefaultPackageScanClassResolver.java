@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -201,7 +202,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                             // load resources using http/https, sonicfs and other acceptable scheme
                             // sonic ESB requires to be loaded using a regular URLConnection
                             LOG.trace("Loading from jar using url: {}", urlPath);
-                            URL urlStream = new URL(urlPath);
+                            URL urlStream = URI.create(urlPath).toURL();
                             URLConnection con = urlStream.openConnection();
                             // disable cache mainly to avoid jar file locking on Windows
                             con.setUseCaches(false);
