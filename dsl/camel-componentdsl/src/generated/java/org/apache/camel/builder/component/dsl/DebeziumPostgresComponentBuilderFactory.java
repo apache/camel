@@ -381,6 +381,24 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The maximum time in milliseconds to wait for connection validation to
+         * complete. Defaults to 60 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1m
+         * Group: postgres
+         * 
+         * @param connectionValidationTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder connectionValidationTimeoutMs(long connectionValidationTimeoutMs) {
+            doSetProperty("connectionValidationTimeoutMs", connectionValidationTimeoutMs);
+            return this;
+        }
+    
         /**
          * Optional list of custom converters that would be used instead of
          * default ones. The converters are defined using '.type' config option
@@ -745,6 +763,24 @@ public interface DebeziumPostgresComponentBuilderFactory {
     
         
         /**
+         * The maximum time in milliseconds to wait for task executor to shut
+         * down.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 4s
+         * Group: postgres
+         * 
+         * @param executorShutdownTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder executorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+            doSetProperty("executorShutdownTimeoutMs", executorShutdownTimeoutMs);
+            return this;
+        }
+    
+        
+        /**
          * Boolean to determine if Debezium should flush LSN in the source
          * postgres database. If set to false, user will have to flush the LSN
          * manually outside Debezium.
@@ -936,6 +972,46 @@ public interface DebeziumPostgresComponentBuilderFactory {
     
         
         /**
+         * Action to take when an LSN flush timeout occurs. Options include:
+         * 'fail' (default) to fail the connector; 'warn' to log a warning and
+         * continue processing; 'ignore' to continue processing and ignore the
+         * timeout.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: fail
+         * Group: postgres
+         * 
+         * @param lsnFlushTimeoutAction the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder lsnFlushTimeoutAction(java.lang.String lsnFlushTimeoutAction) {
+            doSetProperty("lsnFlushTimeoutAction", lsnFlushTimeoutAction);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum time in milliseconds to wait for LSN flush operation to
+         * complete. If the flush operation does not complete within this
+         * timeout, the action specified by lsn.flush.timeout.action will be
+         * taken. Defaults to 30 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30s
+         * Group: postgres
+         * 
+         * @param lsnFlushTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder lsnFlushTimeoutMs(long lsnFlushTimeoutMs) {
+            doSetProperty("lsnFlushTimeoutMs", lsnFlushTimeoutMs);
+            return this;
+        }
+    
+        
+        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -1076,6 +1152,106 @@ public interface DebeziumPostgresComponentBuilderFactory {
     
         
         /**
+         * Path to OpenLineage file configuration. See
+         * https://openlineage.io/docs/client/java/configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: ./openlineage.yml
+         * Group: postgres
+         * 
+         * @param openlineageIntegrationConfigFilePath the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
+            doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        
+        /**
+         * Enable Debezium to emit data lineage metadata through OpenLineage
+         * API.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param openlineageIntegrationEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder openlineageIntegrationEnabled(boolean openlineageIntegrationEnabled) {
+            doSetProperty("openlineageIntegrationEnabled", openlineageIntegrationEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * The job's description emitted by Debezium.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: Debezium change data capture job
+         * Group: postgres
+         * 
+         * @param openlineageIntegrationJobDescription the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder openlineageIntegrationJobDescription(java.lang.String openlineageIntegrationJobDescription) {
+            doSetProperty("openlineageIntegrationJobDescription", openlineageIntegrationJobDescription);
+            return this;
+        }
+    
+        /**
+         * The job's namespace emitted by Debezium.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param openlineageIntegrationJobNamespace the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder openlineageIntegrationJobNamespace(java.lang.String openlineageIntegrationJobNamespace) {
+            doSetProperty("openlineageIntegrationJobNamespace", openlineageIntegrationJobNamespace);
+            return this;
+        }
+    
+        /**
+         * The job's owners emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param openlineageIntegrationJobOwners the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder openlineageIntegrationJobOwners(java.lang.String openlineageIntegrationJobOwners) {
+            doSetProperty("openlineageIntegrationJobOwners", openlineageIntegrationJobOwners);
+            return this;
+        }
+    
+        /**
+         * The job's tags emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param openlineageIntegrationJobTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder openlineageIntegrationJobTags(java.lang.String openlineageIntegrationJobTags) {
+            doSetProperty("openlineageIntegrationJobTags", openlineageIntegrationJobTags);
+            return this;
+        }
+    
+        
+        /**
          * The name of the Postgres logical decoding plugin installed on the
          * server. Supported values are 'decoderbufs' and 'pgoutput'. Defaults
          * to 'decoderbufs'.
@@ -1189,6 +1365,25 @@ public interface DebeziumPostgresComponentBuilderFactory {
          */
         default DebeziumPostgresComponentBuilder publicationName(java.lang.String publicationName) {
             doSetProperty("publicationName", publicationName);
+            return this;
+        }
+    
+        
+        /**
+         * A boolean that determines whether the connector should publish
+         * changes via the partition root. When true, changes are published
+         * through partition root. When false, changes are published directly.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param publishViaPartitionRoot the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder publishViaPartitionRoot(boolean publishViaPartitionRoot) {
+            doSetProperty("publishViaPartitionRoot", publishViaPartitionRoot);
             return this;
         }
     
@@ -2208,6 +2403,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "columnExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumPostgresComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
+            case "connectionValidationTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setConnectionValidationTimeoutMs((long) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumPostgresComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumPostgresComponent) component).setCustomMetricTags((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseDbname((java.lang.String) value); return true;
@@ -2228,6 +2424,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumPostgresComponent) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
+            case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "flushLsnSource": getOrCreateConfiguration((DebeziumPostgresComponent) component).setFlushLsnSource((boolean) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatIntervalMs((int) value); return true;
@@ -2238,6 +2435,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
+            case "lsnFlushTimeoutAction": getOrCreateConfiguration((DebeziumPostgresComponent) component).setLsnFlushTimeoutAction((java.lang.String) value); return true;
+            case "lsnFlushTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setLsnFlushTimeoutMs((long) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxQueueSizeInBytes((long) value); return true;
@@ -2246,12 +2445,19 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "messagePrefixIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMessagePrefixIncludeList((java.lang.String) value); return true;
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumPostgresComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
+            case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
+            case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
+            case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;
+            case "openlineageIntegrationJobOwners": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationJobOwners((java.lang.String) value); return true;
+            case "openlineageIntegrationJobTags": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationJobTags((java.lang.String) value); return true;
             case "pluginName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPluginName((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPollIntervalMs((long) value); return true;
             case "postProcessors": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPostProcessors((java.lang.String) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumPostgresComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "publicationAutocreateMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublicationAutocreateMode((java.lang.String) value); return true;
             case "publicationName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublicationName((java.lang.String) value); return true;
+            case "publishViaPartitionRoot": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublishViaPartitionRoot((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setQueryFetchSize((int) value); return true;
             case "replicaIdentityAutosetValues": getOrCreateConfiguration((DebeziumPostgresComponent) component).setReplicaIdentityAutosetValues((java.lang.String) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;

@@ -23,13 +23,14 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(113);
+        Set<String> props = new HashSet<>(124);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
         props.add("columnExcludeList");
         props.add("columnIncludeList");
         props.add("columnPropagateSourceType");
+        props.add("connectionValidationTimeoutMs");
         props.add("converters");
         props.add("customMetricTags");
         props.add("databaseDbname");
@@ -52,6 +53,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("executorShutdownTimeoutMs");
         props.add("flushLsnSource");
         props.add("heartbeatActionQuery");
         props.add("heartbeatIntervalMs");
@@ -64,6 +66,8 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("internalKeyConverter");
         props.add("internalValueConverter");
         props.add("intervalHandlingMode");
+        props.add("lsnFlushTimeoutAction");
+        props.add("lsnFlushTimeoutMs");
         props.add("maxBatchSize");
         props.add("maxQueueSize");
         props.add("maxQueueSizeInBytes");
@@ -81,12 +85,19 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("offsetStoragePartitions");
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
+        props.add("openlineageIntegrationConfigFilePath");
+        props.add("openlineageIntegrationEnabled");
+        props.add("openlineageIntegrationJobDescription");
+        props.add("openlineageIntegrationJobNamespace");
+        props.add("openlineageIntegrationJobOwners");
+        props.add("openlineageIntegrationJobTags");
         props.add("pluginName");
         props.add("pollIntervalMs");
         props.add("postProcessors");
         props.add("provideTransactionMetadata");
         props.add("publicationAutocreateMode");
         props.add("publicationName");
+        props.add("publishViaPartitionRoot");
         props.add("queryFetchSize");
         props.add("replicaIdentityAutosetValues");
         props.add("retriableRestartConnectorWaitMs");

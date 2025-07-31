@@ -416,6 +416,38 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum time in milliseconds to wait for connection validation to
+         * complete. Defaults to 60 seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1m
+         * Group: mysql
+         * 
+         * @param connectionValidationTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder connectionValidationTimeoutMs(long connectionValidationTimeoutMs) {
+            doSetProperty("connectionValidationTimeoutMs", connectionValidationTimeoutMs);
+            return this;
+        }
+        /**
+         * The maximum time in milliseconds to wait for connection validation to
+         * complete. Defaults to 60 seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1m
+         * Group: mysql
+         * 
+         * @param connectionValidationTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder connectionValidationTimeoutMs(String connectionValidationTimeoutMs) {
+            doSetProperty("connectionValidationTimeoutMs", connectionValidationTimeoutMs);
+            return this;
+        }
+        /**
          * Whether a separate thread should be used to ensure the connection is
          * kept alive.
          * 
@@ -1036,6 +1068,38 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum time in milliseconds to wait for task executor to shut
+         * down.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 4s
+         * Group: mysql
+         * 
+         * @param executorShutdownTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder executorShutdownTimeoutMs(long executorShutdownTimeoutMs) {
+            doSetProperty("executorShutdownTimeoutMs", executorShutdownTimeoutMs);
+            return this;
+        }
+        /**
+         * The maximum time in milliseconds to wait for task executor to shut
+         * down.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 4s
+         * Group: mysql
+         * 
+         * @param executorShutdownTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder executorShutdownTimeoutMs(String executorShutdownTimeoutMs) {
+            doSetProperty("executorShutdownTimeoutMs", executorShutdownTimeoutMs);
+            return this;
+        }
+        /**
          * The source UUIDs used to exclude GTID ranges when determine the
          * starting position in the MySQL server's binlog.
          * 
@@ -1588,6 +1652,113 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          */
         default DebeziumMySqlEndpointBuilder notificationSinkTopicName(String notificationSinkTopicName) {
             doSetProperty("notificationSinkTopicName", notificationSinkTopicName);
+            return this;
+        }
+        /**
+         * Path to OpenLineage file configuration. See
+         * https://openlineage.io/docs/client/java/configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: ./openlineage.yml
+         * Group: mysql
+         * 
+         * @param openlineageIntegrationConfigFilePath the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder openlineageIntegrationConfigFilePath(String openlineageIntegrationConfigFilePath) {
+            doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+        /**
+         * Enable Debezium to emit data lineage metadata through OpenLineage
+         * API.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param openlineageIntegrationEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder openlineageIntegrationEnabled(boolean openlineageIntegrationEnabled) {
+            doSetProperty("openlineageIntegrationEnabled", openlineageIntegrationEnabled);
+            return this;
+        }
+        /**
+         * Enable Debezium to emit data lineage metadata through OpenLineage
+         * API.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param openlineageIntegrationEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder openlineageIntegrationEnabled(String openlineageIntegrationEnabled) {
+            doSetProperty("openlineageIntegrationEnabled", openlineageIntegrationEnabled);
+            return this;
+        }
+        /**
+         * The job's description emitted by Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Debezium change data capture job
+         * Group: mysql
+         * 
+         * @param openlineageIntegrationJobDescription the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder openlineageIntegrationJobDescription(String openlineageIntegrationJobDescription) {
+            doSetProperty("openlineageIntegrationJobDescription", openlineageIntegrationJobDescription);
+            return this;
+        }
+        /**
+         * The job's namespace emitted by Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         * 
+         * @param openlineageIntegrationJobNamespace the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder openlineageIntegrationJobNamespace(String openlineageIntegrationJobNamespace) {
+            doSetProperty("openlineageIntegrationJobNamespace", openlineageIntegrationJobNamespace);
+            return this;
+        }
+        /**
+         * The job's owners emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         * 
+         * @param openlineageIntegrationJobOwners the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder openlineageIntegrationJobOwners(String openlineageIntegrationJobOwners) {
+            doSetProperty("openlineageIntegrationJobOwners", openlineageIntegrationJobOwners);
+            return this;
+        }
+        /**
+         * The job's tags emitted by Debezium. A comma-separated list of
+         * key-value pairs.For example: k1=v1,k2=v2.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         * 
+         * @param openlineageIntegrationJobTags the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder openlineageIntegrationJobTags(String openlineageIntegrationJobTags) {
+            doSetProperty("openlineageIntegrationJobTags", openlineageIntegrationJobTags);
             return this;
         }
         /**

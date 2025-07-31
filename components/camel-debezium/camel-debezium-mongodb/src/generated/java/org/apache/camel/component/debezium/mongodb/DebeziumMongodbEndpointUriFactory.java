@@ -23,12 +23,13 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(75);
+        Set<String> props = new HashSet<>(83);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("captureMode");
         props.add("collectionExcludeList");
         props.add("collectionIncludeList");
+        props.add("connectionValidationTimeoutMs");
         props.add("converters");
         props.add("cursorMaxAwaitTimeMs");
         props.add("customMetricTags");
@@ -38,6 +39,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("executorShutdownTimeoutMs");
         props.add("fieldExcludeList");
         props.add("fieldRenames");
         props.add("heartbeatIntervalMs");
@@ -70,6 +72,12 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("offsetStoragePartitions");
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
+        props.add("openlineageIntegrationConfigFilePath");
+        props.add("openlineageIntegrationEnabled");
+        props.add("openlineageIntegrationJobDescription");
+        props.add("openlineageIntegrationJobNamespace");
+        props.add("openlineageIntegrationJobOwners");
+        props.add("openlineageIntegrationJobTags");
         props.add("pollIntervalMs");
         props.add("postProcessors");
         props.add("provideTransactionMetadata");
