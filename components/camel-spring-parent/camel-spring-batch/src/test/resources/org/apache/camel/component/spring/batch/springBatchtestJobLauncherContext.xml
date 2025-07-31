@@ -43,10 +43,6 @@
 
     <camel:camelContext id="camel">
         <camel:route>
-            <camel:from uri="direct:start-jobLauncherRef"/>
-            <camel:to uri="spring-batch:echoJob?jobLauncherRef=jobLauncher"/>
-        </camel:route>
-        <camel:route>
             <camel:from uri="direct:start-jobLauncher"/>
             <camel:to uri="spring-batch:echoJob?jobLauncher=#jobLauncher"/>
         </camel:route>

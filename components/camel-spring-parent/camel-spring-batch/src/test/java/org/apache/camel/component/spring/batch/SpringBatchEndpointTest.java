@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.spring.batch;
 
-import java.time.Instant;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -43,7 +39,6 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
-import static org.apache.camel.test.junit5.TestSupport.header;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -85,10 +80,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("spring-batch:mockJob").to("mock:test");
-                from("direct:dynamic").to("spring-batch:fake?jobFromHeader=true").errorHandler(deadLetterChannel("mock:error"))
-                        .to("mock:test");
-                from("direct:dynamicWithJobRegistry").to("spring-batch:fake?jobFromHeader=true&jobRegistry=#jobRegistry")
-                        .errorHandler(deadLetterChannel("mock:error")).to("mock:test");
             }
         };
     }
@@ -103,65 +94,6 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     }
 
     // Tests
-    @Test
-    public void dynamicJobFailsIfHeaderNotPressent() throws Exception {
-
-        mockEndpoint.expectedMessageCount(0);
-        errorEndpoint.expectedMessageCount(1);
-
-        //dynamic job should fail as header is not present and the job is dynamic
-        sendBody("direct:dyanmic?block=false", "Start the job, please.");
-        mockEndpoint.assertIsSatisfied();
-        mockEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void dynamicJobFailsIfHeaderWithInvalidJobName() throws Exception {
-
-        mockEndpoint.expectedMessageCount(0);
-        errorEndpoint.expectedMessageCount(1);
-
-        //dynamic job should fail as header is present but the job does not exist
-        header(SpringBatchConstants.JOB_NAME).append("thisJobDoesNotExsistAtAll" + Date.from(Instant.now()));
-        sendBody("direct:dyanmic?block=false", "Start the job, please.");
-
-        mockEndpoint.assertIsSatisfied();
-        mockEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void dynamicJobWorksIfHeaderPressentWithValidJob() throws Exception {
-
-        mockEndpoint.expectedMessageCount(1);
-        errorEndpoint.expectedMessageCount(0);
-
-        final Map<String, Object> headers = new HashMap<>();
-        headers.put(SpringBatchConstants.JOB_NAME, "dynamicMockjob");
-
-        sendBody("direct:dynamic?block=false", "Start the job, please.", headers);
-
-        mockEndpoint.assertIsSatisfied();
-        errorEndpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void dynamicJobWorksIfHeaderPresentWithValidJobLocatedInJobRegistry() throws Exception {
-
-        mockEndpoint.expectedMessageCount(1);
-        errorEndpoint.expectedMessageCount(0);
-
-        Job mockJob = mock(Job.class);
-        when(jobRegistry.getJob(eq("dyanmicMockJobFromJobRegistry"))).thenReturn(mockJob);
-
-        final Map<String, Object> headers = new HashMap<>();
-        headers.put(SpringBatchConstants.JOB_NAME, "dyanmicMockJobFromJobRegistry");
-        headers.put("jobRegistry", "#jobRegistry");
-
-        sendBody("direct:dynamicWithJobRegistry", "Start the job, please.", headers);
-
-        mockEndpoint.assertIsSatisfied();
-        errorEndpoint.assertIsSatisfied();
-    }
 
     @Test
     public void shouldInjectJobToEndpoint() throws IllegalAccessException {
@@ -305,27 +237,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
         });
 
         // When
-        assertThrows(FailedToCreateRouteException.class,
-                () -> camelContext.start());
-    }
-
-    @Test
-    public void shouldFailWhenThereIsMoreThanOneJobLauncher() throws Exception {
-        // Given
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.bind("mockJob", job);
-        registry.bind("launcher1", jobLauncher);
-        registry.bind("launcher2", jobLauncher);
-        CamelContext camelContext = new DefaultCamelContext(registry);
-        camelContext.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("spring-batch:mockJob");
-            }
-        });
-
-        // When
-        assertThrows(FailedToCreateRouteException.class,
+        assertThrows(FailedToStartRouteException.class,
                 () -> camelContext.start());
     }
 

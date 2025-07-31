@@ -53,15 +53,6 @@ public class SpringBatchJobLauncherIT extends CamelSpringTestSupport {
         outputEndpoint.assertIsSatisfied();
     }
 
-    @Test
-    public void testJobLauncherRef() throws InterruptedException {
-        outputEndpoint.expectedBodiesReceived("Echo foo", "Echo bar", "Echo baz");
-
-        template.sendBody("direct:start-jobLauncherRef", "Start batch!");
-
-        outputEndpoint.assertIsSatisfied();
-    }
-
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(

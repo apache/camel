@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.spring.batch;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants.
  */
 public final class SpringBatchConstants {
 
+    public static final String DEFAULT_JOB_LAUNCHER_REF_NAME = "jobLauncher";
+
+    @Metadata(description = "The name of the Batch Job to use", javaType = "String")
     public static final String JOB_NAME = "CamelSpringBatchJobName";
 
     private SpringBatchConstants() {

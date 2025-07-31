@@ -88,3 +88,7 @@ The ids parameter for camel-weather has been defined as String instead of List<S
 
 The addresses, privateFor and Topics parameters for camel-web3j have been defined as String instead of List<String>. For the migration users will need to, eventually, define addresses, privateFor or topics  as a comma separated list of addresses, privateFor or topics instead of a List instance. For more information the related issue is CAMEL-17339.
 
+=== camel-spring-batch
+
+The `jobLauncher` and 'jobRegistry' is now autowired on the component if there is a single instance pre-configured in the application.
+This avoids having to wire this into the Camel component or endpoints.

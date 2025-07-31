@@ -28,14 +28,9 @@ import org.springframework.batch.core.launch.JobLauncher;
 @Component("spring-batch")
 public class SpringBatchComponent extends DefaultComponent {
 
-    private static final String DEFAULT_JOB_LAUNCHER_REF_NAME = "jobLauncher";
-
-    private JobLauncher defaultResolvedJobLauncher;
-    private Map<String, JobLauncher> allResolvedJobLaunchers;
-
-    @Metadata
+    @Metadata(autowired = true)
     private JobLauncher jobLauncher;
-    @Metadata
+    @Metadata(autowired = true)
     private JobRegistry jobRegistry;
 
     public SpringBatchComponent() {
@@ -44,8 +39,7 @@ public class SpringBatchComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SpringBatchEndpoint endpoint = new SpringBatchEndpoint(
-                uri, this, jobLauncher, defaultResolvedJobLauncher,
-                allResolvedJobLaunchers, remaining, jobRegistry);
+                uri, this, jobLauncher, remaining, jobRegistry);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -53,9 +47,10 @@ public class SpringBatchComponent extends DefaultComponent {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        defaultResolvedJobLauncher
-                = getCamelContext().getRegistry().lookupByNameAndType(DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
-        allResolvedJobLaunchers = getCamelContext().getRegistry().findByTypeWithName(JobLauncher.class);
+        if (jobLauncher == null) {
+            jobLauncher = getCamelContext().getRegistry()
+                    .lookupByNameAndType(SpringBatchConstants.DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
+        }
     }
 
     public JobLauncher getJobLauncher() {

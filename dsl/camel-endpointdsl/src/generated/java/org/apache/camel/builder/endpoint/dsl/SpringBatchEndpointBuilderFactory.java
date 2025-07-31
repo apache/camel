@@ -207,6 +207,19 @@ public interface SpringBatchEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-spring-batch
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SpringBatchHeaderNameBuilder springBatch() {
+            return SpringBatchHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Spring Batch (camel-spring-batch)
+         * Send messages to Spring Batch for further processing.
+         * 
+         * Category: workflow
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-spring-batch
+         * 
          * Syntax: <code>spring-batch:jobName</code>
          * 
          * Path parameter: jobName (required)
@@ -240,6 +253,29 @@ public interface SpringBatchEndpointBuilderFactory {
             return SpringBatchEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Spring Batch component.
+     */
+    public static class SpringBatchHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SpringBatchHeaderNameBuilder INSTANCE = new SpringBatchHeaderNameBuilder();
+
+        /**
+         * The name of the Batch Job to use.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SpringBatchJobName}.
+         */
+        public String springBatchJobName() {
+            return "CamelSpringBatchJobName";
+        }
     }
     static SpringBatchEndpointBuilder endpointBuilder(String componentName, String path) {
         class SpringBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringBatchEndpointBuilder, AdvancedSpringBatchEndpointBuilder {

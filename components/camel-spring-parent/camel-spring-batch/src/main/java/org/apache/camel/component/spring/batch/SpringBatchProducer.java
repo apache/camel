@@ -40,9 +40,7 @@ public class SpringBatchProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SpringBatchProducer.class);
 
     private final JobLauncher jobLauncher;
-
     private final Job job;
-
     private final JobRegistry jobRegistry;
 
     public SpringBatchProducer(SpringBatchEndpoint endpoint, JobLauncher jobLauncher, Job job, JobRegistry jobRegistry) {
@@ -54,7 +52,6 @@ public class SpringBatchProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-
         JobParameters jobParameters = prepareJobParameters(exchange.getIn().getHeaders());
         String messageJobName = jobParameters.getString(SpringBatchConstants.JOB_NAME);
 
@@ -63,7 +60,8 @@ public class SpringBatchProducer extends DefaultProducer {
         if (messageJobName != null) {
             if (jobRegistry != null) {
                 job2run = jobRegistry.getJob(messageJobName);
-            } else {
+            }
+            if (job2run == null) {
                 job2run = CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), messageJobName, Job.class);
             }
         }

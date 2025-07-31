@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.spring.batch;
 
-import java.util.Map;
-
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -37,40 +35,26 @@ import org.springframework.batch.core.launch.JobLauncher;
  * Send messages to Spring Batch for further processing.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName",
-             remote = false, producerOnly = true, category = { Category.WORKFLOW })
+             remote = false, producerOnly = true, headersClass = SpringBatchConstants.class, category = { Category.WORKFLOW })
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private String jobName;
-
     @UriParam
     private boolean jobFromHeader;
-
-    /**
-     * @deprecated will be removed in Camel 3.0 use jobLauncher instead
-     */
-    @Deprecated
-    private String jobLauncherRef;
-
     @UriParam
     private JobLauncher jobLauncher;
-
-    private JobLauncher defaultResolvedJobLauncher;
-    private Map<String, JobLauncher> allResolvedJobLaunchers;
-    private Job job;
-
     @UriParam
     private JobRegistry jobRegistry;
 
+    private Job job;
+
     public SpringBatchEndpoint(String endpointUri, Component component,
-                               JobLauncher jobLauncher, JobLauncher defaultResolvedJobLauncher,
-                               Map<String, JobLauncher> allResolvedJobLaunchers, String jobName,
-                               JobRegistry jobRegistry) {
+                               JobLauncher jobLauncher,
+                               String jobName, JobRegistry jobRegistry) {
         super(endpointUri, component);
         this.jobLauncher = jobLauncher;
-        this.defaultResolvedJobLauncher = defaultResolvedJobLauncher;
-        this.allResolvedJobLaunchers = allResolvedJobLaunchers;
         this.jobName = jobName;
         this.jobRegistry = jobRegistry;
     }
@@ -91,42 +75,20 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
 
         if (jobLauncher == null) {
-            jobLauncher = resolveJobLauncher();
+            jobLauncher = CamelContextHelper.mandatoryFindSingleByType(getCamelContext(), JobLauncher.class);
         }
         if (job == null && jobName != null && !jobFromHeader) {
             if (jobRegistry != null) {
                 job = jobRegistry.getJob(jobName);
-            } else {
+            }
+            if (job == null) {
                 job = CamelContextHelper.mandatoryLookup(getCamelContext(), jobName, Job.class);
             }
         }
-    }
-
-    private JobLauncher resolveJobLauncher() {
-        if (jobLauncherRef != null) {
-            JobLauncher jobLauncher = getCamelContext().getRegistry().lookupByNameAndType(jobLauncherRef, JobLauncher.class);
-            if (jobLauncher == null) {
-                throw new IllegalStateException(
-                        String.format("No JobLauncher named %s found in the registry.", jobLauncherRef));
-            }
-            return jobLauncher;
-        }
-
-        if (defaultResolvedJobLauncher != null) {
-            return defaultResolvedJobLauncher;
-        }
-
-        if (allResolvedJobLaunchers.size() == 1) {
-            return allResolvedJobLaunchers.values().iterator().next();
-        } else if (allResolvedJobLaunchers.size() > 1) {
-            throw new IllegalStateException("Expected single jobLauncher instance. Found: " + allResolvedJobLaunchers.size());
-        }
-
-        throw new IllegalStateException("Cannot find Spring Batch JobLauncher.");
     }
 
     public String getJobName() {
@@ -138,19 +100,6 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
      */
     public void setJobName(String jobName) {
         this.jobName = jobName;
-    }
-
-    @Deprecated
-    public String getJobLauncherRef() {
-        return jobLauncherRef;
-    }
-
-    /**
-     * Explicitly specifies a JobLauncher to be used looked up from the registry.
-     */
-    @Deprecated
-    public void setJobLauncherRef(String jobLauncherRef) {
-        this.jobLauncherRef = jobLauncherRef;
     }
 
     public JobLauncher getJobLauncher() {
