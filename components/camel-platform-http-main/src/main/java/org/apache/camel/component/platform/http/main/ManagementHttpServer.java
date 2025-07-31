@@ -90,7 +90,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -614,32 +616,30 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                     res = HealthCheckHelper.invokeReadiness(camelContext, level);
                 }
 
-                StringBuilder sb = new StringBuilder();
-                sb.append("{\n");
+                JsonObject root = new JsonObject();
 
                 // are we UP
                 boolean up = HealthCheckHelper.isResultsUp(res, rdy);
 
                 if ("oneline".equals(level)) {
                     // only brief status
-                    healthCheckStatus(sb, up);
+                    healthCheckStatus(root, up);
                 } else if ("full".equals(level)) {
                     // include all details
                     List<HealthCheck.Result> list = new ArrayList<>(res);
-                    healthCheckDetails(sb, list, up, level, includeStackTrace, includeData);
+                    healthCheckDetails(root, list, up, level, includeStackTrace, includeData);
                 } else {
                     // include only DOWN details
                     List<HealthCheck.Result> downs = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN))
                             .collect(Collectors.toList());
-                    healthCheckDetails(sb, downs, up, level, includeStackTrace, includeData);
+                    healthCheckDetails(root, downs, up, level, includeStackTrace, includeData);
                 }
-                sb.append("}\n");
 
                 if (!up) {
                     // we need to fail with a http status so lets use 500
                     ctx.response().setStatusCode(503);
                 }
-                ctx.end(sb.toString());
+                ctx.end(root.toJson());
             }
         };
         // use blocking handler as the task can take longer time to complete
@@ -898,78 +898,63 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 "Cannot create PlatformHttpPluginRegistry. Make sure camel-platform-http JAR is on classpath."));
     }
 
-    private static void healthCheckStatus(StringBuilder sb, boolean up) {
+    private static void healthCheckStatus(JsonObject jo, boolean up) {
         if (up) {
-            sb.append("    \"status\": \"UP\"");
+            jo.put("status", "UP");
         } else {
-            sb.append("    \"status\": \"DOWN\"");
+            jo.put("status", "DOWN");
         }
     }
 
     private static void healthCheckDetails(
-            StringBuilder sb, List<HealthCheck.Result> checks, boolean up, String level, String includeStackTrace,
+            JsonObject jo, List<HealthCheck.Result> checks, boolean up, String level, String includeStackTrace,
             String includeData) {
-        healthCheckStatus(sb, up);
+        healthCheckStatus(jo, up);
 
         if (!checks.isEmpty()) {
-            sb.append(",\n");
-            sb.append("    \"checks\": [\n");
+            JsonArray arr = new JsonArray();
+            jo.put("checks", arr);
             for (int i = 0; i < checks.size(); i++) {
                 HealthCheck.Result d = checks.get(i);
-                sb.append("        {\n");
-                reportHealthCheck(sb, d, level, includeStackTrace, includeData);
-                if (i < checks.size() - 1) {
-                    sb.append("        },\n");
-                } else {
-                    sb.append("        }\n");
-                }
+                reportHealthCheck(arr, d, level, includeStackTrace, includeData);
             }
-            sb.append("    ]\n");
         }
     }
 
     private static void reportHealthCheck(
-            StringBuilder sb, HealthCheck.Result d, String level, String includeStackTrace, String includeData) {
-        sb.append("            \"name\": \"").append(d.getCheck().getId()).append("\",\n");
-        sb.append("            \"status\": \"").append(d.getState()).append("\"");
+            JsonArray arr, HealthCheck.Result d, String level, String includeStackTrace, String includeData) {
+
+        JsonObject jo = new JsonObject();
+        arr.add(jo);
+
+        jo.put("name", d.getCheck().getId());
+        jo.put("status", d.getState().name());
         if (("full".equals(level) || "true".equals(includeStackTrace)) && d.getError().isPresent()) {
             // include error message in full exposure
-            sb.append(",\n");
             String msg = allCausedByErrorMessages(d.getError().get());
-            sb.append("            \"error-message\": \"").append(msg)
-                    .append("\"");
+            jo.put("error-message", Jsoner.escape(msg));
             if ("true".equals(includeStackTrace)) {
-                sb.append(",\n");
-                sb.append("            \"error-stacktrace\": \"").append(errorStackTrace(d.getError().get()))
-                        .append("\"");
+                jo.put("error-stacktrace", Jsoner.escape(errorStackTrace(d.getError().get())));
             }
         }
         if (d.getMessage().isPresent()) {
-            sb.append(",\n");
-            sb.append("            \"message\": \"").append(d.getMessage().get()).append("\"");
+            jo.put("message", Jsoner.escape(d.getMessage().get()));
         }
         // only include data if was enabled
         if (("true".equals(includeData)) && d.getDetails() != null && !d.getDetails().isEmpty()) {
-            sb.append(",\n");
             // lets use sorted keys
             Iterator<String> it = new TreeSet<>(d.getDetails().keySet()).iterator();
-            sb.append("            \"data\": {\n");
+            JsonObject jo2 = new JsonObject();
+            jo.put("data", jo2);
             while (it.hasNext()) {
                 String k = it.next();
                 Object v = d.getDetails().get(k);
                 if (v == null) {
                     v = ""; // in case of null value
                 }
-                boolean last = !it.hasNext();
-                sb.append("                 \"").append(k).append("\": \"").append(v).append("\"");
-                if (!last) {
-                    sb.append(",");
-                }
-                sb.append("\n");
+                jo2.put(k, v);
             }
-            sb.append("            }");
         }
-        sb.append("\n");
     }
 
     private static String allCausedByErrorMessages(Throwable e) {
