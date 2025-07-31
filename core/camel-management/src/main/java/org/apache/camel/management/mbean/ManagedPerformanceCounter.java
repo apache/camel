@@ -319,7 +319,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     public String dumpStatsAsXml(boolean fullStats) {
         StringBuilder sb = new StringBuilder();
         sb.append("<stats ");
-        sb.append(String.format("exchangesCompleted=\"%s\"", exchangesCompleted.getValue()));
+        sb.append(String.format("exchangesTotal=\"%s\"", exchangesTotal.getValue()));
+        sb.append(String.format(" exchangesCompleted=\"%s\"", exchangesCompleted.getValue()));
         sb.append(String.format(" exchangesFailed=\"%s\"", exchangesFailed.getValue()));
         sb.append(String.format(" failuresHandled=\"%s\"", failuresHandled.getValue()));
         sb.append(String.format(" redeliveries=\"%s\"", redeliveries.getValue()));

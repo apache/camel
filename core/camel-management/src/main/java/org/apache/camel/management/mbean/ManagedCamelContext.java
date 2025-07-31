@@ -632,7 +632,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     @Override
     public String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
         StringBuilder sb = new StringBuilder();
-        sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
+        sb.append("<camelContextStat")
+                .append(String.format(" id=\"%s\" state=\"%s\" uptime=\"%s\"", getCamelId(), getState(), getUptimeMillis()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
         sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
@@ -666,7 +667,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 ManagedRouteMBean route
                         = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
                 sb.append("    <routeStat")
-                        .append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
+                        .append(String.format(" id=\"%s\" state=\"%s\" uptime=\"%s\"", route.getRouteId(), route.getState(),
+                                route.getUptimeMillis()));
+                if (route.getRouteGroup() != null) {
+                    sb.append(String.format(" group=\"%s\"", route.getRouteGroup()));
+                }
                 if (route.getSourceLocation() != null) {
                     sb.append(String.format(" sourceLocation=\"%s\"", route.getSourceLocation()));
                 }
@@ -706,7 +711,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     @Override
     public String dumpStepStatsAsXml(boolean fullStats) throws Exception {
         StringBuilder sb = new StringBuilder();
-        sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
+        sb.append("<camelContextStat")
+                .append(String.format(" id=\"%s\" state=\"%s\" uptime=\"%s\"", getCamelId(), getState(), getUptimeMillis()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
         sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
@@ -738,7 +744,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 ManagedRouteMBean route
                         = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
                 sb.append("    <routeStat")
-                        .append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
+                        .append(String.format(" id=\"%s\" state=\"%s\" uptime=\"%s\"", route.getRouteId(), route.getState(),
+                                route.getUptimeMillis()));
+                if (route.getRouteGroup() != null) {
+                    sb.append(String.format(" group=\"%s\"", route.getRouteGroup()));
+                }
                 if (route.getSourceLocation() != null) {
                     sb.append(String.format(" sourceLocation=\"%s\"", route.getSourceLocation()));
                 }

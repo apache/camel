@@ -546,7 +546,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
         StringBuilder answer = new StringBuilder();
         answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
-                .append(String.format(" state=\"%s\"", getState()));
+                .append(String.format(" state=\"%s\"", getState()))
+                .append(String.format(" uptime=\"%s\"", getUptimeMillis()));
+        if (getRouteGroup() != null) {
+            answer.append(String.format(" group=\"%s\"", getRouteGroup()));
+        }
         if (sourceLocation != null) {
             answer.append(String.format(" sourceLocation=\"%s\"", getSourceLocation()));
         }
@@ -615,7 +619,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
         StringBuilder answer = new StringBuilder();
         answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
-                .append(String.format(" state=\"%s\"", getState()));
+                .append(String.format(" state=\"%s\"", getState()))
+                .append(String.format(" uptime=\"%s\"", getUptimeMillis()));
+        if (getRouteGroup() != null) {
+            answer.append(String.format(" group=\"%s\"", getRouteGroup()));
+        }
         if (sourceLocation != null) {
             answer.append(String.format(" sourceLocation=\"%s\"", getSourceLocation()));
         }

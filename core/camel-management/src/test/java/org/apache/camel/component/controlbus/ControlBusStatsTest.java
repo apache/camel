@@ -47,6 +47,7 @@ public class ControlBusStatsTest extends ContextTestSupport {
         assertTrue(xml.contains("routeStat"));
         assertTrue(xml.contains("processorStat"));
         assertTrue(xml.contains("id=\"foo\""));
+        assertTrue(xml.contains("exchangesTotal=\"1\""));
         assertTrue(xml.contains("exchangesCompleted=\"1\""));
     }
 
@@ -64,6 +65,7 @@ public class ControlBusStatsTest extends ContextTestSupport {
         assertTrue(xml.contains("routeStat"));
         assertTrue(xml.contains("processorStat"));
         assertTrue(xml.contains("id=\"current\""));
+        assertTrue(xml.contains("exchangesTotal=\"1\""));
         assertTrue(xml.contains("exchangesCompleted=\"1\""));
     }
 
@@ -83,6 +85,7 @@ public class ControlBusStatsTest extends ContextTestSupport {
         assertTrue(xml.contains("processorStat"));
         assertTrue(xml.contains("id=\"bar\""));
         assertTrue(xml.contains("id=\"foo\""));
+        assertTrue(xml.contains("exchangesTotal=\"1\""));
         assertTrue(xml.contains("exchangesCompleted=\"1\""));
     }
 
