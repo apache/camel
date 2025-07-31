@@ -473,9 +473,6 @@ public class RunMojo extends AbstractExecMojo {
 
         @Override
         public void uncaughtException(Thread thread, Throwable throwable) {
-            if (throwable instanceof ThreadDeath) {
-                return; // harmless
-            }
             boolean doLog = false;
             synchronized (this) {
                 // only remember the first one
@@ -560,8 +557,9 @@ public class RunMojo extends AbstractExecMojo {
                 uncooperativeThreads.add(thread); // ensure we don't process
                 // again
                 if (stopUnresponsiveDaemonThreads) {
-                    getLog().warn("thread " + thread + " will be Thread.stop()'ed");
-                    thread.stop();
+                    getLog().warn("thread " + thread + " is unresponsive to interruption and will be left to run");
+                    // Try to interrupt again
+                    thread.interrupt();
                 } else {
                     getLog().warn("thread " + thread
                                   + " will linger despite being asked to die via interruption");

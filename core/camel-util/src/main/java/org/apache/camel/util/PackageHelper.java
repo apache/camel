@@ -43,7 +43,7 @@ public final class PackageHelper {
      */
     public static boolean isValidVersion(String packageName, double minimumVersion) {
         try {
-            Package spring = Package.getPackage(packageName);
+            Package spring = Thread.currentThread().getContextClassLoader().getDefinedPackage(packageName);
             if (spring != null) {
                 String value = spring.getImplementationVersion();
                 if (value != null) {
