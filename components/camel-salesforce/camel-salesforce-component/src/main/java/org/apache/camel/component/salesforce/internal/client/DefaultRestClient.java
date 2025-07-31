@@ -218,10 +218,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                         String fieldName = entry.getKey();
                         InputStream binaryData = entry.getValue();
 
-                        String contentType = inferContentType(fieldName, sObjectName);
                         multipartContent.addPart(new MultiPart.ContentSourcePart(
                                 fieldName, "temp-file-name.doc",
-                                HttpFields.build().add(HttpHeader.CONTENT_TYPE, contentType),
+                                HttpFields.build().add(HttpHeader.CONTENT_TYPE, "application/octet-stream"),
                                 new InputStreamRequestContent(binaryData)));
                     }
                 } else {
@@ -279,26 +278,6 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         return binaryFields;
     }
 
-    private String inferContentType(String fieldName, String sObjectType) {
-        // Infer content type based on field name and object type
-        switch (fieldName.toLowerCase()) {
-            case "body":
-                if ("Document".equalsIgnoreCase(sObjectType)) {
-                    return "application/octet-stream";
-                } else if ("Attachment".equalsIgnoreCase(sObjectType)) {
-                    return "application/octet-stream";
-                }
-                break;
-            case "versiondata":
-                return "application/octet-stream";
-            case "contentdata":
-                return "application/octet-stream";
-            default:
-                return "application/octet-stream";
-        }
-        return "application/octet-stream";
-    }
-
     @Override
     public void updateSObject(
             String sObjectName, String id, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback) {
@@ -353,10 +332,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                         String fieldName = entry.getKey();
                         InputStream binaryData = entry.getValue();
 
-                        String contentType = inferContentType(fieldName, sObjectName);
                         multipartContent.addPart(new MultiPart.ContentSourcePart(
                                 fieldName, "temp-file-name.doc",
-                                HttpFields.build().add(HttpHeader.CONTENT_TYPE, contentType),
+                                HttpFields.build().add(HttpHeader.CONTENT_TYPE, "application/octet-stream"),
                                 new InputStreamRequestContent(binaryData)));
                     }
                 } else {
