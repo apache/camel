@@ -4,7 +4,7 @@
     "name": "torchserve",
     "title": "TorchServe",
     "description": "Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "4.9.0",
     "label": "ai",
     "javaType": "org.apache.camel.component.torchserve.TorchServeComponent",

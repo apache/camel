@@ -28,7 +28,7 @@
 
     <artifactId>camel-torchserve</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: AI :: TorchServe</name>
+    <name>Camel :: AI :: TorchServe (deprecated)</name>
     <description>Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely
     </description>
 
