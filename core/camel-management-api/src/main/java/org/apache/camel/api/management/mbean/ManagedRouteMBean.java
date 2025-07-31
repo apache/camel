@@ -151,6 +151,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Dumps the route stats as XML")
     String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
 
+    @ManagedOperation(description = "Dumps the route stats as JSon")
+    String dumpRouteStatsAsJSon(boolean fullStats, boolean includeProcessors) throws Exception;
+
     @ManagedOperation(description = "Dumps the route and steps stats as XML")
     String dumpStepStatsAsXml(boolean fullStats) throws Exception;
 

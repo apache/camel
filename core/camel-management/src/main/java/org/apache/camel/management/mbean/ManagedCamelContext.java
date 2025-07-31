@@ -54,6 +54,8 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 @ManagedResource(description = "Managed CamelContext")
 public class ManagedCamelContext extends ManagedPerformanceCounter implements TimerListener, ManagedCamelContextMBean {
@@ -706,6 +708,85 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
         sb.append("</camelContextStat>");
         return sb.toString();
+    }
+
+    @Override
+    public String dumpRouteStatsAsJSon(boolean fullStats, boolean includeProcessors) throws Exception {
+        JsonObject root = new JsonObject();
+        root.put("id", getCamelId());
+        root.put("state", getState());
+        root.put("uptime", getUptimeMillis());
+
+        statsAsJSon(root, fullStats);
+        root.put("exchangesInflight", getInflightExchanges());
+
+        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        if (server != null) {
+            // gather all the routes for this CamelContext, which requires JMX
+            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            ObjectName query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
+            Set<ObjectName> routes = server.queryNames(query, null);
+
+            List<ManagedProcessorMBean> processors = new ArrayList<>();
+            if (includeProcessors) {
+                // gather all the processors for this CamelContext, which requires JMX
+                query = ObjectName.getInstance(
+                        jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+                Set<ObjectName> names = server.queryNames(query, null);
+                for (ObjectName on : names) {
+                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
+                            ManagedProcessorMBean.class);
+                    processors.add(processor);
+                }
+            }
+            processors.sort(new OrderProcessorMBeans());
+
+            // loop the routes, and append the processor stats if needed
+            JsonArray arr = new JsonArray();
+            root.put("routes", arr);
+            for (ObjectName on : routes) {
+                JsonObject jo = new JsonObject();
+                arr.add(jo);
+
+                ManagedRouteMBean route
+                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+                jo.put("id", route.getRouteId());
+                jo.put("state", route.getState());
+                jo.put("uptime", route.getUptimeMillis());
+                if (route.getRouteGroup() != null) {
+                    jo.put("group", route.getRouteGroup());
+                }
+                if (route.getSourceLocation() != null) {
+                    jo.put("sourceLocation", route.getSourceLocation());
+                }
+
+                // use substring as we only want the attributes
+                route.statsAsJSon(jo, fullStats);
+
+                // add processor details if needed
+                if (includeProcessors) {
+                    JsonArray arr2 = new JsonArray();
+                    jo.put("processors", arr2);
+                    for (ManagedProcessorMBean processor : processors) {
+                        int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
+                        // the processor must belong to this route
+                        if (route.getRouteId().equals(processor.getRouteId())) {
+                            JsonObject jo2 = new JsonObject();
+                            arr2.add(jo2);
+                            jo2.put("id", processor.getProcessorId());
+                            jo2.put("index", processor.getIndex());
+                            jo2.put("state", processor.getState());
+                            jo2.put("sourceLineNumber", line);
+                            processor.statsAsJSon(jo2, fullStats);
+                            jo2.put("exchangesInflight", processor.getExchangesInflight());
+                        }
+                    }
+                }
+            }
+        }
+
+        return root.toJson();
     }
 
     @Override

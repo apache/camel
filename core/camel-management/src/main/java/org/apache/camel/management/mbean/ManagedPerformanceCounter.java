@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedResource;
@@ -25,6 +26,7 @@ import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
 import org.apache.camel.management.PerformanceCounter;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.json.JsonObject;
 
 @ManagedResource(description = "Managed PerformanceCounter")
 public abstract class ManagedPerformanceCounter extends ManagedCounter
@@ -353,6 +355,43 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         }
         sb.append("/>");
         return sb.toString();
+    }
+
+    @Override
+    public String dumpStatsAsJSon(boolean fullStats) {
+        JsonObject jo = new JsonObject();
+        statsAsJSon(jo, fullStats);
+        return jo.toJson();
+    }
+
+    @Override
+    public void statsAsJSon(Map<String, Object> jo, boolean fullStats) {
+        jo.put("exchangesTotal", exchangesTotal.getValue());
+        jo.put("exchangesCompleted", exchangesCompleted.getValue());
+        jo.put("exchangesFailed", exchangesFailed.getValue());
+        jo.put("failuresHandled", failuresHandled.getValue());
+        jo.put("redeliveries", redeliveries.getValue());
+        jo.put("externalRedeliveries", externalRedeliveries.getValue());
+        jo.put("minProcessingTime", minProcessingTime.getValue());
+        jo.put("maxProcessingTime", maxProcessingTime.getValue());
+        jo.put("totalProcessingTime", totalProcessingTime.getValue());
+        jo.put("lastProcessingTime", lastProcessingTime.getValue());
+        jo.put("deltaProcessingTime", deltaProcessingTime.getValue());
+        jo.put("meanProcessingTime", meanProcessingTime.getValue());
+        jo.put("idleSince", getIdleSince());
+        if (fullStats) {
+            jo.put("startTimestamp", startTimestamp.getTime());
+            jo.put("resetTimestamp", resetTimestamp.getTime());
+            jo.put("firstExchangeCompletedTimestamp", firstExchangeCompletedTimestamp.getValue());
+            jo.put("firstExchangeCompletedExchangeId", firstExchangeCompletedExchangeId);
+            jo.put("firstExchangeFailureTimestamp", firstExchangeFailureTimestamp.getValue());
+            jo.put("firstExchangeFailureExchangeId", firstExchangeFailureExchangeId);
+            jo.put("lastExchangeCreatedTimestamp", lastExchangeCreatedTimestamp.getValue());
+            jo.put("lastExchangeCompletedTimestamp", lastExchangeCompletedTimestamp.getValue());
+            jo.put("lastExchangeCompletedExchangeId", lastExchangeCompletedExchangeId);
+            jo.put("lastExchangeFailureTimestamp", lastExchangeFailureTimestamp.getValue());
+            jo.put("lastExchangeFailureExchangeId", lastExchangeFailureExchangeId);
+        }
     }
 
     private static String dateAsString(long value) {

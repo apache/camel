@@ -64,6 +64,8 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.xml.LwModelHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -574,6 +576,102 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
         answer.append("</routeStat>");
         return answer.toString();
+    }
+
+    @Override
+    public String dumpRouteStatsAsJSon(boolean fullStats, boolean includeProcessors) throws Exception {
+        // in this logic we need to calculate the accumulated processing time for the processor in the route
+        // and hence why the logic is a bit more complicated to do this, as we need to calculate that from
+        // the bottom -> top of the route but this information is valuable for profiling routes
+        JsonObject root = new JsonObject();
+
+        root.put("id", getRouteId());
+        root.put("state", getState());
+        root.put("uptime", getUptimeMillis());
+        if (getRouteGroup() != null) {
+            root.put("group", getRouteGroup());
+        }
+        if (sourceLocation != null) {
+            root.put("sourceLocation", sourceLocation);
+        }
+        statsAsJSon(root, fullStats);
+        root.put("exchangesInflight", getInflightExchanges());
+        InflightRepository.InflightExchange oldest = getOldestInflightEntry();
+        if (oldest != null) {
+            root.put("oldestInflightExchangeId", oldest.getExchange().getExchangeId());
+            root.put("oldestInflightDuration", oldest.getDuration());
+        }
+
+        // need to calculate this value first, as we need that value for the route stat
+        long processorAccumulatedTime = 0L;
+
+        // gather all the processors for this route, which requires JMX
+        JsonArray arr = null;
+        if (includeProcessors) {
+            arr = new JsonArray();
+            MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+            if (server != null) {
+                // get all the processor mbeans and sort them accordingly to their index
+                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                ObjectName query = ObjectName.getInstance(
+                        jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+                Set<ObjectName> names = server.queryNames(query, null);
+                List<ManagedProcessorMBean> mps = new ArrayList<>();
+                for (ObjectName on : names) {
+                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
+                            ManagedProcessorMBean.class);
+
+                    // the processor must belong to this route
+                    if (getRouteId().equals(processor.getRouteId())) {
+                        mps.add(processor);
+                    }
+                }
+                mps.sort(new OrderProcessorMBeans());
+
+                // walk the processors in reverse order, and calculate the accumulated total time
+                Map<String, Long> accumulatedTimes = new HashMap<>();
+                Collections.reverse(mps);
+                for (ManagedProcessorMBean processor : mps) {
+                    processorAccumulatedTime += processor.getTotalProcessingTime();
+                    accumulatedTimes.put(processor.getProcessorId(), processorAccumulatedTime);
+                }
+                // and reverse back again
+                Collections.reverse(mps);
+
+                // and now add the sorted list of processors to the xml output
+                for (ManagedProcessorMBean processor : mps) {
+                    JsonObject jo = new JsonObject();
+                    arr.add(jo);
+                    processor.statsAsJSon(jo, fullStats);
+
+                    int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
+                    jo.put("id", processor.getProcessorId());
+                    jo.put("index", processor.getIndex());
+                    jo.put("state", processor.getState());
+                    jo.put("sourceLineNumber", line);
+
+                    // do we have an accumulated time then append that
+                    Long accTime = accumulatedTimes.get(processor.getProcessorId());
+                    if (accTime != null) {
+                        jo.put("accumulatedProcessingTime", accTime);
+                    }
+                }
+            }
+        }
+
+        // route self time is route total - processor accumulated total
+        long routeSelfTime = getTotalProcessingTime() - processorAccumulatedTime;
+        if (routeSelfTime < 0) {
+            // ensure we don't calculate that as negative
+            routeSelfTime = 0;
+        }
+        root.put("selfProcessingTime", routeSelfTime);
+        if (arr != null) {
+            // processors should be last
+            root.put("processors", arr);
+        }
+
+        return root.toJson();
     }
 
     @Override

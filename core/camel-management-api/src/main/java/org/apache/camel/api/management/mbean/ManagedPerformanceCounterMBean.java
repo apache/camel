@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -97,5 +98,11 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
 
     @ManagedOperation(description = "Dumps the statistics as XML")
     String dumpStatsAsXml(boolean fullStats);
+
+    @ManagedOperation(description = "Dumps the statistics as JSon")
+    String dumpStatsAsJSon(boolean fullStats);
+
+    @ManagedOperation(description = "Adds statistics to the Map")
+    void statsAsJSon(Map<String, Object> json, boolean fullStats);
 
 }
