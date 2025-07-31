@@ -4,7 +4,7 @@
 :artifactid: camel-langchain4j-tokenizer
 :description: LangChain4j Tokenizer
 :since: 4.8
-:supportlevel: Experimental
+:supportlevel: Preview
 :tabs-sync-option:
 //Manually maintained attributes
 :group: AI

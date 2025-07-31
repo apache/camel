@@ -37,7 +37,7 @@
         <firstVersion>4.8.0</firstVersion>
         <label>ai</label>
         <title>LangChain4j Tokenizer</title>
-        <supportLevel>Experimental</supportLevel>
+        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencies>

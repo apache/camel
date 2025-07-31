@@ -4,7 +4,7 @@
 :artifactid: camel-langchain4j-tools
 :description: LangChain4j Tools and Function Calling Features
 :since: 4.8
-:supportlevel: Experimental
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
