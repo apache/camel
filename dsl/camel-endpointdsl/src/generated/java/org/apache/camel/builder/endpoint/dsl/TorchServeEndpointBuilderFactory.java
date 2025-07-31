@@ -478,6 +478,7 @@ public interface TorchServeEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default TorchServeHeaderNameBuilder torchserve() {
             return TorchServeHeaderNameBuilder.INSTANCE;
         }
@@ -506,6 +507,7 @@ public interface TorchServeEndpointBuilderFactory {
          * @param path api/operation
          * @return the dsl builder
          */
+        @Deprecated
         default TorchServeEndpointBuilder torchserve(String path) {
             return TorchServeEndpointBuilderFactory.endpointBuilder("torchserve", path);
         }
@@ -536,6 +538,7 @@ public interface TorchServeEndpointBuilderFactory {
          * @param path api/operation
          * @return the dsl builder
          */
+        @Deprecated
         default TorchServeEndpointBuilder torchserve(String componentName, String path) {
             return TorchServeEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

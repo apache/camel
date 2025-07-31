@@ -1,10 +1,11 @@
-= TorchServe Component
+= TorchServe Component (deprecated)
 :doctitle: TorchServe
 :shortname: torchserve
 :artifactid: camel-torchserve
 :description: Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely
 :since: 4.9
-:supportlevel: Preview
+:supportlevel: Preview-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

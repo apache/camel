@@ -14952,6 +14952,7 @@ public class StaticEndpointBuilders {
      * @param path api/operation
      * @return the dsl builder
      */
+    @Deprecated
     public static TorchServeEndpointBuilderFactory.TorchServeEndpointBuilder torchserve(String path) {
         return torchserve("torchserve", path);
     }
@@ -14982,6 +14983,7 @@ public class StaticEndpointBuilders {
      * @param path api/operation
      * @return the dsl builder
      */
+    @Deprecated
     public static TorchServeEndpointBuilderFactory.TorchServeEndpointBuilder torchserve(String componentName, String path) {
         return TorchServeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
