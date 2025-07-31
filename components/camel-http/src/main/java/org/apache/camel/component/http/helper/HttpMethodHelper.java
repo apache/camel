@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpMethods;
@@ -73,7 +74,13 @@ public final class HttpMethodHelper {
                 answer = HttpMethods.GET;
             } else {
                 // fallback to POST if we have payload, otherwise GET
-                answer = exchange.getMessage().getBody() != null ? HttpMethods.POST : HttpMethods.GET;
+                Object body = exchange.getMessage().getBody();
+                if (body instanceof StreamCache sc) {
+                    long len = sc.length();
+                    answer = len > 0 ? HttpMethods.POST : HttpMethods.GET;
+                } else {
+                    answer = body != null ? HttpMethods.POST : HttpMethods.GET;
+                }
             }
         }
 
