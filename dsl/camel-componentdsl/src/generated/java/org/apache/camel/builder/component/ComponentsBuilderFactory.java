@@ -2867,6 +2867,19 @@ public interface ComponentsBuilderFactory {
         return KuduComponentBuilderFactory.kudu();
     }
     /**
+     * LangChain4j Agent (camel-langchain4j-agent)
+     * LangChain4j Agent component
+     * 
+     * Category: ai
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-langchain4j-agent
+     * 
+     * @return the dsl builder
+     */
+    static Langchain4jAgentComponentBuilderFactory.Langchain4jAgentComponentBuilder langchain4jAgent() {
+        return Langchain4jAgentComponentBuilderFactory.langchain4jAgent();
+    }
+    /**
      * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
