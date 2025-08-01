@@ -62,6 +62,8 @@ public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForRoute(Route route) throws MalformedObjectNameException;
 
+    ObjectName getObjectNameForRouteGroup(CamelContext camelContext, String group) throws MalformedObjectNameException;
+
     ObjectName getObjectNameForConsumer(CamelContext context, Consumer consumer) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForProducer(CamelContext context, Producer producer) throws MalformedObjectNameException;

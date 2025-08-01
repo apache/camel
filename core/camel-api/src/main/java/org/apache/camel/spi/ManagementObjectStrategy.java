@@ -49,6 +49,8 @@ public interface ManagementObjectStrategy {
 
     Object getManagedObjectForRoute(CamelContext context, Route route);
 
+    Object getManagedObjectForRouteGroup(CamelContext context, String group);
+
     Object getManagedObjectForConsumer(CamelContext context, Consumer consumer);
 
     Object getManagedObjectForProducer(CamelContext context, Producer producer);

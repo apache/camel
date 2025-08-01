@@ -48,6 +48,7 @@ import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRouteController;
+import org.apache.camel.management.mbean.ManagedRouteGroup;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
@@ -78,6 +79,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     public static final String TYPE_CONSUMER = "consumers";
     public static final String TYPE_PRODUCER = "producers";
     public static final String TYPE_ROUTE = "routes";
+    public static final String TYPE_ROUTE_GROUP = "routegroups";
     public static final String TYPE_COMPONENT = "components";
     public static final String TYPE_STEP = "steps";
     public static final String TYPE_TRACER = "tracer";
@@ -138,6 +140,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             objectName = getObjectNameForEndpoint(endpoint);
         } else if (managedObject instanceof ManagedRoute mr) {
             objectName = getObjectNameForRoute(mr.getRoute());
+        } else if (managedObject instanceof ManagedRouteGroup mrg) {
+            objectName = getObjectNameForRouteGroup(mrg.getContext(), mrg.getRouteGroup());
         } else if (managedObject instanceof ManagedStep mp) {
             objectName = getObjectNameForStep(mp.getContext(), mp.getProcessor(), mp.getDefinition());
         } else if (managedObject instanceof ManagedProcessor mp) {
@@ -374,6 +378,16 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(KEY_CONTEXT).append("=").append(getContextId(route.getCamelContext())).append(",");
         buffer.append(KEY_TYPE).append("=").append(TYPE_ROUTE).append(",");
         buffer.append(KEY_NAME).append("=").append(ObjectName.quote(route.getId()));
+        return createObjectName(buffer);
+    }
+
+    @Override
+    public ObjectName getObjectNameForRouteGroup(CamelContext camelContext, String group) throws MalformedObjectNameException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT).append("=").append(getContextId(camelContext)).append(",");
+        buffer.append(KEY_TYPE).append("=").append(TYPE_ROUTE_GROUP).append(",");
+        buffer.append(KEY_NAME).append("=").append(ObjectName.quote(group));
         return createObjectName(buffer);
     }
 

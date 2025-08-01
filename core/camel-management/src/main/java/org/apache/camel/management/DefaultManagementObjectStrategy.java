@@ -80,6 +80,7 @@ import org.apache.camel.management.mbean.ManagedRollback;
 import org.apache.camel.management.mbean.ManagedRoundRobinLoadBalancer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRouteController;
+import org.apache.camel.management.mbean.ManagedRouteGroup;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
 import org.apache.camel.management.mbean.ManagedSamplingThrottler;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
@@ -260,6 +261,16 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         } else {
             mr = new ManagedRoute(context, route);
         }
+        mr.init(context.getManagementStrategy());
+        return mr;
+    }
+
+    @Override
+    public Object getManagedObjectForRouteGroup(CamelContext context, String group) {
+        if (group == null) {
+            return null;
+        }
+        ManagedRouteGroup mr = new ManagedRouteGroup(context, group);
         mr.init(context.getManagementStrategy());
         return mr;
     }
