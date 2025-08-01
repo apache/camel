@@ -29,6 +29,7 @@ public class MockExpectation {
     private final String expectedInput;
     private final ToolExecutionSequence toolSequence;
     private String expectedResponse;
+    private String toolContentResponse;
     private BiFunction<HttpExchange, String, String> customResponseFunction;
     private Consumer<String> requestAssertion;
 
@@ -44,6 +45,10 @@ public class MockExpectation {
 
     public String getExpectedResponse() {
         return expectedResponse;
+    }
+
+    public String getToolContentResponse() {
+        return toolContentResponse;
     }
 
     public BiFunction<HttpExchange, String, String> getCustomResponseFunction() {
@@ -69,6 +74,10 @@ public class MockExpectation {
 
     public void setRequestAssertion(Consumer<String> requestAssertion) {
         this.requestAssertion = requestAssertion;
+    }
+
+    public void setToolContentResponse(String toolContentResponse) {
+        this.toolContentResponse = toolContentResponse;
     }
 
     // Tool sequence delegation methods

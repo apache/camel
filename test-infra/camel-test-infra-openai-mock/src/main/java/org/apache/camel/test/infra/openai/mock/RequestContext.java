@@ -31,30 +31,30 @@ public class RequestContext {
     }
 
     public boolean hasToolRole() {
-        if (!messagesNode.isArray()) {
+        if (!messagesNode.isArray() || messagesNode.size() == 0) {
             return false;
         }
 
-        for (JsonNode messageNode : messagesNode) {
-            String role = messageNode.path("role").asText();
-            if ("tool".equals(role)) {
-                return true;
-            }
-        }
-        return false;
+        // Check if the last message has a tool role
+        JsonNode lastMessage = messagesNode.get(messagesNode.size() - 1);
+        String role = lastMessage.path("role").asText();
+        return "tool".equals(role);
     }
 
-    public String getFirstUserMessage() {
+    public String getLastUserMessage() {
         if (!messagesNode.isArray()) {
             return null;
         }
 
-        for (JsonNode messageNode : messagesNode) {
+        for (int i = messagesNode.size(); i > 0; i--) {
+            JsonNode messageNode = messagesNode.get(i - 1);
+
             String role = messageNode.path("role").asText();
             if ("user".equals(role)) {
                 return messageNode.path("content").asText();
             }
         }
+
         return null;
     }
 
