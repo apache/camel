@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.langchain4j.agent;
+package org.apache.camel.component.langchain4j.agent.integration;
 
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.agent.AiAgentBody;
 import org.apache.camel.component.langchain4j.agent.pojos.PersistentChatMemoryStore;
 import org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail;
 import org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Class to test a mix match between all those different concepts : memory / tool / RAG / guardrails
  */
 @EnabledIfSystemProperty(named = "OPENAI_API_KEY", matches = ".*", disabledReason = "OpenAI API key required")
-public class LangChain4jAgenWithMemoryServiceIT extends AbstractRAGTest {
+public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
 
     private static final int MEMORY_ID_SESSION = 42;
 
