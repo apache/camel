@@ -67,6 +67,10 @@ import org.slf4j.LoggerFactory;
  * A supervising capable {@link RouteController} that delays the startup of the routes after the camel context startup
  * and takes control of starting the routes in a safe manner. This controller is able to retry starting failing routes,
  * and have various options to configure settings for backoff between restarting routes.
+ * <p/>
+ * When a route has been successfully started, then this supervising controller will no longer manage the route
+ * and afterward the route is managed by the default route controller. The supervising capabilities are designed
+ * to only be in use during the startup of the application.
  *
  * @see DefaultRouteController
  */
@@ -394,16 +398,6 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         } else {
             doStartRoute(route.get(), true, r -> super.startRoute(routeId));
         }
-    }
-
-    @Override
-    public void startRoutes() {
-        throw new UnsupportedOperationException("TODO implement");
-    }
-
-    @Override
-    public void stopRouteGroup(String routeGroup) throws Exception {
-        throw new UnsupportedOperationException("TODO implement");
     }
 
     @Override
