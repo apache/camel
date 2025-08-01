@@ -1378,6 +1378,8 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
+                // TODO When baseline will be Java 21
+                //                return Thread.currentThread().threadId();
                 return Thread.currentThread().getId();
             }
 

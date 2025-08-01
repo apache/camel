@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -478,9 +479,16 @@ public final class ObjectHelper {
     public static Object invokeMethodSafe(Method method, Object instance, Object... parameters)
             throws InvocationTargetException, IllegalAccessException {
         Object answer;
-        if (!method.isAccessible()) {
-            method.setAccessible(true);
+        if (Modifier.isStatic(method.getModifiers())) {
+            if (!method.canAccess(null)) {
+                method.setAccessible(true);
+            }
+        } else {
+            if (!method.canAccess(instance)) {
+                method.setAccessible(true);
+            }
         }
+
         if (parameters != null) {
             answer = method.invoke(instance, parameters);
         } else {

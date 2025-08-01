@@ -18,7 +18,7 @@ package org.apache.camel.test.oauth;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -78,7 +78,7 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
     }
 
     private static void connectToUrl(String httpsUrl) throws IOException {
-        var url = new URL(httpsUrl);
+        var url = URI.create(httpsUrl).toURL();
         var con = (HttpsURLConnection) url.openConnection();
         con.connect();
     }

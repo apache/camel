@@ -17,7 +17,7 @@
 package org.apache.camel.component.rss;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
@@ -45,7 +45,7 @@ public final class RssUtils {
     }
 
     private static SyndFeed createSyndFeed(String feedUri) throws IOException, FeedException {
-        try (XmlReader reader = new XmlReader(new URL(feedUri))) {
+        try (XmlReader reader = new XmlReader(URI.create(feedUri).toURL())) {
             SyndFeedInput input = new SyndFeedInput();
             return input.build(reader);
         }

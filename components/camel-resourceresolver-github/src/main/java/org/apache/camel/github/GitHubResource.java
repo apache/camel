@@ -19,6 +19,7 @@ package org.apache.camel.github;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 
 import org.apache.camel.CamelContext;
@@ -39,7 +40,7 @@ public final class GitHubResource extends ResourceSupport {
     public boolean exists() {
         if (!init) {
             try {
-                URL u = new URL(getLocation());
+                URL u = URI.create(getLocation()).toURL();
                 try (InputStream is = u.openStream()) {
                     cache = camelContext.getTypeConverter().tryConvertTo(byte[].class, is);
                 }

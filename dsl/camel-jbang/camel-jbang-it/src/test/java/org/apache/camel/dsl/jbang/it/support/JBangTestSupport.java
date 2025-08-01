@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -340,7 +341,7 @@ public abstract class JBangTestSupport {
 
     protected String downloadNewFileInDataFolder(String downloadUrl) {
         try {
-            return this.downloadNewFileInDataFolder(new URL(downloadUrl), null);
+            return this.downloadNewFileInDataFolder(URI.create(downloadUrl).toURL(), null);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

@@ -152,6 +152,8 @@ public class AS2AsyncMDNServerConnection {
             // parses the received AS2MessageEntity
             AS2BHttpServerConnection inConn = new AS2BHttpServerConnection(cfg);
             inConn.bind(inSocket);
+            // TODO Update once baseline is Java 21
+            // setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + threadId());
             setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + getId());
             this.httpService = httpService;
             this.serverConnection = inConn;

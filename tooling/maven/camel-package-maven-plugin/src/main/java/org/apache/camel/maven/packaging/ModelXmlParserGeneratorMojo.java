@@ -25,7 +25,7 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -117,7 +117,7 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
         String resName = outputDefinitionClass.getName().replace('.', '/') + ".class";
         String url = classLoader.getResource(resName).toExternalForm().replace(resName, JandexStore.DEFAULT_NAME);
         Index index;
-        try (InputStream is = new URL(url).openStream()) {
+        try (InputStream is = URI.create(url).toURL().openStream()) {
             index = new IndexReader(is).read();
         } catch (IOException e) {
             throw new MojoExecutionException("IOException: " + e.getMessage(), e);

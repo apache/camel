@@ -198,6 +198,9 @@ public class SmppConsumer extends DefaultConsumer {
                 reconnectLock.unlock();
             }
         } else {
+            // TODO Update once baseline is Java 21
+            //            LOG.warn("Thread {} could not acquire a lock for creating the session during consumer reconnection",
+            //                    Thread.currentThread().threadId());
             LOG.warn("Thread {} could not acquire a lock for creating the session during consumer reconnection",
                     Thread.currentThread().getId());
         }
