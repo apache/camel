@@ -16,15 +16,16 @@
  */
 package org.apache.camel.management;
 
+import java.util.Set;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
