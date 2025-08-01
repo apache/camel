@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.langchain4j.agent;
+package org.apache.camel.component.langchain4j.agent.integration;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.agent.AiAgentBody;
 import org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail;
 import org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = "OPENAI_API_KEY", matches = ".*", disabledReason = "OpenAI API key required")
-public class LangChain4jAgentServiceIT extends AbstractRAGTest {
+public class LangChain4jAgentServiceIT extends AbstractRAGIT {
 
     private static final String USER_DATABASE = """
             {"id": "123", "name": "John Smith", "membership": "Gold", "rentals": 15, "preferredVehicle": "SUV"}
