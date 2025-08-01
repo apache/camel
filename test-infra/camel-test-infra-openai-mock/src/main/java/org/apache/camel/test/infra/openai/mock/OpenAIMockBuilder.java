@@ -52,6 +52,13 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    public OpenAIMockBuilder replyWithToolContent(String customMessage) {
+        validateCurrentExpectation("replyWithToolContent()");
+        log.debug("Setting tool content response with custom message: {}", customMessage);
+        currentExpectation.setToolContentResponse(customMessage);
+        return this;
+    }
+
     public OpenAIMockBuilder invokeTool(String toolName) {
         validateCurrentExpectation("invokeTool()");
         log.debug("Adding new tool execution step with tool: {}", toolName);

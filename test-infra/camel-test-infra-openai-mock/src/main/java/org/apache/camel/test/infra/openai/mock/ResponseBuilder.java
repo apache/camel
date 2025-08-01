@@ -61,11 +61,19 @@ public class ResponseBuilder {
         return objectMapper.writeValueAsString(chatCompletion);
     }
 
-    public String createFinalToolResponse(JsonNode messagesNode, String fallbackContent) throws Exception {
+    public String createFinalToolResponse(JsonNode messagesNode, String fallbackContent, String toolContentResponse)
+            throws Exception {
         Map<String, Object> responseMessage = createBaseMessage();
 
-        String content = extractLastToolContent(messagesNode)
-                .orElse(fallbackContent != null ? fallbackContent : "All tools processed");
+        String content;
+        if (fallbackContent != null) {
+            content = fallbackContent;
+        } else if (toolContentResponse != null) {
+            String toolContent = extractLastToolContent(messagesNode).orElse("");
+            content = toolContent + " " + toolContentResponse;
+        } else {
+            content = extractLastToolContent(messagesNode).orElse("All tools processed");
+        }
         responseMessage.put("content", content);
 
         Map<String, Object> choice = createBaseChoice("stop", responseMessage);
@@ -73,6 +81,10 @@ public class ResponseBuilder {
         chatCompletion.put("history", messagesNode);
 
         return objectMapper.writeValueAsString(chatCompletion);
+    }
+
+    public String createFinalToolResponse(JsonNode messagesNode, String fallbackContent) throws Exception {
+        return createFinalToolResponse(messagesNode, fallbackContent, null);
     }
 
     public String createErrorResponse(int statusCode, String errorMessage, HttpExchange exchange) {

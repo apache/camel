@@ -50,7 +50,9 @@ public class RequestHandler {
             JsonNode rootNode = objectMapper.readTree(requestBody);
             RequestContext context = new RequestContext(rootNode);
 
-            if (context.hasToolRole()) {
+            MockExpectation expectation = findExpectationByInput(context.getLastUserMessage());
+
+            if (context.hasToolRole() && !expectation.getToolSequence().isEmpty()) {
                 return handleToolSequenceResponse(context, exchange);
             } else {
                 return handleUserInput(requestBody, context, exchange);
@@ -63,7 +65,7 @@ public class RequestHandler {
     }
 
     private String handleToolSequenceResponse(RequestContext context, HttpExchange exchange) throws Exception {
-        String originalInput = context.getFirstUserMessage();
+        String originalInput = context.getLastUserMessage();
         if (originalInput == null) {
             LOG.warn("Could not find original user input in message history");
             return responseBuilder.createErrorResponse(400, "Original user input not found", exchange);
@@ -79,15 +81,17 @@ public class RequestHandler {
 
         if (expectation.hasMoreToolSteps()) {
             LOG.debug("Executing next tool step for expectation: {}", originalInput);
-            return createToolCallResponse(expectation);
+            String result = createToolCallResponse(expectation);
+            return result;
         } else {
             LOG.debug("Tool sequence completed for expectation: {}", originalInput);
-            return responseBuilder.createFinalToolResponse(context.getMessagesNode(), expectation.getExpectedResponse());
+            return responseBuilder.createFinalToolResponse(context.getMessagesNode(), expectation.getExpectedResponse(),
+                    expectation.getToolContentResponse());
         }
     }
 
     private String handleUserInput(String requestBody, RequestContext context, HttpExchange exchange) throws Exception {
-        String userInput = context.getFirstUserMessage();
+        String userInput = context.getLastUserMessage();
         if (userInput == null) {
             LOG.warn("User message content not found in request");
             throw new IllegalArgumentException("User message content not found in request");
