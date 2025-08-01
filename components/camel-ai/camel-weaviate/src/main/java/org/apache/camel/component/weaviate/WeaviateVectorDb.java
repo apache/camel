@@ -67,5 +67,12 @@ public class WeaviateVectorDb {
 
         @Metadata(description = "Merges properties into the object", javaType = "Boolean", defaultValue = "true")
         public static final String UPDATE_WITH_MERGE = "CamelWeaviateUpdateWithMerge";
+
+        @Metadata(description = "Key Name for Insert/Upsert operation", javaType = "String")
+        public static final String KEY_NAME = "CamelWeaviateKeyName";
+
+        @Metadata(description = "Key Value for Insert/Upsert operation", javaType = "String")
+        public static final String KEY_VALUE = "CamelWeaviateKeyValue";
+
     }
 }
