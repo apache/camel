@@ -21,6 +21,7 @@ import io.dapr.client.domain.PublishEventRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfiguration;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.component.dapr.DaprOperation;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -42,9 +43,12 @@ public class DaprPubSubTest extends CamelTestSupport {
 
     @Mock
     private DaprClient client;
+    @Mock
+    private DaprEndpoint endpoint;
 
     @Test
     void testPubSub() throws Exception {
+        when(endpoint.getClient()).thenReturn(client);
         when(client.publishEvent(any(PublishEventRequest.class))).thenReturn(Mono.empty());
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -56,8 +60,8 @@ public class DaprPubSubTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("myBody");
 
-        final DaprPubSubHandler operation = new DaprPubSubHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprPubSubHandler operation = new DaprPubSubHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
 
         PublishEventRequest response = (PublishEventRequest) operationResponse.getBody();
         assertNotNull(operationResponse);
@@ -72,7 +76,7 @@ public class DaprPubSubTest extends CamelTestSupport {
         DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
 
         final Exchange exchange = new DefaultExchange(context);
-        final DaprPubSubHandler operation = new DaprPubSubHandler(configurationOptionsProxy);
+        final DaprPubSubHandler operation = new DaprPubSubHandler(configurationOptionsProxy, endpoint);
 
         // case 1: both pubSubName and topic empty
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));

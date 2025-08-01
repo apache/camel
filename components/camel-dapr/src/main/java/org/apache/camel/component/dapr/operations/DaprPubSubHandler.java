@@ -22,18 +22,21 @@ import io.dapr.client.DaprClient;
 import io.dapr.client.domain.PublishEventRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 public class DaprPubSubHandler implements DaprOperationHandler {
 
     private final DaprConfigurationOptionsProxy configurationOptionsProxy;
+    private final DaprEndpoint endpoint;
 
-    public DaprPubSubHandler(DaprConfigurationOptionsProxy configurationOptionsProxy) {
+    public DaprPubSubHandler(DaprConfigurationOptionsProxy configurationOptionsProxy, DaprEndpoint endpoint) {
         this.configurationOptionsProxy = configurationOptionsProxy;
+        this.endpoint = endpoint;
     }
 
     @Override
-    public DaprOperationResponse handle(Exchange exchange, DaprClient client) {
+    public DaprOperationResponse handle(Exchange exchange) {
         Object payload = exchange.getIn().getBody();
         String pubSubName = configurationOptionsProxy.getPubSubName(exchange);
         String topic = configurationOptionsProxy.getTopic(exchange);
@@ -44,6 +47,7 @@ public class DaprPubSubHandler implements DaprOperationHandler {
         publishEventRequest.setContentType(contentType);
         publishEventRequest.setMetadata(metadata);
 
+        DaprClient client = endpoint.getClient();
         client.publishEvent(publishEventRequest).block();
 
         return DaprOperationResponse.create(publishEventRequest);

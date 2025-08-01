@@ -23,18 +23,21 @@ import io.dapr.client.domain.InvokeBindingRequest;
 import io.dapr.utils.TypeRef;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 public class DaprInvokeBindingHandler implements DaprOperationHandler {
 
     private final DaprConfigurationOptionsProxy configurationOptionsProxy;
+    private final DaprEndpoint endpoint;
 
-    public DaprInvokeBindingHandler(DaprConfigurationOptionsProxy configurationOptionsProxy) {
+    public DaprInvokeBindingHandler(DaprConfigurationOptionsProxy configurationOptionsProxy, DaprEndpoint endpoint) {
         this.configurationOptionsProxy = configurationOptionsProxy;
+        this.endpoint = endpoint;
     }
 
     @Override
-    public DaprOperationResponse handle(Exchange exchange, DaprClient client) {
+    public DaprOperationResponse handle(Exchange exchange) {
         Object payload = exchange.getIn().getBody();
         String bindingName = configurationOptionsProxy.getBindingName(exchange);
         String bindingOperation = configurationOptionsProxy.getBindingOperation(exchange);
@@ -44,6 +47,7 @@ public class DaprInvokeBindingHandler implements DaprOperationHandler {
         bindingRequest.setData(payload);
         bindingRequest.setMetadata(metadata);
 
+        DaprClient client = endpoint.getClient();
         final byte[] response = client.invokeBinding(bindingRequest, TypeRef.get(byte[].class)).block();
 
         return DaprOperationResponse.create(response);

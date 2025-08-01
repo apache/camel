@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.dapr.operations;
 
-import io.dapr.client.DaprClient;
 import org.apache.camel.Exchange;
 
 public interface DaprOperationHandler {
@@ -25,9 +24,8 @@ public interface DaprOperationHandler {
      * Execute the configured operation on this exchange.
      *
      * @param exchange the current exchange
-     * @param client   the DaprClient
      */
-    DaprOperationResponse handle(Exchange exchange, DaprClient client);
+    DaprOperationResponse handle(Exchange exchange);
 
     /**
      * Validates configuration based on operation on this exchange.

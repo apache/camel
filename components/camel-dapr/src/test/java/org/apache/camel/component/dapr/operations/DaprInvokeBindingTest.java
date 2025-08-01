@@ -20,6 +20,7 @@ import io.dapr.client.DaprClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfiguration;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.component.dapr.DaprOperation;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -41,11 +42,14 @@ public class DaprInvokeBindingTest extends CamelTestSupport {
 
     @Mock
     private DaprClient client;
+    @Mock
+    private DaprEndpoint endpoint;
 
     @Test
     void testInvokeBinding() throws Exception {
         final byte[] mockResponse = "hello".getBytes();
 
+        when(endpoint.getClient()).thenReturn(client);
         when(client.invokeBinding(any(), any())).thenReturn(Mono.just(mockResponse));
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -57,8 +61,8 @@ public class DaprInvokeBindingTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("myBody");
 
-        final DaprInvokeBindingHandler operation = new DaprInvokeBindingHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprInvokeBindingHandler operation = new DaprInvokeBindingHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
 
         assertNotNull(operationResponse);
         assertEquals(mockResponse, operationResponse.getBody());
@@ -71,7 +75,7 @@ public class DaprInvokeBindingTest extends CamelTestSupport {
         DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
 
         final Exchange exchange = new DefaultExchange(context);
-        final DaprInvokeBindingHandler operation = new DaprInvokeBindingHandler(configurationOptionsProxy);
+        final DaprInvokeBindingHandler operation = new DaprInvokeBindingHandler(configurationOptionsProxy, endpoint);
 
         // case 1: both bindingName and bindingOperation empty
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));

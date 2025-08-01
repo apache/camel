@@ -23,21 +23,25 @@ import io.dapr.client.domain.GetBulkSecretRequest;
 import io.dapr.client.domain.GetSecretRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 public class DaprSecretHandler implements DaprOperationHandler {
 
     private final DaprConfigurationOptionsProxy configurationOptionsProxy;
+    private final DaprEndpoint endpoint;
 
-    public DaprSecretHandler(DaprConfigurationOptionsProxy configurationOptionsProxy) {
+    public DaprSecretHandler(DaprConfigurationOptionsProxy configurationOptionsProxy, DaprEndpoint endpoint) {
         this.configurationOptionsProxy = configurationOptionsProxy;
+        this.endpoint = endpoint;
     }
 
     @Override
-    public DaprOperationResponse handle(Exchange exchange, DaprClient client) {
+    public DaprOperationResponse handle(Exchange exchange) {
         String secretStore = configurationOptionsProxy.getSecretStore(exchange);
         String key = configurationOptionsProxy.getKey(exchange);
         Map<String, String> metadata = configurationOptionsProxy.getMetadata(exchange);
+        DaprClient client = endpoint.getClient();
 
         Object response;
         if (ObjectHelper.isNotEmpty(key)) {
