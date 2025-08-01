@@ -1176,7 +1176,7 @@ public abstract class AbstractCamelContext extends BaseService
             if (routeService != null) {
                 try {
                     startRouteService(routeService, false);
-                    logRouteState(routeService.getRoute(), "Started", loggingLevel);
+                    logRouteState(routeService.getRoute(), "Started", loggingLevel, 0);
                 } catch (Exception e) {
                     DefaultRouteError.set(this, routeId, Phase.START, e);
                     throw e;
@@ -1209,7 +1209,7 @@ public abstract class AbstractCamelContext extends BaseService
                     // must resume the route as well
                     Route route = getRoute(routeId);
                     ServiceHelper.resumeService(route);
-                    logRouteState(routeService.getRoute(), "Resumed", loggingLevel);
+                    logRouteState(routeService.getRoute(), "Resumed", loggingLevel, 0);
                 }
             } catch (Exception e) {
                 DefaultRouteError.set(this, routeId, Phase.RESUME, e);
@@ -1266,6 +1266,43 @@ public abstract class AbstractCamelContext extends BaseService
         doShutdownRoute(routeId, timeout, timeUnit, false, LoggingLevel.INFO);
     }
 
+    public void startRouteGroup(String routeGroup) throws Exception {
+        Map<String, RouteService> toStart = new LinkedHashMap<>();
+        for (var e : routeServices.entrySet()) {
+            String group = e.getValue().getRoute().getGroup();
+            if (routeGroup.equals(group)) {
+                toStart.put(e.getKey(), e.getValue());
+            }
+        }
+        if (!toStart.isEmpty()) {
+            LOG.debug("Starting route group: {}", routeGroup);
+            internalRouteStartupManager.doStartOrResumeRoutes(this, toStart, true, true, false, false);
+        }
+
+        var routes = getRoutesByGroup(routeGroup);
+        LOG.info("Route group: {} started (total:{})", routeGroup, routes.size());
+        for (Route route : routes) {
+            logRouteState(route, "Started", LoggingLevel.INFO, 4);
+        }
+    }
+
+    public void stopRouteGroup(String routeGroup) throws Exception {
+        RouteController controller = getRouteController();
+        if (controller == null) {
+            // in case we are called during shutdown and controller is null
+            return;
+        }
+        LOG.debug("Stopping route group: {}", routeGroup);
+        doShutdownRouteGroup(routeGroup, getShutdownStrategy().getTimeout(), getShutdownStrategy().getTimeUnit(), false,
+                LoggingLevel.OFF);
+
+        var routes = getRoutesByGroup(routeGroup);
+        LOG.info("Route group: {} stopped (total:{})", routeGroup, routes.size());
+        for (Route route : routes) {
+            logRouteState(route, "Stopped", LoggingLevel.INFO, 4);
+        }
+    }
+
     protected void doShutdownRoute(
             String routeId, long timeout, TimeUnit timeUnit, boolean removingRoutes, LoggingLevel loggingLevel)
             throws Exception {
@@ -1286,6 +1323,44 @@ public abstract class AbstractCamelContext extends BaseService
                     stopRouteService(routeService, removingRoutes, loggingLevel);
                 } catch (Exception e) {
                     DefaultRouteError.set(this, routeId, removingRoutes ? Phase.SHUTDOWN : Phase.STOP, e);
+                    throw e;
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    protected void doShutdownRouteGroup(
+            String routeGroup, long timeout, TimeUnit timeUnit, boolean removingRoutes, LoggingLevel loggingLevel)
+            throws Exception {
+        lock.lock();
+        try {
+            List<RouteStartupOrder> routeList = new ArrayList<>();
+            List<RouteService> routeServiceList = new ArrayList<>();
+            for (var order : routeStartupOrder) {
+                if (routeGroup.equals(order.getRoute().getGroup())) {
+                    routeList.add(order);
+                    String id = order.getRoute().getRouteId();
+                    DefaultRouteError.reset(this, id);
+                    RouteService routeService = routeServices.get(id);
+                    if (routeService != null) {
+                        routeServiceList.add(routeService);
+                    }
+                }
+            }
+            if (!routeList.isEmpty()) {
+                try {
+                    getShutdownStrategy().shutdown(this, routeList, timeout, timeUnit);
+                    // must stop route service as well (and remove the routes from management)
+                    for (RouteService routeService : routeServiceList) {
+                        stopRouteService(routeService, removingRoutes, loggingLevel);
+                    }
+                } catch (Exception e) {
+                    for (RouteStartupOrder order : routeList) {
+                        DefaultRouteError.set(this, order.getRoute().getRouteId(), removingRoutes ? Phase.SHUTDOWN : Phase.STOP,
+                                e);
+                    }
                     throw e;
                 }
             }
@@ -3483,20 +3558,21 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
-    protected void logRouteState(Route route, String state, LoggingLevel loggingLevel) {
+    protected void logRouteState(Route route, String state, LoggingLevel loggingLevel, int level) {
         lock.lock();
         try {
             CamelLogger logger = new CamelLogger(LOG, loggingLevel);
             if (logger.shouldLog()) {
+                String pad = " ".repeat(level);
                 if (route.getConsumer() != null) {
                     String id = route.getId();
                     String uri = route.getEndpoint().getEndpointBaseUri();
                     uri = URISupport.sanitizeUri(uri);
-                    String line = String.format("%s %s (%s)", state, id, uri);
+                    String line = String.format("%s%s %s (%s)", pad, state, id, uri);
                     logger.log(line);
                 } else {
                     String id = route.getId();
-                    String line = String.format("%s %s", state, id);
+                    String line = String.format("%s%s %s", pad, state, id);
                     logger.log(line);
                 }
             }
@@ -3509,7 +3585,7 @@ public abstract class AbstractCamelContext extends BaseService
         lock.lock();
         try {
             routeService.stop();
-            logRouteState(routeService.getRoute(), "Stopped", loggingLevel);
+            logRouteState(routeService.getRoute(), "Stopped", loggingLevel, 0);
         } finally {
             lock.unlock();
         }
@@ -3528,7 +3604,7 @@ public abstract class AbstractCamelContext extends BaseService
         lock.lock();
         try {
             routeService.shutdown();
-            logRouteState(routeService.getRoute(), "Shutdown", loggingLevel);
+            logRouteState(routeService.getRoute(), "Shutdown", loggingLevel, 0);
         } finally {
             lock.unlock();
         }
@@ -3539,7 +3615,7 @@ public abstract class AbstractCamelContext extends BaseService
         try {
             routeService.setRemovingRoutes(false);
             routeService.suspend();
-            logRouteState(routeService.getRoute(), "Suspended", LoggingLevel.INFO);
+            logRouteState(routeService.getRoute(), "Suspended", LoggingLevel.INFO, 0);
         } finally {
             lock.unlock();
         }

@@ -397,6 +397,16 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     }
 
     @Override
+    public void startRoutes() {
+        throw new UnsupportedOperationException("TODO implement");
+    }
+
+    @Override
+    public void stopRouteGroup(String routeGroup) throws Exception {
+        throw new UnsupportedOperationException("TODO implement");
+    }
+
+    @Override
     public Collection<Route> getControlledRoutes() {
         return routes.stream()
                 .map(RouteHolder::get)

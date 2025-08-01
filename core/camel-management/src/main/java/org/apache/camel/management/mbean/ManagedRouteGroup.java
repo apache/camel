@@ -16,15 +16,22 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedRouteGroupMBean;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.TimeUtils;
 
 @ManagedResource(description = "Managed Route Group")
 public class ManagedRouteGroup extends ManagedPerformanceCounter implements TimerListener, ManagedRouteGroupMBean {
+
+    public static final String VALUE_UNKNOWN = "Unknown";
 
     protected final String group;
     protected final CamelContext context;
@@ -58,6 +65,46 @@ public class ManagedRouteGroup extends ManagedPerformanceCounter implements Time
     @Override
     public int getGroupSize() {
         return context.getRoutesByGroup(group).size();
+    }
+
+    @Override
+    public String[] getGroupIds() {
+        List<String> list = context.getRoutesByGroup(group).stream().map(Route::getRouteId).toList();
+        return list.toArray(new String[0]);
+    }
+
+    @Override
+    public String getState() {
+        String answer = null;
+        for (Route route : context.getRoutesByGroup(group)) {
+            ServiceStatus status = context.getRouteController().getRouteStatus(route.getId());
+            if (status != null) {
+                if (answer == null) {
+                    answer = status.name();
+                } else if (!status.name().equals(answer)) {
+                    answer = VALUE_UNKNOWN;
+                }
+            }
+        }
+        return answer;
+    }
+
+    @Override
+    public String getUptime() {
+        long delta = getUptimeMillis();
+        if (delta == 0) {
+            return "";
+        }
+        return TimeUtils.printDuration(delta);
+    }
+
+    @Override
+    public long getUptimeMillis() {
+        long answer = -1;
+        for (Route route : context.getRoutesByGroup(group)) {
+            answer = Math.max(answer, route.getUptimeMillis());
+        }
+        return answer;
     }
 
     @Override
@@ -122,6 +169,16 @@ public class ManagedRouteGroup extends ManagedPerformanceCounter implements Time
 
     private Integer getInflightExchanges() {
         return (int) super.getExchangesInflight();
+    }
+
+    @Override
+    public void start() throws Exception {
+        context.getRouteController().startRouteGroup(group);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        context.getRouteController().stopRouteGroup(group);
     }
 
 }

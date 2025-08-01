@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedRouteGroupMBean extends ManagedCounterMBean {
 
@@ -25,6 +26,18 @@ public interface ManagedRouteGroupMBean extends ManagedCounterMBean {
 
     @ManagedAttribute(description = "Number of routes in this group")
     int getGroupSize();
+
+    @ManagedAttribute(description = "The route IDs within this group")
+    String[] getGroupIds();
+
+    @ManagedAttribute(description = "Route State")
+    String getState();
+
+    @ManagedAttribute(description = "Route Uptime [human readable text]")
+    String getUptime();
+
+    @ManagedAttribute(description = "Route Uptime [milliseconds]")
+    long getUptimeMillis();
 
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
@@ -61,5 +74,11 @@ public interface ManagedRouteGroupMBean extends ManagedCounterMBean {
 
     @ManagedAttribute(description = "Throughput message/second")
     String getThroughput();
+
+    @ManagedOperation(description = "Start all routes")
+    void start() throws Exception;
+
+    @ManagedOperation(description = "Stop all routes")
+    void stop() throws Exception;
 
 }

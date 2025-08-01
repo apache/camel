@@ -168,6 +168,16 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
         getInternalRouteController().resumeRoute(routeId);
     }
 
+    @Override
+    public void startRouteGroup(String routeGroup) throws Exception {
+        getInternalRouteController().startRouteGroup(routeGroup);
+    }
+
+    @Override
+    public void stopRouteGroup(String routeGroup) throws Exception {
+        getInternalRouteController().stopRouteGroup(routeGroup);
+    }
+
     // ***************************************************
     //
     // ***************************************************
