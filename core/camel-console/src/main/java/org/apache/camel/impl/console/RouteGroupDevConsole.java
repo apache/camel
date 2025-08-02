@@ -18,6 +18,7 @@ package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteGroupMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -81,6 +84,10 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Size: %s", mrg.getGroupSize()));
             sb.append(String.format("\n    State: %s", mrg.getState()));
             sb.append(String.format("\n    Uptime: %s", mrg.getUptime()));
+            String coverage = calculateRouteCoverage(mrg, true);
+            if (coverage != null) {
+                sb.append(String.format("\n    Coverage: %s", coverage));
+            }
             String load1 = getLoad1(mrg);
             String load5 = getLoad5(mrg);
             String load15 = getLoad15(mrg);
@@ -144,10 +151,15 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
             JsonObject jo = new JsonObject();
             list.add(jo);
             jo.put("group", mrg.getRouteGroup());
-            jo.put("routeIds", new JsonArray(Arrays.stream(mrg.getGroupIds()).toList()));
+            jo.put("size", mrg.getGroupSize());
             jo.put("state", mrg.getState());
             jo.put("uptime", mrg.getUptime());
+            jo.put("routeIds", new JsonArray(Arrays.stream(mrg.getGroupIds()).toList()));
             JsonObject stats = new JsonObject();
+            String coverage = calculateRouteCoverage(mrg, false);
+            if (coverage != null) {
+                stats.put("coverage", coverage);
+            }
             String load1 = getLoad1(mrg);
             String load5 = getLoad5(mrg);
             String load15 = getLoad15(mrg);
@@ -251,6 +263,45 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
         // lets use dot as separator
         s = s.replace(',', '.');
         return s;
+    }
+
+    private String calculateRouteCoverage(ManagedRouteGroupMBean mrg, boolean percent) {
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+
+        Collection<String> ids = new ArrayList<>();
+        for (String id : mrg.getGroupIds()) {
+            ManagedRouteMBean mrb = mcc.getManagedRoute(id);
+            try {
+                ids.addAll(mrb.processorIds());
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        int total = ids.size();
+        int covered = 0;
+
+        for (String id : ids) {
+            ManagedProcessorMBean mp = mcc.getManagedProcessor(id);
+            if (mp != null) {
+                if (mp.getExchangesTotal() > 0) {
+                    covered++;
+                }
+            }
+        }
+
+        if (percent) {
+            double p;
+            if (total > 0) {
+                p = ((double) covered / total) * 100;
+            } else {
+                p = 0;
+            }
+            String f = String.format("%.0f", p);
+            return covered + "/" + total + " (" + f + "%)";
+        } else {
+            return covered + "/" + total;
+        }
     }
 
     protected void doAction(CamelContext camelContext, String command, String filter) {
