@@ -33,6 +33,10 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
                         description = "Route ids (multiple ids can be separated by comma)", defaultValue = "*")
     String id = "*";
 
+    @CommandLine.Option(names = { "--group" },
+                        description = "Perform the action on a group of routes")
+    boolean group;
+
     public CamelRouteAction(CamelJBangMain main) {
         super(main);
     }
@@ -44,6 +48,7 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
         for (long pid : pids) {
             JsonObject root = new JsonObject();
             root.put("action", "route");
+            root.put("group", group);
             root.put("id", id);
             Path f = getActionFile(Long.toString(pid));
             onAction(root);

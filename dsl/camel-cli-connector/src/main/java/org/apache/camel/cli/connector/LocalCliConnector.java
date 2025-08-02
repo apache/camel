@@ -34,6 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -801,16 +802,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         // id is a pattern
         String[] patterns = root.getString("id").split(",");
         boolean all = patterns.length == 1 && "*".equals(patterns[0]);
+        boolean group = root.getBooleanOrDefault("group", false);
         List<String> ids;
         if (all) {
             ids = List.of("*");
         } else {
             // find matching IDs
             ids = camelContext.getRoutes()
-                    .stream().map(Route::getRouteId)
-                    .filter(routeId -> {
+                    .stream().map(r -> group ? r.getGroup() : r.getRouteId())
+                    .filter(Objects::nonNull)
+                    .filter(name -> {
                         for (String p : patterns) {
-                            if (PatternHelper.matchPattern(routeId, p)) {
+                            if (PatternHelper.matchPattern(name, p)) {
                                 return true;
                             }
                         }
@@ -824,12 +827,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 if ("start".equals(command)) {
                     if ("*".equals(id)) {
                         camelContext.getRouteController().startAllRoutes();
+                    } else if (group) {
+                        camelContext.getRouteController().startRouteGroup(id);
                     } else {
                         camelContext.getRouteController().startRoute(id);
                     }
                 } else if ("stop".equals(command)) {
                     if ("*".equals(id)) {
                         camelContext.getRouteController().stopAllRoutes();
+                    } else if (group) {
+                        camelContext.getRouteController().stopRouteGroup(id);
                     } else {
                         camelContext.getRouteController().stopRoute(id);
                     }
@@ -838,6 +845,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         for (Route r : camelContext.getRoutes()) {
                             camelContext.getRouteController().suspendRoute(r.getRouteId());
                         }
+                    } else if (group) {
+                        // we do not have suspend for a group
+                        camelContext.getRouteController().stopRouteGroup(id);
                     } else {
                         camelContext.getRouteController().suspendRoute(id);
                     }
@@ -846,6 +856,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         for (Route r : camelContext.getRoutes()) {
                             camelContext.getRouteController().resumeRoute(r.getRouteId());
                         }
+                    } else if (group) {
+                        // we do not have resume for a group
+                        camelContext.getRouteController().startRouteGroup(id);
                     } else {
                         camelContext.getRouteController().resumeRoute(id);
                     }
