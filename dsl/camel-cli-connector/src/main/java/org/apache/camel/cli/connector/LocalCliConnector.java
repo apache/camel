@@ -910,6 +910,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("routes", json2.get("routes"));
                     }
                 }
+                DevConsole dc2b = dcr.resolveById("route-group");
+                if (dc2b != null) {
+                    JsonObject json = (JsonObject) dc2b.call(DevConsole.MediaType.JSON);
+                    if (json != null) {
+                        root.put("routeGroups", json.get("routeGroups"));
+                    }
+                }
                 DevConsole dc3 = dcr.resolveById("endpoint");
                 if (dc3 != null) {
                     JsonObject json = (JsonObject) dc3.call(DevConsole.MediaType.JSON);

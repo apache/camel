@@ -98,6 +98,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("get", new CommandLine(new CamelStatus(main))
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
+                        .addSubcommand("route-group", new CommandLine(new CamelRouteGroupStatus(main)))
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
                         .addSubcommand("count", new CommandLine(new CamelCount(main)))
                         .addSubcommand("health", new CommandLine(new ListHealth(main)))
