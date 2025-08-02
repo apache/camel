@@ -819,6 +819,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         }
                         return false;
                     })
+                    .distinct()
                     .toList();
         }
         for (String id : ids) {

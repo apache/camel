@@ -16,42 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Path;
-import java.util.List;
-
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-public abstract class CamelRouteAction extends ActionBaseCommand {
+@CommandLine.Command(name = "start-group",
+                     description = "Start Camel route groups", sortOptions = false, showDefaultValues = true)
+public class CamelRouteGroupStartAction extends CamelRouteAction {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
-    String name = "*";
-
-    @CommandLine.Option(names = { "--id" },
-                        description = "Route ids (multiple ids can be separated by comma)", defaultValue = "*")
-    String id = "*";
-
-    public CamelRouteAction(CamelJBangMain main) {
+    public CamelRouteGroupStartAction(CamelJBangMain main) {
         super(main);
     }
 
     @Override
-    public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-
-        for (long pid : pids) {
-            JsonObject root = new JsonObject();
-            root.put("action", "route");
-            root.put("id", id);
-            Path f = getActionFile(Long.toString(pid));
-            onAction(root);
-            PathUtils.writeTextSafely(root.toJson(), f);
-        }
-
-        return 0;
+    protected void onAction(JsonObject root) {
+        root.put("group", true);
+        root.put("command", "start");
     }
 
-    protected abstract void onAction(JsonObject root);
 }
