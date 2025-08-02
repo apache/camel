@@ -439,6 +439,30 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
         public String weaviateUpdateWithMerge() {
             return "CamelWeaviateUpdateWithMerge";
         }
+        /**
+         * Key Name for Insert/Upsert operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code WeaviateKeyName}.
+         */
+        public String weaviateKeyName() {
+            return "CamelWeaviateKeyName";
+        }
+        /**
+         * Key Value for Insert/Upsert operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code WeaviateKeyValue}.
+         */
+        public String weaviateKeyValue() {
+            return "CamelWeaviateKeyValue";
+        }
     }
     static WeaviateVectorDbEndpointBuilder endpointBuilder(String componentName, String path) {
         class WeaviateVectorDbEndpointBuilderImpl extends AbstractEndpointBuilder implements WeaviateVectorDbEndpointBuilder, AdvancedWeaviateVectorDbEndpointBuilder {
