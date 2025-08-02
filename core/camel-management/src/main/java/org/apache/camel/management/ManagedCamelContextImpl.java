@@ -31,6 +31,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteGroupMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.model.Model;
@@ -126,6 +127,26 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
     public List<ManagedRouteMBean> getManagedRoutes() {
         // null group will return all
         return getManagedRoutesByGroup(null);
+    }
+
+    @Override
+    public ManagedRouteGroupMBean getManagedRouteGroup(String group) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
+        if (!camelContext.getRoutesByGroup(group).isEmpty()) {
+            try {
+                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
+                        .getObjectNameForRouteGroup(camelContext, group);
+                return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteGroupMBean.class);
+            } catch (MalformedObjectNameException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return null;
     }
 
     @Override

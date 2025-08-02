@@ -19,7 +19,7 @@ package org.apache.camel.api.management.mbean;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedRouteGroupMBean extends ManagedCounterMBean {
+public interface ManagedRouteGroupMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Route ID")
     String getRouteGroup();

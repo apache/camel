@@ -51,7 +51,7 @@ public class RouteDevConsole extends AbstractDevConsole {
     private static final Logger LOG = LoggerFactory.getLogger(RouteDevConsole.class);
 
     /**
-     * Filters the routes matching by route id, route uri, and source location
+     * Filters the routes matching by route id, route uri, or route group, and source location
      */
     public static final String FILTER = "filter";
 
@@ -91,10 +91,13 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             sb.append(String.format("    Id: %s", mrb.getRouteId()));
             if (mrb.getNodePrefixId() != null) {
-                sb.append(String.format("    Node Prefix Id: %s", mrb.getNodePrefixId()));
+                sb.append(String.format("\n    Node Prefix Id: %s", mrb.getNodePrefixId()));
+            }
+            if (mrb.getRouteGroup() != null) {
+                sb.append(String.format("\n    Group: %s", mrb.getRouteGroup()));
             }
             if (mrb.getDescription() != null) {
-                sb.append(String.format("    Description: %s", mrb.getDescription()));
+                sb.append(String.format("\n    Description: %s", mrb.getDescription()));
             }
             sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
             sb.append(String.format("\n    Remote: %s", mrb.isRemoteEndpoint()));
@@ -125,7 +128,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             String load5 = getLoad5(mrb);
             String load15 = getLoad15(mrb);
             if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
-                sb.append(String.format("\n    Load Average: %s %s %s\n", load1, load5, load15));
+                sb.append(String.format("\n    Load Average: %s %s %s", load1, load5, load15));
             }
             String thp = getThroughput(mrb);
             if (!thp.isEmpty()) {
