@@ -19,8 +19,8 @@ package org.apache.camel.management;
 import org.apache.camel.Exchange;
 
 /**
- * A composite {@link PerformanceCounter} is used for tracking performance statistics on both a per context and route
- * level, by issuing callbacks on both when an event happens.
+ * A composite {@link PerformanceCounter} is used for tracking performance statistics on both a per context, route, and
+ * route group levels, by issuing callbacks on both when an event happens.
  * <p/>
  * This implementation is used so the {@link org.apache.camel.management.mbean.ManagedCamelContext} can aggregate all
  * stats from the routes.
@@ -29,10 +29,12 @@ public class CompositePerformanceCounter implements PerformanceCounter {
 
     private final PerformanceCounter counter1;
     private final PerformanceCounter counter2;
+    private final PerformanceCounter counter3; // counter 3 is optional
 
-    public CompositePerformanceCounter(PerformanceCounter counter1, PerformanceCounter counter2) {
+    public CompositePerformanceCounter(PerformanceCounter counter1, PerformanceCounter counter2, PerformanceCounter counter3) {
         this.counter1 = counter1;
         this.counter2 = counter2;
+        this.counter3 = counter3;
     }
 
     @Override
@@ -42,6 +44,9 @@ public class CompositePerformanceCounter implements PerformanceCounter {
         }
         if (counter2.isStatisticsEnabled()) {
             counter2.processExchange(exchange, type);
+        }
+        if (counter3 != null && counter3.isStatisticsEnabled()) {
+            counter3.processExchange(exchange, type);
         }
     }
 
@@ -53,6 +58,9 @@ public class CompositePerformanceCounter implements PerformanceCounter {
         if (counter2.isStatisticsEnabled()) {
             counter2.completedExchange(exchange, time);
         }
+        if (counter3 != null && counter3.isStatisticsEnabled()) {
+            counter3.completedExchange(exchange, time);
+        }
     }
 
     @Override
@@ -62,6 +70,9 @@ public class CompositePerformanceCounter implements PerformanceCounter {
         }
         if (counter2.isStatisticsEnabled()) {
             counter2.failedExchange(exchange);
+        }
+        if (counter3 != null && counter3.isStatisticsEnabled()) {
+            counter3.failedExchange(exchange);
         }
     }
 

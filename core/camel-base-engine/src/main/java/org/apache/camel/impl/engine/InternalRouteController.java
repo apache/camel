@@ -167,6 +167,16 @@ class InternalRouteController implements RouteController {
     }
 
     @Override
+    public void startRouteGroup(String routeGroup) throws Exception {
+        abstractCamelContext.startRouteGroup(routeGroup);
+    }
+
+    @Override
+    public void stopRouteGroup(String routeGroup) throws Exception {
+        abstractCamelContext.stopRouteGroup(routeGroup);
+    }
+
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         throw new UnsupportedOperationException();
     }

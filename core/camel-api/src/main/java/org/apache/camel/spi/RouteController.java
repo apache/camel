@@ -220,4 +220,20 @@ public interface RouteController extends CamelContextAware, StaticService {
      */
     void resumeRoute(String routeId) throws Exception;
 
+    /**
+     * Starts all the routes in the given group
+     *
+     * @param  routeGroup the route group
+     * @throws Exception  is thrown if any of the routes could not be started for whatever reason
+     */
+    void startRouteGroup(String routeGroup) throws Exception;
+
+    /**
+     * Stops all the routes in the given group
+     *
+     * @param  routeGroup the route group
+     * @throws Exception  is thrown if any of the routes could not be stopped for whatever reason
+     */
+    void stopRouteGroup(String routeGroup) throws Exception;
+
 }

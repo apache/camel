@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "route-group",
+    "title": "Route Group",
+    "description": "Route Group information",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.RouteGroupDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.14.0-SNAPSHOT"
+  }
+}
+

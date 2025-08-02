@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteGroupMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 
@@ -87,6 +88,14 @@ public interface ManagedCamelContext {
      * @return the routes or an empty list if no routes exists
      */
     List<ManagedRouteMBean> getManagedRoutes();
+
+    /**
+     * Gets the managed route group client api with the given route group
+     *
+     * @param  group the name of the group
+     * @return       the route group or <tt>null</tt> if not found
+     */
+    ManagedRouteGroupMBean getManagedRouteGroup(String group);
 
     /**
      * Gets all the managed routes for the given group

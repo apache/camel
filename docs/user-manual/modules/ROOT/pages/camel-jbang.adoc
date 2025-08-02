@@ -1906,6 +1906,48 @@ TIP: You can stop one or more route by their ids by separating using
 comma such as `camel cmd start-route --id=route1,hello`.
 Use `camel cmd start-route --help` for more details.
 
+==== Starting and Stopping route groups
+
+*Available as of Camel 4.14*
+
+If you group together routes, then you can also control by groups. For example, you can see status of route groups via:
+
+[source,bash]
+----
+camel get group
+  PID   NAME  GROUP   ROUTES  STATUS   AGE  COVER  MSG/S  TOTAL  FAIL  INFLIGHT  MEAN  MIN   MAX   LAST  DELTA  SINCE-LAST
+ 53173  foo   first        2  Started   8s    4/4   1.00     15     0         1   504   501   511   502     -3     0s/0s/-
+ 53173  foo   second       3  Started  40s    7/7   0.00      8     0         0  2260  2256  2263  2263     +6     5s/2s/-
+----
+
+The data shown above is _aggregate_ of all the routes within each group. There are _2_ routes in first and _3_ routes in seconds.
+
+You can then stop a group such as _first_ via:
+
+[source,bash]
+----
+camel cmd stop-group foo --id=first
+----
+
+And when you see the status it is listed as _Stopped_:
+
+[source,bash]
+----
+camel get group
+  PID   NAME  GROUP   ROUTES  STATUS   AGE  COVER  MSG/S  TOTAL  FAIL  INFLIGHT  MEAN  MIN   MAX   LAST  DELTA  SINCE-LAST
+ 53173  foo   first        2  Stopped         0/0   0.00      8     0         0   504   501   511   502     -1   11s/11s/-
+ 53173  foo   second       3  Started  19s    7/7   1.00      4     0         0  2259  2256  2261  2260     -1     3s/1s/-
+----
+
+And you can of course also start the group again:
+
+[source,bash]
+----
+camel cmd start-group foo --id=first
+----
+
+The route group commands works similar to how you control routes (see above).
+
 ==== Running Camel integrations on Kubernetes
 
 After developing the Camel routes locally with JBang, you may want to run these also on the Kubernetes platform at some point.
