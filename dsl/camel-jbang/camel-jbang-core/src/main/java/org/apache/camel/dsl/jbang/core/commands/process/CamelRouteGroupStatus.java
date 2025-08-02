@@ -52,7 +52,6 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
 
     }
 
-
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
