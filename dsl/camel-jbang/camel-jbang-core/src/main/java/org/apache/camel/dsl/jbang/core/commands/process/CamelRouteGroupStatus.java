@@ -204,7 +204,7 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
                 new Column().header("GROUP").dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getGroup),
-                new Column().header("SIZE").dataAlign(HorizontalAlign.RIGHT).headerAlign(HorizontalAlign.CENTER)
+                new Column().header("ROUTES").dataAlign(HorizontalAlign.RIGHT).headerAlign(HorizontalAlign.CENTER)
                         .with(r -> "" + r.size),
                 new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.state),
