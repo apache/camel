@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.s3.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -95,6 +96,8 @@ public final class AWS2S3Utils {
             if (len > 0) {
                 return len;
             }
+        } else if (is instanceof FileInputStream fis) {
+            return fis.getChannel().size();
         }
 
         if (!is.markSupported()) {

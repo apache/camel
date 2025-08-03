@@ -114,36 +114,51 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     public void processMultiPart(final Exchange exchange) throws Exception {
-        File filePayload;
-        Object obj = exchange.getIn().getMandatoryBody();
+        Object obj = exchange.getIn().getBody();
+        InputStream inputStream;
+        File filePayload = null;
+
+        // the content-length may already be known
+        long contentLength = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_LENGTH, -1, Long.class);
+
         // Need to check if the message body is WrappedFile
-        if (obj instanceof WrappedFile) {
-            obj = ((WrappedFile<?>) obj).getFile();
+        if (obj instanceof WrappedFile<?> wf) {
+            obj = wf.getFile();
         }
-        if (obj instanceof File) {
-            filePayload = (File) obj;
+        if (obj instanceof File f) {
+            filePayload = f;
+            inputStream = new FileInputStream(f);
+            contentLength = f.length();
         } else {
-            throw new IllegalArgumentException("aws2-s3: MultiPart upload requires a File input.");
+            // okay we use input stream
+            inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
+            if (contentLength <= 0) {
+                contentLength = AWS2S3Utils.determineLengthInputStream(inputStream);
+                if (contentLength == -1) {
+                    // fallback to read into memory to calculate length
+                    LOG.debug(
+                            "The content length is not defined. It needs to be determined by reading the data into memory");
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    IOHelper.copyAndCloseInput(inputStream, baos);
+                    byte[] arr = baos.toByteArray();
+                    contentLength = arr.length;
+                    inputStream = new ByteArrayInputStream(arr);
+                }
+            }
         }
 
         Map<String, String> objectMetadata = determineMetadata(exchange);
 
-        Long contentLength = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_LENGTH, Long.class);
-        if (contentLength == null || contentLength == 0) {
-            contentLength = filePayload.length();
-        }
-
         long partSize = getConfiguration().getPartSize();
         if (contentLength == 0 || contentLength < partSize) {
             // optimize to do a single op if content length is known and < part size
-            LOG.debug("File size < partSize. Uploading file in single operation: {}", filePayload);
-            processSingleOp(exchange);
+            LOG.debug("Payload size < partSize ({} > {}). Uploading payload in single operation", contentLength, partSize);
+            doPutObject(exchange, objectMetadata, filePayload, inputStream, contentLength);
             return;
         }
 
-        LOG.debug("File size >= partSize. Uploading file using multi-part operation: {}", filePayload);
-
-        objectMetadata.put("Content-Length", contentLength.toString());
+        LOG.debug("Payload size >= partSize ({} > {}). Uploading payload using multi-part operation", contentLength, partSize);
+        objectMetadata.put("Content-Length", "" + contentLength);
 
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
@@ -198,36 +213,29 @@ public class AWS2S3Producer extends DefaultProducer {
         List<CompletedPart> completedParts = new ArrayList<CompletedPart>();
         CompleteMultipartUploadResponse uploadResult;
 
-        long filePosition = 0;
+        long position = 0;
         try {
-            for (int part = 1; filePosition < contentLength; part++) {
-                partSize = Math.min(partSize, contentLength - filePosition);
+            for (int part = 1; position < contentLength; part++) {
+                partSize = Math.min(partSize, contentLength - position);
 
                 UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
                         .key(keyName).uploadId(initResponse.uploadId())
                         .partNumber(part).build();
 
-                LOG.trace("Uploading part [{}] for {}", part, keyName);
-                try (InputStream fileInputStream = new FileInputStream(filePayload)) {
-                    if (filePosition > 0) {
-                        long skipped = fileInputStream.skip(filePosition);
-                        if (skipped == 0) {
-                            LOG.warn("While trying to upload the file {} file, 0 bytes were skipped", keyName);
-                        }
-                    }
+                LOG.debug("Uploading multi-part [{}] at position: [{}] for {}", part, position, keyName);
 
-                    String etag = getEndpoint().getS3Client()
-                            .uploadPart(uploadRequest, RequestBody.fromInputStream(fileInputStream, partSize)).eTag();
-                    CompletedPart partUpload = CompletedPart.builder().partNumber(part).eTag(etag).build();
-                    completedParts.add(partUpload);
-                    filePosition += partSize;
-                }
+                String etag = getEndpoint().getS3Client()
+                        .uploadPart(uploadRequest, RequestBody.fromInputStream(inputStream, partSize)).eTag();
+                CompletedPart partUpload = CompletedPart.builder().partNumber(part).eTag(etag).build();
+                completedParts.add(partUpload);
+                position += partSize;
             }
-            CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
-            CompleteMultipartUploadRequest.Builder compRequestBuilder;
-            compRequestBuilder = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
-                    .bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId());
 
+            LOG.debug("Completing multi-part upload for {}", keyName);
+            CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
+            CompleteMultipartUploadRequest.Builder compRequestBuilder = CompleteMultipartUploadRequest.builder()
+                    .multipartUpload(completeMultipartUpload).bucket(getConfiguration().getBucketName()).key(keyName)
+                    .uploadId(initResponse.uploadId());
             if (getConfiguration().isConditionalWritesEnabled()) {
                 compRequestBuilder.ifNoneMatch("*");
             }
@@ -238,6 +246,8 @@ public class AWS2S3Producer extends DefaultProducer {
                     .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
                             .key(keyName).uploadId(initResponse.uploadId()).build());
             throw e;
+        } finally {
+            IOHelper.close(inputStream);
         }
 
         Message message = getMessageForResponse(exchange);
@@ -248,16 +258,12 @@ public class AWS2S3Producer extends DefaultProducer {
             message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
         }
 
-        if (getConfiguration().isDeleteAfterWrite()) {
+        if (filePayload != null && getConfiguration().isDeleteAfterWrite()) {
             FileUtil.deleteFile(filePayload);
         }
     }
 
     public void processSingleOp(final Exchange exchange) throws Exception {
-        PutObjectRequest.Builder putObjectRequest = PutObjectRequest.builder();
-
-        Map<String, String> objectMetadata = determineMetadata(exchange);
-
         // the content-length may already be known
         long contentLength = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_LENGTH, -1, Long.class);
 
@@ -292,7 +298,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 }
             }
 
-            doPutObject(exchange, putObjectRequest, objectMetadata, filePayload, inputStream, contentLength);
+            Map<String, String> objectMetadata = determineMetadata(exchange);
+            doPutObject(exchange, objectMetadata, filePayload, inputStream, contentLength);
         } finally {
             IOHelper.close(inputStream);
         }
@@ -303,10 +310,12 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void doPutObject(
-            Exchange exchange, PutObjectRequest.Builder putObjectRequest, Map<String, String> objectMetadata,
+            Exchange exchange, Map<String, String> objectMetadata,
             File file, InputStream inputStream, long contentLength) {
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
+
+        PutObjectRequest.Builder putObjectRequest = PutObjectRequest.builder();
         putObjectRequest.bucket(bucketName).key(keyName).metadata(objectMetadata);
 
         String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());

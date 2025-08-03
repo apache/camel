@@ -149,7 +149,9 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Set up the partSize which is used in multipart upload, the default size is 25M.
+     * Set up the partSize which is used in multipart upload, the default size is 25 MB.
+     *
+     * The minimum size in AWS is 5 MB.
      *
      * Camel will only do multipart uploads for files that are larger than the part-size thresholds. Files that are
      * smaller will be uploaded in a single operation.
