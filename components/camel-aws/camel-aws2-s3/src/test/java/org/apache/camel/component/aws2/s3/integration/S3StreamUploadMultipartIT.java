@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
@@ -33,21 +32,19 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class S3StreamUploadMultipartIT extends Aws2S3Base {
-
-    @EndpointInject
-    private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
     @Test
-    public void sendIn() throws Exception {
+    public void sendFile() throws Exception {
         result.expectedMessageCount(10);
 
         for (int i = 0; i < 10; i++) {
-            template.send("direct:stream1", new Processor() {
+            Exchange out = template.send("direct:stream1", new Processor() {
 
                 @Override
                 public void process(Exchange exchange) {
@@ -55,6 +52,7 @@ public class S3StreamUploadMultipartIT extends Aws2S3Base {
                     exchange.getIn().setBody(new File("src/test/resources/empty.bin"));
                 }
             });
+            assertFalse(out.isFailed());
         }
 
         MockEndpoint.assertIsSatisfied(context);
