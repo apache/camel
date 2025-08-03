@@ -695,9 +695,10 @@ public interface Aws2S3ComponentBuilderFactory {
         
         /**
          * Set up the partSize which is used in multipart upload, the default
-         * size is 25M. Camel will only do multipart uploads for files that are
-         * larger than the part-size thresholds. Files that are smaller will be
-         * uploaded in a single operation.
+         * size is 25 MB. The minimum size in AWS is 5 MB. Camel will only do
+         * multipart uploads for files that are larger than the part-size
+         * thresholds. Files that are smaller will be uploaded in a single
+         * operation.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
