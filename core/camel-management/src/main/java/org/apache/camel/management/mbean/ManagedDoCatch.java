@@ -26,11 +26,13 @@ import org.apache.camel.processor.CatchProcessor;
 @ManagedResource(description = "Managed DoCatch")
 public class ManagedDoCatch extends ManagedProcessor implements ManagedDoCatchMBean {
 
-    private final CatchProcessor processor;
-
     public ManagedDoCatch(CamelContext context, CatchProcessor processor, CatchDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public CatchProcessor getProcessor() {
+        return (CatchProcessor) super.getProcessor();
     }
 
     @Override
@@ -58,17 +60,17 @@ public class ManagedDoCatch extends ManagedProcessor implements ManagedDoCatchMB
 
     @Override
     public Long getCaughtCount() {
-        return processor.getCaughtCount();
+        return getProcessor().getCaughtCount();
     }
 
     @Override
     public Long getCaughtCount(String className) {
-        return processor.getCaughtCount(className);
+        return getProcessor().getCaughtCount(className);
     }
 
     @Override
     public String[] getExceptionTypes() {
-        return processor.getCaughtExceptionClassNames().toArray(new String[0]);
+        return getProcessor().getCaughtExceptionClassNames().toArray(new String[0]);
     }
 
 }

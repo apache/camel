@@ -25,11 +25,14 @@ import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 
 @ManagedResource(description = "Managed Random LoadBalancer")
 public class ManagedRandomLoadBalancer extends ManagedProcessor implements ManagedRandomLoadBalancerMBean {
-    private final RandomLoadBalancer processor;
 
     public ManagedRandomLoadBalancer(CamelContext context, RandomLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public RandomLoadBalancer getProcessor() {
+        return (RandomLoadBalancer) super.getProcessor();
     }
 
     @Override
@@ -39,12 +42,12 @@ public class ManagedRandomLoadBalancer extends ManagedProcessor implements Manag
 
     @Override
     public Integer getSize() {
-        return processor.getProcessors().size();
+        return getProcessor().getProcessors().size();
     }
 
     @Override
     public String getLastChosenProcessorId() {
-        int idx = processor.getLastChosenProcessorIndex();
+        int idx = getProcessor().getLastChosenProcessorIndex();
         if (idx != -1) {
             LoadBalanceDefinition def = getDefinition();
             ProcessorDefinition<?> output = def.getOutputs().get(idx);

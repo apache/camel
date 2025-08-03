@@ -24,11 +24,14 @@ import org.apache.camel.processor.SetVariablesProcessor;
 
 @ManagedResource(description = "Managed SetVariables")
 public class ManagedSetVariables extends ManagedProcessor implements ManagedSetVariablesMBean {
-    private final SetVariablesProcessor processor;
 
     public ManagedSetVariables(CamelContext context, SetVariablesProcessor processor, SetVariablesDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public SetVariablesProcessor getProcessor() {
+        return (SetVariablesProcessor) super.getProcessor();
     }
 
     @Override
@@ -38,7 +41,7 @@ public class ManagedSetVariables extends ManagedProcessor implements ManagedSetV
 
     @Override
     public String[] getVariableNames() {
-        return processor.getVariableNames()
+        return getProcessor().getVariableNames()
                 .stream().map(Object::toString).distinct().toArray(String[]::new);
     }
 }

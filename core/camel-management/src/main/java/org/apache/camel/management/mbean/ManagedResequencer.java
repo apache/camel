@@ -25,22 +25,17 @@ import org.apache.camel.processor.StreamResequencer;
 
 @ManagedResource(description = "Managed Resequencer")
 public class ManagedResequencer extends ManagedProcessor implements ManagedResequencerMBean {
-    private final Resequencer processor;
-    private final StreamResequencer streamProcessor;
+
     private final String expression;
 
     public ManagedResequencer(CamelContext context, Resequencer processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
-        this.streamProcessor = null;
         this.expression = processor.getExpression().toString();
     }
 
     public ManagedResequencer(CamelContext context, StreamResequencer processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = null;
-        this.streamProcessor = processor;
-        this.expression = streamProcessor.getExpression().toString();
+        this.expression = processor.getExpression().toString();
     }
 
     @Override
@@ -48,10 +43,24 @@ public class ManagedResequencer extends ManagedProcessor implements ManagedReseq
         return expression;
     }
 
+    private Resequencer getResequencer() {
+        if (getProcessor() instanceof Resequencer r) {
+            return r;
+        }
+        return null;
+    }
+
+    private StreamResequencer getStreamResequencer() {
+        if (getProcessor() instanceof StreamResequencer r) {
+            return r;
+        }
+        return null;
+    }
+
     @Override
     public Integer getBatchSize() {
-        if (processor != null) {
-            return processor.getBatchSize();
+        if (getResequencer() != null) {
+            return getResequencer().getBatchSize();
         } else {
             return null;
         }
@@ -59,17 +68,17 @@ public class ManagedResequencer extends ManagedProcessor implements ManagedReseq
 
     @Override
     public Long getTimeout() {
-        if (processor != null) {
-            return processor.getBatchTimeout();
+        if (getResequencer() != null) {
+            return getResequencer().getBatchTimeout();
         } else {
-            return streamProcessor.getTimeout();
+            return getStreamResequencer().getTimeout();
         }
     }
 
     @Override
     public Boolean isAllowDuplicates() {
-        if (processor != null) {
-            return processor.isAllowDuplicates();
+        if (getResequencer() != null) {
+            return getResequencer().isAllowDuplicates();
         } else {
             return null;
         }
@@ -77,8 +86,8 @@ public class ManagedResequencer extends ManagedProcessor implements ManagedReseq
 
     @Override
     public Boolean isReverse() {
-        if (processor != null) {
-            return processor.isReverse();
+        if (getResequencer() != null) {
+            return getResequencer().isReverse();
         } else {
             return null;
         }
@@ -86,28 +95,28 @@ public class ManagedResequencer extends ManagedProcessor implements ManagedReseq
 
     @Override
     public Boolean isIgnoreInvalidExchanges() {
-        if (processor != null) {
-            return processor.isIgnoreInvalidExchanges();
+        if (getResequencer() != null) {
+            return getResequencer().isIgnoreInvalidExchanges();
         } else {
-            return streamProcessor.isIgnoreInvalidExchanges();
+            return getStreamResequencer().isIgnoreInvalidExchanges();
         }
     }
 
     @Override
     public Integer getCapacity() {
-        if (processor != null) {
+        if (getResequencer() != null) {
             return null;
         } else {
-            return streamProcessor.getCapacity();
+            return getStreamResequencer().getCapacity();
         }
     }
 
     @Override
     public Boolean isRejectOld() {
-        if (processor != null) {
+        if (getResequencer() != null) {
             return null;
         } else {
-            return streamProcessor.isRejectOld();
+            return getStreamResequencer().isRejectOld();
         }
     }
 }

@@ -37,13 +37,12 @@ import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed WireTapProcessor")
 public class ManagedWireTapProcessor extends ManagedProcessor implements ManagedWireTapMBean {
-    private final WireTapProcessor processor;
+
     private String uri;
     private boolean sanitize;
 
     public ManagedWireTapProcessor(CamelContext context, WireTapProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
@@ -51,17 +50,17 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         super.init(strategy);
         sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
         if (sanitize) {
-            uri = URISupport.sanitizeUri(processor.getUri());
+            uri = URISupport.sanitizeUri(getProcessor().getUri());
         } else {
-            uri = processor.getUri();
+            uri = getProcessor().getUri();
         }
     }
 
     @Override
     public void reset() {
         super.reset();
-        if (processor.getEndpointUtilizationStatistics() != null) {
-            processor.getEndpointUtilizationStatistics().clear();
+        if (getProcessor().getEndpointUtilizationStatistics() != null) {
+            getProcessor().getEndpointUtilizationStatistics().clear();
         }
     }
 
@@ -72,7 +71,7 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
 
     @Override
     public WireTapProcessor getProcessor() {
-        return processor;
+        return (WireTapProcessor) super.getProcessor();
     }
 
     @Override
@@ -82,27 +81,27 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
 
     @Override
     public Integer getCacheSize() {
-        return processor.getCacheSize();
+        return getProcessor().getCacheSize();
     }
 
     @Override
     public Boolean isIgnoreInvalidEndpoint() {
-        return processor.isIgnoreInvalidEndpoint();
+        return getProcessor().isIgnoreInvalidEndpoint();
     }
 
     @Override
     public Boolean isCopy() {
-        return processor.isCopy();
+        return getProcessor().isCopy();
     }
 
     @Override
     public Boolean isDynamicUri() {
-        return processor.isDynamicUri();
+        return getProcessor().isDynamicUri();
     }
 
     @Override
     public Integer getTaskSize() {
-        return processor.getPendingExchangesSize();
+        return getProcessor().getPendingExchangesSize();
     }
 
     @Override
@@ -110,7 +109,7 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 
-            EndpointUtilizationStatistics stats = processor.getEndpointUtilizationStatistics();
+            EndpointUtilizationStatistics stats = getProcessor().getEndpointUtilizationStatistics();
             if (stats != null) {
                 for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
                     CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();

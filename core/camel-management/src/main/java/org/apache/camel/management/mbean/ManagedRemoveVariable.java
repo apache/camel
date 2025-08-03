@@ -24,15 +24,18 @@ import org.apache.camel.processor.RemoveVariableProcessor;
 
 @ManagedResource(description = "Managed RemoveVariable")
 public class ManagedRemoveVariable extends ManagedProcessor implements ManagedRemoveVariableMBean {
-    private final RemoveVariableProcessor processor;
 
     public ManagedRemoveVariable(CamelContext context, RemoveVariableProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public RemoveVariableProcessor getProcessor() {
+        return (RemoveVariableProcessor) super.getProcessor();
     }
 
     @Override
     public String getVariableName() {
-        return processor.getVariableName();
+        return getProcessor().getVariableName();
     }
 }

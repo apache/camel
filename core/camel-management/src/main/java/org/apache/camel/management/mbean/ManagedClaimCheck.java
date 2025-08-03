@@ -24,25 +24,28 @@ import org.apache.camel.processor.ClaimCheckProcessor;
 
 @ManagedResource(description = "Managed Claim Check")
 public class ManagedClaimCheck extends ManagedProcessor implements ManagedClaimCheckMBean {
-    private final ClaimCheckProcessor processor;
 
     public ManagedClaimCheck(CamelContext context, ClaimCheckProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public ClaimCheckProcessor getProcessor() {
+        return (ClaimCheckProcessor) super.getProcessor();
     }
 
     @Override
     public String getOperation() {
-        return processor.getOperation();
+        return getProcessor().getOperation();
     }
 
     @Override
     public String getKey() {
-        return processor.getKey();
+        return getProcessor().getKey();
     }
 
     @Override
     public String getFilter() {
-        return processor.getFilter();
+        return getProcessor().getFilter();
     }
 }

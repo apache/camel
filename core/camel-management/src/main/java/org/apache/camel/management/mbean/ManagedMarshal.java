@@ -24,11 +24,14 @@ import org.apache.camel.support.processor.MarshalProcessor;
 
 @ManagedResource(description = "Managed Marshal")
 public class ManagedMarshal extends ManagedProcessor implements ManagedMarshalMBean {
-    private final MarshalProcessor processor;
 
     public ManagedMarshal(CamelContext context, MarshalProcessor processor, MarshalDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public MarshalProcessor getProcessor() {
+        return (MarshalProcessor) super.getProcessor();
     }
 
     @Override
@@ -47,11 +50,11 @@ public class ManagedMarshal extends ManagedProcessor implements ManagedMarshalMB
 
     @Override
     public String getVariableSend() {
-        return processor.getVariableSend();
+        return getProcessor().getVariableSend();
     }
 
     @Override
     public String getVariableReceive() {
-        return processor.getVariableReceive();
+        return getProcessor().getVariableReceive();
     }
 }

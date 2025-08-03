@@ -24,15 +24,18 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 
 @ManagedResource(description = "Managed Topic LoadBalancer")
 public class ManagedTopicLoadBalancer extends ManagedProcessor implements ManagedTopicLoadBalancerMBean {
-    private final TopicLoadBalancer processor;
 
     public ManagedTopicLoadBalancer(CamelContext context, TopicLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public TopicLoadBalancer getProcessor() {
+        return (TopicLoadBalancer) super.getProcessor();
     }
 
     @Override
     public Integer getSize() {
-        return processor.getProcessors().size();
+        return getProcessor().getProcessors().size();
     }
 }

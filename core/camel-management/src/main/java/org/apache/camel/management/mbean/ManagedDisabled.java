@@ -24,15 +24,18 @@ import org.apache.camel.processor.DisabledProcessor;
 
 @ManagedResource(description = "Managed Disabled Processor")
 public class ManagedDisabled extends ManagedProcessor implements ManagedDisabledMBean {
-    private final DisabledProcessor processor;
 
     public ManagedDisabled(CamelContext context, DisabledProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public DisabledProcessor getProcessor() {
+        return (DisabledProcessor) super.getProcessor();
     }
 
     @Override
     public String getNodeType() {
-        return processor.getNodeType();
+        return getProcessor().getNodeType();
     }
 }

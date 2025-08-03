@@ -30,7 +30,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedPollMBean;
 import org.apache.camel.model.PollDefinition;
-import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.PollProcessor;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ManagementStrategy;
@@ -38,30 +37,34 @@ import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed Poll")
 public class ManagedPoll extends ManagedProcessor implements ManagedPollMBean {
-    private final PollProcessor processor;
+
     private String uri;
     private boolean sanitize;
 
     public ManagedPoll(CamelContext context, PollProcessor processor, PollDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
         sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
-        uri = processor.getUri();
+        uri = getProcessor().getUri();
         if (sanitize) {
             uri = URISupport.sanitizeUri(uri);
         }
     }
 
     @Override
+    public PollProcessor getProcessor() {
+        return (PollProcessor) super.getProcessor();
+    }
+
+    @Override
     public void reset() {
         super.reset();
-        if (processor.getEndpointUtilizationStatistics() != null) {
-            processor.getEndpointUtilizationStatistics().clear();
+        if (getProcessor().getEndpointUtilizationStatistics() != null) {
+            getProcessor().getEndpointUtilizationStatistics().clear();
         }
     }
 
@@ -76,23 +79,18 @@ public class ManagedPoll extends ManagedProcessor implements ManagedPollMBean {
     }
 
     @Override
-    public PollEnricher getProcessor() {
-        return processor;
-    }
-
-    @Override
     public String getDestination() {
         return uri;
     }
 
     @Override
     public String getVariableReceive() {
-        return processor.getVariableReceive();
+        return getProcessor().getVariableReceive();
     }
 
     @Override
     public Long getTimeout() {
-        return processor.getTimeout();
+        return getProcessor().getTimeout();
     }
 
     @Override
@@ -100,7 +98,7 @@ public class ManagedPoll extends ManagedProcessor implements ManagedPollMBean {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 
-            EndpointUtilizationStatistics stats = processor.getEndpointUtilizationStatistics();
+            EndpointUtilizationStatistics stats = getProcessor().getEndpointUtilizationStatistics();
             if (stats != null) {
                 for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
                     CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();

@@ -41,21 +41,14 @@ import org.apache.camel.processor.TryProcessor;
 @ManagedResource(description = "Managed DoTry")
 public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean {
 
-    private final List<CatchProcessor> catchProcessors;
-
     public ManagedDoTry(CamelContext context, TryProcessor processor, TryDefinition definition) {
         super(context, processor, definition);
 
-        if (processor.getCatchClauses() != null && !processor.getCatchClauses().isEmpty()) {
-            catchProcessors = new ArrayList<>();
-            for (Processor p : processor.getCatchClauses()) {
-                Channel c = (Channel) p;
-                CatchProcessor caught = asCatchProcessor(c);
-                catchProcessors.add(caught);
-            }
-        } else {
-            catchProcessors = null;
-        }
+    }
+
+    @Override
+    public TryProcessor getProcessor() {
+        return (TryProcessor) super.getProcessor();
     }
 
     @Override
@@ -73,28 +66,27 @@ public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean 
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.doTryTabularType());
 
-            if (catchProcessors != null) {
-                List<CatchDefinition> exceptions = getDefinition().getCatchClauses();
-                for (int i = 0; i < catchProcessors.size(); i++) {
-                    CatchDefinition when = exceptions.get(i);
-                    CatchProcessor caught = catchProcessors.get(i);
-                    if (caught != null) {
-                        for (String fqn : caught.getCaughtExceptionClassNames()) {
-                            CompositeType ct = CamelOpenMBeanTypes.doTryCompositeType();
-                            String predicate = null;
-                            String language = null;
-                            if (when.getOnWhen() != null) {
-                                predicate = when.getOnWhen().getExpression().getExpression();
-                                language = when.getOnWhen().getExpression().getLanguage();
-                            }
-                            long matches = caught.getCaughtCount(fqn);
-
-                            CompositeData data = new CompositeDataSupport(
-                                    ct,
-                                    new String[] { "exception", "predicate", "language", "matches" },
-                                    new Object[] { fqn, predicate, language, matches });
-                            answer.put(data);
+            var catchProcessors = getCatchProcessors();
+            List<CatchDefinition> exceptions = getDefinition().getCatchClauses();
+            for (int i = 0; i < catchProcessors.size(); i++) {
+                CatchDefinition when = exceptions.get(i);
+                CatchProcessor caught = catchProcessors.get(i);
+                if (caught != null) {
+                    for (String fqn : caught.getCaughtExceptionClassNames()) {
+                        CompositeType ct = CamelOpenMBeanTypes.doTryCompositeType();
+                        String predicate = null;
+                        String language = null;
+                        if (when.getOnWhen() != null) {
+                            predicate = when.getOnWhen().getExpression().getExpression();
+                            language = when.getOnWhen().getExpression().getLanguage();
                         }
+                        long matches = caught.getCaughtCount(fqn);
+
+                        CompositeData data = new CompositeDataSupport(
+                                ct,
+                                new String[] { "exception", "predicate", "language", "matches" },
+                                new Object[] { fqn, predicate, language, matches });
+                        answer.put(data);
                     }
                 }
             }
@@ -118,6 +110,18 @@ public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean 
             }
         }
         return null;
+    }
+
+    private List<CatchProcessor> getCatchProcessors() {
+        List<CatchProcessor> answer = new ArrayList<>();
+        if (getProcessor().getCatchClauses() != null && !getProcessor().getCatchClauses().isEmpty()) {
+            for (Processor p : getProcessor().getCatchClauses()) {
+                Channel c = (Channel) p;
+                CatchProcessor caught = asCatchProcessor(c);
+                answer.add(caught);
+            }
+        }
+        return answer;
     }
 
 }

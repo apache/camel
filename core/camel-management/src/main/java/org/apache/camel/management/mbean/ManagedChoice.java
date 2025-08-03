@@ -37,11 +37,14 @@ import org.apache.camel.processor.FilterProcessor;
 
 @ManagedResource(description = "Managed Choice")
 public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBean {
-    private final ChoiceProcessor processor;
 
     public ManagedChoice(CamelContext context, ChoiceProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public ChoiceProcessor getProcessor() {
+        return (ChoiceProcessor) super.getProcessor();
     }
 
     @Override
@@ -51,7 +54,7 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
 
     @Override
     public void reset() {
-        processor.reset();
+        getProcessor().reset();
         super.reset();
     }
 
@@ -66,7 +69,7 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.choiceTabularType());
 
             List<WhenDefinition> whens = getDefinition().getWhenClauses();
-            List<FilterProcessor> filters = processor.getFilters();
+            List<FilterProcessor> filters = getProcessor().getFilters();
 
             for (int i = 0; i < filters.size(); i++) {
                 WhenDefinition when = whens.get(i);
@@ -87,7 +90,7 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
                 CompositeType ct = CamelOpenMBeanTypes.choiceCompositeType();
                 String predicate = "otherwise";
                 String language = "";
-                long matches = processor.getNotFilteredCount();
+                long matches = getProcessor().getNotFilteredCount();
 
                 CompositeData data = new CompositeDataSupport(
                         ct,

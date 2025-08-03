@@ -37,13 +37,12 @@ import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed RecipientList")
 public class ManagedRecipientList extends ManagedProcessor implements ManagedRecipientListMBean {
-    private final RecipientList processor;
+
     private String uri;
     private boolean sanitize;
 
     public ManagedRecipientList(CamelContext context, RecipientList processor, RecipientListDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
@@ -57,10 +56,15 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
     }
 
     @Override
+    public RecipientList getProcessor() {
+        return (RecipientList) super.getProcessor();
+    }
+
+    @Override
     public void reset() {
         super.reset();
-        if (processor.getEndpointUtilizationStatistics() != null) {
-            processor.getEndpointUtilizationStatistics().clear();
+        if (getProcessor().getEndpointUtilizationStatistics() != null) {
+            getProcessor().getEndpointUtilizationStatistics().clear();
         }
     }
 
@@ -86,42 +90,42 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
 
     @Override
     public String getUriDelimiter() {
-        return processor.getDelimiter();
+        return getProcessor().getDelimiter();
     }
 
     @Override
     public Integer getCacheSize() {
-        return processor.getCacheSize();
+        return getProcessor().getCacheSize();
     }
 
     @Override
     public Boolean isParallelAggregate() {
-        return processor.isParallelAggregate();
+        return getProcessor().isParallelAggregate();
     }
 
     @Override
     public Boolean isParallelProcessing() {
-        return processor.isParallelProcessing();
+        return getProcessor().isParallelProcessing();
     }
 
     @Override
     public Boolean isStreaming() {
-        return processor.isStreaming();
+        return getProcessor().isStreaming();
     }
 
     @Override
     public Boolean isStopOnException() {
-        return processor.isStopOnException();
+        return getProcessor().isStopOnException();
     }
 
     @Override
     public Boolean isShareUnitOfWork() {
-        return processor.isShareUnitOfWork();
+        return getProcessor().isShareUnitOfWork();
     }
 
     @Override
     public Long getTimeout() {
-        return processor.getTimeout();
+        return getProcessor().getTimeout();
     }
 
     @Override
@@ -129,7 +133,7 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 
-            EndpointUtilizationStatistics stats = processor.getEndpointUtilizationStatistics();
+            EndpointUtilizationStatistics stats = getProcessor().getEndpointUtilizationStatistics();
             if (stats != null) {
                 for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
                     CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();

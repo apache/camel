@@ -26,36 +26,39 @@ import org.slf4j.Marker;
 
 @ManagedResource(description = "Managed Log")
 public class ManagedLog extends ManagedProcessor implements ManagedLogMBean {
-    private final LogProcessor processor;
 
     public ManagedLog(CamelContext context, LogProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public LogProcessor getProcessor() {
+        return (LogProcessor) super.getProcessor();
     }
 
     @Override
     public String getMessage() {
-        if (processor.getExpression() != null) {
-            return processor.getExpression().toString();
+        if (getProcessor().getExpression() != null) {
+            return getProcessor().getExpression().toString();
         } else {
-            return processor.getMessage();
+            return getProcessor().getMessage();
         }
     }
 
     @Override
     public String getLoggingLevel() {
-        LoggingLevel level = processor.getLogger().getLevel();
+        LoggingLevel level = getProcessor().getLogger().getLevel();
         return level != null ? level.name() : null;
     }
 
     @Override
     public String getLogName() {
-        return processor.getLogger().getLog().getName();
+        return getProcessor().getLogger().getLog().getName();
     }
 
     @Override
     public String getMarker() {
-        Marker marker = processor.getLogger().getMarker();
+        Marker marker = getProcessor().getLogger().getMarker();
         return marker != null ? marker.getName() : null;
     }
 }

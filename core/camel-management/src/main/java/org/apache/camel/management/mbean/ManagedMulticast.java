@@ -24,40 +24,43 @@ import org.apache.camel.processor.MulticastProcessor;
 
 @ManagedResource(description = "Managed Multicast")
 public class ManagedMulticast extends ManagedProcessor implements ManagedMulticastMBean {
-    private final MulticastProcessor processor;
 
     public ManagedMulticast(CamelContext context, MulticastProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public MulticastProcessor getProcessor() {
+        return (MulticastProcessor) super.getProcessor();
     }
 
     @Override
     public Boolean isParallelAggregate() {
-        return processor.isParallelAggregate();
+        return getProcessor().isParallelAggregate();
     }
 
     @Override
     public Boolean isParallelProcessing() {
-        return processor.isParallelProcessing();
+        return getProcessor().isParallelProcessing();
     }
 
     @Override
     public Boolean isStreaming() {
-        return processor.isStreaming();
+        return getProcessor().isStreaming();
     }
 
     @Override
     public Boolean isStopOnException() {
-        return processor.isStopOnException();
+        return getProcessor().isStopOnException();
     }
 
     @Override
     public Boolean isShareUnitOfWork() {
-        return processor.isShareUnitOfWork();
+        return getProcessor().isShareUnitOfWork();
     }
 
     @Override
     public Long getTimeout() {
-        return processor.getTimeout();
+        return getProcessor().getTimeout();
     }
 }

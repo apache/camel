@@ -26,16 +26,14 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 
 @ManagedResource(description = "Managed AggregateProcessor")
 public class ManagedAggregateProcessor extends ManagedProcessor implements ManagedAggregateProcessorMBean {
-    private final AggregateProcessor processor;
 
     public ManagedAggregateProcessor(CamelContext context, AggregateProcessor processor, AggregateDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
     public AggregateProcessor getProcessor() {
-        return processor;
+        return (AggregateProcessor) super.getProcessor();
     }
 
     @Override
@@ -63,7 +61,7 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public long getCompletionTimeout() {
-        return processor.getCompletionTimeout();
+        return getProcessor().getCompletionTimeout();
     }
 
     @Override
@@ -86,17 +84,17 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public long getCompletionInterval() {
-        return processor.getCompletionInterval();
+        return getProcessor().getCompletionInterval();
     }
 
     @Override
     public long getCompletionTimeoutCheckerInterval() {
-        return processor.getCompletionTimeoutCheckerInterval();
+        return getProcessor().getCompletionTimeoutCheckerInterval();
     }
 
     @Override
     public int getCompletionSize() {
-        return processor.getCompletionSize();
+        return getProcessor().getCompletionSize();
     }
 
     @Override
@@ -119,37 +117,37 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public boolean isCompletionFromBatchConsumer() {
-        return processor.isCompletionFromBatchConsumer();
+        return getProcessor().isCompletionFromBatchConsumer();
     }
 
     @Override
     public boolean isCompletionOnNewCorrelationGroup() {
-        return processor.isCompletionOnNewCorrelationGroup();
+        return getProcessor().isCompletionOnNewCorrelationGroup();
     }
 
     @Override
     public boolean isIgnoreInvalidCorrelationKeys() {
-        return processor.isIgnoreInvalidCorrelationKeys();
+        return getProcessor().isIgnoreInvalidCorrelationKeys();
     }
 
     @Override
     public Integer getCloseCorrelationKeyOnCompletion() {
-        return processor.getCloseCorrelationKeyOnCompletion();
+        return getProcessor().getCloseCorrelationKeyOnCompletion();
     }
 
     @Override
     public boolean isParallelProcessing() {
-        return processor.isParallelProcessing();
+        return getProcessor().isParallelProcessing();
     }
 
     @Override
     public boolean isOptimisticLocking() {
-        return processor.isOptimisticLocking();
+        return getProcessor().isOptimisticLocking();
     }
 
     @Override
     public boolean isEagerCheckCompletion() {
-        return processor.isEagerCheckCompletion();
+        return getProcessor().isEagerCheckCompletion();
     }
 
     @Override
@@ -172,27 +170,27 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public boolean isDiscardOnCompletionTimeout() {
-        return processor.isDiscardOnCompletionTimeout();
+        return getProcessor().isDiscardOnCompletionTimeout();
     }
 
     @Override
     public boolean isForceCompletionOnStop() {
-        return processor.isCompletionFromBatchConsumer();
+        return getProcessor().isCompletionFromBatchConsumer();
     }
 
     @Override
     public boolean isCompleteAllOnStop() {
-        return processor.isCompleteAllOnStop();
+        return getProcessor().isCompleteAllOnStop();
     }
 
     @Override
     public int getInProgressCompleteExchanges() {
-        return processor.getInProgressCompleteExchanges();
+        return getProcessor().getInProgressCompleteExchanges();
     }
 
     @Override
     public int aggregationRepositoryGroups() {
-        Set<String> keys = processor.getAggregationRepository().getKeys();
+        Set<String> keys = getProcessor().getAggregationRepository().getKeys();
         if (keys != null) {
             return keys.size();
         } else {
@@ -202,8 +200,8 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public int forceCompletionOfGroup(String key) {
-        if (processor.getAggregateController() != null) {
-            return processor.getAggregateController().forceCompletionOfGroup(key);
+        if (getProcessor().getAggregateController() != null) {
+            return getProcessor().getAggregateController().forceCompletionOfGroup(key);
         } else {
             return 0;
         }
@@ -211,8 +209,8 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public int forceCompletionOfAllGroups() {
-        if (processor.getAggregateController() != null) {
-            return processor.getAggregateController().forceCompletionOfAllGroups();
+        if (getProcessor().getAggregateController() != null) {
+            return getProcessor().getAggregateController().forceCompletionOfAllGroups();
         } else {
             return 0;
         }
@@ -220,8 +218,8 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public int forceDiscardingOfGroup(String key) {
-        if (processor.getAggregateController() != null) {
-            return processor.getAggregateController().forceDiscardingOfGroup(key);
+        if (getProcessor().getAggregateController() != null) {
+            return getProcessor().getAggregateController().forceDiscardingOfGroup(key);
         } else {
             return 0;
         }
@@ -229,8 +227,8 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public int forceDiscardingOfAllGroups() {
-        if (processor.getAggregateController() != null) {
-            return processor.getAggregateController().forceDiscardingOfAllGroups();
+        if (getProcessor().getAggregateController() != null) {
+            return getProcessor().getAggregateController().forceDiscardingOfAllGroups();
         } else {
             return 0;
         }
@@ -238,66 +236,66 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public int getClosedCorrelationKeysCacheSize() {
-        return processor.getClosedCorrelationKeysCacheSize();
+        return getProcessor().getClosedCorrelationKeysCacheSize();
     }
 
     @Override
     public void clearClosedCorrelationKeysCache() {
-        processor.clearClosedCorrelationKeysCache();
+        getProcessor().clearClosedCorrelationKeysCache();
     }
 
     @Override
     public long getTotalIn() {
-        return processor.getStatistics().getTotalIn();
+        return getProcessor().getStatistics().getTotalIn();
     }
 
     @Override
     public long getTotalCompleted() {
-        return processor.getStatistics().getTotalCompleted();
+        return getProcessor().getStatistics().getTotalCompleted();
     }
 
     @Override
     public long getCompletedBySize() {
-        return processor.getStatistics().getCompletedBySize();
+        return getProcessor().getStatistics().getCompletedBySize();
     }
 
     @Override
     public long getCompletedByStrategy() {
-        return processor.getStatistics().getCompletedByStrategy();
+        return getProcessor().getStatistics().getCompletedByStrategy();
     }
 
     @Override
     public long getCompletedByInterval() {
-        return processor.getStatistics().getCompletedByInterval();
+        return getProcessor().getStatistics().getCompletedByInterval();
     }
 
     @Override
     public long getCompletedByTimeout() {
-        return processor.getStatistics().getCompletedByTimeout();
+        return getProcessor().getStatistics().getCompletedByTimeout();
     }
 
     @Override
     public long getCompletedByPredicate() {
-        return processor.getStatistics().getCompletedByPredicate();
+        return getProcessor().getStatistics().getCompletedByPredicate();
     }
 
     @Override
     public long getCompletedByBatchConsumer() {
-        return processor.getStatistics().getCompletedByBatchConsumer();
+        return getProcessor().getStatistics().getCompletedByBatchConsumer();
     }
 
     @Override
     public long getCompletedByForce() {
-        return processor.getStatistics().getCompletedByForce();
+        return getProcessor().getStatistics().getCompletedByForce();
     }
 
     @Override
     public long getDiscarded() {
-        return processor.getStatistics().getDiscarded();
+        return getProcessor().getStatistics().getDiscarded();
     }
 
     @Override
     public void resetStatistics() {
-        processor.getStatistics().reset();
+        getProcessor().getStatistics().reset();
     }
 }

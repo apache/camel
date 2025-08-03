@@ -28,16 +28,19 @@ import org.apache.camel.processor.ThreadsProcessor;
 
 @ManagedResource(description = "Managed Threads")
 public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMBean {
-    private final ThreadsProcessor processor;
 
     public ManagedThreads(CamelContext context, ThreadsProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public ThreadsProcessor getProcessor() {
+        return (ThreadsProcessor) super.getProcessor();
     }
 
     @Override
     public Boolean isCallerRunsWhenRejected() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor) {
             String name = getRejectedPolicy();
             return "CallerRuns".equals(name);
         } else {
@@ -47,7 +50,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public String getRejectedPolicy() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.getRejectedExecutionHandler().toString();
         } else {
             return null;
@@ -56,7 +59,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public int getCorePoolSize() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.getCorePoolSize();
         } else {
             return 0;
@@ -65,7 +68,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public int getPoolSize() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.getPoolSize();
         } else {
             return 0;
@@ -74,7 +77,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public int getMaximumPoolSize() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.getMaximumPoolSize();
         } else {
             return 0;
@@ -83,7 +86,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public int getLargestPoolSize() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.getLargestPoolSize();
         } else {
             return 0;
@@ -92,7 +95,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public int getActiveCount() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.getActiveCount();
         } else {
             return 0;
@@ -101,7 +104,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public long getTaskCount() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.getTaskCount();
         } else {
             return 0;
@@ -110,7 +113,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public long getCompletedTaskCount() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.getCompletedTaskCount();
         } else {
             return 0;
@@ -119,7 +122,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public long getTaskQueueSize() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             BlockingQueue<Runnable> queue = threadPoolExecutor.getQueue();
             return queue != null ? queue.size() : 0;
         } else {
@@ -129,7 +132,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public long getKeepAliveTime() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.getKeepAliveTime(TimeUnit.SECONDS);
         } else {
             return 0;
@@ -138,7 +141,7 @@ public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMB
 
     @Override
     public boolean isAllowCoreThreadTimeout() {
-        if (processor.getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
+        if (getProcessor().getExecutorService() instanceof ThreadPoolExecutor threadPoolExecutor) {
             return threadPoolExecutor.allowsCoreThreadTimeOut();
         } else {
             return false;

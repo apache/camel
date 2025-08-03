@@ -26,16 +26,19 @@ import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 
 @ManagedResource(description = "Managed Weighted LoadBalancer")
 public class ManagedWeightedLoadBalancer extends ManagedProcessor implements ManagedWeightedBalancerMBean {
-    private final WeightedLoadBalancer processor;
 
     public ManagedWeightedLoadBalancer(CamelContext context, WeightedLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public WeightedLoadBalancer getProcessor() {
+        return (WeightedLoadBalancer) super.getProcessor();
     }
 
     @Override
     public Integer getSize() {
-        return processor.getProcessors().size();
+        return getProcessor().getProcessors().size();
     }
 
     @Override
@@ -75,7 +78,7 @@ public class ManagedWeightedLoadBalancer extends ManagedProcessor implements Man
 
     @Override
     public String getLastChosenProcessorId() {
-        int idx = processor.getLastChosenProcessorIndex();
+        int idx = getProcessor().getLastChosenProcessorIndex();
         if (idx != -1) {
             LoadBalanceDefinition def = getDefinition();
             ProcessorDefinition<?> output = def.getOutputs().get(idx);

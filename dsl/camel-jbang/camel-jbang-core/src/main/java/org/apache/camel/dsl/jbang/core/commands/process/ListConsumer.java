@@ -174,7 +174,7 @@ public class ListConsumer extends ProcessWatchCommand {
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                 new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.id),
-                new Column().header("STATE").headerAlign(HorizontalAlign.CENTER).with(this::getState),
+                new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER).with(this::getState),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getType),
                 new Column().header("INFLIGHT").with(r -> Integer.toString(r.inflight)),

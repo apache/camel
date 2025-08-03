@@ -25,12 +25,15 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 
 @ManagedResource(description = "Managed RoundRobin LoadBalancer")
 public class ManagedRoundRobinLoadBalancer extends ManagedProcessor implements ManagedRoundRobinLoadBalancerMBean {
-    private final RoundRobinLoadBalancer processor;
 
     public ManagedRoundRobinLoadBalancer(CamelContext context, RoundRobinLoadBalancer processor,
                                          LoadBalanceDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public RoundRobinLoadBalancer getProcessor() {
+        return (RoundRobinLoadBalancer) super.getProcessor();
     }
 
     @Override
@@ -40,12 +43,12 @@ public class ManagedRoundRobinLoadBalancer extends ManagedProcessor implements M
 
     @Override
     public Integer getSize() {
-        return processor.getProcessors().size();
+        return getProcessor().getProcessors().size();
     }
 
     @Override
     public String getLastChosenProcessorId() {
-        int idx = processor.getLastChosenProcessorIndex();
+        int idx = getProcessor().getLastChosenProcessorIndex();
         if (idx != -1) {
             LoadBalanceDefinition def = getDefinition();
             ProcessorDefinition<?> output = def.getOutputs().get(idx);

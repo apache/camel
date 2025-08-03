@@ -95,12 +95,22 @@ public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
         state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
 
-        // should be 0 consumer and 0 processor
+        // should be 0 consumer and 1 processor
         set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
         assertEquals(0, set.size(), "Should be 0 consumer");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals(0, set.size(), "Should be 0 processor");
+        assertEquals(1, set.size(), "Should be 1 processor");
+
+        // remove
+        mbeanServer.invoke(on, "remove", null, null);
+
+        // should be 0 consumer and 0 processor
+        set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
+        assertEquals(0, set.size(), "Should be 1 consumer");
+
+        set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
+        assertEquals(0, set.size(), "Should be 1 processor");
     }
 
 }

@@ -26,11 +26,14 @@ import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed Custom LoadBalancer")
 public class ManagedCustomLoadBalancer extends ManagedProcessor implements ManagedCustomLoadBalancerMBean {
-    private final LoadBalancer processor;
 
     public ManagedCustomLoadBalancer(CamelContext context, LoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public LoadBalancer getProcessor() {
+        return (LoadBalancer) super.getProcessor();
     }
 
     @Override
@@ -46,11 +49,11 @@ public class ManagedCustomLoadBalancer extends ManagedProcessor implements Manag
 
     @Override
     public String getLoadBalancerClassName() {
-        return ObjectHelper.className(processor);
+        return ObjectHelper.className(getProcessor());
     }
 
     @Override
     public Integer getSize() {
-        return processor.getProcessors().size();
+        return getProcessor().getProcessors().size();
     }
 }

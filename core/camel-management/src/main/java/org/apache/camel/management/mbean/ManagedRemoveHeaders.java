@@ -26,12 +26,11 @@ import org.apache.camel.processor.RemoveHeadersProcessor;
 
 @ManagedResource(description = "Managed RemoveHeaders")
 public class ManagedRemoveHeaders extends ManagedProcessor implements ManagedRemoveHeadersMBean {
-    private final RemoveHeadersProcessor processor;
+
     private final String exclude;
 
     public ManagedRemoveHeaders(CamelContext context, RemoveHeadersProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
         if (processor.getExcludePattern() != null) {
             exclude = Arrays.toString(processor.getExcludePattern());
         } else {
@@ -40,8 +39,13 @@ public class ManagedRemoveHeaders extends ManagedProcessor implements ManagedRem
     }
 
     @Override
+    public RemoveHeadersProcessor getProcessor() {
+        return (RemoveHeadersProcessor) super.getProcessor();
+    }
+
+    @Override
     public String getPattern() {
-        return processor.getPattern();
+        return getProcessor().getPattern();
     }
 
     @Override

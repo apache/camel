@@ -24,16 +24,19 @@ import org.apache.camel.processor.ExchangePatternProcessor;
 
 @ManagedResource(description = "Managed SetExchangePattern")
 public class ManagedSetExchangePattern extends ManagedProcessor implements ManagedSetExchangePatternMBean {
-    private final ExchangePatternProcessor processor;
 
     public ManagedSetExchangePattern(CamelContext context, ExchangePatternProcessor processor,
                                      ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public ExchangePatternProcessor getProcessor() {
+        return (ExchangePatternProcessor) super.getProcessor();
     }
 
     @Override
     public String getPattern() {
-        return processor.getExchangePattern().name();
+        return getProcessor().getExchangePattern().name();
     }
 }
