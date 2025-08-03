@@ -493,9 +493,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         if (!initialized) {
             return;
         }
-        // always remove consumer
-        boolean consumer = service instanceof Consumer;
-        if (!consumer && !shutdown) {
+        // always remove consumer or producer
+        boolean consumerOrProducer = service instanceof Consumer || service instanceof Producer;
+        if (!consumerOrProducer && !shutdown) {
             // only remove service if being shutdown
             return;
         }
