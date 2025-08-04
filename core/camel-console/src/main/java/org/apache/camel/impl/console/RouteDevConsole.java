@@ -214,6 +214,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 }
                 sb.append(String.format("\n        Source: %s", loc));
             }
+            sb.append(String.format("\n        State: %s", mp.getState()));
             sb.append(String.format("\n        Total: %s", mp.getExchangesTotal()));
             sb.append(String.format("\n        Failed: %s", mp.getExchangesFailed()));
             sb.append(String.format("\n        Inflight: %s", mp.getExchangesInflight()));
@@ -378,6 +379,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 }
                 jo.put("source", loc);
             }
+            jo.put("state", mp.getState());
             String line = ConsoleHelper.loadSourceLine(getCamelContext(), mp.getSourceLocation(), mp.getSourceLineNumber());
             if (line != null) {
                 JsonArray ca = new JsonArray();

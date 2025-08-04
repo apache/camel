@@ -24,15 +24,18 @@ import org.apache.camel.processor.RemovePropertyProcessor;
 
 @ManagedResource(description = "Managed RemoveProperty")
 public class ManagedRemoveProperty extends ManagedProcessor implements ManagedRemovePropertyMBean {
-    private final RemovePropertyProcessor processor;
 
     public ManagedRemoveProperty(CamelContext context, RemovePropertyProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public RemovePropertyProcessor getProcessor() {
+        return (RemovePropertyProcessor) super.getProcessor();
     }
 
     @Override
     public String getPropertyName() {
-        return processor.getPropertyName();
+        return getProcessor().getPropertyName();
     }
 }

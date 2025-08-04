@@ -24,30 +24,33 @@ import org.apache.camel.support.processor.ConvertHeaderProcessor;
 
 @ManagedResource(description = "Managed ConvertHeader")
 public class ManagedConvertHeader extends ManagedProcessor implements ManagedConvertHeaderMBean {
-    private final ConvertHeaderProcessor processor;
 
     public ManagedConvertHeader(CamelContext context, ConvertHeaderProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public ConvertHeaderProcessor getProcessor() {
+        return (ConvertHeaderProcessor) super.getProcessor();
     }
 
     @Override
     public String getName() {
-        return processor.getName();
+        return getProcessor().getName();
     }
 
     @Override
     public String getToName() {
-        return processor.getToName();
+        return getProcessor().getToName();
     }
 
     @Override
     public String getType() {
-        return processor.getType().getCanonicalName();
+        return getProcessor().getType().getCanonicalName();
     }
 
     @Override
     public String getCharset() {
-        return processor.getCharset();
+        return getProcessor().getCharset();
     }
 }

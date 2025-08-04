@@ -34,12 +34,10 @@ import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed SendProcessor")
 public class ManagedSendProcessor extends ManagedProcessor implements ManagedSendProcessorMBean {
-    private final SendProcessor processor;
     private String destination;
 
     public ManagedSendProcessor(CamelContext context, SendProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
@@ -47,9 +45,9 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
         if (sanitize) {
-            destination = URISupport.sanitizeUri(processor.getDestination().getEndpointUri());
+            destination = URISupport.sanitizeUri(getProcessor().getDestination().getEndpointUri());
         } else {
-            destination = processor.getDestination().getEndpointUri();
+            destination = getProcessor().getDestination().getEndpointUri();
         }
     }
 
@@ -61,12 +59,12 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
     @Override
     public void reset() {
         super.reset();
-        processor.reset();
+        getProcessor().reset();
     }
 
     @Override
     public SendProcessor getProcessor() {
-        return processor;
+        return (SendProcessor) super.getProcessor();
     }
 
     @Override
@@ -76,18 +74,18 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
 
     @Override
     public String getVariableSend() {
-        return processor.getVariableSend();
+        return getProcessor().getVariableSend();
     }
 
     @Override
     public String getVariableReceive() {
-        return processor.getVariableReceive();
+        return getProcessor().getVariableReceive();
     }
 
     @Override
     public String getMessageExchangePattern() {
-        if (processor.getPattern() != null) {
-            return processor.getPattern().name();
+        if (getProcessor().getPattern() != null) {
+            return getProcessor().getPattern().name();
         } else {
             return null;
         }
@@ -101,7 +99,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
             // we only have 1 endpoint
             CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();
             String url = getDestination();
-            long hits = processor.getCounter();
+            long hits = getProcessor().getCounter();
 
             CompositeData data = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
             answer.put(data);

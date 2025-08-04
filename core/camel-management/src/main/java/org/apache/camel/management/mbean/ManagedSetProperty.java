@@ -24,11 +24,14 @@ import org.apache.camel.processor.SetPropertyProcessor;
 
 @ManagedResource(description = "Managed SetProperty")
 public class ManagedSetProperty extends ManagedProcessor implements ManagedSetPropertyMBean {
-    private final SetPropertyProcessor processor;
 
     public ManagedSetProperty(CamelContext context, SetPropertyProcessor processor, SetPropertyDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public SetPropertyProcessor getProcessor() {
+        return (SetPropertyProcessor) super.getProcessor();
     }
 
     @Override
@@ -38,7 +41,7 @@ public class ManagedSetProperty extends ManagedProcessor implements ManagedSetPr
 
     @Override
     public String getPropertyName() {
-        return processor.getPropertyName();
+        return getProcessor().getPropertyName();
     }
 
     @Override

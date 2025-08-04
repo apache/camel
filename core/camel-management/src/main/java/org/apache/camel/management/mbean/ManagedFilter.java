@@ -24,11 +24,14 @@ import org.apache.camel.processor.FilterProcessor;
 
 @ManagedResource(description = "Managed Filter")
 public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {
-    private final FilterProcessor processor;
 
     public ManagedFilter(CamelContext context, FilterProcessor processor, ExpressionNode definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public FilterProcessor getProcessor() {
+        return (FilterProcessor) super.getProcessor();
     }
 
     @Override
@@ -38,7 +41,7 @@ public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBea
 
     @Override
     public void reset() {
-        processor.reset();
+        getProcessor().reset();
         super.reset();
     }
 
@@ -54,6 +57,6 @@ public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBea
 
     @Override
     public Long getFilteredCount() {
-        return processor.getFilteredCount();
+        return getProcessor().getFilteredCount();
     }
 }

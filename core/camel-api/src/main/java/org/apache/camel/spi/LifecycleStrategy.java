@@ -155,6 +155,18 @@ public interface LifecycleStrategy {
     void onServiceRemove(CamelContext context, Service service, Route route);
 
     /**
+     * Notification on removing a {@link Service}.
+     *
+     * @param context  the camel context
+     * @param service  the removed service
+     * @param route    the route the service belongs to if any possible to determine
+     * @param shutdown whether camel is being shutdown
+     */
+    default void onServiceRemove(CamelContext context, Service service, Route route, boolean shutdown) {
+        onServiceRemove(context, service, route);
+    }
+
+    /**
      * Notification on adding {@link Route}(s).
      *
      * @param routes the added routes

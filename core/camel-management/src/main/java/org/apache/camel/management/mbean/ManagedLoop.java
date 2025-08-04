@@ -24,11 +24,14 @@ import org.apache.camel.processor.LoopProcessor;
 
 @ManagedResource(description = "Managed Loop")
 public class ManagedLoop extends ManagedProcessor implements ManagedLoopMBean {
-    private final LoopProcessor processor;
 
     public ManagedLoop(CamelContext context, LoopProcessor processor, LoopDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public LoopProcessor getProcessor() {
+        return (LoopProcessor) super.getProcessor();
     }
 
     @Override
@@ -48,11 +51,11 @@ public class ManagedLoop extends ManagedProcessor implements ManagedLoopMBean {
 
     @Override
     public Boolean isCopy() {
-        return processor.isCopy();
+        return getProcessor().isCopy();
     }
 
     @Override
     public Boolean isBreakOnShutdown() {
-        return processor.isBreakOnShutdown();
+        return getProcessor().isBreakOnShutdown();
     }
 }

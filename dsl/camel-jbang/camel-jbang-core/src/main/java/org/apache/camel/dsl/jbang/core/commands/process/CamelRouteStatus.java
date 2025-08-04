@@ -69,6 +69,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         description = "Filter routes that must be slower than the given time (ms)")
     long mean;
 
+    @CommandLine.Option(names = { "--running" },
+                        description = "Only include running routes")
+    boolean running;
+
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter routes by id, or url")
     String[] filter;
@@ -217,6 +221,9 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             }
                             if (add && group != null) {
                                 add = PatternHelper.matchPatterns(row.group, group);
+                            }
+                            if (add && running) {
+                                add = "Started".equals(row.state);
                             }
                             if (add) {
                                 rows.add(row);

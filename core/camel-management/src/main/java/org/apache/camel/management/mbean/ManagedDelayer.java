@@ -26,41 +26,40 @@ import org.apache.camel.processor.Delayer;
 
 @ManagedResource(description = "Managed Delayer")
 public class ManagedDelayer extends ManagedProcessor implements ManagedDelayerMBean {
-    private final Delayer delayer;
 
     public ManagedDelayer(CamelContext context, Delayer delayer, ProcessorDefinition<?> definition) {
         super(context, delayer, definition);
-        this.delayer = delayer;
     }
 
-    public Delayer getDelayer() {
-        return delayer;
+    @Override
+    public Delayer getProcessor() {
+        return (Delayer) super.getProcessor();
     }
 
     @Override
     public Long getDelay() {
-        return delayer.getDelayValue();
+        return getProcessor().getDelayValue();
     }
 
     @Override
     public void constantDelay(Integer millis) {
         Expression delay = ExpressionBuilder.constantExpression(millis);
-        delayer.setDelay(delay);
+        getProcessor().setDelay(delay);
     }
 
     @Override
     public int getDelayedCount() {
-        return delayer.getDelayedCount();
+        return getProcessor().getDelayedCount();
     }
 
     @Override
     public Boolean isAsyncDelayed() {
-        return delayer.isAsyncDelayed();
+        return getProcessor().isAsyncDelayed();
     }
 
     @Override
     public Boolean isCallerRunsWhenRejected() {
-        return delayer.isCallerRunsWhenRejected();
+        return getProcessor().isCallerRunsWhenRejected();
     }
 
 }

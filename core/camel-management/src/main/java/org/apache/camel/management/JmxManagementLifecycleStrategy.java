@@ -47,6 +47,7 @@ import org.apache.camel.Service;
 import org.apache.camel.StartupListener;
 import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.api.management.mbean.ManagedProcessorAware;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.debugger.BacklogTracer;
@@ -467,6 +468,10 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(managedObject)) {
             LOG.trace("The service is already managed: {}", service);
+            // re-attach processor on mben so we can reuse existing MBean but with newly created processor
+            if (managedObject instanceof ManagedProcessorAware mpa && service instanceof Processor processor) {
+                mpa.setProcessor(processor);
+            }
             return;
         }
 
@@ -479,8 +484,19 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
     @Override
     public void onServiceRemove(CamelContext context, Service service, Route route) {
+        onServiceRemove(context, service, route, true);
+    }
+
+    @Override
+    public void onServiceRemove(CamelContext context, Service service, Route route, boolean shutdown) {
         // the agent hasn't been started
         if (!initialized) {
+            return;
+        }
+        // always remove consumer or producer
+        boolean consumerOrProducer = service instanceof Consumer || service instanceof Producer;
+        if (!consumerOrProducer && !shutdown) {
+            // only remove service if being shutdown
             return;
         }
 
@@ -837,7 +853,6 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 }
             }
         }
-
     }
 
     private void registerPerformanceCounters(

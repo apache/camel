@@ -26,12 +26,11 @@ import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed Process")
 public class ManagedProcess extends ManagedProcessor implements ManagedProcessMBean {
-    private final Processor processor;
+
     private String processorClassName;
 
     public ManagedProcess(CamelContext context, Processor processor, ProcessDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
@@ -49,7 +48,7 @@ public class ManagedProcess extends ManagedProcessor implements ManagedProcessMB
         if (processorClassName != null) {
             return processorClassName;
         }
-        Processor target = processor;
+        Processor target = getProcessor();
         if (target instanceof DelegateProcessor delegateProcessor) {
             target = delegateProcessor.getProcessor();
         }

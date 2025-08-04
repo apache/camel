@@ -25,24 +25,27 @@ import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed ThrowException")
 public class ManagedThrowException extends ManagedProcessor implements ManagedThrowExceptionMBean {
-    private final ThrowExceptionProcessor processor;
 
     public ManagedThrowException(CamelContext context, ThrowExceptionProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public ThrowExceptionProcessor getProcessor() {
+        return (ThrowExceptionProcessor) super.getProcessor();
     }
 
     @Override
     public String getMessage() {
-        return processor.getMessage();
+        return getProcessor().getMessage();
     }
 
     @Override
     public String getExceptionType() {
-        if (processor.getType() != null) {
-            return ObjectHelper.name(processor.getType());
-        } else if (processor.getException() != null) {
-            return ObjectHelper.className(processor.getException());
+        if (getProcessor().getType() != null) {
+            return ObjectHelper.name(getProcessor().getType());
+        } else if (getProcessor().getException() != null) {
+            return ObjectHelper.className(getProcessor().getException());
         } else {
             return null;
         }

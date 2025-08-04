@@ -77,6 +77,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                         description = "Filter processors that must be slower than the given time (ms)")
     long mean;
 
+    @CommandLine.Option(names = { "--running" },
+                        description = "Only include running processors")
+    boolean running;
+
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter processors by id")
     String[] filter;
@@ -194,7 +198,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 });
 
         // filter rows
-        if (filter != null || group != null) {
+        if (running || filter != null || group != null) {
             rows.removeIf(r -> {
                 boolean keep = true;
                 if (filter != null) {
@@ -211,6 +215,9 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 // group take precedence
                 if (keep && group != null) {
                     keep = PatternHelper.matchPatterns(r.group, group);
+                }
+                if (keep && running) {
+                    keep = "Started".equals(r.state);
                 }
                 return !keep;
             });
@@ -240,6 +247,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
             row.description = o.getString("description");
             row.level = o.getIntegerOrDefault("level", 0);
             row.source = o.getString("source");
+            row.state = o.getString("state");
             Map<String, ?> stats = o.getMap("statistics");
             if (stats != null) {
                 row.total = stats.get("exchangesTotal").toString();
@@ -304,6 +312,8 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT).minWidth(25)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getProcessor),
+                new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).headerAlign(HorizontalAlign.CENTER)
+                        .with(this::getStatus),
                 new Column().header("TOTAL").with(this::getTotal),
                 new Column().header("FAIL").with(this::getFailed),
                 new Column().header("INFLIGHT").with(this::getInflight),
@@ -416,6 +426,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         } else {
             return "";
         }
+    }
+
+    protected String getStatus(Row r) {
+        return r.state;
     }
 
     protected String getProcessor(Row r) {

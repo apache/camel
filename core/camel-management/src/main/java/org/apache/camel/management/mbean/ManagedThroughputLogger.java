@@ -22,51 +22,46 @@ import org.apache.camel.api.management.mbean.ManagedThroughputLoggerMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.support.processor.ThroughputLogger;
 
-/**
- *
- */
 @ManagedResource(description = "Managed ThroughputLogger")
 public class ManagedThroughputLogger extends ManagedProcessor implements ManagedThroughputLoggerMBean {
 
-    private final ThroughputLogger logger;
-
     public ManagedThroughputLogger(CamelContext context, ThroughputLogger logger, ProcessorDefinition<?> definition) {
         super(context, logger, definition);
-        this.logger = logger;
     }
 
-    public ThroughputLogger getLogger() {
-        return logger;
+    @Override
+    public ThroughputLogger getProcessor() {
+        return (ThroughputLogger) super.getProcessor();
     }
 
     @Override
     public void reset() {
         super.reset();
-        logger.reset();
+        getProcessor().reset();
     }
 
     @Override
     public long getReceivedCounter() {
-        return logger.getReceivedCounter();
+        return getProcessor().getReceivedCounter();
     }
 
     @Override
     public double getAverage() {
-        return logger.getAverage();
+        return getProcessor().getAverage();
     }
 
     @Override
     public double getRate() {
-        return logger.getRate();
+        return getProcessor().getRate();
     }
 
     @Override
     public String getLastLogMessage() {
-        return logger.getLastLogMessage();
+        return getProcessor().getLastLogMessage();
     }
 
     @Override
     public void resetThroughputLogger() {
-        logger.reset();
+        getProcessor().reset();
     }
 }

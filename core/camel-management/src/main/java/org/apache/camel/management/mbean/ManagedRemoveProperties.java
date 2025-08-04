@@ -26,13 +26,12 @@ import org.apache.camel.processor.RemovePropertiesProcessor;
 
 @ManagedResource(description = "Managed RemoveProperties")
 public class ManagedRemoveProperties extends ManagedProcessor implements ManagedRemovePropertiesMBean {
-    private final RemovePropertiesProcessor processor;
+
     private final String exclude;
 
     public ManagedRemoveProperties(CamelContext context, RemovePropertiesProcessor processor,
                                    ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
         if (processor.getExcludePattern() != null) {
             exclude = Arrays.toString(processor.getExcludePattern());
         } else {
@@ -41,8 +40,13 @@ public class ManagedRemoveProperties extends ManagedProcessor implements Managed
     }
 
     @Override
+    public RemovePropertiesProcessor getProcessor() {
+        return (RemovePropertiesProcessor) super.getProcessor();
+    }
+
+    @Override
     public String getPattern() {
-        return processor.getPattern();
+        return getProcessor().getPattern();
     }
 
     @Override

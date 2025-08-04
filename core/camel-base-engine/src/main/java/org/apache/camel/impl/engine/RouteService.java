@@ -426,7 +426,7 @@ public class RouteService extends ChildServiceSupport {
     protected void stopChildServices(Route route, Set<Service> services, boolean shutdown) {
         for (Service service : services) {
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onServiceRemove(camelContext, service, route);
+                strategy.onServiceRemove(camelContext, service, route, shutdown);
             }
             if (shutdown) {
                 ServiceHelper.stopAndShutdownService(service);

@@ -24,11 +24,14 @@ import org.apache.camel.support.processor.UnmarshalProcessor;
 
 @ManagedResource(description = "Managed Unmarshal")
 public class ManagedUnmarshal extends ManagedProcessor implements ManagedUnmarshalMBean {
-    private final UnmarshalProcessor processor;
 
     public ManagedUnmarshal(CamelContext context, UnmarshalProcessor processor, UnmarshalDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public UnmarshalProcessor getProcessor() {
+        return (UnmarshalProcessor) super.getProcessor();
     }
 
     @Override
@@ -47,16 +50,16 @@ public class ManagedUnmarshal extends ManagedProcessor implements ManagedUnmarsh
 
     @Override
     public String getVariableSend() {
-        return processor.getVariableSend();
+        return getProcessor().getVariableSend();
     }
 
     @Override
     public String getVariableReceive() {
-        return processor.getVariableReceive();
+        return getProcessor().getVariableReceive();
     }
 
     @Override
     public boolean isAllowNullBody() {
-        return processor.isAllowNullBody();
+        return getProcessor().isAllowNullBody();
     }
 }

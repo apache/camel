@@ -24,11 +24,14 @@ import org.apache.camel.processor.SetHeadersProcessor;
 
 @ManagedResource(description = "Managed SetHeaders")
 public class ManagedSetHeaders extends ManagedProcessor implements ManagedSetHeadersMBean {
-    private final SetHeadersProcessor processor;
 
     public ManagedSetHeaders(CamelContext context, SetHeadersProcessor processor, SetHeadersDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public SetHeadersProcessor getProcessor() {
+        return (SetHeadersProcessor) super.getProcessor();
     }
 
     @Override
@@ -38,7 +41,7 @@ public class ManagedSetHeaders extends ManagedProcessor implements ManagedSetHea
 
     @Override
     public String[] getHeaderNames() {
-        return processor.getHeaderNames()
+        return getProcessor().getHeaderNames()
                 .stream().map(Object::toString).distinct().toArray(String[]::new);
     }
 }

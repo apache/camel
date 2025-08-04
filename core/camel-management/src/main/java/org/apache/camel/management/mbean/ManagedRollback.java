@@ -24,25 +24,28 @@ import org.apache.camel.processor.RollbackProcessor;
 
 @ManagedResource(description = "Managed Rollback")
 public class ManagedRollback extends ManagedProcessor implements ManagedRollbackMBean {
-    private final RollbackProcessor processor;
 
     public ManagedRollback(CamelContext context, RollbackProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public RollbackProcessor getProcessor() {
+        return (RollbackProcessor) super.getProcessor();
     }
 
     @Override
     public String getMessage() {
-        return processor.getMessage();
+        return getProcessor().getMessage();
     }
 
     @Override
     public Boolean isMarkRollbackOnly() {
-        return processor.isMarkRollbackOnly();
+        return getProcessor().isMarkRollbackOnly();
     }
 
     @Override
     public Boolean isMarkRollbackOnlyLast() {
-        return processor.isMarkRollbackOnlyLast();
+        return getProcessor().isMarkRollbackOnlyLast();
     }
 }

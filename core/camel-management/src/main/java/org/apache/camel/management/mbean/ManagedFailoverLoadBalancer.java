@@ -39,12 +39,16 @@ import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed Failover LoadBalancer")
 public class ManagedFailoverLoadBalancer extends ManagedProcessor implements ManagedFailoverLoadBalancerMBean {
-    private final FailOverLoadBalancer processor;
+
     private String exceptions;
 
     public ManagedFailoverLoadBalancer(CamelContext context, FailOverLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public FailOverLoadBalancer getProcessor() {
+        return (FailOverLoadBalancer) super.getProcessor();
     }
 
     @Override
@@ -55,7 +59,7 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
     @Override
     public void reset() {
         super.reset();
-        processor.reset();
+        getProcessor().reset();
     }
 
     @Override
@@ -65,22 +69,22 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
 
     @Override
     public Integer getSize() {
-        return processor.getProcessors().size();
+        return getProcessor().getProcessors().size();
     }
 
     @Override
     public Boolean isRoundRobin() {
-        return processor.isRoundRobin();
+        return getProcessor().isRoundRobin();
     }
 
     @Override
     public Boolean isSticky() {
-        return processor.isSticky();
+        return getProcessor().isSticky();
     }
 
     @Override
     public Integer getMaximumFailoverAttempts() {
-        return processor.getMaximumFailoverAttempts();
+        return getProcessor().getMaximumFailoverAttempts();
     }
 
     @Override
@@ -89,7 +93,7 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
             return exceptions;
         }
 
-        List<Class<?>> classes = processor.getExceptions();
+        List<Class<?>> classes = getProcessor().getExceptions();
         if (classes == null || classes.isEmpty()) {
             exceptions = "";
         } else {
@@ -104,7 +108,7 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
 
     @Override
     public String getLastGoodProcessorId() {
-        int idx = processor.getLastGoodIndex();
+        int idx = getProcessor().getLastGoodIndex();
         if (idx != -1) {
             LoadBalanceDefinition def = getDefinition();
             ProcessorDefinition<?> output = def.getOutputs().get(idx);
@@ -120,7 +124,7 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.loadbalancerExceptionsTabularType());
 
-            ExceptionFailureStatistics statistics = processor.getExceptionFailureStatistics();
+            ExceptionFailureStatistics statistics = getProcessor().getExceptionFailureStatistics();
 
             Iterator<Class<?>> it = statistics.getExceptions();
             boolean empty = true;

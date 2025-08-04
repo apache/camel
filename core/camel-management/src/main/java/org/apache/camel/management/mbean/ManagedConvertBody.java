@@ -24,20 +24,23 @@ import org.apache.camel.support.processor.ConvertBodyProcessor;
 
 @ManagedResource(description = "Managed ConvertBody")
 public class ManagedConvertBody extends ManagedProcessor implements ManagedConvertBodyMBean {
-    private final ConvertBodyProcessor processor;
 
     public ManagedConvertBody(CamelContext context, ConvertBodyProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public ConvertBodyProcessor getProcessor() {
+        return (ConvertBodyProcessor) super.getProcessor();
     }
 
     @Override
     public String getType() {
-        return processor.getType().getCanonicalName();
+        return getProcessor().getType().getCanonicalName();
     }
 
     @Override
     public String getCharset() {
-        return processor.getCharset();
+        return getProcessor().getCharset();
     }
 }

@@ -199,7 +199,7 @@ public class ListHealth extends ProcessWatchCommand {
                             .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getId),
                     new Column().header("RL").minWidth(4).maxWidth(4).with(this::getLR),
-                    new Column().header("STATE").headerAlign(HorizontalAlign.CENTER)
+                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                             .dataAlign(HorizontalAlign.CENTER)
                             .with(r -> r.state),
                     new Column().header("RATE").headerAlign(HorizontalAlign.CENTER)

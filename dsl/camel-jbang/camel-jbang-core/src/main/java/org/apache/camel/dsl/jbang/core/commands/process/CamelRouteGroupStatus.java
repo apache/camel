@@ -67,6 +67,10 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
                         description = "Filter groups that must be slower than the given time (ms)")
     long mean;
 
+    @CommandLine.Option(names = { "--running" },
+                        description = "Only include running groups")
+    boolean running;
+
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter groups by name")
     String[] filter;
@@ -178,6 +182,9 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
                                 if (!match) {
                                     add = false;
                                 }
+                            }
+                            if (add && running) {
+                                add = "Started".equals(row.state);
                             }
                             if (add) {
                                 rows.add(row);

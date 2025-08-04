@@ -24,30 +24,33 @@ import org.apache.camel.support.processor.ConvertVariableProcessor;
 
 @ManagedResource(description = "Managed ConvertVariable")
 public class ManagedConvertVariable extends ManagedProcessor implements ManagedConvertVariableMBean {
-    private final ConvertVariableProcessor processor;
 
     public ManagedConvertVariable(CamelContext context, ConvertVariableProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public ConvertVariableProcessor getProcessor() {
+        return (ConvertVariableProcessor) super.getProcessor();
     }
 
     @Override
     public String getName() {
-        return processor.getName();
+        return getProcessor().getName();
     }
 
     @Override
     public String getToName() {
-        return processor.getToName();
+        return getProcessor().getToName();
     }
 
     @Override
     public String getType() {
-        return processor.getType().getCanonicalName();
+        return getProcessor().getType().getCanonicalName();
     }
 
     @Override
     public String getCharset() {
-        return processor.getCharset();
+        return getProcessor().getCharset();
     }
 }

@@ -23,6 +23,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedProcessorAware;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -35,10 +36,11 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
 @ManagedResource(description = "Managed Processor")
-public class ManagedProcessor extends ManagedPerformanceCounter implements ManagedInstance, ManagedProcessorMBean {
+public class ManagedProcessor extends ManagedPerformanceCounter
+        implements ManagedInstance, ManagedProcessorMBean, ManagedProcessorAware {
 
     private final CamelContext context;
-    private final Processor processor;
+    private Processor processor;
     private final ProcessorDefinition<?> definition;
     private final String id;
     private final int nodeLevel;
@@ -80,11 +82,16 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     @Override
     public Object getInstance() {
-        return processor;
+        return getProcessor();
     }
 
     public Processor getProcessor() {
         return processor;
+    }
+
+    @Override
+    public void setProcessor(Processor processor) {
+        this.processor = processor;
     }
 
     public ProcessorDefinition<?> getDefinition() {

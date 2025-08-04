@@ -37,13 +37,12 @@ import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed RoutingSlip")
 public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRoutingSlipMBean {
-    private final RoutingSlip processor;
+
     private String uri;
     private boolean sanitize;
 
     public ManagedRoutingSlip(CamelContext context, RoutingSlip processor, RoutingSlipDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
@@ -57,10 +56,15 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
     }
 
     @Override
+    public RoutingSlip getProcessor() {
+        return (RoutingSlip) super.getProcessor();
+    }
+
+    @Override
     public void reset() {
         super.reset();
-        if (processor.getEndpointUtilizationStatistics() != null) {
-            processor.getEndpointUtilizationStatistics().clear();
+        if (getProcessor().getEndpointUtilizationStatistics() != null) {
+            getProcessor().getEndpointUtilizationStatistics().clear();
         }
     }
 
@@ -86,17 +90,17 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
 
     @Override
     public String getUriDelimiter() {
-        return processor.getUriDelimiter();
+        return getProcessor().getUriDelimiter();
     }
 
     @Override
     public Integer getCacheSize() {
-        return processor.getCacheSize();
+        return getProcessor().getCacheSize();
     }
 
     @Override
     public Boolean isIgnoreInvalidEndpoints() {
-        return processor.isIgnoreInvalidEndpoints();
+        return getProcessor().isIgnoreInvalidEndpoints();
     }
 
     @Override
@@ -104,7 +108,7 @@ public class ManagedRoutingSlip extends ManagedProcessor implements ManagedRouti
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 
-            EndpointUtilizationStatistics stats = processor.getEndpointUtilizationStatistics();
+            EndpointUtilizationStatistics stats = getProcessor().getEndpointUtilizationStatistics();
             if (stats != null) {
                 for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
                     CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();

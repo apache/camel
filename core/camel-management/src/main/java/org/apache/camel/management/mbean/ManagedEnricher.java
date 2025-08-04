@@ -37,13 +37,12 @@ import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed Enricher")
 public class ManagedEnricher extends ManagedProcessor implements ManagedEnricherMBean {
-    private final Enricher processor;
+
     private String uri;
     private boolean sanitize;
 
     public ManagedEnricher(CamelContext context, Enricher processor, EnrichDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
@@ -57,10 +56,15 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
     }
 
     @Override
+    public Enricher getProcessor() {
+        return (Enricher) super.getProcessor();
+    }
+
+    @Override
     public void reset() {
         super.reset();
-        if (processor.getEndpointUtilizationStatistics() != null) {
-            processor.getEndpointUtilizationStatistics().clear();
+        if (getProcessor().getEndpointUtilizationStatistics() != null) {
+            getProcessor().getEndpointUtilizationStatistics().clear();
         }
     }
 
@@ -75,11 +79,6 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
     }
 
     @Override
-    public Enricher getProcessor() {
-        return processor;
-    }
-
-    @Override
     public String getExpressionLanguage() {
         return getDefinition().getExpression().getLanguage();
     }
@@ -91,32 +90,32 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
 
     @Override
     public String getVariableSend() {
-        return processor.getVariableSend();
+        return getProcessor().getVariableSend();
     }
 
     @Override
     public String getVariableReceive() {
-        return processor.getVariableReceive();
+        return getProcessor().getVariableReceive();
     }
 
     @Override
     public Integer getCacheSize() {
-        return processor.getCacheSize();
+        return getProcessor().getCacheSize();
     }
 
     @Override
     public Boolean isIgnoreInvalidEndpoint() {
-        return processor.isIgnoreInvalidEndpoint();
+        return getProcessor().isIgnoreInvalidEndpoint();
     }
 
     @Override
     public Boolean isShareUnitOfWork() {
-        return processor.isShareUnitOfWork();
+        return getProcessor().isShareUnitOfWork();
     }
 
     @Override
     public Boolean isAggregateOnException() {
-        return processor.isAggregateOnException();
+        return getProcessor().isAggregateOnException();
     }
 
     @Override
@@ -124,7 +123,7 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 
-            EndpointUtilizationStatistics stats = processor.getEndpointUtilizationStatistics();
+            EndpointUtilizationStatistics stats = getProcessor().getEndpointUtilizationStatistics();
             if (stats != null) {
                 for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
                     CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();

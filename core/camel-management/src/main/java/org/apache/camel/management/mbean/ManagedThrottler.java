@@ -27,31 +27,30 @@ import static org.apache.camel.builder.Builder.constant;
 
 @ManagedResource(description = "Managed Concurrent Requests Throttler")
 public class ManagedThrottler extends ManagedProcessor implements ManagedThrottlerMBean {
-    private final Throttler throttler;
 
     public ManagedThrottler(CamelContext context, Throttler throttler,
                             ProcessorDefinition<?> definition) {
         super(context, throttler, definition);
-        this.throttler = throttler;
     }
 
-    public Throttler getThrottler() {
-        return throttler;
+    @Override
+    public Throttler getProcessor() {
+        return (Throttler) super.getProcessor();
     }
 
     @Override
     public long getMaximumRequests() {
-        return throttler.getCurrentMaximumRequests();
+        return getProcessor().getCurrentMaximumRequests();
     }
 
     @Override
     public void setMaximumRequests(long maximumConcurrentRequests) {
-        throttler.setMaximumRequestsExpression(constant(maximumConcurrentRequests));
+        getProcessor().setMaximumRequestsExpression(constant(maximumConcurrentRequests));
     }
 
     @Override
     public long getTimePeriodMillis() {
-        if (throttler instanceof TotalRequestsThrottler t) {
+        if (getProcessor() instanceof TotalRequestsThrottler t) {
             return t.getTimePeriodMillis();
         }
 
@@ -60,28 +59,28 @@ public class ManagedThrottler extends ManagedProcessor implements ManagedThrottl
 
     @Override
     public void setTimePeriodMillis(long timePeriodMillis) {
-        if (throttler instanceof TotalRequestsThrottler t) {
+        if (getProcessor() instanceof TotalRequestsThrottler t) {
             t.setTimePeriodMillis(timePeriodMillis);
         }
     }
 
     @Override
     public String getMode() {
-        return throttler.getMode();
+        return getProcessor().getMode();
     }
 
     @Override
     public Boolean isAsyncDelayed() {
-        return throttler.isAsyncDelayed();
+        return getProcessor().isAsyncDelayed();
     }
 
     @Override
     public Boolean isCallerRunsWhenRejected() {
-        return throttler.isCallerRunsWhenRejected();
+        return getProcessor().isCallerRunsWhenRejected();
     }
 
     @Override
     public Boolean isRejectExecution() {
-        return throttler.isRejectExecution();
+        return getProcessor().isRejectExecution();
     }
 }

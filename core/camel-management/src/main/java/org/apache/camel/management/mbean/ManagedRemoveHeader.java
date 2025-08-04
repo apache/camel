@@ -24,16 +24,19 @@ import org.apache.camel.processor.RemoveHeaderProcessor;
 
 @ManagedResource(description = "Managed RemoveHeader")
 public class ManagedRemoveHeader extends ManagedProcessor implements ManagedRemoveHeaderMBean {
-    private final RemoveHeaderProcessor processor;
 
     public ManagedRemoveHeader(CamelContext context, RemoveHeaderProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public RemoveHeaderProcessor getProcessor() {
+        return (RemoveHeaderProcessor) super.getProcessor();
     }
 
     @Override
     public String getHeaderName() {
-        return processor.getHeaderName();
+        return getProcessor().getHeaderName();
     }
 
 }

@@ -37,13 +37,12 @@ import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed PollEnricher")
 public class ManagedPollEnricher extends ManagedProcessor implements ManagedPollEnricherMBean {
-    private final PollEnricher processor;
+
     private String uri;
     private boolean sanitize;
 
     public ManagedPollEnricher(CamelContext context, PollEnricher processor, PollEnrichDefinition definition) {
         super(context, processor, definition);
-        this.processor = processor;
     }
 
     @Override
@@ -57,10 +56,15 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     }
 
     @Override
+    public PollEnricher getProcessor() {
+        return (PollEnricher) super.getProcessor();
+    }
+
+    @Override
     public void reset() {
         super.reset();
-        if (processor.getEndpointUtilizationStatistics() != null) {
-            processor.getEndpointUtilizationStatistics().clear();
+        if (getProcessor().getEndpointUtilizationStatistics() != null) {
+            getProcessor().getEndpointUtilizationStatistics().clear();
         }
     }
 
@@ -75,11 +79,6 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     }
 
     @Override
-    public PollEnricher getProcessor() {
-        return processor;
-    }
-
-    @Override
     public String getExpressionLanguage() {
         return getDefinition().getExpression().getLanguage();
     }
@@ -91,37 +90,37 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
 
     @Override
     public String getVariableReceive() {
-        return processor.getVariableReceive();
+        return getProcessor().getVariableReceive();
     }
 
     @Override
     public Long getTimeout() {
-        return processor.getTimeout();
+        return getProcessor().getTimeout();
     }
 
     @Override
     public Integer getCacheSize() {
-        return processor.getCacheSize();
+        return getProcessor().getCacheSize();
     }
 
     @Override
     public Boolean isIgnoreInvalidEndpoint() {
-        return processor.isIgnoreInvalidEndpoint();
+        return getProcessor().isIgnoreInvalidEndpoint();
     }
 
     @Override
     public Boolean isAggregateOnException() {
-        return processor.isAggregateOnException();
+        return getProcessor().isAggregateOnException();
     }
 
     @Override
     public Boolean isAllowOptimisedComponents() {
-        return processor.isAllowOptimisedComponents();
+        return getProcessor().isAllowOptimisedComponents();
     }
 
     @Override
     public Boolean isOptimised() {
-        return processor.getDynamicAware() != null;
+        return getProcessor().getDynamicAware() != null;
     }
 
     @Override
@@ -129,7 +128,7 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 
-            EndpointUtilizationStatistics stats = processor.getEndpointUtilizationStatistics();
+            EndpointUtilizationStatistics stats = getProcessor().getEndpointUtilizationStatistics();
             if (stats != null) {
                 for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
                     CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();

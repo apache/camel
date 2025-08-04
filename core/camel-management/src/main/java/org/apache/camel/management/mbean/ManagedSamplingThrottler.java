@@ -26,27 +26,30 @@ import org.apache.camel.processor.SamplingThrottler;
 
 @ManagedResource(description = "Managed SamplingThrottler")
 public class ManagedSamplingThrottler extends ManagedProcessor implements ManagedSamplingThrottlerMBean {
-    private final SamplingThrottler processor;
 
     public ManagedSamplingThrottler(CamelContext context, SamplingThrottler processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
-        this.processor = processor;
+    }
+
+    @Override
+    public SamplingThrottler getProcessor() {
+        return (SamplingThrottler) super.getProcessor();
     }
 
     @Override
     public Long getSamplePeriod() {
-        return processor.getSamplePeriod();
+        return getProcessor().getSamplePeriod();
     }
 
     @Override
     public Long getMessageFrequency() {
-        return processor.getMessageFrequency();
+        return getProcessor().getMessageFrequency();
     }
 
     @Override
     public String getTimeUnit() {
-        if (processor.getUnits() != null) {
-            return processor.getUnits().toString().toLowerCase(Locale.ENGLISH);
+        if (getProcessor().getUnits() != null) {
+            return getProcessor().getUnits().toString().toLowerCase(Locale.ENGLISH);
         } else {
             return null;
         }
