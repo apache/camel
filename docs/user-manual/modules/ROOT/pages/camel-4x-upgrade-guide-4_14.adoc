@@ -90,5 +90,5 @@ The addresses, privateFor and Topics parameters for camel-web3j have been define
 
 === camel-spring-batch
 
-The `jobLauncher` and 'jobRegistry' is now autowired on the component if there is a single instance pre-configured in the application.
+The `jobLauncher` and `jobRegistry` is now autowired on the component if there is a single instance pre-configured in the application.
 This avoids having to wire this into the Camel component or endpoints.
