@@ -71,6 +71,7 @@ public enum ExchangePropertyKey {
     PARENT_UNIT_OF_WORK(Exchange.PARENT_UNIT_OF_WORK),
     RECEIVED_TIMESTAMP(Exchange.RECEIVED_TIMESTAMP),
     RECIPIENT_LIST_ENDPOINT(Exchange.RECIPIENT_LIST_ENDPOINT),
+    SKIP_OVER(Exchange.SKIP_OVER),
     SLIP_ENDPOINT(Exchange.SLIP_ENDPOINT),
     SLIP_PRODUCER(Exchange.SLIP_PRODUCER),
     SPLIT_COMPLETE(Exchange.SPLIT_COMPLETE),
@@ -191,6 +192,8 @@ public enum ExchangePropertyKey {
                 return RECEIVED_TIMESTAMP;
             case Exchange.RECIPIENT_LIST_ENDPOINT:
                 return RECIPIENT_LIST_ENDPOINT;
+            case Exchange.SKIP_OVER:
+                return SKIP_OVER;
             case Exchange.SLIP_ENDPOINT:
                 return SLIP_ENDPOINT;
             case Exchange.SLIP_PRODUCER:

@@ -126,6 +126,8 @@ public class DebugDevConsole extends AbstractDevConsole {
             }
         } else if ("stepover".equalsIgnoreCase(command)) {
             backlog.stepOver();
+        } else if ("skipover".equalsIgnoreCase(command)) {
+            backlog.skipOver();
         } else if ("add".equalsIgnoreCase(command) && ObjectHelper.isNotEmpty(breakpoint)) {
             backlog.addBreakpoint(breakpoint);
         } else if ("remove".equalsIgnoreCase(command)) {
@@ -244,6 +246,7 @@ public class DebugDevConsole extends AbstractDevConsole {
             }
             jo.put("elapsed", h.getElapsed());
             jo.put("acceptDebugger", h.isAcceptDebugger());
+            jo.put("skipOver", h.isDebugSkipOver());
             if (h.getNode() != null) {
                 jo.put("nodeId", h.getNode().getId());
                 if (h.getNode().getLocation() != null) {

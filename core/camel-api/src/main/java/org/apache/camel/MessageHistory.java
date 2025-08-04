@@ -70,4 +70,14 @@ public interface MessageHistory {
      */
     boolean isAcceptDebugger();
 
+    /**
+     * Used specially during debugging to know that an EIP was skipped over
+     */
+    void setDebugSkipOver(boolean skipOver);
+
+    /**
+     * Used specially during debugging to know that an EIP was skipped over
+     */
+    boolean isDebugSkipOver();
+
 }

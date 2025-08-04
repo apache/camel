@@ -31,6 +31,7 @@ public class DefaultMessageHistory implements MessageHistory {
     private final MonotonicClock clock = new MonotonicClock();
     private final Message message;
     private boolean acceptDebugger;
+    private boolean debugSkipOver;
     private long elapsed;
 
     public DefaultMessageHistory(String routeId, NamedNode node) {
@@ -82,6 +83,16 @@ public class DefaultMessageHistory implements MessageHistory {
     @Override
     public boolean isAcceptDebugger() {
         return acceptDebugger;
+    }
+
+    @Override
+    public boolean isDebugSkipOver() {
+        return debugSkipOver;
+    }
+
+    @Override
+    public void setDebugSkipOver(boolean debugSkipOver) {
+        this.debugSkipOver = debugSkipOver;
     }
 
     @Override

@@ -79,6 +79,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private final AtomicReference<CountDownLatch> suspend = new AtomicReference<>();
     private final Deque<String> singleStepExchangeId = new ArrayDeque<>();
     private final AtomicBoolean stepOverMode = new AtomicBoolean();
+    private final AtomicBoolean skipOverMode = new AtomicBoolean();
 
     private boolean suspendMode;
     private String initialBreakpoints;
@@ -644,14 +645,24 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             suspendedBreakpointMessages.remove(node);
             SuspendedExchange se = suspendedBreakpoints.remove(node);
             if (se != null) {
+                if (skipOverMode.get()) {
+                    se.getExchange().setProperty(ExchangePropertyKey.SKIP_OVER, Boolean.TRUE);
+                }
                 se.getLatch().countDown();
             }
         }
+        skipOverMode.set(false);
     }
 
     @Override
     public void stepOver() {
         stepOverMode.set(true);
+        step();
+    }
+
+    @Override
+    public void skipOver() {
+        skipOverMode.set(true);
         step();
     }
 
@@ -1012,6 +1023,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         @Override
         public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
             stepOverMode.set(false);
+            skipOverMode.set(false);
         }
 
         @Override

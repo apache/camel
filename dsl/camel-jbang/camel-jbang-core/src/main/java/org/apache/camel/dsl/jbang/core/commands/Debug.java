@@ -223,6 +223,8 @@ public class Debug extends Run {
                     String cmd = "step";
                     if (line.equalsIgnoreCase("o") || line.equalsIgnoreCase("over")) {
                         cmd = "stepover";
+                    } else if (line.equalsIgnoreCase("s") || line.equalsIgnoreCase("skip")) {
+                        cmd = "skipover";
                     }
                     sendDebugCommand(spawnPid, cmd, null);
                 }
@@ -438,6 +440,7 @@ public class Debug extends Run {
                                     history.routeId = line.getString("routeId");
                                     history.nodeId = line.getString("nodeId");
                                     history.elapsed = line.getLongOrDefault("elapsed", 0);
+                                    history.skipOver = line.getBooleanOrDefault("skipOver", false);
                                     history.location = line.getString("location");
                                     history.line = line.getIntegerOrDefault("line", -1);
                                     history.code = line.getString("code");
@@ -471,6 +474,7 @@ public class Debug extends Run {
                 this.waitForUser.set(true);
             }
             if (this.waitForUser.get()) {
+                boolean first = this.suspendedRow != null && this.suspendedRow.first;
                 // save current message to file
                 if (output != null && this.suspendedRow != null) {
                     JsonObject j = this.suspendedRow.message;
@@ -492,10 +496,10 @@ public class Debug extends Run {
                 }
 
                 String msg;
-                if (isStepOverSupported(version)) {
-                    msg = "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue.";
+                if (!first && isStepOverSupported(version)) {
+                    msg = "    Breakpoint suspended (i = step into (default), o = step over, s = skip over). Press ENTER to continue (q = quit).";
                 } else {
-                    msg = "    Breakpoint suspended. Press ENTER to continue.";
+                    msg = "    Breakpoint suspended. Press ENTER to continue (q = quit).";
                 }
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
@@ -603,6 +607,9 @@ public class Debug extends Run {
                     }
                     long e = i == 2 ? 0 : h.elapsed; // the pseudo from should have 0 as elapsed
                     String elapsed = "(" + e + "ms)";
+                    if (h.skipOver) {
+                        elapsed = "(skipped)";
+                    }
 
                     String c = "";
                     if (h.code != null) {
@@ -861,6 +868,7 @@ public class Debug extends Run {
         String routeId;
         String nodeId;
         long elapsed;
+        boolean skipOver;
         String location;
         int line;
         String code;

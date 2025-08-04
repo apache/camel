@@ -98,6 +98,9 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Steps over the next node in step mode")
     void stepOver();
 
+    @ManagedOperation(description = "Skips over the next node in step mode")
+    void skipOver();
+
     @ManagedOperation(description = "Return the node ids which has breakpoints")
     Set<String> breakpoints();
 
