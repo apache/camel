@@ -323,6 +323,22 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
         }
 
+        // debugger can skip processing the exchange
+        Object skip = exchange.removeProperty(ExchangePropertyKey.SKIP_OVER);
+        if (Boolean.TRUE == skip) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Skipping exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            }
+            List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+            if (list != null && !list.isEmpty()) {
+                MessageHistory last = list.get(list.size() - 1);
+                last.setDebugSkipOver(true);
+            }
+            // skip because the processor is specially disabled (such as from debugger)
+            originalCallback.done(true);
+            return true;
+        }
+
         if (exchange.isTransacted()) {
             return processTransacted(exchange, afterTask);
         }

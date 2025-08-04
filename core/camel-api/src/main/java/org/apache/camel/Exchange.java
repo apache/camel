@@ -287,6 +287,7 @@ public interface Exchange extends VariableAware {
     @Deprecated(since = "3.15.0")
     String SOAP_ACTION = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
+    String SKIP_OVER = "CamelSkipOver";
     String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding";
     @Metadata(label = "routingSlip", description = "The endpoint uri of this routing slip", javaType = "String")
     String SLIP_ENDPOINT = "CamelSlipEndpoint";

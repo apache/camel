@@ -57,7 +57,9 @@ NOTE: This requires to enabled JMX by including `camel-management` JAR in the cl
 |`setMessageBodyOnBreakpoint(nodeId,body)` |`void` |To update the message body on the suspended Exchange at the node.
 |`setMessageHeaderOnBreakpoint(nodeId,headerName,value)` |`void` |To update/add the message header on the suspended Exchange at the node.
 |`stepBreakpoint(nodeId)` |`void` |To start single step mode from a suspended breakpoint at the given node. Then invoke `step` to step to next node in the route.
-|`step` |`void` |To step to next node when in single step mode.
+|`step` |`void` |To step into the next node when in single step mode.
+|`stepOver` |`void` |To step over the next node when in single step mode.
+|`skipOver` |`void` |To skip over the next node when in single step mode.
 |`validateConditionalBreakpoint` |`String` |Used for validating if a given predicate is valid or not. Returns null if valid, otherwise a string with the error message.
 |`messageHistoryOnBreakpointAsXml(nodeId)` |`String` |Returns message history at the given node Id in XML format
 |=======================================================================
