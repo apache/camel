@@ -42,6 +42,10 @@ public class RabbitMQLocalContainerInfraService implements RabbitMQInfraService,
 
     public RabbitMQLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
     public RabbitMQLocalContainerInfraService(RabbitMQContainer container) {

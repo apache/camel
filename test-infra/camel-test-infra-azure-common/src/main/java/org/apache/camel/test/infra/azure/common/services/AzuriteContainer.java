@@ -18,8 +18,6 @@
 package org.apache.camel.test.infra.azure.common.services;
 
 import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
-import org.apache.camel.test.infra.azure.common.AzureProperties;
-import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
@@ -27,12 +25,6 @@ public class AzuriteContainer extends GenericContainer<AzuriteContainer> {
     public static final String DEFAULT_ACCOUNT_NAME = "devstoreaccount1";
     public static final String DEFAULT_ACCOUNT_KEY
             = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
-
-    public AzuriteContainer() {
-        LocalPropertyResolver.getProperty(
-                AzuriteContainer.class,
-                AzureProperties.AZURE_CONTAINER);
-    }
 
     public AzuriteContainer(String containerName, boolean fixedPort) {
         super(containerName);

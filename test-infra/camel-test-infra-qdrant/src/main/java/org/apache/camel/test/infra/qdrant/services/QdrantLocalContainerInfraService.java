@@ -44,6 +44,10 @@ public class QdrantLocalContainerInfraService implements QdrantInfraService, Con
 
     public QdrantLocalContainerInfraService(String imageName) {
         this.container = initContainer(imageName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
     public QdrantLocalContainerInfraService(QdrantContainer container) {

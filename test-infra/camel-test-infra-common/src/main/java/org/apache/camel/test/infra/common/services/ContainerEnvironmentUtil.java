@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.common.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.DockerClientFactory;
@@ -57,7 +58,7 @@ public final class ContainerEnvironmentUtil {
         container.setStartupAttempts(startupAttempts);
     }
 
-    public static boolean isFixedPort(Class cls) {
+    public static boolean isFixedPort(@SuppressWarnings("rawtypes") Class cls) {
         for (Class<?> i : cls.getInterfaces()) {
             if (i.getName().contains("InfraService")) {
                 return true;
@@ -65,5 +66,32 @@ public final class ContainerEnvironmentUtil {
         }
 
         return false;
+    }
+
+    public static String containerName(Class cls) {
+        InfraService annotation = findAnnotation(cls);
+        String name = null;
+        if (annotation != null) {
+            name = "camel-" + annotation.serviceAlias()[0];
+            if (annotation.serviceImplementationAlias().length > 0) {
+                name += "-" + annotation.serviceImplementationAlias()[0];
+            }
+        } else {
+            LOG.warn("InfraService annotation not Found to determine container name alias.");
+        }
+        return name;
+    }
+
+    private static InfraService findAnnotation(Class cls) {
+        InfraService annotation = (InfraService) cls.getAnnotation(InfraService.class);
+        Class targetClass = cls;
+        while (annotation == null && targetClass.getSuperclass() != null) {
+            targetClass = targetClass.getSuperclass();
+            annotation = (InfraService) targetClass.getAnnotation(InfraService.class);
+            if (annotation != null) {
+                break;
+            }
+        }
+        return annotation;
     }
 }

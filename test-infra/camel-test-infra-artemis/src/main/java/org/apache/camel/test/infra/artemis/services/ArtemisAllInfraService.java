@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,10 @@ public class ArtemisAllInfraService implements ArtemisInfraService, ContainerSer
 
     public ArtemisAllInfraService() {
         container = initContainer();
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
     protected ArtemisContainer initContainer() {

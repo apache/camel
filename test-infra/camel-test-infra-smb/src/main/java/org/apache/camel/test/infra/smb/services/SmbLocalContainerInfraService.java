@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.smb.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
+import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +26,16 @@ import org.slf4j.LoggerFactory;
 @InfraService(service = SmbLocalContainerInfraService.class,
               description = "SAMBA File Server",
               serviceAlias = "smb")
-public class SmbLocalContainerInfraService implements SmbInfraService {
+public class SmbLocalContainerInfraService implements SmbInfraService, ContainerService<SmbContainer> {
+
     protected static final Logger LOG = LoggerFactory.getLogger(SmbLocalContainerInfraService.class);
     protected final SmbContainer container = new SmbContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
 
     public SmbLocalContainerInfraService() {
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
     @Override
@@ -57,6 +63,11 @@ public class SmbLocalContainerInfraService implements SmbInfraService {
     }
 
     @Override
+    public SmbContainer getContainer() {
+        return container;
+    }
+
+    @Override
     public void registerProperties() {
     }
 
@@ -64,11 +75,12 @@ public class SmbLocalContainerInfraService implements SmbInfraService {
     public void initialize() {
         container.start();
         registerProperties();
-
         LOG.info("SMB host running at address {}:", address());
     }
 
     @Override
     public void shutdown() {
+        LOG.info("Stopping the Smb container");
+        container.stop();
     }
 }

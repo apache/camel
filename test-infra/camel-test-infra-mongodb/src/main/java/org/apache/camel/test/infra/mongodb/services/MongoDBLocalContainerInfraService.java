@@ -41,6 +41,10 @@ public class MongoDBLocalContainerInfraService implements MongoDBInfraService, C
 
     public MongoDBLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
+        String name = ContainerEnvironmentUtil.containerName(this.getClass());
+        if (name != null) {
+            container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
+        }
     }
 
     public MongoDBLocalContainerInfraService(MongoDBContainer container) {
@@ -50,10 +54,6 @@ public class MongoDBLocalContainerInfraService implements MongoDBInfraService, C
     protected MongoDBContainer initContainer(String imageName) {
 
         class TestInfraMongoDBContainer extends MongoDBContainer {
-            public TestInfraMongoDBContainer(boolean fixedPort) {
-                super();
-                addPort(fixedPort);
-            }
 
             public TestInfraMongoDBContainer(boolean fixedPort, String imageName) {
                 super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("mongo"));
@@ -68,12 +68,7 @@ public class MongoDBLocalContainerInfraService implements MongoDBInfraService, C
                 }
             }
         }
-
-        if (imageName == null || imageName.isEmpty()) {
-            return new TestInfraMongoDBContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
-        } else {
-            return new TestInfraMongoDBContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()), imageName);
-        }
+        return new TestInfraMongoDBContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()), imageName);
     }
 
     @Override
