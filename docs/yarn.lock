@@ -20,7 +20,7 @@ __metadata:
     eslint: ^9.32.0
     eslint-config-standard: ^17.1.0
     eslint-plugin-import: ^2.32.0
-    eslint-plugin-n: ^17.21.2
+    eslint-plugin-n: ^17.21.3
     eslint-plugin-node: ^11.1.0
     eslint-plugin-promise: ^6.6.0
     gulp: ~4.0
@@ -2406,9 +2406,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:^17.21.2":
-  version: 17.21.2
-  resolution: "eslint-plugin-n@npm:17.21.2"
+"eslint-plugin-n@npm:^17.21.3":
+  version: 17.21.3
+  resolution: "eslint-plugin-n@npm:17.21.3"
   dependencies:
     "@eslint-community/eslint-utils": ^4.5.0
     enhanced-resolve: ^5.17.1
@@ -2421,7 +2421,7 @@ __metadata:
     ts-declaration-location: ^1.0.6
   peerDependencies:
     eslint: ">=8.23.0"
-  checksum: 1949cae3d09f641bf5dec8301aa3a68d548499c376be05d039700c5f17c1f0b79473ebcb6ec84a5a02a69e287832dadf1d432d5c940769545b3778ea3931f1a6
+  checksum: d3d12f809f6cf57f90386308b9f213d0cfb79f019c0861a0456cc505b5bcb748015bfb6fe3f3ae6d290b67d55ab3f81761a0c4ae74a3ee8fcda9112c16359455
   languageName: node
   linkType: hard
 
