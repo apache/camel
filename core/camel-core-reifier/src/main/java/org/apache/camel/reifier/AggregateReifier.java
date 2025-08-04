@@ -82,6 +82,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
         AggregateProcessor answer
                 = new AggregateProcessor(camelContext, target, correlation, strategy, threadPool, shutdownThreadPool);
+        answer.setDisabled(isDisabled(camelContext, definition));
 
         AggregationRepository repository = createAggregationRepository();
         if (repository != null) {

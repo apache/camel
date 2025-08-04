@@ -53,7 +53,10 @@ public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifi
         } else {
             exp = createExpression(definition.getExpression());
         }
-        return new SortProcessor<T>(exp, comp);
+
+        SortProcessor answer = new SortProcessor<T>(exp, comp);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
 }

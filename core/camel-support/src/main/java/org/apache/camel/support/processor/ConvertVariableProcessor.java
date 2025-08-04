@@ -22,6 +22,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
@@ -40,11 +41,13 @@ import org.apache.camel.util.StringHelper;
  * A processor which converts the variable to be of the given type
  */
 public class ConvertVariableProcessor extends ServiceSupport
-        implements AsyncProcessor, IdAware, RouteIdAware, CamelContextAware {
+        implements AsyncProcessor, IdAware, RouteIdAware, CamelContextAware, DisabledAware {
+
     private CamelContext camelContext;
     private VariableRepositoryFactory factory;
     private String id;
     private String routeId;
+    private boolean disabled;
     private final String name;
     private final Expression variableName;
     private final String toName;
@@ -99,6 +102,16 @@ public class ConvertVariableProcessor extends ServiceSupport
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @Override

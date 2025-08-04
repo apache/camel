@@ -27,6 +27,7 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,6 +53,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ModelRoutesBuilder;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
@@ -245,6 +248,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             action = root.getString("action");
             if ("route".equals(action)) {
                 doActionRouteTask(root);
+            } else if ("processor".equals(action)) {
+                doActionProcessorTask(root);
             } else if ("logger".equals(action)) {
                 doActionLoggerTask(root);
             } else if ("gc".equals(action)) {
@@ -866,6 +871,59 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 }
             } catch (Exception e) {
                 LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
+            }
+        }
+    }
+
+    private void doActionProcessorTask(JsonObject root) {
+        String command = root.getString("command");
+
+        // id is a pattern
+        String[] patterns = root.getString("id").split(",");
+        boolean all = patterns.length == 1 && "*".equals(patterns[0]);
+
+        List<ManagedProcessorMBean> mps = new ArrayList<>();
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        for (Route r : getCamelContext().getRoutes()) {
+            ManagedRouteMBean mrb = mcc.getManagedRoute(r.getRouteId());
+            try {
+                for (String id : mrb.processorIds()) {
+                    mps.add(mcc.getManagedProcessor(id));
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+
+        // find matching IDs
+        if (!all) {
+            mps = mps.stream()
+                    .filter(mp -> {
+                        for (String p : patterns) {
+                            if (PatternHelper.matchPattern(mp.getProcessorId(), p)
+                                    || PatternHelper.matchPattern(mp.getRouteId(), p)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+                    .toList();
+        }
+
+        for (ManagedProcessorMBean mp : mps) {
+            try {
+                if ("start".equals(command)) {
+                    mp.start();
+                } else if ("stop".equals(command)) {
+                    mp.stop();
+                } else if ("disable".equals(command)) {
+                    mp.disable();
+                } else if ("enable".equals(command)) {
+                    mp.enable();
+                }
+            } catch (Exception e) {
+                LOG.warn("Error {} processor: {} due to: {}. This exception is ignored.", command, mp.getProcessorId(),
+                        e.getMessage(), e);
             }
         }
     }

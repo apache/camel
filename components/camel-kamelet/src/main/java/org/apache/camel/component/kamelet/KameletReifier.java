@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kamelet;
 
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.KameletDefinition;
@@ -40,10 +41,13 @@ public class KameletReifier extends ProcessorReifier<KameletDefinition> {
         String outputId = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         camelContext.getCamelContextExtension().createProcessor(outputId);
         try {
-            Processor target = new KameletProcessor(camelContext, parseString(definition.getName()), processor);
-            target = PluginHelper.getInternalProcessorFactory(camelContext)
-                    .addUnitOfWorkProcessorAdvice(camelContext, target, null);
-            return target;
+            Processor answer = new KameletProcessor(camelContext, parseString(definition.getName()), processor);
+            if (answer instanceof DisabledAware da) {
+                da.setDisabled(isDisabled(camelContext, definition));
+            }
+            answer = PluginHelper.getInternalProcessorFactory(camelContext)
+                    .addUnitOfWorkProcessorAdvice(camelContext, answer, null);
+            return answer;
         } finally {
             camelContext.getCamelContextExtension().createProcessor(null);
         }

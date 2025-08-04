@@ -28,19 +28,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.BaseProcessorSupport;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Resume EIP
  */
-public class ResumableProcessor extends AsyncProcessorSupport
+public class ResumableProcessor extends BaseProcessorSupport
         implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResumableProcessor.class);

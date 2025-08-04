@@ -83,6 +83,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         boolean isAllowDuplicates = parseBoolean(config.getAllowDuplicates(), false);
 
         Resequencer resequencer = new Resequencer(camelContext, target, expression, isAllowDuplicates, isReverse);
+        resequencer.setDisabled(isDisabled(camelContext, definition));
         Integer num = parseInt(config.getBatchSize());
         if (num != null) {
             resequencer.setBatchSize(num);
@@ -128,6 +129,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         comparator.setExpression(expression);
 
         StreamResequencer resequencer = new StreamResequencer(camelContext, target, comparator, expression);
+        resequencer.setDisabled(isDisabled(camelContext, definition));
         Long dur = parseDuration(config.getTimeout());
         if (dur != null) {
             resequencer.setTimeout(dur);

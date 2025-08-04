@@ -75,8 +75,7 @@ public class InterceptReifier extends ProcessorReifier<InterceptDefinition> {
                 if (interceptedTarget != null) {
                     return Pipeline.newInstance(context, p, output, interceptedTarget);
                 } else {
-                    return Pipeline.newInstance(context,
-                            p, output);
+                    return Pipeline.newInstance(context, p, output);
                 }
             }
 

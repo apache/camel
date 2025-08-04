@@ -46,6 +46,7 @@ public class PollReifier extends ProcessorReifier<PollDefinition> {
         }
         long timeout = parseDuration(definition.getTimeout(), 20000);
         PollProcessor answer = new PollProcessor(exp, uri, timeout);
+        answer.setDisabled(isDisabled(camelContext, definition));
         answer.setVariableReceive(parseString(definition.getVariableReceive()));
         return answer;
     }

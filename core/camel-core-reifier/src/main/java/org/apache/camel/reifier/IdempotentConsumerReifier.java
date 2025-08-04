@@ -47,8 +47,10 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
         // these boolean should be false by default
         boolean completionEager = parseBoolean(definition.getCompletionEager(), false);
 
-        return new IdempotentConsumer(
+        IdempotentConsumer answer = new IdempotentConsumer(
                 expression, idempotentRepository, eager, completionEager, duplicate, remove, childProcessor);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     /**

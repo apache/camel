@@ -25,12 +25,11 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A processor that sorts the expression using a comparator
  */
-public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, RouteIdAware, Traceable {
+public class SortProcessor<T> extends BaseProcessorSupport implements IdAware, RouteIdAware, Traceable {
 
     private String id;
     private String routeId;

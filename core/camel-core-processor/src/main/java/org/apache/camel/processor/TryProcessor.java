@@ -33,7 +33,6 @@ import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Implements try/catch/finally type processing
  */
-public class TryProcessor extends AsyncProcessorSupport
+public class TryProcessor extends BaseProcessorSupport
         implements Navigate<Processor>, Traceable, IdAware, RouteIdAware, InterceptableProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(TryProcessor.class);

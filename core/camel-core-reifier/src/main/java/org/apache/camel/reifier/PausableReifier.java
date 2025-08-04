@@ -42,7 +42,9 @@ public class PausableReifier extends ProcessorReifier<PausableDefinition> {
 
         route.setConsumerListener(consumerListener);
 
-        return new PausableProcessor(childProcessor);
+        PausableProcessor answer = new PausableProcessor(childProcessor);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     protected ConsumerListener<?, ?> resolveConsumerListener() {

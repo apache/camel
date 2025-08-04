@@ -42,7 +42,7 @@ public class WhenDefinition extends BasicOutputExpressionNode
     private ProcessorDefinition<?> parent;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime.")
+              description = "Disables this EIP from the route.")
     private String disabled;
 
     public WhenDefinition() {

@@ -29,7 +29,6 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * Implements a Choice structure where one or more predicates are used which if they are true their processors are used,
  * with a default otherwise clause used if none match.
  */
-public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+public class ChoiceProcessor extends BaseProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
 

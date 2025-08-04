@@ -31,7 +31,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step, reusing the same
  * message exchanges
  */
-public class Pipeline extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+public class Pipeline extends BaseProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Pipeline.class);
 

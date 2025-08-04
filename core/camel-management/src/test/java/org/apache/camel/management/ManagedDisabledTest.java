@@ -25,7 +25,8 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedDisabledTest extends ManagementTestSupport {
@@ -42,15 +43,51 @@ public class ManagedDisabledTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "mychoice");
-        String type = (String) mbeanServer.getAttribute(on, "NodeType");
-        assertEquals("choice", type);
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "foo");
+        Boolean disabled = (Boolean) mbeanServer.getAttribute(on, "Disabled");
+        assertFalse(disabled);
+
+        on = getCamelObjectName(TYPE_PROCESSOR, "mychoice");
+        disabled = (Boolean) mbeanServer.getAttribute(on, "Disabled");
+        assertTrue(disabled);
+
         on = getCamelObjectName(TYPE_PROCESSOR, "mybaz");
-        type = (String) mbeanServer.getAttribute(on, "NodeType");
-        assertEquals("to", type);
+        disabled = (Boolean) mbeanServer.getAttribute(on, "Disabled");
+        assertTrue(disabled);
+
         on = getCamelObjectName(TYPE_PROCESSOR, "mylog");
-        type = (String) mbeanServer.getAttribute(on, "NodeType");
-        assertEquals("log", type);
+        disabled = (Boolean) mbeanServer.getAttribute(on, "Disabled");
+        assertTrue(disabled);
+
+        on = getCamelObjectName(TYPE_PROCESSOR, "result");
+        disabled = (Boolean) mbeanServer.getAttribute(on, "Disabled");
+        assertFalse(disabled);
+    }
+
+    @Test
+    public void testManageEnabled() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+
+        // enable at runtime
+        ObjectName on = getCamelObjectName(TYPE_PROCESSOR, "mychoice");
+        mbeanServer.invoke(on, "enable", null, null);
+        on = getCamelObjectName(TYPE_PROCESSOR, "mylog");
+        mbeanServer.invoke(on, "enable", null, null);
+
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:baz").expectedMessageCount(0);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:start", "<bar>Moes</bar>", "foo", "123");
+        assertMockEndpointsSatisfied();
+
+        on = getCamelObjectName(TYPE_PROCESSOR, "mychoice");
+        Boolean disabled = (Boolean) mbeanServer.getAttribute(on, "Disabled");
+        assertFalse(disabled);
+
+        on = getCamelObjectName(TYPE_PROCESSOR, "mybaz");
+        disabled = (Boolean) mbeanServer.getAttribute(on, "Disabled");
+        assertTrue(disabled);
     }
 
     @Override
@@ -59,14 +96,14 @@ public class ManagedDisabledTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("mock:foo")
+                    .to("mock:foo").id("foo")
                     .choice().disabled().id("mychoice")
                         .when(xpath("/bar")).to("mock:bar")
                         .when(xpath("/baz")).to("mock:baz")
                     .end()
                     .to("mock:baz").disabled(true).id("mybaz")
                     .log("Hello World").disabled("true").id("mylog")
-                    .to("mock:result");
+                    .to("mock:result").id("result");
             }
         };
     }

@@ -20,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
@@ -37,9 +38,10 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * If the conversion fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
  */
-public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor, IdAware, RouteIdAware {
+public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor, IdAware, RouteIdAware, DisabledAware {
     private String id;
     private String routeId;
+    private boolean disabled;
     private final Class<?> type;
     private final String charset;
     private final boolean mandatory;
@@ -88,6 +90,16 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @Override

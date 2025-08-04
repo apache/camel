@@ -20,12 +20,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Stops continue processing the route and marks it as complete.
  */
-public class StopProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware {
+public class StopProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware {
 
     private String id;
     private String routeId;

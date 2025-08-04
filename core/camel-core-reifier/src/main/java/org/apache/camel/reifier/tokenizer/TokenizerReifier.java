@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TokenizerReifier<T extends TokenizerDefinition> extends ProcessorReifier<T> {
+
     private static final Logger LOG = LoggerFactory.getLogger(TokenizerReifier.class);
     private static final String TOKENIZER_PATH = FactoryFinder.DEFAULT_PATH + "tokenizer/";
 
@@ -58,7 +59,9 @@ public class TokenizerReifier<T extends TokenizerDefinition> extends ProcessorRe
         LOG.info("Creating a tokenizer of type {}", tokenizer.getClass().getName());
         configure(tokenizer);
 
-        return new TokenizerProcessor(childProcessor, tokenizer);
+        TokenizerProcessor answer = new TokenizerProcessor(childProcessor, tokenizer);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     protected void configure(Tokenizer tokenizer) {

@@ -17,12 +17,11 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Processor;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 /**
  * Endpoint intercept processor so we know the processor is supposed to intercept an endpoint.
  */
-public class InterceptEndpointProcessor extends DelegateAsyncProcessor {
+public class InterceptEndpointProcessor extends BaseDelegateProcessorSupport {
 
     private final String uri;
 

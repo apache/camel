@@ -32,7 +32,6 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
@@ -50,7 +49,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  *
  * @see PollEnricher
  */
-public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
 
     private CamelContext camelContext;
     private String id;

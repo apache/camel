@@ -50,6 +50,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
+import org.apache.camel.processor.BaseProcessorSupport;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
@@ -60,7 +61,6 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LRUCacheFactory;
@@ -84,7 +84,7 @@ import org.slf4j.LoggerFactory;
  * and older prices to be discarded). Another idea is to combine line item messages together into a single invoice
  * message.
  */
-public class AggregateProcessor extends AsyncProcessorSupport
+public class AggregateProcessor extends BaseProcessorSupport
         implements Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware, RouteIdAware {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";

@@ -27,6 +27,8 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Channel;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -285,6 +287,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             originalCallback.done(true);
             return true;
         }
+        if (this instanceof Channel ca && ca.getNextProcessor() instanceof DisabledAware da && da.isDisabled()) {
+            // skip because the processor is disabled at runtime (in dev mode)
+            originalCallback.done(true);
+            return true;
+        }
 
         if (shutdownStrategy.isForceShutdown()) {
             return processShutdown(exchange, originalCallback);
@@ -490,7 +497,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      */
     public static class RoutePolicyAdvice implements CamelInternalProcessorAdvice<Object> {
 
-        private final Logger log = LoggerFactory.getLogger(getClass());
+        private static final Logger LOG = LoggerFactory.getLogger(RoutePolicyAdvice.class);
         private final List<RoutePolicy> routePolicies;
         private Route route;
 
@@ -524,7 +531,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         policy.onExchangeBegin(route, exchange);
                     }
                 } catch (Exception e) {
-                    log.warn("Error occurred during onExchangeBegin on RoutePolicy: {}. This exception will be ignored", policy,
+                    LOG.warn("Error occurred during onExchangeBegin on RoutePolicy: {}. This exception will be ignored", policy,
                             e);
                 }
             }
@@ -545,7 +552,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         policy.onExchangeDone(route, exchange);
                     }
                 } catch (Exception e) {
-                    log.warn("Error occurred during onExchangeDone on RoutePolicy: {}. This exception will be ignored",
+                    LOG.warn("Error occurred during onExchangeDone on RoutePolicy: {}. This exception will be ignored",
                             policy, e);
                 }
             }
@@ -1008,7 +1015,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      */
     public static class DelayerAdvice implements CamelInternalProcessorAdvice<Object> {
 
-        private final Logger log = LoggerFactory.getLogger(getClass());
+        private static final Logger LOG = LoggerFactory.getLogger(DelayerAdvice.class);
         private final long delay;
 
         public DelayerAdvice(long delay) {
@@ -1018,10 +1025,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public Object before(Exchange exchange) throws Exception {
             try {
-                log.trace("Sleeping for: {} millis", delay);
+                LOG.trace("Sleeping for: {} millis", delay);
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                log.debug("Sleep interrupted");
                 Thread.currentThread().interrupt();
                 throw e;
             }

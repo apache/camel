@@ -60,7 +60,9 @@ public class TryReifier extends ProcessorReifier<TryDefinition> {
         }
         Processor finallyProcessor = createProcessor(finallyDefinition);
 
-        return new TryProcessor(camelContext, tryProcessor, catchProcessors, finallyProcessor);
+        TryProcessor answer = new TryProcessor(camelContext, tryProcessor, catchProcessors, finallyProcessor);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
 }

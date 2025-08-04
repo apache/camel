@@ -25,12 +25,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A processor which sets multiple headers on the IN or OUT message with an {@link org.apache.camel.Expression}
  */
-public class SetHeadersProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SetHeadersProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
     private String id;
     private String routeId;
     private final List<Expression> headerNames;

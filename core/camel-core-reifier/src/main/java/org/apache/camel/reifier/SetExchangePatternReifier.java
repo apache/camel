@@ -31,6 +31,8 @@ public class SetExchangePatternReifier extends ProcessorReifier<SetExchangePatte
 
     @Override
     public Processor createProcessor() {
-        return new ExchangePatternProcessor(parse(ExchangePattern.class, definition.getPattern()));
+        ExchangePatternProcessor answer = new ExchangePatternProcessor(parse(ExchangePattern.class, definition.getPattern()));
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

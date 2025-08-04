@@ -36,6 +36,7 @@ public class MarshalReifier extends ProcessorReifier<MarshalDefinition> {
         MarshalProcessor answer = new MarshalProcessor(dataFormat);
         answer.setVariableSend(parseString(definition.getVariableSend()));
         answer.setVariableReceive(parseString(definition.getVariableReceive()));
+        answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }
 

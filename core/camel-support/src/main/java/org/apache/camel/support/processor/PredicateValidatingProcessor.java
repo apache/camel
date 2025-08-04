@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.processor;
 
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -30,12 +31,13 @@ import org.slf4j.LoggerFactory;
 /**
  * A processor which validates the content of the inbound message body against a {@link Predicate}.
  */
-public class PredicateValidatingProcessor extends ServiceSupport implements Processor, Traceable, IdAware {
+public class PredicateValidatingProcessor extends ServiceSupport implements Processor, Traceable, IdAware, DisabledAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(PredicateValidatingProcessor.class);
 
     private final Predicate predicate;
     private PredicateExceptionFactory predicateExceptionFactory;
+    private boolean disabled;
     private String id;
 
     public PredicateValidatingProcessor(Predicate predicate) {
@@ -89,6 +91,16 @@ public class PredicateValidatingProcessor extends ServiceSupport implements Proc
      */
     public void setPredicateExceptionFactory(PredicateExceptionFactory predicateExceptionFactory) {
         this.predicateExceptionFactory = predicateExceptionFactory;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @Override

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.PipelineDefinition;
@@ -29,6 +30,10 @@ public class PipelineReifier extends ProcessorReifier<PipelineDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        return this.createChildProcessor(true);
+        Processor answer = this.createChildProcessor(true);
+        if (answer instanceof DisabledAware da) {
+            da.setDisabled(isDisabled(camelContext, definition));
+        }
+        return answer;
     }
 }

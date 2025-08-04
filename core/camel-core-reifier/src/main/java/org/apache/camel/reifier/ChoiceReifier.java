@@ -82,7 +82,9 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 otherwiseProcessor = createOutputsProcessor(definition.getOtherwise().getOutputs());
             }
         }
-        return new ChoiceProcessor(filters, otherwiseProcessor);
+        ChoiceProcessor answer = new ChoiceProcessor(filters, otherwiseProcessor);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     /**

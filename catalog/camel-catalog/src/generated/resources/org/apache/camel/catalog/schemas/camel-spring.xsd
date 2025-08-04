@@ -3651,8 +3651,7 @@ configuration.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled
-later at runtime. Default value: false
+Disables this EIP from the route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4615,8 +4614,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at
-runtime. Default value: false
+Disables this EIP from the route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -4705,8 +4703,7 @@ runtime. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at
-runtime. Default value: false
+Disables this EIP from the route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -39,10 +40,13 @@ import org.apache.camel.util.ObjectHelper;
  * Unmarshals the body of the incoming message using the given <a href="http://camel.apache.org/data-format.html">data
  * format</a>
  */
-public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceable, CamelContextAware, IdAware, RouteIdAware {
+public class UnmarshalProcessor extends AsyncProcessorSupport
+        implements Traceable, CamelContextAware, IdAware, RouteIdAware, DisabledAware {
+
     private String id;
     private String routeId;
     private CamelContext camelContext;
+    private boolean disabled;
     private final DataFormat dataFormat;
     private final boolean allowNullBody;
     private String variableSend;
@@ -161,6 +165,16 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public boolean isAllowNullBody() {

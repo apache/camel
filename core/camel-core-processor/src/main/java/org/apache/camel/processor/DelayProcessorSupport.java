@@ -25,7 +25,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This implementation will block while waiting.
  */
-public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
+public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelayProcessorSupport.class);
 

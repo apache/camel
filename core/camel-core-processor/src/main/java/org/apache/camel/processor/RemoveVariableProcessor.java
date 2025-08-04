@@ -26,13 +26,12 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
  * A processor which removes the variable
  */
-public class RemoveVariableProcessor extends AsyncProcessorSupport
+public class RemoveVariableProcessor extends BaseProcessorSupport
         implements Traceable, IdAware, RouteIdAware, CamelContextAware {
     private CamelContext camelContext;
     private String id;

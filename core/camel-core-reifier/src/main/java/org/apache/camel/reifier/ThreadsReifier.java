@@ -100,7 +100,9 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
             }
         }
 
-        return new ThreadsProcessor(camelContext, threadPool, shutdownThreadPool, policy);
+        ThreadsProcessor answer = new ThreadsProcessor(camelContext, threadPool, shutdownThreadPool, policy);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     protected ThreadPoolRejectedPolicy resolveRejectedPolicy() {

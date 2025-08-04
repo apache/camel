@@ -56,6 +56,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         }
 
         Enricher enricher = new Enricher(exp, uri);
+        enricher.setDisabled(isDisabled(camelContext, definition));
         enricher.setVariableSend(parseString(definition.getVariableSend()));
         enricher.setVariableReceive(parseString(definition.getVariableReceive()));
         enricher.setShareUnitOfWork(parseBoolean(definition.getShareUnitOfWork(), false));

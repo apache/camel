@@ -38,6 +38,7 @@ public class FinallyReifier extends ProcessorReifier<FinallyDefinition> {
 
         // do finally does mandate a child processor
         FinallyProcessor processor = new FinallyProcessor(this.createChildProcessor(false));
+        processor.setDisabled(isDisabled(camelContext, definition));
         // inject id
         String id = getId(definition);
         processor.setId(id);

@@ -17,6 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -32,6 +33,7 @@ import org.apache.camel.model.StepDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -47,6 +49,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter
     private final String stepId;
     private Route route;
     private String sourceLocation;
+    private String sourceLocationShort;
 
     public ManagedProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) {
         this.context = context;
@@ -67,6 +70,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter
             RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
             sourceLocation = rd != null ? rd.getLocation() : null;
         }
+        this.sourceLocationShort = LoggerHelper.getLineNumberLoggerName(definition);
     }
 
     @Override
@@ -120,6 +124,11 @@ public class ManagedProcessor extends ManagedPerformanceCounter
     @Override
     public String getSourceLocation() {
         return sourceLocation;
+    }
+
+    @Override
+    public String getSourceLocationShort() {
+        return sourceLocationShort;
     }
 
     @Override
@@ -194,6 +203,28 @@ public class ManagedProcessor extends ManagedPerformanceCounter
     @Override
     public String getDescription() {
         return definition.getDescription();
+    }
+
+    @Override
+    public Boolean getDisabled() {
+        if (processor instanceof DisabledAware da) {
+            return da.isDisabled();
+        }
+        return false;
+    }
+
+    @Override
+    public void enable() {
+        if (processor instanceof DisabledAware da) {
+            da.setDisabled(false);
+        }
+    }
+
+    @Override
+    public void disable() {
+        if (processor instanceof DisabledAware da) {
+            da.setDisabled(true);
+        }
     }
 
     @Override

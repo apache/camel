@@ -34,15 +34,18 @@ public class RemovePropertiesReifier extends ProcessorReifier<RemovePropertiesDe
     @Override
     public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getPattern(), "patterns", this);
+        RemovePropertiesProcessor answer;
         if (definition.getExcludePatterns() != null) {
-            return new RemovePropertiesProcessor(
+            answer = new RemovePropertiesProcessor(
                     parseString(definition.getPattern()), parseStrings(definition.getExcludePatterns()));
         } else if (definition.getExcludePattern() != null) {
-            return new RemovePropertiesProcessor(
+            answer = new RemovePropertiesProcessor(
                     parseString(definition.getPattern()), parseStrings(new String[] { definition.getExcludePattern() }));
         } else {
-            return new RemovePropertiesProcessor(parseString(definition.getPattern()), null);
+            answer = new RemovePropertiesProcessor(parseString(definition.getPattern()), null);
         }
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     private String[] parseStrings(String[] array) {

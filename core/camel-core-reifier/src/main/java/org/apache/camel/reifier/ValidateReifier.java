@@ -35,6 +35,7 @@ public class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
     public Processor createProcessor() throws Exception {
         Predicate pred = createPredicate(definition.getExpression());
         PredicateValidatingProcessor answer = new PredicateValidatingProcessor(pred);
+        answer.setDisabled(isDisabled(camelContext, definition));
 
         PredicateExceptionFactory factory = definition.getFactory();
         if (factory == null && definition.getPredicateExceptionFactory() != null) {

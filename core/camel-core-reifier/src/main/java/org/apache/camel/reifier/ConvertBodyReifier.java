@@ -39,7 +39,9 @@ public class ConvertBodyReifier extends ProcessorReifier<ConvertBodyDefinition> 
         if (definition.getMandatory() != null) {
             mandatory = parseBoolean(definition.getMandatory(), true);
         }
-        return new ConvertBodyProcessor(typeClass, charset, mandatory);
+        ConvertBodyProcessor answer = new ConvertBodyProcessor(typeClass, charset, mandatory);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     public static String validateCharset(String charset) throws UnsupportedCharsetException {

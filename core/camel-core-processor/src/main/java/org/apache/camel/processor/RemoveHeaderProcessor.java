@@ -21,12 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A processor which removes the header from the IN or OUT message
  */
-public class RemoveHeaderProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class RemoveHeaderProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
     private final String headerName;
     private String id;
     private String routeId;

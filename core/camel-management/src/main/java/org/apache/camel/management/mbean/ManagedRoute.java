@@ -525,8 +525,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 for (ManagedProcessorMBean processor : mps) {
                     int line = processor.getSourceLineNumber() != null ? processor.getSourceLineNumber() : -1;
                     sb.append("    <processorStat")
-                            .append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
-                                    processor.getProcessorId(), processor.getIndex(), processor.getState(), line));
+                            .append(String.format(
+                                    " id=\"%s\" index=\"%s\" state=\"%s\" disabled=\"%s\" sourceLineNumber=\"%s\"",
+                                    processor.getProcessorId(), processor.getIndex(), processor.getState(),
+                                    processor.getDisabled(), line));
                     // do we have an accumulated time then append that
                     Long accTime = accumulatedTimes.get(processor.getProcessorId());
                     if (accTime != null) {
@@ -648,6 +650,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                     jo.put("id", processor.getProcessorId());
                     jo.put("index", processor.getIndex());
                     jo.put("state", processor.getState());
+                    jo.put("disabled", processor.getDisabled());
                     jo.put("sourceLineNumber", line);
 
                     // do we have an accumulated time then append that

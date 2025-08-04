@@ -26,7 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.Rejectable;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
@@ -50,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * be free to process a new exchange, as its processing the current exchange.</li>
  * </ul>
  */
-public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware {
+public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThreadsProcessor.class);
 

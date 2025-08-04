@@ -55,7 +55,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the pipeline to
  * ensure it works the same and the async routing engine is flawless.
  */
-public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutingSlip.class);
 

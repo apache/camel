@@ -19,6 +19,7 @@ package org.apache.camel.reifier;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
@@ -45,6 +46,10 @@ public class StepReifier extends ProcessorReifier<StepDefinition> {
     @Override
     protected Processor createCompositeProcessor(List<Processor> list) throws Exception {
         String stepId = getId(definition);
-        return StepProcessor.newInstance(camelContext, list, stepId);
+        Processor answer = StepProcessor.newInstance(camelContext, list, stepId);
+        if (answer instanceof DisabledAware da) {
+            da.setDisabled(isDisabled(camelContext, definition));
+        }
+        return answer;
     }
 }

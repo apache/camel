@@ -30,9 +30,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorSupport;
 
-public class PausableProcessor extends AsyncProcessorSupport
+public class PausableProcessor extends BaseProcessorSupport
         implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware {
 
     private final AsyncProcessor processor;

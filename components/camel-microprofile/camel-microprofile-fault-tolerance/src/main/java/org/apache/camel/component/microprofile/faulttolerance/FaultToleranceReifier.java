@@ -64,6 +64,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         configureBulkhead(config, configuration);
 
         FaultToleranceProcessor answer = new FaultToleranceProcessor(configuration, processor, fallback);
+        answer.setDisabled(isDisabled(camelContext, definition));
         // using any existing circuit breakers?
         if (config.getTypedGuard() != null) {
             TypedGuard<Exchange> cb = mandatoryLookup(parseString(config.getTypedGuard()), TypedGuard.class);

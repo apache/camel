@@ -48,7 +48,10 @@ public class LoopReifier extends ExpressionReifier<LoopDefinition> {
         } else {
             expression = createExpression(definition.getExpression());
         }
-        return new LoopProcessor(camelContext, output, expression, predicate, prepare, isCopy, isBreakOnShutdown);
+        LoopProcessor answer
+                = new LoopProcessor(camelContext, output, expression, predicate, prepare, isCopy, isBreakOnShutdown);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
 }

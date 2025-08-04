@@ -47,7 +47,6 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionComparator;
 import org.apache.camel.support.LoggingExceptionHandler;
@@ -60,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a> which can reorder
  * messages within a batch.
  */
-public class Resequencer extends AsyncProcessorSupport implements Navigate<Processor>, IdAware, RouteIdAware, Traceable {
+public class Resequencer extends BaseProcessorSupport implements Navigate<Processor>, IdAware, RouteIdAware, Traceable {
 
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;

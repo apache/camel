@@ -43,6 +43,7 @@ public class DelayReifier extends ExpressionReifier<DelayDefinition> {
         Delayer answer = new Delayer(camelContext, childProcessor, delay, threadPool, shutdownThreadPool);
         answer.setAsyncDelayed(async);
         answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
+        answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }
 

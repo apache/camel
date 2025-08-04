@@ -60,7 +60,10 @@ public class ConvertHeaderReifier extends ProcessorReifier<ConvertHeaderDefiniti
         if (definition.getMandatory() != null) {
             mandatory = parseBoolean(definition.getMandatory(), true);
         }
-        return new ConvertHeaderProcessor(key, nameExpr, toKey, toNameExpr, typeClass, charset, mandatory);
+        ConvertHeaderProcessor answer
+                = new ConvertHeaderProcessor(key, nameExpr, toKey, toNameExpr, typeClass, charset, mandatory);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     public static String validateCharset(String charset) throws UnsupportedCharsetException {

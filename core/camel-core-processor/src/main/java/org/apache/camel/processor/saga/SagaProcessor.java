@@ -23,26 +23,23 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.processor.BaseDelegateProcessorSupport;
 import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Processor for handling sagas.
  */
-public abstract class SagaProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
+public abstract class SagaProcessor extends BaseDelegateProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     protected final CamelSagaService sagaService;
-
     protected final CamelSagaStep step;
-
     protected final SagaCompletionMode completionMode;
-
     private String id;
     private String routeId;
 

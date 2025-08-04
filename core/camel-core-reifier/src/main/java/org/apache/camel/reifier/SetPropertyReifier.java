@@ -43,6 +43,9 @@ public class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition>
             nameExpr = camelContext.resolveLanguage("constant").createExpression(key);
         }
         nameExpr.init(camelContext);
-        return new SetPropertyProcessor(nameExpr, expr);
+
+        SetPropertyProcessor answer = new SetPropertyProcessor(nameExpr, expr);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

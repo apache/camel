@@ -40,6 +40,7 @@ public class RollbackReifier extends ProcessorReifier<RollbackDefinition> {
         }
 
         RollbackProcessor answer = new RollbackProcessor(definition.getMessage());
+        answer.setDisabled(isDisabled(camelContext, definition));
         answer.setMarkRollbackOnly(isMarkRollbackOnly);
         answer.setMarkRollbackOnlyLast(isMarkRollbackOnlyLast);
         return answer;

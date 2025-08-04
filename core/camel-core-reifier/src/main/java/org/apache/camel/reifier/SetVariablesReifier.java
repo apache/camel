@@ -52,6 +52,9 @@ public class SetVariablesReifier extends ProcessorReifier<SetVariablesDefinition
             nameExpr.init(camelContext);
             nameExprs.add(nameExpr);
         }
-        return new SetVariablesProcessor(nameExprs, valueExprs);
+
+        SetVariablesProcessor answer = new SetVariablesProcessor(nameExprs, valueExprs);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

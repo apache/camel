@@ -61,6 +61,7 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
 
         CatchProcessor processor
                 = new CatchProcessor(getCamelContext(), definition.getExceptionClasses(), childProcessor, when);
+        processor.setDisabled(isDisabled(camelContext, definition));
         // inject id
         String id = getId(definition);
         processor.setId(id);

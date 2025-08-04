@@ -43,6 +43,9 @@ public class SetVariableReifier extends ExpressionReifier<SetVariableDefinition>
             nameExpr = camelContext.resolveLanguage("constant").createExpression(key);
         }
         nameExpr.init(camelContext);
-        return new SetVariableProcessor(nameExpr, expr);
+
+        SetVariableProcessor answer = new SetVariableProcessor(nameExpr, expr);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

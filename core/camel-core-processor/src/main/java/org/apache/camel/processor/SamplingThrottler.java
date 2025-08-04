@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * This kind of throttling can be useful for taking a sample from an exchange stream, rough consolidation of noisy and
  * bursty exchange traffic or where queuing of throttled exchanges is undesirable.
  */
-public class SamplingThrottler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SamplingThrottler extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SamplingThrottler.class);
 

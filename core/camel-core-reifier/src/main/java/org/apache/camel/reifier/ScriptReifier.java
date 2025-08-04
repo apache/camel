@@ -32,6 +32,8 @@ public class ScriptReifier extends ExpressionReifier<ScriptDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Expression expr = createExpression(definition.getExpression());
-        return new ScriptProcessor(expr);
+        ScriptProcessor answer = new ScriptProcessor(expr);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

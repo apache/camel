@@ -30,6 +30,8 @@ public class StopReifier extends ProcessorReifier<StopDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        return new StopProcessor();
+        StopProcessor answer = new StopProcessor();
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

@@ -35,6 +35,7 @@ public class UnmarshalReifier extends ProcessorReifier<UnmarshalDefinition> {
         DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType());
         UnmarshalProcessor answer
                 = new UnmarshalProcessor(dataFormat, Boolean.TRUE == parseBoolean(definition.getAllowNullBody()));
+        answer.setDisabled(isDisabled(camelContext, definition));
         answer.setVariableSend(parseString(definition.getVariableSend()));
         answer.setVariableReceive(parseString(definition.getVariableReceive()));
         return answer;

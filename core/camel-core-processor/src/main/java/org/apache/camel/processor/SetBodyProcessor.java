@@ -23,14 +23,14 @@ import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 
 /**
  * A processor which sets the body on the IN or OUT message with an {@link Expression}
  */
-public class SetBodyProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SetBodyProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
     private String id;
     private String routeId;
     private final Expression expression;

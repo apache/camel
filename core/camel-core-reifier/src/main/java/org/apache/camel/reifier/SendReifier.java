@@ -35,6 +35,7 @@ public class SendReifier extends ProcessorReifier<ToDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         SendProcessor answer = new SendProcessor(resolveEndpoint(), parse(ExchangePattern.class, definition.getPattern()));
+        answer.setDisabled(isDisabled(camelContext, definition));
         answer.setVariableSend(parseString(definition.getVariableSend()));
         answer.setVariableReceive(parseString(definition.getVariableReceive()));
         return answer;

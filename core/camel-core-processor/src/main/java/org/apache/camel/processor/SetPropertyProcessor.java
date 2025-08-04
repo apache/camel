@@ -22,13 +22,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the property on the exchange with an {@link org.apache.camel.Expression}
  */
-public class SetPropertyProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SetPropertyProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
     private String id;
     private String routeId;
     private final Expression propertyName;

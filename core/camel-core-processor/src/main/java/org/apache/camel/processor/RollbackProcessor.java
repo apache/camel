@@ -22,12 +22,11 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Processor for marking an {@link org.apache.camel.Exchange} to rollback.
  */
-public class RollbackProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class RollbackProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private String id;
     private String routeId;
