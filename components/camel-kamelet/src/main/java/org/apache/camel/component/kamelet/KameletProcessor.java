@@ -28,17 +28,17 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.processor.BaseProcessorSupport;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Kamelet EIP implementation.
  */
 @ManagedResource(description = "Managed Kamelet Processor")
-public class KameletProcessor extends AsyncProcessorSupport
+public class KameletProcessor extends BaseProcessorSupport
         implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware, RouteIdAware {
 
     private final String name;

@@ -43,6 +43,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         notNull(definition.getOperation(), "operation", this);
 
         ClaimCheckProcessor claim = new ClaimCheckProcessor();
+        claim.setDisabled(isDisabled(camelContext, definition));
         claim.setOperation(parse(ClaimCheckOperation.class, definition.getOperation()).name());
         claim.setKey(parseString(definition.getKey()));
         claim.setFilter(parseString(definition.getFilter()));

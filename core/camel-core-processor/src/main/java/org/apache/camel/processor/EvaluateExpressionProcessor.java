@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A {@link org.apache.camel.Processor} which evaluates an {@link Expression} and stores the result as a property on the
@@ -29,7 +28,7 @@ import org.apache.camel.support.AsyncProcessorSupport;
  * <p/>
  * This processor will in case of evaluation exceptions, set the caused exception on the {@link Exchange}.
  */
-public class EvaluateExpressionProcessor extends AsyncProcessorSupport implements Traceable {
+public class EvaluateExpressionProcessor extends BaseProcessorSupport implements Traceable {
 
     private final Expression expression;
 

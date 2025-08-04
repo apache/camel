@@ -30,6 +30,8 @@ public class RemoveHeaderReifier extends ProcessorReifier<RemoveHeaderDefinition
 
     @Override
     public Processor createProcessor() throws Exception {
-        return new RemoveHeaderProcessor(parseString(definition.getName()));
+        RemoveHeaderProcessor answer = new RemoveHeaderProcessor(parseString(definition.getName()));
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

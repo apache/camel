@@ -17,6 +17,7 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Channel;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalanceDefinition;
@@ -34,6 +35,9 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
     @Override
     public Processor createProcessor() throws Exception {
         LoadBalancer loadBalancer = LoadBalancerReifier.reifier(route, definition.getLoadBalancerType()).createLoadBalancer();
+        if (loadBalancer instanceof DisabledAware da) {
+            da.setDisabled(isDisabled(camelContext, definition));
+        }
 
         // some load balancer can only support a fixed number of outputs
         int max = definition.getLoadBalancerType().getMaximumNumberOfOutputs();

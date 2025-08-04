@@ -77,7 +77,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
                     isShareUnitOfWork, isParallelAggregate);
         }
         answer.setSynchronous(isSynchronous);
-
+        answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }
 

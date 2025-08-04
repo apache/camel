@@ -60,7 +60,10 @@ public class ConvertVariableReifier extends ProcessorReifier<ConvertVariableDefi
         if (definition.getMandatory() != null) {
             mandatory = parseBoolean(definition.getMandatory(), true);
         }
-        return new ConvertVariableProcessor(key, nameExpr, toKey, toNameExpr, typeClass, charset, mandatory);
+        ConvertVariableProcessor answer
+                = new ConvertVariableProcessor(key, nameExpr, toKey, toNameExpr, typeClass, charset, mandatory);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     public static String validateCharset(String charset) throws UnsupportedCharsetException {

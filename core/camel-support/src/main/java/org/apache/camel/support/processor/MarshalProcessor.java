@@ -19,6 +19,7 @@ package org.apache.camel.support.processor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
@@ -35,11 +36,14 @@ import org.apache.camel.util.ObjectHelper;
  * Marshals the body of the incoming message using the given <a href="http://camel.apache.org/data-format.html">data
  * format</a>
  */
-public class MarshalProcessor extends AsyncProcessorSupport implements Traceable, CamelContextAware, IdAware, RouteIdAware {
+public class MarshalProcessor extends AsyncProcessorSupport
+        implements Traceable, CamelContextAware, IdAware, RouteIdAware, DisabledAware {
+
     private String id;
     private String routeId;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
+    private boolean disabled;
     private String variableSend;
     private String variableReceive;
 
@@ -114,6 +118,16 @@ public class MarshalProcessor extends AsyncProcessorSupport implements Traceable
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @Override

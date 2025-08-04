@@ -59,6 +59,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         long timeout = parseDuration(definition.getTimeout(), -1);
 
         PollEnricher enricher = new PollEnricher(exp, uri, timeout);
+        enricher.setDisabled(isDisabled(camelContext, definition));
         AggregationStrategy strategy = getConfiguredAggregationStrategy(definition);
         if (strategy != null) {
             enricher.setAggregationStrategy(strategy);
@@ -76,7 +77,6 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         if (definition.getAllowOptimisedComponents() != null) {
             enricher.setAllowOptimisedComponents(parseBoolean(definition.getAllowOptimisedComponents(), true));
         }
-
         return enricher;
     }
 

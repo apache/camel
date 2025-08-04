@@ -103,13 +103,12 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
                 dynamicSendProcessor, target, uri,
                 parse(ExchangePattern.class, definition.getPattern()), isCopy,
                 threadPool, shutdownThreadPool, dynamic);
-
+        answer.setDisabled(isDisabled(camelContext, definition));
         Processor prepare = definition.getOnPrepareProcessor();
         if (prepare == null && definition.getOnPrepare() != null) {
             prepare = mandatoryLookup(definition.getOnPrepare(), Processor.class);
         }
         answer.setOnPrepare(prepare);
-
         return answer;
     }
 

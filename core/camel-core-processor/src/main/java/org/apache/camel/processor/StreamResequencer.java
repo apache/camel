@@ -37,7 +37,6 @@ import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.service.ServiceHelper;
@@ -61,7 +60,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see ResequencerEngine
  */
-public class StreamResequencer extends AsyncProcessorSupport
+public class StreamResequencer extends BaseProcessorSupport
         implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);

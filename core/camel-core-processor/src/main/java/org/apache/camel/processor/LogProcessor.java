@@ -27,14 +27,13 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A processor which evaluates an {@link Expression} and logs it.
  */
-public class LogProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class LogProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogProcessor.class);
 

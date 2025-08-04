@@ -32,6 +32,8 @@ public class SetBodyReifier extends ExpressionReifier<SetBodyDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Expression expr = createExpression(definition.getExpression());
-        return new SetBodyProcessor(expr);
+        SetBodyProcessor answer = new SetBodyProcessor(expr);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

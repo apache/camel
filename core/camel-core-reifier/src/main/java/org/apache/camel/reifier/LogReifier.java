@@ -119,15 +119,18 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
                 ? parse(LoggingLevel.class, definition.getLoggingLevel()) : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, definition.getMarker());
 
+        LogProcessor answer;
         if (exp != null) {
             // dynamic log message via simple expression
-            return new LogProcessor(
+            answer = new LogProcessor(
                     exp, camelLogger, getMaskingFormatter(), camelContext.getCamelContextExtension().getLogListeners());
         } else {
             // static log message via string message
-            return new LogProcessor(
+            answer = new LogProcessor(
                     msg, camelLogger, getMaskingFormatter(), camelContext.getCamelContextExtension().getLogListeners());
         }
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     private MaskingFormatter getMaskingFormatter() {

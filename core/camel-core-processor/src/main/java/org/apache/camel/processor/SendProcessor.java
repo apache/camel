@@ -32,7 +32,6 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
@@ -49,7 +48,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see SendDynamicProcessor
  */
-public class SendProcessor extends AsyncProcessorSupport implements Traceable, EndpointAware, IdAware, RouteIdAware {
+public class SendProcessor extends BaseProcessorSupport implements Traceable, EndpointAware, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
 

@@ -458,7 +458,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "discardOnAggregationFailure" : {
             "type" : "boolean",
@@ -546,7 +546,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -662,7 +662,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "exception" : {
             "type" : "array",
@@ -704,7 +704,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -750,7 +750,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "faultToleranceConfiguration" : {
             "title" : "Fault Tolerance Configuration",
@@ -804,7 +804,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "filter" : {
             "type" : "string",
@@ -880,7 +880,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -920,7 +920,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -969,7 +969,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -1105,7 +1105,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "executorService" : {
             "type" : "string",
@@ -1238,7 +1238,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -1407,7 +1407,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -2016,7 +2016,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -2077,7 +2077,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -2247,7 +2247,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "eager" : {
             "type" : "boolean",
@@ -2353,7 +2353,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -2390,7 +2390,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -2438,7 +2438,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -2584,7 +2584,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -2623,7 +2623,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -2763,7 +2763,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "doWhile" : {
             "type" : "boolean",
@@ -3286,7 +3286,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -3379,7 +3379,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "executorService" : {
             "type" : "string",
@@ -3455,7 +3455,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "executorService" : {
             "type" : "string",
@@ -3526,7 +3526,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "exception" : {
             "type" : "array",
@@ -3789,7 +3789,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -3905,7 +3905,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -3934,7 +3934,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -3963,7 +3963,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -4001,7 +4001,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -4153,7 +4153,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -4219,7 +4219,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -4480,7 +4480,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "executorService" : {
             "type" : "string",
@@ -4727,7 +4727,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -4760,7 +4760,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "excludePattern" : {
               "type" : "string",
@@ -4798,7 +4798,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "excludePattern" : {
               "type" : "string",
@@ -4836,7 +4836,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -4869,7 +4869,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -4998,7 +4998,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -5215,7 +5215,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -5259,7 +5259,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -5649,7 +5649,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -5754,7 +5754,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -5811,7 +5811,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -5919,7 +5919,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -6042,7 +6042,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -6095,7 +6095,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -6198,7 +6198,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -6254,7 +6254,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "headers" : {
             "type" : "array",
@@ -6358,7 +6358,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -6487,7 +6487,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -6543,7 +6543,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -6652,7 +6652,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -6796,7 +6796,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "executorService" : {
             "type" : "string",
@@ -6899,7 +6899,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -6928,7 +6928,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -7069,7 +7069,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "executorService" : {
             "type" : "string",
@@ -7223,7 +7223,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "executorService" : {
             "type" : "string",
@@ -7296,7 +7296,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "exceptionType" : {
             "type" : "string",
@@ -7337,7 +7337,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -7404,7 +7404,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "id" : {
               "type" : "string",
@@ -7458,7 +7458,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -7552,7 +7552,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -7659,7 +7659,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "fromType" : {
             "type" : "string",
@@ -7719,7 +7719,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "doCatch" : {
             "type" : "array",
@@ -7766,7 +7766,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -8374,7 +8374,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -8519,7 +8519,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "id" : {
             "type" : "string",
@@ -8595,7 +8595,7 @@
           "disabled" : {
             "type" : "boolean",
             "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+            "description" : "Disables this EIP from the route."
           },
           "dynamicUri" : {
             "type" : "boolean",
@@ -9643,7 +9643,7 @@
             "disabled" : {
               "type" : "boolean",
               "title" : "Disabled",
-              "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+              "description" : "Disables this EIP from the route."
             },
             "expressionRef" : {
               "type" : "string",

@@ -31,18 +31,15 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.Tokenizer;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * This implements the core processor for handling tokenization
  */
-public class TokenizerProcessor extends AsyncProcessorSupport
-        implements Navigate<Processor>,
-        CamelContextAware, IdAware, RouteIdAware {
+public class TokenizerProcessor extends BaseProcessorSupport
+        implements Navigate<Processor>, CamelContextAware, IdAware, RouteIdAware {
 
     private final AsyncProcessor processor;
     private final Tokenizer tokenizer;
-
     private CamelContext camelContext;
     private String id;
     private String routeId;

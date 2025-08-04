@@ -48,6 +48,7 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.processor.BaseProcessorSupport;
 import org.apache.camel.processor.PooledExchangeTask;
 import org.apache.camel.processor.PooledExchangeTaskFactory;
 import org.apache.camel.processor.PooledTaskFactory;
@@ -56,7 +57,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * Implementation of Circuit Breaker EIP using resilience4j.
  */
 @ManagedResource(description = "Managed Resilience Processor")
-public class ResilienceProcessor extends AsyncProcessorSupport
+public class ResilienceProcessor extends BaseProcessorSupport
         implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResilienceProcessor.class);

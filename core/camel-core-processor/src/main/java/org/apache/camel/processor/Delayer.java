@@ -33,6 +33,7 @@ import org.apache.camel.spi.RouteIdAware;
  * This implementation will block while waiting.
  */
 public class Delayer extends DelayProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
     private String routeId;
     private String id;
     private Expression delay;

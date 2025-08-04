@@ -52,6 +52,9 @@ public class SetHeadersReifier extends ProcessorReifier<SetHeadersDefinition> {
             nameExpr.init(camelContext);
             nameExprs.add(nameExpr);
         }
-        return new SetHeadersProcessor(nameExprs, valueExprs);
+
+        SetHeadersProcessor answer = new SetHeadersProcessor(nameExprs, valueExprs);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

@@ -29,6 +29,7 @@ import org.apache.camel.model.PropertyExpressionDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
 import org.apache.camel.processor.saga.SagaCompletionMode;
+import org.apache.camel.processor.saga.SagaProcessor;
 import org.apache.camel.processor.saga.SagaProcessorBuilder;
 import org.apache.camel.processor.saga.SagaPropagation;
 import org.apache.camel.saga.CamelSagaService;
@@ -83,9 +84,11 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
         camelSagaService.registerStep(step);
 
-        return new SagaProcessorBuilder().camelContext(camelContext).childProcessor(childProcessor)
+        SagaProcessor answer = new SagaProcessorBuilder().camelContext(camelContext).childProcessor(childProcessor)
                 .sagaService(camelSagaService).step(step)
                 .propagation(propagation).completionMode(completionMode).build();
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     protected CamelSagaService resolveSagaService() {

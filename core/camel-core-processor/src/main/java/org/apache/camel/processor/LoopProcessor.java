@@ -33,7 +33,6 @@ import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 /**
  * The processor which sends messages in a loop.
  */
-public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware, ShutdownAware {
+public class LoopProcessor extends BaseDelegateProcessorSupport implements Traceable, IdAware, RouteIdAware, ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoopProcessor.class);
 

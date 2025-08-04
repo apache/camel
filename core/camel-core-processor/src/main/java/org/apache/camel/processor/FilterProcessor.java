@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * The processor which implements the <a href="http://camel.apache.org/message-filter.html">Message Filter</a> EIP
  * pattern.
  */
-public class FilterProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
+public class FilterProcessor extends BaseDelegateProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);
 

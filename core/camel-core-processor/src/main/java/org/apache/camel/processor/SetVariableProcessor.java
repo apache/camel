@@ -17,23 +17,19 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the variable with an {@link Expression}
  */
-public class SetVariableProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware, CamelContextAware {
+public class SetVariableProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
-    private CamelContext camelContext;
     private String id;
     private String routeId;
     private final Expression variableName;
@@ -44,16 +40,6 @@ public class SetVariableProcessor extends AsyncProcessorSupport implements Trace
         this.expression = expression;
         ObjectHelper.notNull(variableName, "variableName");
         ObjectHelper.notNull(expression, "expression");
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
     @Override

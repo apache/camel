@@ -20,12 +20,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A disabled EIP that does not do anything
  */
-public class DisabledProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware {
+public class DisabledProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware {
 
     private String id;
     private String routeId;
@@ -74,4 +73,13 @@ public class DisabledProcessor extends AsyncProcessorSupport implements IdAware,
         this.nodeType = nodeType;
     }
 
+    @Override
+    public boolean isDisabled() {
+        return true; // is always disabled
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        // not possible to change
+    }
 }

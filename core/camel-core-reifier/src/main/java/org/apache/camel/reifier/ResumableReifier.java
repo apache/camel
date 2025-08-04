@@ -52,7 +52,9 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
         LoggingLevel loggingLevel = resolveLoggingLevel();
 
         boolean intermittent = parseBoolean(definition.getIntermittent(), false);
-        return new ResumableProcessor(resumeStrategy, childProcessor, loggingLevel, intermittent);
+        ResumableProcessor answer = new ResumableProcessor(resumeStrategy, childProcessor, loggingLevel, intermittent);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     protected ResumeStrategy resolveResumeStrategy() {

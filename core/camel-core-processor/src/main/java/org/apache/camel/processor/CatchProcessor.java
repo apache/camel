@@ -35,7 +35,6 @@ import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A processor which catches exceptions.
  */
-public class CatchProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware, InterceptableProcessor {
+public class CatchProcessor extends BaseDelegateProcessorSupport
+        implements Traceable, IdAware, RouteIdAware, InterceptableProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 

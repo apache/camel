@@ -41,6 +41,7 @@ public class FilterReifier extends ExpressionReifier<FilterDefinition> {
         Processor childProcessor = this.createChildProcessor(true);
 
         FilterProcessor answer = new FilterProcessor(camelContext, createPredicate(), childProcessor);
+        answer.setDisabled(isDisabled(camelContext, definition));
         answer.setStatusPropertyName(status);
         return answer;
     }

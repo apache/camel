@@ -31,6 +31,8 @@ public class RemovePropertyReifier extends ProcessorReifier<RemovePropertyDefini
     @Override
     public Processor createProcessor() throws Exception {
         String name = definition.getName();
-        return new RemovePropertyProcessor(parseString(name));
+        RemovePropertyProcessor answer = new RemovePropertyProcessor(parseString(name));
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

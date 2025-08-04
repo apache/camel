@@ -43,6 +43,9 @@ public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
             nameExpr = camelContext.resolveLanguage("constant").createExpression(key);
         }
         nameExpr.init(camelContext);
-        return new SetHeaderProcessor(nameExpr, expr);
+
+        SetHeaderProcessor answer = new SetHeaderProcessor(nameExpr, expr);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

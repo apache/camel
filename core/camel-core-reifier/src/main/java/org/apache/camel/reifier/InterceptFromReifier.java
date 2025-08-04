@@ -51,7 +51,10 @@ public class InterceptFromReifier extends ProcessorReifier<InterceptFromDefiniti
                 exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ENDPOINT, exchange.getFromEndpoint().getEndpointUri());
             }
         };
-        return new FilterProcessor(getCamelContext(), when, Pipeline.newInstance(getCamelContext(), p, child));
+        FilterProcessor answer
+                = new FilterProcessor(getCamelContext(), when, Pipeline.newInstance(getCamelContext(), p, child));
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
 }

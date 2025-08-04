@@ -22,12 +22,11 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A processor which converts current message body to a stream cache.
  */
-public class StreamCachingProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class StreamCachingProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private String id;
     private String routeId;

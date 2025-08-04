@@ -35,16 +35,18 @@ public class ThrowExceptionReifier extends ProcessorReifier<ThrowExceptionDefini
         if (exception == null && ref != null) {
             exception = lookupByNameAndType(ref, Exception.class);
         }
-
         Class<? extends Exception> exceptionClass = definition.getExceptionClass();
         if (exceptionClass == null && definition.getExceptionType() != null) {
             exceptionClass = parse(Class.class, definition.getExceptionType());
         }
-
         if (exception == null && exceptionClass == null) {
             throw new IllegalArgumentException("exception/ref or exceptionClass/exceptionType must be configured on: " + this);
         }
-        return new ThrowExceptionProcessor(exception, exceptionClass, parseString(definition.getMessage()));
+
+        ThrowExceptionProcessor answer
+                = new ThrowExceptionProcessor(exception, exceptionClass, parseString(definition.getMessage()));
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
 }

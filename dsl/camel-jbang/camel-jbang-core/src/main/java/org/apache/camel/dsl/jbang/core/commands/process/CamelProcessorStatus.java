@@ -248,6 +248,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
             row.level = o.getIntegerOrDefault("level", 0);
             row.source = o.getString("source");
             row.state = o.getString("state");
+            row.disabled = o.getBooleanOrDefault("disabled", false);
             Map<String, ?> stats = o.getMap("statistics");
             if (stats != null) {
                 row.total = stats.get("exchangesTotal").toString();
@@ -429,6 +430,9 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
     }
 
     protected String getStatus(Row r) {
+        if (r.disabled) {
+            return "Disabled";
+        }
         return r.state;
     }
 
@@ -458,6 +462,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         int level;
         String source;
         String state;
+        boolean disabled;
         String total;
         String totalRemote;
         String failed;

@@ -27,6 +27,7 @@ import org.apache.camel.support.service.ServiceHelper;
  * A processor which ensures wrapping processors is having lifecycle handled.
  */
 public class WrapProcessor extends DelegateAsyncProcessor implements WrapAwareProcessor {
+
     private final Processor wrapped;
 
     public WrapProcessor(Processor processor, Processor wrapped) {

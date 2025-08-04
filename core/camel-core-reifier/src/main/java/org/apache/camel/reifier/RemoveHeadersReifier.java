@@ -34,15 +34,18 @@ public class RemoveHeadersReifier extends ProcessorReifier<RemoveHeadersDefiniti
     @Override
     public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getPattern(), "patterns", definition);
+        RemoveHeadersProcessor answer;
         if (definition.getExcludePatterns() != null) {
-            return new RemoveHeadersProcessor(
+            answer = new RemoveHeadersProcessor(
                     parseString(definition.getPattern()), parseStrings(definition.getExcludePatterns()));
         } else if (definition.getExcludePattern() != null) {
-            return new RemoveHeadersProcessor(
+            answer = new RemoveHeadersProcessor(
                     parseString(definition.getPattern()), parseStrings(new String[] { definition.getExcludePattern() }));
         } else {
-            return new RemoveHeadersProcessor(parseString(definition.getPattern()), null);
+            answer = new RemoveHeadersProcessor(parseString(definition.getPattern()), null);
         }
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 
     private String[] parseStrings(String[] array) {

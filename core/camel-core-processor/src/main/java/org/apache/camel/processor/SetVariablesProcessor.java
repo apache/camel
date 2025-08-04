@@ -24,13 +24,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 
 /**
  * A processor which sets multiple variables on the Exchange with an {@link Expression}
  */
-public class SetVariablesProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+public class SetVariablesProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
     private String id;
     private String routeId;
     private final List<Expression> variableNames;

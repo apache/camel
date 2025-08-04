@@ -60,6 +60,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         } else {
             answer = new RecipientList(camelContext, expression);
         }
+        answer.setDisabled(isDisabled(camelContext, definition));
         answer.setAggregationStrategy(createAggregationStrategy());
         answer.setParallelProcessing(isParallelProcessing);
         answer.setParallelAggregate(isParallelAggregate);

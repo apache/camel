@@ -35,7 +35,6 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-
         boolean async = parseBoolean(definition.getAsyncDelayed(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
         ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Throttle", definition, true);
@@ -55,22 +54,19 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
         if (ThrottlingMode.toMode(parseString(definition.getMode())) == ThrottlingMode.ConcurrentRequests) {
             ConcurrentRequestsThrottler answer = new ConcurrentRequestsThrottler(
                     camelContext, maxRequestsExpression, threadPool, shutdownThreadPool, reject, correlation);
-
+            answer.setDisabled(isDisabled(camelContext, definition));
             answer.setAsyncDelayed(async);
             // should be true by default
             answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
-
             return answer;
         } else {
             long period = parseDuration(definition.getTimePeriodMillis(), 1000L);
-
             TotalRequestsThrottler answer = new TotalRequestsThrottler(
                     camelContext, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
-
+            answer.setDisabled(isDisabled(camelContext, definition));
             answer.setAsyncDelayed(async);
             // should be true by default
             answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
-
             return answer;
         }
 

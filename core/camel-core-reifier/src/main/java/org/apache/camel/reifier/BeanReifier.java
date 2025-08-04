@@ -17,6 +17,7 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.BeanScope;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.BeanDefinition;
@@ -50,6 +51,9 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         if (answer instanceof IdAware idAware) {
             String id = camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class).createId(definition);
             idAware.setId(id);
+        }
+        if (answer instanceof DisabledAware da) {
+            da.setDisabled(isDisabled(camelContext, definition));
         }
         return answer;
     }

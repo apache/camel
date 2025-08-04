@@ -55,6 +55,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         }
 
         SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
+        processor.setDisabled(isDisabled(camelContext, definition));
         processor.setCamelContext(camelContext);
         processor.setPattern(parse(ExchangePattern.class, definition.getPattern()));
         processor.setVariableSend(parseString(definition.getVariableSend()));

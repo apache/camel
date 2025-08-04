@@ -24,15 +24,15 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.BaseProcessorSupport;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A default base class for a {@link LoadBalancer} implementation.
  */
-public abstract class LoadBalancerSupport extends AsyncProcessorSupport
+public abstract class LoadBalancerSupport extends BaseProcessorSupport
         implements LoadBalancer, Navigate<Processor>, IdAware, RouteIdAware {
 
     private final AtomicReference<AsyncProcessor[]> processors = new AtomicReference<>(new AsyncProcessor[0]);

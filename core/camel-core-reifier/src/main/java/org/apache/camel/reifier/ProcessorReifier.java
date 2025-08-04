@@ -183,11 +183,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(Route route, ProcessorDefinition<?> definition) {
         ProcessorReifier<? extends ProcessorDefinition<?>> answer = null;
 
-        // special if the EIP is disabled
-        if (route.getCamelContext() != null && isDisabled(route.getCamelContext(), definition)) {
-            return new DisabledReifier<>(route, definition);
-        }
-
         if (!PROCESSORS.isEmpty()) {
             // custom take precedence
             BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier

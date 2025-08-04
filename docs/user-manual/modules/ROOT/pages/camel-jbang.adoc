@@ -1948,6 +1948,57 @@ camel cmd start-group foo --id=first
 
 The route group commands works similar to how you control routes (see above).
 
+==== Enabling and Disabling EIPs
+
+*Available as of Camel 4.14*
+
+When developing prototypes or trouble-shooting, you may want to quickly be able to disable some EIPs that
+should not be active, without having to change source code.
+
+[source,bash]
+----
+camel get processor
+PID   NAME  ID            PROCESSOR                 STATUS   TOTAL  FAIL  INFLIGHT  MEAN  MIN   MAX   LAST  DELTA  SINCE-LAST
+ 5202  foo   a             direct://a                Started     14     0         1   504   501   506   501     -5        1s/-
+             delay1          delay                   Started     14     0         1   503   500   505   500     -5        1s/-
+             log1            log                     Started     14     0         0     0     0     1     0      0        1s/-
+----
+
+The route above have 2 processors, and we can quickly disable one of them such as _log1_ as follows:
+
+[source,bash]
+----
+camel cmd disable-processor --id=log1
+----
+
+[source,bash]
+----
+camel get processor
+ PID   NAME  ID            PROCESSOR                  STATUS   TOTAL  FAIL  INFLIGHT  MEAN  MIN   MAX   LAST  DELTA  SINCE-LAST
+ 5202  foo   a             direct://a                Started     116     0         1   503   500   506   503     -1        0s/-
+             delay1          delay                   Started     116     0         1   503   500   505   503     -1        0s/-
+             log1            log                     Disabled    112     0         0     0     0     1     0      0        4s/-
+----
+
+The status is now changed to _Disabled_ and the EIP is not in use, and it's statistics will not be updated as it does not process any messages.
+
+You can enable the EIP again either explicit:
+
+[source,bash]
+----
+camel cmd enable-processor --id=log1
+----
+
+Or to quickly enable all EIPs
+
+[source,bash]
+----
+camel cmd enable-processor
+----
+
+TIP: You can also disable multiple EIPs seperated by comma, such as `--id=log1,log2,setBody2,choice1`
+
+
 ==== Running Camel integrations on Kubernetes
 
 After developing the Camel routes locally with JBang, you may want to run these also on the Kubernetes platform at some point.

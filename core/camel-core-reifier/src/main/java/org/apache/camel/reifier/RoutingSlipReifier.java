@@ -41,6 +41,7 @@ public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<
         }
 
         RoutingSlip routingSlip = new RoutingSlip(camelContext, expression, delimiter);
+        routingSlip.setDisabled(isDisabled(camelContext, definition));
         if (definition.getIgnoreInvalidEndpoints() != null) {
             routingSlip.setIgnoreInvalidEndpoints(parseBoolean(definition.getIgnoreInvalidEndpoints(), false));
         }

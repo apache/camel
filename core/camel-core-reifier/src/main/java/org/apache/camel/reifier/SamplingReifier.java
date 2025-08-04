@@ -33,11 +33,14 @@ public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Long freq = parseLong(definition.getMessageFrequency());
+        SamplingThrottler answer;
         if (freq != null) {
-            return new SamplingThrottler(freq);
+            answer = new SamplingThrottler(freq);
         } else {
             long time = parseDuration(definition.getSamplePeriod(), 1);
-            return new SamplingThrottler(time, TimeUnit.MILLISECONDS);
+            answer = new SamplingThrottler(time, TimeUnit.MILLISECONDS);
         }
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

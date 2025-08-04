@@ -40,6 +40,9 @@ public class RemoveVariableReifier extends ProcessorReifier<RemoveVariableDefini
             nameExpr = camelContext.resolveLanguage("constant").createExpression(key);
         }
         nameExpr.init(camelContext);
-        return new RemoveVariableProcessor(nameExpr);
+
+        RemoveVariableProcessor answer = new RemoveVariableProcessor(nameExpr);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }

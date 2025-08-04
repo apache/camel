@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -27,12 +26,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractThrottler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware, Throttler {
+public abstract class AbstractThrottler extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, Throttler {
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractThrottler.class);
 
     protected static final String DEFAULT_KEY = "CamelThrottlerDefaultKey";

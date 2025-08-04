@@ -21,12 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Processor to set {@link org.apache.camel.ExchangePattern} on the {@link org.apache.camel.Exchange}.
  */
-public class ExchangePatternProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware {
+public class ExchangePatternProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware {
+
     private String id;
     private String routeId;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;

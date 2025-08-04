@@ -27,14 +27,14 @@ import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * The processor which sets an {@link Exception} on the {@link Exchange}
  */
-public class ThrowExceptionProcessor extends AsyncProcessorSupport
+public class ThrowExceptionProcessor extends BaseProcessorSupport
         implements Traceable, IdAware, RouteIdAware, CamelContextAware {
+
     private String id;
     private String routeId;
     private CamelContext camelContext;

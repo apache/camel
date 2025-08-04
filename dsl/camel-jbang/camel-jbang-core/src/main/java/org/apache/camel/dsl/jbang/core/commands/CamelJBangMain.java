@@ -137,6 +137,8 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("resume-route", new CommandLine(new CamelRouteResumeAction(main)))
                         .addSubcommand("start-group", new CommandLine(new CamelRouteGroupStartAction(main)))
                         .addSubcommand("stop-group", new CommandLine(new CamelRouteGroupStopAction(main)))
+                        .addSubcommand("enable-processor", new CommandLine(new CamelProcessorEnableAction(main)))
+                        .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(main)))
                         .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(main)))
                         .addSubcommand("reload", new CommandLine(new CamelReloadAction(main)))
                         .addSubcommand("send", new CommandLine(new CamelSendAction(main)))

@@ -25,14 +25,13 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Processor to handle do finally supporting asynchronous routing engine
  */
-public class FinallyProcessor extends DelegateAsyncProcessor
+public class FinallyProcessor extends BaseDelegateProcessorSupport
         implements Traceable, IdAware, RouteIdAware, InterceptableProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(FinallyProcessor.class);

@@ -37,6 +37,7 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
                 ? definition.getUriDelimiter() : DynamicRouterDefinition.DEFAULT_DELIMITER;
 
         DynamicRouter dynamicRouter = new DynamicRouter(camelContext, expression, delimiter);
+        dynamicRouter.setDisabled(isDisabled(camelContext, definition));
         if (definition.getIgnoreInvalidEndpoints() != null) {
             dynamicRouter.setIgnoreInvalidEndpoints(parseBoolean(definition.getIgnoreInvalidEndpoints(), false));
         }
@@ -48,7 +49,6 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
         AsyncProcessor errorHandler
                 = (AsyncProcessor) wrapInErrorHandler(dynamicRouter.newRoutingSlipProcessorForErrorHandler());
         dynamicRouter.setErrorHandler(errorHandler);
-
         return dynamicRouter;
     }
 

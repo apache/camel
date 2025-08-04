@@ -86,7 +86,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Implements the Multicast pattern to send a message exchange to a number of endpoints, each endpoint receiving a copy
  * of the message exchange.
  */
-public class MulticastProcessor extends AsyncProcessorSupport
+public class MulticastProcessor extends BaseProcessorSupport
         implements Navigate<Processor>, Traceable, IdAware, RouteIdAware, ErrorHandlerAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(MulticastProcessor.class);

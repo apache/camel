@@ -85,6 +85,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         ResilienceProcessor answer = new ResilienceProcessor(
                 cbConfig, bhConfig, tlConfig, processor, fallback, throwExceptionWhenHalfOpenOrOpenState, recordPredicate,
                 ignorePredicate);
+        answer.setDisabled(isDisabled(camelContext, definition));
         configureTimeoutExecutorService(answer, config);
         // using any existing circuit breakers?
         if (config.getCircuitBreaker() != null) {

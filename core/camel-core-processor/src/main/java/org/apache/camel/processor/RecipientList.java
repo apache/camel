@@ -32,7 +32,6 @@ import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.cache.EmptyProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
@@ -46,7 +45,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Implements a dynamic <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> pattern where the list
  * of actual endpoints to send a message exchange to are dependent on some dynamic expression.
  */
-public class RecipientList extends AsyncProcessorSupport implements IdAware, RouteIdAware, ErrorHandlerAware {
+public class RecipientList extends BaseProcessorSupport implements IdAware, RouteIdAware, ErrorHandlerAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
 

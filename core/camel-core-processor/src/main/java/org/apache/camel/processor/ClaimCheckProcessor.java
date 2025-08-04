@@ -26,7 +26,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.spi.ClaimCheckRepository;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * against concurrent and thread-safe issues. For off-memory persistent storage of data, then use any of the many Camel
  * components that support persistent storage, and do not use this Claim Check EIP implementation.
  */
-public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+public class ClaimCheckProcessor extends BaseProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClaimCheckProcessor.class);
 

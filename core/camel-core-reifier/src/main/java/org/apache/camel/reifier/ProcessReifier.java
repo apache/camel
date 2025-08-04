@@ -17,6 +17,7 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -52,6 +53,9 @@ public class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
                 // the processor is sync by nature so use the sync delegate
                 answer = new DelegateSyncProcessor(answer);
             }
+        }
+        if (answer instanceof DisabledAware da) {
+            da.setDisabled(isDisabled(camelContext, definition));
         }
         return answer;
     }

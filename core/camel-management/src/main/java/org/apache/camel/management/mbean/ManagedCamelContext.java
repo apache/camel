@@ -691,8 +691,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                         // the processor must belong to this route
                         if (route.getRouteId().equals(processor.getRouteId())) {
                             sb.append("        <processorStat")
-                                    .append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
-                                            processor.getProcessorId(), processor.getIndex(), processor.getState(), line));
+                                    .append(String.format(
+                                            " id=\"%s\" index=\"%s\" state=\"%s\" disabled=\"%s\" sourceLineNumber=\"%s\"",
+                                            processor.getProcessorId(), processor.getIndex(), processor.getState(),
+                                            processor.getDisabled(), line));
                             // use substring as we only want the attributes
                             stat = processor.dumpStatsAsXml(fullStats);
                             sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
@@ -777,6 +779,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                             jo2.put("id", processor.getProcessorId());
                             jo2.put("index", processor.getIndex());
                             jo2.put("state", processor.getState());
+                            jo2.put("disabled", processor.getDisabled());
                             jo2.put("sourceLineNumber", line);
                             processor.statsAsJSon(jo2, fullStats);
                             jo2.put("exchangesInflight", processor.getExchangesInflight());
@@ -846,8 +849,9 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     if (route.getRouteId().equals(step.getRouteId())) {
                         int line = step.getSourceLineNumber() != null ? step.getSourceLineNumber() : -1;
                         sb.append("        <stepStat")
-                                .append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
-                                        step.getProcessorId(), step.getIndex(), step.getState(), line));
+                                .append(String.format(
+                                        " id=\"%s\" index=\"%s\" state=\"%s\" disabled=\"%s\" sourceLineNumber=\"%s\"",
+                                        step.getProcessorId(), step.getIndex(), step.getState(), step.getDisabled(), line));
                         // use substring as we only want the attributes
                         stat = step.dumpStatsAsXml(fullStats);
                         sb.append(" exchangesInflight=\"").append(step.getExchangesInflight()).append("\"");

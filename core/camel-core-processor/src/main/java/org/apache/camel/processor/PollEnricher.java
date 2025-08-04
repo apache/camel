@@ -40,7 +40,6 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.PollDynamicAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EndpointHelper;
@@ -65,7 +64,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * @see PollProcessor
  * @see Enricher
  */
-public class PollEnricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+public class PollEnricher extends BaseProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
 

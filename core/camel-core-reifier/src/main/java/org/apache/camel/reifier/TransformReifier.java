@@ -36,12 +36,13 @@ public class TransformReifier extends ExpressionReifier<TransformDefinition> {
             throw new IllegalArgumentException(
                     "Both expression and data type set on transform EIP - please choose only one of them");
         }
-
         if (definition.getToType() != null) {
             return new DataTypeProcessor(definition.getFromType(), definition.getToType());
         }
 
         Expression expr = createExpression(definition.getExpression());
-        return new TransformProcessor(expr);
+        TransformProcessor answer = new TransformProcessor(expr);
+        answer.setDisabled(isDisabled(camelContext, definition));
+        return answer;
     }
 }
