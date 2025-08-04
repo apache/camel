@@ -322,11 +322,12 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Directory to load additional configuration files that contains configuration values that takes precedence over
-     * any other configuration. This can be used to refer to files that may have secret configuration that has been
-     * mounted on the file system for containers.
+     * Directory to load additional properties files that contains configurations that takes precedence
+     * (except for camel.main.xxx configurations).
      *
-     * You can specify a pattern to load from sub directories and a name pattern such as /var/app/secret/*.properties,
+     * This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers.
+     *
+     * You can specify a pattern to load from file-system (not classpath) and a name pattern such as /var/app/secret/*.properties,
      * multiple directories can be separated by comma.
      */
     public void setFileConfigurations(String fileConfigurations) {

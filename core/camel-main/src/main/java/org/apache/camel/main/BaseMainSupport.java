@@ -525,14 +525,8 @@ public abstract class BaseMainSupport extends BaseService {
         // gathers the properties (key=value) that was auto-configured
         final OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
 
-        // configure the profile with pre-configured settings
-        StartupStep step = recorder.beginStep(BaseMainSupport.class, "configureMain", "Profile Configure");
-        doInitFileConfigurations(camelContext, mainConfigurationProperties);
-        ProfileConfigurer.configureMain(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties);
-        recorder.endStep(step);
-
         // need to pre-load vault configuration as they are used eager during property placeholder resolutions
-        step = recorder.beginStep(BaseMainSupport.class, "configureVault", "Configure Vault");
+        StartupStep step = recorder.beginStep(BaseMainSupport.class, "configureVault", "Configure Vault");
         doConfigureVaultFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
         recorder.endStep(step);
 
@@ -565,6 +559,12 @@ public abstract class BaseMainSupport extends BaseService {
             autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
             recorder.endStep(step);
         }
+
+        // configure the profile with pre-configured settings
+        step = recorder.beginStep(BaseMainSupport.class, "configureMain", "Profile Configure");
+        doInitFileConfigurations(camelContext, mainConfigurationProperties);
+        ProfileConfigurer.configureMain(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties);
+        recorder.endStep(step);
 
         // configure main listener
         configureMainListener(camelContext);
@@ -1175,6 +1175,7 @@ public abstract class BaseMainSupport extends BaseService {
                 String path = FileUtil.onlyPath(loc);
                 if (path != null) {
                     String pattern = loc.length() > path.length() ? loc.substring(path.length() + 1) : null;
+                    LOG.debug("Discovering file configurations from directory: {} (pattern: {})", path, pattern);
                     File[] files = new File(path).listFiles(f -> matches(pattern, f.getName()));
                     if (files != null) {
                         for (File file : files) {

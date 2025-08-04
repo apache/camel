@@ -16,12 +16,15 @@
  */
 package org.apache.camel.main;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ManagementStrategy;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.CollectionHelper.propertiesOf;
@@ -205,6 +208,30 @@ public class MainTest {
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.configure().withDurationMaxSeconds(2);
         main.run();
+    }
+
+    @Test
+    public void testMainConfigurationFiles() throws Exception {
+        Main main = new Main();
+        final List<String> list = new ArrayList<>();
+        main.setPropertyPlaceholderLocations("myapp.properties");
+        main.configure().withDurationMaxMessages(1);
+        main.configure().addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("timer:foo?repeatCount=1").setBody(simple("{{hello}}")).process(e -> {
+                    list.add(e.getMessage().getBody(String.class));
+                });
+            }
+        });
+
+        main.run();
+
+        Assertions.assertEquals("MySpecialApp", main.getCamelContext().getName());
+        Assertions.assertEquals(1, list.size());
+        Assertions.assertEquals("Moon", list.get(0));
+
+        main.stop();
     }
 
     public static class MyRouteBuilder extends RouteBuilder {
