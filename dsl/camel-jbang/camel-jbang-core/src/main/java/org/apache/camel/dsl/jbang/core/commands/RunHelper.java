@@ -285,10 +285,10 @@ public final class RunHelper {
     /**
      * When using camel run . or camel export . then dot should include all the files in the current folder.
      */
-    public static void dotToFiles(List<String> files) {
+    public static void dirToFiles(String dir, List<String> files) {
         files.clear();
         try {
-            Files.list(Paths.get("."))
+            Files.list(Paths.get(dir))
                     .filter(p -> {
                         try {
                             return Files.isRegularFile(p) && !Files.isHidden(p);
@@ -296,7 +296,7 @@ public final class RunHelper {
                             return false;
                         }
                     })
-                    .forEach(p -> files.add(p.getFileName().toString()));
+                    .forEach(f -> files.add(dir + "/" + f.getFileName()));
         } catch (IOException e) {
             // Ignore
         }

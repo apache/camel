@@ -63,7 +63,7 @@ class ExportSpringBoot extends Export {
             return 1;
         }
 
-        Path profile = Path.of("application.properties");
+        Path profile = exportBaseDir.resolve("application.properties");
 
         // the settings file has information what to export
         Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);

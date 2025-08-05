@@ -78,6 +78,18 @@ public class SBOMGenerator extends Export {
 
     @Override
     protected Integer export() throws Exception {
+        exportBaseDir = Path.of(".");
+
+        // special if user type: camel run . or camel run dirName
+        if (files != null && files.size() == 1) {
+            String name = FileUtil.stripTrailingSeparator(files.get(0));
+            Path first = Path.of(name);
+            if (Files.isDirectory(first)) {
+                exportBaseDir = first;
+                RunHelper.dirToFiles(name, files);
+            }
+        }
+
         Integer answer = doExport();
         if (answer == 0) {
             Path buildDir = Paths.get(EXPORT_DIR);
@@ -149,7 +161,7 @@ public class SBOMGenerator extends Export {
 
     protected Integer doExport() throws Exception {
         // read runtime and gav from properties if not configured
-        Path profile = Paths.get("application.properties");
+        Path profile = exportBaseDir.resolve("application.properties");
         if (Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
@@ -181,13 +193,13 @@ public class SBOMGenerator extends Export {
 
         switch (runtime) {
             case springBoot -> {
-                return export(new ExportSpringBoot(getMain()));
+                return export(exportBaseDir, new ExportSpringBoot(getMain()));
             }
             case quarkus -> {
-                return export(new ExportQuarkus(getMain()));
+                return export(exportBaseDir, new ExportQuarkus(getMain()));
             }
             case main -> {
-                return export(new ExportCamelMain(getMain()));
+                return export(exportBaseDir, new ExportCamelMain(getMain()));
             }
             default -> {
                 printer().printErr("Unknown runtime: " + runtime);

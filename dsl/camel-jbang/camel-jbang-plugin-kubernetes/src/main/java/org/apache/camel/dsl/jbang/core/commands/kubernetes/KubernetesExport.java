@@ -37,6 +37,7 @@ import org.apache.camel.dsl.jbang.core.commands.Export;
 import org.apache.camel.dsl.jbang.core.commands.ExportBaseCommand;
 import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
@@ -48,6 +49,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.util.CamelCaseOrderedProperties;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -135,7 +137,7 @@ public class KubernetesExport extends Export {
 
     public KubernetesExport(CamelJBangMain main, String[] files) {
         super(main);
-        this.files = Arrays.asList(files);
+        this.files.addAll(Arrays.asList(files));
     }
 
     public KubernetesExport(CamelJBangMain main, ExportConfigurer configurer) {
@@ -144,6 +146,7 @@ public class KubernetesExport extends Export {
         runtime = configurer.runtime;
         quarkusVersion = configurer.quarkusVersion;
 
+        exportBaseDir = configurer.exportBaseDir;
         files = configurer.files;
         name = configurer.name;
         gav = configurer.gav;
@@ -187,6 +190,16 @@ public class KubernetesExport extends Export {
     public Integer export() throws Exception {
         if (runtime == null) {
             runtime = RuntimeType.quarkus;
+        }
+
+        // special if user type: camel run . or camel run dirName
+        if (files != null && files.size() == 1) {
+            String name = FileUtil.stripTrailingSeparator(files.get(0));
+            Path first = Path.of(name);
+            if (Files.isDirectory(first)) {
+                exportBaseDir = first;
+                RunHelper.dirToFiles(name, files);
+            }
         }
 
         printer().println("Exporting application ...");
@@ -275,7 +288,8 @@ public class KubernetesExport extends Export {
         var applicationProfileProperties = new String[0];
         if (this.profile != null) {
             // override from profile specific configuration
-            applicationProfileProperties = extractPropertiesTraits(Paths.get("application-" + profile + ".properties"));
+            applicationProfileProperties
+                    = extractPropertiesTraits(exportBaseDir.resolve("application-" + profile + ".properties"));
         }
 
         Traits traitsSpec = getTraitSpec(applicationProfileProperties, applicationProperties);
@@ -395,7 +409,7 @@ public class KubernetesExport extends Export {
         return 0;
     }
 
-    protected Integer export(ExportBaseCommand cmd) throws Exception {
+    protected Integer export(Path exportBaseDir, ExportBaseCommand cmd) throws Exception {
         if (runtime == RuntimeType.quarkus) {
             cmd.pomTemplateName = "quarkus-kubernetes-pom.tmpl";
         }
@@ -405,7 +419,7 @@ public class KubernetesExport extends Export {
         if (runtime == RuntimeType.main) {
             cmd.pomTemplateName = "main-kubernetes-pom.tmpl";
         }
-        return super.export(cmd);
+        return super.export(exportBaseDir, cmd);
     }
 
     protected Traits getTraitSpec(String[] applicationProfileProperties, String[] applicationProperties) {
@@ -588,6 +602,7 @@ public class KubernetesExport extends Export {
      * Configurer used to customize internal options for the Export command.
      */
     public record ExportConfigurer(RuntimeType runtime,
+            Path exportBaseDir,
             String quarkusVersion,
             List<String> files,
             String name,

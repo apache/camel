@@ -111,6 +111,7 @@ public class Run extends CamelCommand {
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
     public boolean exportRun;
+    protected Path exportBaseDir;
     boolean scriptRun;
     boolean transformRun;
     boolean transformMessageRun;
@@ -429,10 +430,10 @@ public class Run extends CamelCommand {
         }
     }
 
-    private Properties loadProfileProperties(Path source) throws Exception {
+    private Properties loadProfilePropertiesFile(Path file) throws Exception {
         Properties prop = new CamelCaseOrderedProperties();
-        if (Files.exists(source)) {
-            try (InputStream is = Files.newInputStream(source)) {
+        if (Files.exists(file)) {
+            try (InputStream is = Files.newInputStream(file)) {
                 prop.load(is);
             }
         }
@@ -463,9 +464,16 @@ public class Run extends CamelCommand {
             return 1;
         }
 
-        // special if user type: camel run .
-        if (sourceDir == null && (files != null && files.size() == 1 && ".".equals(files.get(0)))) {
-            RunHelper.dotToFiles(files);
+        Path baseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
+
+        // special if user type: camel run . or camel run dirName
+        if (sourceDir == null && files != null && files.size() == 1) {
+            String name = FileUtil.stripTrailingSeparator(files.get(0));
+            Path first = Path.of(name);
+            if (Files.isDirectory(first)) {
+                baseDir = first;
+                RunHelper.dirToFiles(name, files);
+            }
         }
 
         if (!exportRun) {
@@ -486,8 +494,8 @@ public class Run extends CamelCommand {
             }
         }
 
-        Properties profileProperties = !empty ? loadProfileProperties() : null;
-        configureLogging();
+        Properties profileProperties = !empty ? loadProfileProperties(baseDir) : null;
+        configureLogging(baseDir);
         if (openapi != null) {
             generateOpenApi();
         }
@@ -719,21 +727,21 @@ public class Run extends CamelCommand {
 
         // if we only run pom.xml/build.gradle then auto discover from the Maven/Gradle based project
         if (files.size() == 1 && (files.get(0).endsWith("pom.xml") || files.get(0).endsWith("build.gradle"))) {
-            Path projectDescriptorPath = Path.of(files.get(0)).toAbsolutePath();
+            Path projectDir = Path.of(files.get(0)).toAbsolutePath();
             // use a better name when running
             if (name == null || "CamelJBang".equals(name)) {
-                name = RunHelper.mavenArtifactId(projectDescriptorPath);
+                name = RunHelper.mavenArtifactId(projectDir);
             }
             // find source files
-            files = RunHelper.scanMavenOrGradleProject(projectDescriptorPath.getParent());
+            files = RunHelper.scanMavenOrGradleProject(projectDir.getParent());
             // include extra dependencies from pom.xml
-            var pomDependencies = RunHelper.scanMavenDependenciesFromPom(projectDescriptorPath);
+            var pomDependencies = RunHelper.scanMavenDependenciesFromPom(projectDir);
             addDependencies(pomDependencies.toArray(new String[0]));
         }
 
         if (profile != null) {
             // need to include profile application properties if exists
-            String name = "application-" + profile + ".properties";
+            String name = baseDir + "/application-" + profile + ".properties";
             if (Files.exists(Paths.get(name)) && !files.contains(name)) {
                 files.add(name);
             }
@@ -1274,7 +1282,7 @@ public class Run extends CamelCommand {
         }
     }
 
-    private Properties loadProfileProperties() throws Exception {
+    private Properties loadProfileProperties(Path baseDir) throws Exception {
         Properties answer = null;
 
         if (transformMessageRun) {
@@ -1287,7 +1295,7 @@ public class Run extends CamelCommand {
         if (sourceDir != null) {
             profilePropertiesPath = Paths.get(sourceDir).resolve("application.properties");
         } else {
-            profilePropertiesPath = Paths.get("application.properties");
+            profilePropertiesPath = baseDir.resolve("application.properties");
         }
         // based application-profile.properties
         answer = doLoadAndInitProfileProperties(profilePropertiesPath);
@@ -1318,7 +1326,7 @@ public class Run extends CamelCommand {
     private Properties doLoadAndInitProfileProperties(Path profilePropertiesPath) throws Exception {
         Properties answer = null;
         if (Files.exists(profilePropertiesPath)) {
-            answer = this.loadProfileProperties((Path) profilePropertiesPath);
+            answer = loadProfilePropertiesFile(profilePropertiesPath);
             // logging level/color may be configured in the properties file
             loggingLevel = answer.getProperty("loggingLevel", loggingLevel);
             loggingColor
@@ -1765,10 +1773,10 @@ public class Run extends CamelCommand {
         return main;
     }
 
-    private void configureLogging() throws Exception {
+    private void configureLogging(Path baseDir) throws Exception {
         if (logging) {
             // allow to configure individual logging levels in application.properties
-            Properties prop = loadProfileProperties();
+            Properties prop = loadProfileProperties(baseDir);
             if (prop != null) {
                 for (Object obj : prop.keySet()) {
                     String key = obj.toString();

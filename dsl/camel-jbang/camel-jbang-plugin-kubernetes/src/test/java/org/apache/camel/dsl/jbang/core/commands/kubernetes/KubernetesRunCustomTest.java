@@ -75,7 +75,7 @@ class KubernetesRunCustomTest {
     public void disableAutomaticClusterDetection() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsOpenshift();
-        KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--disable-auto");
         int exit = command.doCall();
@@ -93,7 +93,7 @@ class KubernetesRunCustomTest {
     public void detectOpenshiftCluster() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsOpenshift();
-        KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml", "--verbose");
         int exit = command.doCall();
 
@@ -113,7 +113,7 @@ class KubernetesRunCustomTest {
     public void detectMinikubeCluster() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsMinikube();
-        KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
         int exit = command.doCall();
 
@@ -135,7 +135,7 @@ class KubernetesRunCustomTest {
     public void shouldGenerateKnativeService() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsMinikube();
-        KubernetesRun command = createCommand(new String[] { "classpath:route-service.yaml" },
+        KubernetesRun command = createCommand(List.of("classpath:route-service.yaml"),
                 "--trait", "knative-service.enabled=true",
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
         int exit = command.doCall();
@@ -167,7 +167,7 @@ class KubernetesRunCustomTest {
     public void shouldGenerateRegularService() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsMinikube();
-        KubernetesRun command = createCommand(new String[] { "classpath:route-service.yaml" },
+        KubernetesRun command = createCommand(List.of("classpath:route-service.yaml"),
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
         int exit = command.doCall();
 
@@ -221,7 +221,7 @@ class KubernetesRunCustomTest {
                 .always();
     }
 
-    private KubernetesRun createCommand(String[] files, String... args) {
+    private KubernetesRun createCommand(List<String> files, String... args) {
         var argsArr = Optional.ofNullable(args).orElse(new String[0]);
         var argsLst = new ArrayList<>(Arrays.asList(argsArr));
         var jbangMain = new CamelJBangMain().withPrinter(printer);
