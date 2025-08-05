@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.FileFilter;
@@ -24,8 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
@@ -38,6 +37,7 @@ import io.vertx.core.file.FileSystemOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
@@ -59,9 +59,11 @@ import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelp
 @CommandLine.Command(name = "run", description = "Run Camel application on Kubernetes", sortOptions = false)
 public class KubernetesRun extends KubernetesBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel file(s) to run.",
-                            arity = "0..9", paramLabel = "<files>")
-    String[] filePaths;
+    @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
+                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
+    Path[] filePaths; // Defined only for file path completion; the field never used
+
+    public List<String> files = new ArrayList<>();
 
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
     String serviceAccount;
@@ -281,30 +283,41 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private int devModeReloadCount;
 
     private KubernetesPodLogs reusablePodLogs;
-
     private Printer quietPrinter;
 
     public KubernetesRun(CamelJBangMain main) {
         this(main, null);
     }
 
-    public KubernetesRun(CamelJBangMain main, String[] files) {
+    public KubernetesRun(CamelJBangMain main, List<String> files) {
         super(main);
-        filePaths = files;
+        if (files != null) {
+            this.files.addAll(files);
+        }
         projectNameSuppliers.add(() -> projectNameFromImage(() -> image));
         projectNameSuppliers.add(() -> projectNameFromGav(() -> gav));
-        projectNameSuppliers.add(() -> projectNameFromFilePath(() -> firstFilePath()));
+        projectNameSuppliers.add(() -> projectNameFromFilePath(this::firstFilePath));
     }
 
     private String firstFilePath() {
-        return filePaths != null && filePaths.length > 0 ? filePaths[0] : null;
+        return !files.isEmpty() ? files.get(0) : null;
     }
 
     public Integer doCall() throws Exception {
         String projectName = getProjectName();
 
+        Path baseDir = Path.of(".");
+        if (files.size() == 1) {
+            String name = FileUtil.stripTrailingSeparator(files.get(0));
+            Path first = Path.of(name);
+            if (Files.isDirectory(first)) {
+                baseDir = first;
+                RunHelper.dirToFiles(name, files);
+            }
+        }
+
         String workingDir = getIndexedWorkingDir(projectName);
-        KubernetesExport export = configureExport(workingDir);
+        KubernetesExport export = configureExport(workingDir, baseDir);
         int exit = export.export();
         if (exit != 0) {
             printer().printErr("Project export failed!");
@@ -361,7 +374,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (dev) {
-            setupDevMode(projectName, workingDir);
+            setupDevMode(projectName, workingDir, baseDir);
         }
 
         if (dev || logs) {
@@ -379,12 +392,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return workingDir;
     }
 
-    private KubernetesExport configureExport(String workingDir) {
+    private KubernetesExport configureExport(String workingDir, Path baseDir) {
         detectCluster();
         KubernetesExport.ExportConfigurer configurer = new KubernetesExport.ExportConfigurer(
                 runtime,
+                baseDir,
                 quarkusVersion,
-                List.of(filePaths),
+                files,
                 name,
                 gav,
                 repositories,
@@ -446,7 +460,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return export;
     }
 
-    private void setupDevMode(String projectName, String workingDir) throws Exception {
+    private void setupDevMode(String projectName, String workingDir, Path baseDir) throws Exception {
         String firstPath = firstFilePath();
 
         String watchDir = ".";
@@ -457,7 +471,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 watchDir = filePath;
             }
 
-            filter = pathname -> Arrays.stream(filePaths)
+            filter = pathname -> files.stream()
                     .map(FileUtil::stripPath)
                     .anyMatch(name -> name.equals(pathname.getName()));
         }
@@ -475,7 +489,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
                 // Re-export updated project
                 //
-                KubernetesExport export = configureExport(reloadWorkingDir);
+                KubernetesExport export = configureExport(reloadWorkingDir, baseDir);
                 int exit = export.export();
                 if (exit != 0) {
                     printer().printErr("Project (re)export failed for: %s".formatted(reloadWorkingDir));
@@ -508,7 +522,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 // Recursively setup --dev mode for updated project
                 //
                 Runtime.getRuntime().removeShutdownHook(devModeShutdownTask);
-                setupDevMode(projectName, reloadWorkingDir);
+                setupDevMode(projectName, reloadWorkingDir, baseDir);
 
                 printer().printf("Project reloaded: %s%n", reloadWorkingDir);
             }
@@ -720,7 +734,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
         // wait for that process to exit as we run in foreground
         int exit = p.waitFor();
         if (exit != 0) {
-            printer().printErr("Deployment to %s failed!".formatted(clusterType));
+            String msg = "Deployment to %s failed!";
+            if (!verbose) {
+                msg += " (use --verbose for more details)";
+            }
+            printer().printErr(msg.formatted(clusterType));
             return exit;
         }
 
@@ -730,7 +748,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private void detectCluster() {
         if (!disableAuto) {
             if (verbose) {
-                printer().print("Automatic kubernetes cluster detection... ");
+                printer().print("Automatic Kubernetes cluster detection... ");
             }
             ClusterType cluster = KubernetesHelper.discoverClusterType();
             this.clusterType = cluster.name();
@@ -756,4 +774,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
         return super.printer();
     }
+
+    static class FilesConsumer extends ParameterConsumer<KubernetesRun> {
+        @Override
+        protected void doConsumeParameters(Stack<String> args, KubernetesRun cmd) {
+            String arg = args.pop();
+            cmd.files.add(arg);
+        }
+    }
+
 }

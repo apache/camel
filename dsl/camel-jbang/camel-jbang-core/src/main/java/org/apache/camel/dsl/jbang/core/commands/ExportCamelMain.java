@@ -76,7 +76,7 @@ class ExportCamelMain extends Export {
 
         printer().println("Exporting as Camel Main project to: " + exportDir);
 
-        Path profile = Path.of("application.properties");
+        Path profile = exportBaseDir.resolve("application.properties");
 
         // use a temporary work dir
         Path buildDir = Path.of(BUILD_DIR);

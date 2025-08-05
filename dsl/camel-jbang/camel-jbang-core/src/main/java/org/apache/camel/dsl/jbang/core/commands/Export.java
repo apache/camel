@@ -60,11 +60,23 @@ public class Export extends ExportBaseCommand {
     }
 
     protected Integer doExport() throws Exception {
+        Path baseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
+
+        // special if user type: camel run . or camel run dirName
+        if (files != null && files.size() == 1) {
+            String name = FileUtil.stripTrailingSeparator(files.get(0));
+            Path first = Path.of(name);
+            if (Files.isDirectory(first)) {
+                baseDir = first;
+                RunHelper.dirToFiles(name, files);
+            }
+        }
+
         // application.properties
-        doLoadAndInitProfileProperties(Paths.get("application.properties"));
+        doLoadAndInitProfileProperties(baseDir.resolve("application.properties"));
         if (profile != null) {
             // override from profile specific configuration
-            doLoadAndInitProfileProperties(Paths.get("application-" + profile + ".properties"));
+            doLoadAndInitProfileProperties(baseDir.resolve("application-" + profile + ".properties"));
         }
 
         if (runtime == null) {
@@ -90,13 +102,13 @@ public class Export extends ExportBaseCommand {
 
         switch (runtime) {
             case springBoot -> {
-                return export(new ExportSpringBoot(getMain()));
+                return export(baseDir, new ExportSpringBoot(getMain()));
             }
             case quarkus -> {
-                return export(new ExportQuarkus(getMain()));
+                return export(baseDir, new ExportQuarkus(getMain()));
             }
             case main -> {
-                return export(new ExportCamelMain(getMain()));
+                return export(baseDir, new ExportCamelMain(getMain()));
             }
             default -> {
                 printer().printErr("Unknown runtime: " + runtime);
@@ -163,8 +175,9 @@ public class Export extends ExportBaseCommand {
         }
     }
 
-    protected Integer export(ExportBaseCommand cmd) throws Exception {
+    protected Integer export(Path exportBaseDir, ExportBaseCommand cmd) throws Exception {
         // copy properties from this to cmd
+        cmd.exportBaseDir = exportBaseDir;
         cmd.files = this.files;
         cmd.repositories = this.repositories;
         cmd.dependencies = this.dependencies;
@@ -226,12 +239,7 @@ public class Export extends ExportBaseCommand {
             }
         }
 
-        // special if user type: camel export .
-        if (files.size() == 1 && ".".equals(files.get(0))) {
-            RunHelper.dotToFiles(files);
-        }
-
-        if (!files.isEmpty()) {
+        if (files != null && !files.isEmpty()) {
             return FileUtil.onlyName(SourceScheme.onlyName(files.get(0)));
         }
 

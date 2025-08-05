@@ -65,8 +65,8 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldHandleMissingSourceFile(RuntimeType rt) throws Exception {
-        KubernetesRun command = createCommand(new String[] { "mickey-mouse.groovy" },
-                "--output=yaml", "--runtime=" + rt.runtime());
+        KubernetesRun command = createCommand(List.of("mickey-mouse.groovy"),
+                "--disable-auto=true", "--output=yaml", "--runtime=" + rt.runtime());
         int exit = command.doCall();
 
         Assertions.assertEquals(1, exit);
@@ -77,8 +77,8 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateKubernetesManifest(RuntimeType rt) throws Exception {
-        KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
-                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+                "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--trait", "container.image-pull-policy=IfNotPresent",
                 "--runtime=" + rt.runtime());
         int exit = command.doCall();
@@ -121,8 +121,8 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldHandleUnsupportedOutputFormat(RuntimeType rt) throws Exception {
-        KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
-                "--output=wrong", "--runtime=" + rt.runtime());
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+                "--disable-auto=true", "--output=wrong", "--runtime=" + rt.runtime());
 
         Assertions.assertEquals(1, command.doCall());
         Assertions.assertTrue(printer.getOutput().endsWith("ERROR: Unsupported output format 'wrong' (supported: yaml, json)"));
@@ -131,8 +131,8 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateKubernetesNamespace(RuntimeType rt) throws Exception {
-        KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
-                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+                "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--namespace", "custom",
                 "--runtime=" + rt.runtime());
         int exit = command.doCall();
@@ -161,7 +161,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
     }
 
-    private KubernetesRun createCommand(String[] files, String... args) {
+    private KubernetesRun createCommand(List<String> files, String... args) {
         var argsArr = Optional.ofNullable(args).orElse(new String[0]);
         var argsLst = new ArrayList<>(Arrays.asList(argsArr));
         var jbangMain = new CamelJBangMain().withPrinter(printer);

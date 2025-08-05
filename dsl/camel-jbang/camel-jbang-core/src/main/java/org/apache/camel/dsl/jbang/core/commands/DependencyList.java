@@ -37,6 +37,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.XmlHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
+import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "list",
@@ -66,12 +67,15 @@ public class DependencyList extends Export {
             return 1;
         }
 
-        // automatic detect maven/gradle based projects and use that
-        if (files.isEmpty()) {
-            if (Files.exists(Paths.get("pom.xml"))) {
-                files.add("pom.xml");
-            } else if (Files.exists(Paths.get("build.gradle"))) {
-                files.add("build.gradle");
+        exportBaseDir = Path.of(".");
+
+        // special if user type: camel run . or camel run dirName
+        if (files != null && files.size() == 1) {
+            String name = FileUtil.stripTrailingSeparator(files.get(0));
+            Path first = Path.of(name);
+            if (Files.isDirectory(first)) {
+                exportBaseDir = first;
+                RunHelper.dirToFiles(name, files);
             }
         }
 
@@ -218,7 +222,7 @@ public class DependencyList extends Export {
 
     protected Integer doExport() throws Exception {
         // read runtime and gav from properties if not configured
-        Path profile = Paths.get("application.properties");
+        Path profile = exportBaseDir.resolve("application.properties");
         if (Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();
             try (InputStream is = Files.newInputStream(profile)) {
@@ -255,13 +259,13 @@ public class DependencyList extends Export {
         // turn off noise
         switch (runtime) {
             case springBoot -> {
-                return export(new ExportSpringBoot(getMain()));
+                return export(exportBaseDir, new ExportSpringBoot(getMain()));
             }
             case quarkus -> {
-                return export(new ExportQuarkus(getMain()));
+                return export(exportBaseDir, new ExportQuarkus(getMain()));
             }
             case main -> {
-                return export(new ExportCamelMain(getMain()));
+                return export(exportBaseDir, new ExportCamelMain(getMain()));
             }
             default -> {
                 printer().printErr("Unknown runtime: " + runtime);

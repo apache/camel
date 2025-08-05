@@ -91,8 +91,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
+    protected Path exportBaseDir;
     private MavenDownloader downloader;
-
     private Printer quietPrinter;
 
     @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
@@ -357,6 +357,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean, boolean verbose) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
+        run.exportBaseDir = exportBaseDir;
         run.dependencies = dependencies;
         run.files = files;
         run.name = name;
@@ -1116,7 +1117,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return dependency;
     }
 
-    protected static MavenGav parseMavenGav(String dep) {
+    protected MavenGav parseMavenGav(String dep) {
         MavenGav gav;
         if (dep.startsWith("lib:") && dep.endsWith(".jar")) {
             // lib:commons-lang3-3.12.0.jar
@@ -1145,8 +1146,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return gav;
     }
 
-    private static MavenGav parseLocalJar(String dep) {
-        Path path = Paths.get(dep + ".jar");
+    private MavenGav parseLocalJar(String dep) {
+        Path path = exportBaseDir.resolve(dep + ".jar");
         if (!Files.isRegularFile(path) || !Files.exists(path)) {
             return null;
         }
@@ -1219,7 +1220,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected void copyApplicationPropertiesFiles(Path srcResourcesDir) throws Exception {
         try {
-            Files.list(Paths.get("."))
+            Files.list(exportBaseDir)
                     .filter(p -> Files.isRegularFile(p))
                     .filter(p -> {
                         String fileName = p.getFileName().toString();

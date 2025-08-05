@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.FileInputStream;
@@ -125,6 +124,32 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("org.example.project", model.getGroupId());
         Assertions.assertEquals("proj-name", model.getArtifactId());
         Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateProjectFromDir(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "src/test/resources/myapp" },
+                "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("eclipse-temurin:21", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
+        Assertions.assertNull(props.get("jkube.docker.push.registry"));
+        Assertions.assertNull(props.get("jkube.container-image.registry"));
+        Assertions.assertNull(props.get("jkube.container-image.platforms"));
+
+        Properties applicationProperties = getApplicationProperties(workingDir);
+        Assertions.assertEquals("MySuperApp", applicationProperties.getProperty("camel.main.name"));
     }
 
     @ParameterizedTest
