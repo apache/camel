@@ -28,7 +28,7 @@ by just executing `camel` (see more next).
 
 Note: It requires access to the internet, in case of using a proxy, please ensure that the proxy is configured for your system.
 If Camel JBang is not working with your current configuration,
-please look to https://www.jbang.dev/documentation/guide/latest/configuration.html#proxy-configuration[Proxy configuration in JBang documentation].
+please look to https://www.jbang.dev/documentation/jbang/latest/configuration.html#proxy-configuration[Proxy configuration in JBang documentation].
 
 == Container Image
 
