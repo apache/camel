@@ -58,9 +58,9 @@ public class DevModeITCase extends JBangTestSupport {
         checkLogContains(DEFAULT_MSG);
         final HttpResponse<String> res = getDevRequest("");
         Assertions.assertThat(res.statusCode()).as("dev console status code").isEqualTo(200);
-        final HttpResponse<String> health = getDevRequest("/health");
+        final HttpResponse<String> health = getObserve("/health");
         Assertions.assertThat(health.statusCode()).as("dev console health status code").isEqualTo(200);
-        Assertions.assertThat(health.body()).as("health status is UP").contains("Health Check Status: UP");
+        Assertions.assertThat(health.body()).as("health status is UP").contains("UP");
         final HttpResponse<String> top = getDevRequest("/top");
         Assertions.assertThat(top.statusCode()).as("dev console top status code").isEqualTo(200);
         Assertions.assertThat(top.body()).as("top contains route").contains("Route Id: route1");
@@ -132,4 +132,22 @@ public class DevModeITCase extends JBangTestSupport {
             throw new RuntimeException(e);
         }
     }
+
+    private HttpResponse<String> getObserve(final String ctxUrl) {
+        try {
+            return httpClient.send(HttpRequest
+                    .newBuilder(
+                            new URI(
+                                    String.format("http://localhost:%s/observe%s", containerService.getDevConsolePort(),
+                                            ctxUrl)))
+                    .timeout(Duration.ofSeconds(5))
+                    .GET()
+                    .build(),
+                    HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException | URISyntaxException e) {
+            Assertions.fail("unable to call observe");
+            throw new RuntimeException(e);
+        }
+    }
+
 }
