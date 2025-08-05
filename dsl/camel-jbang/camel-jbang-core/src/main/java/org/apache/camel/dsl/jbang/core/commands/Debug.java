@@ -349,6 +349,11 @@ public class Debug extends Run {
         return version == null || VersionHelper.isGE(version, "4.8.3");
     }
 
+    private static boolean isSkipOverSupported(String version) {
+        // skip-over is Camel 4.14 or better
+        return version == null || VersionHelper.isGE(version, "4.14.0");
+    }
+
     private void printDebugStatus(long pid, StringWriter buffer) {
         JsonObject jo = loadDebug(pid);
         if (jo != null) {
@@ -496,8 +501,10 @@ public class Debug extends Run {
                 }
 
                 String msg;
-                if (!first && isStepOverSupported(version)) {
+                if (!first && isSkipOverSupported(version)) {
                     msg = "    Breakpoint suspended (i = step into (default), o = step over, s = skip over). Press ENTER to continue (q = quit).";
+                } else if (!first && isStepOverSupported(version)) {
+                    msg = "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue (q = quit).";
                 } else {
                     msg = "    Breakpoint suspended. Press ENTER to continue (q = quit).";
                 }
