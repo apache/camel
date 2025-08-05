@@ -11,6 +11,7 @@
 
 This module is a common interface and API for distributed tracing/telemetry. It is not intended to be used directly by end users. This component is implemented concretely in following dependencies:
 
+* camel-opentelemetry2
 * camel-telemetry-dev
 
 Tracing an application in a distributed deployment is an important feature supported by Camel. As there are plenty of potential telemetry implementation out there we have created an abstract component whose goal is to define the structure and lifecycle of a trace from Camel point of view. This component acts as a trace manager, making sure that regardless of the concrete technology used, the traces are consistently treated by Camel applications.
@@ -88,7 +89,25 @@ The component provide the possibility to exclude the trace of any component when
 
 The component automatically includes certain useful parameter out of the box for the different components you may use within Camel. As an example, if you're using the Kafka component (`camel-kafka`), then, it will include in the Kafka endpoint span a few useful information such as *partition* or *offset* which you will be able to verify later in the trace collector.
 
-NOTE: more information about each decorator in the telemetry component code repository.
+==== Implement a new component decorator
+
+You can customize each component by adding or updating the specific decorator class contained in this package. Each class should extend either `AbstractSpanDecorator`, `AbstractInternalSpanDecorator`, `AbstractHttpSpanDecorator` or `AbstractMessagingSpanDecorator`, depending on the component kind (for example, the components dealing with messaging should extend the abstract messaging class).
+
+There are two "identification" methods to override:
+
+* String getComponent()
+* String getComponentClassName()
+
+They are used to provide a component name and above all to identify the component to which this decorator is bound (via its fully qualified class name).
+
+Additionally you can alter the trace extending the following methods:
+
+* void beforeTracingEvent(...);
+* void afterTracingEvent(...);
+
+These methods are the ones in charge to alter the trace before and after it reaches the telemetry endpoint (hence, altering it accordingly).
+
+Beside that you will need to include the fully qualified name in the `resources/META-INF/services/org.apache.camel.telemetry.SpanDecorator` service provider file. This is the mechanism used by the telemetry component to load dynamically the available decorators which will be matched by the component fully qualified class name.
 
 === Distributed Tracing
 
