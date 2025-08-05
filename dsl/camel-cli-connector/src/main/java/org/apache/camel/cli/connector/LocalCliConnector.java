@@ -176,6 +176,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             return new Thread(r, threadName);
         });
 
+        // make it go faster in debug mode
+        if (camelContext.isDebugging()) {
+            delay = 100;
+        }
+
         lockFile = createLockFile(getPid());
         if (lockFile != null) {
             statusFile = createLockFile(lockFile.getName() + "-status.json");
