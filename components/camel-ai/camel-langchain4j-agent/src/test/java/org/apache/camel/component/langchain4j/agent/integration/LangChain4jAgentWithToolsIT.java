@@ -16,21 +16,23 @@
  */
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.util.List;
+
 import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.agent.AiAgentBody;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
-import static java.time.Duration.ofSeconds;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "OPENAI_API_KEY", matches = ".*", disabledReason = "OpenAI API key required")
+@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#environmentWithoutEmbeddings")
 public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
 
     private static final String USER_DB_NAME = "John Doe";
@@ -45,22 +47,7 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        openAiApiKey = System.getenv("OPENAI_API_KEY");
-        if (openAiApiKey == null || openAiApiKey.trim().isEmpty()) {
-            throw new IllegalStateException("OPENAI_API_KEY system property is required for testing");
-        }
-        chatModel = createModel();
-    }
-
-    protected ChatModel createModel() {
-        return OpenAiChatModel.builder()
-                .apiKey(openAiApiKey)
-                .modelName(GPT_4_O_MINI)
-                .temperature(1.0)
-                .timeout(ofSeconds(60))
-                .logRequests(true)
-                .logResponses(true)
-                .build();
+        chatModel = ModelHelper.loadFromEnv();
     }
 
     @Test
@@ -159,32 +146,41 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        this.context.getRegistry().bind("chatModel", chatModel);
+        // Create agent configuration for tools testing (no memory, RAG, or guardrails)
+        AgentConfiguration configuration = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withInputGuardrailClasses(List.of())
+                .withOutputGuardrailClasses(List.of());
+
+        Agent agentWithTools = new AgentWithoutMemory(configuration);
+
+        // Register agent in the context
+        this.context.getRegistry().bind("agentWithTools", agentWithTools);
 
         return new RouteBuilder() {
             public void configure() {
                 from("direct:agent-with-user-tools")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel&tags=users")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithTools&tags=users")
                         .to("mock:agent-response");
 
                 from("direct:agent-with-weather-tools")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel&tags=weather")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithTools&tags=weather")
                         .to("mock:agent-response");
 
                 from("direct:agent-with-multiple-tools")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel&tags=users,weather")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithTools&tags=users,weather")
                         .to("mock:agent-response");
 
                 from("direct:agent-with-configured-tags")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel&tags=weather")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithTools&tags=weather")
                         .to("mock:agent-response");
 
                 from("direct:agent-without-tools")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithTools")
                         .to("mock:agent-response");
 
                 from("direct:agent-check-no-tools")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel&tags=nonexistent")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithTools&tags=nonexistent")
                         .to("mock:check-no-tools");
 
                 from("langchain4j-tools:userDb?tags=users&description=Query user database by user ID&parameter.userId=integer")

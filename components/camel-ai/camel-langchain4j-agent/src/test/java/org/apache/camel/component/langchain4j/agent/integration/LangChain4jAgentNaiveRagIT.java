@@ -16,16 +16,21 @@
  */
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.util.List;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.Headers.SYSTEM_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "OPENAI_API_KEY", matches = ".*", disabledReason = "OpenAI API key required")
+@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#isEmbeddingCapable")
 public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
 
     private static final String SYSTEM_MESSAGE_CUSTOMER_SERVICE
@@ -147,13 +152,22 @@ public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        this.context.getRegistry().bind("chatModel", chatModel);
-        this.context.getRegistry().bind("retrievalAugmentor", retrievalAugmentor);
+        // Create agent configuration with RAG support
+        AgentConfiguration configuration = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withRetrievalAugmentor(retrievalAugmentor)
+                .withInputGuardrailClasses(List.of())
+                .withOutputGuardrailClasses(List.of());
+
+        Agent agentWithRag = new AgentWithoutMemory(configuration);
+
+        // Register agent in the context
+        this.context.getRegistry().bind("agentWithRag", agentWithRag);
 
         return new RouteBuilder() {
             public void configure() {
                 from("direct:agent-with-rag")
-                        .to("langchain4j-agent:test-rag-agent?chatModel=#chatModel&retrievalAugmentor=#retrievalAugmentor")
+                        .to("langchain4j-agent:test-rag-agent?agent=#agentWithRag")
                         .to("mock:rag-response");
             }
         };

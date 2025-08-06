@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.langchain4j.agent;
+package org.apache.camel.component.langchain4j.agent.api;
+
+import dev.langchain4j.service.tool.ToolProvider;
+import org.apache.camel.component.langchain4j.agent.AiAgentBody;
 
 /**
  * Agent interface that abstracts the different types of AI agents (with or without memory). This interface provides a
@@ -22,7 +25,7 @@ package org.apache.camel.component.langchain4j.agent;
  *
  * This is an internal interface used only within the LangChain4j agent component.
  */
-interface Agent {
+public interface Agent {
 
     /**
      * Executes a chat interaction with the AI agent using the provided body.
@@ -30,6 +33,6 @@ interface Agent {
      * @param  aiAgentBody the body containing user message, system message, and memory ID
      * @return             the AI agent's response
      */
-    String chat(AiAgentBody aiAgentBody);
+    String chat(AiAgentBody aiAgentBody, ToolProvider toolProvider);
 
 }

@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.langchain4j.agent;
 
+import java.util.List;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithMemory;
 import org.apache.camel.component.langchain4j.agent.pojos.PersistentChatMemoryStore;
 import org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -127,16 +132,21 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        this.context.getRegistry().bind("chatModel", chatModel);
-        this.context.getRegistry().bind("memoryProvider", chatMemoryProvider);
+        AgentConfiguration configuration = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withChatMemoryProvider(chatMemoryProvider)
+                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClasses(List.of());
+
+        Agent agent = new AgentWithMemory(configuration);
+
+        this.context.getRegistry().bind("agent", agent);
 
         return new RouteBuilder() {
             public void configure() {
                 //  Tools + Memory + Guardrails + RAG
                 from("direct:complete-agent")
-                        .to("langchain4j-agent:complete?chatModel=#chatModel&chatMemoryProvider=#memoryProvider&tags=users,weather"
-                            +
-                            "&inputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                        .to("langchain4j-agent:complete?agent=#agent&tags=users,weather")
                         .to("mock:agent-response");
 
                 // Tool routes for function calling

@@ -16,28 +16,29 @@
  */
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.util.List;
 import java.util.Map;
 
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithMemory;
 import org.apache.camel.component.langchain4j.agent.pojos.PersistentChatMemoryStore;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
-import static java.time.Duration.ofSeconds;
 import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.Headers.MEMORY_ID;
 import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.Headers.SYSTEM_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "OPENAI_API_KEY", matches = ".*", disabledReason = "OpenAI API key required")
+@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#environmentWithoutEmbeddings")
 public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
 
     private static final int MEMORY_ID_SESSION_1 = 1;
@@ -47,32 +48,15 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
 
     protected ChatModel chatModel;
     protected ChatMemoryProvider chatMemoryProvider;
-    private String openAiApiKey;
     private PersistentChatMemoryStore store;
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        openAiApiKey = System.getenv("OPENAI_API_KEY");
-        if (openAiApiKey == null || openAiApiKey.trim().isEmpty()) {
-            throw new IllegalStateException("OPENAI_API_KEY system property is required for testing");
-        }
-
-        chatModel = createModel();
+        chatModel = ModelHelper.loadFromEnv();
         store = new PersistentChatMemoryStore();
         chatMemoryProvider = createMemoryProvider();
-    }
-
-    protected ChatModel createModel() {
-        return OpenAiChatModel.builder()
-                .apiKey(openAiApiKey)
-                .modelName(GPT_4_O_MINI)
-                .temperature(1.0)
-                .timeout(ofSeconds(60))
-                .logRequests(true)
-                .logResponses(true)
-                .build();
     }
 
     protected ChatMemoryProvider createMemoryProvider() {
@@ -212,19 +196,27 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        this.context.getRegistry().bind("chatModel", chatModel);
+        // Create agent configuration with memory support
+        AgentConfiguration configuration = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withChatMemoryProvider(chatMemoryProvider)
+                .withInputGuardrailClasses(List.of())
+                .withOutputGuardrailClasses(List.of());
 
-        this.context.getRegistry().bind("chatMemoryProvider", chatMemoryProvider);
+        Agent agentWithMemory = new AgentWithMemory(configuration);
+
+        // Register agent in the context
+        this.context.getRegistry().bind("agentWithMemory", agentWithMemory);
 
         return new RouteBuilder() {
             public void configure() {
                 // Agent routes for memory testing
                 from("direct:agent-with-memory")
-                        .to("langchain4j-agent:test-memory-agent?chatModel=#chatModel&chatMemoryProvider=#chatMemoryProvider")
+                        .to("langchain4j-agent:test-memory-agent?agent=#agentWithMemory")
                         .to("mock:memory-response");
 
                 from("direct:agent-with-memory-system")
-                        .to("langchain4j-agent:test-memory-agent?chatModel=#chatModel&chatMemoryProvider=#chatMemoryProvider")
+                        .to("langchain4j-agent:test-memory-agent?agent=#agentWithMemory")
                         .to("mock:memory-response");
 
             }

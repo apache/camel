@@ -22,15 +22,13 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.agent.tool.ToolSpecification;
-import dev.langchain4j.memory.chat.ChatMemoryProvider;
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolExecutorCache;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
@@ -45,7 +43,6 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jAgentProducer.class);
 
     private final LangChain4jAgentEndpoint endpoint;
-    private ChatModel chatModel;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public LangChain4jAgentProducer(LangChain4jAgentEndpoint endpoint) {
@@ -58,30 +55,15 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         Object messagePayload = exchange.getIn().getBody();
         ObjectHelper.notNull(messagePayload, "body");
 
+        Agent agent = endpoint.getConfiguration().getAgent();
+
         AiAgentBody aiAgentBody = processBody(messagePayload, exchange);
-
-        // get chatMemory if specified
-        ChatMemoryProvider chatMemoryProvider = endpoint.getConfiguration().getChatMemoryProvider();
-        if (chatMemoryProvider != null) {
-            ObjectHelper.notNull(aiAgentBody.getMemoryId(), "memoryId");
-        }
-
-        // RetrievalAugmentor for naive or advanced RAG
-        RetrievalAugmentor retrievalAugmentor = endpoint.getConfiguration().getRetrievalAugmentor();
 
         // tags for Camel Routes as Tools
         String tags = endpoint.getConfiguration().getTags();
 
-        // Input Guardrails
-        List<Class<?>> inputGuardrailClasses = parseGuardrailClasses(endpoint.getConfiguration().getInputGuardrails());
-
-        // Output Guardrails
-        List<Class<?>> outputGuardrailClasses = parseGuardrailClasses(endpoint.getConfiguration().getOutputGuardrails());
-
-        // Create appropriate agent implementation based on memory requirements
-        Agent agent = createAgent(chatMemoryProvider, tags, retrievalAugmentor, inputGuardrailClasses, outputGuardrailClasses,
-                exchange);
-        String response = agent.chat(aiAgentBody);
+        ToolProvider toolProvider = createCamelToolProvider(tags, exchange);
+        String response = agent.chat(aiAgentBody, toolProvider);
         exchange.getMessage().setBody(response);
     }
 
@@ -103,36 +85,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
         Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
 
-        AiAgentBody aiAgentBody = new AiAgentBody((String) messagePayload, systemMessage, memoryId);
-        return aiAgentBody;
-
-    }
-
-    /**
-     * Creates the appropriate Agent implementation based on whether memory is required.
-     *
-     * @param  chatMemoryProvider     the memory provider, null if no memory is needed
-     * @param  tags                   the tags for tool discovery
-     * @param  retrievalAugmentor     the RAG augmentor
-     * @param  inputGuardrailClasses  input guardrail classes
-     * @param  outputGuardrailClasses output guardrail classes
-     * @param  exchange               the Camel exchange
-     * @return                        Agent implementation (with or without memory)
-     */
-    private Agent createAgent(
-            ChatMemoryProvider chatMemoryProvider, String tags, RetrievalAugmentor retrievalAugmentor,
-            List<Class<?>> inputGuardrailClasses, List<Class<?>> outputGuardrailClasses, Exchange exchange) {
-        ToolProvider toolProvider = createCamelToolProvider(tags, exchange);
-
-        if (chatMemoryProvider != null) {
-            return new AgentWithMemory(
-                    chatModel, chatMemoryProvider, tags, retrievalAugmentor,
-                    inputGuardrailClasses, outputGuardrailClasses, exchange, toolProvider);
-        } else {
-            return new AgentWithoutMemory(
-                    chatModel, tags, retrievalAugmentor,
-                    inputGuardrailClasses, outputGuardrailClasses, exchange, toolProvider);
-        }
+        return new AiAgentBody((String) messagePayload, systemMessage, memoryId);
     }
 
     /**
@@ -238,44 +191,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         return toolsByName;
     }
 
-    /**
-     * Parse comma-separated guardrail class names into a list of loaded classes.
-     *
-     * @param  guardrailClassNames comma-separated class names, can be null or empty
-     * @return                     list of loaded classes, empty list if input is null or empty
-     */
-    private List<Class<?>> parseGuardrailClasses(String guardrailClassNames) {
-        if (guardrailClassNames == null || guardrailClassNames.trim().isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        return Arrays.stream(guardrailClassNames.split(","))
-                .map(String::trim)
-                .filter(name -> !name.isEmpty())
-                .map(this::loadGuardrailClass)
-                .filter(clazz -> clazz != null)
-                .collect(java.util.stream.Collectors.toList());
-    }
-
-    /**
-     * Load a guardrail class by name.
-     *
-     * @param  className the fully qualified class name
-     * @return           the loaded class, or null if loading failed
-     */
-    private Class<?> loadGuardrailClass(String className) {
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            LOG.warn("Failed to load guardrail class: {}", className, e);
-            return null;
-        }
-    }
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.chatModel = this.endpoint.getConfiguration().getChatModel();
-        ObjectHelper.notNull(chatModel, "chatModel");
     }
 }
