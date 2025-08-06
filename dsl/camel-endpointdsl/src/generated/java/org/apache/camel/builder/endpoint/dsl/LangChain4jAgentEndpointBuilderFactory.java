@@ -17,11 +17,14 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 import javax.annotation.processing.Generated;
-
+import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.component.langchain4j.agent.api.Agent;
 
 /**
  * LangChain4j Agent component
@@ -45,14 +48,15 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * The agent to use for the component.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.langchain4j.agent.api.Agent</code> type.
+         * <code>org.apache.camel.component.langchain4j.agent.api.Agent</code>
+         * type.
          * 
          * Group: producer
          * 
          * @param agent the value to set
          * @return the dsl builder
          */
-        default LangChain4jAgentEndpointBuilder agent(Agent agent) {
+        default LangChain4jAgentEndpointBuilder agent(org.apache.camel.component.langchain4j.agent.api.Agent agent) {
             doSetProperty("agent", agent);
             return this;
         }
@@ -60,7 +64,8 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          * The agent to use for the component.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.langchain4j.agent.api.Agent</code> type.
+         * <code>org.apache.camel.component.langchain4j.agent.api.Agent</code>
+         * type.
          * 
          * Group: producer
          * 
