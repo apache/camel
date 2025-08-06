@@ -16,23 +16,25 @@
  */
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.util.List;
+
 import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.agent.AiAgentBody;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
-import static java.time.Duration.ofSeconds;
 import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.Headers.SYSTEM_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "OPENAI_API_KEY", matches = ".*", disabledReason = "OpenAI API key required")
+@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#environmentWithoutEmbeddings")
 public class LangChain4jSimpleAgentIT extends CamelTestSupport {
 
     // Test constants
@@ -46,28 +48,11 @@ public class LangChain4jSimpleAgentIT extends CamelTestSupport {
 
     protected ChatModel chatModel;
 
-    private String openAiApiKey;
-
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        openAiApiKey = System.getenv("OPENAI_API_KEY");
-        if (openAiApiKey == null || openAiApiKey.trim().isEmpty()) {
-            throw new IllegalStateException("OPENAI_API_KEY environment variable is required for testing");
-        }
-        chatModel = createModel();
-    }
-
-    protected ChatModel createModel() {
-        return OpenAiChatModel.builder()
-                .apiKey(openAiApiKey)
-                .modelName(GPT_4_O_MINI)
-                .temperature(1.0)
-                .timeout(ofSeconds(60))
-                .logRequests(true)
-                .logResponses(true)
-                .build();
+        chatModel = ModelHelper.loadFromEnv();
     }
 
     @Test
@@ -118,12 +103,21 @@ public class LangChain4jSimpleAgentIT extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        this.context.getRegistry().bind("chatModel", chatModel);
+        // Create simple agent configuration (no memory, tools, RAG, or guardrails)
+        AgentConfiguration configuration = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withInputGuardrailClasses(List.of())
+                .withOutputGuardrailClasses(List.of());
+
+        Agent simpleAgent = new AgentWithoutMemory(configuration);
+
+        // Register agent in the context
+        this.context.getRegistry().bind("simpleAgent", simpleAgent);
 
         return new RouteBuilder() {
             public void configure() {
                 from("direct:send-simple-user-message")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel")
+                        .to("langchain4j-agent:test-agent?agent=#simpleAgent")
                         .to("mock:response");
             }
         };

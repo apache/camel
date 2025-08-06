@@ -30,21 +30,12 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jAgentComponent target = (LangChain4jAgentComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "agent": getOrCreateConfiguration(target).setAgent(property(camelContext, org.apache.camel.component.langchain4j.agent.api.Agent.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
-        case "chatmemoryprovider":
-        case "chatMemoryProvider": getOrCreateConfiguration(target).setChatMemoryProvider(property(camelContext, dev.langchain4j.memory.chat.ChatMemoryProvider.class, value)); return true;
-        case "chatmodel":
-        case "chatModel": getOrCreateConfiguration(target).setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatModel.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class, value)); return true;
-        case "inputguardrails":
-        case "inputGuardrails": getOrCreateConfiguration(target).setInputGuardrails(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputguardrails":
-        case "outputGuardrails": getOrCreateConfiguration(target).setOutputGuardrails(property(camelContext, java.lang.String.class, value)); return true;
-        case "retrievalaugmentor":
-        case "retrievalAugmentor": getOrCreateConfiguration(target).setRetrievalAugmentor(property(camelContext, dev.langchain4j.rag.RetrievalAugmentor.class, value)); return true;
         case "tags": getOrCreateConfiguration(target).setTags(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -52,27 +43,18 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"chatMemoryProvider", "chatModel", "retrievalAugmentor"};
+        return new String[]{"agent"};
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "agent": return org.apache.camel.component.langchain4j.agent.api.Agent.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
-        case "chatmemoryprovider":
-        case "chatMemoryProvider": return dev.langchain4j.memory.chat.ChatMemoryProvider.class;
-        case "chatmodel":
-        case "chatModel": return dev.langchain4j.model.chat.ChatModel.class;
         case "configuration": return org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class;
-        case "inputguardrails":
-        case "inputGuardrails": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "outputguardrails":
-        case "outputGuardrails": return java.lang.String.class;
-        case "retrievalaugmentor":
-        case "retrievalAugmentor": return dev.langchain4j.rag.RetrievalAugmentor.class;
         case "tags": return java.lang.String.class;
         default: return null;
         }
@@ -82,21 +64,12 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jAgentComponent target = (LangChain4jAgentComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "agent": return getOrCreateConfiguration(target).getAgent();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
-        case "chatmemoryprovider":
-        case "chatMemoryProvider": return getOrCreateConfiguration(target).getChatMemoryProvider();
-        case "chatmodel":
-        case "chatModel": return getOrCreateConfiguration(target).getChatModel();
         case "configuration": return target.getConfiguration();
-        case "inputguardrails":
-        case "inputGuardrails": return getOrCreateConfiguration(target).getInputGuardrails();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "outputguardrails":
-        case "outputGuardrails": return getOrCreateConfiguration(target).getOutputGuardrails();
-        case "retrievalaugmentor":
-        case "retrievalAugmentor": return getOrCreateConfiguration(target).getRetrievalAugmentor();
         case "tags": return getOrCreateConfiguration(target).getTags();
         default: return null;
         }

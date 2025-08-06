@@ -17,14 +17,11 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.*;
-import java.util.stream.*;
 import javax.annotation.processing.Generated;
-import org.apache.camel.builder.EndpointConsumerBuilder;
+
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
 
 /**
  * LangChain4j Agent component
@@ -45,33 +42,33 @@ public interface LangChain4jAgentEndpointBuilderFactory {
         }
 
         /**
-         * Comma-separated list of input guardrail class names to validate user
-         * input before sending to LLM.
+         * The agent to use for the component.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.langchain4j.agent.api.Agent</code> type.
          * 
          * Group: producer
          * 
-         * @param inputGuardrails the value to set
+         * @param agent the value to set
          * @return the dsl builder
          */
-        default LangChain4jAgentEndpointBuilder inputGuardrails(String inputGuardrails) {
-            doSetProperty("inputGuardrails", inputGuardrails);
+        default LangChain4jAgentEndpointBuilder agent(Agent agent) {
+            doSetProperty("agent", agent);
             return this;
         }
         /**
-         * Comma-separated list of output guardrail class names to validate LLM
-         * responses.
+         * The agent to use for the component.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option will be converted to a
+         * <code>org.apache.camel.component.langchain4j.agent.api.Agent</code> type.
          * 
          * Group: producer
          * 
-         * @param outputGuardrails the value to set
+         * @param agent the value to set
          * @return the dsl builder
          */
-        default LangChain4jAgentEndpointBuilder outputGuardrails(String outputGuardrails) {
-            doSetProperty("outputGuardrails", outputGuardrails);
+        default LangChain4jAgentEndpointBuilder agent(String agent) {
+            doSetProperty("agent", agent);
             return this;
         }
         /**
@@ -144,108 +141,6 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          */
         default AdvancedLangChain4jAgentEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Chat Memory Provider of type
-         * dev.langchain4j.memory.ChatMemoryProvider. Note for this to be
-         * successful, you need to use a reliable ChatMemoryStore. This provider
-         * supposes that a user has multiple sessions, if need only a single
-         * session, use a default memoryId.
-         * 
-         * The option is a:
-         * <code>dev.langchain4j.memory.chat.ChatMemoryProvider</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatMemoryProvider the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jAgentEndpointBuilder chatMemoryProvider(dev.langchain4j.memory.chat.ChatMemoryProvider chatMemoryProvider) {
-            doSetProperty("chatMemoryProvider", chatMemoryProvider);
-            return this;
-        }
-        /**
-         * Chat Memory Provider of type
-         * dev.langchain4j.memory.ChatMemoryProvider. Note for this to be
-         * successful, you need to use a reliable ChatMemoryStore. This provider
-         * supposes that a user has multiple sessions, if need only a single
-         * session, use a default memoryId.
-         * 
-         * The option will be converted to a
-         * <code>dev.langchain4j.memory.chat.ChatMemoryProvider</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatMemoryProvider the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jAgentEndpointBuilder chatMemoryProvider(String chatMemoryProvider) {
-            doSetProperty("chatMemoryProvider", chatMemoryProvider);
-            return this;
-        }
-        /**
-         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
-         * 
-         * The option is a: <code>dev.langchain4j.model.chat.ChatModel</code>
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatModel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jAgentEndpointBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
-            doSetProperty("chatModel", chatModel);
-            return this;
-        }
-        /**
-         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
-         * 
-         * The option will be converted to a
-         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatModel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jAgentEndpointBuilder chatModel(String chatModel) {
-            doSetProperty("chatModel", chatModel);
-            return this;
-        }
-        /**
-         * Retrieval Augmentor for advanced RAG of type
-         * dev.langchain4j.rag.RetrievalAugmentor. This allows using RAG on both
-         * Naive and Advanced RAG.
-         * 
-         * The option is a: <code>dev.langchain4j.rag.RetrievalAugmentor</code>
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param retrievalAugmentor the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jAgentEndpointBuilder retrievalAugmentor(dev.langchain4j.rag.RetrievalAugmentor retrievalAugmentor) {
-            doSetProperty("retrievalAugmentor", retrievalAugmentor);
-            return this;
-        }
-        /**
-         * Retrieval Augmentor for advanced RAG of type
-         * dev.langchain4j.rag.RetrievalAugmentor. This allows using RAG on both
-         * Naive and Advanced RAG.
-         * 
-         * The option will be converted to a
-         * <code>dev.langchain4j.rag.RetrievalAugmentor</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param retrievalAugmentor the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jAgentEndpointBuilder retrievalAugmentor(String retrievalAugmentor) {
-            doSetProperty("retrievalAugmentor", retrievalAugmentor);
             return this;
         }
     }

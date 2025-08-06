@@ -23,7 +23,6 @@ import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
@@ -31,23 +30,14 @@ import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import org.apache.camel.component.langchain4j.agent.BaseLangChain4jAgent;
 
-import static java.time.Duration.ofSeconds;
-
 public abstract class AbstractRAGIT extends BaseLangChain4jAgent {
-
-    private String openAiApiKey;
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        openAiApiKey = System.getenv("OPENAI_API_KEY");
-        if (openAiApiKey == null || openAiApiKey.trim().isEmpty()) {
-            throw new IllegalStateException("OPENAI_API_KEY system property is required for testing");
-        }
-
         // Setup components
-        chatModel = createChatModel(openAiApiKey, null);
+        chatModel = ModelHelper.loadFromEnv();
         retrievalAugmentor = createRetrievalAugmentor();
     }
 
@@ -59,11 +49,7 @@ public abstract class AbstractRAGIT extends BaseLangChain4jAgent {
         List<TextSegment> segments = DocumentSplitters.recursive(300, 100).split(document);
 
         // Create embeddings
-        EmbeddingModel embeddingModel = OpenAiEmbeddingModel.builder()
-                .apiKey(openAiApiKey)
-                .modelName("text-embedding-ada-002")
-                .timeout(ofSeconds(30))
-                .build();
+        EmbeddingModel embeddingModel = ModelHelper.createEmbeddingModel();
 
         List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
 
@@ -79,9 +65,10 @@ public abstract class AbstractRAGIT extends BaseLangChain4jAgent {
                 .minScore(0.6)
                 .build();
 
-        // Create a RetreivalAugmentor that uses only a content retriever : naive rag scenario
+        // Create a RetrievalAugmentor that uses only a content retriever : naive rag scenario
         return DefaultRetrievalAugmentor.builder()
                 .contentRetriever(contentRetriever)
                 .build();
     }
+
 }

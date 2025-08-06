@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.util.List;
+
 import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.langchain4j.agent.pojos.TestFailingInputGuardrail;
 import org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail;
 import org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail;
@@ -26,41 +30,22 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
-import static java.time.Duration.ofSeconds;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "OPENAI_API_KEY", matches = ".*", disabledReason = "OpenAI API key required")
+@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#environmentWithoutEmbeddings")
 public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
 
     protected ChatModel chatModel;
-    private String openAiApiKey;
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
-
-        openAiApiKey = System.getenv("OPENAI_API_KEY");
-        if (openAiApiKey == null || openAiApiKey.trim().isEmpty()) {
-            throw new IllegalStateException("OPENAI_API_KEY system property is required for testing");
-        }
-        chatModel = createModel();
-    }
-
-    protected ChatModel createModel() {
-        return OpenAiChatModel.builder()
-                .apiKey(openAiApiKey)
-                .modelName(GPT_4_O_MINI)
-                .temperature(1.0)
-                .timeout(ofSeconds(60))
-                .logRequests(true)
-                .logResponses(true)
-                .build();
+        chatModel = ModelHelper.loadFromEnv();
     }
 
     @BeforeEach
@@ -215,24 +200,57 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        this.context.getRegistry().bind("chatModel", chatModel);
+        // Create agent with input guardrails
+        AgentConfiguration inputGuardrailsConfig = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClasses(List.of());
+        Agent agentWithInputGuardrails = new AgentWithoutMemory(inputGuardrailsConfig);
+
+        // Create agent with multiple input guardrails
+        AgentConfiguration multipleInputGuardrailsConfig = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withInputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail,org.apache.camel.component.langchain4j.agent.pojos.TestFailingInputGuardrail")
+                .withOutputGuardrailClasses(List.of());
+        Agent agentWithMultipleInputGuardrails = new AgentWithoutMemory(multipleInputGuardrailsConfig);
+
+        // Create agent with output guardrails
+        AgentConfiguration outputGuardrailsConfig = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withInputGuardrailClasses(List.of())
+                .withOutputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
+        Agent agentWithOutputGuardrails = new AgentWithoutMemory(outputGuardrailsConfig);
+
+        // Create agent with mixed guardrails
+        AgentConfiguration mixedGuardrailsConfig = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
+        Agent agentWithMixedGuardrails = new AgentWithoutMemory(mixedGuardrailsConfig);
+
+        // Register agents in the context
+        this.context.getRegistry().bind("agentWithInputGuardrails", agentWithInputGuardrails);
+        this.context.getRegistry().bind("agentWithMultipleInputGuardrails", agentWithMultipleInputGuardrails);
+        this.context.getRegistry().bind("agentWithOutputGuardrails", agentWithOutputGuardrails);
+        this.context.getRegistry().bind("agentWithMixedGuardrails", agentWithMixedGuardrails);
 
         return new RouteBuilder() {
             public void configure() {
                 from("direct:agent-with-input-guardrails")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel&inputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithInputGuardrails")
                         .to("mock:agent-response");
 
                 from("direct:agent-with-multiple-input-guardrails")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel&inputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail,org.apache.camel.component.langchain4j.agent.pojos.TestFailingInputGuardrail")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithMultipleInputGuardrails")
                         .to("mock:agent-response");
 
                 from("direct:agent-with-json-output-guardrail")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel&outputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithOutputGuardrails")
                         .to("mock:agent-response");
 
                 from("direct:agent-with-mixed-guardrails")
-                        .to("langchain4j-agent:test-agent?chatModel=#chatModel&inputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail&outputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail")
+                        .to("langchain4j-agent:test-agent?agent=#agentWithMixedGuardrails")
                         .to("mock:agent-response");
             }
         };

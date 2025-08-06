@@ -18,17 +18,20 @@ package org.apache.camel.component.langchain4j.agent.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.agent.AiAgentBody;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail;
 import org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "OPENAI_API_KEY", matches = ".*", disabledReason = "OpenAI API key required")
+@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#isEmbeddingCapable")
 public class LangChain4jAgentServiceIT extends AbstractRAGIT {
 
     private static final String USER_DATABASE = """
@@ -91,18 +94,23 @@ public class LangChain4jAgentServiceIT extends AbstractRAGIT {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        this.context.getRegistry().bind("chatModel", chatModel);
-        this.context.getRegistry().bind("retrievalAugmentor", retrievalAugmentor);
+        // Create agent configuration with all features: RAG, Tools, and Guardrails
+        AgentConfiguration configuration = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withRetrievalAugmentor(retrievalAugmentor)
+                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
+
+        Agent completeAgent = new AgentWithoutMemory(configuration);
+
+        // Register agent in the context
+        this.context.getRegistry().bind("completeAgent", completeAgent);
 
         return new RouteBuilder() {
             public void configure() {
 
                 from("direct:complete-agent-no-memory")
-                        .to("langchain4j-agent:no-memory?chatModel=#chatModel&tags=users,weather" +
-                            "&retrievalAugmentor=#retrievalAugmentor" +
-                            "&inputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail"
-                            +
-                            "&outputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail")
+                        .to("langchain4j-agent:no-memory?agent=#completeAgent&tags=users,weather")
                         .to("mock:agent-response");
 
                 from("langchain4j-tools:userDb?tags=users&description=Query user database by user ID&parameter.userId=string")

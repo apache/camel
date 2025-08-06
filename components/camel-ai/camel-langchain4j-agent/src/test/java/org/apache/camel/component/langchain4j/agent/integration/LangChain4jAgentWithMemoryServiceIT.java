@@ -16,24 +16,31 @@
  */
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.util.List;
+
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.agent.AiAgentBody;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithMemory;
 import org.apache.camel.component.langchain4j.agent.pojos.PersistentChatMemoryStore;
 import org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail;
 import org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Class to test a mix match between all those different concepts : memory / tool / RAG / guardrails
  */
-@EnabledIfSystemProperty(named = "OPENAI_API_KEY", matches = ".*", disabledReason = "OpenAI API key required")
+@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#isEmbeddingCapable")
 public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
 
     private static final int MEMORY_ID_SESSION = 42;
@@ -180,36 +187,53 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        this.context.getRegistry().bind("chatModel", chatModel);
-        this.context.getRegistry().bind("retrievalAugmentor", retrievalAugmentor);
-        this.context.getRegistry().bind("memoryProvider", chatMemoryProvider);
+        // Create complete agent configuration with Tools + Memory + Input Guardrails + RAG
+        AgentConfiguration completeConfig = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withChatMemoryProvider(chatMemoryProvider)
+                .withRetrievalAugmentor(retrievalAugmentor)
+                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClasses(List.of());
+        Agent completeAgent = new AgentWithMemory(completeConfig);
+
+        // Create complete agent with JSON output guardrails
+        AgentConfiguration completeJsonConfig = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withChatMemoryProvider(chatMemoryProvider)
+                .withRetrievalAugmentor(retrievalAugmentor)
+                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
+        Agent completeJsonAgent = new AgentWithMemory(completeJsonConfig);
+
+        // Create RAG-only agent (no tools, just RAG + Memory + Input Guardrails)
+        AgentConfiguration ragOnlyConfig = new AgentConfiguration()
+                .withChatModel(chatModel)
+                .withChatMemoryProvider(chatMemoryProvider)
+                .withRetrievalAugmentor(retrievalAugmentor)
+                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClasses(List.of());
+        Agent ragOnlyAgent = new AgentWithMemory(ragOnlyConfig);
+
+        // Register agents in the context
+        this.context.getRegistry().bind("completeAgent", completeAgent);
+        this.context.getRegistry().bind("completeJsonAgent", completeJsonAgent);
+        this.context.getRegistry().bind("ragOnlyAgent", ragOnlyAgent);
 
         return new RouteBuilder() {
             public void configure() {
                 //  Tools + Memory + Guardrails + RAG
                 from("direct:complete-agent")
-                        .to("langchain4j-agent:complete?chatModel=#chatModel&chatMemoryProvider=#memoryProvider&tags=users,weather"
-                            +
-                            "&retrievalAugmentor=#retrievalAugmentor" +
-                            "&inputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                        .to("langchain4j-agent:complete?agent=#completeAgent&tags=users,weather")
                         .to("mock:agent-response");
 
                 //  Tools + Memory + JSON output Guardrails + RAG
                 from("direct:complete-agent-json")
-                        .to("langchain4j-agent:complete-json?chatModel=#chatModel&tags=users" +
-                            "&chatMemoryProvider=#memoryProvider" +
-                            "&retrievalAugmentor=#retrievalAugmentor" +
-                            "&inputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail"
-                            +
-                            "&outputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail")
+                        .to("langchain4j-agent:complete-json?agent=#completeJsonAgent&tags=users")
                         .to("mock:agent-response");
 
                 // RAG only without tools
                 from("direct:rag-only-agent")
-                        .to("langchain4j-agent:rag-only?chatModel=#chatModel" +
-                            "&chatMemoryProvider=#memoryProvider" +
-                            "&retrievalAugmentor=#retrievalAugmentor" +
-                            "&inputGuardrails=org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                        .to("langchain4j-agent:rag-only?agent=#ragOnlyAgent")
                         .to("mock:agent-response");
 
                 // Tool routes for function calling

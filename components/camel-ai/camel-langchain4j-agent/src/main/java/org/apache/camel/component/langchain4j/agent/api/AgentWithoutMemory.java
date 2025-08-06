@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.langchain4j.agent;
+package org.apache.camel.component.langchain4j.agent.api;
 
 import java.util.List;
 
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
-import org.apache.camel.Exchange;
+import org.apache.camel.component.langchain4j.agent.AiAgentBody;
+import org.apache.camel.component.langchain4j.agent.AiAgentWithoutMemoryService;
 
 /**
  * Implementation of Agent for AI agents without memory support. This agent handles chat interactions without
@@ -30,31 +29,17 @@ import org.apache.camel.Exchange;
  *
  * This is an internal class used only within the LangChain4j agent component.
  */
-class AgentWithoutMemory implements Agent {
+public class AgentWithoutMemory implements Agent {
 
-    private final ChatModel chatModel;
-    private final String tags;
-    private final RetrievalAugmentor retrievalAugmentor;
-    private final List<Class<?>> inputGuardrailClasses;
-    private final List<Class<?>> outputGuardrailClasses;
-    private final Exchange exchange;
-    private final ToolProvider toolProvider;
+    private final AgentConfiguration configuration;
 
-    public AgentWithoutMemory(ChatModel chatModel, String tags, RetrievalAugmentor retrievalAugmentor,
-                              List<Class<?>> inputGuardrailClasses, List<Class<?>> outputGuardrailClasses,
-                              Exchange exchange, ToolProvider toolProvider) {
-        this.chatModel = chatModel;
-        this.tags = tags;
-        this.retrievalAugmentor = retrievalAugmentor;
-        this.inputGuardrailClasses = inputGuardrailClasses;
-        this.outputGuardrailClasses = outputGuardrailClasses;
-        this.exchange = exchange;
-        this.toolProvider = toolProvider;
+    public AgentWithoutMemory(AgentConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
-    public String chat(AiAgentBody aiAgentBody) {
-        AiAgentWithoutMemoryService agentService = createAiAgentService();
+    public String chat(AiAgentBody aiAgentBody, ToolProvider toolProvider) {
+        AiAgentWithoutMemoryService agentService = createAiAgentService(toolProvider);
 
         return aiAgentBody.getSystemMessage() != null
                 ? agentService.chat(aiAgentBody.getUserMessage(), aiAgentBody.getSystemMessage())
@@ -64,9 +49,9 @@ class AgentWithoutMemory implements Agent {
     /**
      * Create AI service with a single universal tool that handles multiple Camel routes
      */
-    private AiAgentWithoutMemoryService createAiAgentService() {
+    private AiAgentWithoutMemoryService createAiAgentService(ToolProvider toolProvider) {
         var builder = AiServices.builder(AiAgentWithoutMemoryService.class)
-                .chatModel(chatModel);
+                .chatModel(configuration.getChatModel());
 
         // Apache Camel Tool Provider
         if (toolProvider != null) {
@@ -74,18 +59,18 @@ class AgentWithoutMemory implements Agent {
         }
 
         // RAG
-        if (retrievalAugmentor != null) {
-            builder.retrievalAugmentor(retrievalAugmentor);
+        if (configuration.getRetrievalAugmentor() != null) {
+            builder.retrievalAugmentor(configuration.getRetrievalAugmentor());
         }
 
         // Input Guardrails
-        if (inputGuardrailClasses != null && !inputGuardrailClasses.isEmpty()) {
-            builder.inputGuardrailClasses((List) inputGuardrailClasses);
+        if (configuration.getInputGuardrailClasses() != null && !configuration.getInputGuardrailClasses().isEmpty()) {
+            builder.inputGuardrailClasses((List) configuration.getInputGuardrailClasses());
         }
 
         // Output Guardrails
-        if (outputGuardrailClasses != null && !outputGuardrailClasses.isEmpty()) {
-            builder.outputGuardrailClasses((List) outputGuardrailClasses);
+        if (configuration.getOutputGuardrailClasses() != null && !configuration.getOutputGuardrailClasses().isEmpty()) {
+            builder.outputGuardrailClasses((List) configuration.getOutputGuardrailClasses());
         }
 
         return builder.build();

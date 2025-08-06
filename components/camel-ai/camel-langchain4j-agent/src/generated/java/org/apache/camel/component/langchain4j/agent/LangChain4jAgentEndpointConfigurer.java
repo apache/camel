@@ -23,18 +23,9 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jAgentEndpoint target = (LangChain4jAgentEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "chatmemoryprovider":
-        case "chatMemoryProvider": target.getConfiguration().setChatMemoryProvider(property(camelContext, dev.langchain4j.memory.chat.ChatMemoryProvider.class, value)); return true;
-        case "chatmodel":
-        case "chatModel": target.getConfiguration().setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatModel.class, value)); return true;
-        case "inputguardrails":
-        case "inputGuardrails": target.getConfiguration().setInputGuardrails(property(camelContext, java.lang.String.class, value)); return true;
+        case "agent": target.getConfiguration().setAgent(property(camelContext, org.apache.camel.component.langchain4j.agent.api.Agent.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "outputguardrails":
-        case "outputGuardrails": target.getConfiguration().setOutputGuardrails(property(camelContext, java.lang.String.class, value)); return true;
-        case "retrievalaugmentor":
-        case "retrievalAugmentor": target.getConfiguration().setRetrievalAugmentor(property(camelContext, dev.langchain4j.rag.RetrievalAugmentor.class, value)); return true;
         case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -42,24 +33,15 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"chatMemoryProvider", "chatModel", "retrievalAugmentor"};
+        return new String[]{"agent"};
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "chatmemoryprovider":
-        case "chatMemoryProvider": return dev.langchain4j.memory.chat.ChatMemoryProvider.class;
-        case "chatmodel":
-        case "chatModel": return dev.langchain4j.model.chat.ChatModel.class;
-        case "inputguardrails":
-        case "inputGuardrails": return java.lang.String.class;
+        case "agent": return org.apache.camel.component.langchain4j.agent.api.Agent.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "outputguardrails":
-        case "outputGuardrails": return java.lang.String.class;
-        case "retrievalaugmentor":
-        case "retrievalAugmentor": return dev.langchain4j.rag.RetrievalAugmentor.class;
         case "tags": return java.lang.String.class;
         default: return null;
         }
@@ -69,18 +51,9 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jAgentEndpoint target = (LangChain4jAgentEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "chatmemoryprovider":
-        case "chatMemoryProvider": return target.getConfiguration().getChatMemoryProvider();
-        case "chatmodel":
-        case "chatModel": return target.getConfiguration().getChatModel();
-        case "inputguardrails":
-        case "inputGuardrails": return target.getConfiguration().getInputGuardrails();
+        case "agent": return target.getConfiguration().getAgent();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "outputguardrails":
-        case "outputGuardrails": return target.getConfiguration().getOutputGuardrails();
-        case "retrievalaugmentor":
-        case "retrievalAugmentor": return target.getConfiguration().getRetrievalAugmentor();
         case "tags": return target.getConfiguration().getTags();
         default: return null;
         }
