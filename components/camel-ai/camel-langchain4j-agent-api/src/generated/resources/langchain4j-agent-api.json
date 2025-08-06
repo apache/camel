@@ -1,0 +1,13 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "langchain4j-agent-api",
+    "title": "Langchain4j Agent Api",
+    "description": "LangChain4j Agent API",
+    "deprecated": false,
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-langchain4j-agent-api",
+    "version": "4.14.0-SNAPSHOT"
+  }
+}

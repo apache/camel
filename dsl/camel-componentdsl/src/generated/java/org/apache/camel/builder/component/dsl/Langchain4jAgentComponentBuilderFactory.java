@@ -51,6 +51,22 @@ public interface Langchain4jAgentComponentBuilderFactory {
     interface Langchain4jAgentComponentBuilder extends ComponentBuilder<LangChain4jAgentComponent> {
     
         /**
+         * The agent to use for the component.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.langchain4j.agent.api.Agent&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param agent the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder agent(org.apache.camel.component.langchain4j.agent.api.Agent agent) {
+            doSetProperty("agent", agent);
+            return this;
+        }
+    
+        /**
          * The configuration.
          * 
          * The option is a:
@@ -63,22 +79,6 @@ public interface Langchain4jAgentComponentBuilderFactory {
          */
         default Langchain4jAgentComponentBuilder configuration(org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration configuration) {
             doSetProperty("configuration", configuration);
-            return this;
-        }
-    
-        /**
-         * Comma-separated list of input guardrail class names to validate user
-         * input before sending to LLM.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param inputGuardrails the value to set
-         * @return the dsl builder
-         */
-        default Langchain4jAgentComponentBuilder inputGuardrails(java.lang.String inputGuardrails) {
-            doSetProperty("inputGuardrails", inputGuardrails);
             return this;
         }
     
@@ -104,22 +104,6 @@ public interface Langchain4jAgentComponentBuilderFactory {
          */
         default Langchain4jAgentComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    
-        /**
-         * Comma-separated list of output guardrail class names to validate LLM
-         * responses.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param outputGuardrails the value to set
-         * @return the dsl builder
-         */
-        default Langchain4jAgentComponentBuilder outputGuardrails(java.lang.String outputGuardrails) {
-            doSetProperty("outputGuardrails", outputGuardrails);
             return this;
         }
     
@@ -159,60 +143,6 @@ public interface Langchain4jAgentComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
-    
-        /**
-         * Chat Memory Provider of type
-         * dev.langchain4j.memory.ChatMemoryProvider. Note for this to be
-         * successful, you need to use a reliable ChatMemoryStore. This provider
-         * supposes that a user has multiple sessions, if need only a single
-         * session, use a default memoryId.
-         * 
-         * The option is a:
-         * &lt;code&gt;dev.langchain4j.memory.chat.ChatMemoryProvider&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatMemoryProvider the value to set
-         * @return the dsl builder
-         */
-        default Langchain4jAgentComponentBuilder chatMemoryProvider(dev.langchain4j.memory.chat.ChatMemoryProvider chatMemoryProvider) {
-            doSetProperty("chatMemoryProvider", chatMemoryProvider);
-            return this;
-        }
-    
-        /**
-         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
-         * 
-         * The option is a:
-         * &lt;code&gt;dev.langchain4j.model.chat.ChatModel&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatModel the value to set
-         * @return the dsl builder
-         */
-        default Langchain4jAgentComponentBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
-            doSetProperty("chatModel", chatModel);
-            return this;
-        }
-    
-        /**
-         * Retrieval Augmentor for advanced RAG of type
-         * dev.langchain4j.rag.RetrievalAugmentor. This allows using RAG on both
-         * Naive and Advanced RAG.
-         * 
-         * The option is a:
-         * &lt;code&gt;dev.langchain4j.rag.RetrievalAugmentor&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param retrievalAugmentor the value to set
-         * @return the dsl builder
-         */
-        default Langchain4jAgentComponentBuilder retrievalAugmentor(dev.langchain4j.rag.RetrievalAugmentor retrievalAugmentor) {
-            doSetProperty("retrievalAugmentor", retrievalAugmentor);
-            return this;
-        }
     }
 
     class Langchain4jAgentComponentBuilderImpl
@@ -234,15 +164,11 @@ public interface Langchain4jAgentComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "agent": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgent((org.apache.camel.component.langchain4j.agent.api.Agent) value); return true;
             case "configuration": ((LangChain4jAgentComponent) component).setConfiguration((org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) value); return true;
-            case "inputGuardrails": getOrCreateConfiguration((LangChain4jAgentComponent) component).setInputGuardrails((java.lang.String) value); return true;
             case "lazyStartProducer": ((LangChain4jAgentComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "outputGuardrails": getOrCreateConfiguration((LangChain4jAgentComponent) component).setOutputGuardrails((java.lang.String) value); return true;
             case "tags": getOrCreateConfiguration((LangChain4jAgentComponent) component).setTags((java.lang.String) value); return true;
             case "autowiredEnabled": ((LangChain4jAgentComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "chatMemoryProvider": getOrCreateConfiguration((LangChain4jAgentComponent) component).setChatMemoryProvider((dev.langchain4j.memory.chat.ChatMemoryProvider) value); return true;
-            case "chatModel": getOrCreateConfiguration((LangChain4jAgentComponent) component).setChatModel((dev.langchain4j.model.chat.ChatModel) value); return true;
-            case "retrievalAugmentor": getOrCreateConfiguration((LangChain4jAgentComponent) component).setRetrievalAugmentor((dev.langchain4j.rag.RetrievalAugmentor) value); return true;
             default: return false;
             }
         }

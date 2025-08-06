@@ -21,37 +21,40 @@ import java.util.List;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
 import org.apache.camel.component.langchain4j.agent.AiAgentBody;
-import org.apache.camel.component.langchain4j.agent.AiAgentWithoutMemoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of Agent for AI agents without memory support. This agent handles chat interactions without
- * maintaining conversation history.
+ * Implementation of Agent for AI agents with memory support. This agent handles chat interactions while maintaining
+ * conversation history.
  *
  * This is an internal class used only within the LangChain4j agent component.
  */
-public class AgentWithoutMemory implements Agent {
+public class AgentWithMemory implements Agent {
+    private static final Logger LOG = LoggerFactory.getLogger(AgentWithMemory.class);
 
     private final AgentConfiguration configuration;
 
-    public AgentWithoutMemory(AgentConfiguration configuration) {
+    public AgentWithMemory(AgentConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
     public String chat(AiAgentBody aiAgentBody, ToolProvider toolProvider) {
-        AiAgentWithoutMemoryService agentService = createAiAgentService(toolProvider);
+        AiAgentWithMemoryService agentService = createAiAgentService(toolProvider);
 
         return aiAgentBody.getSystemMessage() != null
-                ? agentService.chat(aiAgentBody.getUserMessage(), aiAgentBody.getSystemMessage())
-                : agentService.chat(aiAgentBody.getUserMessage());
+                ? agentService.chat(aiAgentBody.getMemoryId(), aiAgentBody.getUserMessage(), aiAgentBody.getSystemMessage())
+                : agentService.chat(aiAgentBody.getMemoryId(), aiAgentBody.getUserMessage());
     }
 
     /**
-     * Create AI service with a single universal tool that handles multiple Camel routes
+     * Create AI service with a single universal tool that handles multiple Camel routes and Memory Provider
      */
-    private AiAgentWithoutMemoryService createAiAgentService(ToolProvider toolProvider) {
-        var builder = AiServices.builder(AiAgentWithoutMemoryService.class)
-                .chatModel(configuration.getChatModel());
+    private AiAgentWithMemoryService createAiAgentService(ToolProvider toolProvider) {
+        var builder = AiServices.builder(AiAgentWithMemoryService.class)
+                .chatModel(configuration.getChatModel())
+                .chatMemoryProvider(configuration.getChatMemoryProvider());
 
         // Apache Camel Tool Provider
         if (toolProvider != null) {
@@ -75,4 +78,5 @@ public class AgentWithoutMemory implements Agent {
 
         return builder.build();
     }
+
 }
