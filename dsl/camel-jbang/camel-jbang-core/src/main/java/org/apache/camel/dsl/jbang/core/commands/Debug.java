@@ -221,12 +221,13 @@ public class Debug extends Run {
                         }
                     }
                     String cmd = "step";
+                    int position = lineIsNumber(line);
                     if (line.equalsIgnoreCase("o") || line.equalsIgnoreCase("over")) {
                         cmd = "stepover";
                     } else if (line.equalsIgnoreCase("s") || line.equalsIgnoreCase("skip")) {
                         cmd = "skipover";
                     }
-                    sendDebugCommand(spawnPid, cmd, null);
+                    sendDebugCommand(spawnPid, cmd, null, position);
                 }
                 // user have pressed ENTER so continue
                 waitForUser.set(false);
@@ -319,7 +320,7 @@ public class Debug extends Run {
         return 0;
     }
 
-    private void sendDebugCommand(long pid, String command, String breakpoint) {
+    private void sendDebugCommand(long pid, String command, String breakpoint, int position) {
         // ensure output file is deleted before executing action
         Path outputFile = getOutputFile(Long.toString(pid));
         PathUtils.deleteFile(outputFile);
@@ -331,6 +332,9 @@ public class Debug extends Run {
         }
         if (breakpoint != null) {
             root.put("breakpoint", breakpoint);
+        }
+        if (position > 0) {
+            root.put("position", position);
         }
         Path f = getActionFile(Long.toString(pid));
         try {
@@ -362,6 +366,10 @@ public class Debug extends Run {
             // only read if expecting new data
             long cnt = jo.getLongOrDefault("debugCounter", 0);
             String version = jo.getString("version");
+            // clip -SNAPSHOT from version
+            if (version != null && version.endsWith("-SNAPSHOT")) {
+                version = version.substring(0, version.length() - 9);
+            }
             if (cnt > debugCounter.get()) {
                 JsonArray arr = jo.getCollection("suspended");
                 if (arr != null) {
@@ -442,6 +450,7 @@ public class Debug extends Run {
                                 boolean accept = line.getBooleanOrDefault("acceptDebugger", true);
                                 if (accept) {
                                     History history = new History();
+                                    history.index = line.getIntegerOrDefault("index", 0);
                                     history.routeId = line.getString("routeId");
                                     history.nodeId = line.getString("nodeId");
                                     history.elapsed = line.getLongOrDefault("elapsed", 0);
@@ -480,6 +489,7 @@ public class Debug extends Run {
             }
             if (this.waitForUser.get()) {
                 boolean first = this.suspendedRow != null && this.suspendedRow.first;
+                boolean last = this.suspendedRow != null && this.suspendedRow.last;
                 // save current message to file
                 if (output != null && this.suspendedRow != null) {
                     JsonObject j = this.suspendedRow.message;
@@ -501,9 +511,9 @@ public class Debug extends Run {
                 }
 
                 String msg;
-                if (!first && isSkipOverSupported(version)) {
-                    msg = "    Breakpoint suspended (i = step into (default), o = step over, s = skip over). Press ENTER to continue (q = quit).";
-                } else if (!first && isStepOverSupported(version)) {
+                if (!last && !first && isSkipOverSupported(version)) {
+                    msg = "    Breakpoint suspended (i = step into (default), o = step over, s = skip over, N = step to index). Press ENTER to continue (q = quit).";
+                } else if (!last && !first && isStepOverSupported(version)) {
                     msg = "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue (q = quit).";
                 } else {
                     msg = "    Breakpoint suspended. Press ENTER to continue (q = quit).";
@@ -551,6 +561,7 @@ public class Debug extends Run {
                 int length = msg.length();
                 if (loggingColor && code.match) {
                     Ansi.Color col = Ansi.Color.BLUE;
+                    Ansi.Attribute it = Ansi.Attribute.INTENSITY_BOLD;
                     if (row.failed && row.last) {
                         col = Ansi.Color.RED;
                     } else if (row.last) {
@@ -562,7 +573,7 @@ public class Debug extends Run {
                         msg = msg + extra;
                         length = 80;
                     }
-                    msg = Ansi.ansi().bg(col).a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset().toString();
+                    msg = Ansi.ansi().bg(col).a(it).a(msg).reset().toString();
                 } else {
                     // need to fill out entire line, so fill in spaces
                     if (length < 80) {
@@ -627,18 +638,18 @@ public class Debug extends Run {
                     String fids = String.format("%-30.30s", ids);
                     String msg;
                     if (top && !row.last) {
-                        msg = String.format("%10.10s %s %4d:   %s", "--->", fids, h.line, c);
+                        msg = String.format("%2d %10.10s %s %4d:   %s", h.index, "--->", fids, h.line, c);
                     } else {
-                        msg = String.format("%10.10s %s %4d:   %s", elapsed, fids, h.line, c);
+                        msg = String.format("%2d %10.10s %s %4d:   %s", h.index, elapsed, fids, h.line, c);
                     }
                     int len = msg.length();
                     if (loggingColor) {
                         fids = String.format("%-30.30s", ids);
                         fids = Ansi.ansi().fgCyan().a(fids).reset().toString();
                         if (top && !row.last) {
-                            msg = String.format("%10.10s %s %4d:   %s", "--->", fids, h.line, c);
+                            msg = String.format("%2d %10.10s %s %4d:   %s", h.index, "--->", fids, h.line, c);
                         } else {
-                            msg = String.format("%10.10s %s %4d:   %s", elapsed, fids, h.line, c);
+                            msg = String.format("%2d %10.10s %s %4d:   %s", h.index, elapsed, fids, h.line, c);
                         }
                     }
 
@@ -841,6 +852,14 @@ public class Debug extends Run {
         return null;
     }
 
+    private static int lineIsNumber(String line) {
+        try {
+            return Integer.parseInt(line);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     private static class SuspendedRow {
         String pid;
         String version;
@@ -872,6 +891,7 @@ public class Debug extends Run {
     }
 
     private static class History {
+        int index;
         String routeId;
         String nodeId;
         long elapsed;

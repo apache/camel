@@ -17,6 +17,7 @@
 package org.apache.camel.impl.debugger;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -669,6 +671,17 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     @Override
     public Set<String> getSuspendedBreakpointNodeIds() {
         return new LinkedHashSet<>(suspendedBreakpoints.keySet());
+    }
+
+    @Override
+    public Set<String> getSuspendedExchangeIds() {
+        if (suspendedBreakpoints.isEmpty()) {
+            return Collections.EMPTY_SET;
+        } else {
+            return suspendedBreakpoints.values().stream()
+                    .map(e -> e.getExchange().getExchangeId())
+                    .collect(Collectors.toSet());
+        }
     }
 
     @Override

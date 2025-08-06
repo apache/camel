@@ -217,6 +217,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public Set<String> suspendedBreakpointExchangeIds() {
+        return backlogDebugger.getSuspendedExchangeIds();
+    }
+
+    @Override
     public void disableBreakpoint(String nodeId) {
         backlogDebugger.disableBreakpoint(nodeId);
     }

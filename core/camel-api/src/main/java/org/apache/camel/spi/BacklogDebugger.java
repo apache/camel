@@ -297,6 +297,11 @@ public interface BacklogDebugger extends StatefulService {
     Set<String> getSuspendedBreakpointNodeIds();
 
     /**
+     * Gets the exchange ids for all current suspended exchanges
+     */
+    Set<String> getSuspendedExchangeIds();
+
+    /**
      * Gets the exchanged suspended at the given breakpoint id or null if there is none at that id.
      *
      * @param  id node id for the breakpoint

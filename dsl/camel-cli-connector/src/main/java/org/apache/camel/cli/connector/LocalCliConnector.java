@@ -774,8 +774,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             String cmd = root.getStringOrDefault("command", "");
             String bp = root.getStringOrDefault("breakpoint", "");
             String history = root.getStringOrDefault("history", "false");
+            String position = root.getStringOrDefault("position", "");
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                    Map.of("command", cmd, "breakpoint", bp, "history", history));
+                    Map.of("command", cmd, "breakpoint", bp, "history", history, "position", position));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
