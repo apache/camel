@@ -77,6 +77,36 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
+         * The agent factory to use for creating agents if no Agent is provided.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.langchain4j.agent.api.AgentFactory</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param agentFactory the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder agentFactory(org.apache.camel.component.langchain4j.agent.api.AgentFactory agentFactory) {
+            doSetProperty("agentFactory", agentFactory);
+            return this;
+        }
+        /**
+         * The agent factory to use for creating agents if no Agent is provided.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.langchain4j.agent.api.AgentFactory</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param agentFactory the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder agentFactory(String agentFactory) {
+            doSetProperty("agentFactory", agentFactory);
+            return this;
+        }
+        /**
          * Tags for discovering and calling Camel route tools.
          * 
          * The option is a: <code>java.lang.String</code> type.

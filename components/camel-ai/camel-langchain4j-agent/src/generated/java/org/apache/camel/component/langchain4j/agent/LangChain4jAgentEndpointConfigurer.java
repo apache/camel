@@ -24,6 +24,8 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         LangChain4jAgentEndpoint target = (LangChain4jAgentEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": target.getConfiguration().setAgent(property(camelContext, org.apache.camel.component.langchain4j.agent.api.Agent.class, value)); return true;
+        case "agentfactory":
+        case "agentFactory": target.getConfiguration().setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
@@ -33,13 +35,15 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"agent"};
+        return new String[]{"agent", "agentFactory"};
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": return org.apache.camel.component.langchain4j.agent.api.Agent.class;
+        case "agentfactory":
+        case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "tags": return java.lang.String.class;
@@ -52,6 +56,8 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         LangChain4jAgentEndpoint target = (LangChain4jAgentEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": return target.getConfiguration().getAgent();
+        case "agentfactory":
+        case "agentFactory": return target.getConfiguration().getAgentFactory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "tags": return target.getConfiguration().getTags();

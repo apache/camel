@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.agent;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -30,6 +31,10 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     @UriParam(description = "The agent to use for the component")
     @Metadata(autowired = true)
     private Agent agent;
+
+    @UriParam(description = "The agent factory to use for creating agents if no Agent is provided")
+    @Metadata(autowired = true)
+    private AgentFactory agentFactory;
 
     @UriParam(description = "Tags for discovering and calling Camel route tools")
     private String tags;
@@ -69,5 +74,18 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     public void setAgent(Agent agent) {
         this.agent = agent;
+    }
+
+    /**
+     * An agent factory creating the agents
+     *
+     * @return the instance of the agent factory in use
+     */
+    public AgentFactory getAgentFactory() {
+        return agentFactory;
+    }
+
+    public void setAgentFactory(AgentFactory agentFactory) {
+        this.agentFactory = agentFactory;
     }
 }

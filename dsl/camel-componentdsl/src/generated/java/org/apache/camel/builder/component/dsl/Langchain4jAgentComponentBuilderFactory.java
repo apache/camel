@@ -67,6 +67,22 @@ public interface Langchain4jAgentComponentBuilderFactory {
         }
     
         /**
+         * The agent factory to use for creating agents if no Agent is provided.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.langchain4j.agent.api.AgentFactory&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param agentFactory the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder agentFactory(org.apache.camel.component.langchain4j.agent.api.AgentFactory agentFactory) {
+            doSetProperty("agentFactory", agentFactory);
+            return this;
+        }
+    
+        /**
          * The configuration.
          * 
          * The option is a:
@@ -165,6 +181,7 @@ public interface Langchain4jAgentComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "agent": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgent((org.apache.camel.component.langchain4j.agent.api.Agent) value); return true;
+            case "agentFactory": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgentFactory((org.apache.camel.component.langchain4j.agent.api.AgentFactory) value); return true;
             case "configuration": ((LangChain4jAgentComponent) component).setConfiguration((org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) value); return true;
             case "lazyStartProducer": ((LangChain4jAgentComponent) component).setLazyStartProducer((boolean) value); return true;
             case "tags": getOrCreateConfiguration((LangChain4jAgentComponent) component).setTags((java.lang.String) value); return true;

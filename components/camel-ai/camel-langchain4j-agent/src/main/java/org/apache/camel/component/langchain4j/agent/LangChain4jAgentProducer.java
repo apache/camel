@@ -29,6 +29,7 @@ import dev.langchain4j.service.tool.ToolProviderResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolExecutorCache;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
@@ -44,6 +45,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
     private final LangChain4jAgentEndpoint endpoint;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private AgentFactory agentFactory;
 
     public LangChain4jAgentProducer(LangChain4jAgentEndpoint endpoint) {
         super(endpoint);
@@ -55,7 +57,12 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         Object messagePayload = exchange.getIn().getBody();
         ObjectHelper.notNull(messagePayload, "body");
 
-        Agent agent = endpoint.getConfiguration().getAgent();
+        Agent agent;
+        if (agentFactory != null) {
+            agent = agentFactory.createAgent();
+        } else {
+            agent = endpoint.getConfiguration().getAgent();
+        }
 
         AiAgentBody aiAgentBody = processBody(messagePayload, exchange);
 
@@ -194,5 +201,10 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        agentFactory = endpoint.getConfiguration().getAgentFactory();
+        if (agentFactory != null) {
+            agentFactory.setCamelContext(this.endpoint.getCamelContext());
+        }
     }
 }
