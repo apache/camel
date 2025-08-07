@@ -31,6 +31,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         LangChain4jAgentComponent target = (LangChain4jAgentComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": getOrCreateConfiguration(target).setAgent(property(camelContext, org.apache.camel.component.langchain4j.agent.api.Agent.class, value)); return true;
+        case "agentfactory":
+        case "agentFactory": getOrCreateConfiguration(target).setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class, value)); return true;
@@ -43,13 +45,15 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"agent"};
+        return new String[]{"agent", "agentFactory"};
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": return org.apache.camel.component.langchain4j.agent.api.Agent.class;
+        case "agentfactory":
+        case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class;
@@ -65,6 +69,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         LangChain4jAgentComponent target = (LangChain4jAgentComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": return getOrCreateConfiguration(target).getAgent();
+        case "agentfactory":
+        case "agentFactory": return getOrCreateConfiguration(target).getAgentFactory();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();

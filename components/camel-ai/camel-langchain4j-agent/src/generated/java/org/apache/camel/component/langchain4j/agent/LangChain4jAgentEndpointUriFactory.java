@@ -23,8 +23,9 @@ public class LangChain4jAgentEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(4);
+        Set<String> props = new HashSet<>(5);
         props.add("agent");
+        props.add("agentFactory");
         props.add("agentId");
         props.add("lazyStartProducer");
         props.add("tags");

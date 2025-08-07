@@ -24,6 +24,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration target = (org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": target.setAgent(property(camelContext, org.apache.camel.component.langchain4j.agent.api.Agent.class, value)); return true;
+        case "agentfactory":
+        case "agentFactory": target.setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -33,6 +35,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": return org.apache.camel.component.langchain4j.agent.api.Agent.class;
+        case "agentfactory":
+        case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
         case "tags": return java.lang.String.class;
         default: return null;
         }
@@ -43,6 +47,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration target = (org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "agent": return target.getAgent();
+        case "agentfactory":
+        case "agentFactory": return target.getAgentFactory();
         case "tags": return target.getTags();
         default: return null;
         }
