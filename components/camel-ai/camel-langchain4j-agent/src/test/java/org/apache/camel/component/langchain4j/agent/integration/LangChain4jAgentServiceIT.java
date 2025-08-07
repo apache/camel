@@ -17,10 +17,10 @@
 package org.apache.camel.component.langchain4j.agent.integration;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.langchain4j.agent.AiAgentBody;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
+import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail;
 import org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail;
 import org.apache.camel.component.mock.MockEndpoint;
