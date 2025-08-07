@@ -20,7 +20,6 @@ import java.util.List;
 
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
-import org.apache.camel.component.langchain4j.agent.AiAgentBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

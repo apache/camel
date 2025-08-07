@@ -17,7 +17,6 @@
 package org.apache.camel.component.langchain4j.agent.api;
 
 import dev.langchain4j.service.tool.ToolProvider;
-import org.apache.camel.component.langchain4j.agent.AiAgentBody;
 
 /**
  * Agent interface that abstracts the different types of AI agents (with or without memory). This interface provides a

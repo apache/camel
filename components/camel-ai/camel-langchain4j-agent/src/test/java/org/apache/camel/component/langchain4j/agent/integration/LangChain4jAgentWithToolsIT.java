@@ -20,10 +20,10 @@ import java.util.List;
 
 import dev.langchain4j.model.chat.ChatModel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.langchain4j.agent.AiAgentBody;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
+import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;

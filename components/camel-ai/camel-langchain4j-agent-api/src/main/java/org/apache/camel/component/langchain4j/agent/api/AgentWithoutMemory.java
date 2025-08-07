@@ -20,7 +20,6 @@ import java.util.List;
 
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
-import org.apache.camel.component.langchain4j.agent.AiAgentBody;
 
 /**
  * Implementation of Agent for AI agents without memory support. This agent handles chat interactions without
