@@ -8,7 +8,7 @@
     <extension>
         <groupId>eu.maveniverse.maven.nisse</groupId>
         <artifactId>extension</artifactId>
-        <version>0.5.0</version>
+        <version>0.5.1</version>
     </extension>
 <!-- Temporarily disabled due to INFRA-26647 -->
 <!--    <extension>-->
