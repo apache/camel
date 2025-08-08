@@ -27,6 +27,28 @@ import dev.langchain4j.rag.RetrievalAugmentor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Configuration class for AI agents in the Apache Camel LangChain4j integration.
+ *
+ * <p>
+ * This class encapsulates all the configuration parameters needed to create and configure AI agents, including chat
+ * models, memory providers, RAG components, and security guardrails. It provides a fluent builder-style API for easy
+ * configuration setup.
+ * </p>
+ *
+ * <p>
+ * Supported configuration options include:
+ * </p>
+ * <ul>
+ * <li><strong>Chat Model:</strong> The underlying LLM for processing conversations</li>
+ * <li><strong>Memory Provider:</strong> For maintaining conversation history in stateful agents</li>
+ * <li><strong>Retrieval Augmentor:</strong> For RAG (Retrieval-Augmented Generation) capabilities</li>
+ * <li><strong>Input Guardrails:</strong> Security filters applied to incoming messages</li>
+ * <li><strong>Output Guardrails:</strong> Security filters applied to agent responses</li>
+ * </ul>
+ *
+ * @since 4.9.0
+ */
 public class AgentConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(AgentConfiguration.class);
 
@@ -36,64 +58,148 @@ public class AgentConfiguration {
     private List<Class<?>> inputGuardrailClasses;
     private List<Class<?>> outputGuardrailClasses;
 
+    /**
+     * Gets the configured chat model.
+     *
+     * @return the chat model instance, or {@code null} if not configured
+     */
     public ChatModel getChatModel() {
         return chatModel;
     }
 
+    /**
+     * Sets the chat model for this agent configuration.
+     *
+     * @param  chatModel the LangChain4j chat model to use for AI interactions
+     * @return           this configuration instance for method chaining
+     */
     public AgentConfiguration withChatModel(ChatModel chatModel) {
         this.chatModel = chatModel;
         return this;
     }
 
+    /**
+     * Gets the configured chat memory provider.
+     *
+     * @return the chat memory provider instance, or {@code null} if not configured
+     */
     public ChatMemoryProvider getChatMemoryProvider() {
         return chatMemoryProvider;
     }
 
+    /**
+     * Sets the chat memory provider for stateful agent conversations.
+     *
+     * @param  chatMemoryProvider the memory provider for maintaining conversation history
+     * @return                    this configuration instance for method chaining
+     */
     public AgentConfiguration withChatMemoryProvider(ChatMemoryProvider chatMemoryProvider) {
         this.chatMemoryProvider = chatMemoryProvider;
         return this;
     }
 
+    /**
+     * Gets the configured retrieval augmentor for RAG (Retrieval-Augmented Generation) support.
+     *
+     * @return the retrieval augmentor instance, or {@code null} if not configured
+     */
     public RetrievalAugmentor getRetrievalAugmentor() {
         return retrievalAugmentor;
     }
 
+    /**
+     * Sets the retrieval augmentor for enabling RAG (Retrieval-Augmented Generation) capabilities.
+     *
+     * @param  retrievalAugmentor the retrieval augmentor to enhance responses with external knowledge
+     * @return                    this configuration instance for method chaining
+     */
     public AgentConfiguration withRetrievalAugmentor(RetrievalAugmentor retrievalAugmentor) {
         this.retrievalAugmentor = retrievalAugmentor;
         return this;
     }
 
+    /**
+     * Gets the configured input guardrail classes for security filtering.
+     *
+     * @return the list of input guardrail classes, or {@code null} if not configured
+     */
     public List<Class<?>> getInputGuardrailClasses() {
         return inputGuardrailClasses;
     }
 
+    /**
+     * Sets input guardrail classes from a comma-separated string of class names.
+     *
+     * @param  inputGuardrailClasses comma-separated list of fully qualified class names
+     * @return                       this configuration instance for method chaining
+     * @see                          #parseGuardrailClasses(String)
+     */
     public AgentConfiguration withInputGuardrailClassesList(String inputGuardrailClasses) {
         return withInputGuardrailClasses(parseGuardrailClasses(inputGuardrailClasses));
     }
 
+    /**
+     * Sets input guardrail classes for security filtering of incoming messages.
+     *
+     * @param  inputGuardrailClasses list of guardrail classes to apply to user inputs
+     * @return                       this configuration instance for method chaining
+     */
     public AgentConfiguration withInputGuardrailClasses(List<Class<?>> inputGuardrailClasses) {
         this.inputGuardrailClasses = inputGuardrailClasses;
         return this;
     }
 
+    /**
+     * Gets the configured output guardrail classes for security filtering.
+     *
+     * @return the list of output guardrail classes, or {@code null} if not configured
+     */
     public List<Class<?>> getOutputGuardrailClasses() {
         return outputGuardrailClasses;
     }
 
+    /**
+     * Sets output guardrail classes from a comma-separated string of class names.
+     *
+     * @param  outputGuardrailClasses comma-separated list of fully qualified class names
+     * @return                        this configuration instance for method chaining
+     * @see                           #parseGuardrailClasses(String)
+     */
     public AgentConfiguration withOutputGuardrailClassesList(String outputGuardrailClasses) {
         return withOutputGuardrailClasses(parseGuardrailClasses(outputGuardrailClasses));
     }
 
+    /**
+     * Sets output guardrail classes for security filtering of agent responses.
+     *
+     * @param  outputGuardrailClasses list of guardrail classes to apply to agent outputs
+     * @return                        this configuration instance for method chaining
+     */
     public AgentConfiguration withOutputGuardrailClasses(List<Class<?>> outputGuardrailClasses) {
         this.outputGuardrailClasses = outputGuardrailClasses;
         return this;
     }
 
     /**
-     * Parse comma-separated guardrail class names into a list of loaded classes.
+     * Parses comma-separated guardrail class names into a list of loaded classes.
      *
-     * @param  guardrailClassNames comma-separated class names, can be null or empty
-     * @return                     list of loaded classes, empty list if input is null or empty
+     * <p>
+     * This utility method takes a string containing comma-separated fully qualified class names and attempts to load
+     * each class using reflection. Classes that cannot be loaded are logged as warnings and excluded from the result.
+     * </p>
+     *
+     * <p>
+     * Example usage:
+     * </p>
+     *
+     * <pre>{@code
+     * List<Class<?>> classes = AgentConfiguration.parseGuardrailClasses(
+     *         "com.example.InputFilter,com.example.OutputValidator");
+     * }</pre>
+     *
+     * @param  guardrailClassNames comma-separated class names, may be {@code null} or empty
+     * @return                     a list of successfully loaded classes; empty list if input is {@code null}, empty, or
+     *                             if no classes could be loaded
      */
     public static List<Class<?>> parseGuardrailClasses(String guardrailClassNames) {
         if (guardrailClassNames == null || guardrailClassNames.trim().isEmpty()) {
@@ -109,10 +215,15 @@ public class AgentConfiguration {
     }
 
     /**
-     * Load a guardrail class by name.
+     * Loads a guardrail class by its fully qualified name using reflection.
      *
-     * @param  className the fully qualified class name
-     * @return           the loaded class, or null if loading failed
+     * <p>
+     * This method attempts to load the specified class using {@link Class#forName(String)}. If the class cannot be
+     * found, a warning is logged and {@code null} is returned.
+     * </p>
+     *
+     * @param  className the fully qualified class name to load
+     * @return           the loaded {@link Class} object, or {@code null} if the class could not be found
      */
     protected static Class<?> loadGuardrailClass(String className) {
         try {

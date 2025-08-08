@@ -20,15 +20,35 @@ package org.apache.camel.component.langchain4j.agent.api;
 import org.apache.camel.CamelContextAware;
 
 /**
- * Provides a common interface for factories of agents.
+ * Factory interface for creating AI agent instances within the Apache Camel LangChain4j integration.
+ *
+ * <p>
+ * This factory provides a standardized way to create and manage AI agents, supporting both agents with memory
+ * capabilities and stateless agents. Implementations of this interface are responsible for configuring the underlying
+ * LangChain4j AI services with appropriate models, memory providers, and other necessary components.
+ * </p>
+ *
+ * <p>
+ * The factory extends {@link CamelContextAware} to ensure proper integration with the Camel context and access to
+ * registry components.
+ * </p>
+ *
+ * @since 4.9.0
  */
 public interface AgentFactory extends CamelContextAware {
 
     /**
-     * Create a new agent instance (might be cached)
+     * Creates a new AI agent instance configured with the appropriate settings.
      *
-     * @return           An agent instance
-     * @throws Exception if unable to create the agent
+     * <p>
+     * Implementations may choose to cache agent instances for performance optimization, especially when the underlying
+     * configuration remains unchanged. The returned agent will be fully configured and ready to handle chat
+     * interactions.
+     * </p>
+     *
+     * @return           a configured {@link Agent} instance ready for chat interactions
+     * @throws Exception if unable to create the agent due to configuration issues, missing dependencies, or
+     *                   initialization failures
      */
     Agent createAgent() throws Exception;
 }
