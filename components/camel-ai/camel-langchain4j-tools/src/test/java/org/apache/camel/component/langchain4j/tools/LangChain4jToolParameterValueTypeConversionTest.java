@@ -33,16 +33,19 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class LangChain4jToolTest extends CamelTestSupport {
-
-    protected final String nameFromDB = "pippo";
+class LangChain4jToolParameterValueTypeConversionTest extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
     static OpenAIMock openAIMock = new OpenAIMock().builder()
-            .when("What is the name of the user 1?\n")
-            .invokeTool("QueryUserByNumber")
-            .withParam("number", 1)
+            .when("A test user message\n")
+            .invokeTool("TestTool")
+            .withParam("int", 1)
+            .withParam("intNumeric", 2)
+            .withParam("long", Long.MIN_VALUE)
+            .withParam("double", 1.0)
+            .withParam("boolean", true)
+            .withParam("string", "1")
             .build();
 
     @Override
@@ -70,38 +73,46 @@ public class LangChain4jToolTest extends CamelTestSupport {
             public void configure() {
 
                 from("direct:test")
-                        .to("langchain4j-tools:test1?tags=user")
+                        .to("langchain4j-tools:test?tags=test")
                         .log("response is: ${body}");
 
-                from("langchain4j-tools:test1?tags=user&name=QueryUserByNumber&description=Query user database by number&parameter.number=integer")
-                        .setBody(simple("{\"name\": \"pippo\"}"));
-
-                from("langchain4j-tools:test1?tags=user&description=Does not really do anything")
-                        .setBody(constant("Hello World"));
-
-                from("langchain4j-tools:test1?tags=user&name=DoesNothing&description=Also does not really do anything, but has a name")
-                        .setBody(constant("Hello World"));
-
+                from("langchain4j-tools:test?tags=test&name=TestTool&description=Test Tool&parameter.int=integer&parameter.intNumeric=number&parameter.long=number&parameter.double=number&parameter.boolean=boolean&parameter.string=string")
+                        .setBody(simple("{\"content\": \"fake response\"}"));
             }
         };
     }
 
     @RepeatedTest(1)
-    public void testSimpleInvocation() {
+    void parameterValueTypeConversion() {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new SystemMessage(
                 """
                         You provide the requested information using the functions you hava available. You can invoke the functions to obtain the information you need to complete the answer.
                         """));
         messages.add(new UserMessage("""
-                What is the name of the user 1?
+                A test user message
                 """));
 
         Exchange exchange = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
         Assertions.assertThat(exchange).isNotNull();
         Message message = exchange.getMessage();
-        Assertions.assertThat(message.getBody(String.class)).containsIgnoringCase(nameFromDB);
-        Assertions.assertThat(message.getHeader("number")).isInstanceOf(Integer.class);
+        Assertions.assertThat(message.getHeader("int")).isInstanceOf(Integer.class);
+        Assertions.assertThat(message.getHeader("int")).isEqualTo(1);
+
+        Assertions.assertThat(message.getHeader("intNumeric")).isInstanceOf(Integer.class);
+        Assertions.assertThat(message.getHeader("intNumeric")).isEqualTo(2);
+
+        Assertions.assertThat(message.getHeader("long")).isInstanceOf(Long.class);
+        Assertions.assertThat(message.getHeader("long")).isEqualTo(Long.MIN_VALUE);
+
+        Assertions.assertThat(message.getHeader("double")).isInstanceOf(Double.class);
+        Assertions.assertThat(message.getHeader("double")).isEqualTo(1.0);
+
+        Assertions.assertThat(message.getHeader("boolean")).isInstanceOf(Boolean.class);
+        Assertions.assertThat(message.getHeader("boolean")).isEqualTo(true);
+
+        Assertions.assertThat(message.getHeader("string")).isInstanceOf(String.class);
+        Assertions.assertThat(message.getHeader("string")).isEqualTo("1");
     }
 }
