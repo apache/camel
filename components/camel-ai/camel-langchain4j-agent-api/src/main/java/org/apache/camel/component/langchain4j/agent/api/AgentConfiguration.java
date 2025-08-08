@@ -139,6 +139,17 @@ public class AgentConfiguration {
     }
 
     /**
+     * Sets input guardrail classes from an array of class names.
+     *
+     * @param  inputGuardrailClasses array of fully qualified class names
+     * @return                       this configuration instance for method chaining
+     * @see                          #parseGuardrailClasses(String[])
+     */
+    public AgentConfiguration withInputGuardrailClassesArray(String[] inputGuardrailClasses) {
+        return withInputGuardrailClasses(parseGuardrailClasses(inputGuardrailClasses));
+    }
+
+    /**
      * Sets input guardrail classes for security filtering of incoming messages.
      *
      * @param  inputGuardrailClasses list of guardrail classes to apply to user inputs
@@ -166,6 +177,17 @@ public class AgentConfiguration {
      * @see                           #parseGuardrailClasses(String)
      */
     public AgentConfiguration withOutputGuardrailClassesList(String outputGuardrailClasses) {
+        return withOutputGuardrailClasses(parseGuardrailClasses(outputGuardrailClasses));
+    }
+
+    /**
+     * Sets output guardrail classes from an array of class names.
+     *
+     * @param  outputGuardrailClasses array of fully qualified class names
+     * @return                        this configuration instance for method chaining
+     * @see                           #parseGuardrailClasses(String[])
+     */
+    public AgentConfiguration withOutputGuardrailClassesArray(String[] outputGuardrailClasses) {
         return withOutputGuardrailClasses(parseGuardrailClasses(outputGuardrailClasses));
     }
 
@@ -206,7 +228,36 @@ public class AgentConfiguration {
             return Collections.emptyList();
         }
 
-        return Arrays.stream(guardrailClassNames.split(","))
+        return parseGuardrailClasses(guardrailClassNames.split(","));
+    }
+
+    /**
+     * Parses an array of guardrail class names into a list of loaded classes.
+     *
+     * <p>
+     * This utility method takes an array of fully qualified class names and attempts to load each class using
+     * reflection. Classes that cannot be loaded are logged as warnings and excluded from the result.
+     * </p>
+     *
+     * <p>
+     * Example usage:
+     * </p>
+     *
+     * <pre>{@code
+     * String[] classNames = { "java.lang.String", "java.util.List" };
+     * List<Class<?>> classes = AgentConfiguration.parseGuardrailClasses(classNames);
+     * }</pre>
+     *
+     * @param  guardrailClassNames array of fully qualified class names, may be {@code null}
+     * @return                     a list of successfully loaded classes; empty list if input is {@code null} or if no
+     *                             classes could be loaded
+     */
+    public static List<Class<?>> parseGuardrailClasses(String[] guardrailClassNames) {
+        if (guardrailClassNames == null) {
+            return Collections.emptyList();
+        }
+
+        return Arrays.stream(guardrailClassNames)
                 .map(String::trim)
                 .filter(name -> !name.isEmpty())
                 .map(AgentConfiguration::loadGuardrailClass)
