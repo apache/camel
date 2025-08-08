@@ -504,11 +504,13 @@ public class KubernetesExport extends Export {
         // the camel-observability-services artifact is set in the pom template
         // it renames the container health base path to /observe, so this has to be in the container health probes http path
         // only quarkus and sb runtimes, because there is no published health endpoints when using runtime=main
+        String probePort = port > 0 ? "" + port : "9876";
         if (RuntimeType.quarkus == runtime) {
             // jkube reads quarkus properties to set the container health probes path
+            buildProperties.add("jkube.enricher.jkube-healthcheck-quarkus.port=" + probePort);
             buildProperties.add("quarkus.smallrye-health.root-path=/observe/health");
             List<String> newProps = new ArrayList<>();
-            newProps.add("quarkus.management.port=" + (port > 0 ? "" + port : "9876"));
+            newProps.add("quarkus.management.port=" + probePort);
             if (applicationProperties == null) {
                 applicationProperties = newProps.toArray(new String[newProps.size()]);
             } else {
@@ -520,7 +522,7 @@ public class KubernetesExport extends Export {
             // jkube reads spring-boot properties to set the kubernetes container health probes path
             // in this case, jkube reads from the application.properties and not from the build properties in pom.xml
             newProps.add("management.endpoints.web.base-path=/observe");
-            newProps.add("management.server.port=" + (port > 0 ? "" + port : "9876"));
+            newProps.add("management.server.port=" + probePort);
             // jkube uses the old property to enable the readiness/liveness probes
             // TODO: rename this property once https://github.com/eclipse-jkube/jkube/issues/3690 is fixed
             newProps.add("management.health.probes.enabled=true");
@@ -532,7 +534,7 @@ public class KubernetesExport extends Export {
             }
         } else if (RuntimeType.main == runtime) {
             List<String> newProps = new ArrayList<>();
-            newProps.add("camel.management.port=" + (port > 0 ? "" + port : "9876"));
+            newProps.add("camel.management.port=" + probePort);
             if (applicationProperties == null) {
                 applicationProperties = newProps.toArray(new String[newProps.size()]);
             } else {
