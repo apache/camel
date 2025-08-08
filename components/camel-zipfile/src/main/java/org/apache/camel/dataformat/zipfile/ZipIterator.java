@@ -16,20 +16,20 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
-import java.io.BufferedInputStream;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.IOHelper;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,8 @@ public class ZipIterator implements Iterator<Message>, Closeable {
 
     private final Exchange exchange;
     private boolean allowEmptyDirectory;
-    private volatile ZipInputStream zipInputStream;
+    private volatile ZipArchiveInputStream zipInputStream;
+    private volatile ZipArchiveEntry currentEntry;
     private volatile Message parent;
     private volatile boolean first;
 
@@ -52,13 +53,15 @@ public class ZipIterator implements Iterator<Message>, Closeable {
 
         Objects.requireNonNull(inputStream);
 
-        if (inputStream instanceof ZipInputStream) {
-            zipInputStream = (ZipInputStream) inputStream;
+        if (inputStream instanceof ZipArchiveInputStream) {
+            zipInputStream = (ZipArchiveInputStream) inputStream;
         } else {
-            if (inputStream instanceof InputStream) {
-                zipInputStream = new ZipInputStream(inputStream);
-            } else {
-                zipInputStream = new ZipInputStream(new BufferedInputStream(inputStream));
+            try {
+                ArchiveInputStream input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP,
+                        new BufferedInputStream(inputStream));
+                zipInputStream = (ZipArchiveInputStream) input;
+            } catch (ArchiveException e) {
+                throw new RuntimeException(e.getMessage(), e);
             }
         }
         parent = null;
@@ -77,7 +80,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             if (zipInputStream == null) {
                 return false;
             }
-            boolean availableDataInCurrentEntry = zipInputStream.available() == 1;
+            boolean availableDataInCurrentEntry = currentEntry != null;
             if (!availableDataInCurrentEntry) {
                 // advance to the next entry.
                 parent = getNextElement();
@@ -110,6 +113,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         }
         Message answer = parent;
         parent = null;
+        currentEntry = null;
 
         if (first && answer == null) {
             throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
@@ -127,15 +131,28 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         }
 
         try {
-            ZipEntry current = getNextEntry();
+            currentEntry = getNextEntry();
 
-            if (current != null) {
-                LOG.debug("read zipEntry {}", current.getName());
+            if (currentEntry != null) {
+                LOG.debug("read zipEntry {}", currentEntry.getName());
+
                 Message answer = new DefaultMessage(exchange.getContext());
                 answer.getHeaders().putAll(exchange.getIn().getHeaders());
-                answer.setHeader("zipFileName", current.getName());
-                answer.setHeader(Exchange.FILE_NAME, current.getName());
-                answer.setBody(new ZipInputStreamWrapper(zipInputStream));
+                answer.setHeader("zipFileName", currentEntry.getName());
+                answer.setHeader(Exchange.FILE_NAME, currentEntry.getName());
+                if (currentEntry.isDirectory()) {
+                    if (allowEmptyDirectory) {
+                        answer.setBody(new ByteArrayInputStream(new byte[0]));
+                    } else {
+                        return getNextElement(); // skip directory
+                    }
+                } else {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    IOHelper.copy(zipInputStream, baos);
+                    byte[] data = baos.toByteArray();
+                    answer.setBody(new ByteArrayInputStream(data));
+                }
+
                 return answer;
             } else {
                 LOG.trace("close zipInputStream");
@@ -153,8 +170,8 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         }
     }
 
-    private ZipEntry getNextEntry() throws IOException {
-        ZipEntry entry;
+    private ZipArchiveEntry getNextEntry() throws IOException {
+        ZipArchiveEntry entry;
 
         while ((entry = zipInputStream.getNextEntry()) != null) {
             if (!entry.isDirectory()) {
@@ -178,6 +195,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     public void close() throws IOException {
         IOHelper.close(zipInputStream);
         zipInputStream = null;
+        currentEntry = null;
     }
 
     public boolean isSupportIteratorForEmptyDirectory() {
