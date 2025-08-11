@@ -33,7 +33,7 @@ import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHE
              title = "LangChain4j Agent",
              syntax = "langchain4j-agent:agentId",
              producerOnly = true,
-             category = { Category.AI }, headersClass = LangChain4jAgent.Headers.class)
+             category = { Category.AI }, headersClass = Headers.class)
 public class LangChain4jAgentEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The Agent id")

@@ -38,8 +38,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.Headers.MEMORY_ID;
-import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.Headers.SYSTEM_MESSAGE;
+import static org.apache.camel.component.langchain4j.agent.Headers.MEMORY_ID;
+import static org.apache.camel.component.langchain4j.agent.Headers.SYSTEM_MESSAGE;
 
 public class LangChain4jAgentProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jAgentProducer.class);

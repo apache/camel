@@ -14,12 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent;
 
-public class LangChain4jAgent {
-    public static final String SCHEME = "langchain4j-agent";
+import org.apache.camel.spi.Metadata;
 
-    private LangChain4jAgent() {
-    }
+/**
+ * Headers that the agent component may rely on
+ */
+public class Headers {
+    @Metadata(description = "The system prompt.", javaType = "String")
+    public static final String SYSTEM_MESSAGE = "CamelLangChain4jAgentSystemMessage";
 
+    @Metadata(description = "Memory ID.", javaType = "Object")
+    public static final String MEMORY_ID = "CamelLangChain4jAgentMemoryId";
 }
