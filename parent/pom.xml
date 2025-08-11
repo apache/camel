@@ -205,7 +205,7 @@
         <google-cloud-storage-version>2.55.0</google-cloud-storage-version>
         <graaljs-version>24.2.2</graaljs-version>
         <graphql-java-version>24.2</graphql-java-version>
-        <greenmail-version>2.1.4</greenmail-version>
+        <greenmail-version>2.1.5</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.28</groovy-version>
         <grpc-version>1.74.0</grpc-version>
