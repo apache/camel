@@ -41,14 +41,16 @@ import static org.apache.camel.Exchange.FILE_LENGTH;
 import static org.apache.camel.Exchange.FILE_NAME;
 
 /**
- * Zip file data format. See {@link org.apache.camel.model.dataformat.ZipFileDataFormat} for "deflate" compression.
+ * Zip file data format.
  */
 @Dataformat("zipFile")
 public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+
     /**
      * The default maximum decompressed size (in bytes), which corresponds to 1G.
      */
     private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824;
+
     private boolean usingIterator;
     private boolean allowEmptyDirectory;
     private boolean preservePathElements;
@@ -61,29 +63,26 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        String filename;
+        String filename = null;
+
         String filepath = exchange.getIn().getHeader(FILE_NAME, String.class);
         Long fileLength = exchange.getIn().getHeader(FILE_LENGTH, Long.class);
-        if (filepath == null) {
-            // generate the file name as the camel file component would do
-            filename = filepath = StringHelper.sanitize(exchange.getIn().getMessageId());
-        } else {
+        if (filepath != null) {
             Path filenamePath = Paths.get(filepath).getFileName();
             if (filenamePath != null) {
                 filename = filenamePath.toString(); // remove any path elements
-            } else {
-                // TODO do some logging
-                return;
             }
         }
-
-        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(stream);
-
+        if (filename == null) {
+            // generate the file name as the camel file component would do
+            filename = filepath = StringHelper.sanitize(exchange.getIn().getMessageId());
+        }
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
         if (fileLength == null) {
             fileLength = (long) is.available();
         }
 
+        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(stream);
         if (preservePathElements) {
             createZipEntries(zos, filepath, fileLength);
         } else {
@@ -109,7 +108,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             return zipIterator;
         } else {
             BufferedInputStream bis = new BufferedInputStream(inputStream);
-            ZipArchiveInputStream zis = (ZipArchiveInputStream) new ArchiveStreamFactory()
+            ZipArchiveInputStream zis = new ArchiveStreamFactory()
                     .createArchiveInputStream(ArchiveStreamFactory.ZIP, bis);
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
@@ -191,13 +190,4 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
         this.maxDecompressedSize = maxDecompressedSize;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

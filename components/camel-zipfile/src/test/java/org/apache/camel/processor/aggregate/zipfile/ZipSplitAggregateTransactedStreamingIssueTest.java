@@ -24,7 +24,6 @@ import org.apache.camel.dataformat.zipfile.ZipSplitter;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.h2.jdbcx.JdbcDataSource;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 public class ZipSplitAggregateTransactedStreamingIssueTest extends CamelTestSupport {
 
