@@ -28,6 +28,7 @@ pipeline {
 
     environment {
         MAVEN_SKIP_RC = true
+        DEVELOCITY_ACCESS_KEY = credentials('CAMEL_DEVELOCITY_ACCESS_KEY')
     }
 
     options {
