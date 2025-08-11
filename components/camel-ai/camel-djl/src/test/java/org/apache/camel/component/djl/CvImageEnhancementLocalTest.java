@@ -47,7 +47,8 @@ import org.slf4j.LoggerFactory;
 public class CvImageEnhancementLocalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CvImageEnhancementLocalTest.class);
 
-    private static final String MODEL_URL = "https://storage.googleapis.com/tfhub-modules/captain-pool/esrgan-tf2/1.tar.gz";
+    private static final String MODEL_URL
+            = "https://www.kaggle.com/api/v1/models/kaggle/esrgan-tf2/tensorFlow2/esrgan-tf2/1/download";
     private static final String MODEL_NAME = "esrgan-tf2";
 
     @BeforeAll
