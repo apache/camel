@@ -33,7 +33,7 @@ public class FtpConsumerReplyStringIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
         mock.expectedHeaderReceived(FtpConstants.FTP_REPLY_CODE, 226);
-        mock.expectedHeaderReceived(FtpConstants.FTP_REPLY_STRING, "226 Transfer complete.\r\n");
+        mock.expectedHeaderReceived(FtpConstants.FTP_REPLY_STRING, "226 Transfer complete.");
 
         template.requestBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
