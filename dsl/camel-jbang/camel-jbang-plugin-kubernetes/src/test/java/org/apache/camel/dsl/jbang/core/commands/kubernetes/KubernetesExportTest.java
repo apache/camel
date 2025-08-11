@@ -75,6 +75,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
             Assertions.assertEquals("9876", props.get("quarkus.management.port"));
             Assertions.assertEquals("9876", applicationProperties.get("quarkus.management.port"));
+            Assertions.assertEquals("9876", props.get("jkube.enricher.jkube-healthcheck-quarkus.port"));
             Assertions.assertEquals("/observe/health", props.get("quarkus.smallrye-health.root-path"));
         } else if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
             Assertions.assertEquals("9876", applicationProperties.get("management.server.port"));
