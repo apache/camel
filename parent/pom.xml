@@ -240,7 +240,7 @@
         <icu4j-version>77.1</icu4j-version>
         <ignite-version>2.17.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
-        <infinispan-version>15.2.5.Final</infinispan-version>
+        <infinispan-version>16.0.0.Dev03</infinispan-version>
         <infinispan-protostream-version>15.0.13.Final</infinispan-protostream-version>
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>7.3.0</influx-client-java-driver-version>
