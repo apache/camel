@@ -36,6 +36,8 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.debugger.DebuggerJmxConnectorService;
+import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
@@ -91,6 +93,7 @@ import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.OffUuidGenerator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
@@ -662,6 +665,71 @@ public final class DefaultConfigurationConfigurer {
                     .sorted(Comparator.comparing(CamelContextCustomizer::getOrder))
                     .forEach(c -> c.configure(camelContext));
         }
+    }
+
+    /**
+     * Configures the {@link BacklogDebugger} with the configuration.
+     *
+     * @param camelContext the camel context
+     * @param config       the configuration
+     */
+    public static void configureBacklogDebugger(CamelContext camelContext, DebuggerConfigurationProperties config)
+            throws Exception {
+        if (!config.isEnabled() && !config.isStandby()) {
+            return;
+        }
+
+        // must enable source location and history
+        // so debugger tooling knows to map breakpoints to source code
+        camelContext.setSourceLocationEnabled(true);
+        camelContext.setMessageHistory(true);
+
+        // enable debugger on camel
+        camelContext.setDebugging(config.isEnabled());
+        camelContext.setDebugStandby(config.isStandby());
+
+        BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext);
+        debugger.setEnabled(config.isEnabled());
+        debugger.setStandby(config.isStandby());
+        debugger.setInitialBreakpoints(config.getBreakpoints());
+        debugger.setSingleStepIncludeStartEnd(config.isSingleStepIncludeStartEnd());
+        debugger.setBodyMaxChars(config.getBodyMaxChars());
+        debugger.setBodyIncludeStreams(config.isBodyIncludeStreams());
+        debugger.setBodyIncludeFiles(config.isBodyIncludeFiles());
+        debugger.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
+        debugger.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
+        debugger.setIncludeException(config.isIncludeException());
+        debugger.setLoggingLevel(config.getLoggingLevel().name());
+        debugger.setSuspendMode(config.isWaitForAttach()); // this option is named wait-for-attach
+        debugger.setFallbackTimeout(config.getFallbackTimeout());
+
+        // enable jmx connector if port is set
+        if (config.isJmxConnectorEnabled()) {
+            DebuggerJmxConnectorService connector = new DebuggerJmxConnectorService();
+            connector.setCreateConnector(true);
+            connector.setRegistryPort(config.getJmxConnectorPort());
+            camelContext.addService(connector);
+        }
+
+        // start debugger after context is started
+        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+            @Override
+            public void onContextStarted(CamelContext context) {
+                // only enable debugger if not in standby mode
+                if (debugger.isEnabled() && !debugger.isStandby()) {
+                    debugger.enableDebugger();
+                }
+            }
+
+            @Override
+            public void onContextStopping(CamelContext context) {
+                if (debugger.isEnabled()) {
+                    debugger.disableDebugger();
+                }
+            }
+        });
+
+        camelContext.addService(debugger);
     }
 
     /**

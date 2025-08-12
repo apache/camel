@@ -87,7 +87,7 @@ public class Run extends CamelCommand {
     public static final String RUN_JAVA_SH = "classpath:templates/run-java.sh";
 
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
-    private static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
+    public static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
 
     private static final String[] ACCEPTED_XML_ROOT_ELEMENT_NAMES = new String[] {
             "route", "routes",
@@ -1228,7 +1228,7 @@ public class Run extends CamelCommand {
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
         }
-        pb.command(runDirPath.toString() + mvnw, "--quiet", "--file",
+        pb.command(runDirPath + mvnw, "--quiet", "--file",
                 runDirPath.toRealPath().resolve("pom.xml").toString(),
                 "spring-boot:run");
 
@@ -2013,7 +2013,7 @@ public class Run extends CamelCommand {
         }
     }
 
-    private static void removeDir(Path directory) {
+    protected static void removeDir(Path directory) {
         try {
             if (Files.exists(directory)) {
                 Files.walk(directory)

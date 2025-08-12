@@ -81,14 +81,19 @@ public interface BacklogDebugger extends StatefulService {
     void setLoggingLevel(String level);
 
     /**
-     * To enable the debugger
+     * To enable and start the debugger
      */
     void enableDebugger();
 
     /**
-     * To disable the debugger
+     * To disable and stop the debugger
      */
     void disableDebugger();
+
+    /**
+     * To configure whether the debugger should be enabled
+     */
+    void setEnabled(boolean enabled);
 
     /**
      * Whether the debugger is enabled

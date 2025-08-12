@@ -26,6 +26,7 @@ import java.util.Base64;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.camel.MyFoo;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultResourceLoader;
@@ -339,4 +340,20 @@ public class ResourceLoaderTest extends TestSupport {
             assertEquals(raw, content);
         }
     }
+
+    @Test
+    public void testLoadSource() throws Exception {
+        DefaultCamelContext context = new DefaultCamelContext();
+        Resource resource
+                = PluginHelper.getResourceLoader(context).resolveResource("source:" + MyFoo.class.getName() + "?test=true");
+
+        try (InputStream is = resource.getInputStream()) {
+            assertNotNull(is);
+
+            String content = context.getTypeConverter().convertTo(String.class, is);
+            assertNotNull(content);
+            assertTrue(content.contains("public class MyFoo {"));
+        }
+    }
+
 }

@@ -207,6 +207,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled.set(enabled);
+    }
+
+    @Override
     public boolean isEnabled() {
         return enabled.get();
     }
