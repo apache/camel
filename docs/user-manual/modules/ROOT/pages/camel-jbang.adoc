@@ -2744,6 +2744,22 @@ To set a breakpoint at line 18 and 34
 camel debug hello.yaml --breakpoint=18,34
 ----
 
+===== Camel Spring Boot route debugging
+
+In *Camel 4.14* we added support for using Camel JBang to debug an existing Camel Spring Boot Maven based project.
+
+All that is needed is to execute:
+
+[source,bash]
+----
+camel debug pom.xml
+----
+
+This tells Camel JBang to look inside the Maven pom.xml file and if `camel-spring-boot-bom` is detected,
+then Camel JBang will automatically run Spring Boot with debugging enabled. This is done by letting Spring Boot
+compile and build a fat-jar, that then is launched in the background and the output is shown in the console; just as shown
+above. You will then get the same user experience as debugging plain Camel Main files.
+
 ==== Editing code using VSCode or IDEA editors
 
 You can use JBang to edit the source code by using the `jbang` CLI to download dependencies,
