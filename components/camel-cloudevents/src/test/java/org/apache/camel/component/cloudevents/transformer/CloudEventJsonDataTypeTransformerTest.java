@@ -55,7 +55,8 @@ class CloudEventJsonDataTypeTransformerTest {
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
         assertTrue(exchange.getMessage().hasHeaders());
-        assertEquals("application/cloudevents+json", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals(CloudEventJsonDataTypeTransformer.APPLICATION_CLOUDEVENTS_JSON,
+                exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
         assertTrue(exchange.getMessage().getBody(String.class).contains(String.format("\"%s\":\"%s\"",
                 cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID).json(), exchange.getExchangeId())));
         assertTrue(exchange.getMessage().getBody(String.class).contains(String.format("\"%s\":\"org.apache.camel.event.test\"",
@@ -72,6 +73,41 @@ class CloudEventJsonDataTypeTransformerTest {
     }
 
     @Test
+    void shouldHandleJsonBody() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, "test1.txt");
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.test");
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "org.apache.camel.test");
+        exchange.getMessage().setHeader(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "application/json");
+        exchange.getMessage().setBody(new ByteArrayInputStream("""
+                {
+                    "message": "Test1"
+                }
+                """.getBytes(StandardCharsets.UTF_8)));
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        CloudEvent cloudEvent = CloudEvents.v1_0;
+        assertTrue(exchange.getMessage().hasHeaders());
+        assertEquals(CloudEventJsonDataTypeTransformer.APPLICATION_CLOUDEVENTS_JSON,
+                exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertTrue(exchange.getMessage().getBody(String.class).contains(String.format("\"%s\":\"%s\"",
+                cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID).json(), exchange.getExchangeId())));
+        assertTrue(exchange.getMessage().getBody(String.class).contains(String.format("\"%s\":\"org.apache.camel.event.test\"",
+                cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).json())));
+        assertTrue(exchange.getMessage().getBody(String.class).contains(String.format("\"%s\":\"org.apache.camel.test\"",
+                cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE).json())));
+        assertTrue(exchange.getMessage().getBody(String.class).contains(String.format("\"%s\":\"application/json\"",
+                cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json())));
+        assertTrue(exchange.getMessage().getBody(String.class).contains("\"data\":{\n"));
+
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+        assertNull(exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
+    }
+
+    @Test
     void shouldSetDefaultCloudEventAttributes() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
@@ -81,7 +117,8 @@ class CloudEventJsonDataTypeTransformerTest {
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
         assertTrue(exchange.getMessage().hasHeaders());
-        assertEquals("application/cloudevents+json", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals(CloudEventJsonDataTypeTransformer.APPLICATION_CLOUDEVENTS_JSON,
+                exchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
         assertTrue(exchange.getMessage().getBody(String.class).contains(String.format("\"%s\":\"%s\"",
                 cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID).json(), exchange.getExchangeId())));
         assertTrue(exchange.getMessage().getBody(String.class).contains(String.format("\"%s\":\"org.apache.camel.event\"",
@@ -97,6 +134,12 @@ class CloudEventJsonDataTypeTransformerTest {
     public void shouldLookupTransformer() throws Exception {
         Transformer transformer
                 = camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("application-cloudevents+json"));
+        Assertions.assertNotNull(transformer);
+        Assertions.assertEquals(CloudEventJsonDataTypeTransformer.class, transformer.getClass());
+
+        transformer
+                = camelContext.getTransformerRegistry()
+                        .resolveTransformer(new TransformerKey(CloudEventJsonDataTypeTransformer.APPLICATION_CLOUDEVENTS_JSON));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(CloudEventJsonDataTypeTransformer.class, transformer.getClass());
     }

@@ -38,48 +38,65 @@ import org.apache.camel.support.MessageHelper;
                      description = "Adds default CloudEvent (JSon binding) headers to the Camel message (such as content-type, event source, event type etc.)")
 public class CloudEventJsonDataTypeTransformer extends Transformer {
 
+    public static final String APPLICATION_CLOUDEVENTS_JSON = "application/cloudevents+json";
+    public static final String APPLICATION_JSON = "application/json";
+
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
         final Map<String, Object> headers = message.getHeaders();
 
-        Map<String, Object> cloudEventAttributes = new HashMap<>();
-        CloudEvent cloudEvent = CloudEvents.v1_0;
-        for (CloudEvent.Attribute attribute : cloudEvent.attributes()) {
-            if (headers.containsKey(attribute.id())) {
-                cloudEventAttributes.put(attribute.json(), headers.get(attribute.id()));
+        String dataContentType = headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, APPLICATION_JSON).toString();
+        if (!APPLICATION_CLOUDEVENTS_JSON.equals(dataContentType)) {
+            Map<String, Object> cloudEventAttributes = new HashMap<>();
+            CloudEvent cloudEvent = CloudEvents.v1_0;
+            for (CloudEvent.Attribute attribute : cloudEvent.attributes()) {
+                if (headers.containsKey(attribute.id())) {
+                    cloudEventAttributes.put(attribute.json(), headers.get(attribute.id()));
+                }
             }
+
+            cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_VERSION).json(),
+                    cloudEvent.version());
+            cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID).json(),
+                    message.getExchange().getExchangeId());
+            cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).json(),
+                    CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_TYPE);
+            cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE).json(),
+                    CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_SOURCE);
+
+            cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME).json(),
+                    cloudEvent.getEventTime(message.getExchange()));
+
+            String body = MessageHelper.extractBodyAsString(message);
+            cloudEventAttributes.putIfAbsent("data", body);
+            cloudEventAttributes.putIfAbsent(
+                    cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json(), dataContentType);
+
+            headers.put(Exchange.CONTENT_TYPE, APPLICATION_CLOUDEVENTS_JSON);
+
+            message.setBody(createCouldEventJsonObject(cloudEventAttributes));
+
+            cloudEvent.attributes().stream().map(CloudEvent.Attribute::id).forEach(headers::remove);
         }
-
-        cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_VERSION).json(),
-                cloudEvent.version());
-        cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_ID).json(),
-                message.getExchange().getExchangeId());
-        cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TYPE).json(),
-                CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_TYPE);
-        cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE).json(),
-                CloudEvent.DEFAULT_CAMEL_CLOUD_EVENT_SOURCE);
-
-        cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_TIME).json(),
-                cloudEvent.getEventTime(message.getExchange()));
-
-        String body = MessageHelper.extractBodyAsString(message);
-        cloudEventAttributes.putIfAbsent("data", body);
-        cloudEventAttributes.putIfAbsent(cloudEvent.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json(),
-                headers.getOrDefault(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, "application/json"));
-
-        headers.put(Exchange.CONTENT_TYPE, "application/cloudevents+json");
-
-        message.setBody(createCouldEventJsonObject(cloudEventAttributes));
-
-        cloudEvent.attributes().stream().map(CloudEvent.Attribute::id).forEach(headers::remove);
     }
 
     private String createCouldEventJsonObject(Map<String, Object> cloudEventAttributes) {
         StringBuilder builder = new StringBuilder("{");
 
         cloudEventAttributes.forEach((key, value) -> {
-            builder.append(" ").append("\"").append(key).append("\"").append(":").append("\"").append(value).append("\"")
-                    .append(",");
+            if ("data".equals(key) && value instanceof String data) {
+                if (isJson(data)) {
+                    // set Json data as nested object in the data field
+                    builder.append(" ").append("\"").append(key).append("\"").append(":").append(data)
+                            .append(",");
+                } else {
+                    builder.append(" ").append("\"").append(key).append("\"").append(":").append("\"").append(data).append("\"")
+                            .append(",");
+                }
+            } else {
+                builder.append(" ").append("\"").append(key).append("\"").append(":").append("\"").append(value).append("\"")
+                        .append(",");
+            }
         });
 
         if (!cloudEventAttributes.isEmpty()) {
@@ -87,5 +104,13 @@ public class CloudEventJsonDataTypeTransformer extends Transformer {
         }
 
         return builder.append("}").toString();
+    }
+
+    private boolean isJson(String data) {
+        if (data == null || data.isEmpty()) {
+            return false;
+        }
+
+        return data.trim().startsWith("{") || data.trim().startsWith("[");
     }
 }
