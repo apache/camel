@@ -986,6 +986,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public List<Route> getRoutesByGroup(String groupId) {
+        if (groupId == null) {
+            return Collections.EMPTY_LIST;
+        }
         return getRoutes(f -> groupId.equals(f.getGroup()));
     }
 

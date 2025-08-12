@@ -136,7 +136,7 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
             return null;
         }
 
-        if (!camelContext.getRoutesByGroup(group).isEmpty()) {
+        if (group != null && !camelContext.getRoutesByGroup(group).isEmpty()) {
             try {
                 ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
                         .getObjectNameForRouteGroup(camelContext, group);
