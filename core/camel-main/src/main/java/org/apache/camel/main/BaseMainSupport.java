@@ -58,13 +58,10 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.impl.debugger.DebuggerJmxConnectorService;
-import org.apache.camel.impl.debugger.DefaultBacklogDebugger;
 import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
-import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
@@ -2100,58 +2097,8 @@ public abstract class BaseMainSupport extends BaseService {
         setPropertiesOnTarget(camelContext, config, properties, "camel.debug.",
                 failIfNotSet, true, autoConfiguredProperties);
 
-        if (!config.isEnabled() && !config.isStandby()) {
-            return;
-        }
-
-        // must enable source location and history
-        // so debugger tooling knows to map breakpoints to source code
-        camelContext.setSourceLocationEnabled(true);
-        camelContext.setMessageHistory(true);
-
-        // enable debugger on camel
-        camelContext.setDebugging(config.isEnabled());
-        camelContext.setDebugStandby(config.isStandby());
-
-        BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext);
-        debugger.setStandby(config.isStandby());
-        debugger.setInitialBreakpoints(config.getBreakpoints());
-        debugger.setSingleStepIncludeStartEnd(config.isSingleStepIncludeStartEnd());
-        debugger.setBodyMaxChars(config.getBodyMaxChars());
-        debugger.setBodyIncludeStreams(config.isBodyIncludeStreams());
-        debugger.setBodyIncludeFiles(config.isBodyIncludeFiles());
-        debugger.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
-        debugger.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
-        debugger.setIncludeException(config.isIncludeException());
-        debugger.setLoggingLevel(config.getLoggingLevel().name());
-        debugger.setSuspendMode(config.isWaitForAttach()); // this option is named wait-for-attach
-        debugger.setFallbackTimeout(config.getFallbackTimeout());
-
-        // enable jmx connector if port is set
-        if (config.isJmxConnectorEnabled()) {
-            DebuggerJmxConnectorService connector = new DebuggerJmxConnectorService();
-            connector.setCreateConnector(true);
-            connector.setRegistryPort(config.getJmxConnectorPort());
-            camelContext.addService(connector);
-        }
-
-        // start debugger after context is started
-        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
-            @Override
-            public void onContextStarted(CamelContext context) {
-                // only enable debugger if not in standby mode
-                if (!debugger.isStandby()) {
-                    debugger.enableDebugger();
-                }
-            }
-
-            @Override
-            public void onContextStopping(CamelContext context) {
-                debugger.disableDebugger();
-            }
-        });
-
-        camelContext.addService(debugger);
+        // use common logic to configure debugger
+        DefaultConfigurationConfigurer.configureBacklogDebugger(camelContext, config);
     }
 
     private void setTracerProperties(

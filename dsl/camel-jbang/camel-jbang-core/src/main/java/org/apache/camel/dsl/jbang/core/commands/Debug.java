@@ -18,18 +18,25 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.BufferedReader;
 import java.io.Console;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
@@ -46,11 +53,22 @@ import org.apache.camel.util.concurrent.ThreadHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.apache.maven.model.Activation;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
+import org.apache.maven.model.Profile;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.CAMEL_JBANG_WORK_DIR;
 import static org.apache.camel.util.IOHelper.buffered;
 
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false, showDefaultValues = true)
@@ -172,8 +190,14 @@ public class Debug extends Run {
                     printer().println(line);
                 }
                 // and any error
-                String text = IOHelper.loadText(spawnError);
-                printer().println(text);
+                if (spawnError != null) {
+                    try {
+                        String text = IOHelper.loadText(spawnError);
+                        printer().println(text);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
                 return -1;
             }
         } while (exit == 0 && !quit.get());
@@ -183,23 +207,25 @@ public class Debug extends Run {
 
     private void doReadLog(AtomicBoolean quit) {
         do {
-            InputStreamReader isr = new InputStreamReader(spawnOutput);
-            try {
-                BufferedReader reader = buffered(isr);
-                while (true) {
-                    String line = reader.readLine();
-                    if (line != null) {
-                        while (logBuffer.size() >= 100) {
-                            logBuffer.remove(0);
+            if (spawnOutput != null) {
+                InputStreamReader isr = new InputStreamReader(spawnOutput);
+                try {
+                    BufferedReader reader = buffered(isr);
+                    while (true) {
+                        String line = reader.readLine();
+                        if (line != null) {
+                            while (logBuffer.size() >= 100) {
+                                logBuffer.remove(0);
+                            }
+                            logBuffer.add(line);
+                            logUpdated.set(true);
+                        } else {
+                            break;
                         }
-                        logBuffer.add(line);
-                        logUpdated.set(true);
-                    } else {
-                        break;
                     }
+                } catch (Exception e) {
+                    // ignore
                 }
-            } catch (Exception e) {
-                // ignore
             }
         } while (!quit.get());
     }
@@ -237,6 +263,137 @@ public class Debug extends Run {
 
     @Override
     protected int runDebug(KameletMain main) throws Exception {
+        // is this a maven project
+        File pom = new File("pom.xml");
+        if (pom.isFile() && pom.exists()) {
+            // is this a spring-boot project
+            try (InputStream is = new FileInputStream(pom)) {
+                String text = IOHelper.loadText(is);
+                if (text.contains("camel-spring-boot-bom")) {
+                    return doRunDebugSpringBoot(main);
+                }
+            }
+        }
+        return doRunDebug(main);
+    }
+
+    private int doRunDebugSpringBoot(KameletMain main) throws Exception {
+        Path pom = Paths.get("pom.xml");
+        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+        try (Reader reader = Files.newBufferedReader(pom)) {
+            Model model = mavenReader.read(reader);
+
+            // include camel-debug dependency
+            Dependency d = new Dependency();
+            d.setGroupId("org.apache.camel.springboot");
+            d.setArtifactId("camel-debug-starter");
+            model.getDependencies().add(d);
+            d = new Dependency();
+            d.setGroupId("org.apache.camel.springboot");
+            d.setArtifactId("camel-cli-connector-starter");
+            model.getDependencies().add(d);
+
+            Profile mp = new Profile();
+            model.addProfile(mp);
+            mp.setId("camel-debug");
+            Activation a = new Activation();
+            a.setActiveByDefault(true);
+            mp.setActivation(a);
+
+            Build b = new Build();
+            mp.setBuild(b);
+
+            Plugin pi = new Plugin();
+            b.addPlugin(pi);
+            pi.setGroupId("org.springframework.boot");
+            pi.setArtifactId("spring-boot-maven-plugin");
+            pi.setVersion("${spring-boot-version}");
+            PluginExecution pe = new PluginExecution();
+            pe.addGoal("repackage");
+            pi.addExecution(pe);
+            Xpp3Dom cfg = new Xpp3Dom("finalName");
+            cfg.setValue("camel-jbang-debug");
+            Xpp3Dom root = new Xpp3Dom("configuration");
+            root.addChild(cfg);
+            pi.setConfiguration(root);
+
+            MavenXpp3Writer w = new MavenXpp3Writer();
+            FileOutputStream fos = new FileOutputStream("camel-jbang-debug-pom.xml", false);
+            w.write(fos, model);
+            IOHelper.close(fos);
+
+            printer().println("Preparing Camel Spring Boot for debugging ...");
+
+            // use maven wrapper if present
+            String mvnw = "/mvnw";
+            if (FileUtil.isWindows()) {
+                mvnw = "/mvnw.cmd";
+            }
+            if (!new File(mvnw).exists()) {
+                mvnw = "mvn";
+            }
+            // use maven to build the JAR and then run the JAR after-wards
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command(mvnw, "-Dmaven.test.skip", "--file", "camel-jbang-debug-pom.xml", "package", "spring-boot:repackage");
+            Process p = pb.start();
+
+            if (p.waitFor(30, TimeUnit.SECONDS)) {
+                AtomicReference<Process> processRef = new AtomicReference<>();
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    try {
+                        // We need to wait for the process to exit before doing any cleanup
+                        Process process = processRef.get();
+                        if (process != null) {
+                            process.destroy();
+                            for (int i = 0; i < 30; i++) {
+                                if (!process.isAlive()) {
+                                    break;
+                                }
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                }
+                            }
+                        }
+                        removeDir(Paths.get(RUN_PLATFORM_DIR));
+                        removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                        Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
+                    } catch (Exception e) {
+                        // Ignore
+                    }
+                }));
+
+                // okay build is complete then run java
+                pb = new ProcessBuilder();
+                pb.command("java",
+                        "-Dcamel.debug.enabled=true",
+                        (breakpoint == null
+                                ? "-Dcamel.debug.breakpoints=_all_routes_" : "-Dcamel.debug.breakpoints=" + breakpoint),
+                        "-Dcamel.debug.loggingLevel=DEBUG",
+                        "-Dcamel.debug.singleStepIncludeStartEnd=true",
+                        loggingColor ? "-Dspring.output.ansi.enabled=ALWAYS" : "-Dspring.output.ansi.enabled=NEVER",
+                        "-jar", "target/camel-jbang-debug.jar");
+
+                p = pb.start();
+                processRef.set(p);
+                this.spawnOutput = p.getInputStream();
+                this.spawnError = p.getErrorStream();
+                this.spawnPid = p.pid();
+                printer().println("Debugging Camel Spring Boot integration: " + name + " with PID: " + p.pid());
+            } else {
+                printer().printErr("Timed out preparing Camel Spring Boot for debugging");
+                this.spawnError = p.getErrorStream();
+                this.spawnPid = p.pid();
+                p.destroy();
+                return -1;
+            }
+        }
+
+        return 0;
+    }
+
+    protected int doRunDebug(KameletMain main) throws Exception {
         List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
 
         // debug should be run

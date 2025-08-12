@@ -287,6 +287,53 @@ public final class DefaultResourceResolvers {
         }
     }
 
+    /**
+     * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from file system in
+     * src/main/java.
+     */
+    @ResourceResolver(SourceResolver.SCHEME)
+    public static class SourceResolver extends ResourceResolverSupport {
+        public static final String SCHEME = "source";
+
+        public SourceResolver() {
+            super(SCHEME);
+        }
+
+        @Override
+        public Resource createResource(String location, String remaining) {
+            String dir = "src/main/java/";
+            boolean test = remaining.endsWith("?test=true");
+            if (test) {
+                remaining = remaining.substring(0, remaining.length() - 10);
+                dir = "src/test/java/";
+            }
+            String name = remaining.replace('.', '/') + ".java";
+            final File path = new File(getPath(dir + name));
+            return new ResourceSupport(SCHEME, location) {
+                @Override
+                public boolean exists() {
+                    return path.exists();
+                }
+
+                @Override
+                public URI getURI() {
+                    return path.toURI();
+                }
+
+                @Override
+                public InputStream getInputStream() throws IOException {
+                    if (!exists()) {
+                        throw new FileNotFoundException(path + " does not exist");
+                    }
+                    if (path.isDirectory()) {
+                        throw new FileNotFoundException(path + " is a directory");
+                    }
+                    return new FileInputStream(path);
+                }
+            };
+        }
+    }
+
     static final class HttpResource extends ResourceSupport implements ContentTypeAware {
         private String contentType;
 
