@@ -3,14 +3,6 @@
 This plugin helps you to write automated tests with Camel JBang.
 Please make sure to meet these prerequisites for running tests with Camel JBang:
 
-* Install the https://citrusframework.org/[Citrus test framework] as a JBang application
-
-[source,bash]
-----
-jbang trust add https://github.com/citrusframework/citrus/
-jbang app install citrus@citrusframework/citrus
-----
-
 * Activate the Camel JBang test plugin
 
 The Camel JBang Test functionality is provided as a command plugin.
@@ -93,35 +85,6 @@ Please refer to the help page of the `run` command for options and details.
 TIP: The Camel JBang plugin automatically creates a subfolder `test` and adds the test source files into this folder.
 This is a way to separate test scoped resources from Camel integration sources.
 
-== Dependency management
-
-The Citrus JBang tooling includes some basic dependencies out of the box, so you are not required to add dependencies prior to running the test.
-In case you need to add a Citrus module that is not included by default you can add this to a file called `jbang.properties`.
-
-TIP: The property file should be located right next to the test source file, so JBang can find it automatically when running the test.
-
-.jbang.properties
-[source,properties]
-----
-# Declare required additional dependencies
-run.deps=org.citrusframework:citrus-camel:4.7.0,\
-org.citrusframework:citrus-kafka:4.7.0,\
-org.citrusframework:citrus-testcontainers:4.7.0,\
-org.apache.camel:camel-endpointdsl:4.13.0,\
-org.apache.camel:camel-aws2-s3:4.13.0
-
-# Enable dump of Camel JBang integration output
-run.D=citrus.camel.jbang.dump.integration.output=true
-----
-
-You can add dependencies in the form of Maven GAV style coordinates in the `run.deps` property.
-JBang will automatically resolve the artifacts and add it to the runtime.
-
-The `jbang.properties` is a good place to add System properties for the Citrus runtime.
-For instance, the setting `citrus.camel.jbang.dump.integration.output=true` controls the output of the Camel integration and that it should be stored into a file for later analysis.
-
-TIP: During the project export the dependencies listed in `jbang.properties` will be added to the Maven POM as test-scoped dependencies.
-
 == Project export
 
 Once you are happy with the Camel integration and the automated test you may want to export these files into a project for further usage after the prototyping phase.
@@ -153,10 +116,51 @@ Now the automated tests from the prototyping phase with Camel JBang are part of 
 
 TIP: The project export has created a Java unit test (in `src/test/java`) that runs the test. You can also run the test from your Java IDE with this class. By default, the export uses JUnit Jupiter as a test engine.
 
+== Dependency management
+
+The test plugin is based on the Java test framework https://citrusframework.org/[Citrus].
+It uses commands and modules provided by Citrus to run the tests.
+In fact the Camel test plugin calls Citrus as another JBang command.
+
+The Citrus JBang tooling includes some basic dependencies out of the box, so you are not required to add dependencies prior to running the test.
+In case you need to add a Citrus module that is not included by default (e.g. support for Kafka or Testcontainers) you can add the additional dependencies to a file called `jbang.properties`.
+
+TIP: The property file should be located right next to the test source file, so JBang can find it automatically when running the test.
+
+.jbang.properties
+[source,properties]
+----
+# Declare required additional dependencies
+run.deps=org.citrusframework:citrus-camel:4.7.0,\
+org.citrusframework:citrus-kafka:4.7.0,\
+org.citrusframework:citrus-testcontainers:4.7.0,\
+org.apache.camel:camel-endpointdsl:4.13.0,\
+org.apache.camel:camel-aws2-s3:4.13.0
+
+# Enable dump of Camel JBang integration output
+run.D=citrus.camel.jbang.dump.integration.output=true
+----
+
+You can add dependencies in the form of Maven GAV style coordinates in the `run.deps` property.
+JBang will automatically resolve the artifacts and add it to the runtime.
+
+The `jbang.properties` is a good place to add System properties for the Citrus runtime.
+For instance, the setting `citrus.camel.jbang.dump.integration.output=true` controls the output of the Camel integration and that it should be stored into a file for later analysis.
+
+TIP: During the project export the dependencies listed in `jbang.properties` will be added to the Maven POM as test-scoped dependencies.
+
 == Explore test capabilities
 
 The test plugin uses https://citrusframework.org/[Citrus] as an underlying test framework.
 Citrus is an Open Source Java test framework that integrates very well with Apache Camel as it provides special test actions to use Camel JBang for instance.
+
+You can also install the https://citrusframework.org/[Citrus test framework] JBang application to explore the full capabilities.
+
+[source,bash]
+----
+jbang trust add https://github.com/citrusframework/citrus/
+jbang app install citrus@citrusframework/citrus
+----
 
 Usually an automated test of a Camel integration needs to perform these high level steps:
 

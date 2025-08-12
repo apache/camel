@@ -28,6 +28,8 @@ class for all your configuration and routing without.
 
 |xref:test-infra.adoc[camel-test-infra] | *Camel Test Infra*: Camel Test Infra is a set of modules that leverage modern JUnit 5 features to abstract the provisioning and execution of test infrastructure. Among other things, it provides abstraction of the infrastructure (based on Test Containers - being the de-facto successor of the camel-testcontainers components) as well as JUnit 5 extensions for the Camel Context itself.
 
+|xref:camel-jbang-test.adoc[camel-jbang-test] | *Camel JBang Test Plugin*: A Camel JBang plugin to help writing automated tests during prototyping with JBang. The tests are able to start the Camel integration and verify its logic from the very beginning. The test plugin does not require any project setup so you can just start writing and executing automated tests.
+
 |=======================================================================
 
 NOTE: If you are using Camel Quarkus, then you can find information in
@@ -110,13 +112,47 @@ For example, you can send (or send and skip) a message to a xref:components::moc
 endpoint for validating the message send by Camel is as expected.
 |=======================================================================
 
-=== Third Party Testing libraries
+== Integration testing
 
-There are a number of third party testing libraries that Camel users have found useful.
+The purpose of integration testing is to verify a whole component or service with its integration to other components, infrastructure and services.
+
+Usually the integration tests start the Camel application as a whole and include test infrastructure such as message brokers, data persistence and 3rd party services that interact with the Camel application.
+
+See this chapter about xref:integration-test.adoc[integration testing] for details and how to master common integration testing challenges.
+
+There are a number of third party testing libraries that Camel users have found useful especially when it comes to integration testing.
 
 [width="100%",cols="1,3",options="header",]
 |=======================================================================
 |Name |Description
-| https://citrusframework.org/[Citrus Integration Framework] | Framework for automated integration tests supporting a wide range of message protocols and data formats
-| https://citrusframework.org/yaks/[Citrus Yaks] | YAKS is a framework to enable Cloud Native BDD testing on Kubernetes
+| https://citrusframework.org/[Citrus Integration Testing] | Framework for automated integration tests supporting a wide range of message protocols and data formats
+| https://citrusframework.org/yaks/[YAKS] | YAKS is a framework based on Citrus to enable Cloud Native BDD testing on Kubernetes
 |=======================================================================
+
+=== Citrus test framework
+
+As an example of writing integration tests for Camel applications you can use the
+https://citfrusframework.org[Citrus] test framework.
+Citrus is an Open Source Java testing framework with focus on integration testing and messaging.
+
+The framework provides a very good integration with Apache Camel.
+Citrus helps you to write automated integration tests with a proper preparation of test infrastructure and connects with the exposed services to verify the Camel application with powerful message validation capabilities for different message data formats (e.g. XML, Json, YAML, plaintext).
+
+Please refer to the https://citrusframework.org/citrus/reference/html/[Citrus documentation] to find out how to write automated tests for Apache Camel applications.
+The following sections might be interesting to explore for Camel developers and testers:
+
+[width="100%",cols="1,3",options="header",]
+|=======================================================================
+|Name |Description
+| https://citrusframework.org/citrus/reference/html/#apache-camel[Citrus & Camel routes] | Start and stop Camel routes as part of the test.
+| https://citrusframework.org/citrus/reference/html/#camel-infra[Citrus & Camel test infra] | Start and stop Camel test infrastructure services as part of the Citrus test.
+| https://citrusframework.org/citrus/reference/html/#camel-processor-support[Citrus & Camel processors] | Use Camel processor, transformer and data format EIPs in Citrus tests.
+| https://citrusframework.org/citrus/reference/html/#apache-camel[Citrus & Camel JBang] | Run Camel integrations with JBang as part of a test.
+|=======================================================================
+
+TIP: Citrus provides a good integration with https://www.jbang.dev[JBang] and Camel JBang.
+This means you can use Citrus from the very beginning for writing automated tests also in the prototyping phase with Camel JBang.
+Read about it in the chapter xref:camel-jbang-test.adoc[Camel JBang test plugin].
+
+Citrus integrates with Quarkus and Spring Boot so you can write the tests on top of known concepts and libraries.
+You can choose from a set of supported test engines such as JUnit Jupiter to run the tests as part of the build lifecycle or from your favorite IDE.
