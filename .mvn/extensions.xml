@@ -10,10 +10,9 @@
         <artifactId>extension</artifactId>
         <version>0.5.1</version>
     </extension>
-<!-- Temporarily disabled due to INFRA-26647 -->
-<!--    <extension>-->
-<!--        <groupId>com.gradle</groupId>-->
-<!--        <artifactId>develocity-maven-extension</artifactId>-->
-<!--        <version>1.23.2</version>-->
-<!--    </extension>-->
+    <extension>
+        <groupId>com.gradle</groupId>
+        <artifactId>develocity-maven-extension</artifactId>
+        <version>2.0.1</version>
+    </extension>
 </extensions>
