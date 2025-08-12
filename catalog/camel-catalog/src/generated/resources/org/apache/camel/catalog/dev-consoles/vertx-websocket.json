@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "vertx-websocket",
+    "title": "Vert.x WebSocket",
+    "description": "Vert.x WebSocket consumer details",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.vertx.websocket.VertxWebsocketDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-vertx-websocket",
+    "version": "4.14.0-SNAPSHOT"
+  }
+}
+
