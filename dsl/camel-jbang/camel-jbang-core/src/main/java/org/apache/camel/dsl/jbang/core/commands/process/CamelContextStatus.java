@@ -314,7 +314,13 @@ public class CamelContextStatus extends ProcessWatchCommand {
     }
 
     protected String getReloaded(Row row) {
-        return row.reloaded + "/" + row.reloadedFailed;
+        String r = row.reloaded;
+        String f = row.reloadedFailed;
+        if (r != null && f != null) {
+            return r + "/" + f;
+        } else {
+            return "";
+        }
     }
 
     protected String getRoutes(Row r) {
