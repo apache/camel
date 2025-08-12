@@ -1,0 +1,27 @@
+{
+  "id" : "7fa7f51e-2974-4155-a41a-ead18d8d6ff0",
+  "name" : "",
+  "request" : {
+    "url" : "/",
+    "method" : "GET",
+    "headers" : {
+      "WireMockScenario" : {
+        "equalTo" : "Olingo4RouteTest"
+      }
+    }
+  },
+  "response" : {
+    "status" : 302,
+    "body" : "<html><head><title>Object moved</title></head><body>\r\n<h2>Object moved to <a href=\"/TripPinRESTierService/(S(q0nfejgvcxozb1sovfcquqzj))/\">here</a>.</h2>\r\n</body></html>\r\n",
+    "headers" : {
+      "Server" : "Microsoft-IIS/10.0",
+      "Date" : "Fri, 15 Aug 2025 07:59:28 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Location" : "/TripPinRESTierService/(S(q0nfejgvcxozb1sovfcquqzj))/",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "7fa7f51e-2974-4155-a41a-ead18d8d6ff0",
+  "persistent" : true,
+  "insertionIndex" : 48
+}

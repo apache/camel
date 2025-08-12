@@ -1,0 +1,26 @@
+{
+  "id" : "618e7283-f30f-4d05-bf82-6b858e46cbfd",
+  "name" : "swsavybrdqat5w0ijuujikkzx_people_count",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/People/$count",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "20",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:06 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Content-Type" : "text/plain; charset=utf-8"
+    }
+  },
+  "uuid" : "618e7283-f30f-4d05-bf82-6b858e46cbfd",
+  "persistent" : true,
+  "insertionIndex" : 37
+}

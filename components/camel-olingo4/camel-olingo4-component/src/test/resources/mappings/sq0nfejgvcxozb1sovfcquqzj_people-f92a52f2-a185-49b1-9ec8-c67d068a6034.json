@@ -1,0 +1,33 @@
+{
+  "id" : "f92a52f2-a185-49b1-9ec8-c67d068a6034",
+  "name" : "sq0nfejgvcxozb1sovfcquqzj_people",
+  "request" : {
+    "urlPath" : "/(S(q0nfejgvcxozb1sovfcquqzj))/People",
+    "method" : "GET",
+    "queryParameters" : {
+      "$top" : {
+        "hasExactly" : [ {
+          "equalTo" : "5"
+        } ]
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"@odata.context\":\"https://services.odata.org/TripPinRESTierService/(S(q0nfejgvcxozb1sovfcquqzj))/$metadata#People\",\"value\":[{\"UserName\":\"angelhuffman\",\"FirstName\":\"Angel\",\"LastName\":\"Huffman\",\"MiddleName\":null,\"Gender\":\"Female\",\"Age\":null,\"Emails\":[\"Angel@example.com\"],\"FavoriteFeature\":\"Feature1\",\"Features\":[],\"AddressInfo\":[{\"Address\":\"55 Grizzly Peak Rd.\",\"City\":{\"Name\":\"Butte\",\"CountryRegion\":\"United States\",\"Region\":\"MT\"}}],\"HomeAddress\":null},{\"UserName\":\"clydeguess\",\"FirstName\":\"Clyde\",\"LastName\":\"Guess\",\"MiddleName\":null,\"Gender\":\"Male\",\"Age\":null,\"Emails\":[],\"FavoriteFeature\":\"Feature1\",\"Features\":[],\"AddressInfo\":[],\"HomeAddress\":{\"Address\":null,\"City\":null}},{\"UserName\":\"elainestewart\",\"FirstName\":\"Elaine\",\"LastName\":\"Stewart\",\"MiddleName\":null,\"Gender\":\"Female\",\"Age\":null,\"Emails\":[\"Elaine@example.com\",\"Elaine@contoso.com\"],\"FavoriteFeature\":\"Feature1\",\"Features\":[],\"AddressInfo\":[{\"Address\":\"55 Grizzly Peak Rd.\",\"City\":{\"Name\":\"Butte\",\"CountryRegion\":\"United States\",\"Region\":\"MT\"}}],\"HomeAddress\":null},{\"@odata.type\":\"#Trippin.Manager\",\"UserName\":\"genevievereeves\",\"FirstName\":\"Genevieve\",\"LastName\":\"Reeves\",\"MiddleName\":null,\"Gender\":\"Female\",\"Age\":null,\"Emails\":[\"Genevieve@example.com\",\"Genevieve@contoso.com\"],\"FavoriteFeature\":\"Feature1\",\"Features\":[],\"Budget\":0,\"AddressInfo\":[{\"Address\":\"87 Polk St. Suite 5\",\"City\":{\"Name\":\"San Francisco\",\"CountryRegion\":\"United States\",\"Region\":\"CA\"}}],\"HomeAddress\":null,\"BossOffice\":null},{\"UserName\":\"georginabarlow\",\"FirstName\":\"Georgina\",\"LastName\":\"Barlow\",\"MiddleName\":null,\"Gender\":\"Female\",\"Age\":null,\"Emails\":[\"Georgina@example.com\",\"Georgina@contoso.com\"],\"FavoriteFeature\":\"Feature1\",\"Features\":[],\"AddressInfo\":[{\"Address\":\"55 Grizzly Peak Rd.\",\"City\":{\"Name\":\"Butte\",\"CountryRegion\":\"United States\",\"Region\":\"MT\"}}],\"HomeAddress\":null}]}",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:30 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Content-Type" : "application/json; charset=utf-8; odata.metadata=minimal"
+    }
+  },
+  "uuid" : "f92a52f2-a185-49b1-9ec8-c67d068a6034",
+  "persistent" : true,
+  "insertionIndex" : 44
+}

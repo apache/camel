@@ -1,0 +1,30 @@
+{
+  "id" : "5b645e9f-2ed8-45a7-90cc-857c350f47ae",
+  "name" : "swsavybrdqat5w0ijuujikkzx_airlinesaa",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/Airlines('AA')",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"@odata.context\":\"https://services.odata.org/TripPinRESTierService/(S(wsavybrdqat5w0ijuujikkzx))/$metadata#Airlines/$entity\",\"@odata.etag\":\"W/\\\"J0FtZXJpY2FuIEFpcmxpbmVzJw==\\\"\",\"AirlineCode\":\"AA\",\"Name\":\"American Airlines\"}",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "ETag" : "W/\"J0FtZXJpY2FuIEFpcmxpbmVzJw==\"",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:23 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Content-Type" : "application/json; charset=utf-8; odata.metadata=minimal"
+    }
+  },
+  "uuid" : "5b645e9f-2ed8-45a7-90cc-857c350f47ae",
+  "persistent" : true,
+  "scenarioName" : "scenario-2-(S(wsavybrdqat5w0ijuujikkzx))-Airlines('AA')",
+  "requiredScenarioState" : "scenario-2-(S(wsavybrdqat5w0ijuujikkzx))-Airlines('AA')-2",
+  "newScenarioState" : "scenario-2-(S(wsavybrdqat5w0ijuujikkzx))-Airlines('AA')-3",
+  "insertionIndex" : 9
+}

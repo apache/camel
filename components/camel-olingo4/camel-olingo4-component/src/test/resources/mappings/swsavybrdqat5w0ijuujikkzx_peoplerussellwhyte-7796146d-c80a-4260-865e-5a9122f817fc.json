@@ -1,0 +1,26 @@
+{
+  "id" : "7796146d-c80a-4260-865e-5a9122f817fc",
+  "name" : "swsavybrdqat5w0ijuujikkzx_peoplerussellwhyte",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/People('russellwhyte')",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"@odata.context\":\"https://services.odata.org/TripPinRESTierService/(S(wsavybrdqat5w0ijuujikkzx))/$metadata#People/$entity\",\"UserName\":\"russellwhyte\",\"FirstName\":\"Russell\",\"LastName\":\"Whyte\",\"MiddleName\":null,\"Gender\":\"Male\",\"Age\":null,\"Emails\":[\"Russell@example.com\",\"Russell@contoso.com\"],\"FavoriteFeature\":\"Feature1\",\"Features\":[\"Feature1\",\"Feature2\"],\"AddressInfo\":[{\"Address\":\"187 Suffolk Ln.\",\"City\":{\"Name\":\"Boise\",\"CountryRegion\":\"United States\",\"Region\":\"ID\"}}],\"HomeAddress\":null}",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:09 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Content-Type" : "application/json; charset=utf-8; odata.metadata=minimal"
+    }
+  },
+  "uuid" : "7796146d-c80a-4260-865e-5a9122f817fc",
+  "persistent" : true,
+  "insertionIndex" : 32
+}

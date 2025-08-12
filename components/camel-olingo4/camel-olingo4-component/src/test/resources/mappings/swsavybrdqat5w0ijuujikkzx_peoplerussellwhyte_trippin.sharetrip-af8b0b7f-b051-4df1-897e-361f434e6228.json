@@ -1,0 +1,28 @@
+{
+  "id" : "af8b0b7f-b051-4df1-897e-361f434e6228",
+  "name" : "swsavybrdqat5w0ijuujikkzx_peoplerussellwhyte_trippin.sharetrip",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/People('russellwhyte')/Trippin.ShareTrip",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\"userName\":\"scottketchum\",\"tripId\":0}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 204,
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:22 GMT",
+      "X-Powered-By" : "ASP.NET"
+    }
+  },
+  "uuid" : "af8b0b7f-b051-4df1-897e-361f434e6228",
+  "persistent" : true,
+  "insertionIndex" : 12
+}

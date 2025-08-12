@@ -1,0 +1,32 @@
+{
+  "id" : "c64c79d4-d135-427b-82a7-e8014d7d9a69",
+  "name" : "swsavybrdqat5w0ijuujikkzx_people",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/People",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\n  \"UserName\": \"lewisblack\",\n  \"FirstName\": \"Lewis\",\n  \"LastName\": \"Black\"\n}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 201,
+    "body" : "{\"@odata.context\":\"https://services.odata.org/TripPinRESTierService/(S(wsavybrdqat5w0ijuujikkzx))/$metadata#People/$entity\",\"UserName\":\"lewisblack\",\"FirstName\":\"Lewis\",\"LastName\":\"Black\",\"MiddleName\":null,\"Gender\":\"Male\",\"Age\":null,\"Emails\":[],\"FavoriteFeature\":\"Feature1\",\"Features\":[],\"AddressInfo\":[],\"HomeAddress\":null}",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:16 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Location" : "https://services.odata.org/TripPinRESTierService/(S(wsavybrdqat5w0ijuujikkzx))/People('lewisblack')",
+      "Content-Type" : "application/json; charset=utf-8; odata.metadata=minimal"
+    }
+  },
+  "uuid" : "c64c79d4-d135-427b-82a7-e8014d7d9a69",
+  "persistent" : true,
+  "insertionIndex" : 21
+}

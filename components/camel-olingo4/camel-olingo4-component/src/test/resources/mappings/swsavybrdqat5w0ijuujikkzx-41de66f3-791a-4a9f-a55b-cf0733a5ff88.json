@@ -1,0 +1,26 @@
+{
+  "id" : "41de66f3-791a-4a9f-a55b-cf0733a5ff88",
+  "name" : "swsavybrdqat5w0ijuujikkzx",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"@odata.context\":\"https://services.odata.org/TripPinRESTierService/(S(wsavybrdqat5w0ijuujikkzx))/$metadata\",\"value\":[{\"name\":\"People\",\"kind\":\"EntitySet\",\"url\":\"People\"},{\"name\":\"Airlines\",\"kind\":\"EntitySet\",\"url\":\"Airlines\"},{\"name\":\"Airports\",\"kind\":\"EntitySet\",\"url\":\"Airports\"},{\"name\":\"Me\",\"kind\":\"Singleton\",\"url\":\"Me\"}]}",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:05 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Content-Type" : "application/json; charset=utf-8; odata.metadata=minimal"
+    }
+  },
+  "uuid" : "41de66f3-791a-4a9f-a55b-cf0733a5ff88",
+  "persistent" : true,
+  "insertionIndex" : 39
+}
