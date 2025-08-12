@@ -25,6 +25,7 @@
 *** xref:test-infra.adoc[Test Infra]
 *** xref:notify-builder.adoc[NotifyBuilder]
 *** xref:advice-with.adoc[AdviceWith]
+*** xref:integration-test.adoc[Integration Test]
 ** xref:rest-dsl.adoc[Working with REST and Rest DSL]
 *** xref:rest-dsl-openapi.adoc[Rest DSL contract first]
 ** xref:writing-components.adoc[Writing Components]
