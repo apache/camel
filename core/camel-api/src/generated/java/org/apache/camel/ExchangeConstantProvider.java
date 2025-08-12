@@ -13,7 +13,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(162);
+        Map<String, String> map = new HashMap<>(163);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -45,6 +45,7 @@ public class ExchangeConstantProvider {
         map.put("CORRELATION_ID", "CamelCorrelationId");
         map.put("CREATED_TIMESTAMP", "CamelCreatedTimestamp");
         map.put("DATASET_INDEX", "CamelDataSetIndex");
+        map.put("DEBUGGER_SELF_TIME", "CamelDebuggerSelfTime");
         map.put("DEFAULT_CHARSET_PROPERTY", "org.apache.camel.default.charset");
         map.put("DESTINATION_OVERRIDE_URL", "CamelDestinationOverrideUrl");
         map.put("DISABLE_HTTP_STREAM_CACHE", "CamelDisableHttpStreamCache");

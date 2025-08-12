@@ -44,6 +44,7 @@ public enum ExchangePropertyKey {
     CIRCUIT_BREAKER_RESPONSE_STATE(CircuitBreakerConstants.RESPONSE_STATE),
     CLAIM_CHECK_REPOSITORY(Exchange.CLAIM_CHECK_REPOSITORY),
     CORRELATION_ID(Exchange.CORRELATION_ID),
+    DEBUGGER_SELF_TIME(Exchange.DEBUGGER_SELF_TIME),
     DUPLICATE_MESSAGE(Exchange.DUPLICATE_MESSAGE),
     ERRORHANDLER_BRIDGE(Exchange.ERRORHANDLER_BRIDGE),
     ERRORHANDLER_CIRCUIT_DETECTED(Exchange.ERRORHANDLER_CIRCUIT_DETECTED),
@@ -140,6 +141,8 @@ public enum ExchangePropertyKey {
                 return CLAIM_CHECK_REPOSITORY;
             case Exchange.CORRELATION_ID:
                 return CORRELATION_ID;
+            case Exchange.DEBUGGER_SELF_TIME:
+                return DEBUGGER_SELF_TIME;
             case Exchange.DUPLICATE_MESSAGE:
                 return DUPLICATE_MESSAGE;
             case Exchange.ERRORHANDLER_BRIDGE:

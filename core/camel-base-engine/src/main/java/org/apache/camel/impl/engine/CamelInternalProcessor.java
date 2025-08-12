@@ -956,7 +956,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @Override
         public void after(Exchange exchange, MessageHistory history) throws Exception {
             if (history != null) {
-                history.nodeProcessingDone();
+                Long delta = (Long) exchange.removeProperty(ExchangePropertyKey.DEBUGGER_SELF_TIME);
+                if (delta != null) {
+                    history.nodeProcessingDone(delta);
+                } else {
+                    history.nodeProcessingDone();
+                }
             }
         }
     }

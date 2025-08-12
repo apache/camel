@@ -67,7 +67,18 @@ public class DefaultMessageHistory implements MessageHistory {
 
     @Override
     public void nodeProcessingDone() {
+        nodeProcessingDone(0);
+    }
+
+    @Override
+    public void nodeProcessingDone(long delta) {
         elapsed = clock.elapsed();
+        if (delta > 0) {
+            elapsed = elapsed - delta;
+        }
+        if (elapsed < 0) {
+            elapsed = 0;
+        }
     }
 
     @Override

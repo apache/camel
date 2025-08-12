@@ -126,6 +126,7 @@ public interface Exchange extends VariableAware {
 
     String DATASET_INDEX = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
+    String DEBUGGER_SELF_TIME = "CamelDebuggerSelfTime";
     String DESTINATION_OVERRIDE_URL = "CamelDestinationOverrideUrl";
     String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
     @Metadata(label = "idempotentConsumer",

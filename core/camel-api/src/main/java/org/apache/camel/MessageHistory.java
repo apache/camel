@@ -54,6 +54,13 @@ public interface MessageHistory {
     void nodeProcessingDone();
 
     /**
+     * Used for signalling that processing of the node is done.
+     *
+     * @param delta extra time in millis that should be subtracted from the processing time
+     */
+    void nodeProcessingDone(long delta);
+
+    /**
      * A read-only copy of the message at the point of this history (if this has been enabled).
      */
     Message getMessage();

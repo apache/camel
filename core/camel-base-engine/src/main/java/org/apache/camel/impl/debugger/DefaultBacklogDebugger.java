@@ -94,27 +94,31 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private boolean includeException = true;
 
     /**
-     * An suspend {@link Exchange} at a breakpoint.
+     * An {@link Exchange} suspended at a breakpoint.
      */
     private static final class SuspendedExchange {
+
         private final Exchange exchange;
         private final CountDownLatch latch;
+        private final StopWatch watch;
 
-        /**
-         * @param exchange the suspended exchange
-         * @param latch    the latch to use to continue routing the exchange
-         */
-        private SuspendedExchange(Exchange exchange, CountDownLatch latch) {
+        private SuspendedExchange(Exchange exchange) {
             this.exchange = exchange;
-            this.latch = latch;
+            this.latch = new CountDownLatch(1);
+            this.watch = new StopWatch();
         }
 
         public Exchange getExchange() {
             return exchange;
         }
 
-        public CountDownLatch getLatch() {
-            return latch;
+        public void continueExchange() {
+            exchange.setProperty(ExchangePropertyKey.DEBUGGER_SELF_TIME, watch.taken());
+            latch.countDown();
+        }
+
+        public boolean awaitExchange(long timeout) throws InterruptedException {
+            return latch.await(timeout, TimeUnit.SECONDS);
         }
     }
 
@@ -358,7 +362,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             debugger.removeBreakpoint(breakpoint);
         }
         if (se != null) {
-            se.getLatch().countDown();
+            se.continueExchange();
         }
     }
 
@@ -395,7 +399,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         suspendedBreakpointMessages.remove(nodeId);
         SuspendedExchange se = suspendedBreakpoints.remove(nodeId);
         if (se != null) {
-            se.getLatch().countDown();
+            se.continueExchange();
         }
     }
 
@@ -587,7 +591,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             suspendedBreakpointMessages.remove(node);
             SuspendedExchange se = suspendedBreakpoints.remove(node);
             if (se != null) {
-                se.getLatch().countDown();
+                se.continueExchange();
             }
         }
     }
@@ -655,7 +659,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 if (skipOverMode.get()) {
                     se.getExchange().setProperty(ExchangePropertyKey.SKIP_OVER, Boolean.TRUE);
                 }
-                se.getLatch().countDown();
+                se.continueExchange();
             }
         }
         skipOverMode.set(false);
@@ -860,7 +864,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         // make sure to clear state and latches is counted down, so we won't have hanging threads
         breakpoints.clear();
         for (SuspendedExchange se : suspendedBreakpoints.values()) {
-            se.getLatch().countDown();
+            se.continueExchange();
         }
         suspendedBreakpoints.clear();
         suspendedBreakpointMessages.clear();
@@ -936,7 +940,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 logger.log(String.format("NodeBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
                         exchangeId));
                 try {
-                    boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
+                    boolean hit = se.awaitExchange(fallbackTimeout);
                     if (!hit) {
                         // remove breakpoint as it timed out
                         suspendedBreakpointMessages.remove(nodeId);
@@ -973,7 +977,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             }
 
             // we only want to break one exchange at a time, so if there is already a suspended breakpoint then do not match
-            SuspendedExchange se = new SuspendedExchange(exchange, new CountDownLatch(1));
+            SuspendedExchange se = new SuspendedExchange(exchange);
             boolean existing = suspendedBreakpoints.putIfAbsent(nodeId, se) != null;
             return !existing;
         }
@@ -1011,7 +1015,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint
-            SuspendedExchange se = new SuspendedExchange(exchange, new CountDownLatch(1));
+            SuspendedExchange se = new SuspendedExchange(exchange);
             suspendedBreakpoints.put(toNode, se);
 
             // now wait until we should continue
@@ -1019,7 +1023,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                     String.format("StepBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
                             exchange.getExchangeId()));
             try {
-                boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
+                boolean hit = se.awaitExchange(fallbackTimeout);
                 if (!hit) {
                     // remove breakpoint as it timed out
                     suspendedBreakpointMessages.remove(toNode);
@@ -1119,7 +1123,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint
-            SuspendedExchange se = new SuspendedExchange(exchange, new CountDownLatch(1));
+            SuspendedExchange se = new SuspendedExchange(exchange);
             suspendedBreakpoints.put(toNode, se);
 
             // now wait until we should continue
@@ -1127,7 +1131,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                     String.format("StepBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
                             exchange.getExchangeId()));
             try {
-                boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
+                boolean hit = se.awaitExchange(fallbackTimeout);
                 if (!hit) {
                     // remove breakpoint as it timed out
                     suspendedBreakpointMessages.remove(toNode);
