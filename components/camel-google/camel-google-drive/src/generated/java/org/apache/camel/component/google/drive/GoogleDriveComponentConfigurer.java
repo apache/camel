@@ -31,6 +31,8 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         map.put("LazyStartProducer", boolean.class);
         map.put("AutowiredEnabled", boolean.class);
         map.put("ClientFactory", org.apache.camel.component.google.drive.GoogleDriveClientFactory.class);
+        map.put("ProxyHost", java.lang.String.class);
+        map.put("ProxyPort", java.lang.Integer.class);
         map.put("AccessToken", java.lang.String.class);
         map.put("ClientSecret", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
@@ -67,6 +69,10 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.lang.String.class, value)); return true;
@@ -102,6 +108,10 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "delegate": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.lang.String.class;
@@ -133,6 +143,10 @@ public class GoogleDriveComponentConfigurer extends PropertyConfigurerSupport im
         case "delegate": return getOrCreateConfiguration(target).getDelegate();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "proxyhost":
+        case "proxyHost": return target.getProxyHost();
+        case "proxyport":
+        case "proxyPort": return target.getProxyPort();
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         case "scopes": return getOrCreateConfiguration(target).getScopes();

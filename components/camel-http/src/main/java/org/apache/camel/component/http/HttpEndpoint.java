@@ -282,8 +282,10 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
                 if (scheme == null) {
                     scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
                 }
-                LOG.debug(
-                        "CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}",
+                LOG.warn(
+                        "CamelContext global options [http.proxyHost,http.proxyPort,http.proxyScheme] detected."
+                         + " Using global option configuration is deprecated. Instead configure this on the HTTP component."
+                         + " Using http proxy host: {} port: {} scheme: {}",
                         host, port, scheme);
                 HttpHost proxy = new HttpHost(scheme, host, port);
                 clientBuilder.setProxy(proxy);

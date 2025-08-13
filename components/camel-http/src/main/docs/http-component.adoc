@@ -239,6 +239,8 @@ There is also support for proxy authentication via the
 
 ==== Using proxy settings outside of URI
 
+*Deprecated*
+
 To avoid System properties conflicts, you can set proxy configuration
 only from the CamelContext or URI. +
  Java DSL :
@@ -267,6 +269,8 @@ So you can override the system properties with the endpoint options.
 
 There is also a `http.proxyScheme` property you
 can set to explicitly configure the scheme to use.
+
+IMPORTANT: Using GlobalOptions (as shown above) is deprecated. Instead, configure proxy settings on the HTTP component level.
 
 === Configuring charset
 

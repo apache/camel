@@ -223,6 +223,36 @@ public interface GoogleDriveComponentBuilderFactory {
         }
     
         /**
+         * Proxy server host.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+    
+        /**
+         * Proxy server port.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+    
+        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -315,6 +345,8 @@ public interface GoogleDriveComponentBuilderFactory {
             case "lazyStartProducer": ((GoogleDriveComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((GoogleDriveComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleDriveComponent) component).setClientFactory((org.apache.camel.component.google.drive.GoogleDriveClientFactory) value); return true;
+            case "proxyHost": ((GoogleDriveComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": ((GoogleDriveComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleDriveComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleDriveComponent) component).setClientSecret((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleDriveComponent) component).setRefreshToken((java.lang.String) value); return true;

@@ -33,11 +33,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.fhir.FhirConfiguration;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for creating FHIR {@link ca.uhn.fhir.rest.client.api.IGenericClient}
  */
 public final class FhirHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FhirHelper.class);
 
     private FhirHelper() {
         // hide utility class constructor
@@ -101,8 +105,12 @@ public final class FhirHelper {
 
         String camelProxyHost = camelContext.getGlobalOption("http.proxyHost");
         String camelProxyPort = camelContext.getGlobalOption("http.proxyPort");
-
         if (ObjectHelper.isNotEmpty(camelProxyHost) && ObjectHelper.isNotEmpty(camelProxyPort)) {
+            LOG.warn(
+                    "CamelContext global options [http.proxyHost,http.proxyPort] detected."
+                     + " Using global option configuration is deprecated. Instead configure this on the component."
+                     + " Using http proxy host: {} port: {}",
+                    camelProxyHost, camelProxyPort);
             restfulClientFactory.setProxy(camelProxyHost, Integer.parseInt(camelProxyPort));
         }
         if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort)) {
