@@ -34,8 +34,8 @@ public class PackageNameSourceLoader extends DefaultSourceLoader {
 
     private final String packageName;
 
-    public PackageNameSourceLoader(String packageName) {
-        this.packageName = packageName;
+    public PackageNameSourceLoader(String groupId, String artifactId) {
+        this.packageName = determinePackageName(groupId, artifactId);
     }
 
     @Override
@@ -58,6 +58,20 @@ public class PackageNameSourceLoader extends DefaultSourceLoader {
     private static String determineClassName(String content) {
         Matcher matcher = PACKAGE_PATTERN.matcher(content);
         return matcher.find() ? matcher.group(1) : null;
+    }
+
+    private static String determinePackageName(String groupId, String artifactId) {
+        // compute package name based on Maven GAV
+        // for package name it must be in lower-case and alpha/numeric
+        String s = groupId + "." + artifactId;
+        StringBuilder sb = new StringBuilder();
+        for (char ch : s.toCharArray()) {
+            if (ch == '.' || Character.isAlphabetic(ch) || Character.isDigit(ch)) {
+                ch = Character.toLowerCase(ch);
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 
 }

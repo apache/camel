@@ -36,6 +36,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.FileUtils;
 
+import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
+
 class ExportCamelMain extends Export {
 
     public ExportCamelMain(CamelJBangMain main) {

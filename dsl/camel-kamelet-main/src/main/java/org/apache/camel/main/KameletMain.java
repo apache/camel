@@ -578,8 +578,7 @@ public class KameletMain extends MainCommandLineSupport {
             MavenGav g = MavenGav.parseGav(gav);
             if (g.getGroupId() != null && g.getArtifactId() != null) {
                 // plugin a custom source loader with package name based on GAV
-                String defaultPackageName = g.getGroupId().replace('-', '.') + "." + g.getArtifactId().replace('-', '.');
-                SourceLoader sl = new PackageNameSourceLoader(defaultPackageName);
+                SourceLoader sl = new PackageNameSourceLoader(g.getGroupId(), g.getArtifactId());
                 answer.getRegistry().bind("PackageNameSourceLoader", sl);
             }
         }

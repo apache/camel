@@ -40,6 +40,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.FileUtils;
 
+import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
+
 class ExportSpringBoot extends Export {
 
     public ExportSpringBoot(CamelJBangMain main) {

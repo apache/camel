@@ -42,6 +42,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.FileUtils;
 
+import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
+
 class ExportQuarkus extends Export {
 
     public ExportQuarkus(CamelJBangMain main) {
