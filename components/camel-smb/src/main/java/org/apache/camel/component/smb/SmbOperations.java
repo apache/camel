@@ -80,9 +80,9 @@ public class SmbOperations implements SmbFileOperations {
 
     protected void connectIfNecessary() {
         try {
-            Connection connection = smbClient.connect(configuration.getHostname(), configuration.getPort());
-
             if (!loggedIn || !isConnected()) {
+                Connection connection = smbClient.connect(configuration.getHostname(), configuration.getPort());
+
                 LOG.debug("Not already connected/logged in. Connecting to: {}:{}", configuration.getHostname(),
                         configuration.getPort());
 
