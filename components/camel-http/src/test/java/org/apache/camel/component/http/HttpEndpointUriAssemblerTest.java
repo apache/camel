@@ -34,8 +34,8 @@ public class HttpEndpointUriAssemblerTest {
     public void testHttpAssembler() throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("httpUri", "www.google.com");
-        params.put("proxyAuthHost", "myotherproxy");
-        params.put("proxyAuthPort", 2345);
+        params.put("proxyHost", "myotherproxy");
+        params.put("proxyPort", 2345);
         params.put("proxyAuthUsername", "usr");
         params.put("proxyAuthPassword", "pwd");
 
@@ -51,7 +51,7 @@ public class HttpEndpointUriAssemblerTest {
             String uri = assembler.buildUri("https", params);
             assertNotNull(uri);
             assertEquals(
-                    "https://www.google.com?proxyAuthHost=myotherproxy&proxyAuthPassword=RAW(pwd)&proxyAuthPort=2345&proxyAuthUsername=RAW(usr)",
+                    "https://www.google.com?proxyAuthPassword=RAW(pwd)&proxyAuthUsername=RAW(usr)&proxyHost=myotherproxy&proxyPort=2345",
                     uri);
 
         }

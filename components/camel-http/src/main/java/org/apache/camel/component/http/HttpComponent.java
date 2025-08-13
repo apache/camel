@@ -130,22 +130,32 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected long responseTimeout;
 
     // proxy
-    @Metadata(label = "producer,proxy", enums = "http,https", description = "Proxy authentication protocol scheme")
+    @Metadata(label = "producer,proxy", description = "Proxy server host")
+    protected String proxyHost;
+    @Metadata(label = "producer,proxy", description = "Proxy server port")
+    protected Integer proxyPort;
+    @Metadata(label = "producer,proxy", enums = "http,https",
+              description = "Proxy server authentication protocol scheme to use")
     protected String proxyAuthScheme;
     @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM",
               description = "Proxy authentication method to use (NTLM is deprecated)")
     protected String proxyAuthMethod;
-    @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
+    @Metadata(label = "producer,proxy", secret = true, description = "Proxy server username")
     protected String proxyAuthUsername;
-    @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication password")
+    @Metadata(label = "producer,proxy", secret = true, description = "Proxy server password")
     protected String proxyAuthPassword;
-    @Metadata(label = "producer,proxy", description = "Proxy authentication host")
+    @Deprecated
+    @Metadata(label = "producer,proxy", description = "Proxy server host")
     protected String proxyAuthHost;
-    @Metadata(label = "producer,proxy", description = "Proxy authentication port")
+    @Deprecated
+    @Metadata(label = "producer,proxy", description = "Proxy server port")
     protected Integer proxyAuthPort;
-    @Metadata(label = "producer,proxy", description = "Proxy authentication domain to use")
+    @Deprecated
+    @Metadata(label = "producer,proxy", description = "Proxy authentication domain to use with NTLM")
     protected String proxyAuthDomain;
-    @Metadata(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
+    @Deprecated
+    @Metadata(label = "producer,proxy",
+              description = "Proxy authentication domain (workstation name) to use with NTLM (NTLM is deprecated)")
     protected String proxyAuthNtHost;
 
     // options to the default created http connection manager
@@ -314,14 +324,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             // fallback and use either http or https depending on secure
             proxyAuthScheme = secure ? "https" : "http";
         }
+        // these are old names and are deprecated
         String proxyAuthHost = getParameter(parameters, "proxyAuthHost", String.class, getProxyAuthHost());
         Integer proxyAuthPort = getParameter(parameters, "proxyAuthPort", Integer.class, getProxyAuthPort());
-        // fallback to alternative option name
         if (proxyAuthHost == null) {
-            proxyAuthHost = getParameter(parameters, "proxyHost", String.class);
+            proxyAuthHost = getParameter(parameters, "proxyHost", String.class, getProxyHost());
         }
         if (proxyAuthPort == null) {
-            proxyAuthPort = getParameter(parameters, "proxyPort", Integer.class);
+            proxyAuthPort = getParameter(parameters, "proxyPort", Integer.class, getProxyPort());
         }
 
         if (proxyAuthHost != null && proxyAuthPort != null) {
@@ -886,6 +896,22 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         this.responseTimeout = responseTimeout;
     }
 
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
     public String getProxyAuthScheme() {
         return proxyAuthScheme;
     }
@@ -918,18 +944,22 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         this.proxyAuthPassword = proxyAuthPassword;
     }
 
+    @Deprecated
     public String getProxyAuthHost() {
         return proxyAuthHost;
     }
 
+    @Deprecated
     public void setProxyAuthHost(String proxyAuthHost) {
         this.proxyAuthHost = proxyAuthHost;
     }
 
+    @Deprecated
     public Integer getProxyAuthPort() {
         return proxyAuthPort;
     }
 
+    @Deprecated
     public void setProxyAuthPort(Integer proxyAuthPort) {
         this.proxyAuthPort = proxyAuthPort;
     }

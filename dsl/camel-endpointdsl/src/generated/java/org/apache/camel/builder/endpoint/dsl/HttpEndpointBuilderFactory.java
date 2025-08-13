@@ -443,7 +443,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication host.
+         * Proxy server host.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -452,12 +452,13 @@ public interface HttpEndpointBuilderFactory {
          * @param proxyAuthHost the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder proxyAuthHost(String proxyAuthHost) {
             doSetProperty("proxyAuthHost", proxyAuthHost);
             return this;
         }
         /**
-         * Proxy authentication method to use.
+         * Proxy authentication method to use (NTLM is deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -486,7 +487,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication password.
+         * Proxy server password.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -500,7 +501,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication port.
+         * Proxy server port.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -509,12 +510,13 @@ public interface HttpEndpointBuilderFactory {
          * @param proxyAuthPort the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder proxyAuthPort(int proxyAuthPort) {
             doSetProperty("proxyAuthPort", proxyAuthPort);
             return this;
         }
         /**
-         * Proxy authentication port.
+         * Proxy server port.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -523,12 +525,13 @@ public interface HttpEndpointBuilderFactory {
          * @param proxyAuthPort the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpEndpointBuilder proxyAuthPort(String proxyAuthPort) {
             doSetProperty("proxyAuthPort", proxyAuthPort);
             return this;
         }
         /**
-         * Proxy authentication scheme to use.
+         * Proxy server authentication protocol scheme to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -542,7 +545,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy authentication username.
+         * Proxy server username.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -556,7 +559,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy hostname to use.
+         * Proxy server host.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -570,7 +573,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy port to use.
+         * Proxy server port.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -584,7 +587,7 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy port to use.
+         * Proxy server port.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

@@ -596,7 +596,7 @@ public interface HttpComponentBuilderFactory {
         }
     
         /**
-         * Proxy authentication domain to use.
+         * Proxy authentication domain to use with NTLM.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -611,7 +611,7 @@ public interface HttpComponentBuilderFactory {
         }
     
         /**
-         * Proxy authentication host.
+         * Proxy server host.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -620,6 +620,7 @@ public interface HttpComponentBuilderFactory {
          * @param proxyAuthHost the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpComponentBuilder proxyAuthHost(java.lang.String proxyAuthHost) {
             doSetProperty("proxyAuthHost", proxyAuthHost);
             return this;
@@ -641,7 +642,8 @@ public interface HttpComponentBuilderFactory {
         }
     
         /**
-         * Proxy authentication domain (workstation name) to use with NTML.
+         * Proxy authentication domain (workstation name) to use with NTLM (NTLM
+         * is deprecated).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -656,7 +658,7 @@ public interface HttpComponentBuilderFactory {
         }
     
         /**
-         * Proxy authentication password.
+         * Proxy server password.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -671,7 +673,7 @@ public interface HttpComponentBuilderFactory {
         }
     
         /**
-         * Proxy authentication port.
+         * Proxy server port.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -680,13 +682,14 @@ public interface HttpComponentBuilderFactory {
          * @param proxyAuthPort the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default HttpComponentBuilder proxyAuthPort(java.lang.Integer proxyAuthPort) {
             doSetProperty("proxyAuthPort", proxyAuthPort);
             return this;
         }
     
         /**
-         * Proxy authentication protocol scheme.
+         * Proxy server authentication protocol scheme to use.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -701,7 +704,7 @@ public interface HttpComponentBuilderFactory {
         }
     
         /**
-         * Proxy authentication username.
+         * Proxy server username.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -712,6 +715,36 @@ public interface HttpComponentBuilderFactory {
          */
         default HttpComponentBuilder proxyAuthUsername(java.lang.String proxyAuthUsername) {
             doSetProperty("proxyAuthUsername", proxyAuthUsername);
+            return this;
+        }
+    
+        /**
+         * Proxy server host.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+    
+        /**
+         * Proxy server port.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
     
@@ -895,6 +928,8 @@ public interface HttpComponentBuilderFactory {
             case "proxyAuthPort": ((HttpComponent) component).setProxyAuthPort((java.lang.Integer) value); return true;
             case "proxyAuthScheme": ((HttpComponent) component).setProxyAuthScheme((java.lang.String) value); return true;
             case "proxyAuthUsername": ((HttpComponent) component).setProxyAuthUsername((java.lang.String) value); return true;
+            case "proxyHost": ((HttpComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": ((HttpComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "sslContextParameters": ((HttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((HttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "x509HostnameVerifier": ((HttpComponent) component).setX509HostnameVerifier((javax.net.ssl.HostnameVerifier) value); return true;

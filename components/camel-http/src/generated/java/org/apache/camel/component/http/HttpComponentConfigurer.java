@@ -89,6 +89,10 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthScheme": target.setProxyAuthScheme(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthusername":
         case "proxyAuthUsername": target.setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "redirecthandlingdisabled":
         case "redirectHandlingDisabled": target.setRedirectHandlingDisabled(property(camelContext, boolean.class, value)); return true;
         case "responsepayloadstreamingthreshold":
@@ -191,6 +195,10 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthScheme": return java.lang.String.class;
         case "proxyauthusername":
         case "proxyAuthUsername": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
         case "redirecthandlingdisabled":
         case "redirectHandlingDisabled": return boolean.class;
         case "responsepayloadstreamingthreshold":
@@ -289,6 +297,10 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthScheme": return target.getProxyAuthScheme();
         case "proxyauthusername":
         case "proxyAuthUsername": return target.getProxyAuthUsername();
+        case "proxyhost":
+        case "proxyHost": return target.getProxyHost();
+        case "proxyport":
+        case "proxyPort": return target.getProxyPort();
         case "redirecthandlingdisabled":
         case "redirectHandlingDisabled": return target.isRedirectHandlingDisabled();
         case "responsepayloadstreamingthreshold":

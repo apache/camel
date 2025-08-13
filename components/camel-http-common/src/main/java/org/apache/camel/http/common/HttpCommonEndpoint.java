@@ -179,21 +179,25 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @Deprecated
     @UriParam(label = "producer,security", description = "Authentication host to use with NTLM")
     private String authHost;
-    @UriParam(label = "producer,proxy", description = "Proxy hostname to use")
+    @UriParam(label = "producer,proxy", description = "Proxy server host")
     private String proxyHost;
-    @UriParam(label = "producer,proxy", description = "Proxy port to use")
+    @UriParam(label = "producer,proxy", description = "Proxy server port")
     private int proxyPort;
-    @UriParam(label = "producer,proxy", enums = "http,https", description = "Proxy authentication scheme to use")
+    @UriParam(label = "producer,proxy", enums = "http,https",
+              description = "Proxy server authentication protocol scheme to use")
     private String proxyAuthScheme;
-    @UriParam(label = "producer,proxy", enums = "Basic,Bearer,NTLM", description = "Proxy authentication method to use")
+    @UriParam(label = "producer,proxy", enums = "Basic,Bearer,NTLM",
+              description = "Proxy authentication method to use (NTLM is deprecated)")
     private String proxyAuthMethod;
-    @UriParam(label = "producer,proxy", secret = true, description = "Proxy authentication username")
+    @UriParam(label = "producer,proxy", secret = true, description = "Proxy server username")
     private String proxyAuthUsername;
-    @UriParam(label = "producer,proxy", secret = true, description = "Proxy authentication password")
+    @UriParam(label = "producer,proxy", secret = true, description = "Proxy server password")
     private String proxyAuthPassword;
-    @UriParam(label = "producer,proxy", description = "Proxy authentication host")
+    @Deprecated
+    @UriParam(label = "producer,proxy", description = "Proxy server host")
     private String proxyAuthHost;
-    @UriParam(label = "producer,proxy", description = "Proxy authentication port")
+    @Deprecated
+    @UriParam(label = "producer,proxy", description = "Proxy server port")
     private int proxyAuthPort;
     @Deprecated
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTLM")
