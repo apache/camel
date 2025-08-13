@@ -37,6 +37,8 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
+import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
+
 class ExportCamelMain extends Export {
 
     protected static final String GROOVY_COMPILE_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/compile/groovy";

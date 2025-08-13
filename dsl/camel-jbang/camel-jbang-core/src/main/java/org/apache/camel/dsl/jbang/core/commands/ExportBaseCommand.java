@@ -773,27 +773,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
         // noop
     }
 
-    protected String exportPackageName(String groupId, String artifactId, String packageName) {
-        if ("false".equalsIgnoreCase(packageName)) {
-            return null; // package names are turned off (we should use root package)
-        }
-        if (packageName != null) {
-            return packageName; // use specific package name
-        }
-
-        // compute package name based on Maven GAV
-        // for package name it must be in lower-case and alpha/numeric
-        String s = groupId + "." + artifactId;
-        StringBuilder sb = new StringBuilder();
-        for (char ch : s.toCharArray()) {
-            if (ch == '.' || Character.isAlphabetic(ch) || Character.isDigit(ch)) {
-                ch = Character.toLowerCase(ch);
-                sb.append(ch);
-            }
-        }
-        return sb.toString();
-    }
-
     protected void copySettingsAndProfile(
             Path settings, Path profile, Path targetDir,
             Function<Properties, Object> customize)
