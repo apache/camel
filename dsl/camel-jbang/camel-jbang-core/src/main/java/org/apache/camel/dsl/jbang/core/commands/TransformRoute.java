@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.IOHelper;
@@ -92,7 +93,7 @@ public class TransformRoute extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", Boolean.toString(resolvePlaceholders));
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", Boolean.toString(uriAsParameters));
                 main.addInitialProperty("camel.main.dumpRoutesOutput", target);
-                main.addInitialProperty("camel.jbang.transform", "true");
+                main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
                 main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
                 if (ignoreLoadingError) {
                     // turn off bean method validator if ignore loading error

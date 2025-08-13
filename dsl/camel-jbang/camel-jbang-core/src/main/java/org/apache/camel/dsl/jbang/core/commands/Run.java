@@ -75,6 +75,7 @@ import picocli.CommandLine.Parameters;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.asGistSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
@@ -331,7 +332,7 @@ public class Run extends CamelCommand {
     protected boolean ignoreLoadingError;
 
     @Option(names = { "--lazy-bean" }, defaultValue = "false",
-            description = "Whether to use lazy bean initialization (can help with complex classloading issues")
+            description = "Whether to use lazy bean initialization (can help with complex classloading issues)")
     protected boolean lazyBean;
 
     @Option(names = { "--prompt" }, defaultValue = "false",
@@ -600,7 +601,7 @@ public class Run extends CamelCommand {
                 sj.add(n);
             }
             stub = sj.toString();
-            writeSetting(main, profileProperties, "camel.jbang.stub", stub);
+            writeSetting(main, profileProperties, STUB, stub);
             main.setStubPattern(stub);
         }
 
@@ -610,7 +611,7 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.main.shutdownTimeout", "5");
         }
         if (sourceDir != null) {
-            writeSetting(main, profileProperties, "camel.jbang.sourceDir", sourceDir);
+            writeSetting(main, profileProperties, SOURCE_DIR, sourceDir);
         }
         if (trace) {
             writeSetting(main, profileProperties, "camel.main.tracing", "true");
@@ -621,37 +622,37 @@ public class Run extends CamelCommand {
             main.configure().withModeline(true);
         }
         if (ignoreLoadingError) {
-            writeSetting(main, profileProperties, "camel.jbang.ignoreLoadingError", "true");
+            writeSetting(main, profileProperties, IGNORE_LOADING_ERROR, "true");
         }
         if (lazyBean) {
-            writeSetting(main, profileProperties, "camel.jbang.lazyBean", "true");
+            writeSetting(main, profileProperties, LAZY_BEAN, "true");
         }
         if (prompt) {
-            writeSetting(main, profileProperties, "camel.jbang.prompt", "true");
+            writeSetting(main, profileProperties, PROMPT, "true");
         }
-        writeSetting(main, profileProperties, "camel.jbang.compileWorkDir",
+        writeSetting(main, profileProperties, COMPILE_WORK_DIR,
                 Paths.get(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "compile").toString());
 
         if (gav != null) {
-            writeSetting(main, profileProperties, "camel.jbang.gav", gav);
+            writeSetting(main, profileProperties, GAV, gav);
         }
-        writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
+        writeSetting(main, profileProperties, OPEN_API, openapi);
         if (repositories != null) {
-            writeSetting(main, profileProperties, "camel.jbang.repos", repositories);
+            writeSetting(main, profileProperties, REPOS, repositories);
         }
-        writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.jbang.verbose", verbose ? "true" : "false");
+        writeSetting(main, profileProperties, HEALTH, health ? "true" : "false");
+        writeSetting(main, profileProperties, METRICS, metrics ? "true" : "false");
+        writeSetting(main, profileProperties, CONSOLE, console ? "true" : "false");
+        writeSetting(main, profileProperties, VERBOSE, verbose ? "true" : "false");
         // the runtime version of Camel is what is loaded via the catalog
-        writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
-        writeSetting(main, profileProperties, "camel.jbang.springBootVersion", springBootVersion);
-        writeSetting(main, profileProperties, "camel.jbang.quarkusVersion", quarkusVersion);
-        writeSetting(main, profileProperties, "camel.jbang.quarkusGroupId", quarkusGroupId);
-        writeSetting(main, profileProperties, "camel.jbang.quarkusArtifactId", quarkusArtifactId);
+        writeSetting(main, profileProperties, CAMEL_VERSION, new DefaultCamelCatalog().getCatalogVersion());
+        writeSetting(main, profileProperties, SPRING_BOOT_VERSION, springBootVersion);
+        writeSetting(main, profileProperties, QUARKUS_VERSION, quarkusVersion);
+        writeSetting(main, profileProperties, QUARKUS_GROUP_ID, quarkusGroupId);
+        writeSetting(main, profileProperties, QUARKUS_ARTIFACT_ID, quarkusArtifactId);
 
         if (observe) {
-            main.addInitialProperty("camel.jbang.dependencies", "camel:observability-services");
+            main.addInitialProperty(DEPENDENCIES, "camel:observability-services");
         }
 
         // command line arguments
@@ -670,14 +671,14 @@ public class Run extends CamelCommand {
             if (!verbose) {
                 main.setSilent(true);
             }
-            main.addInitialProperty("camel.jbang.export", "true");
+            main.addInitialProperty(EXPORT, "true");
             // enable stub in silent mode so we do not use real components
             main.setStubPattern("*");
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "-1");
         } else if (debugRun) {
-            main.addInitialProperty("camel.jbang.debug", "true");
+            main.addInitialProperty(DEBUG, "true");
         } else if (transformRun) {
             main.setSilent(true);
             // enable stub in silent mode so we do not use real components
@@ -706,10 +707,10 @@ public class Run extends CamelCommand {
         if (managementPort != -1) {
             writeSetting(main, profileProperties, "camel.management.port", () -> String.valueOf(managementPort));
         }
-        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
-        writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
+        writeSetting(main, profileProperties, JFR, jfr || jfrProfile != null ? "jfr" : null);
+        writeSetting(main, profileProperties, JFR_PROFILE, jfrProfile != null ? jfrProfile : null);
 
-        writeSetting(main, profileProperties, "camel.jbang.kameletsVersion", kameletsVersion);
+        writeSetting(main, profileProperties, KAMELETS_VERSION, kameletsVersion);
 
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
@@ -867,34 +868,34 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.main.routesIncludePattern", () -> null);
         }
         if (sjClasspathFiles.length() > 0) {
-            main.addInitialProperty("camel.jbang.classpathFiles", sjClasspathFiles.toString());
-            writeSettings("camel.jbang.classpathFiles", sjClasspathFiles.toString());
+            main.addInitialProperty(CLASSPATH_FILES, sjClasspathFiles.toString());
+            writeSettings(CLASSPATH_FILES, sjClasspathFiles.toString());
         } else {
-            writeSetting(main, profileProperties, "camel.jbang.classpathFiles", () -> null);
+            writeSetting(main, profileProperties, CLASSPATH_FILES, () -> null);
         }
         if (sjScriptFiles.length() > 0) {
-            main.addInitialProperty("camel.jbang.scriptFiles", sjScriptFiles.toString());
-            writeSettings("camel.jbang.scriptFiles", sjScriptFiles.toString());
+            main.addInitialProperty(SCRIPT_FILES, sjScriptFiles.toString());
+            writeSettings(SCRIPT_FILES, sjScriptFiles.toString());
         } else {
-            writeSetting(main, profileProperties, "camel.jbang.scriptFiles", () -> null);
+            writeSetting(main, profileProperties, SCRIPT_FILES, () -> null);
         }
         if (sjGroovyFiles.length() > 0) {
-            main.addInitialProperty("camel.jbang.groovyFiles", sjGroovyFiles.toString());
-            writeSettings("camel.jbang.groovyFiles", sjGroovyFiles.toString());
+            main.addInitialProperty(GROOVY_FILES, sjGroovyFiles.toString());
+            writeSettings(GROOVY_FILES, sjGroovyFiles.toString());
         } else {
-            writeSetting(main, profileProperties, "camel.jbang.groovyFiles", () -> null);
+            writeSetting(main, profileProperties, GROOVY_FILES, () -> null);
         }
         if (sjTlsFiles.length() > 0) {
-            main.addInitialProperty("camel.jbang.tlsFiles", sjTlsFiles.toString());
-            writeSettings("camel.jbang.tlsFiles", sjTlsFiles.toString());
+            main.addInitialProperty(TLS_FILES, sjTlsFiles.toString());
+            writeSettings(TLS_FILES, sjTlsFiles.toString());
         } else {
-            writeSetting(main, profileProperties, "camel.jbang.tlsFiles", () -> null);
+            writeSetting(main, profileProperties, TLS_FILES, () -> null);
         }
         if (sjJKubeFiles.length() > 0) {
-            main.addInitialProperty("camel.jbang.jkubeFiles", sjJKubeFiles.toString());
-            writeSettings("camel.jbang.jkubeFiles", sjJKubeFiles.toString());
+            main.addInitialProperty(JKUBE_FILES, sjJKubeFiles.toString());
+            writeSettings(JKUBE_FILES, sjJKubeFiles.toString());
         } else {
-            writeSetting(main, profileProperties, "camel.jbang.jkubeFiles", () -> null);
+            writeSetting(main, profileProperties, JKUBE_FILES, () -> null);
         }
 
         if (sjKamelets.length() > 0) {
@@ -955,8 +956,8 @@ public class Run extends CamelCommand {
         addDependencies(RuntimeUtil.getDependenciesAsArray(profileProperties));
         if (!dependencies.isEmpty()) {
             var joined = String.join(",", dependencies);
-            main.addInitialProperty("camel.jbang.dependencies", joined);
-            writeSettings("camel.jbang.dependencies", joined);
+            main.addInitialProperty(DEPENDENCIES, joined);
+            writeSettings(DEPENDENCIES, joined);
         }
 
         // if we have a specific camel version then make sure we really need to switch
@@ -1257,7 +1258,7 @@ public class Run extends CamelCommand {
         if (dev && (sourceDir != null || sjReload.length() > 0)) {
             main.addInitialProperty("camel.main.routesReloadEnabled", "true");
             if (sourceDir != null) {
-                main.addInitialProperty("camel.jbang.sourceDir", sourceDir);
+                main.addInitialProperty(SOURCE_DIR, sourceDir);
                 main.addInitialProperty("camel.main.routesReloadDirectory", sourceDir);
                 main.addInitialProperty("camel.main.routesReloadPattern", "*");
                 main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");
@@ -1333,29 +1334,29 @@ public class Run extends CamelCommand {
                     = "true".equals(answer.getProperty("loggingColor", loggingColor ? "true" : "false"));
             loggingJson
                     = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
-            repositories = answer.getProperty("camel.jbang.repos", repositories);
-            mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);
-            mavenSettingsSecurity = answer.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
+            repositories = answer.getProperty(REPOS, repositories);
+            mavenSettings = answer.getProperty(MAVEN_SETTINGS, mavenSettings);
+            mavenSettingsSecurity = answer.getProperty(MAVEN_SETTINGS_SECURITY, mavenSettingsSecurity);
             mavenCentralEnabled = "true"
-                    .equals(answer.getProperty("camel.jbang.maven-central-enabled", mavenCentralEnabled ? "true" : "false"));
-            mavenApacheSnapshotEnabled = "true".equals(answer.getProperty("camel.jbang.maven-apache-snapshot-enabled",
+                    .equals(answer.getProperty(MAVEN_CENTRAL_ENABLED, mavenCentralEnabled ? "true" : "false"));
+            mavenApacheSnapshotEnabled = "true".equals(answer.getProperty(MAVEN_APACHE_SNAPSHOTS,
                     mavenApacheSnapshotEnabled ? "true" : "false"));
-            openapi = answer.getProperty("camel.jbang.open-api", openapi);
-            download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
+            openapi = answer.getProperty(OPEN_API, openapi);
+            download = "true".equals(answer.getProperty(DOWNLOAD, download ? "true" : "false"));
             packageScanJars
-                    = "true".equals(answer.getProperty("camel.jbang.packageScanJars", packageScanJars ? "true" : "false"));
-            background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
-            backgroundWait = "true".equals(answer.getProperty("camel.jbang.backgroundWait", backgroundWait ? "true" : "false"));
-            jvmDebugPort = parseJvmDebugPort(answer.getProperty("camel.jbang.jvmDebug", Integer.toString(jvmDebugPort)));
-            camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
-            kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
-            springBootVersion = answer.getProperty("camel.jbang.springBootVersion", springBootVersion);
-            quarkusGroupId = answer.getProperty("camel.jbang.quarkusGroupId", quarkusGroupId);
-            quarkusArtifactId = answer.getProperty("camel.jbang.quarkusArtifactId", quarkusArtifactId);
-            quarkusVersion = answer.getProperty("camel.jbang.quarkusVersion", quarkusVersion);
-            gav = answer.getProperty("camel.jbang.gav", gav);
-            stub = answer.getProperty("camel.jbang.stub", stub);
-            excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(answer, "camel.jbang.excludes", excludes);
+                    = "true".equals(answer.getProperty(PACKAGE_SCAN_JARS, packageScanJars ? "true" : "false"));
+            background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
+            backgroundWait = "true".equals(answer.getProperty(BACKGROUND_WAIT, backgroundWait ? "true" : "false"));
+            jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
+            camelVersion = answer.getProperty(CAMEL_VERSION, camelVersion);
+            kameletsVersion = answer.getProperty(KAMELETS_VERSION, kameletsVersion);
+            springBootVersion = answer.getProperty(SPRING_BOOT_VERSION, springBootVersion);
+            quarkusGroupId = answer.getProperty(QUARKUS_GROUP_ID, quarkusGroupId);
+            quarkusArtifactId = answer.getProperty(QUARKUS_ARTIFACT_ID, quarkusArtifactId);
+            quarkusVersion = answer.getProperty(QUARKUS_VERSION, quarkusVersion);
+            gav = answer.getProperty(GAV, gav);
+            stub = answer.getProperty(STUB, stub);
+            excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(answer, EXCLUDES, excludes);
         }
 
         return answer;
@@ -1768,7 +1769,7 @@ public class Run extends CamelCommand {
                 sj.add(part);
             }
             main = new KameletMain(CAMEL_INSTANCE_TYPE, sj.toString());
-            writeSettings("camel.jbang.localKameletDir", sj.toString());
+            writeSettings(LOCAL_KAMELET_DIR, sj.toString());
         }
         return main;
     }

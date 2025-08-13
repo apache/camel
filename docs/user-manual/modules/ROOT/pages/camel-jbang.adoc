@@ -3972,7 +3972,7 @@ The follow options related to _exporting_, can be configured in `application.pro
 |Apache Camel Kamelets version
 
 |`camel.jbang.localKameletDir`
-|Local directory for loading Kamelets
+|Local file directory for loading custom Kamelets
 
 |`camel.jbang.camelSpringBootVersion`
 |Camel version to use with Spring Boot
@@ -4027,9 +4027,6 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |`camel.jbang.console`
 | Developer console at /q/dev on local HTTP server (port 8080 by default) when running standalone Camel
-
-|`camel.jbang.info`
-| Info console at /observe/info on local HTTP server (port 8080 by default) when running standalone Camel
 
 |`camel.jbang.health`
 | Health check at /observe/health on local HTTP server (port 8080 by default) when running standalone Camel

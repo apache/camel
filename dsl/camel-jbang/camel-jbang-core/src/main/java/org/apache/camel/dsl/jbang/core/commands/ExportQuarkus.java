@@ -44,6 +44,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 class ExportQuarkus extends Export {
 
@@ -186,7 +187,7 @@ class ExportQuarkus extends Export {
                 sj.add(v);
             }
             // extra classpath files
-            if ("camel.jbang.classpathFiles".equals(k)) {
+            if (CLASSPATH_FILES.equals(k)) {
                 v = Arrays.stream(v.split(","))
                         .filter(d -> !d.endsWith(".jar")) // skip local lib JARs
                         .map(ExportQuarkus::stripPath) // remove scheme

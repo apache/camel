@@ -40,6 +40,8 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
+
 @CommandLine.Command(name = "list",
                      description = "Displays all Camel dependencies required to run", sortOptions = false,
                      showDefaultValues = true)
@@ -230,21 +232,21 @@ public class DependencyList extends Export {
             } catch (IOException e) {
                 // ignore
             }
-            if (this.runtime == null && prop.containsKey("camel.jbang.runtime")) {
-                this.runtime = RuntimeType.fromValue(prop.getProperty("camel.jbang.runtime"));
+            if (this.runtime == null && prop.containsKey(RUNTIME)) {
+                this.runtime = RuntimeType.fromValue(prop.getProperty(RUNTIME));
             }
             if (this.gav == null) {
-                this.gav = prop.getProperty("camel.jbang.gav");
+                this.gav = prop.getProperty(GAV);
             }
             // allow configuring versions from profile
-            this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
-            this.camelVersion = prop.getProperty("camel.jbang.camelVersion", this.camelVersion);
-            this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
-            this.localKameletDir = prop.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
-            this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
-            this.quarkusArtifactId = prop.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
-            this.quarkusVersion = prop.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
-            this.springBootVersion = prop.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
+            this.javaVersion = prop.getProperty(JAVA_VERSION, this.javaVersion);
+            this.camelVersion = prop.getProperty(CAMEL_VERSION, this.camelVersion);
+            this.kameletsVersion = prop.getProperty(KAMELETS_VERSION, this.kameletsVersion);
+            this.localKameletDir = prop.getProperty(LOCAL_KAMELET_DIR, this.localKameletDir);
+            this.quarkusGroupId = prop.getProperty(QUARKUS_GROUP_ID, this.quarkusGroupId);
+            this.quarkusArtifactId = prop.getProperty(QUARKUS_ARTIFACT_ID, this.quarkusArtifactId);
+            this.quarkusVersion = prop.getProperty(QUARKUS_VERSION, this.quarkusVersion);
+            this.springBootVersion = prop.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
         }
 
         // use temporary export dir

@@ -187,7 +187,7 @@ public final class RuntimeUtil {
     }
 
     public static String getDependencies(Properties properties) {
-        String deps = properties != null ? properties.getProperty("camel.jbang.dependencies") : null;
+        String deps = properties != null ? properties.getProperty(CamelJBangConstants.DEPENDENCIES) : null;
         if (deps != null) {
             deps = deps.trim();
             if (!deps.isEmpty() && deps.charAt(0) == ',') {
