@@ -22,6 +22,7 @@ import org.apache.camel.vault.SpringCloudConfigConfiguration;
 
 @Configurer(extended = true)
 public class SpringCloudConfigConfigurationProperties extends SpringCloudConfigConfiguration implements BootstrapCloseable {
+
     private MainConfigurationProperties parent;
 
     public SpringCloudConfigConfigurationProperties(MainConfigurationProperties parent) {
@@ -45,28 +46,67 @@ public class SpringCloudConfigConfigurationProperties extends SpringCloudConfigC
     // fluent builders
     // --------------------------------------------------------------
 
-    public SpringCloudConfigConfigurationProperties withUser(String user) {
-        setUsername(user);
+    /**
+     * Username for Spring Config Server
+     */
+    public SpringCloudConfigConfigurationProperties withUsername(String username) {
+        setUsername(username);
         return this;
     }
 
+    /**
+     * Password for Spring Config Server
+     */
     public SpringCloudConfigConfigurationProperties withPassword(String password) {
         setPassword(password);
         return this;
     }
 
+    /**
+     * Comma separated list of Spring Config Server URIs
+     */
     public SpringCloudConfigConfigurationProperties withUris(String uris) {
         setUris(uris);
         return this;
     }
 
-    public SpringCloudConfigConfigurationProperties withRefreshEnabled(boolean refreshEanbled) {
-        setRefreshEnabled(refreshEanbled);
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in Spring Config Server.
+     */
+    public SpringCloudConfigConfigurationProperties withRefreshEnabled(boolean refreshEnabled) {
+        setRefreshEnabled(refreshEnabled);
         return this;
     }
 
+    /**
+     * The period (millis) between checking Spring Config Server for updated secrets.
+     */
     public SpringCloudConfigConfigurationProperties withRefreshPeriod(int refreshPeriod) {
         setRefreshPeriod(refreshPeriod);
+        return this;
+    }
+
+    /**
+     * Authentication token for the Config Server
+     */
+    public SpringCloudConfigConfigurationProperties withToken(String token) {
+        setToken(token);
+        return this;
+    }
+
+    /**
+     * Config Server label to use (e.g., git branch)
+     */
+    public SpringCloudConfigConfigurationProperties withLabel(String label) {
+        setLabel(label);
+        return this;
+    }
+
+    /**
+     * Configuration profile to use
+     */
+    public SpringCloudConfigConfigurationProperties withProfile(String profile) {
+        setProfile(profile);
         return this;
     }
 }

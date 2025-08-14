@@ -25,25 +25,28 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
     private String password;
-    @Metadata(defaultValue = "user")
+    @Metadata(secret = true, defaultValue = "user")
     private String username = "user";
-    @Metadata(defaultValue = "http://localhost:8888", description = "Comma separated list of Spring Config Server URIs")
-    private String uris = "http://localhost:8888";
-    @Metadata
-    private boolean refreshEnabled;
-    @Metadata(defaultValue = "30000")
-    private long refreshPeriod = 30000;
     @Metadata(secret = true)
     private String token;
+    @Metadata(defaultValue = "http://localhost:8888", description = "Comma separated list of Spring Config Server URIs")
+    private String uris = "http://localhost:8888";
     @Metadata
     private String label;
     @Metadata
     private String profile;
+    @Metadata
+    private boolean refreshEnabled;
+    @Metadata(defaultValue = "30000")
+    private long refreshPeriod = 30000;
 
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Password for Spring Config Server
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -52,6 +55,9 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
         return username;
     }
 
+    /**
+     * Username for Spring Config Server
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -60,6 +66,9 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
         return uris;
     }
 
+    /**
+     * Comma separated list of Spring Config Server URIs
+     */
     public void setUris(String uris) {
         this.uris = uris;
     }
@@ -68,6 +77,9 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
         return refreshEnabled;
     }
 
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in Spring Config Server.
+     */
     public void setRefreshEnabled(boolean refreshEnabled) {
         this.refreshEnabled = refreshEnabled;
     }
@@ -76,6 +88,9 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
         return refreshPeriod;
     }
 
+    /**
+     * The period (millis) between checking Spring Config Server for updated secrets.
+     */
     public void setRefreshPeriod(long refreshPeriod) {
         this.refreshPeriod = refreshPeriod;
     }
@@ -84,6 +99,9 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
         return token;
     }
 
+    /**
+     * Authentication token for the Config Server
+     */
     public void setToken(String token) {
         this.token = token;
     }
@@ -92,6 +110,9 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
         return label;
     }
 
+    /**
+     * Config Server label to use (e.g., git branch)
+     */
     public void setLabel(String label) {
         this.label = label;
     }
@@ -100,6 +121,9 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
         return profile;
     }
 
+    /**
+     * Configuration profile to use
+     */
     public void setProfile(String profile) {
         this.profile = profile;
     }
