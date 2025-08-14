@@ -1,5 +1,5 @@
 = Debezium MySQL Connector Component
-:doctitle: Debezium MySQL Connector
+:doctitle: MySQL Connector
 :shortname: debezium-mysql
 :artifactid: camel-debezium-mysql
 :description: Capture changes from a MySQL database.

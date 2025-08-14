@@ -1,5 +1,5 @@
 = Debezium MongoDB Connector Component
-:doctitle: Debezium MongoDB Connector
+:doctitle: MongoDB Connector
 :shortname: debezium-mongodb
 :artifactid: camel-debezium-mongodb
 :description: Capture changes from a MongoDB database.

@@ -1,5 +1,5 @@
 = Debezium Oracle Connector Component
-:doctitle: Debezium Oracle Connector
+:doctitle: Oracle Connector
 :shortname: debezium-oracle
 :artifactid: camel-debezium-oracle
 :description: Capture changes from an Oracle database.

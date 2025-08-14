@@ -1,5 +1,5 @@
 = Debezium SQL Server Connector Component
-:doctitle: Debezium SQL Server Connector
+:doctitle: SQL Server Connector
 :shortname: debezium-sqlserver
 :artifactid: camel-debezium-sqlserver
 :description: Capture changes from an SQL Server database.

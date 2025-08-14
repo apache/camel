@@ -1,5 +1,5 @@
 = Debezium DB2 Connector Component
-:doctitle: Debezium DB2 Connector
+:doctitle: DB2 Connector
 :shortname: debezium-db2
 :artifactid: camel-debezium-db2
 :description: Capture changes from a DB2 database.
