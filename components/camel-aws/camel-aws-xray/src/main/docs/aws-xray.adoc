@@ -1,5 +1,5 @@
 = AWS XRay Component
-:doctitle: AWS XRay
+:doctitle: XRay
 :shortname: aws-xray
 :artifactid: camel-aws-xray
 :description: Enable Distributed tracing using AWS XRay

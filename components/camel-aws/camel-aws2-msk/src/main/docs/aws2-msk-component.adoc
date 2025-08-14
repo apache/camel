@@ -1,5 +1,5 @@
 = AWS Managed Streaming for Apache Kafka (MSK) Component
-:doctitle: AWS Managed Streaming for Apache Kafka (MSK)
+:doctitle: Managed Streaming for Apache Kafka (MSK)
 :shortname: aws2-msk
 :artifactid: camel-aws2-msk
 :description: Manage AWS MSK instances.
@@ -69,7 +69,7 @@ You have the possibility of avoiding the usage of explicit static credentials by
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
- - Amazon EC2 Instance profile credentials. 
+ - Amazon EC2 Instance profile credentials.
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
@@ -106,7 +106,7 @@ from("direct:createCluster")
                 exchange.getIn().setHeader(MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1");
                 exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_NUMBER, 2);
                 BrokerNodeGroupInfo groupInfo = BrokerNodeGroupInfo.builder().build();
-                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);					
+                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);
        }
     })
     .to("aws2-msk://test?mskClient=#amazonMskClient&operation=createCluster")
@@ -131,7 +131,7 @@ from("direct:createCluster")
                 exchange.getIn().setHeader(MSK2Constants.CLUSTER_KAFKA_VERSION, "2.1.1");
                 exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_NUMBER, 2);
                 BrokerNodeGroupInfo groupInfo = BrokerNodeGroupInfo.builder().build();
-                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);					
+                exchange.getIn().setHeader(MSK2Constants.BROKER_NODES_GROUP_INFO, groupInfo);
        }
     })
     .to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster")

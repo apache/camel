@@ -1,5 +1,5 @@
 = AWS Eventbridge Component
-:doctitle: AWS Eventbridge
+:doctitle: Eventbridge
 :shortname: aws2-eventbridge
 :artifactid: camel-aws2-eventbridge
 :description: Send events to AWS Eventbridge cluster instances.
@@ -70,7 +70,7 @@ The order of evaluation for Default Credentials Provider is the following:
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
- - Amazon EC2 Instance profile credentials. 
+ - Amazon EC2 Instance profile credentials.
 
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
 
@@ -99,7 +99,7 @@ Camel-AWS2-Eventbridge component provides the following operation on the produce
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:putRule").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
@@ -111,12 +111,12 @@ Camel-AWS2-Eventbridge component provides the following operation on the produce
 
 This operation will create a rule named _firstrule_, and it will use a json file for defining the EventPattern.
 
-- PutTargets: this operation will add a target to the rule 
+- PutTargets: this operation will add a target to the rule
 
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
@@ -138,7 +138,7 @@ This operation will add the target sqs-queue with the arn reported to the target
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
@@ -158,7 +158,7 @@ This operation will remove the target sqs-queue from the _firstrule_ rule.
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
@@ -175,7 +175,7 @@ This operation will remove the _firstrule_ rule from the test eventbus.
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
@@ -192,7 +192,7 @@ This operation will enable the _firstrule_ rule from the test eventbus.
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
@@ -209,7 +209,7 @@ This operation will disable the _firstrule_ rule from the test eventbus.
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME_PREFIX, "first");
@@ -226,7 +226,7 @@ This operation will list all the rules with prefix first from the test eventbus.
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
@@ -243,7 +243,7 @@ This operation will describe the _firstrule_ rule from the test eventbus.
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
@@ -260,7 +260,7 @@ this operation will return a list of targets associated with the _firstrule_ rul
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
           exchange.getIn().setHeader(EventbridgeConstants.TARGET_ARN, "firstrule");
@@ -277,7 +277,7 @@ this operation will return a list of rules associated with a target.
 [source,java]
 --------------------------------------------------------------------------------
   from("direct:start").process(new Processor() {
-                    
+
       @Override
       public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EventbridgeConstants.EVENT_RESOURCES_ARN, "arn:aws:sqs:eu-west-1:780410022472:camel-connector-test");

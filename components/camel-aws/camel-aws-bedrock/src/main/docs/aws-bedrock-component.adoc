@@ -1,5 +1,5 @@
 = AWS Bedrock Component
-:doctitle: AWS Bedrock
+:doctitle: Bedrock
 :shortname: aws-bedrock
 :artifactid: camel-aws-bedrock
 :description: Invoke Model of AWS Bedrock service.
@@ -69,7 +69,7 @@ The order of evaluation for Default Credentials Provider is the following:
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
- - Amazon EC2 Instance profile credentials. 
+ - Amazon EC2 Instance profile credentials.
 
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
 
@@ -184,7 +184,7 @@ Json schema for request
 --------------------------------------------------------------------------------
 
 - Titan Image Generator G1 with id `amazon.titan-image-generator-v1`
-It generates images from text, and allows users to upload and edit an existing image. Users can edit an image with a text prompt (without a mask) or parts of an image with an image mask. You can extend the boundaries of an image with outpainting, and fill in an image with inpainting. 
+It generates images from text, and allows users to upload and edit an existing image. Users can edit an image with a text prompt (without a mask) or parts of an image with an image mask. You can extend the boundaries of an image with outpainting, and fill in an image with inpainting.
 
 Json schema for request
 

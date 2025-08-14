@@ -1,5 +1,5 @@
 = AWS Simple Notification System (SNS) Component
-:doctitle: AWS Simple Notification System (SNS)
+:doctitle: Simple Notification System (SNS)
 :shortname: aws2-sns
 :artifactid: camel-aws2-sns
 :description: Send messages to AWS Simple Notification Topic.

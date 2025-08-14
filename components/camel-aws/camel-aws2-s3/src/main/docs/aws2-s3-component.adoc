@@ -1,5 +1,5 @@
 = AWS S3 Storage Service Component
-:doctitle: AWS S3 Storage Service
+:doctitle: S3 Storage Service
 :shortname: aws2-s3
 :artifactid: camel-aws2-s3
 :description: Store and retrieve objects from AWS S3 Storage Service.
@@ -136,8 +136,8 @@ The order of evaluation for Default Credentials Provider is the following:
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
- - Amazon EC2 Instance profile credentials. 
- 
+ - Amazon EC2 Instance profile credentials.
+
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
 
 Only one of static, default and profile credentials could be used at the same time.
@@ -414,7 +414,7 @@ In Streaming upload, you'll be able to restart the producer from the point where
 
 By setting the restartingPolicy to lastPart, you will restart uploading files and contents from the last part number the producer left.
 
-As example: 
+As example:
  - Start the route with progressive naming strategy and keyname equals to camel.txt, with batchMessageNumber equals to 20, and restartingPolicy equals to lastPart
  - Send 70 messages.
  - Stop the route

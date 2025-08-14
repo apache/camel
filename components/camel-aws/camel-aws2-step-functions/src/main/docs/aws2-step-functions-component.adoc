@@ -1,5 +1,5 @@
 = AWS StepFunctions Component
-:doctitle: AWS StepFunctions
+:doctitle: StepFunctions
 :shortname: aws2-step-functions
 :artifactid: camel-aws2-step-functions
 :description: Manage and invoke AWS Step functions.

@@ -1,5 +1,5 @@
 = AWS Timestream Component
-:doctitle: AWS Timestream
+:doctitle: Timestream
 :shortname: aws2-timestream
 :artifactid: camel-aws2-timestream
 :description: Write records and execute queries on AWS time-series database

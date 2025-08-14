@@ -1,5 +1,5 @@
 = AWS MQ Component
-:doctitle: AWS MQ
+:doctitle: MQ
 :shortname: aws2-mq
 :artifactid: camel-aws2-mq
 :description: Send messages to AWS MQ.
@@ -71,7 +71,7 @@ The order of evaluation for Default Credentials Provider is the following:
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
- - Amazon EC2 Instance profile credentials. 
+ - Amazon EC2 Instance profile credentials.
 
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
 
@@ -122,7 +122,7 @@ from("direct:createBroker")
                 user.password("camelpwd");
                 users.add(user.build());
                 exchange.getIn().setHeader(MQ2Constants.BROKER_USERS, users);
-						
+
        }
     })
     .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=createBroker")

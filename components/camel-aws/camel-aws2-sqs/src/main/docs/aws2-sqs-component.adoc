@@ -1,5 +1,5 @@
 = AWS Simple Queue Service (SQS) Component
-:doctitle: AWS Simple Queue Service (SQS)
+:doctitle: Simple Queue Service (SQS)
 :shortname: aws2-sqs
 :artifactid: camel-aws2-sqs
 :description: Send and receive messages to/from AWS SQS.
@@ -82,8 +82,8 @@ The order of evaluation for Default Credentials Provider is the following:
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
- - Amazon EC2 Instance profile credentials. 
- 
+ - Amazon EC2 Instance profile credentials.
+
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
 
 Only one of static, default and profile credentials could be used at the same time.
@@ -122,7 +122,7 @@ One important information to take into account is the following:
 - For standard queues, the per-queue delay setting is not retroactively—changing the setting doesn't affect the delay of messages already in the queue.
 - For FIFO queues, the per-queue delay setting is retroactively—changing the setting affects the delay of messages already in the queue.
 
-as stated in the official documentation. If you want to specify a delay on single messages, you can ignore the delayQueue option, while you can set this option 
+as stated in the official documentation. If you want to specify a delay on single messages, you can ignore the delayQueue option, while you can set this option
 to true if you need to add a fixed delay to all messages enqueued.
 
 === Server Side Encryption
@@ -190,7 +190,7 @@ from("direct:start")
           c.add("team2");
           c.add("team3");
           c.add("team4");
-          exchange.getIn().setBody(c);					
+          exchange.getIn().setBody(c);
       }
   })
   .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");

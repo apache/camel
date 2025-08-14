@@ -1,5 +1,5 @@
 = AWS RedshiftData Component
-:doctitle: AWS RedshiftData
+:doctitle: RedshiftData
 :shortname: aws2-redshift-data
 :artifactid: camel-aws2-redshift
 :description: Perform operations on AWS Redshift using Redshift Data API.

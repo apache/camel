@@ -1,5 +1,5 @@
 = AWS Kinesis Firehose Component
-:doctitle: AWS Kinesis Firehose
+:doctitle: Kinesis Firehose
 :shortname: aws2-kinesis-firehose
 :artifactid: camel-aws2-kinesis
 :description: Produce data to AWS Kinesis Firehose streams.
@@ -85,7 +85,7 @@ The order of evaluation for Default Credentials Provider is the following:
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
- - Amazon EC2 Instance profile credentials. 
+ - Amazon EC2 Instance profile credentials.
 
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
 

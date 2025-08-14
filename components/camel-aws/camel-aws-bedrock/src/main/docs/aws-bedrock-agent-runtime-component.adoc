@@ -1,5 +1,5 @@
 = AWS Bedrock Agent Runtime Component
-:doctitle: AWS Bedrock Agent Runtime
+:doctitle: Bedrock Agent Runtime
 :shortname: aws-bedrock-agent-runtime
 :artifactid: camel-aws-bedrock
 :description: Invoke Model of AWS Bedrock Agent Runtime service.
@@ -69,7 +69,7 @@ The order of evaluation for Default Credentials Provider is the following:
  - Web Identity Token from AWS STS.
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
- - Amazon EC2 Instance profile credentials. 
+ - Amazon EC2 Instance profile credentials.
 
 You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
 
