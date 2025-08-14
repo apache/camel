@@ -1,5 +1,5 @@
 = Kubernetes Namespaces Component
-:doctitle: Kubernetes Namespaces
+:doctitle: Namespaces
 :shortname: kubernetes-namespaces
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Namespaces and get notified on Namespace changes.

@@ -1,5 +1,5 @@
 = Kubernetes Deployments Component
-:doctitle: Kubernetes Deployments
+:doctitle: Deployments
 :shortname: kubernetes-deployments
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Deployments and get notified on Deployment changes.

@@ -1,5 +1,5 @@
 = Kubernetes Persistent Volume Component
-:doctitle: Kubernetes Persistent Volume
+:doctitle: Persistent Volume
 :shortname: kubernetes-persistent-volumes
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Persistent Volumes and get notified on Persistent Volume changes.

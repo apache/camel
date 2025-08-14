@@ -1,5 +1,5 @@
 = Kubernetes Resources Quota Component
-:doctitle: Kubernetes Resources Quota
+:doctitle: Resources Quota
 :shortname: kubernetes-resources-quota
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Resources Quotas.

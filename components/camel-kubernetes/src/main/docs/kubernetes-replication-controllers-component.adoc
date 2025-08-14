@@ -1,5 +1,5 @@
 = Kubernetes Replication Controller Component
-:doctitle: Kubernetes Replication Controller
+:doctitle: Replication Controller
 :shortname: kubernetes-replication-controllers
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Replication Controllers and get notified on Replication Controllers changes.

@@ -1,5 +1,5 @@
 = Kubernetes Job Component
-:doctitle: Kubernetes Job
+:doctitle: Job
 :shortname: kubernetes-job
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Jobs.
@@ -126,7 +126,7 @@ public class KubernetesCreateJob extends RouteBuilder {
         	.process(exchange -> {
         		exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_NAME, "camel-job"); //DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                
+
                 Map<String, String> joblabels = new HashMap<String, String>();
                 joblabels.put("jobLabelKey1", "value1");
                 joblabels.put("jobLabelKey2", "value2");
@@ -145,25 +145,25 @@ public class KubernetesCreateJob extends RouteBuilder {
 
 	private JobSpec generateJobSpec() {
 		JobSpec js = new JobSpec();
-		
+
 		PodTemplateSpec pts = new PodTemplateSpec();
-		
+
 		PodSpec ps = new PodSpec();
 		ps.setRestartPolicy("Never");
 		ps.setContainers(generateContainers());
 		pts.setSpec(ps);
-		
+
 		ObjectMeta metadata = new ObjectMeta();
 		Map<String, String> annotations = new HashMap<String, String>();
 		annotations.put("jobMetadataAnnotation1", "random value");
 		metadata.setAnnotations(annotations);
-		
+
 		Map<String, String> podlabels = new HashMap<String, String>();
 		podlabels.put("podLabelKey1", "value1");
 		podlabels.put("podLabelKey2", "value2");
 		podlabels.put("app", "podFromCamelApp");
 		metadata.setLabels(podlabels);
-		
+
 		pts.setMetadata(metadata);
 		js.setTemplate(pts);
 		return js;

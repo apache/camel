@@ -1,5 +1,5 @@
 = Kubernetes HPA Component
-:doctitle: Kubernetes HPA
+:doctitle: HPA
 :shortname: kubernetes-hpa
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.

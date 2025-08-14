@@ -1,5 +1,5 @@
 = Kubernetes Pods Component
-:doctitle: Kubernetes Pods
+:doctitle: Pods
 :shortname: kubernetes-pods
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Pods and get notified on Pod changes.

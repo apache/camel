@@ -1,5 +1,5 @@
 = Kubernetes ConfigMap Component
-:doctitle: Kubernetes ConfigMap
+:doctitle: ConfigMap
 :shortname: kubernetes-config-maps
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes ConfigMaps and get notified on ConfigMaps changes.
@@ -157,7 +157,7 @@ You can also provide a default value in case a key does not exist:
 
 == Automatic Camel context reloading on Configmaps Refresh
 
-Being able to reload Camel context on a Configmap Refresh could be done by specifying the following properties: 
+Being able to reload Camel context on a Configmap Refresh could be done by specifying the following properties:
 
 [source,properties]
 ----

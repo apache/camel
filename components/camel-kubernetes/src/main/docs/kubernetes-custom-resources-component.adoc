@@ -1,5 +1,5 @@
 = Kubernetes Custom Resources Component
-:doctitle: Kubernetes Custom Resources
+:doctitle: Custom Resources
 :shortname: kubernetes-custom-resources
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Custom Resources and get notified on Deployment changes.

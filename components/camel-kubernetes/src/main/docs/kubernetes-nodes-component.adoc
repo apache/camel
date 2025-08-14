@@ -1,5 +1,5 @@
 = Kubernetes Nodes Component
-:doctitle: Kubernetes Nodes
+:doctitle: Nodes
 :shortname: kubernetes-nodes
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Nodes and get notified on Node changes.

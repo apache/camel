@@ -1,5 +1,5 @@
 = Kubernetes Event Component
-:doctitle: Kubernetes Event
+:doctitle: Event
 :shortname: kubernetes-events
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Events and get notified on Events changes.

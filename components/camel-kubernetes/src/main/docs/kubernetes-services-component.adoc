@@ -1,5 +1,5 @@
 = Kubernetes Services Component
-:doctitle: Kubernetes Services
+:doctitle: Services
 :shortname: kubernetes-services
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Services and get notified on Service changes.

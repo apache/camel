@@ -1,5 +1,5 @@
 = Kubernetes Persistent Volume Claim Component
-:doctitle: Kubernetes Persistent Volume Claim
+:doctitle: Persistent Volume Claim
 :shortname: kubernetes-persistent-volumes-claims
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Persistent Volumes Claims and get notified on Persistent Volumes Claim changes.
