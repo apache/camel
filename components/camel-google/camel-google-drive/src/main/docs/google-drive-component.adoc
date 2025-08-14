@@ -1,5 +1,5 @@
 = Google Drive Component
-:doctitle: Google Drive
+:doctitle: Drive
 :shortname: google-drive
 :artifactid: camel-google-drive
 :description: Manage files in Google Drive.

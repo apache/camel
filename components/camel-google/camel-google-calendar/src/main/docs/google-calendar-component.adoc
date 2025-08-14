@@ -1,5 +1,5 @@
 = Google Calendar Component
-:doctitle: Google Calendar
+:doctitle: Calendar
 :shortname: google-calendar
 :artifactid: camel-google-calendar
 :description: Perform various operations on a Google Calendar.

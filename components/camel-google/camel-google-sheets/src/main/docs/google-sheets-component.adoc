@@ -1,5 +1,5 @@
 = Google Sheets Component
-:doctitle: Google Sheets
+:doctitle: Sheets
 :shortname: google-sheets
 :artifactid: camel-google-sheets
 :description: Manage spreadsheets in Google Sheets.

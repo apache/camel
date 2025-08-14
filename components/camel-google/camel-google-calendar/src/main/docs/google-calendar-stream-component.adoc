@@ -1,5 +1,5 @@
 = Google Calendar Stream Component
-:doctitle: Google Calendar Stream
+:doctitle: Calendar Stream
 :shortname: google-calendar-stream
 :artifactid: camel-google-calendar
 :description: Poll for changes in a Google Calendar.

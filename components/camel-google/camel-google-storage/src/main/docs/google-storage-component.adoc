@@ -1,5 +1,5 @@
 = Google Storage Component
-:doctitle: Google Storage
+:doctitle: Storage
 :shortname: google-storage
 :artifactid: camel-google-storage
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
@@ -129,7 +129,7 @@ ByteArrayInputStream bais = new ByteArrayInputStream(payload);
 from("direct:start")
 .process( exchange -> {
     exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "camel.txt");
-    exchange.getIn().setBody(bais);    
+    exchange.getIn().setBody(bais);
 })
 .to("google-storage://myCamelBucket?serviceAccountKey=/home/user/Downloads/my-key.json")
 .log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}");

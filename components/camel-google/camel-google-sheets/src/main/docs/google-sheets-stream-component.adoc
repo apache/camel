@@ -1,5 +1,5 @@
 = Google Sheets Stream Component
-:doctitle: Google Sheets Stream
+:doctitle: Sheets Stream
 :shortname: google-sheets-stream
 :artifactid: camel-google-sheets
 :description: Poll for changes in Google Sheets.

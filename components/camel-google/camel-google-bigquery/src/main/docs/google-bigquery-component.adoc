@@ -1,5 +1,5 @@
 = Google BigQuery Component
-:doctitle: Google BigQuery
+:doctitle: BigQuery
 :shortname: google-bigquery
 :artifactid: camel-google-bigquery
 :description: Google BigQuery data warehouse for analytics.

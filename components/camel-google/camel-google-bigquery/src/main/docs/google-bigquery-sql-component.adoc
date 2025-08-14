@@ -1,5 +1,5 @@
 = Google BigQuery Standard SQL Component
-:doctitle: Google BigQuery Standard SQL
+:doctitle: BigQuery Standard SQL
 :shortname: google-bigquery-sql
 :artifactid: camel-google-bigquery
 :description: Access Google Cloud BigQuery service using SQL queries.

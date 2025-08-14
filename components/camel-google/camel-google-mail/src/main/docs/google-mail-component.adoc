@@ -1,5 +1,5 @@
 = Google Mail Component
-:doctitle: Google Mail
+:doctitle: Mail
 :shortname: google-mail
 :artifactid: camel-google-mail
 :description: Manage messages in Google Mail.

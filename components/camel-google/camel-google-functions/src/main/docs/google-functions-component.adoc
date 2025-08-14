@@ -1,5 +1,5 @@
 = Google Cloud Functions Component
-:doctitle: Google Cloud Functions
+:doctitle: Cloud Functions
 :shortname: google-functions
 :artifactid: camel-google-functions
 :description: Manage and invoke Google Cloud Functions

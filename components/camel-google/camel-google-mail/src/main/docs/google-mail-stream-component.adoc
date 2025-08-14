@@ -1,5 +1,5 @@
 = Google Mail Stream Component
-:doctitle: Google Mail Stream
+:doctitle: Mail Stream
 :shortname: google-mail-stream
 :artifactid: camel-google-mail
 :description: Poll for incoming messages in Google Mail.
