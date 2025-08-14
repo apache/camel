@@ -136,10 +136,6 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String DEPENDENCIES = "camel.jbang.dependencies";
 
-    @Metadata(description = "Additional Maven repositories (Use commas to separate multiple repositories).",
-              javaType = "String", label = "maven")
-    public static final String REPOSITORIES = "camel.jbang.repositories";
-
     @Metadata(description = "Version to use for jib-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options)",
               javaType = "String", defaultValue = "3.4.5", label = "kubernetes")
     public static final String JIB_MAVEN_PLUGIN_VERSION = "camel.jbang.jib-maven-plugin-version";

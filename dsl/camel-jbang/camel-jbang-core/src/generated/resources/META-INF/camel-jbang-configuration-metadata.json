@@ -40,7 +40,6 @@
     { "name": "camel.jbang.quarkusGroupId", "description": "Quarkus Platform Maven groupId", "label": "quarkus", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.quarkusVersion", "description": "Quarkus Platform version", "label": "quarkus", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.repos", "description": "Additional Maven repositories for download on-demand (Use commas to separate multiple repositories)", "label": "maven", "type": "object", "javaType": "String" },
-    { "name": "camel.jbang.repositories", "description": "Additional Maven repositories (Use commas to separate multiple repositories).", "label": "maven", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.runtime", "description": "Which runtime to use (camel-main, spring-boot, quarkus)", "type": "object", "javaType": "String", "enum": [ "camel-main", "spring-boot", "quarkus" ] },
     { "name": "camel.jbang.scriptFiles", "description": "Additional shell script files to export to src\/main\/scripts directory", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.sourceDir", "description": "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.", "label": "advanced", "type": "object", "javaType": "String" },
