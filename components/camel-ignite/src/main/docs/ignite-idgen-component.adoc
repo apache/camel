@@ -1,5 +1,5 @@
 = Ignite ID Generator Component
-:doctitle: Ignite ID Generator
+:doctitle: ID Generator
 :shortname: ignite-idgen
 :artifactid: camel-ignite
 :description: Interact with Ignite Atomic Sequences and ID Generators .

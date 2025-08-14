@@ -1,5 +1,5 @@
 = Ignite Compute Component
-:doctitle: Ignite Compute
+:doctitle: Compute
 :shortname: ignite-compute
 :artifactid: camel-ignite
 :description: Run compute operations on an Ignite cluster.

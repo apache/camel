@@ -1,5 +1,5 @@
 = Ignite Events Component
-:doctitle: Ignite Events
+:doctitle: Events
 :shortname: ignite-events
 :artifactid: camel-ignite
 :description: Receive events from an Ignite cluster by creating a local event listener.

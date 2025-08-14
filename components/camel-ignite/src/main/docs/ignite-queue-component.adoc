@@ -1,5 +1,5 @@
 = Ignite Queues Component
-:doctitle: Ignite Queues
+:doctitle: Queues
 :shortname: ignite-queue
 :artifactid: camel-ignite
 :description: Interact with Ignite Queue data structures.

@@ -1,5 +1,5 @@
 = Ignite Messaging Component
-:doctitle: Ignite Messaging
+:doctitle: Messaging
 :shortname: ignite-messaging
 :artifactid: camel-ignite
 :description: Send and receive messages from an Ignite topic.

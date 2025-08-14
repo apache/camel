@@ -1,5 +1,5 @@
 = Ignite Sets Component
-:doctitle: Ignite Sets
+:doctitle: Sets
 :shortname: ignite-set
 :artifactid: camel-ignite
 :description: Interact with Ignite Set data structures.

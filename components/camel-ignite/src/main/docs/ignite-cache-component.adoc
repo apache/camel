@@ -1,5 +1,5 @@
 = Ignite Cache Component
-:doctitle: Ignite Cache
+:doctitle: Cache
 :shortname: ignite-cache
 :artifactid: camel-ignite
 :description: Perform cache operations on an Ignite cache or consume changes from a continuous query.
