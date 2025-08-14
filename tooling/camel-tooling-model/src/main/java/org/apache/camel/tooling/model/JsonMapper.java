@@ -807,8 +807,12 @@ public final class JsonMapper {
         for (MainGroupModel group : model.getGroups()) {
             JsonObject j = new JsonObject();
             j.put("name", group.getName());
-            j.put("description", group.getDescription());
-            j.put("sourceType", group.getSourceType());
+            if (group.getDescription() != null) {
+                j.put("description", group.getDescription());
+            }
+            if (group.getSourceType() != null) {
+                j.put("sourceType", group.getSourceType());
+            }
             groups.add(j);
         }
         json.put("groups", groups);
@@ -816,8 +820,18 @@ public final class JsonMapper {
         for (MainOptionModel prop : model.getOptions()) {
             JsonObject j = new JsonObject();
             j.put("name", prop.getName());
-            j.put("description", prop.getDescription());
-            j.put("sourceType", prop.getSourceType());
+            if (prop.getDescription() != null) {
+                j.put("description", prop.getDescription());
+            }
+            if (prop.getGroup() != null) {
+                j.put("group", prop.getGroup());
+            }
+            if (prop.getLabel() != null) {
+                j.put("label", prop.getLabel());
+            }
+            if (prop.getSourceType() != null) {
+                j.put("sourceType", prop.getSourceType());
+            }
             j.put("type", prop.getType());
             j.put("javaType", prop.getJavaType());
             if (prop.getDefaultValue() != null) {
@@ -844,8 +858,12 @@ public final class JsonMapper {
         for (JBangGroupModel group : model.getGroups()) {
             JsonObject j = new JsonObject();
             j.put("name", group.getName());
-            j.put("description", group.getDescription());
-            j.put("sourceType", group.getSourceType());
+            if (group.getDescription() != null) {
+                j.put("description", group.getDescription());
+            }
+            if (group.getSourceType() != null) {
+                j.put("sourceType", group.getSourceType());
+            }
             groups.add(j);
         }
         json.put("groups", groups);
@@ -853,8 +871,18 @@ public final class JsonMapper {
         for (JBangOptionModel prop : model.getOptions()) {
             JsonObject j = new JsonObject();
             j.put("name", prop.getName());
-            j.put("description", prop.getDescription());
-            j.put("sourceType", prop.getSourceType());
+            if (prop.getDescription() != null) {
+                j.put("description", prop.getDescription());
+            }
+            if (prop.getGroup() != null) {
+                j.put("group", prop.getGroup());
+            }
+            if (prop.getLabel() != null) {
+                j.put("label", prop.getLabel());
+            }
+            if (prop.getSourceType() != null) {
+                j.put("sourceType", prop.getSourceType());
+            }
             j.put("type", prop.getType());
             j.put("javaType", prop.getJavaType());
             if (prop.getDefaultValue() != null) {
