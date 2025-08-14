@@ -1,5 +1,5 @@
 = Azure ServiceBus Component
-:doctitle: Azure ServiceBus
+:doctitle: ServiceBus
 :shortname: azure-servicebus
 :artifactid: camel-azure-servicebus
 :description: Send and receive messages to/from Azure Service Bus.

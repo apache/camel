@@ -1,5 +1,5 @@
 = Azure Key Vault Component
-:doctitle: Azure Key Vault
+:doctitle: Key Vault
 :shortname: azure-key-vault
 :artifactid: camel-azure-key-vault
 :description: Manage secrets and keys in Azure Key Vault Service

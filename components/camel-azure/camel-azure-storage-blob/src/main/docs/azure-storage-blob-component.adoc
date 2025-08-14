@@ -1,5 +1,5 @@
 = Azure Storage Blob Service Component
-:doctitle: Azure Storage Blob Service
+:doctitle: Storage Blob Service
 :shortname: azure-storage-blob
 :artifactid: camel-azure-storage-blob
 :description: Store and retrieve blobs from Azure Storage Blob Service.

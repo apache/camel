@@ -1,5 +1,5 @@
 = Azure Storage Queue Service Component
-:doctitle: Azure Storage Queue Service
+:doctitle: Storage Queue Service
 :shortname: azure-storage-queue
 :artifactid: camel-azure-storage-queue
 :description: Stores and retrieves messages to/from Azure Storage Queue.
@@ -73,7 +73,7 @@ include::partial$component-endpoint-options.adoc[]
 To use this component, you have multiple options to provide the required Azure authentication information:
 
 - By providing your own QueueServiceClient instance which can be injected into `serviceClient`.
-- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. 
+- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password.
 - Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can be generated through your Azure portal. Note that this is the default authentication strategy.
 - Via shared storage account key, when specifying `credentialType=SHARED_KEY_CREDENTIAL` and providing a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be injected into `credentials` option.
 

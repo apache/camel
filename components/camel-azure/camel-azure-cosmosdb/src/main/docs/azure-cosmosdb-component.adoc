@@ -1,5 +1,5 @@
 = Azure CosmosDB Component
-:doctitle: Azure CosmosDB
+:doctitle: CosmosDB
 :shortname: azure-cosmosdb
 :artifactid: camel-azure-cosmosdb
 :description: To read and write records to the CosmosDB database on Azure cloud platform.

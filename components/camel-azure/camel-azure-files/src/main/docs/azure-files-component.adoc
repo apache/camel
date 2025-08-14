@@ -1,5 +1,5 @@
 = Azure Files Component
-:doctitle: Azure Files
+:doctitle: Files
 :shortname: azure-files
 :artifactid: camel-azure-files
 :description: Send and receive files to Azure storage file share
@@ -21,7 +21,7 @@ This component provides access to Azure Files.
 This is preview component, therefore, anything can change in future releases
 (features and behavior can be changed, modified or even dropped without notice). At the same time it is consolidated
 enough, sparingly documented, a few users reported it was working
-in their environment, and it is ready for wider feedback. 
+in their environment, and it is ready for wider feedback.
 ====
 
 When consuming from remote files server, make sure you read the section titled _Consuming Files_
@@ -65,7 +65,7 @@ You can append query options to the URI in the following format
 
 To use this component, you have multiple options to provide the required Azure authentication information:
 
-- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password. 
+- Via Azure Identity, when specifying `credentialType=AZURE_IDENTITY` and providing required https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity#environment-variables[environment variables]. This enables service principal (e.g. app registration) authentication with secret/certificate as well as username password.
 - Via shared storage account key, when specifying `credentialType=SHARED_ACCOUNT_KEY` and providing `sharedKey` for your Azure account, this is the simplest way to get started. The sharedKey can be generated through your Azure portal.
 - Via Azure SAS, when specifying `credentialType=AZURE_SAS` and providing a SAS Token parameter through the `token` parameter.
 
@@ -103,7 +103,7 @@ azure-files://camelazurefiles/samples/inbox/spam?sharedKey=FAKE502UyuBD...3Z%2BA
 The path separator is `/`. The absolute paths start with the path separator.
 The absolute paths do not include the share name, and they are relative
 to the share root rather than to the endpoint starting directory.
- 
+
 *NOTE:* At some places, namely logs of used libraries, OS-specific path separator
 appears, and the relative paths are relative to the share root (rather than
 to the current working directory or to the endpoint starting directory)
@@ -207,7 +207,7 @@ length must be known at its creation time, consequently:
 === About Timeouts
 
 You can use the `connectTimeout` option to set
-a timeout in millis to connect or disconnect. 
+a timeout in millis to connect or disconnect.
 
 The `timeout` option only applies as the data timeout in millis.
 
@@ -216,7 +216,7 @@ The meta-data operations timeout is minimum of:
 
 For now, the file upload has no timeout. During the upload,
 the underlying library could log timeout warnings. They are
-recoverable and upload could continue.   
+recoverable and upload could continue.
 
 === Using Local Work Directory
 
@@ -300,14 +300,14 @@ documentation.
 === Consuming a single file using a fixed name
 
 Unlike FTP component that features a special combination of options:
-  
+
   - `useList=false`
   - `fileName=myFileName.txt`
   - `ignoreFileNotFoundOrPermissionError=true`
 
 to optimize _the single file using a fixed name_ use case,
 it is necessary to fall back to regular filters (i.e. the list
-permission is needed). 
+permission is needed).
 
 === Debug logging
 

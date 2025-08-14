@@ -1,5 +1,5 @@
 = Azure Event Hubs Component
-:doctitle: Azure Event Hubs
+:doctitle: Event Hubs
 :shortname: azure-eventhubs
 :artifactid: camel-azure-eventhubs
 :description: Send and receive events to/from Azure Event Hubs using AMQP protocol.
