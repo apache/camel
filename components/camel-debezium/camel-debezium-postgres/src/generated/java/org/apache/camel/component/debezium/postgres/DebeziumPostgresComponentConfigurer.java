@@ -88,6 +88,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": getOrCreateConfiguration(target).setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "flushlsnsource":
         case "flushLsnSource": getOrCreateConfiguration(target).setFlushLsnSource(property(camelContext, boolean.class, value)); return true;
         case "heartbeatactionquery":
@@ -339,6 +341,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return boolean.class;
         case "flushlsnsource":
         case "flushLsnSource": return boolean.class;
         case "heartbeatactionquery":
@@ -591,6 +595,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return getOrCreateConfiguration(target).isExtendedHeadersEnabled();
         case "flushlsnsource":
         case "flushLsnSource": return getOrCreateConfiguration(target).isFlushLsnSource();
         case "heartbeatactionquery":

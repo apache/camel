@@ -54,6 +54,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": target.getConfiguration().setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": target.getConfiguration().setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "fieldexcludelist":
         case "fieldExcludeList": target.getConfiguration().setFieldExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "fieldrenames":
@@ -224,6 +226,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return boolean.class;
         case "fieldexcludelist":
         case "fieldExcludeList": return java.lang.String.class;
         case "fieldrenames":
@@ -395,6 +399,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "exchangePattern": return target.getExchangePattern();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return target.getConfiguration().getExecutorShutdownTimeoutMs();
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return target.getConfiguration().isExtendedHeadersEnabled();
         case "fieldexcludelist":
         case "fieldExcludeList": return target.getConfiguration().getFieldExcludeList();
         case "fieldrenames":

@@ -23,7 +23,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(140);
+        Set<String> props = new HashSet<>(141);
         props.add("additionalProperties");
         props.add("archiveDestinationName");
         props.add("archiveLogHours");
@@ -52,6 +52,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("executorShutdownTimeoutMs");
+        props.add("extendedHeadersEnabled");
         props.add("heartbeatActionQuery");
         props.add("heartbeatIntervalMs");
         props.add("heartbeatTopicsPrefix");

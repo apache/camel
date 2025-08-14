@@ -687,6 +687,40 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: db2
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: db2
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder extendedHeadersEnabled(String extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.

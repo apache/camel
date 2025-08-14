@@ -74,6 +74,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": getOrCreateConfiguration(target).setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
@@ -255,6 +257,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return boolean.class;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return int.class;
         case "heartbeattopicsprefix":
@@ -437,6 +441,8 @@ public class DebeziumDb2ComponentConfigurer extends PropertyConfigurerSupport im
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return getOrCreateConfiguration(target).isExtendedHeadersEnabled();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":

@@ -100,6 +100,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": target.getConfiguration().setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": target.getConfiguration().setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": target.getConfiguration().setGtidSourceExcludes(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidsourcefilterdmlevents":
@@ -342,6 +344,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return boolean.class;
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": return java.lang.String.class;
         case "gtidsourcefilterdmlevents":
@@ -585,6 +589,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "exchangePattern": return target.getExchangePattern();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return target.getConfiguration().getExecutorShutdownTimeoutMs();
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return target.getConfiguration().isExtendedHeadersEnabled();
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": return target.getConfiguration().getGtidSourceExcludes();
         case "gtidsourcefilterdmlevents":

@@ -70,6 +70,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": target.getConfiguration().setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": target.getConfiguration().setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": target.getConfiguration().setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
@@ -268,6 +270,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return boolean.class;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return java.lang.String.class;
         case "heartbeatintervalms":
@@ -467,6 +471,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "exchangePattern": return target.getExchangePattern();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return target.getConfiguration().getExecutorShutdownTimeoutMs();
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return target.getConfiguration().isExtendedHeadersEnabled();
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return target.getConfiguration().getHeartbeatActionQuery();
         case "heartbeatintervalms":

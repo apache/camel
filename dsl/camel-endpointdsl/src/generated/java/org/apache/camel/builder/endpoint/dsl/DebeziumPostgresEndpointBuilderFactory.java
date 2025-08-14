@@ -842,6 +842,40 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: postgres
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: postgres
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder extendedHeadersEnabled(String extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
          * Boolean to determine if Debezium should flush LSN in the source
          * postgres database. If set to false, user will have to flush the LSN
          * manually outside Debezium.

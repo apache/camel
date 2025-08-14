@@ -799,6 +799,40 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder extendedHeadersEnabled(String extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
          * The query executed with every heartbeat.
          * 
          * The option is a: <code>java.lang.String</code> type.

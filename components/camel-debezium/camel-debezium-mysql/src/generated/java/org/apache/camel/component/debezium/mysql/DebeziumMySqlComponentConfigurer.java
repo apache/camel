@@ -106,6 +106,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": getOrCreateConfiguration(target).setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": getOrCreateConfiguration(target).setGtidSourceExcludes(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidsourcefilterdmlevents":
@@ -347,6 +349,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return boolean.class;
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": return java.lang.String.class;
         case "gtidsourcefilterdmlevents":
@@ -589,6 +593,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return getOrCreateConfiguration(target).isExtendedHeadersEnabled();
         case "gtidsourceexcludes":
         case "gtidSourceExcludes": return getOrCreateConfiguration(target).getGtidSourceExcludes();
         case "gtidsourcefilterdmlevents":

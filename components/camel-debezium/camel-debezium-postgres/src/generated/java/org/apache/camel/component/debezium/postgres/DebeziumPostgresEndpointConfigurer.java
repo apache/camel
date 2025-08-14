@@ -82,6 +82,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": target.getConfiguration().setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": target.getConfiguration().setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "flushlsnsource":
         case "flushLsnSource": target.getConfiguration().setFlushLsnSource(property(camelContext, boolean.class, value)); return true;
         case "heartbeatactionquery":
@@ -334,6 +336,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return boolean.class;
         case "flushlsnsource":
         case "flushLsnSource": return boolean.class;
         case "heartbeatactionquery":
@@ -587,6 +591,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "exchangePattern": return target.getExchangePattern();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return target.getConfiguration().getExecutorShutdownTimeoutMs();
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return target.getConfiguration().isExtendedHeadersEnabled();
         case "flushlsnsource":
         case "flushLsnSource": return target.getConfiguration().isFlushLsnSource();
         case "heartbeatactionquery":

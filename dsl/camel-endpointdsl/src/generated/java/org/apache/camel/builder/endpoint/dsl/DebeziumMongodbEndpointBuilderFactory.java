@@ -573,6 +573,40 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: mongodb
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: mongodb
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder extendedHeadersEnabled(String extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
          * A comma-separated list of the fully-qualified names of fields that
          * should be excluded from change event message values.
          * 

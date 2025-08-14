@@ -76,6 +76,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": getOrCreateConfiguration(target).setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": getOrCreateConfiguration(target).setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
@@ -273,6 +275,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return boolean.class;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return java.lang.String.class;
         case "heartbeatintervalms":
@@ -471,6 +475,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return getOrCreateConfiguration(target).isExtendedHeadersEnabled();
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return getOrCreateConfiguration(target).getHeartbeatActionQuery();
         case "heartbeatintervalms":

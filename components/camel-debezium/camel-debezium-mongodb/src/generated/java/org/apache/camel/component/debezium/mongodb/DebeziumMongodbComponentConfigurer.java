@@ -60,6 +60,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": getOrCreateConfiguration(target).setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "fieldexcludelist":
         case "fieldExcludeList": getOrCreateConfiguration(target).setFieldExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "fieldrenames":
@@ -229,6 +231,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return long.class;
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return boolean.class;
         case "fieldexcludelist":
         case "fieldExcludeList": return java.lang.String.class;
         case "fieldrenames":
@@ -399,6 +403,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
         case "executorshutdowntimeoutms":
         case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
+        case "extendedheadersenabled":
+        case "extendedHeadersEnabled": return getOrCreateConfiguration(target).isExtendedHeadersEnabled();
         case "fieldexcludelist":
         case "fieldExcludeList": return getOrCreateConfiguration(target).getFieldExcludeList();
         case "fieldrenames":

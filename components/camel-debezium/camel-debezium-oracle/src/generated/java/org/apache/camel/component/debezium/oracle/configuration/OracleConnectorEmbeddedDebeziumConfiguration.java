@@ -207,6 +207,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String archiveDestinationName;
     @UriParam(label = LABEL_NAME, defaultValue = "20s", javaType = "java.time.Duration")
     private long logMiningScnGapDetectionTimeIntervalMaxMs = 20000;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean extendedHeadersEnabled = true;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME)
@@ -1567,6 +1569,19 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Enable/Disable Debezium context headers that provides essential metadata
+     * for tracking and identifying the source of CDC events in downstream
+     * processing systems.
+     */
+    public void setExtendedHeadersEnabled(boolean extendedHeadersEnabled) {
+        this.extendedHeadersEnabled = extendedHeadersEnabled;
+    }
+
+    public boolean isExtendedHeadersEnabled() {
+        return extendedHeadersEnabled;
+    }
+
+    /**
      * Maximum size of the queue for change events read from the database log
      * but not yet recorded or forwarded. Defaults to 8192, and should always be
      * larger than the maximum batch size.
@@ -2043,6 +2058,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
         addPropertyIfNotNull(configBuilder, "archive.destination.name", archiveDestinationName);
         addPropertyIfNotNull(configBuilder, "log.mining.scn.gap.detection.time.interval.max.ms", logMiningScnGapDetectionTimeIntervalMaxMs);
+        addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "rac.nodes", racNodes);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.global", logMiningBufferInfinispanCacheGlobal);
