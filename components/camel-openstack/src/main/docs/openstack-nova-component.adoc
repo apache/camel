@@ -1,5 +1,5 @@
 = OpenStack Nova Component
-:doctitle: OpenStack Nova
+:doctitle: Nova
 :shortname: openstack-nova
 :artifactid: camel-openstack
 :description: Access OpenStack to manage compute resources.

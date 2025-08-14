@@ -1,5 +1,5 @@
 = OpenStack Neutron Component
-:doctitle: OpenStack Neutron
+:doctitle: Neutron
 :shortname: openstack-neutron
 :artifactid: camel-openstack
 :description: Access OpenStack Neutron for network services.

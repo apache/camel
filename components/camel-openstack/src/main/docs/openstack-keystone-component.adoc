@@ -1,5 +1,5 @@
 = OpenStack Keystone Component
-:doctitle: OpenStack Keystone
+:doctitle: Keystone
 :shortname: openstack-keystone
 :artifactid: camel-openstack
 :description: Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant authorization.

@@ -1,5 +1,5 @@
 = OpenStack Glance Component
-:doctitle: OpenStack Glance
+:doctitle: Glance
 :shortname: openstack-glance
 :artifactid: camel-openstack
 :description: Manage VM images and metadata definitions in OpenStack Glance.

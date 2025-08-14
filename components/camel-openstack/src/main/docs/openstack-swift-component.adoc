@@ -1,5 +1,5 @@
 = OpenStack Swift Component
-:doctitle: OpenStack Swift
+:doctitle: Swift
 :shortname: openstack-swift
 :artifactid: camel-openstack
 :description: Access OpenStack Swift object/blob store.

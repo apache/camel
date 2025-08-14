@@ -1,5 +1,5 @@
 = OpenStack Cinder Component
-:doctitle: OpenStack Cinder
+:doctitle: Cinder
 :shortname: openstack-cinder
 :artifactid: camel-openstack
 :description: Access data in OpenStack Cinder block storage.
