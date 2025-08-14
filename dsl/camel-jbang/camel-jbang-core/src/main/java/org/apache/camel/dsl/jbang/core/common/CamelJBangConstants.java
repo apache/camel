@@ -24,6 +24,14 @@ import org.apache.camel.spi.Metadata;
  */
 public final class CamelJBangConstants {
 
+    // internal options which is not intended for Camel users
+    public static final String BACKGROUND = "camel.jbang.background";
+    public static final String BACKGROUND_WAIT = "camel.jbang.backgroundWait";
+    public static final String JVM_DEBUG = "camel.jbang.jvmDebug";
+    public static final String TRANSFORM = "camel.jbang.transform";
+    public static final String EXPORT = "camel.jbang.export";
+    public static final String DEBUG = "camel.jbang.debug";
+
     @Metadata(description = "Additional files to add to classpath (Use commas to separate multiple files).",
               javaType = "String")
     public static final String CLASSPATH_FILES = "camel.jbang.classpathFiles";
@@ -186,14 +194,6 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String CAMEL_VERSION = "camel.jbang.camel-version";
 
-    @Metadata(description = "Run Camel in export mode",
-              javaType = "boolean", label = "internal")
-    public static final String EXPORT = "camel.jbang.export";
-
-    @Metadata(description = "Run Camel in debugging mode",
-              javaType = "boolean", label = "internal")
-    public static final String DEBUG = "camel.jbang.debug";
-
     @Metadata(description = "Enables Java Flight Recorder saving recording to disk on exit",
               javaType = "boolean")
     public static final String JFR = "camel.jbang.jfr";
@@ -209,22 +209,6 @@ public final class CamelJBangConstants {
     @Metadata(description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang",
               javaType = "boolean", label = "advanced")
     public static final String PACKAGE_SCAN_JARS = "camel.jbang.packageScanJars";
-
-    @Metadata(description = "Run in the background",
-              javaType = "boolean", label = "internal")
-    public static final String BACKGROUND = "camel.jbang.background";
-
-    @Metadata(description = "To wait for run in background to startup successfully, before returning",
-              javaType = "boolean", defaultValue = "true", label = "internal")
-    public static final String BACKGROUND_WAIT = "camel.jbang.backgroundWait";
-
-    @Metadata(description = "To enable JVM remote debugging on the given port.",
-              javaType = "int", defaultValue = "4004", label = "internal")
-    public static final String JVM_DEBUG = "camel.jbang.jvmDebug";
-
-    @Metadata(description = "To run in transform mode",
-              javaType = "boolean", label = "internal")
-    public static final String TRANSFORM = "camel.jbang.transform";
 
     @Metadata(description = "To use a custom Camel version when running or export to Spring Boot",
               javaType = "String", label = "spring-boot")

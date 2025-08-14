@@ -3,19 +3,15 @@
     { "name": "camel.jbang", "description": "Camel JBang configurations" }
   ],
   "properties": [
-    { "name": "camel.jbang.background", "description": "Run in the background", "label": "internal", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
-    { "name": "camel.jbang.backgroundWait", "description": "To wait for run in background to startup successfully, before returning", "label": "internal", "type": "boolean", "javaType": "boolean", "defaultValue": true },
     { "name": "camel.jbang.buildTool", "description": "Build tool to use (Maven or Gradle)", "type": "object", "javaType": "String", "defaultValue": "Maven" },
     { "name": "camel.jbang.camel-version", "description": "The version of Apache Camel to use", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.camelSpringBootVersion", "description": "To use a custom Camel version when running or export to Spring Boot", "label": "spring-boot", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.classpathFiles", "description": "Additional files to add to classpath (Use commas to separate multiple files).", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.compileWorkDir", "description": "Work directory for compiler. Can be used to write compiled classes or other resources.", "label": "advanced", "type": "object", "javaType": "String", "defaultValue": ".camel-jbang\/compile" },
     { "name": "camel.jbang.console", "description": "Developer console at \/q\/dev on local HTTP server (port 8080 by default)", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
-    { "name": "camel.jbang.debug", "description": "Run Camel in debugging mode", "label": "internal", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
     { "name": "camel.jbang.dependencies", "description": "Additional dependencies (Use commas to separate multiple dependencies).", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.download", "description": "Whether to allow automatic downloading JAR dependencies (over the internet)", "type": "boolean", "javaType": "boolean", "defaultValue": true },
     { "name": "camel.jbang.excludes", "description": "Exclude files by name or pattern (Use commas to separate multiple files)", "type": "object", "javaType": "String" },
-    { "name": "camel.jbang.export", "description": "Run Camel in export mode", "label": "internal", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
     { "name": "camel.jbang.exportDir", "description": "Directory where the project will be exported", "type": "object", "javaType": "String", "defaultValue": "." },
     { "name": "camel.jbang.gav", "description": "Maven coordinate (groupId:artifactId:version)", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.gradleWrapper", "description": "Include Gradle Wrapper files in the exported project", "type": "boolean", "javaType": "boolean", "defaultValue": true },
@@ -28,7 +24,6 @@
     { "name": "camel.jbang.jib-maven-plugin-version", "description": "Version to use for jib-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options)", "label": "kubernetes", "type": "object", "javaType": "String", "defaultValue": "3.4.5" },
     { "name": "camel.jbang.jkube-maven-plugin-version", "description": "Version to use for jkube-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options)", "label": "kubernetes", "type": "object", "javaType": "String", "defaultValue": "1.18.1" },
     { "name": "camel.jbang.jkubeFiles", "description": "Resource YAML fragments for Kubernetes using Eclipse JKube tool (Use commas to separate multiple files).", "label": "kubernetes", "type": "object", "javaType": "String" },
-    { "name": "camel.jbang.jvmDebug", "description": "To enable JVM remote debugging on the given port.", "label": "internal", "type": "integer", "javaType": "int", "defaultValue": 4004 },
     { "name": "camel.jbang.kameletsVersion", "description": "Apache Camel Kamelets version. By default the Kamelets are the same version as Camel.", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.lazyBean", "description": "Whether to use lazy bean initialization (can help with complex classloading issues)", "label": "advanced", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
     { "name": "camel.jbang.localKameletDir", "description": "Local file directory for loading custom Kamelets", "type": "object", "javaType": "String" },
@@ -52,7 +47,6 @@
     { "name": "camel.jbang.springBootVersion", "description": "Spring Boot version", "label": "spring-boot", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.stub", "description": "Stubs all the matching endpoint with the given component name or pattern. Multiple names can be separated by comma. (all = everything).", "type": "object", "javaType": "String" },
     { "name": "camel.jbang.tlsFiles", "description": "Additional SSL\/TLS files to export to src\/main\/tls directory", "type": "object", "javaType": "String" },
-    { "name": "camel.jbang.transform", "description": "To run in transform mode", "label": "internal", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
     { "name": "camel.jbang.verbose", "description": "Verbose output of startup activity (dependency resolution and downloading", "type": "boolean", "javaType": "boolean", "defaultValue": "false" }
   ]
 }
