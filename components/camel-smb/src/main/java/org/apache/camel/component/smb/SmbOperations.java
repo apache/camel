@@ -65,6 +65,7 @@ public class SmbOperations implements SmbFileOperations {
     private Session session;
     private DiskShare share;
     private SMBClient smbClient;
+    private Connection connection;
 
     public SmbOperations(SmbConfiguration configuration) {
         this.configuration = configuration;
@@ -80,12 +81,15 @@ public class SmbOperations implements SmbFileOperations {
 
     protected void connectIfNecessary() {
         try {
-            Connection connection = smbClient.connect(configuration.getHostname(), configuration.getPort());
-
-            if (!loggedIn || !isConnected()) {
+            if (!isConnected()) {
                 LOG.debug("Not already connected/logged in. Connecting to: {}:{}", configuration.getHostname(),
                         configuration.getPort());
 
+                // Clean up any existing partial connections
+                disconnect();
+
+                // Establish fresh connections
+                connection = smbClient.connect(configuration.getHostname(), configuration.getPort());
                 AuthenticationContext ac = new AuthenticationContext(
                         configuration.getUsername(),
                         configuration.getPassword().toCharArray(),
@@ -108,10 +112,10 @@ public class SmbOperations implements SmbFileOperations {
 
     @Override
     public boolean isConnected() throws GenericFileOperationFailedException {
-        if (share != null) {
-            return share.isConnected();
-        }
-        return false;
+        return loggedIn &&
+                connection != null && connection.isConnected() &&
+                session != null &&
+                share != null && share.isConnected();
     }
 
     @Override
@@ -128,17 +132,24 @@ public class SmbOperations implements SmbFileOperations {
         if (session != null) {
             try {
                 session.close();
-                session.getConnection().close();
+            } catch (Exception e) {
+                // ignore
+            }
+            session = null;
+        }
+        if (connection != null) {
+            try {
+                connection.close();
             } catch (TransportException t) {
                 try {
-                    session.getConnection().close(true);
+                    connection.close(true);
                 } catch (IOException e) {
                     // ignore
                 }
             } catch (Exception e) {
                 // ignore
             }
-            session = null;
+            connection = null;
         }
     }
 
