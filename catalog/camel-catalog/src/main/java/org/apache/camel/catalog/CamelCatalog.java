@@ -539,6 +539,11 @@ public interface CamelCatalog {
     String listOthersAsJson();
 
     /**
+     * Lists all the pojo beans summary details in JSon
+     */
+    String listBeansAsJson();
+
+    /**
      * Reports a summary what the catalog contains in JSon
      */
     String summaryAsJson();

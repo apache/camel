@@ -536,6 +536,15 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public String listBeansAsJson() {
+        return cache(LIST_BEANS_AS_JSON, () -> JsonMapper.serialize(findBeansNames().stream()
+                .map(this::pojoBeanJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("bean"))
+                .toList()));
+    }
+
+    @Override
     public String summaryAsJson() {
         return cache(SUMMARY_AS_JSON, () -> {
             Map<String, Object> obj = new JsonObject();

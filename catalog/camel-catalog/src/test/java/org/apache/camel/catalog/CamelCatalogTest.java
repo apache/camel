@@ -924,6 +924,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testListBeansAsJson() throws Exception {
+        String json = catalog.listBeansAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
     public void testSummaryAsJson() throws Exception {
         String json = catalog.summaryAsJson();
         assertNotNull(json);

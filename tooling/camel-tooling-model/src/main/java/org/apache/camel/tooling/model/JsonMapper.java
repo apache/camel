@@ -30,6 +30,8 @@ import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JBangModel.JBangGroupModel;
+import org.apache.camel.tooling.model.JBangModel.JBangOptionModel;
 import org.apache.camel.tooling.model.LanguageModel.LanguageOptionModel;
 import org.apache.camel.tooling.model.MainModel.MainGroupModel;
 import org.apache.camel.tooling.model.MainModel.MainOptionModel;
@@ -604,6 +606,12 @@ public final class JsonMapper {
         option.setSourceType(mp.getString("sourceType"));
     }
 
+    private static void parseGroup(JsonObject mp, JBangGroupModel option) {
+        option.setName(mp.getString("name"));
+        option.setDescription(mp.getString("description"));
+        option.setSourceType(mp.getString("sourceType"));
+    }
+
     private static void parseFunction(JsonObject mp, LanguageModel.LanguageFunctionModel func, String name) {
         func.setName(name);
         func.setConstantName(name);
@@ -768,6 +776,31 @@ public final class JsonMapper {
         return model;
     }
 
+    public static JBangModel generateJBangModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateJBangModel(obj);
+    }
+
+    public static JBangModel generateJBangModel(JsonObject obj) {
+        JBangModel model = new JBangModel();
+        JsonArray mgrp = (JsonArray) obj.get("groups");
+        for (Object entry : mgrp) {
+            JsonObject mg = (JsonObject) entry;
+            JBangGroupModel group = new JBangGroupModel();
+            parseGroup(mg, group);
+            model.addGroup(group);
+        }
+        JsonArray mprp = (JsonArray) obj.get("properties");
+        for (Object entry : mprp) {
+            JsonObject mp = (JsonObject) entry;
+            JBangOptionModel option = new JBangOptionModel();
+            parseOption(mp, option, mp.getString("name"));
+            option.setSourceType(mp.getString("sourceType"));
+            model.addOption(option);
+        }
+        return model;
+    }
+
     public static JsonObject asJsonObject(MainModel model) {
         JsonObject json = new JsonObject();
         JsonArray groups = new JsonArray();
@@ -781,6 +814,43 @@ public final class JsonMapper {
         json.put("groups", groups);
         JsonArray props = new JsonArray();
         for (MainOptionModel prop : model.getOptions()) {
+            JsonObject j = new JsonObject();
+            j.put("name", prop.getName());
+            j.put("description", prop.getDescription());
+            j.put("sourceType", prop.getSourceType());
+            j.put("type", prop.getType());
+            j.put("javaType", prop.getJavaType());
+            if (prop.getDefaultValue() != null) {
+                j.put("defaultValue", prop.getDefaultValue());
+            }
+            if (prop.getEnums() != null) {
+                j.put("enum", prop.getEnums());
+            }
+            if (prop.isDeprecated()) {
+                j.put("deprecated", prop.isDeprecated());
+            }
+            if (prop.isAutowired()) {
+                j.put("autowired", prop.isAutowired());
+            }
+            props.add(j);
+        }
+        json.put("properties", props);
+        return json;
+    }
+
+    public static JsonObject asJsonObject(JBangModel model) {
+        JsonObject json = new JsonObject();
+        JsonArray groups = new JsonArray();
+        for (JBangGroupModel group : model.getGroups()) {
+            JsonObject j = new JsonObject();
+            j.put("name", group.getName());
+            j.put("description", group.getDescription());
+            j.put("sourceType", group.getSourceType());
+            groups.add(j);
+        }
+        json.put("groups", groups);
+        JsonArray props = new JsonArray();
+        for (JBangOptionModel prop : model.getOptions()) {
             JsonObject j = new JsonObject();
             j.put("name", prop.getName());
             j.put("description", prop.getDescription());
@@ -832,6 +902,11 @@ public final class JsonMapper {
     }
 
     public static String createJsonSchema(MainModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    public static String createJsonSchema(JBangModel model) {
         JsonObject wrapper = asJsonObject(model);
         return serialize(wrapper);
     }
