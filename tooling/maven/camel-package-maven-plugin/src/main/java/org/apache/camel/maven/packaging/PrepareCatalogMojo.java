@@ -163,6 +163,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File mainOutDir;
 
     /**
+     * The output directory for generated jbang
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/jbang")
+    protected File jbangOutDir;
+
+    /**
      * The components directory where all the Apache Camel components are
      */
     @Parameter(defaultValue = "${project.basedir}/../../components")
@@ -215,6 +221,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.basedir}/../../core/camel-main/target/classes/META-INF")
     protected File mainDir;
+
+    /**
+     * The directory where the camel-jbang metadata are
+     */
+    @Parameter(defaultValue = "${project.basedir}/../../dsl/camel-jbang/camel-jbang-core/target/classes/META-INF")
+    protected File jbangDir;
 
     /**
      * Skip the execution of this mojo
@@ -397,6 +409,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             executeDocuments(components, dataformats, languages, others);
             executeXmlSchemas();
             executeMain();
+            executeJBang();
         } catch (Exception e) {
             throw new MojoFailureException("Error preparing catalog", e);
         }
@@ -995,6 +1008,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected void executeMain() throws Exception {
         getLog().info("Copying camel-main metadata");
         copyFile(mainDir.toPath().resolve("camel-main-configuration-metadata.json"), mainOutDir.toPath());
+    }
+
+    protected void executeJBang() throws Exception {
+        getLog().info("Copying camel-jbang metadata");
+        copyFile(jbangDir.toPath().resolve("camel-jbang-configuration-metadata.json"), jbangOutDir.toPath());
     }
 
     protected void executeDocuments(

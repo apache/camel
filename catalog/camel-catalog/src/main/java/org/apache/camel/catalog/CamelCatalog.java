@@ -369,6 +369,13 @@ public interface CamelCatalog {
     String mainJsonSchema();
 
     /**
+     * Returns the camel-jbang json schema
+     *
+     * @return the camel-jbang json schema
+     */
+    String jbangJsonSchema();
+
+    /**
      * Parses the endpoint uri and constructs a key/value properties of each option
      *
      * @param  uri the endpoint uri

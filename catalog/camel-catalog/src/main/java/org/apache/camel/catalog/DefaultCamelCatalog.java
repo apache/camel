@@ -59,6 +59,7 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
     private static final String MAIN_DIR = "org/apache/camel/catalog/main";
+    private static final String JBANG_DIR = "org/apache/camel/catalog/jbang";
     private static final String BASE_RESOURCE_DIR = "org/apache/camel/catalog";
 
     public static final String FIND_COMPONENT_NAMES = "findComponentNames";
@@ -470,6 +471,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public String mainJsonSchema() {
         return cache(MAIN_DIR + "/camel-main-configuration-metadata.json", this::loadResource);
+    }
+
+    @Override
+    public String jbangJsonSchema() {
+        return cache(JBANG_DIR + "/camel-jbang-configuration-metadata.json", this::loadResource);
     }
 
     @Override

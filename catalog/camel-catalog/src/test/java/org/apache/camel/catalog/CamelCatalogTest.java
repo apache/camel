@@ -215,6 +215,12 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testJBang() {
+        String schema = catalog.jbangJsonSchema();
+        assertNotNull(schema);
+    }
+
+    @Test
     public void testAsEndpointUriMapFile() throws Exception {
         Map<String, String> map = new HashMap<>();
         map.put("directoryName", "src/data/inbox");
