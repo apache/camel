@@ -524,6 +524,25 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: mongodb
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+    
         /**
          * A comma-separated list of the fully-qualified names of fields that
          * should be excluded from change event message values.
@@ -1566,6 +1585,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumMongodbComponent) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
+            case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumMongodbComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
             case "fieldExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldExcludeList((java.lang.String) value); return true;
             case "fieldRenames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldRenames((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatIntervalMs((int) value); return true;

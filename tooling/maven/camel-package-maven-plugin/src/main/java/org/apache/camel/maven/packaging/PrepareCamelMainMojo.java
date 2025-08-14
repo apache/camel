@@ -87,8 +87,12 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             String javaType = f.getType().getQualifiedName();
             String sourceType = clazz.getQualifiedName();
             String defaultValue = f.getStringInitializer();
+            boolean secret = false;
+            boolean required = false;
             if (as != null) {
                 defaultValue = as.getStringValue("defaultValue");
+                secret = "true".equals(as.getStringValue("secret"));
+                required = "true".equals(as.getStringValue("required"));
             }
             if (defaultValue != null && defaultValue.startsWith("new ")) {
                 // skip constructors
@@ -111,6 +115,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                 model.setSourceType(sourceType);
                 model.setDefaultValue(asDefaultValue(type, defaultValue));
                 model.setDeprecated(deprecated);
+                model.setSecret(secret);
+                model.setRequired(required);
                 List<String> enums = null;
                 // add known enums
                 if ("org.apache.camel.LoggingLevel".equals(javaType)) {

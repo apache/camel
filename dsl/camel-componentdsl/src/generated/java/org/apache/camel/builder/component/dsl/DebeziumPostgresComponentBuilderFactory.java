@@ -781,6 +781,25 @@ public interface DebeziumPostgresComponentBuilderFactory {
     
         
         /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: postgres
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Boolean to determine if Debezium should flush LSN in the source
          * postgres database. If set to false, user will have to flush the LSN
          * manually outside Debezium.
@@ -2425,6 +2444,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumPostgresComponent) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
+            case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumPostgresComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
             case "flushLsnSource": getOrCreateConfiguration((DebeziumPostgresComponent) component).setFlushLsnSource((boolean) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatIntervalMs((int) value); return true;

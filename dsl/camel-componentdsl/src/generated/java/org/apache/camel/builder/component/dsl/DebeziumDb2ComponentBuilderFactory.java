@@ -650,6 +650,25 @@ public interface DebeziumDb2ComponentBuilderFactory {
     
         
         /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: db2
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
@@ -1726,6 +1745,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumDb2Component) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumDb2Component) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumDb2Component) component).setExecutorShutdownTimeoutMs((long) value); return true;
+            case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumDb2Component) component).setExtendedHeadersEnabled((boolean) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumDb2Component) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumDb2Component) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "includeSchemaChanges": getOrCreateConfiguration((DebeziumDb2Component) component).setIncludeSchemaChanges((boolean) value); return true;

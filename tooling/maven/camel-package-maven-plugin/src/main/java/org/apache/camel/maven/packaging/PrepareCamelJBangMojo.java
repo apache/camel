@@ -82,6 +82,8 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
                 String defaultValue = as.getStringValue("defaultValue");
                 String desc = as.getStringValue("description");
                 String label = as.getStringValue("label");
+                boolean secret = "true".equals(as.getStringValue("secret"));
+                boolean required = "true".equals(as.getStringValue("required"));
                 boolean deprecated = clazz.getAnnotation(Deprecated.class) != null || f.getAnnotation(Deprecated.class) != null;
                 String type = fromMainToType(javaType);
                 JBangModel.JBangOptionModel model = new JBangModel.JBangOptionModel();
@@ -93,6 +95,8 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
                 model.setSourceType(null);
                 model.setDefaultValue(asDefaultValue(type, defaultValue));
                 model.setDeprecated(deprecated);
+                model.setSecret(secret);
+                model.setRequired(required);
                 List<String> enums = null;
                 String text = as.getStringValue("enums");
                 if (text != null) {

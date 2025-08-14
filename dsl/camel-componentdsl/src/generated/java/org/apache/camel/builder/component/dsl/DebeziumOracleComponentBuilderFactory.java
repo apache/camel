@@ -732,6 +732,25 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+    
         /**
          * The query executed with every heartbeat.
          * 
@@ -2663,6 +2682,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumOracleComponent) component).setErrorsMaxRetries((int) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
+            case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumOracleComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;

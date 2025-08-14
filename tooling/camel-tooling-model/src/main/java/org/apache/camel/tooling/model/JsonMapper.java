@@ -820,6 +820,7 @@ public final class JsonMapper {
         for (MainOptionModel prop : model.getOptions()) {
             JsonObject j = new JsonObject();
             j.put("name", prop.getName());
+            j.put("required", prop.isRequired());
             if (prop.getDescription() != null) {
                 j.put("description", prop.getDescription());
             }
@@ -837,6 +838,7 @@ public final class JsonMapper {
             if (prop.getDefaultValue() != null) {
                 j.put("defaultValue", prop.getDefaultValue());
             }
+            j.put("secret", prop.isSecret());
             if (prop.getEnums() != null) {
                 j.put("enum", prop.getEnums());
             }
@@ -871,6 +873,7 @@ public final class JsonMapper {
         for (JBangOptionModel prop : model.getOptions()) {
             JsonObject j = new JsonObject();
             j.put("name", prop.getName());
+            j.put("required", prop.isRequired());
             if (prop.getDescription() != null) {
                 j.put("description", prop.getDescription());
             }
@@ -888,6 +891,7 @@ public final class JsonMapper {
             if (prop.getDefaultValue() != null) {
                 j.put("defaultValue", prop.getDefaultValue());
             }
+            j.put("secret", prop.isSecret());
             if (prop.getEnums() != null) {
                 j.put("enum", prop.getEnums());
             }

@@ -948,6 +948,25 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Enable/Disable Debezium context headers that provides essential
+         * metadata for tracking and identifying the source of CDC events in
+         * downstream processing systems.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: mysql
+         * 
+         * @param extendedHeadersEnabled the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
+            doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+    
         /**
          * The source UUIDs used to exclude GTID ranges when determine the
          * starting position in the MySQL server's binlog.
@@ -2338,6 +2357,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventDeserializationFailureHandlingMode((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
+            case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumMySqlComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
             case "gtidSourceExcludes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceExcludes((java.lang.String) value); return true;
             case "gtidSourceFilterDmlEvents": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceFilterDmlEvents((boolean) value); return true;
             case "gtidSourceIncludes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceIncludes((java.lang.String) value); return true;
