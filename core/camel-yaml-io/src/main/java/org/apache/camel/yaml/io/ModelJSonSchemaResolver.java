@@ -152,6 +152,17 @@ class ModelJSonSchemaResolver implements JSonSchemaResolver {
         return null;
     }
 
+    @Override
+    public String getJBangJsonSchema() {
+        try {
+            String path = "META-INF/camel-jbang-configuration-metadata.json";
+            return doLoadResource(path);
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
+    }
+
     private String doLoadResource(String path) throws IOException {
         InputStream is = null;
         if (classLoader != null) {

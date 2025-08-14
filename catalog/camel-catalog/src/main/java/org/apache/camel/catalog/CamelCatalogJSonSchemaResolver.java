@@ -133,6 +133,12 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
     }
 
     @Override
+    public String getJBangJsonSchema() {
+        final String file = "org/apache/camel/catalog/jbang/camel-jbang-configuration-metadata.json";
+        return loadResourceFromVersionManager(file);
+    }
+
+    @Override
     public String getOtherJSonSchema(String name) {
         final String file = camelCatalog.getRuntimeProvider().getOtherJSonSchemaDirectory() + "/" + name + EXTENSION;
         return loadResourceFromVersionManager(file);

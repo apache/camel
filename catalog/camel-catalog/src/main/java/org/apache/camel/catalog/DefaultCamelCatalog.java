@@ -40,6 +40,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JBangModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
@@ -417,6 +418,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public MainModel mainModel() {
         return cache("main-model", "main-model", k -> super.mainModel());
+    }
+
+    @Override
+    public JBangModel jbangModel() {
+        return cache("jbang-model", "jbang-model", k -> super.jbangModel());
     }
 
     @Override

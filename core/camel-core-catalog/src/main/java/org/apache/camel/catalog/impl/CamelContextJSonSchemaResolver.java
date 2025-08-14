@@ -140,4 +140,28 @@ public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
         }
         return null;
     }
+
+    @Override
+    public String getJBangJsonSchema() {
+        String path = "META-INF/camel-jbang-configuration-metadata.json";
+        InputStream is = null;
+        if (classLoader != null) {
+            is = classLoader.getResourceAsStream(path);
+        }
+        if (is == null) {
+            ClassResolver resolver = camelContext.getClassResolver();
+            is = resolver.loadResourceAsStream(path);
+        }
+        if (is != null) {
+            try {
+                return IOHelper.loadText(is);
+            } catch (IOException e) {
+                // ignore
+            } finally {
+                IOHelper.close(is);
+            }
+        }
+        return null;
+    }
+
 }

@@ -212,12 +212,18 @@ public class CamelCatalogTest {
     public void testMain() {
         String schema = catalog.mainJsonSchema();
         assertNotNull(schema);
+
+        var model = catalog.mainModel();
+        assertNotNull(model);
     }
 
     @Test
     public void testJBang() {
         String schema = catalog.jbangJsonSchema();
         assertNotNull(schema);
+
+        var model = catalog.jbangModel();
+        assertNotNull(model);
     }
 
     @Test
