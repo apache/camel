@@ -1,4 +1,7 @@
 = Enterprise Integration Patterns
+:doctitle: EIPs
+:shortname: eips
+:description: Enterprise Integration Patterns
 
 Camel supports most of the
 http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns]
