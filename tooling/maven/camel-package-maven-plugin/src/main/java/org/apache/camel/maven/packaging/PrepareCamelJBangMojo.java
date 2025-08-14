@@ -48,13 +48,13 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  */
 @Mojo(name = "prepare-jbang", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
       requiresDependencyResolution = ResolutionScope.COMPILE)
-public class PrepareJBangMojo extends AbstractGeneratorMojo {
+public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
 
     @Inject
-    public PrepareJBangMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+    public PrepareCamelJBangMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
         super(projectHelper, buildContext);
     }
 

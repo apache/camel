@@ -3942,110 +3942,11 @@ TIP: Camel will by default store export logs to `<user home>/.camel/camel-export
 The export command will by default load configuration from `application.properties`
 which also can be used to specific parameters for export such as selecting the runtime and java version.
 
-The follow options related to _exporting_, can be configured in `application.properties`:
+The follow options related to _exporting_ or _running_, can be configured in `application.properties`:
 
-|===
-|Option | Description
+// jbang options: START
+// jbang options: END
 
-|`camel.jbang.runtime`
-|Runtime (spring-boot, quarkus, or camel-main)
-
-|`camel.jbang.gav`
-|The Maven group:artifact:version
-
-|`camel.jbang.dependencies`
-|Additional dependencies (Use commas to separate multiple dependencies). See more details at xref:_adding_custom_jars[].
-
-|`camel.jbang.excludes`
-|Exclude files by name or pattern. Multiple names can be separated by comma.
-
-|`camel.jbang.classpathFiles`
-|Additional files to add to classpath (Use commas to separate multiple files). See more details at xref:_adding_custom_jars[].
-
-|`camel.jbang.jkubeFiles`
-|Resource fragments for Kubernetes (Use commas to separate multiple files).
-
-|`camel.jbang.javaVersion`
-|Java version (17 or 21). Java 17 is default.
-
-|`camel.jbang.kameletsVersion`
-|Apache Camel Kamelets version
-
-|`camel.jbang.localKameletDir`
-|Local file directory for loading custom Kamelets
-
-|`camel.jbang.camelSpringBootVersion`
-|Camel version to use with Spring Boot
-
-|`camel.jbang.springBootVersion`
-|Spring Boot version
-
-|`camel.jbang.quarkusGroupId`
-|Quarkus Platform Maven groupId
-
-|`camel.jbang.quarkusArtifactId`
-|Quarkus Platform Maven artifactId
-
-|`camel.jbang.quarkusVersion`
-|Quarkus Platform version
-
-|`camel.jbang.mavenWrapper`
-|Include Maven Wrapper files in the exported project
-
-|`camel.jbang.gradleWrapper`
-|Include Gradle Wrapper files in the exported project
-
-|`camel.jbang.buildTool`
-|Build tool to use (Maven or Gradle)
-
-|`camel.jbang.repos`
-|Additional maven repositories for download on-demand (Use commas to separate multiple repositories)
-
-|`camel.jbang.mavenSettings`
-|Optional location of Maven settings.xml file to configure servers, repositories, mirrors, and proxies. If set to false, not even the default ~/.m2/settings.xml will be used.
-
-|`camel.jbang.mavenSettingsSecurity`
-|Optional location of Maven settings-security.xml file to decrypt settings.xml
-
-|`camel.jbang.mavenCentralEnabled`
-|Whether downloading JARs from Maven Central repository is enabled
-
-|`camel.jbang.mavenApacheSnapshotEnabled`
-|Whether downloading JARs from ASF Maven Snapshot repository is enabled
-
-|`camel.jbang.download`
-|Whether to allow automatic downloading JAR dependencies (over the internet)
-
-|`camel.jbang.packageScanJars`
-|Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang
-
-|`camel.jbang.exportDir`
-|Directory where the project will be exported
-
-|`camel.jbang.platform-http.port`
-| HTTP server port to use when running standalone Camel, such as when `--console` is enabled (port 8080 by default).
-
-|`camel.jbang.console`
-| Developer console at /q/dev on local HTTP server (port 8080 by default) when running standalone Camel
-
-|`camel.jbang.health`
-| Health check at /observe/health on local HTTP server (port 8080 by default) when running standalone Camel
-
-|`camel.jbang.metrics`
-| Metrics (Micrometer and Prometheus) at /observe/metrics on local HTTP server (port 8080 by default) when running standalone Camel
-
-|`camel.jbang.open-api`
-| File name of open-api spec file (JSON or YAML) that are used when using `--open-api` to generate routes from the swagger/openapi API spec file.
-
-|`camel.jbang.ignoreLoadingError`
-| Whether to ignore route loading and compilation errors (use this with care!)
-
-|`camel.jbang.jib-maven-plugin-version`
-| Version to use for jib-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options).
-
-|===
-
-NOTE: These are options from the export command, so you can see more details and default values using `camel export --help`.
 
 == Configuration
 

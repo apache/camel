@@ -16,15 +16,6 @@
  */
 package org.apache.camel.maven.packaging;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.util.PackageHelper;
@@ -40,56 +31,64 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 import org.mvel2.templates.TemplateRuntime;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Prepares camel-main by updating the main documentation.
+ * Prepares camel-jbang by updating the jbang documentation.
  */
-@Mojo(name = "prepare-main", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
+@Mojo(name = "prepare-jbang-doc", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
       requiresDependencyResolution = ResolutionScope.COMPILE)
-public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
+public class PrepareCamelJBangDocMojo extends AbstractGeneratorMojo {
 
     /**
      * The documentation directory
      */
-    @Parameter(defaultValue = "${project.basedir}/src/main/docs")
+    @Parameter(defaultValue = "${project.basedir}/../../docs/user-manual/modules/ROOT/pages")
     protected File docDocDir;
 
     /**
      * The metadata file
      */
-    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/META-INF/camel-main-configuration-metadata.json")
-    protected File mainJsonFile;
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/META-INF/camel-jbang-configuration-metadata.json")
+    protected File jbangJsonFile;
 
     @Inject
-    public PrepareCamelMainDocMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+    public PrepareCamelJBangDocMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
         super(projectHelper, buildContext);
     }
 
     @Override
     public void execute(MavenProject project)
             throws MojoFailureException, MojoExecutionException {
-        docDocDir = new File(project.getBasedir(), "src/main/docs");
-        mainJsonFile
+        docDocDir = new File(project.getBasedir().getParentFile().getParent(), "docs/user-manual/modules/ROOT/pages");
+        jbangJsonFile
                 = new File(project.getBasedir(), "src/generated/resources/META-INF/camel-main-configuration-metadata.json");
         super.execute(project);
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!mainJsonFile.exists()) {
+        if (!jbangJsonFile.exists()) {
             // it's not this module so skip
             return;
         }
 
-        File file = new File(docDocDir, "main.adoc");
+        File file = new File(docDocDir, "camel-jbang.adoc");
         boolean exists = file.exists();
         boolean updated;
         try {
-            String json = PackageHelper.loadText(mainJsonFile);
+            String json = PackageHelper.loadText(jbangJsonFile);
             MainModel model = JsonMapper.generateMainModel(json);
-            String options = evaluateTemplate("main-options.mvel", model);
-            updated = updateOptionsIn(file, "main", options);
+            String options = evaluateTemplate("jbang-options.mvel", model);
+            updated = updateOptionsIn(file, "jbang", options);
         } catch (IOException e) {
-            throw new MojoExecutionException("Error preparing main docs", e);
+            throw new MojoExecutionException("Error preparing jbang docs", e);
         }
 
         if (updated) {

@@ -179,7 +179,6 @@
 
     <build>
         <plugins>
-            <!-- generate and include all components in the catalog -->
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
@@ -187,6 +186,7 @@
                     <execution>
                         <goals>
                             <goal>prepare-jbang</goal>
+                            <goal>prepare-jbang-doc</goal>
                         </goals>
                         <phase>generate-resources</phase>
                     </execution>
