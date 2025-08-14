@@ -22,12 +22,15 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
+
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 @CommandLine.Command(name = "sbom",
                      description = "Generate a CycloneDX or SPDX SBOM for a specific project", sortOptions = false,
@@ -165,21 +168,21 @@ public class SBOMGenerator extends Export {
         if (Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
-            if (this.runtime == null && prop.containsKey("camel.jbang.runtime")) {
-                this.runtime = RuntimeType.fromValue(prop.getProperty("camel.jbang.runtime"));
+            if (this.runtime == null && prop.containsKey(CamelJBangConstants.RUNTIME)) {
+                this.runtime = RuntimeType.fromValue(prop.getProperty(CamelJBangConstants.RUNTIME));
             }
             if (this.gav == null) {
-                this.gav = prop.getProperty("camel.jbang.gav");
+                this.gav = prop.getProperty(GAV);
             }
             // allow configuring versions from profile
-            this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
-            this.camelVersion = prop.getProperty("camel.jbang.camelVersion", this.camelVersion);
-            this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
-            this.localKameletDir = prop.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
-            this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
-            this.quarkusArtifactId = prop.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
-            this.quarkusVersion = prop.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
-            this.springBootVersion = prop.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
+            this.javaVersion = prop.getProperty(JAVA_VERSION, this.javaVersion);
+            this.camelVersion = prop.getProperty(CAMEL_VERSION, this.camelVersion);
+            this.kameletsVersion = prop.getProperty(KAMELETS_VERSION, this.kameletsVersion);
+            this.localKameletDir = prop.getProperty(LOCAL_KAMELET_DIR, this.localKameletDir);
+            this.quarkusGroupId = prop.getProperty(QUARKUS_GROUP_ID, this.quarkusGroupId);
+            this.quarkusArtifactId = prop.getProperty(QUARKUS_ARTIFACT_ID, this.quarkusArtifactId);
+            this.quarkusVersion = prop.getProperty(QUARKUS_VERSION, this.quarkusVersion);
+            this.springBootVersion = prop.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
         }
 
         // use temporary export dir

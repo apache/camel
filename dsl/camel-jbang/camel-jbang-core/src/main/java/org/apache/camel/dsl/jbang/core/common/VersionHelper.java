@@ -46,8 +46,8 @@ public final class VersionHelper {
      * @return          the Spring Boot version string, or null if no version can be determined
      */
     public static String getSpringBootVersion(Supplier<String> supplier) {
-        if (System.getProperty("camel.jbang.camelSpringBootVersion") != null) {
-            return System.getProperty("camel.jbang.camelSpringBootVersion");
+        if (System.getProperty(CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION) != null) {
+            return System.getProperty(CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION);
         } else if (supplier != null) {
             return supplier.get();
         }

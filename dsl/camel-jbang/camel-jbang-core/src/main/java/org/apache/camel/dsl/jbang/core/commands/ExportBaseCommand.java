@@ -69,6 +69,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
+
 public abstract class ExportBaseCommand extends CamelCommand {
 
     protected static final String BUILD_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/work";
@@ -77,12 +79,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
             "camel.main.routesIncludePattern",
             "camel.component.properties.location",
             "camel.component.kamelet.location",
-            "camel.jbang.classpathFiles",
-            "camel.jbang.localKameletDir",
-            "camel.jbang.groovyFiles",
-            "camel.jbang.scriptFiles",
-            "camel.jbang.tlsFiles",
-            "camel.jbang.jkubeFiles",
+            CLASSPATH_FILES,
+            LOCAL_KAMELET_DIR,
+            GROOVY_FILES,
+            SCRIPT_FILES,
+            TLS_FILES,
+            JKUBE_FILES,
             "kamelet"
     };
 
@@ -485,8 +487,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         }
                     }
                 }
-            } else if (line.startsWith("camel.jbang.dependencies=")) {
-                String deps = StringHelper.after(line, "camel.jbang.dependencies=");
+            } else if (line.startsWith(DEPENDENCIES + "=")) {
+                String deps = StringHelper.after(line, DEPENDENCIES + "=");
                 if (!deps.isEmpty()) {
                     for (String d : deps.split(",")) {
                         answer.add(d.trim());
@@ -503,8 +505,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         }
                     }
                 }
-            } else if (line.startsWith("camel.jbang.classpathFiles")) {
-                String deps = StringHelper.after(line, "camel.jbang.classpathFiles=");
+            } else if (line.startsWith(CLASSPATH_FILES + "=")) {
+                String deps = StringHelper.after(line, CLASSPATH_FILES + "=");
                 if (!deps.isEmpty()) {
                     for (String d : deps.split(",")) {
                         // special to include local JARs in export lib folder
@@ -621,7 +623,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
 
-        String localKameletDir = prop.getProperty("camel.jbang.localKameletDir");
+        String localKameletDir = prop.getProperty(LOCAL_KAMELET_DIR);
         if (localKameletDir != null) {
             String scheme = getScheme(localKameletDir);
             if (scheme != null) {
@@ -659,12 +661,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     }
                     boolean java = "java".equals(ext);
                     boolean kamelet = "kamelet".equals(k) || "camel.component.kamelet.location".equals(k)
-                            || "camel.jbang.localKameletDir".equals(k) || "kamelet.yaml".equalsIgnoreCase(ext2);
+                            || LOCAL_KAMELET_DIR.equals(k) || "kamelet.yaml".equalsIgnoreCase(ext2);
                     boolean camel = !kamelet && "camel.main.routesIncludePattern".equals(k);
-                    boolean jkube = "camel.jbang.jkubeFiles".equals(k);
-                    boolean script = "camel.jbang.scriptFiles".equals(k);
-                    boolean groovy = "camel.jbang.groovyFiles".equals(k);
-                    boolean tls = "camel.jbang.tlsFiles".equals(k);
+                    boolean jkube = JKUBE_FILES.equals(k);
+                    boolean script = SCRIPT_FILES.equals(k);
+                    boolean groovy = GROOVY_FILES.equals(k);
+                    boolean tls = TLS_FILES.equals(k);
                     boolean web = ext != null && List.of("css", "html", "ico", "jpeg", "jpg", "js", "png").contains(ext);
                     Path targetDir;
                     if (java) {
@@ -957,7 +959,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String getMavenRepositories(Path settings, Properties prop, String camelVersion) throws Exception {
         Set<String> answer = new LinkedHashSet<>();
 
-        String propRepositories = prop.getProperty("camel.jbang.repositories");
+        String propRepositories = prop.getProperty(CLASSPATH_FILES);
         if (propRepositories != null) {
             answer.add(propRepositories);
         }
@@ -1025,12 +1027,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected static String jibMavenPluginVersion(Path settings, Properties prop) {
         String answer = null;
         if (prop != null) {
-            answer = prop.getProperty("camel.jbang.jib-maven-plugin-version");
+            answer = prop.getProperty(JIB_MAVEN_PLUGIN_VERSION);
         }
         if (answer == null) {
             try {
                 List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-                answer = lines.stream().filter(l -> l.startsWith("camel.jbang.jib-maven-plugin-version="))
+                answer = lines.stream().filter(l -> l.startsWith(JIB_MAVEN_PLUGIN_VERSION + "="))
                         .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
             } catch (Exception e) {
                 // ignore
@@ -1042,13 +1044,13 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected static String jkubeMavenPluginVersion(Path settings, Properties props) {
         String answer = null;
         if (props != null) {
-            answer = props.getProperty("camel.jbang.jkube-maven-plugin-version");
+            answer = props.getProperty(JKUBE_MAVEN_PLUGIN_VERSION);
         }
         if (answer == null) {
             try {
                 List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
                 answer = lines.stream()
-                        .filter(l -> l.startsWith("camel.jbang.jkube-maven-plugin-version=") || l.startsWith("jkube.version="))
+                        .filter(l -> l.startsWith(JKUBE_MAVEN_PLUGIN_VERSION + "=") || l.startsWith("jkube.version="))
                         .map(s -> StringHelper.after(s, "=")).findFirst().orElse(null);
             } catch (Exception e) {
                 // ignore

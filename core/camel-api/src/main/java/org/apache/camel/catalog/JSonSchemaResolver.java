@@ -90,6 +90,13 @@ public interface JSonSchemaResolver {
     String getMainJsonSchema();
 
     /**
+     * Returns the camel-jbang json schema
+     *
+     * @return the camel-jbang json schema
+     */
+    String getJBangJsonSchema();
+
+    /**
      * Returns the pojo bean information as JSON format.
      *
      * @param  name the pojo bean name

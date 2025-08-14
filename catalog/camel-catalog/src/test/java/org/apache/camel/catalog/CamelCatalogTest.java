@@ -212,6 +212,18 @@ public class CamelCatalogTest {
     public void testMain() {
         String schema = catalog.mainJsonSchema();
         assertNotNull(schema);
+
+        var model = catalog.mainModel();
+        assertNotNull(model);
+    }
+
+    @Test
+    public void testJBang() {
+        String schema = catalog.jbangJsonSchema();
+        assertNotNull(schema);
+
+        var model = catalog.jbangModel();
+        assertNotNull(model);
     }
 
     @Test
@@ -915,6 +927,17 @@ public class CamelCatalogTest {
     @Test
     public void testListOthersAsJson() throws Exception {
         String json = catalog.listOthersAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
+    public void testListBeansAsJson() throws Exception {
+        String json = catalog.listBeansAsJson();
         assertNotNull(json);
 
         // validate we can parse the json

@@ -29,6 +29,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JBangModel;
 import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
@@ -369,6 +370,13 @@ public interface CamelCatalog {
     String mainJsonSchema();
 
     /**
+     * Returns the camel-jbang json schema
+     *
+     * @return the camel-jbang json schema
+     */
+    String jbangJsonSchema();
+
+    /**
      * Parses the endpoint uri and constructs a key/value properties of each option
      *
      * @param  uri the endpoint uri
@@ -539,6 +547,11 @@ public interface CamelCatalog {
     String listOthersAsJson();
 
     /**
+     * Lists all the pojo beans summary details in JSon
+     */
+    String listBeansAsJson();
+
+    /**
      * Reports a summary what the catalog contains in JSon
      */
     String summaryAsJson();
@@ -595,6 +608,11 @@ public interface CamelCatalog {
      * @return the requested main model or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     MainModel mainModel();
+
+    /**
+     * @return the requested jbang model or {@code null} in case it is not available in this {@link CamelCatalog}
+     */
+    JBangModel jbangModel();
 
     /**
      * Lookup the model for the given kind and name

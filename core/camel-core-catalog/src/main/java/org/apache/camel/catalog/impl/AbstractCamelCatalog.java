@@ -52,6 +52,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JBangModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
@@ -161,6 +162,15 @@ public abstract class AbstractCamelCatalog {
     public MainModel mainModel() {
         String json = mainJSonSchema();
         return json != null ? JsonMapper.generateMainModel(json) : null;
+    }
+
+    public String jbangJSonSchema() {
+        return getJSonSchemaResolver().getJBangJsonSchema();
+    }
+
+    public JBangModel jbangModel() {
+        String json = jbangJSonSchema();
+        return json != null ? JsonMapper.generateJBangModel(json) : null;
     }
 
     public SuggestionStrategy getSuggestionStrategy() {

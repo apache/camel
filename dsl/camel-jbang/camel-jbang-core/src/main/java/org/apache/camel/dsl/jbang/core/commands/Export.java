@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Properties;
 
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
@@ -35,6 +36,8 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import picocli.CommandLine.Command;
+
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 @Command(name = "export",
          description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
@@ -141,37 +144,37 @@ public class Export extends ExportBaseCommand {
             Properties props = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(props, path);
             // read runtime and gav from profile if not configured
-            String rt = props.getProperty("camel.jbang.runtime");
+            String rt = props.getProperty(CamelJBangConstants.RUNTIME);
             if (rt != null) {
                 this.runtime = RuntimeType.fromValue(rt);
             }
-            this.gav = props.getProperty("camel.jbang.gav", this.gav);
+            this.gav = props.getProperty(GAV, this.gav);
             // allow configuring versions from profile
-            this.javaVersion = props.getProperty("camel.jbang.javaVersion", this.javaVersion);
-            this.camelVersion = props.getProperty("camel.jbang.camelVersion", this.camelVersion);
-            this.kameletsVersion = props.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
-            this.localKameletDir = props.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
-            this.quarkusGroupId = props.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
-            this.quarkusArtifactId = props.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
-            this.quarkusVersion = props.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
+            this.javaVersion = props.getProperty(JAVA_VERSION, this.javaVersion);
+            this.camelVersion = props.getProperty(CAMEL_VERSION, this.camelVersion);
+            this.kameletsVersion = props.getProperty(KAMELETS_VERSION, this.kameletsVersion);
+            this.localKameletDir = props.getProperty(LOCAL_KAMELET_DIR, this.localKameletDir);
+            this.quarkusGroupId = props.getProperty(QUARKUS_GROUP_ID, this.quarkusGroupId);
+            this.quarkusArtifactId = props.getProperty(QUARKUS_ARTIFACT_ID, this.quarkusArtifactId);
+            this.quarkusVersion = props.getProperty(QUARKUS_VERSION, this.quarkusVersion);
             this.camelSpringBootVersion = VersionHelper.getSpringBootVersion(
-                    () -> props.getProperty("camel.jbang.camelSpringBootVersion", this.camelSpringBootVersion));
-            this.springBootVersion = props.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
+                    () -> props.getProperty(CAMEL_SPRING_BOOT_VERSION, this.camelSpringBootVersion));
+            this.springBootVersion = props.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
             this.mavenWrapper
-                    = "true".equals(props.getProperty("camel.jbang.mavenWrapper", this.mavenWrapper ? "true" : "false"));
+                    = "true".equals(props.getProperty(MAVEN_WRAPPER, this.mavenWrapper ? "true" : "false"));
             this.gradleWrapper
-                    = "true".equals(props.getProperty("camel.jbang.gradleWrapper", this.gradleWrapper ? "true" : "false"));
-            this.exportDir = props.getProperty("camel.jbang.exportDir", this.exportDir);
-            this.buildTool = props.getProperty("camel.jbang.buildTool", this.buildTool);
-            this.openapi = props.getProperty("camel.jbang.openApi", this.openapi);
-            this.repositories = props.getProperty("camel.jbang.repos", this.repositories);
-            this.mavenSettings = props.getProperty("camel.jbang.maven-settings", this.mavenSettings);
-            this.mavenSettingsSecurity = props.getProperty("camel.jbang.maven-settings-security", this.mavenSettingsSecurity);
+                    = "true".equals(props.getProperty(GRADLE_WRAPPER, this.gradleWrapper ? "true" : "false"));
+            this.exportDir = props.getProperty(EXPORT_DIR, this.exportDir);
+            this.buildTool = props.getProperty(BUILD_TOOL, this.buildTool);
+            this.openapi = props.getProperty(OPEN_API, this.openapi);
+            this.repositories = props.getProperty(REPOS, this.repositories);
+            this.mavenSettings = props.getProperty(MAVEN_SETTINGS, this.mavenSettings);
+            this.mavenSettingsSecurity = props.getProperty(MAVEN_SETTINGS_SECURITY, this.mavenSettingsSecurity);
             this.mavenCentralEnabled = "true"
-                    .equals(props.getProperty("camel.jbang.maven-central-enabled", mavenCentralEnabled ? "true" : "false"));
-            this.mavenApacheSnapshotEnabled = "true".equals(props.getProperty("camel.jbang.maven-apache-snapshot-enabled",
+                    .equals(props.getProperty(MAVEN_CENTRAL_ENABLED, mavenCentralEnabled ? "true" : "false"));
+            this.mavenApacheSnapshotEnabled = "true".equals(props.getProperty(MAVEN_APACHE_SNAPSHOTS,
                     mavenApacheSnapshotEnabled ? "true" : "false"));
-            this.excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(props, "camel.jbang.excludes", this.excludes);
+            this.excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(props, EXCLUDES, this.excludes);
         }
     }
 

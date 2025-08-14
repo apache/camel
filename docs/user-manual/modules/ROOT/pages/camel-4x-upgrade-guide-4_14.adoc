@@ -64,6 +64,10 @@ this during export.
 
 Notice when exporting to kubernetes then `camel-observabilities-services` is always enabled.
 
+When controlling Camel JBang exports with configuration in `application.properties` then
+there was a duplicate option (`camel.jbang.repositories` and `camel.jbang.repos`) which has been fixed to
+be only `camel.jbang.repos`.
+
 === camel-google
 
 The scopes parameter for camel-google-calendar, camel-google-calendar-streams, camel-google-drive, camel-google-mail, camel-google-mail-streams and camel-google-sheets-streams has been defined as String instead of Collection<String>. For the migration users will need to, eventually, define scopes as a comma separated list of scopes instead of a Collection instance. For more information the related issue is CAMEL-22247.

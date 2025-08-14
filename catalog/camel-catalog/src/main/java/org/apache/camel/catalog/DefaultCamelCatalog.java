@@ -40,6 +40,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JBangModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
@@ -59,6 +60,7 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
     private static final String MAIN_DIR = "org/apache/camel/catalog/main";
+    private static final String JBANG_DIR = "org/apache/camel/catalog/jbang";
     private static final String BASE_RESOURCE_DIR = "org/apache/camel/catalog";
 
     public static final String FIND_COMPONENT_NAMES = "findComponentNames";
@@ -419,6 +421,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public JBangModel jbangModel() {
+        return cache("jbang-model", "jbang-model", k -> super.jbangModel());
+    }
+
+    @Override
     public Set<String> findModelLabels() {
         return cache(FIND_MODEL_LABELS, () -> findLabels(this::findModelNames, this::eipModel));
     }
@@ -470,6 +477,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public String mainJsonSchema() {
         return cache(MAIN_DIR + "/camel-main-configuration-metadata.json", this::loadResource);
+    }
+
+    @Override
+    public String jbangJsonSchema() {
+        return cache(JBANG_DIR + "/camel-jbang-configuration-metadata.json", this::loadResource);
     }
 
     @Override
@@ -532,6 +544,15 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
                 .map(this::otherJSonSchema)
                 .map(JsonMapper::deserialize)
                 .map(o -> o.get("other"))
+                .toList()));
+    }
+
+    @Override
+    public String listBeansAsJson() {
+        return cache(LIST_BEANS_AS_JSON, () -> JsonMapper.serialize(findBeansNames().stream()
+                .map(this::pojoBeanJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("bean"))
                 .toList()));
     }
 
