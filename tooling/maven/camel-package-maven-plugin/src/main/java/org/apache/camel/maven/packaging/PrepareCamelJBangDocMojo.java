@@ -16,8 +16,17 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.apache.camel.tooling.model.JBangModel;
 import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,14 +40,6 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 import org.mvel2.templates.TemplateRuntime;
 
-import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Prepares camel-jbang by updating the jbang documentation.
  */
@@ -49,7 +50,7 @@ public class PrepareCamelJBangDocMojo extends AbstractGeneratorMojo {
     /**
      * The documentation directory
      */
-    @Parameter(defaultValue = "${project.basedir}/../../docs/user-manual/modules/ROOT/pages")
+    @Parameter(defaultValue = "${project.basedir}/../../../docs/user-manual/modules/ROOT/pages")
     protected File docDocDir;
 
     /**
@@ -66,7 +67,8 @@ public class PrepareCamelJBangDocMojo extends AbstractGeneratorMojo {
     @Override
     public void execute(MavenProject project)
             throws MojoFailureException, MojoExecutionException {
-        docDocDir = new File(project.getBasedir().getParentFile().getParent(), "docs/user-manual/modules/ROOT/pages");
+        docDocDir = new File(
+                project.getBasedir().getParentFile().getParentFile().getParent(), "docs/user-manual/modules/ROOT/pages");
         jbangJsonFile
                 = new File(project.getBasedir(), "src/generated/resources/META-INF/camel-main-configuration-metadata.json");
         super.execute(project);
@@ -84,7 +86,7 @@ public class PrepareCamelJBangDocMojo extends AbstractGeneratorMojo {
         boolean updated;
         try {
             String json = PackageHelper.loadText(jbangJsonFile);
-            MainModel model = JsonMapper.generateMainModel(json);
+            JBangModel model = JsonMapper.generateJBangModel(json);
             String options = evaluateTemplate("jbang-options.mvel", model);
             updated = updateOptionsIn(file, "jbang", options);
         } catch (IOException e) {
@@ -98,17 +100,17 @@ public class PrepareCamelJBangDocMojo extends AbstractGeneratorMojo {
                 getLog().debug("No changes to doc file: " + file);
             }
         } else {
-            getLog().warn("No main doc file: " + file);
+            getLog().warn("No jbang doc file: " + file);
         }
     }
 
-    private static String evaluateTemplate(final String templateName, final MainModel model) throws MojoExecutionException {
+    private static String evaluateTemplate(final String templateName, final JBangModel model) throws MojoExecutionException {
         StringBuilder sb = new StringBuilder(256);
 
         try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
             String template = PackageHelper.loadText(templateStream);
             // loop each group and eval
-            for (MainModel.MainGroupModel group : model.getGroups()) {
+            for (JBangModel.JBangGroupModel group : model.getGroups()) {
                 Map<String, Object> root = new HashMap<>();
                 root.put("group", group);
                 root.put("options", model.getOptions().stream()
