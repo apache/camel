@@ -1,5 +1,5 @@
 = Hazelcast Atomic Number Component
-:doctitle: Hazelcast Atomic Number
+:doctitle: Atomic Number
 :shortname: hazelcast-atomicvalue
 :artifactid: camel-hazelcast
 :description: Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
@@ -16,7 +16,7 @@
 *{component-header}*
 
 The http://www.hazelcast.com/[Hazelcast] atomic number component is one of Camel Hazelcast Components which allows you to access Hazelcast atomic number.
-An atomic number is an object that simply provides a grid wide number (long). 
+An atomic number is an object that simply provides a grid wide number (long).
 
 
 // component-configure options: START

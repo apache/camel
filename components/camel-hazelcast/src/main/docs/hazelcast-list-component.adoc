@@ -1,5 +1,5 @@
 = Hazelcast List Component
-:doctitle: Hazelcast List
+:doctitle: List
 :shortname: hazelcast-list
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed list.

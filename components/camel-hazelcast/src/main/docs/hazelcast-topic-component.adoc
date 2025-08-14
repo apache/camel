@@ -1,5 +1,5 @@
 = Hazelcast Topic Component
-:doctitle: Hazelcast Topic
+:doctitle: Topic
 :shortname: hazelcast-topic
 :artifactid: camel-hazelcast
 :description: Send and receive messages to/from Hazelcast distributed topic.

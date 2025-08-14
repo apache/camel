@@ -1,5 +1,5 @@
 = Hazelcast Ringbuffer Component
-:doctitle: Hazelcast Ringbuffer
+:doctitle: Ringbuffer
 :shortname: hazelcast-ringbuffer
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed ringbuffer.
@@ -16,7 +16,7 @@
 *{component-header}*
 
 The http://www.hazelcast.com/[Hazelcast] ringbuffer component is one of Camel Hazelcast Components which allows you to access Hazelcast ringbuffer.
-Ringbuffer is a distributed data structure where the data is stored in a ring-like structure. You can think of it as a circular array with a certain capacity. 
+Ringbuffer is a distributed data structure where the data is stored in a ring-like structure. You can think of it as a circular array with a certain capacity.
 
 
 // component-configure options: START
@@ -33,7 +33,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== ringbuffer cache producer 
+== ringbuffer cache producer
 
 The ringbuffer producer provides 5 operations:
 

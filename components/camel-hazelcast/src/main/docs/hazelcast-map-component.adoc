@@ -1,5 +1,5 @@
 = Hazelcast Map Component
-:doctitle: Hazelcast Map
+:doctitle: Map
 :shortname: hazelcast-map
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed map.
@@ -37,7 +37,7 @@ include::partial$component-endpoint-options.adoc[]
 == Map cache producer - to("hazelcast-map:foo")
 
 If you want to store a value in a map, you can use the map cache
-producer. 
+producer.
 
 The map cache producer provides follow operations specified by *CamelHazelcastOperationType* header:
 

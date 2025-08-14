@@ -1,5 +1,5 @@
 = Hazelcast Instance Component
-:doctitle: Hazelcast Instance
+:doctitle: Instance
 :shortname: hazelcast-instance
 :artifactid: camel-hazelcast
 :description: Consume join/leave events of a cache instance in a Hazelcast cluster.
@@ -35,7 +35,7 @@ include::partial$component-endpoint-options.adoc[]
 == instance consumer - from("hazelcast-instance:foo")
 
 The instance consumer fires if a new cache instance joins or leaves the cluster.
- 
+
 Here's a sample:
 
 [source,java]

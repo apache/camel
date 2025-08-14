@@ -1,5 +1,5 @@
 = Hazelcast Multimap Component
-:doctitle: Hazelcast Multimap
+:doctitle: Multimap
 :shortname: hazelcast-multimap
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed multimap.

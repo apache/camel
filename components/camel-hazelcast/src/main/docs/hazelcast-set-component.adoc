@@ -1,5 +1,5 @@
 = Hazelcast Set Component
-:doctitle: Hazelcast Set
+:doctitle: Set
 :shortname: hazelcast-set
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed set.

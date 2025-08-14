@@ -1,5 +1,5 @@
 = Hazelcast Replicated Map Component
-:doctitle: Hazelcast Replicated Map
+:doctitle: Replicated Map
 :shortname: hazelcast-replicatedmap
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast replicated map.
@@ -17,8 +17,8 @@
 
 The http://www.hazelcast.com/[Hazelcast] instance component is one of Camel Hazelcast Components which allows you to consume join/leave events of the cache instance in the cluster.
 A replicated map is a weakly consistent, distributed key-value data structure with no data partition.
- 
- 
+
+
 // component-configure options: START
 
 // component-configure options: END
