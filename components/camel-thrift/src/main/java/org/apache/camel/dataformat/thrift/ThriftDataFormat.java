@@ -114,6 +114,10 @@ public class ThriftDataFormat extends ServiceSupport
         return contentTypeHeader;
     }
 
+    public String getContentTypeFormat() {
+        return contentTypeFormat;
+    }
+
     /*
      * Defines a content type format in which thrift message will be
      * serialized/deserialized from(to) the Java been. It can be native thrift

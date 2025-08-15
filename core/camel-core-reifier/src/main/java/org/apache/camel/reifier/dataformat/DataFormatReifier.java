@@ -26,8 +26,10 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.dataformat.*;
 import org.apache.camel.reifier.AbstractReifier;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.spi.ReifierStrategy;
@@ -243,7 +245,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                     dataFormatContentTypeHeader.setContentTypeHeader(contentTypeHeader);
                 }
                 // configure the rest of the options
-                configureDataFormat(dataFormat);
+                configureDataFormat(dataFormat, definition.getDataFormatName());
             } else {
                 throw new IllegalArgumentException(
                         "Data format '" + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>")
@@ -273,8 +275,16 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     /**
      * Allows derived classes to customize the data format
      */
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, String dataFormatName) {
         Map<String, Object> properties = new LinkedHashMap<>();
+        // is there a generic data format that has been auto-configured, then we need to grab the default configuration first
+        if (camelContext.getDataFormatNames().contains(dataFormatName)) {
+            DataFormat df = camelContext.resolveDataFormat(dataFormatName);
+            BeanIntrospection bi = PluginHelper.getBeanIntrospection(camelContext);
+            if (bi != null) {
+                bi.getProperties(df, properties, null);
+            }
+        }
         prepareDataFormatConfig(properties);
         properties.entrySet().removeIf(e -> e.getValue() == null);
 
