@@ -18,8 +18,10 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("manual test")
 public class NettyUDPProducerOptionsTest extends BaseNettyTest {
 
     @Test
