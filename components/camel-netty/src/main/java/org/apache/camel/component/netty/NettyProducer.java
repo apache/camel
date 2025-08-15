@@ -534,7 +534,8 @@ public class NettyProducer extends DefaultAsyncProducer {
             connectionlessClientBootstrap.option(ChannelOption.SO_RCVBUF, configuration.getReceiveBufferSize());
 
             if (configuration.getNetworkInterface() != null) {
-                connectionlessClientBootstrap.option(ChannelOption.IP_MULTICAST_IF, NetworkInterface.getByName(configuration.getNetworkInterface()));
+                connectionlessClientBootstrap.option(ChannelOption.IP_MULTICAST_IF,
+                        NetworkInterface.getByName(configuration.getNetworkInterface()));
             }
 
             // set any additional netty options
