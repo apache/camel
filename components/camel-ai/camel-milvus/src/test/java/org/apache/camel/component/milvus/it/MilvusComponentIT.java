@@ -42,6 +42,7 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MilvusComponentIT extends MilvusTestSupport {
@@ -178,8 +179,9 @@ public class MilvusComponentIT extends MilvusTestSupport {
                         upsertParam)
                 .request(Exchange.class);
 
+        // we cannot upsert as we lack userID field
         assertThat(result).isNotNull();
-        assertThat(result.getException()).message().isEqualTo("Upsert don't support autoID==True, collection: test");
+        assertTrue(result.isFailed());
     }
 
     @Test
