@@ -308,11 +308,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                 .withProperties(parameters)
                 .bind();
 
-        // additional netty options, we don't want to store an empty map, so set it as null if empty
-        options = PropertiesHelper.extractProperties(parameters, "option.");
-        if (options.isEmpty()) {
-            options = null;
-        }
+        addAdditionalOptions(PropertiesHelper.extractProperties(parameters, "option."));
 
         // add default encoders and decoders
         if (encodersList.isEmpty() && decodersList.isEmpty()) {
