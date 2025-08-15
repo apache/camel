@@ -38,13 +38,13 @@ public class NettyUDPProducerOptionsTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:udp://230.0.0.5:{{port}}?sync=false&networkInterface=eth8")
+                from("netty:udp://230.0.0.5:{{port}}?sync=false&networkInterface=lo")
                         .log("Received message: ${body}")
                         .to("mock:result");
 
                 from("direct:sendMessage")
                         .log("Sending message: ${body}")
-                        .to("netty:udp://230.0.0.5:{{port}}?sync=false&networkInterface=eth8&option.IP_MULTICAST_TTL=188");
+                        .to("netty:udp://230.0.0.5:{{port}}?sync=false&networkInterface=lo&option.IP_MULTICAST_TTL=188");
             }
         };
     }
