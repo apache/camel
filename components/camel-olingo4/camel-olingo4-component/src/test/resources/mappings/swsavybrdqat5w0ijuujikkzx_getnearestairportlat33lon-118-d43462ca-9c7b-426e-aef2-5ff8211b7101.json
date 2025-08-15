@@ -1,0 +1,26 @@
+{
+  "id" : "d43462ca-9c7b-426e-aef2-5ff8211b7101",
+  "name" : "swsavybrdqat5w0ijuujikkzx_getnearestairportlat33lon-118",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/GetNearestAirport(lat=33,lon=-118)",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"@odata.context\":\"https://services.odata.org/TripPinRESTierService/(S(wsavybrdqat5w0ijuujikkzx))/$metadata#Airports/$entity\",\"Name\":\"Los Angeles International Airport\",\"IcaoCode\":\"KLAX\",\"IataCode\":\"LAX\",\"Location\":{\"Address\":\"1 World Way, Los Angeles, CA, 90045\",\"Loc\":{\"type\":\"Point\",\"coordinates\":[-118.408055555556,33.9425],\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"EPSG:4326\"}}},\"City\":{\"Name\":\"Los Angeles\",\"CountryRegion\":\"United States\",\"Region\":\"California\"}}}",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:09 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Content-Type" : "application/json; charset=utf-8; odata.metadata=minimal"
+    }
+  },
+  "uuid" : "d43462ca-9c7b-426e-aef2-5ff8211b7101",
+  "persistent" : true,
+  "insertionIndex" : 31
+}

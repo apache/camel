@@ -1,0 +1,38 @@
+{
+  "id" : "41ed02bd-88e5-48ab-917d-24300a7af534",
+  "name" : "s2ouoy1wpk2eehi1gxmwcjagu_people",
+  "request" : {
+    "urlPath" : "/(S(2ouoy1wpk2eehi1gxmwcjagu))/People",
+    "method" : "GET",
+    "queryParameters" : {
+      "$filter" : {
+        "hasExactly" : [ {
+          "equalTo" : "LastName eq 'Whyte'"
+        } ]
+      },
+      "$expand" : {
+        "hasExactly" : [ {
+          "equalTo" : "Trips"
+        } ]
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"@odata.context\":\"https://services.odata.org/TripPinRESTierService/(S(2ouoy1wpk2eehi1gxmwcjagu))/$metadata#People(Trips())\",\"value\":[{\"UserName\":\"russellwhyte\",\"FirstName\":\"Russell\",\"LastName\":\"Whyte\",\"MiddleName\":null,\"Gender\":\"Male\",\"Age\":null,\"Emails\":[\"Russell@example.com\",\"Russell@contoso.com\"],\"FavoriteFeature\":\"Feature1\",\"Features\":[\"Feature1\",\"Feature2\"],\"AddressInfo\":[{\"Address\":\"187 Suffolk Ln.\",\"City\":{\"Name\":\"Boise\",\"CountryRegion\":\"United States\",\"Region\":\"ID\"}}],\"HomeAddress\":null,\"Trips\":[{\"TripId\":0,\"ShareId\":\"9d9b2fa0-efbf-490e-a5e3-bac8f7d47354\",\"Name\":\"Trip in US\",\"Budget\":3000,\"Description\":\"Trip from San Francisco to New York City\",\"Tags\":[\"business\",\"New York meeting\"],\"StartsAt\":\"2014-01-01T00:00:00Z\",\"EndsAt\":\"2014-01-04T00:00:00Z\"},{\"TripId\":1,\"ShareId\":\"f94e9116-8bdd-4dac-ab61-08438d0d9a71\",\"Name\":\"Trip in Beijing\",\"Budget\":2000,\"Description\":\"Trip from Shanghai to Beijing\",\"Tags\":[\"Travel\",\"Beijing\"],\"StartsAt\":\"2014-02-01T00:00:00Z\",\"EndsAt\":\"2014-02-04T00:00:00Z\"},{\"TripId\":2,\"ShareId\":\"9ce142c3-5fd6-4a71-848e-5220ebf1e9f3\",\"Name\":\"Honeymoon\",\"Budget\":2650,\"Description\":\"Happy honeymoon trip\",\"Tags\":[\"Travel\",\"honeymoon\"],\"StartsAt\":\"2014-02-01T00:00:00Z\",\"EndsAt\":\"2014-02-04T00:00:00Z\"}]}]}",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:33 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Content-Type" : "application/json; charset=utf-8; odata.metadata=minimal"
+    }
+  },
+  "uuid" : "41ed02bd-88e5-48ab-917d-24300a7af534",
+  "persistent" : true,
+  "insertionIndex" : 81
+}

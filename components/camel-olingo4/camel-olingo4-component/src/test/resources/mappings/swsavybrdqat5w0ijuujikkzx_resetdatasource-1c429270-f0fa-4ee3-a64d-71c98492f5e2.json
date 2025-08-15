@@ -1,0 +1,23 @@
+{
+  "id" : "1c429270-f0fa-4ee3-a64d-71c98492f5e2",
+  "name" : "swsavybrdqat5w0ijuujikkzx_resetdatasource",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/ResetDataSource",
+    "method" : "POST"
+  },
+  "response" : {
+    "status" : 204,
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:20 GMT",
+      "X-Powered-By" : "ASP.NET"
+    }
+  },
+  "uuid" : "1c429270-f0fa-4ee3-a64d-71c98492f5e2",
+  "persistent" : true,
+  "insertionIndex" : 13
+}

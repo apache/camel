@@ -30,8 +30,11 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class Olingo4ComponentConsumerTest extends AbstractOlingo4WireMockTestSupport {
 
     private static final String PEOPLE = "People";
     private static final String TEST_PEOPLE = "People('russellwhyte')";
@@ -64,6 +68,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         return context;
     }
 
+    @Order(1)
     @Test
     public void testConsumerQueryWithExpand() throws Exception {
         int expectedMsgCount = 1;
@@ -106,6 +111,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
      * purposes of this test. The default will mean the first n messages contain the results (where n is the result
      * total) then subsequent messages will be empty
      */
+    @Order(2)
     @Test
     public void testConsumerReadFilterAlreadySeen() throws Exception {
         int expectedEntities = 20;
@@ -150,6 +156,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
      * set to false since this ensures the first returned message contains all the results. - sendEmptyMessageWhenIdle
      * is set to false so only 1 message should even be returned.
      */
+    @Order(3)
     @Test
     public void testConsumerReadFilterAlreadySeenNoEmptyMsgs() throws Exception {
         int expectedEntities = 20;
@@ -194,6 +201,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
      *
      * @throws Exception
      */
+    @Order(4)
     @Test
     public void testConsumerReadFilterAlreadySeenWithPredicate1() throws Exception {
         int expectedMsgCount = 3;
@@ -238,6 +246,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
      *
      * @throws Exception
      */
+    @Order(5)
     @Test
     public void testConsumerReadFilterAlreadySeenWithPredicate2() throws Exception {
         int expectedMsgCount = 1;
@@ -286,6 +295,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
     /**
      * Read entity set of the People object and split the results into individual messages
      */
+    @Order(6)
     @Test
     public void testConsumerReadSplitResults() throws Exception {
         int expectedMsgCount = 3;
@@ -329,6 +339,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
     /**
      * Read value of the People object and split the results into individual messages
      */
+    @Order(7)
     @Test
     public void testConsumerReadClientValuesSplitResults() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-value");
@@ -383,6 +394,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
      * Read value of the People object's AddressInfo collection value & split the results into individual messages for
      * each address
      */
+    @Order(8)
     @Test
     public void testConsumerReadClientCollectionValuesNoSplitResults() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-nosplitresult-colleciton-value");
@@ -409,5 +421,10 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         assertIsInstanceOf(ClientComplexValue.class, propValueObj);
         ClientComplexValue propValue = (ClientComplexValue) propValueObj;
         assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
+    }
+
+    @Override
+    public String getClassIdentifier() {
+        return "Olingo4ComponentConsumerTest";
     }
 }

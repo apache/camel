@@ -1,0 +1,20 @@
+== Camel Olingo4 integration tests
+
+Connection to `https://services.odata.org/TripPinRESTierService` has to be enabled by providing system property `use.real.backend` with value `true`. If not provided mocked test (using WireMock is used).
+
+Note: `Olingo4ComponentProducerBatchTest#testBatch` is currently disabled, because it is not possible to mock it with WireMock (please see https://github.com/wiremock/wiremock/issues/3133). When enabled, it runs against real server by default.
+
+=== WireMock approach
+Given the real test service need to generate unique session id (as per https://www.odata.org/odata-services/service-usages/request-key-tutorial/) for subsequent requests  we need to be sure the recorded stubs are in correct order.
+Otherwise it could happen that eg. one test reads GET /people and expects full list, but other test with the same session id could run POST /deletePeople before the other test.
+Because of that we use `@Order` on tests.
+But sharing the same sessionId for all `@Test` and `TestClass` is not good idea, because even if we have correct order of `@Test`, the `TestClass` is run in some undeterministic order.
+Thus we use the same sessionId per `TestClass`.
+Other problem is that for obtaining sessionId, the request looks always the same.
+And if we record such requests, WireMock then for replaying doesn't know which one to serve.
+To solve it, we added unique HTTP header `WireMockScenario` per TestClass. WireMock can then pair the requests based on that header.
+
+=== Generating WireMock stubs
+For recording network traffic, all you need to do is to set `-Dwiremock.record=true`, so whenever stubs need to be regenerated, all you need is command like:
+eg. `mvn clean test -Dsurefire.rerunFailingTestsCount=0 -Dwiremock.record=true`
+(it is good practice to clean folder `src/test/resources/mapping` so it will contain only new stubs).

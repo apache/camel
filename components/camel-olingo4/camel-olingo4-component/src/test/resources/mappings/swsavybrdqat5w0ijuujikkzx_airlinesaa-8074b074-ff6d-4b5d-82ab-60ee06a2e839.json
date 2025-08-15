@@ -1,0 +1,28 @@
+{
+  "id" : "8074b074-ff6d-4b5d-82ab-60ee06a2e839",
+  "name" : "swsavybrdqat5w0ijuujikkzx_airlinesaa",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/Airlines('AA')",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 404,
+    "body" : "{\"error\":{\"code\":\"\",\"message\":\"The request resource is not found.\"}}",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:24 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Content-Type" : "application/json; charset=utf-8; odata.metadata=minimal"
+    }
+  },
+  "uuid" : "8074b074-ff6d-4b5d-82ab-60ee06a2e839",
+  "persistent" : true,
+  "scenarioName" : "scenario-2-(S(wsavybrdqat5w0ijuujikkzx))-Airlines('AA')",
+  "requiredScenarioState" : "scenario-2-(S(wsavybrdqat5w0ijuujikkzx))-Airlines('AA')-3",
+  "insertionIndex" : 7
+}

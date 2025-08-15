@@ -1,0 +1,23 @@
+{
+  "id" : "99c4a375-733c-4b5e-8048-a7baca8cdd91",
+  "name" : "swsavybrdqat5w0ijuujikkzx_airlinesaa",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/Airlines('AA')",
+    "method" : "DELETE"
+  },
+  "response" : {
+    "status" : 204,
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:24 GMT",
+      "X-Powered-By" : "ASP.NET"
+    }
+  },
+  "uuid" : "99c4a375-733c-4b5e-8048-a7baca8cdd91",
+  "persistent" : true,
+  "insertionIndex" : 8
+}

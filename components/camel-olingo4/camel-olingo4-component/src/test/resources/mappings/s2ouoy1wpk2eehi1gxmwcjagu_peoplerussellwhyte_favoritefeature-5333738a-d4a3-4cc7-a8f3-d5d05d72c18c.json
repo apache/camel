@@ -1,0 +1,26 @@
+{
+  "id" : "5333738a-d4a3-4cc7-a8f3-d5d05d72c18c",
+  "name" : "s2ouoy1wpk2eehi1gxmwcjagu_peoplerussellwhyte_favoritefeature",
+  "request" : {
+    "url" : "/(S(2ouoy1wpk2eehi1gxmwcjagu))/People('russellwhyte')/FavoriteFeature",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"@odata.context\":\"https://services.odata.org/TripPinRESTierService/(S(2ouoy1wpk2eehi1gxmwcjagu))/$metadata#People('russellwhyte')/FavoriteFeature\",\"value\":\"Feature1\"}",
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "OData-Version" : "4.0",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:57 GMT",
+      "X-Powered-By" : "ASP.NET",
+      "Content-Type" : "application/json; charset=utf-8; odata.metadata=minimal"
+    }
+  },
+  "uuid" : "5333738a-d4a3-4cc7-a8f3-d5d05d72c18c",
+  "persistent" : true,
+  "insertionIndex" : 53
+}

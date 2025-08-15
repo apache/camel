@@ -1,0 +1,25 @@
+{
+  "id" : "cc6f0dd3-9861-4697-80e7-fd818086a2bb",
+  "name" : "swsavybrdqat5w0ijuujikkzx_peoplelewisblack",
+  "request" : {
+    "url" : "/(S(wsavybrdqat5w0ijuujikkzx))/People('lewisblack')",
+    "method" : "DELETE"
+  },
+  "response" : {
+    "status" : 204,
+    "headers" : {
+      "Cache-Control" : "no-cache",
+      "Server" : "Microsoft-IIS/10.0",
+      "X-AspNet-Version" : "4.0.30319",
+      "Pragma" : "no-cache",
+      "Expires" : "-1",
+      "Date" : "Fri, 15 Aug 2025 07:59:18 GMT",
+      "X-Powered-By" : "ASP.NET"
+    }
+  },
+  "uuid" : "cc6f0dd3-9861-4697-80e7-fd818086a2bb",
+  "persistent" : true,
+  "scenarioName" : "scenario-5-(S(wsavybrdqat5w0ijuujikkzx))-People('lewisblack')",
+  "requiredScenarioState" : "scenario-5-(S(wsavybrdqat5w0ijuujikkzx))-People('lewisblack')-2",
+  "insertionIndex" : 16
+}
