@@ -915,6 +915,21 @@ public interface NettyEndpointBuilderFactory {
             return (NettyEndpointConsumerBuilder) this;
         }
         /**
+         * When using UDP then this option can be used to specify a network
+         * interface by its name, such as eth0 to join a multicast group.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param networkInterface the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder networkInterface(String networkInterface) {
+            doSetProperty("networkInterface", networkInterface);
+            return this;
+        }
+        /**
          * Allows to configure a backlog for netty consumer (server). Note the
          * backlog is just a best effort depending on the OS. Setting this
          * option to a value such as 200, 500 or 1000, tells the TCP stack how
@@ -1222,21 +1237,6 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder nettyServerBootstrapFactory(String nettyServerBootstrapFactory) {
             doSetProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
-            return this;
-        }
-        /**
-         * When using UDP then this option can be used to specify a network
-         * interface by its name, such as eth0 to join a multicast group.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param networkInterface the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNettyEndpointConsumerBuilder networkInterface(String networkInterface) {
-            doSetProperty("networkInterface", networkInterface);
             return this;
         }
         /**
@@ -2683,6 +2683,21 @@ public interface NettyEndpointBuilderFactory {
             return (NettyEndpointProducerBuilder) this;
         }
 
+        /**
+         * When using UDP then this option can be used to specify a network
+         * interface by its name, such as eth0 to join a multicast group.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param networkInterface the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointProducerBuilder networkInterface(String networkInterface) {
+            doSetProperty("networkInterface", networkInterface);
+            return this;
+        }
         /**
          * To use a custom ClientInitializerFactory.
          * 
@@ -4386,6 +4401,21 @@ public interface NettyEndpointBuilderFactory {
             return (NettyEndpointBuilder) this;
         }
 
+        /**
+         * When using UDP then this option can be used to specify a network
+         * interface by its name, such as eth0 to join a multicast group.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param networkInterface the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointBuilder networkInterface(String networkInterface) {
+            doSetProperty("networkInterface", networkInterface);
+            return this;
+        }
         /**
          * Only used for TCP when transferExchange is true. When set to true,
          * serializable objects in headers and properties will be added to the
