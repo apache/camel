@@ -314,6 +314,15 @@
   "artifactId" : "camel-test-infra-infinispan",
   "version" : "4.14.0-SNAPSHOT"
 }, {
+  "service" : "org.apache.camel.test.infra.ibmmq.services.IbmMQInfraService",
+  "description" : "IBM MQ messaging middleware",
+  "implementation" : "org.apache.camel.test.infra.ibmmq.services.IbmMQLocalContainerInfraService",
+  "alias" : [ "ibmmq" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-ibmmq",
+  "version" : "4.14.0-SNAPSHOT"
+}, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
   "implementation" : "org.apache.camel.test.infra.aws2.services.AWSS3LocalContainerInfraService",
