@@ -844,6 +844,10 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         getNamespaceContext().setNamespaces(namespaces);
     }
 
+    public String getKeyPassword() {
+        return keyPassword;
+    }
+
     public void setKeyPassword(String keyPassword) {
         this.keyPassword = keyPassword;
     }

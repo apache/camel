@@ -283,6 +283,10 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         this.inline = inline;
     }
 
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
     /**
      * Sets the JCE name of the Encryption Algorithm that should be used
      */
@@ -298,6 +302,10 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         this.parameterSpec = parameterSpec;
     }
 
+    public String getCryptoProvider() {
+        return cryptoProvider;
+    }
+
     /**
      * Sets the name of the JCE provider e.g. SUN or BC for Bouncy
      */
@@ -305,11 +313,19 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         this.cryptoProvider = cryptoProvider;
     }
 
+    public String getMacAlgorithm() {
+        return macAlgorithm;
+    }
+
     /**
      * Sets the algorithm used to create the Hash-based Message Authentication Code (HMAC) appended to the stream.
      */
     public void setMacAlgorithm(String macAlgorithm) {
         this.macAlgorithm = macAlgorithm;
+    }
+
+    public boolean isShouldAppendHMAC() {
+        return shouldAppendHMAC;
     }
 
     /**
@@ -324,6 +340,10 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
      */
     public void setKey(Key key) {
         this.configuredkey = key;
+    }
+
+    public int getBufferSize() {
+        return bufferSize;
     }
 
     /**

@@ -542,7 +542,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         this.armored = armored;
     }
 
-    public boolean getArmored() {
+    public boolean isArmored() {
         return this.armored;
     }
 
@@ -553,7 +553,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         this.integrity = integrity;
     }
 
-    public boolean getIntegrity() {
+    public boolean isIntegrity() {
         return this.integrity;
     }
 
