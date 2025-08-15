@@ -480,7 +480,7 @@
         <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
         <spring-batch-version>5.2.2</spring-batch-version>
         <spring-data-redis-version>3.5.2</spring-data-redis-version>
-        <spring-ldap-version>3.3.2</spring-ldap-version>
+        <spring-ldap-version>3.3.3</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
         <spring-version>6.2.10</spring-version>
         <spring-rabbitmq-version>3.2.6</spring-rabbitmq-version>
