@@ -18,9 +18,11 @@ package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.SocketAddress;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -491,14 +493,15 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
             clientBootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
 
-            //TODO need to check it later;
             // set any additional netty options
-            /*
             if (configuration.getOptions() != null) {
                 for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
-                    clientBootstrap.setOption(entry.getKey(), entry.getValue());
+                    // child Channel Option can not be added to Client Bootstrap
+                    if (!entry.getKey().contains("child.")) {
+                        clientBootstrap.option(ChannelOption.valueOf(entry.getKey()), entry.getValue());
+                    }
                 }
-            }*/
+            }
 
             // set the pipeline factory, which creates the pipeline for each newly created channels
             clientBootstrap.handler(pipelineFactory);
@@ -530,14 +533,19 @@ public class NettyProducer extends DefaultAsyncProducer {
             connectionlessClientBootstrap.option(ChannelOption.SO_SNDBUF, configuration.getSendBufferSize());
             connectionlessClientBootstrap.option(ChannelOption.SO_RCVBUF, configuration.getReceiveBufferSize());
 
-            //TODO need to check it later
+            if (configuration.getNetworkInterface() != null) {
+                connectionlessClientBootstrap.option(ChannelOption.IP_MULTICAST_IF, NetworkInterface.getByName(configuration.getNetworkInterface()));
+            }
+
             // set any additional netty options
-            /*
             if (configuration.getOptions() != null) {
                 for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
-                    connectionlessClientBootstrap.setOption(entry.getKey(), entry.getValue());
+                    // child Channel Option can not be added to Client Bootstrap
+                    if (!entry.getKey().contains("child.")) {
+                        connectionlessClientBootstrap.option(ChannelOption.valueOf(entry.getKey()), entry.getValue());
+                    }
                 }
-            }*/
+            }
 
             // set the pipeline factory, which creates the pipeline for each newly created channels
             connectionlessClientBootstrap.handler(pipelineFactory);

@@ -17,9 +17,11 @@
 package org.apache.camel.component.netty;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.ssl.SslHandler;
@@ -138,7 +140,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected EventLoopGroup workerGroup;
     @UriParam(label = "advanced", description = "To use an explicit ChannelGroup.")
     protected ChannelGroup channelGroup;
-    @UriParam(label = "consumer,advanced",
+    @UriParam(label = "common,advanced",
               description = "When using UDP then this option can be used to specify a network interface by its name, such as eth0 to join a multicast group.")
     protected String networkInterface;
     @UriParam(label = "consumer", defaultValue = "true",
@@ -163,6 +165,70 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
 
     public boolean isTcp() {
         return protocol.equalsIgnoreCase("tcp");
+    }
+
+    public void addAdditionalOptions(Map<String, Object> extractedOptions) {
+        // additional netty options, we don't want to store an empty map, so set it as null if empty
+        if (extractedOptions.isEmpty()) {
+            options = null;
+        } else {
+            if (options == null) {
+                options = new HashMap<>();
+            }
+            extractedOptions.forEach((key, value) -> {
+                Object val = getOptionValue(key, (String) value);
+                if (val != null) {
+                    options.put(key, val);
+                }
+            });
+        }
+    }
+
+    public Object getOptionValue(String option, String value) {
+        if (option.contains(ChannelOption.CONNECT_TIMEOUT_MILLIS.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.MAX_MESSAGES_PER_WRITE.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.WRITE_SPIN_COUNT.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.ALLOW_HALF_CLOSURE.name())) {
+            return Boolean.valueOf(value);
+        } else if (option.contains(ChannelOption.AUTO_READ.name())) {
+            return Boolean.valueOf(value);
+        } else if (option.contains(ChannelOption.AUTO_CLOSE.name())) {
+            return Boolean.valueOf(value);
+        } else if (option.contains(ChannelOption.SO_BROADCAST.name())) {
+            return Boolean.valueOf(value);
+        } else if (option.contains(ChannelOption.SO_KEEPALIVE.name())) {
+            return Boolean.valueOf(value);
+        } else if (option.contains(ChannelOption.SO_SNDBUF.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.SO_RCVBUF.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.SO_REUSEADDR.name())) {
+            return Boolean.valueOf(value);
+        } else if (option.contains(ChannelOption.SO_LINGER.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.SO_BACKLOG.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.SO_TIMEOUT.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.IP_TOS.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.IP_MULTICAST_TTL.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.IP_MULTICAST_LOOP_DISABLED.name())) {
+            return Boolean.valueOf(value);
+        } else if (option.contains(ChannelOption.TCP_NODELAY.name())) {
+            return Boolean.valueOf(value);
+        } else if (option.contains(ChannelOption.TCP_FASTOPEN_CONNECT.name())) {
+            return Boolean.valueOf(value);
+        } else if (option.contains(ChannelOption.TCP_FASTOPEN.name())) {
+            return Integer.valueOf(value);
+        } else if (option.contains(ChannelOption.SINGLE_EVENTEXECUTOR_PER_GROUP.name())) {
+            return Boolean.valueOf(value);
+        }
+        return null;
     }
 
     public String getProtocol() {
