@@ -38,9 +38,9 @@ public class NettyUDPProducerOptionsTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                                from("netty:udp://230.0.0.5:{{port}}?sync=false&networkInterface=eth8")
-                                        .log("Received message: ${body}")
-                                        .to("mock:result");
+                from("netty:udp://230.0.0.5:{{port}}?sync=false&networkInterface=eth8")
+                        .log("Received message: ${body}")
+                        .to("mock:result");
 
                 from("direct:sendMessage")
                         .log("Sending message: ${body}")
