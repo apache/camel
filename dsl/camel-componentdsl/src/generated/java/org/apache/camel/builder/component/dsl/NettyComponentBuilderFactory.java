@@ -179,6 +179,22 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * When using UDP then this option can be used to specify a network
+         * interface by its name, such as eth0 to join a multicast group.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param networkInterface the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder networkInterface(java.lang.String networkInterface) {
+            doSetProperty("networkInterface", networkInterface);
+            return this;
+        }
+    
         
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
@@ -404,22 +420,6 @@ public interface NettyComponentBuilderFactory {
          */
         default NettyComponentBuilder nettyServerBootstrapFactory(org.apache.camel.component.netty.NettyServerBootstrapFactory nettyServerBootstrapFactory) {
             doSetProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
-            return this;
-        }
-    
-        /**
-         * When using UDP then this option can be used to specify a network
-         * interface by its name, such as eth0 to join a multicast group.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param networkInterface the value to set
-         * @return the dsl builder
-         */
-        default NettyComponentBuilder networkInterface(java.lang.String networkInterface) {
-            doSetProperty("networkInterface", networkInterface);
             return this;
         }
     
@@ -1513,6 +1513,7 @@ public interface NettyComponentBuilderFactory {
             case "reuseChannel": getOrCreateConfiguration((NettyComponent) component).setReuseChannel((boolean) value); return true;
             case "sync": getOrCreateConfiguration((NettyComponent) component).setSync((boolean) value); return true;
             case "tcpNoDelay": getOrCreateConfiguration((NettyComponent) component).setTcpNoDelay((boolean) value); return true;
+            case "networkInterface": getOrCreateConfiguration((NettyComponent) component).setNetworkInterface((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((NettyComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientMode": getOrCreateConfiguration((NettyComponent) component).setClientMode((boolean) value); return true;
             case "reconnect": getOrCreateConfiguration((NettyComponent) component).setReconnect((boolean) value); return true;
@@ -1525,7 +1526,6 @@ public interface NettyComponentBuilderFactory {
             case "executorService": ((NettyComponent) component).setExecutorService((io.netty.util.concurrent.EventExecutorGroup) value); return true;
             case "maximumPoolSize": ((NettyComponent) component).setMaximumPoolSize((int) value); return true;
             case "nettyServerBootstrapFactory": getOrCreateConfiguration((NettyComponent) component).setNettyServerBootstrapFactory((org.apache.camel.component.netty.NettyServerBootstrapFactory) value); return true;
-            case "networkInterface": getOrCreateConfiguration((NettyComponent) component).setNetworkInterface((java.lang.String) value); return true;
             case "noReplyLogLevel": getOrCreateConfiguration((NettyComponent) component).setNoReplyLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "serverClosedChannelExceptionCaughtLogLevel": getOrCreateConfiguration((NettyComponent) component).setServerClosedChannelExceptionCaughtLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "serverExceptionCaughtLogLevel": getOrCreateConfiguration((NettyComponent) component).setServerExceptionCaughtLogLevel((org.apache.camel.LoggingLevel) value); return true;
