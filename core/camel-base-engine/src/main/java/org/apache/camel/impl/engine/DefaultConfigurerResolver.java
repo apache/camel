@@ -90,15 +90,12 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
             // fallback special for camel context itself as we have an extended configurer
             if (name.startsWith("org.apache.camel.") && name.contains("CamelContext") && !name.contains("Extension")) {
                 type = findConfigurer(CamelContext.class.getName(), context);
-
                 if (type != null) {
                     var extensionType = findConfigurer(ExtendedCamelContext.class.getName(), context);
-
                     if (extensionType != null) {
                         return createPropertyConfigurerForContext(name, context, type, extensionType);
                     }
                 }
-                //
             } else {
                 type = findConfigurer(name, context);
                 if (type == null) {
