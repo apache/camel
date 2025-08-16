@@ -21,6 +21,7 @@ import org.apache.camel.Component;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Helper class for dealing with configurers.
@@ -53,12 +54,8 @@ public final class PropertyConfigurerHelper {
         }
 
         if (configurer == null) {
-            String name = target.getClass().getName();
-            // see if there is a configurer for it
-            configurer = PluginHelper.getConfigurerResolver(context)
-                    .resolvePropertyConfigurer(name, context);
+            configurer = resolvePropertyConfigurer(context, target.getClass());
         }
-
         return configurer;
     }
 
@@ -73,10 +70,37 @@ public final class PropertyConfigurerHelper {
         ObjectHelper.notNull(targetType, "targetType");
         ObjectHelper.notNull(context, "context");
 
-        String name = targetType.getName();
-        // see if there is a configurer for it
-        return PluginHelper.getConfigurerResolver(context)
-                .resolvePropertyConfigurer(name, context);
+        // map FQN to configurer syntax for components/dataformats/languages
+        if (targetType.getName().endsWith("Component")) {
+            String name = StringHelper.before(targetType.getSimpleName(), "Component");
+            name = StringHelper.camelCaseToDash(name) + "-component";
+            return PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name, context);
+        } else if (targetType.getName().endsWith("Language")) {
+            String name = StringHelper.before(targetType.getSimpleName(), "Language");
+            name = StringHelper.camelCaseToDash(name) + "-language";
+            return PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name, context);
+        } else if (targetType.getName().endsWith("DataFormat")) {
+            String name = StringHelper.before(targetType.getSimpleName(), "DataFormat");
+            name = StringHelper.camelCaseToDash(name) + "-dataformat";
+            return PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name, context);
+        }
+
+        if (targetType.isAnonymousClass()) {
+            return null;
+        }
+
+        // lookup configurer if there is any
+        // use FQN class name first, then simple name, and root key last
+        String[] names = new String[] {
+                targetType.getName(), targetType.getSimpleName(),
+                targetType.getName() + "-configurer", targetType.getSimpleName() + "-configurer" };
+        for (String n : names) {
+            PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(n, context);
+            if (configurer != null) {
+                return configurer;
+            }
+        }
+        return null;
     }
 
     /**
