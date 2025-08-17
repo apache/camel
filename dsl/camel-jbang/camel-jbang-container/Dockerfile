@@ -17,7 +17,7 @@
 
 FROM docker.io/eclipse-temurin:21-jdk
 
-ENV JBANG_VERSION=0.127.18
+ENV JBANG_VERSION=0.129.0
 # /!\ Camel version must be changed in the entrypoint line too
 ENV CAMEL_VERSION=4.13.0
 
