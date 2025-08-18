@@ -73,24 +73,52 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private Pattern includeHeadersPattern;
     private boolean binaryContent;
 
-    public void setBinaryContent(boolean binaryContent) {
-        this.binaryContent = binaryContent;
+    public String getMultipartSubType() {
+        return multipartSubType;
     }
 
-    public void setHeadersInline(boolean headersInline) {
-        this.headersInline = headersInline;
+    public void setMultipartSubType(String multipartSubType) {
+        this.multipartSubType = multipartSubType;
     }
 
-    public void setIncludeHeaders(String includeHeaders) {
-        this.includeHeaders = includeHeaders;
+    public boolean isMultipartWithoutAttachment() {
+        return multipartWithoutAttachment;
     }
 
     public void setMultipartWithoutAttachment(boolean multipartWithoutAttachment) {
         this.multipartWithoutAttachment = multipartWithoutAttachment;
     }
 
-    public void setMultipartSubType(String multipartSubType) {
-        this.multipartSubType = multipartSubType;
+    public boolean isHeadersInline() {
+        return headersInline;
+    }
+
+    public void setHeadersInline(boolean headersInline) {
+        this.headersInline = headersInline;
+    }
+
+    public String getIncludeHeaders() {
+        return includeHeaders;
+    }
+
+    public void setIncludeHeaders(String includeHeaders) {
+        this.includeHeaders = includeHeaders;
+    }
+
+    public Pattern getIncludeHeadersPattern() {
+        return includeHeadersPattern;
+    }
+
+    public void setIncludeHeadersPattern(Pattern includeHeadersPattern) {
+        this.includeHeadersPattern = includeHeadersPattern;
+    }
+
+    public boolean isBinaryContent() {
+        return binaryContent;
+    }
+
+    public void setBinaryContent(boolean binaryContent) {
+        this.binaryContent = binaryContent;
     }
 
     @Override
