@@ -22,6 +22,7 @@ public class ForyDataFormatConfigurer extends org.apache.camel.support.component
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowAutoWiredFory", boolean.class);
         map.put("RequireClassRegistration", boolean.class);
         map.put("ThreadSafe", boolean.class);
         map.put("UnmarshalType", java.lang.Class.class);
@@ -32,6 +33,8 @@ public class ForyDataFormatConfigurer extends org.apache.camel.support.component
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ForyDataFormat target = (ForyDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowautowiredfory":
+        case "allowAutoWiredFory": target.setAllowAutoWiredFory(property(camelContext, boolean.class, value)); return true;
         case "requireclassregistration":
         case "requireClassRegistration": target.setRequireClassRegistration(property(camelContext, boolean.class, value)); return true;
         case "threadsafe":
@@ -50,6 +53,8 @@ public class ForyDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowautowiredfory":
+        case "allowAutoWiredFory": return boolean.class;
         case "requireclassregistration":
         case "requireClassRegistration": return boolean.class;
         case "threadsafe":
@@ -64,6 +69,8 @@ public class ForyDataFormatConfigurer extends org.apache.camel.support.component
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ForyDataFormat target = (ForyDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowautowiredfory":
+        case "allowAutoWiredFory": return target.isAllowAutoWiredFory();
         case "requireclassregistration":
         case "requireClassRegistration": return target.isRequireClassRegistration();
         case "threadsafe":
