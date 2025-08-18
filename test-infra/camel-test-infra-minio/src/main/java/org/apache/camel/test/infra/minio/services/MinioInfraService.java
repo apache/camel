@@ -30,4 +30,10 @@ public interface MinioInfraService extends InfrastructureService {
     int port();
 
     String host();
+
+    int consolePort();
+
+    String consoleUsername();
+
+    String consolePassword();
 }
