@@ -195,7 +195,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 byte[] initializationVector = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
 
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", generator.generateKey());
-                cryptoFormat.setInitializationVector(initializationVector);
+                cryptoFormat.setInitVector(initializationVector);
 
                 from("direct:init-vector")
                         .marshal(cryptoFormat)
@@ -212,7 +212,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 SecretKey key = generator.generateKey();
 
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", key);
-                cryptoFormat.setInitializationVector(initializationVector);
+                cryptoFormat.setInitVector(initializationVector);
                 cryptoFormat.setShouldInlineInitializationVector(true);
                 CryptoDataFormat decryptFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", key);
                 decryptFormat.setShouldInlineInitializationVector(true);
@@ -317,7 +317,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 Key key = generator.generateKey();
 
                 CryptoDataFormat encCryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", key);
-                encCryptoFormat.setInitializationVector(iv);
+                encCryptoFormat.setInitVector(iv);
                 encCryptoFormat.setShouldInlineInitializationVector(true);
 
                 CryptoDataFormat decCryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", key);
@@ -376,7 +376,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 GCMParameterSpec paramSpec = new GCMParameterSpec(128, iv);
 
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES/GCM/NoPadding", generator.generateKey());
-                cryptoFormat.setInitializationVector(iv);
+                cryptoFormat.setInitVector(iv);
                 cryptoFormat.setShouldInlineInitializationVector(true);
                 cryptoFormat.setAlgorithmParameterSpec(paramSpec);
 
@@ -396,7 +396,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
 
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat();
                 cryptoFormat.setKey(generator.generateKey());
-                cryptoFormat.setInitializationVector(iv);
+                cryptoFormat.setInitVector(iv);
                 // cryptoFormat.setAlgorithm("DES/CBC/PKCS5Padding");
 
                 from("direct:no-algorithm")

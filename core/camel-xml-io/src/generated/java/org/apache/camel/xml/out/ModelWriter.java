@@ -2477,10 +2477,10 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("shouldAppendHMAC", def.getShouldAppendHMAC(), "true");
         doWriteAttribute("inline", def.getInline(), "false");
         doWriteAttribute("macAlgorithm", def.getMacAlgorithm(), "HmacSHA1");
-        doWriteAttribute("algorithmParameterRef", def.getAlgorithmParameterRef(), null);
-        doWriteAttribute("initVectorRef", def.getInitVectorRef(), null);
+        doWriteAttribute("initVector", def.getInitVector(), null);
         doWriteAttribute("cryptoProvider", def.getCryptoProvider(), null);
-        doWriteAttribute("keyRef", def.getKeyRef(), null);
+        doWriteAttribute("algorithmParameterSpec", def.getAlgorithmParameterSpec(), null);
+        doWriteAttribute("key", def.getKey(), null);
         doWriteAttribute("bufferSize", def.getBufferSize(), "4096");
         doWriteAttribute("algorithm", def.getAlgorithm(), null);
         endElement(name);

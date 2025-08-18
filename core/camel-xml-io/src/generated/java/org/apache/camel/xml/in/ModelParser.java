@@ -1801,12 +1801,12 @@ public class ModelParser extends BaseParser {
     protected CryptoDataFormat doParseCryptoDataFormat() throws IOException, XmlPullParserException {
         return doParse(new CryptoDataFormat(), (def, key, val) -> switch (key) {
                 case "algorithm": def.setAlgorithm(val); yield true;
-                case "algorithmParameterRef": def.setAlgorithmParameterRef(val); yield true;
+                case "algorithmParameterSpec": def.setAlgorithmParameterSpec(val); yield true;
                 case "bufferSize": def.setBufferSize(val); yield true;
                 case "cryptoProvider": def.setCryptoProvider(val); yield true;
-                case "initVectorRef": def.setInitVectorRef(val); yield true;
+                case "initVector": def.setInitVector(val); yield true;
                 case "inline": def.setInline(val); yield true;
-                case "keyRef": def.setKeyRef(val); yield true;
+                case "key": def.setKey(val); yield true;
                 case "macAlgorithm": def.setMacAlgorithm(val); yield true;
                 case "shouldAppendHMAC": def.setShouldAppendHMAC(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
