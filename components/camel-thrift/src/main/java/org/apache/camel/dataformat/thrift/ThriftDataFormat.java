@@ -53,7 +53,7 @@ public class ThriftDataFormat extends ServiceSupport
     private CamelContext camelContext;
     @SuppressWarnings("rawtypes")
     private TBase defaultInstance;
-    private String instanceClassName;
+    private String instanceClass;
     private boolean contentTypeHeader = true;
     private String contentTypeFormat = CONTENT_TYPE_FORMAT_BINARY;
 
@@ -101,9 +101,12 @@ public class ThriftDataFormat extends ServiceSupport
         }
     }
 
+    public String getInstanceClass() {
+        return instanceClass;
+    }
+
     public void setInstanceClass(String className) {
-        ObjectHelper.notNull(className, "ThriftDataFormat instaceClass");
-        instanceClassName = className;
+        instanceClass = className;
     }
 
     public void setContentTypeHeader(boolean contentTypeHeader) {
@@ -128,11 +131,6 @@ public class ThriftDataFormat extends ServiceSupport
         this.contentTypeFormat = contentTypeFormat;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.camel.spi.DataFormat#marshal(org.apache.camel.Exchange,
-     * java.lang.Object, java.io.OutputStream)
-     */
     @Override
     @SuppressWarnings("rawtypes")
     public void marshal(final Exchange exchange, final Object graph, final OutputStream outputStream) throws Exception {
@@ -159,11 +157,6 @@ public class ThriftDataFormat extends ServiceSupport
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.camel.spi.DataFormat#unmarshal(org.apache.camel.Exchange,
-     * java.io.InputStream)
-     */
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         TDeserializer deserializer;
@@ -204,8 +197,8 @@ public class ThriftDataFormat extends ServiceSupport
 
     @Override
     protected void doStart() throws Exception {
-        if (defaultInstance == null && instanceClassName != null) {
-            defaultInstance = loadDefaultInstance(instanceClassName, getCamelContext());
+        if (defaultInstance == null && instanceClass != null) {
+            defaultInstance = loadDefaultInstance(instanceClass, getCamelContext());
         }
     }
 

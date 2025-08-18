@@ -31,6 +31,7 @@ public class TarFileDataFormatReifier extends DataFormatReifier<TarFileDataForma
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("usingIterator", definition.getUsingIterator());
+        properties.put("allowEmptyDirectory", definition.getAllowEmptyDirectory());
         properties.put("preservePathElements", definition.getPreservePathElements());
         properties.put("maxDecompressedSize", definition.getMaxDecompressedSize());
     }

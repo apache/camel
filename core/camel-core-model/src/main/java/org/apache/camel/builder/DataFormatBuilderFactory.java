@@ -53,7 +53,6 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
-import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
@@ -324,13 +323,6 @@ public final class DataFormatBuilderFactory {
      */
     public ThriftDataFormat.Builder thrift() {
         return new ThriftDataFormat.Builder();
-    }
-
-    /**
-     * Return TidyMarkup in the default format as {@link org.w3c.dom.Node}
-     */
-    public TidyMarkupDataFormat.Builder tidyMarkup() {
-        return new TidyMarkupDataFormat.Builder();
     }
 
     /**

@@ -553,9 +553,6 @@ public class ModelWriter extends BaseWriter {
     public void writeThriftDataFormat(ThriftDataFormat def) throws IOException {
         doWriteThriftDataFormat("thrift", def);
     }
-    public void writeTidyMarkupDataFormat(TidyMarkupDataFormat def) throws IOException {
-        doWriteTidyMarkupDataFormat("tidyMarkup", def);
-    }
     public void writeUniVocityCsvDataFormat(UniVocityCsvDataFormat def) throws IOException {
         doWriteUniVocityCsvDataFormat("univocityCsv", def);
     }
@@ -1240,7 +1237,6 @@ public class ModelWriter extends BaseWriter {
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
-                case "TidyMarkupDataFormat" -> doWriteTidyMarkupDataFormat("tidyMarkup", (TidyMarkupDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
@@ -2001,7 +1997,6 @@ public class ModelWriter extends BaseWriter {
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
-                case "TidyMarkupDataFormat" -> doWriteTidyMarkupDataFormat("tidyMarkup", (TidyMarkupDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
@@ -2564,7 +2559,6 @@ public class ModelWriter extends BaseWriter {
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
-                case "TidyMarkupDataFormat" -> doWriteTidyMarkupDataFormat("tidyMarkup", (TidyMarkupDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
@@ -2886,13 +2880,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute("contentTypeFormat", def.getContentTypeFormat(), "binary");
         doWriteAttribute("instanceClass", def.getInstanceClass(), null);
-        endElement(name);
-    }
-    protected void doWriteTidyMarkupDataFormat(String name, TidyMarkupDataFormat def) throws IOException {
-        startElement(name);
-        doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("omitXmlDeclaration", def.getOmitXmlDeclaration(), null);
-        doWriteAttribute("dataObjectType", def.getDataObjectTypeName(), "org.w3c.dom.Node");
         endElement(name);
     }
     protected void doWriteUniVocityAbstractDataFormatAttributes(UniVocityAbstractDataFormat def) throws IOException {
@@ -3708,7 +3695,6 @@ public class ModelWriter extends BaseWriter {
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
-                case "TidyMarkupDataFormat" -> doWriteTidyMarkupDataFormat("tidyMarkup", (TidyMarkupDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);

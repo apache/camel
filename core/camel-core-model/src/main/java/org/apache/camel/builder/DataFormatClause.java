@@ -62,7 +62,6 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
-import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
@@ -1019,20 +1018,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
     public T thrift(String instanceClassName, String contentTypeFormat) {
         return dataFormat(new ThriftDataFormat(instanceClassName, contentTypeFormat));
-    }
-
-    /**
-     * Return WellFormed HTML (an XML Document) either {@link java.lang.String} or {@link org.w3c.dom.Node}
-     */
-    public T tidyMarkup(Class<?> dataObjectType) {
-        return dataFormat(new TidyMarkupDataFormat(dataObjectType));
-    }
-
-    /**
-     * Return TidyMarkup in the default format as {@link org.w3c.dom.Node}
-     */
-    public T tidyMarkup() {
-        return dataFormat(new TidyMarkupDataFormat(Node.class));
     }
 
     /**

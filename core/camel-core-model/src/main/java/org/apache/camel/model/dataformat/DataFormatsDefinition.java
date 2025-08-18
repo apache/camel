@@ -80,7 +80,6 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "syslog", type = SyslogDataFormat.class),
             @XmlElement(name = "tarFile", type = TarFileDataFormat.class),
             @XmlElement(name = "thrift", type = ThriftDataFormat.class),
-            @XmlElement(name = "tidyMarkup", type = TidyMarkupDataFormat.class),
             @XmlElement(name = "univocityCsv", type = UniVocityCsvDataFormat.class),
             @XmlElement(name = "univocityFixed", type = UniVocityFixedDataFormat.class),
             @XmlElement(name = "univocityTsv", type = UniVocityTsvDataFormat.class),

@@ -2181,13 +2181,6 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
-    protected TidyMarkupDataFormat doParseTidyMarkupDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new TidyMarkupDataFormat(), (def, key, val) -> switch (key) {
-                case "dataObjectType": def.setDataObjectTypeName(val); yield true;
-                case "omitXmlDeclaration": def.setOmitXmlDeclaration(val); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, noElementHandler(), noValueHandler());
-    }
     protected UniVocityCsvDataFormat doParseUniVocityCsvDataFormat() throws IOException, XmlPullParserException {
         return doParse(new UniVocityCsvDataFormat(), (def, key, val) -> switch (key) {
                 case "delimiter": def.setDelimiter(val); yield true;
@@ -2982,7 +2975,6 @@ public class ModelParser extends BaseParser {
             case "syslog": return doParseSyslogDataFormat();
             case "tarFile": return doParseTarFileDataFormat();
             case "thrift": return doParseThriftDataFormat();
-            case "tidyMarkup": return doParseTidyMarkupDataFormat();
             case "univocityCsv": return doParseUniVocityCsvDataFormat();
             case "univocityFixed": return doParseUniVocityFixedDataFormat();
             case "univocityTsv": return doParseUniVocityTsvDataFormat();
