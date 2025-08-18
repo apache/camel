@@ -22,6 +22,7 @@ public class Iso8583DataFormatConfigurer extends org.apache.camel.support.compon
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowAutoWiredMessageFormat", boolean.class);
         map.put("ConfigFile", java.lang.String.class);
         map.put("IsoType", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -31,6 +32,8 @@ public class Iso8583DataFormatConfigurer extends org.apache.camel.support.compon
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Iso8583DataFormat target = (Iso8583DataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowautowiredmessageformat":
+        case "allowAutoWiredMessageFormat": target.setAllowAutoWiredMessageFormat(property(camelContext, boolean.class, value)); return true;
         case "configfile":
         case "configFile": target.setConfigFile(property(camelContext, java.lang.String.class, value)); return true;
         case "isotype":
@@ -47,6 +50,8 @@ public class Iso8583DataFormatConfigurer extends org.apache.camel.support.compon
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowautowiredmessageformat":
+        case "allowAutoWiredMessageFormat": return boolean.class;
         case "configfile":
         case "configFile": return java.lang.String.class;
         case "isotype":
@@ -59,6 +64,8 @@ public class Iso8583DataFormatConfigurer extends org.apache.camel.support.compon
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Iso8583DataFormat target = (Iso8583DataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowautowiredmessageformat":
+        case "allowAutoWiredMessageFormat": return target.isAllowAutoWiredMessageFormat();
         case "configfile":
         case "configFile": return target.getConfigFile();
         case "isotype":
