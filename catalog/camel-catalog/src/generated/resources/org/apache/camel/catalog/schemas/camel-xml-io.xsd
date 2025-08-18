@@ -9234,7 +9234,7 @@ asymmetric key encryption or decryption.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="keyOrTrustStoreParametersRef" type="xs:string">
+        <xs:attribute name="keyOrTrustStoreParameters" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -9280,6 +9280,15 @@ Default value: MGF1_SHA1
 <![CDATA[
 Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.
 Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="namespace" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a Map XML Namespaces of prefix - uri mappings.
 ]]>
             </xs:documentation>
           </xs:annotation>

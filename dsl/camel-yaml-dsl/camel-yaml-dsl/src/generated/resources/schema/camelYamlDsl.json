@@ -12409,9 +12409,9 @@
             "default" : "RSA_OAEP",
             "enum" : [ "RSA_v1dot5", "RSA_OAEP", "RSA_OAEP_11" ]
           },
-          "keyOrTrustStoreParametersRef" : {
+          "keyOrTrustStoreParameters" : {
             "type" : "string",
-            "title" : "Key Or Trust Store Parameters Ref",
+            "title" : "Key Or Trust Store Parameters",
             "description" : "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore."
           },
           "keyPassword" : {
@@ -12425,6 +12425,11 @@
             "description" : "The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are: EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256 EncryptionConstants.MGF1_SHA512 The default value is EncryptionConstants.MGF1_SHA1",
             "default" : "MGF1_SHA1",
             "enum" : [ "MGF1_SHA1", "MGF1_SHA256", "MGF1_SHA512" ]
+          },
+          "namespace" : {
+            "type" : "string",
+            "title" : "Namespace",
+            "description" : "Refers to a Map XML Namespaces of prefix - uri mappings"
           },
           "passPhrase" : {
             "type" : "string",

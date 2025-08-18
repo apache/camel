@@ -99,6 +99,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     private String keyPassword;
 
     private KeyStoreParameters keyOrTrustStoreParameters;
+    private Map<String, String> namespaces;
 
     private CamelContext camelContext;
     private DefaultNamespaceContext nsContext = new DefaultNamespaceContext();
@@ -264,6 +265,10 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     @Override
     protected void doStart() throws Exception {
         CamelContextAware.trySetCamelContext(keyOrTrustStoreParameters, getCamelContext());
+        if (namespaces != null) {
+            getNamespaceContext().setNamespaces(namespaces);
+        }
+
     }
 
     @Override
@@ -840,10 +845,6 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         return this.keyOrTrustStoreParameters;
     }
 
-    public void setNamespaces(Map<String, String> namespaces) {
-        getNamespaceContext().setNamespaces(namespaces);
-    }
-
     public String getKeyPassword() {
         return keyPassword;
     }
@@ -876,4 +877,11 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
     }
 
+    public Map<String, String> getNamespaces() {
+        return namespaces;
+    }
+
+    public void setNamespaces(Map<String, String> namespaces) {
+        this.namespaces = namespaces;
+    }
 }

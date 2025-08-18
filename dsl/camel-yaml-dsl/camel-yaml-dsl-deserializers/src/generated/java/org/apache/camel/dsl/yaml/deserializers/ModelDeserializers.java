@@ -20797,9 +20797,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "digestAlgorithm", type = "enum:SHA1,SHA256,SHA512", defaultValue = "SHA1", description = "The digest algorithm to use with the RSA OAEP algorithm. The available choices are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default value is XMLCipher.SHA1", displayName = "Digest Algorithm"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "keyCipherAlgorithm", type = "enum:RSA_v1dot5,RSA_OAEP,RSA_OAEP_11", defaultValue = "RSA_OAEP", description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key. The available choices are: XMLCipher.RSA_v1dot5 XMLCipher.RSA_OAEP XMLCipher.RSA_OAEP_11 The default value is XMLCipher.RSA_OAEP", displayName = "Key Cipher Algorithm"),
-                    @YamlProperty(name = "keyOrTrustStoreParametersRef", type = "string", description = "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.", displayName = "Key Or Trust Store Parameters Ref"),
+                    @YamlProperty(name = "keyOrTrustStoreParameters", type = "string", description = "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.", displayName = "Key Or Trust Store Parameters"),
                     @YamlProperty(name = "keyPassword", type = "string", description = "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.", displayName = "Key Password"),
                     @YamlProperty(name = "mgfAlgorithm", type = "enum:MGF1_SHA1,MGF1_SHA256,MGF1_SHA512", defaultValue = "MGF1_SHA1", description = "The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are: EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256 EncryptionConstants.MGF1_SHA512 The default value is EncryptionConstants.MGF1_SHA1", displayName = "Mgf Algorithm"),
+                    @YamlProperty(name = "namespace", type = "string", description = "Refers to a Map XML Namespaces of prefix - uri mappings", displayName = "Namespace"),
                     @YamlProperty(name = "passPhrase", type = "string", description = "A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the passPhase can be a Only another 24 Byte key", displayName = "Pass Phrase"),
                     @YamlProperty(name = "passPhraseByte", type = "string", format = "binary", description = "A byte used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the passPhase can be a Only another 24 Byte key", displayName = "Pass Phrase Byte"),
                     @YamlProperty(name = "recipientKeyAlias", type = "string", description = "The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.", displayName = "Recipient Key Alias"),
@@ -20843,9 +20844,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setKeyCipherAlgorithm(val);
                     break;
                 }
-                case "keyOrTrustStoreParametersRef": {
+                case "keyOrTrustStoreParameters": {
                     String val = asText(node);
-                    target.setKeyOrTrustStoreParametersRef(val);
+                    target.setKeyOrTrustStoreParameters(val);
                     break;
                 }
                 case "keyPassword": {
@@ -20856,6 +20857,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "mgfAlgorithm": {
                     String val = asText(node);
                     target.setMgfAlgorithm(val);
+                    break;
+                }
+                case "namespace": {
+                    String val = asText(node);
+                    target.setNamespaceRef(val);
                     break;
                 }
                 case "passPhrase": {

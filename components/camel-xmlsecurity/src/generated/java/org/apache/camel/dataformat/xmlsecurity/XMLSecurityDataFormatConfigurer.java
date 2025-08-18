@@ -25,6 +25,7 @@ public class XMLSecurityDataFormatConfigurer extends org.apache.camel.support.co
         map.put("AddKeyValueForEncryptedKey", boolean.class);
         map.put("DigestAlgorithm", java.lang.String.class);
         map.put("KeyCipherAlgorithm", java.lang.String.class);
+        map.put("KeyOrTrustStoreParameters", org.apache.camel.support.jsse.KeyStoreParameters.class);
         map.put("KeyPassword", java.lang.String.class);
         map.put("MgfAlgorithm", java.lang.String.class);
         map.put("PassPhrase", byte[].class);
@@ -45,6 +46,8 @@ public class XMLSecurityDataFormatConfigurer extends org.apache.camel.support.co
         case "digestAlgorithm": target.setDigestAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "keycipheralgorithm":
         case "keyCipherAlgorithm": target.setKeyCipherAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyortruststoreparameters":
+        case "keyOrTrustStoreParameters": target.setKeyOrTrustStoreParameters(property(camelContext, org.apache.camel.support.jsse.KeyStoreParameters.class, value)); return true;
         case "keypassword":
         case "keyPassword": target.setKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "mgfalgorithm":
@@ -77,6 +80,8 @@ public class XMLSecurityDataFormatConfigurer extends org.apache.camel.support.co
         case "digestAlgorithm": return java.lang.String.class;
         case "keycipheralgorithm":
         case "keyCipherAlgorithm": return java.lang.String.class;
+        case "keyortruststoreparameters":
+        case "keyOrTrustStoreParameters": return org.apache.camel.support.jsse.KeyStoreParameters.class;
         case "keypassword":
         case "keyPassword": return java.lang.String.class;
         case "mgfalgorithm":
@@ -105,6 +110,8 @@ public class XMLSecurityDataFormatConfigurer extends org.apache.camel.support.co
         case "digestAlgorithm": return target.getDigestAlgorithm();
         case "keycipheralgorithm":
         case "keyCipherAlgorithm": return target.getKeyCipherAlgorithm();
+        case "keyortruststoreparameters":
+        case "keyOrTrustStoreParameters": return target.getKeyOrTrustStoreParameters();
         case "keypassword":
         case "keyPassword": return target.getKeyPassword();
         case "mgfalgorithm":

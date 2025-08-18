@@ -2945,11 +2945,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("addKeyValueForEncryptedKey", def.getAddKeyValueForEncryptedKey(), "true");
         doWriteAttribute("keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "RSA_OAEP");
         doWriteAttribute("recipientKeyAlias", def.getRecipientKeyAlias(), null);
-        doWriteAttribute("keyOrTrustStoreParametersRef", def.getKeyOrTrustStoreParametersRef(), null);
         doWriteAttribute("digestAlgorithm", def.getDigestAlgorithm(), "SHA1");
         doWriteAttribute("mgfAlgorithm", def.getMgfAlgorithm(), "MGF1_SHA1");
         doWriteAttribute("secureTagContents", def.getSecureTagContents(), null);
+        doWriteAttribute("namespace", def.getNamespaceRef(), null);
         doWriteAttribute("passPhraseByte", toString(def.getPassPhraseByte()), null);
+        doWriteAttribute("keyOrTrustStoreParameters", def.getKeyOrTrustStoreParameters(), null);
         doWriteAttribute("keyPassword", def.getKeyPassword(), null);
         doWriteAttribute("secureTag", def.getSecureTag(), null);
         doWriteAttribute("xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");

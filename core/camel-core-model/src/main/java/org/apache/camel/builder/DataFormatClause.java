@@ -1159,7 +1159,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParametersRef(keyOrTrustStoreParametersId);
+        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParametersId);
         return dataFormat(xsdf);
     }
 
@@ -1176,7 +1176,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParametersRef(keyOrTrustStoreParametersId);
+        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParametersId);
         xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);
     }
@@ -1194,7 +1194,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        xsdf.setKeyStoreParameters(keyOrTrustStoreParameters);
         return dataFormat(xsdf);
     }
 
@@ -1211,7 +1211,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        xsdf.setKeyStoreParameters(keyOrTrustStoreParameters);
         xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);
     }
@@ -1229,7 +1229,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParametersRef(keyOrTrustStoreParametersId);
+        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParametersId);
         return dataFormat(xsdf);
     }
 
@@ -1246,7 +1246,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParametersRef(keyOrTrustStoreParametersId);
+        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParametersId);
         xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);
     }
@@ -1265,7 +1265,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        xsdf.setKeyStoreParameters(keyOrTrustStoreParameters);
         return dataFormat(xsdf);
     }
 
@@ -1283,7 +1283,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        xsdf.setKeyStoreParameters(keyOrTrustStoreParameters);
         xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);
     }
@@ -1302,7 +1302,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setRecipientKeyAlias(recipientKeyAlias);
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
-        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        xsdf.setKeyStoreParameters(keyOrTrustStoreParameters);
         xsdf.setDigestAlgorithm(digestAlgorithm);
         xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);

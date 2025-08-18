@@ -2239,9 +2239,10 @@ public class ModelParser extends BaseParser {
                 case "addKeyValueForEncryptedKey": def.setAddKeyValueForEncryptedKey(val); yield true;
                 case "digestAlgorithm": def.setDigestAlgorithm(val); yield true;
                 case "keyCipherAlgorithm": def.setKeyCipherAlgorithm(val); yield true;
-                case "keyOrTrustStoreParametersRef": def.setKeyOrTrustStoreParametersRef(val); yield true;
+                case "keyOrTrustStoreParameters": def.setKeyOrTrustStoreParameters(val); yield true;
                 case "keyPassword": def.setKeyPassword(val); yield true;
                 case "mgfAlgorithm": def.setMgfAlgorithm(val); yield true;
+                case "namespace": def.setNamespaceRef(val); yield true;
                 case "passPhrase": def.setPassPhrase(val); yield true;
                 case "passPhraseByte": def.setPassPhraseByte(asByteArray(val)); yield true;
                 case "recipientKeyAlias": def.setRecipientKeyAlias(val); yield true;
