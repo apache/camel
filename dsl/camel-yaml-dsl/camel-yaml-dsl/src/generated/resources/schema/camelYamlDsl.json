@@ -10151,12 +10151,15 @@
           "barcodeFormat" : {
             "type" : "string",
             "title" : "Barcode Format",
-            "description" : "Barcode format such as QR-Code"
+            "description" : "Barcode format such as QR-Code",
+            "default" : "QR_CODE",
+            "enum" : [ "AZTEC", "CODABAR", "CODE_39", "CODE_93", "CODE_128", "DATA_MATRIX", "EAN_8", "EAN_13", "ITF", "MAXICODE", "PDF_417", "QR_CODE", "RSS_14", "RSS_EXPANDED", "UPC_A", "UPC_E", "UPC_EAN_EXTENSION" ]
           },
           "height" : {
             "type" : "number",
             "title" : "Height",
-            "description" : "Height of the barcode"
+            "description" : "Height of the barcode",
+            "default" : "100"
           },
           "id" : {
             "type" : "string",
@@ -10166,12 +10169,15 @@
           "imageType" : {
             "type" : "string",
             "title" : "Image Type",
-            "description" : "Image type of the barcode such as png"
+            "description" : "Image type of the barcode such as png",
+            "default" : "PNG",
+            "enum" : [ "JPG", "GIF", "PNG" ]
           },
           "width" : {
             "type" : "number",
             "title" : "Width",
-            "description" : "Width of the barcode"
+            "description" : "Width of the barcode",
+            "default" : "100"
           }
         }
       },

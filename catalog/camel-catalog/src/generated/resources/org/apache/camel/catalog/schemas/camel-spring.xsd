@@ -7850,7 +7850,7 @@ When not disabled, the SchemaResolver will be looked up into the registry. Defau
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Barcode format such as QR-Code.
+Barcode format such as QR-Code. Default value: QR_CODE
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7859,7 +7859,7 @@ Barcode format such as QR-Code.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Image type of the barcode such as png.
+Image type of the barcode such as png. Default value: PNG
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7868,7 +7868,7 @@ Image type of the barcode such as png.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Width of the barcode.
+Width of the barcode. Default value: 100
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7877,7 +7877,7 @@ Width of the barcode.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Height of the barcode.
+Height of the barcode. Default value: 100
 ]]>
             </xs:documentation>
           </xs:annotation>

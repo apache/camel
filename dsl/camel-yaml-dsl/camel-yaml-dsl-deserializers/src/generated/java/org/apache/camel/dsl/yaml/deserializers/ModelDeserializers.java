@@ -788,11 +788,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Transform strings to various 1D/2D barcode bitmap formats and back.",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "barcodeFormat", type = "string", description = "Barcode format such as QR-Code", displayName = "Barcode Format"),
-                    @YamlProperty(name = "height", type = "number", description = "Height of the barcode", displayName = "Height"),
+                    @YamlProperty(name = "barcodeFormat", type = "enum:AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION", defaultValue = "QR_CODE", description = "Barcode format such as QR-Code", displayName = "Barcode Format"),
+                    @YamlProperty(name = "height", type = "number", defaultValue = "100", description = "Height of the barcode", displayName = "Height"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "imageType", type = "string", description = "Image type of the barcode such as png", displayName = "Image Type"),
-                    @YamlProperty(name = "width", type = "number", description = "Width of the barcode", displayName = "Width")
+                    @YamlProperty(name = "imageType", type = "enum:JPG,GIF,PNG", defaultValue = "PNG", description = "Image type of the barcode such as png", displayName = "Image Type"),
+                    @YamlProperty(name = "width", type = "number", defaultValue = "100", description = "Width of the barcode", displayName = "Width")
             }
     )
     public static class BarcodeDataFormatDeserializer extends YamlDeserializerBase<BarcodeDataFormat> {
