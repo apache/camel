@@ -1927,7 +1927,7 @@ public class ModelParser extends BaseParser {
                 case "fixed": def.setFixed(val); yield true;
                 case "ignoreExtraColumns": def.setIgnoreExtraColumns(val); yield true;
                 case "ignoreFirstRecord": def.setIgnoreFirstRecord(val); yield true;
-                case "parserFactoryRef": def.setParserFactoryRef(val); yield true;
+                case "parserFactory": def.setParserFactory(val); yield true;
                 case "textQualifier": def.setTextQualifier(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());

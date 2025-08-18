@@ -18,6 +18,7 @@ to their implementation using reflection-free configurers. A few data formats ha
 |crypto|initVectorRef|initVector
 |csv|formatRef|format
 |csv|formatName|format
+|flatpack|parserFactoryRef|parserFactory
 |===
 
 And in XML DSL the csv dataformat have changed `header` from a `List<String>` to be a single `String`

@@ -28,6 +28,7 @@ public class FlatpackDataFormatConfigurer extends org.apache.camel.support.compo
         map.put("Fixed", boolean.class);
         map.put("IgnoreExtraColumns", boolean.class);
         map.put("IgnoreFirstRecord", boolean.class);
+        map.put("ParserFactory", net.sf.flatpack.ParserFactory.class);
         map.put("TextQualifier", char.class);
         ALL_OPTIONS = map;
     }
@@ -45,6 +46,8 @@ public class FlatpackDataFormatConfigurer extends org.apache.camel.support.compo
         case "ignoreExtraColumns": target.setIgnoreExtraColumns(property(camelContext, boolean.class, value)); return true;
         case "ignorefirstrecord":
         case "ignoreFirstRecord": target.setIgnoreFirstRecord(property(camelContext, boolean.class, value)); return true;
+        case "parserfactory":
+        case "parserFactory": target.setParserFactory(property(camelContext, net.sf.flatpack.ParserFactory.class, value)); return true;
         case "textqualifier":
         case "textQualifier": target.setTextQualifier(property(camelContext, char.class, value)); return true;
         default: return false;
@@ -68,6 +71,8 @@ public class FlatpackDataFormatConfigurer extends org.apache.camel.support.compo
         case "ignoreExtraColumns": return boolean.class;
         case "ignorefirstrecord":
         case "ignoreFirstRecord": return boolean.class;
+        case "parserfactory":
+        case "parserFactory": return net.sf.flatpack.ParserFactory.class;
         case "textqualifier":
         case "textQualifier": return char.class;
         default: return null;
@@ -87,6 +92,8 @@ public class FlatpackDataFormatConfigurer extends org.apache.camel.support.compo
         case "ignoreExtraColumns": return target.isIgnoreExtraColumns();
         case "ignorefirstrecord":
         case "ignoreFirstRecord": return target.isIgnoreFirstRecord();
+        case "parserfactory":
+        case "parserFactory": return target.getParserFactory();
         case "textqualifier":
         case "textQualifier": return target.getTextQualifier();
         default: return null;

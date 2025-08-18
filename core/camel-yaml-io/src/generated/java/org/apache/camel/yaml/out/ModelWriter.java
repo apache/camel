@@ -2625,10 +2625,10 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("allowShortLines", def.getAllowShortLines(), null);
         doWriteAttribute("delimiter", def.getDelimiter(), ",");
+        doWriteAttribute("parserFactory", def.getParserFactory(), null);
         doWriteAttribute("fixed", def.getFixed(), null);
         doWriteAttribute("definition", def.getDefinition(), null);
         doWriteAttribute("ignoreFirstRecord", def.getIgnoreFirstRecord(), "true");
-        doWriteAttribute("parserFactoryRef", def.getParserFactoryRef(), null);
         doWriteAttribute("textQualifier", def.getTextQualifier(), null);
         doWriteAttribute("ignoreExtraColumns", def.getIgnoreExtraColumns(), null);
         endElement(name);
