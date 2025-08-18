@@ -60,4 +60,19 @@ public class MinioRemoteInfraService implements MinioInfraService {
     public String host() {
         return System.getProperty(MinioProperties.SERVICE_HOST);
     }
+
+    @Override
+    public int consolePort() {
+        return Integer.valueOf(System.getProperty(MinioProperties.SERVICE_PORT));
+    }
+
+    @Override
+    public String consoleUsername() {
+        return System.getProperty(MinioProperties.USERNAME);
+    }
+
+    @Override
+    public String consolePassword() {
+        return System.getProperty(MinioProperties.PASSWORD);
+    }
 }

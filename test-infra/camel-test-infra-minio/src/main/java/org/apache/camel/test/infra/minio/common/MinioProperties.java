@@ -22,6 +22,7 @@ public final class MinioProperties {
     public static final String ACCESS_KEY = "minio.access.key";
     public static final String SECRET_KEY = "minio.secret.key";
     public static final String USERNAME = "minio.access.username";
+    public static final String PASSWORD = "minio.access.password";
     public static final String SERVICE_HOST = "minio.service.host";
     public static final String SERVICE_PORT = "minio.service.port";
     public static final int DEFAULT_SERVICE_PORT = 9000;

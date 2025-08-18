@@ -33,16 +33,14 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
               serviceAlias = { "minio" })
 public class MinioLocalContainerInfraService implements MinioInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "minio";
-    private static final String ACCESS_KEY;
-    private static final String SECRET_KEY;
-    private static final int BROKER_PORT = 9000;
+    private static final String ACCESS_KEY = System.getProperty(MinioProperties.ACCESS_KEY, "testAccessKey");
+    private static final String SECRET_KEY = System.getProperty(MinioProperties.SECRET_KEY, "testSecretKey");
+    private static final String USERNAME = System.getProperty(MinioProperties.USERNAME, "minioadmin");
+    private static final String PASSWORD = System.getProperty(MinioProperties.PASSWORD, "minioadmin");
+    private static final int MINIO_TCP_PORT = 9000;
+    private static final int MINIO_UI_PORT = 9001;
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioLocalContainerInfraService.class);
-
-    static {
-        ACCESS_KEY = System.getProperty(MinioProperties.ACCESS_KEY, "testAccessKey");
-        SECRET_KEY = System.getProperty(MinioProperties.SECRET_KEY, "testSecretKey");
-    }
 
     private final GenericContainer<?> container;
 
@@ -70,16 +68,20 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
                 withNetworkAliases(containerName)
                         .withEnv("MINIO_ACCESS_KEY", accessKey())
                         .withEnv("MINIO_SECRET_KEY", secretKey())
-                        .withCommand("server /data")
                         .waitingFor(new HttpWaitStrategy()
                                 .forPath("/minio/health/live")
-                                .forPort(BROKER_PORT)
+                                .forPort(MINIO_TCP_PORT)
                                 .withStartupTimeout(Duration.ofSeconds(10)));
 
                 if (fixedPort) {
-                    addFixedExposedPort(BROKER_PORT, BROKER_PORT);
+                    addFixedExposedPort(MINIO_TCP_PORT, MINIO_TCP_PORT);
+                    addFixedExposedPort(MINIO_UI_PORT, MINIO_UI_PORT);
+                    withCommand("server /data --console-address :9001");
+                    withEnv("MINIO_ROOT_USER", USERNAME);
+                    withEnv("MINIO_ROOT_PASSWORD", PASSWORD);
                 } else {
-                    withExposedPorts(BROKER_PORT);
+                    withExposedPorts(MINIO_TCP_PORT);
+                    withCommand("server /data");
                 }
             }
         }
@@ -128,11 +130,26 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
 
     @Override
     public int port() {
-        return container.getMappedPort(BROKER_PORT);
+        return container.getMappedPort(MINIO_TCP_PORT);
     }
 
     @Override
     public String host() {
         return container.getHost();
+    }
+
+    @Override
+    public int consolePort() {
+        return container.getMappedPort(MINIO_UI_PORT);
+    }
+
+    @Override
+    public String consoleUsername() {
+        return USERNAME;
+    }
+
+    @Override
+    public String consolePassword() {
+        return PASSWORD;
     }
 }
