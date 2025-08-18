@@ -30,7 +30,7 @@ public class HL7DataFormatReifier extends DataFormatReifier<HL7DataFormat> {
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("parser", definition.getParser());
+        properties.put("parser", asRef(definition.getParser()));
         properties.put("validate", definition.getValidate());
     }
 

@@ -368,7 +368,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the HL7 data format
      */
-    public T hl7(Object parser) {
+    public T hl7(String parser) {
         HL7DataFormat hl7 = new HL7DataFormat();
         hl7.setParser(parser);
         return dataFormat(hl7);

@@ -2659,6 +2659,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteHL7DataFormat(String name, HL7DataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("parser", def.getParser(), null);
         doWriteAttribute("validate", def.getValidate(), "true");
         endElement(name);
     }

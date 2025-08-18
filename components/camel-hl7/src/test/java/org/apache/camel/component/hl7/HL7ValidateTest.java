@@ -142,14 +142,14 @@ public class HL7ValidateTest extends CamelTestSupport {
         ValidationContext customValidationContext = ValidationContextFactory.fromBuilder(builder);
 
         HapiContext customContext = new DefaultHapiContext(customValidationContext);
-        final Parser customParser = new GenericParser(customContext);
+        context.getRegistry().bind("myParser", new GenericParser(customContext));
 
         return new RouteBuilder() {
             public void configure() {
                 from("direct:unmarshalFailed").unmarshal().hl7().to("mock:unmarshal");
                 from("direct:unmarshalOk").unmarshal().hl7(false).to("mock:unmarshal");
                 from("direct:unmarshalOkCustom").unmarshal(hl7).to("mock:unmarshal");
-                from("direct:start1").marshal().hl7(customParser).to("mock:end");
+                from("direct:start1").marshal().hl7("myParser").to("mock:end");
                 from("direct:start2").marshal().hl7(true).to("mock:end");
 
             }

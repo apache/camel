@@ -1955,6 +1955,7 @@ public class ModelParser extends BaseParser {
     }
     protected HL7DataFormat doParseHL7DataFormat() throws IOException, XmlPullParserException {
         return doParse(new HL7DataFormat(), (def, key, val) -> switch (key) {
+                case "parser": def.setParser(val); yield true;
                 case "validate": def.setValidate(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());

@@ -34,10 +34,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {
 
-    @XmlTransient
+    @XmlAttribute
     @Metadata(label = "advanced", javaType = "ca.uhn.hl7v2.parser.Parser")
-    private Object parser;
-
+    private String parser;
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String validate;
@@ -76,14 +75,14 @@ public class HL7DataFormat extends DataFormatDefinition {
         this.validate = validate;
     }
 
-    public Object getParser() {
+    public String getParser() {
         return parser;
     }
 
     /**
      * To use a custom HL7 parser
      */
-    public void setParser(Object parser) {
+    public void setParser(String parser) {
         this.parser = parser;
     }
 
@@ -93,7 +92,7 @@ public class HL7DataFormat extends DataFormatDefinition {
     @XmlTransient
     public static class Builder implements DataFormatBuilder<HL7DataFormat> {
 
-        private Object parser;
+        private String parser;
         private String validate;
 
         /**
@@ -119,7 +118,7 @@ public class HL7DataFormat extends DataFormatDefinition {
         /**
          * To use a custom HL7 parser
          */
-        public Builder parser(Object parser) {
+        public Builder parser(String parser) {
             this.parser = parser;
             return this;
         }
