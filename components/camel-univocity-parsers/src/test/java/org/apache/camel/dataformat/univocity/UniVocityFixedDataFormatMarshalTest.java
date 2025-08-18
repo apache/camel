@@ -122,20 +122,23 @@ public final class UniVocityFixedDataFormatMarshalTest extends CamelTestSupport 
         final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default writing of fixed-width
-        tests.put("default", new UniVocityFixedDataFormat()
-                .setFieldLengths(new int[] { 3, 3, 5 }));
+        var df = new UniVocityFixedDataFormat();
+        df.setFieldLengths("3,3,5");
+        tests.put("default", df);
 
         // Write a fixed-width with specific headers
-        tests.put("header", new UniVocityFixedDataFormat()
-                .setFieldLengths(new int[] { 3, 5 })
-                .setHeaders(new String[] { "A", "C" }));
+        df = new UniVocityFixedDataFormat();
+        df.setFieldLengths("3,5");
+        df.setHeaders("A,C");
+        tests.put("header", df);
 
         // Write a fixed-width with an advanced configuration
-        tests.put("advanced", new UniVocityFixedDataFormat()
-                .setFieldLengths(new int[] { 5, 5 })
-                .setNullValue("N/A")
-                .setEmptyValue("empty")
-                .setPadding('_'));
+        df = new UniVocityFixedDataFormat();
+        df.setFieldLengths("5,5");
+        df.setNullValue("N/A");
+        df.setEmptyValue("empty");
+        df.setPadding('_');
+        tests.put("advanced", df);
 
         return new RouteBuilder() {
             @Override

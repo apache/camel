@@ -17,6 +17,7 @@
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
@@ -38,16 +39,13 @@ public class UniVocityFixedWidthDataFormatReifier extends UniVocityAbstractDataF
         properties.put("padding", definition.getPadding());
     }
 
-    private int[] getFieldLengths() {
+    private String getFieldLengths() {
         if (definition.getHeaders() != null) {
-            int i = 0;
-            int[] arr = new int[definition.getHeaders().size()];
+            StringJoiner sj = new StringJoiner(",");
             for (UniVocityHeader header : definition.getHeaders()) {
-                String len = header.getLength();
-                int num = Integer.parseInt(len);
-                arr[i++] = num;
+                sj.add(header.getLength());
             }
-            return arr;
+            return sj.toString();
         } else {
             return null;
         }

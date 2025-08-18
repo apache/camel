@@ -125,17 +125,19 @@ public final class UniVocityCsvDataFormatMarshalTest extends CamelTestSupport {
         tests.put("default", new UniVocityCsvDataFormat());
 
         // Write a CSV with specific headers
-        tests.put("header", new UniVocityCsvDataFormat()
-                .setHeaders(new String[] { "A", "C" }));
+        var df = new UniVocityCsvDataFormat();
+        df.setHeaders("A,C");
+        tests.put("header", df);
 
         // Write a CSV with an advanced configuration
-        tests.put("advanced", new UniVocityCsvDataFormat()
-                .setNullValue("N/A")
-                .setEmptyValue("empty")
-                .setQuote('_')
-                .setQuoteAllFields(true)
-                .setQuoteEscape('-')
-                .setDelimiter(';'));
+        df = new UniVocityCsvDataFormat();
+        df.setNullValue("N/A");
+        df.setEmptyValue("empty");
+        df.setQuote('_');
+        df.setQuoteAllFields(true);
+        df.setQuoteEscape('-');
+        df.setDelimiter(';');
+        tests.put("advanced", df);
 
         return new RouteBuilder() {
             @Override

@@ -16,9 +16,8 @@
  */
 package org.apache.camel.reifier.dataformat;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
@@ -49,21 +48,20 @@ public class UniVocityAbstractDataFormatReifier<T extends UniVocityAbstractDataF
         properties.put("asMap", definition.getAsMap());
     }
 
-    /**
-     * Gets only the headers with non-null and non-empty names. It returns {@code null} if there's no such headers.
-     *
-     * @return The headers with non-null and non-empty names
-     */
-    private String[] getValidHeaderNames() {
+    private String getValidHeaderNames() {
         if (definition.getHeaders() == null) {
             return null;
         }
-        List<String> names = new ArrayList<>(definition.getHeaders().size());
+        StringJoiner sj = new StringJoiner(",");
         for (UniVocityHeader header : definition.getHeaders()) {
             if (header.getName() != null && !header.getName().isEmpty()) {
-                names.add(header.getName());
+                sj.add(header.getName());
             }
         }
-        return names.isEmpty() ? null : names.toArray(new String[0]);
+        if (sj.length() > 0) {
+            return sj.toString();
+        } else {
+            return null;
+        }
     }
 }

@@ -155,33 +155,38 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
         final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default reading of fixed-width
-        tests.put("default", new UniVocityFixedDataFormat()
-                .setFieldLengths(new int[] { 3, 3, 5 }));
+        var df = new UniVocityFixedDataFormat();
+        df.setFieldLengths("3,3,5");
+        tests.put("default", df);
 
         // Reading fixed-width as Map
-        tests.put("map", new UniVocityFixedDataFormat()
-                .setFieldLengths(new int[] { 3, 3, 5 })
-                .setAsMap(true)
-                .setHeaderExtractionEnabled(true));
+        df = new UniVocityFixedDataFormat();
+        df.setFieldLengths("3,3,5");
+        df.setAsMap(true);
+        df.setHeaderExtractionEnabled(true);
+        tests.put("map", df);
 
         // Reading fixed-width as Map with specific headers
-        tests.put("mapWithHeaders", new UniVocityFixedDataFormat()
-                .setFieldLengths(new int[] { 3, 3, 5 })
-                .setAsMap(true)
-                .setHeaders(new String[] { "A", "B", "C" }));
+        df = new UniVocityFixedDataFormat();
+        df.setFieldLengths("3,3,5");
+        df.setAsMap(true);
+        df.setHeaders("A,B,C");
+        tests.put("mapWithHeaders", df);
 
         // Reading fixed-width using an iterator
-        tests.put("lazy", new UniVocityFixedDataFormat()
-                .setFieldLengths(new int[] { 3, 3, 5 })
-                .setLazyLoad(true));
+        df = new UniVocityFixedDataFormat();
+        df.setFieldLengths("3,3,5");
+        df.setLazyLoad(true);
+        tests.put("lazy", df);
 
         // Reading fixed-width using advanced configuration
-        tests.put("advanced", new UniVocityFixedDataFormat()
-                .setFieldLengths(new int[] { 3, 3 })
-                .setNullValue("N/A")
-                .setPadding('_')
-                .setComment('!')
-                .setSkipEmptyLines(true));
+        df = new UniVocityFixedDataFormat();
+        df.setFieldLengths("3,3");
+        df.setNullValue("N/A");
+        df.setPadding('_');
+        df.setComment('!');
+        df.setSkipEmptyLines(true);
+        tests.put("advanced", df);
 
         return new RouteBuilder() {
             @Override
