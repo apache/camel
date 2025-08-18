@@ -43,7 +43,7 @@
         <route>
             <from uri="direct:unmarshalFull"/>
             <unmarshal>
-                <swiftMx writeInJson="false" readMessageId="urn:swift:xsd:xsys.011.001.02" readConfigRef="readConfig" />
+                <swiftMx writeInJson="false" readMessageId="urn:swift:xsd:xsys.011.001.02" readConfig="readConfig" />
             </unmarshal>
             <to uri="mock:unmarshalFull"/>
         </route>
@@ -57,7 +57,7 @@
         <route>
             <from uri="direct:marshalFull"/>
             <marshal>
-                <swiftMx writeConfigRef="writeConfig"/>
+                <swiftMx writeConfig="writeConfig"/>
             </marshal>
             <to uri="mock:marshalFull"/>
         </route>

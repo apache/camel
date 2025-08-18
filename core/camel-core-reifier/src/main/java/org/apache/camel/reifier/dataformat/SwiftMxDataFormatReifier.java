@@ -30,9 +30,9 @@ public class SwiftMxDataFormatReifier extends DataFormatReifier<SwiftMxDataForma
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("writeConfig", or(definition.getWriteConfig(), asRef(definition.getWriteConfigRef())));
+        properties.put("writeConfig", or(definition.getWriteConfigObject(), asRef(definition.getWriteConfig())));
         properties.put("writeInJson", definition.getWriteInJson());
         properties.put("readMessageId", definition.getReadMessageId());
-        properties.put("readConfig", or(definition.getReadConfig(), asRef(definition.getReadConfigRef())));
+        properties.put("readConfig", or(definition.getReadConfigObject(), asRef(definition.getReadConfig())));
     }
 }

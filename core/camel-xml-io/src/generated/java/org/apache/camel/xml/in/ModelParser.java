@@ -2154,9 +2154,9 @@ public class ModelParser extends BaseParser {
     }
     protected SwiftMxDataFormat doParseSwiftMxDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SwiftMxDataFormat(), (def, key, val) -> switch (key) {
-                case "readConfigRef": def.setReadConfigRef(val); yield true;
+                case "readConfig": def.setReadConfig(val); yield true;
                 case "readMessageId": def.setReadMessageId(val); yield true;
-                case "writeConfigRef": def.setWriteConfigRef(val); yield true;
+                case "writeConfig": def.setWriteConfig(val); yield true;
                 case "writeInJson": def.setWriteInJson(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());

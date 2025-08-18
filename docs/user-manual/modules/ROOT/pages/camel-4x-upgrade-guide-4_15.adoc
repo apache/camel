@@ -22,6 +22,8 @@ to their implementation using reflection-free configurers. A few data formats ha
 |jaxb|namespacePrefixRef|namespacePrefix
 |soap|namespacePrefixRef|namespacePrefix
 |soap|elementNameStrategyRef|elementNameStrategy
+|swiftMx|readConfigRef|readConfig
+|swiftMx|writeConfigRef|writeConfig
 |===
 
 And in XML DSL the csv dataformat have changed `header` from a `List<String>` to be a single `String`

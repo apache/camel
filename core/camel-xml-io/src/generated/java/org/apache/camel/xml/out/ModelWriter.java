@@ -2860,10 +2860,10 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSwiftMxDataFormat(String name, SwiftMxDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("readConfig", def.getReadConfig(), null);
+        doWriteAttribute("writeConfig", def.getWriteConfig(), null);
         doWriteAttribute("readMessageId", def.getReadMessageId(), null);
         doWriteAttribute("writeInJson", def.getWriteInJson(), null);
-        doWriteAttribute("writeConfigRef", def.getWriteConfigRef(), null);
-        doWriteAttribute("readConfigRef", def.getReadConfigRef(), null);
         endElement(name);
     }
     protected void doWriteSyslogDataFormat(String name, SyslogDataFormat def) throws IOException {
