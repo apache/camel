@@ -10470,25 +10470,17 @@
               "title" : "Escape Disabled",
               "description" : "Use for disabling using escape character"
             },
-            "formatName" : {
+            "format" : {
               "type" : "string",
-              "title" : "Format Name",
-              "description" : "The name of the format to use, the default value is CSVFormat.DEFAULT",
+              "title" : "Format",
+              "description" : "The format to use.",
               "default" : "DEFAULT",
-              "enum" : [ "DEFAULT", "EXCEL", "INFORMIX_UNLOAD", "INFORMIX_UNLOAD_CSV", "MYSQL", "RFC4180" ]
-            },
-            "formatRef" : {
-              "type" : "string",
-              "title" : "Format Ref",
-              "description" : "The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT"
+              "enum" : [ "DEFAULT", "EXCEL", "INFORMIX_UNLOAD", "INFORMIX_UNLOAD_CSV", "MONGODB_CSV", "MONGODB_TSV", "MYSQL", "ORACLE", "POSTGRESQL_CSV", "POSTGRESQL_TEXT", "RFC4180" ]
             },
             "header" : {
-              "type" : "array",
+              "type" : "string",
               "title" : "Header",
-              "description" : "To configure the CSV headers",
-              "items" : {
-                "type" : "string"
-              }
+              "description" : "To configure the CSV headers. Multiple headers can be separated by comma."
             },
             "headerDisabled" : {
               "type" : "boolean",

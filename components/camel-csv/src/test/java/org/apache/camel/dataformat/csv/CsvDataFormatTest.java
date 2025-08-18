@@ -37,9 +37,10 @@ public class CsvDataFormatTest {
     @Test
     void shouldUseDefaultFormat() {
         CsvDataFormat dataFormat = new CsvDataFormat();
+        dataFormat.start();
 
         // Properly initialized
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
 
         // Properly used
         assertEquals(CSVFormat.DEFAULT, dataFormat.getActiveFormat());
@@ -48,9 +49,10 @@ public class CsvDataFormatTest {
     @Test
     void shouldUseFormatFromConstructor() {
         CsvDataFormat dataFormat = new CsvDataFormat(CSVFormat.EXCEL);
+        dataFormat.start();
 
         // Properly initialized
-        assertSame(CSVFormat.EXCEL, dataFormat.getFormat());
+        assertSame(CSVFormat.EXCEL, dataFormat.getCsvFormat());
 
         // Properly used
         assertEquals(CSVFormat.EXCEL, dataFormat.getActiveFormat());
@@ -58,35 +60,23 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldUseSpecifiedFormat() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setFormat(CSVFormat.MYSQL);
+        CsvDataFormat dataFormat = new CsvDataFormat(CSVFormat.MYSQL);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.MYSQL, dataFormat.getFormat());
+        assertSame(CSVFormat.MYSQL, dataFormat.getCsvFormat());
 
         // Properly used
         assertEquals(CSVFormat.MYSQL, dataFormat.getActiveFormat());
     }
 
     @Test
-    void shouldFallbackToDefaultFormat() {
-        CsvDataFormat dataFormat = new CsvDataFormat(CSVFormat.EXCEL)
-                .setFormat(null);
-
-        // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
-
-        // Properly used
-        assertEquals(CSVFormat.DEFAULT, dataFormat.getActiveFormat());
-    }
-
-    @Test
     void shouldDefineFormatByName() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setFormatName("EXCEL");
+        CsvDataFormat dataFormat = new CsvDataFormat(CSVFormat.EXCEL);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.EXCEL, dataFormat.getFormat());
+        assertSame(CSVFormat.EXCEL, dataFormat.getCsvFormat());
 
         // Properly used
         assertEquals(CSVFormat.EXCEL, dataFormat.getActiveFormat());
@@ -97,9 +87,10 @@ public class CsvDataFormatTest {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setCommentMarkerDisabled(true)
                 .setCommentMarker('c');
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertTrue(dataFormat.isCommentMarkerDisabled());
         assertEquals(Character.valueOf('c'), dataFormat.getCommentMarker());
 
@@ -111,9 +102,10 @@ public class CsvDataFormatTest {
     void shouldOverrideCommentMarker() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setCommentMarker('c');
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Character.valueOf('c'), dataFormat.getCommentMarker());
 
         // Properly used
@@ -124,9 +116,10 @@ public class CsvDataFormatTest {
     void shouldOverrideDelimiter() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setDelimiter('d');
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Character.valueOf('d'), dataFormat.getDelimiter());
 
         // Properly used
@@ -138,9 +131,10 @@ public class CsvDataFormatTest {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setEscapeDisabled(true)
                 .setEscape('e');
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertTrue(dataFormat.isEscapeDisabled());
         assertEquals(Character.valueOf('e'), dataFormat.getEscape());
 
@@ -152,9 +146,10 @@ public class CsvDataFormatTest {
     void shouldOverrideEscape() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setEscape('e');
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Character.valueOf('e'), dataFormat.getEscape());
 
         // Properly used
@@ -166,9 +161,10 @@ public class CsvDataFormatTest {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setHeaderDisabled(true)
                 .setHeader(new String[] { "a", "b", "c" });
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertTrue(dataFormat.isHeaderDisabled());
         assertEquals("a,b,c", dataFormat.getHeader());
 
@@ -180,9 +176,10 @@ public class CsvDataFormatTest {
     void shouldOverrideHeader() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setHeader("a,b,c");
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals("a,b,c", dataFormat.getHeader());
 
         // Properly used
@@ -193,9 +190,10 @@ public class CsvDataFormatTest {
     void shouldAllowMissingColumnNames() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setAllowMissingColumnNames(true);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.TRUE, dataFormat.getAllowMissingColumnNames());
 
         // Properly used
@@ -206,9 +204,10 @@ public class CsvDataFormatTest {
     void shouldNotAllowMissingColumnNames() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setAllowMissingColumnNames(false);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.FALSE, dataFormat.getAllowMissingColumnNames());
 
         // Properly used
@@ -219,9 +218,10 @@ public class CsvDataFormatTest {
     void shouldIgnoreEmptyLines() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setIgnoreEmptyLines(true);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.TRUE, dataFormat.getIgnoreEmptyLines());
 
         // Properly used
@@ -232,9 +232,10 @@ public class CsvDataFormatTest {
     void shouldNotIgnoreEmptyLines() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setIgnoreEmptyLines(false);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.FALSE, dataFormat.getIgnoreEmptyLines());
 
         // Properly used
@@ -245,9 +246,10 @@ public class CsvDataFormatTest {
     void shouldIgnoreSurroundingSpaces() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setIgnoreSurroundingSpaces(true);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.TRUE, dataFormat.getIgnoreSurroundingSpaces());
 
         // Properly used
@@ -258,9 +260,10 @@ public class CsvDataFormatTest {
     void shouldNotIgnoreSurroundingSpaces() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setIgnoreSurroundingSpaces(false);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.FALSE, dataFormat.getIgnoreSurroundingSpaces());
 
         // Properly used
@@ -272,9 +275,10 @@ public class CsvDataFormatTest {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setNullStringDisabled(true)
                 .setNullString("****");
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertTrue(dataFormat.isNullStringDisabled());
         assertEquals("****", dataFormat.getNullString());
 
@@ -286,9 +290,10 @@ public class CsvDataFormatTest {
     void shouldOverrideNullString() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setNullString("****");
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals("****", dataFormat.getNullString());
 
         // Properly used
@@ -300,9 +305,10 @@ public class CsvDataFormatTest {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setQuoteDisabled(true)
                 .setQuote('q');
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertTrue(dataFormat.isQuoteDisabled());
         assertEquals(Character.valueOf('q'), dataFormat.getQuote());
 
@@ -314,9 +320,10 @@ public class CsvDataFormatTest {
     void shouldOverrideQuote() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setQuote('q');
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Character.valueOf('q'), dataFormat.getQuote());
 
         // Properly used
@@ -327,9 +334,10 @@ public class CsvDataFormatTest {
     void shouldOverrideQuoteMode() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setQuoteMode(QuoteMode.ALL);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(QuoteMode.ALL, dataFormat.getQuoteMode());
 
         // Properly used
@@ -341,9 +349,10 @@ public class CsvDataFormatTest {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setRecordSeparatorDisabled(true)
                 .setRecordSeparator("separator");
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertTrue(dataFormat.isRecordSeparatorDisabled());
         assertEquals("separator", dataFormat.getRecordSeparator());
 
@@ -355,9 +364,10 @@ public class CsvDataFormatTest {
     void shouldOverrideRecordSeparator() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setRecordSeparator("separator");
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals("separator", dataFormat.getRecordSeparator());
 
         // Properly used
@@ -368,9 +378,10 @@ public class CsvDataFormatTest {
     void shouldSkipHeaderRecord() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setSkipHeaderRecord(true);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.TRUE, dataFormat.getSkipHeaderRecord());
 
         // Properly used
@@ -381,9 +392,10 @@ public class CsvDataFormatTest {
     void shouldNotSkipHeaderRecord() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setSkipHeaderRecord(false);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.FALSE, dataFormat.getSkipHeaderRecord());
 
         // Properly used
@@ -394,9 +406,10 @@ public class CsvDataFormatTest {
     void shouldHandleLazyLoad() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setLazyLoad(true);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertTrue(dataFormat.isLazyLoad());
 
         // Properly used (it doesn't modify the format)
@@ -407,9 +420,10 @@ public class CsvDataFormatTest {
     void shouldHandleUseMaps() {
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setUseMaps(true);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertTrue(dataFormat.isUseMaps());
 
         // Properly used (it doesn't modify the format)
@@ -427,9 +441,10 @@ public class CsvDataFormatTest {
 
         CsvDataFormat dataFormat = new CsvDataFormat()
                 .setRecordConverter(converter);
+        dataFormat.start();
 
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertSame(converter, dataFormat.getRecordConverter());
 
         // Properly used (it doesn't modify the format)
@@ -440,24 +455,27 @@ public class CsvDataFormatTest {
     void testTrim() {
         // Set to TRUE
         CsvDataFormat dataFormat = new CsvDataFormat().setTrim(true);
+        dataFormat.start();
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.TRUE, dataFormat.getTrim());
         // Properly used
         assertTrue(dataFormat.getActiveFormat().getTrim());
 
         // NOT set
         dataFormat = new CsvDataFormat();
+        dataFormat.start();
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertNull(dataFormat.getTrim());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrim());
 
         // Set to false
         dataFormat = new CsvDataFormat().setTrim(false);
+        dataFormat.start();
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.FALSE, dataFormat.getTrim());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrim());
@@ -468,24 +486,27 @@ public class CsvDataFormatTest {
     void testIgnoreHeaderCase() {
         // Set to TRUE
         CsvDataFormat dataFormat = new CsvDataFormat().setIgnoreHeaderCase(true);
+        dataFormat.start();
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.TRUE, dataFormat.getIgnoreHeaderCase());
         // Properly used
         assertTrue(dataFormat.getActiveFormat().getIgnoreHeaderCase());
 
         // NOT set
         dataFormat = new CsvDataFormat();
+        dataFormat.start();
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertNull(dataFormat.getIgnoreHeaderCase());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getIgnoreHeaderCase());
 
         // Set to false
         dataFormat = new CsvDataFormat().setIgnoreHeaderCase(false);
+        dataFormat.start();
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.FALSE, dataFormat.getIgnoreHeaderCase());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getIgnoreHeaderCase());
@@ -495,24 +516,27 @@ public class CsvDataFormatTest {
     void testTrailingDelimiter() {
         // Set to TRUE
         CsvDataFormat dataFormat = new CsvDataFormat().setTrailingDelimiter(true);
+        dataFormat.start();
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.TRUE, dataFormat.getTrailingDelimiter());
         // Properly used
         assertTrue(dataFormat.getActiveFormat().getTrailingDelimiter());
 
         // NOT set
         dataFormat = new CsvDataFormat();
+        dataFormat.start();
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertNull(dataFormat.getTrailingDelimiter());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrailingDelimiter());
 
         // Set to false
         dataFormat = new CsvDataFormat().setTrailingDelimiter(false);
+        dataFormat.start();
         // Properly saved
-        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertSame(CSVFormat.DEFAULT, dataFormat.getCsvFormat());
         assertEquals(Boolean.FALSE, dataFormat.getTrailingDelimiter());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrailingDelimiter());

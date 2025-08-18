@@ -8259,31 +8259,12 @@ value: false
   <xs:complexType name="csvDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-To configure the CSV headers.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute name="formatRef" type="xs:string">
+        <xs:sequence/>
+        <xs:attribute name="format" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="formatName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The name of the format to use, the default value is CSVFormat.DEFAULT. Default value: DEFAULT
+The format to use. Default value: DEFAULT
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8338,6 +8319,15 @@ Sets the escape character to use.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Use for disabling headers. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="header" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To configure the CSV headers. Multiple headers can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>

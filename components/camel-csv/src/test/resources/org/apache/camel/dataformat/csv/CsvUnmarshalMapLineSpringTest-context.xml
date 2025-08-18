@@ -34,22 +34,14 @@
     <route>
       <from uri="direct:explicitHeader"/>
       <unmarshal>
-        <csv delimiter="|" useMaps="true">
-          <header>MyOrderId</header>
-          <header>MyItem</header>
-          <header>MyAmount</header>
-        </csv>
+        <csv delimiter="|" useMaps="true" header="MyOrderId,MyItem,MyAmount"/>
       </unmarshal>
       <to uri="mock:result"/>
     </route>
     <route>
       <from uri="direct:replaceHeader"/>
       <unmarshal>
-        <csv delimiter="|" useMaps="true" skipHeaderRecord="true">
-          <header>MyOrderId</header>
-          <header>MyItem</header>
-          <header>MyAmount</header>
-        </csv>
+        <csv delimiter="|" useMaps="true" skipHeaderRecord="true" header="MyOrderId,MyItem,MyAmount"/>
       </unmarshal>
       <to uri="mock:result"/>
     </route>

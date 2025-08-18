@@ -16,5 +16,28 @@ to their implementation using reflection-free configurers. A few data formats ha
 |crypto|algorithmParameterRef|algorithmParameterSpec
 |crypto|keyRef|key
 |crypto|initVectorRef|initVector
+|csv|formatRef|format
+|csv|formatName|format
 |===
+
+And in XML DSL the csv dataformat have changed `header` from a `List<String>` to be a single `String`
+where the header values are seperated by comma. This is more tooling friendly and also how other components
+and dataformats are configured.
+
+For example:
+
+[source,xml]
+----
+<csv format="EXCEL" delimiter="|" skipHeaderRecord="true">
+  <header>orderId</header>
+  <header>amount</header>
+</csv>
+----
+
+Should be changed to:
+
+[source,xml]
+----
+<csv format="EXCEL" delimiter="|" skipHeaderRecord="true" header="orderId,amount"/>
+----
 

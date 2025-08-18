@@ -1821,8 +1821,8 @@ public class ModelParser extends BaseParser {
                 case "delimiter": def.setDelimiter(val); yield true;
                 case "escape": def.setEscape(val); yield true;
                 case "escapeDisabled": def.setEscapeDisabled(val); yield true;
-                case "formatName": def.setFormatName(val); yield true;
-                case "formatRef": def.setFormatRef(val); yield true;
+                case "format": def.setFormat(val); yield true;
+                case "header": def.setHeader(val); yield true;
                 case "headerDisabled": def.setHeaderDisabled(val); yield true;
                 case "ignoreEmptyLines": def.setIgnoreEmptyLines(val); yield true;
                 case "ignoreHeaderCase": def.setIgnoreHeaderCase(val); yield true;
@@ -1843,10 +1843,7 @@ public class ModelParser extends BaseParser {
                 case "useMaps": def.setUseMaps(val); yield true;
                 case "useOrderedMaps": def.setUseOrderedMaps(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "header": doAdd(doParseText(), def.getHeader(), def::setHeader); yield true;
-                default: yield false;
-            }, noValueHandler());
+            }, noElementHandler(), noValueHandler());
     }
     protected CustomDataFormat doParseCustomDataFormat() throws IOException, XmlPullParserException {
         return doParse(new CustomDataFormat(), (def, key, val) -> switch (key) {

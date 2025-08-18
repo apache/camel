@@ -29,6 +29,7 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
         map.put("Delimiter", java.lang.Character.class);
         map.put("Escape", java.lang.Character.class);
         map.put("EscapeDisabled", boolean.class);
+        map.put("Format", java.lang.String.class);
         map.put("Header", java.lang.String.class);
         map.put("HeaderDisabled", boolean.class);
         map.put("IgnoreEmptyLines", java.lang.Boolean.class);
@@ -66,6 +67,7 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
         case "escape": target.setEscape(property(camelContext, java.lang.Character.class, value)); return true;
         case "escapedisabled":
         case "escapeDisabled": target.setEscapeDisabled(property(camelContext, boolean.class, value)); return true;
+        case "format": target.setFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "header": target.setHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "headerdisabled":
         case "headerDisabled": target.setHeaderDisabled(property(camelContext, boolean.class, value)); return true;
@@ -123,6 +125,7 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
         case "escape": return java.lang.Character.class;
         case "escapedisabled":
         case "escapeDisabled": return boolean.class;
+        case "format": return java.lang.String.class;
         case "header": return java.lang.String.class;
         case "headerdisabled":
         case "headerDisabled": return boolean.class;
@@ -176,6 +179,7 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
         case "escape": return target.getEscape();
         case "escapedisabled":
         case "escapeDisabled": return target.isEscapeDisabled();
+        case "format": return target.getFormat();
         case "header": return target.getHeader();
         case "headerdisabled":
         case "headerDisabled": return target.isHeaderDisabled();

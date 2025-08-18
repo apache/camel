@@ -2974,9 +2974,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "delimiter", type = "string", description = "Sets the delimiter to use. The default value is , (comma)", displayName = "Delimiter"),
                     @YamlProperty(name = "escape", type = "string", description = "Sets the escape character to use", displayName = "Escape"),
                     @YamlProperty(name = "escapeDisabled", type = "boolean", description = "Use for disabling using escape character", displayName = "Escape Disabled"),
-                    @YamlProperty(name = "formatName", type = "enum:DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180", defaultValue = "DEFAULT", description = "The name of the format to use, the default value is CSVFormat.DEFAULT", displayName = "Format Name"),
-                    @YamlProperty(name = "formatRef", type = "string", description = "The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT", displayName = "Format Ref"),
-                    @YamlProperty(name = "header", type = "array:string", description = "To configure the CSV headers", displayName = "Header"),
+                    @YamlProperty(name = "format", type = "enum:DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MONGODB_CSV,MONGODB_TSV,MYSQL,ORACLE,POSTGRESQL_CSV,POSTGRESQL_TEXT,RFC4180", defaultValue = "DEFAULT", description = "The format to use.", displayName = "Format"),
+                    @YamlProperty(name = "header", type = "string", description = "To configure the CSV headers. Multiple headers can be separated by comma.", displayName = "Header"),
                     @YamlProperty(name = "headerDisabled", type = "boolean", description = "Use for disabling headers", displayName = "Header Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreEmptyLines", type = "boolean", description = "Whether to ignore empty lines.", displayName = "Ignore Empty Lines"),
@@ -3054,18 +3053,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setEscapeDisabled(val);
                     break;
                 }
-                case "formatName": {
+                case "format": {
                     String val = asText(node);
-                    target.setFormatName(val);
-                    break;
-                }
-                case "formatRef": {
-                    String val = asText(node);
-                    target.setFormatRef(val);
+                    target.setFormat(val);
                     break;
                 }
                 case "header": {
-                    java.util.List<String> val = asStringList(node);
+                    String val = asText(node);
                     target.setHeader(val);
                     break;
                 }

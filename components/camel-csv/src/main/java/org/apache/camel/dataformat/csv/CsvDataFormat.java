@@ -38,7 +38,8 @@ import org.apache.commons.csv.QuoteMode;
 @Dataformat("csv")
 public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     // CSV format options
-    private CSVFormat format = CSVFormat.DEFAULT;
+    private CSVFormat csvFormat = CSVFormat.DEFAULT;
+    private String format;
     private boolean commentMarkerDisabled;
     private Character commentMarker;
     private Character delimiter;
@@ -77,7 +78,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     public CsvDataFormat(CSVFormat format) {
-        setFormat(format);
+        csvFormat = format;
     }
 
     @Override
@@ -105,6 +106,13 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         super.doInit();
         marshaller = marshallerFactory.create(getActiveFormat(), this);
         unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
+
+        if (csvFormat == null && format != null) {
+            csvFormat = CSVFormat.valueOf(format);
+        }
+        if (csvFormat == null) {
+            csvFormat = CSVFormat.DEFAULT;
+        }
     }
 
     @Override
@@ -113,7 +121,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     CSVFormat getActiveFormat() {
-        CSVFormat answer = format;
+        CSVFormat answer = csvFormat;
 
         if (commentMarkerDisabled) {
             answer = answer.withCommentMarker(null); // null disables the comment marker
@@ -197,30 +205,6 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     //region Getters/Setters
 
     /**
-     * Gets the CSV format before applying any changes. It cannot be {@code null}, the default one is
-     * {@link org.apache.commons.csv.CSVFormat#DEFAULT}.
-     *
-     * @return CSV format
-     */
-    public CSVFormat getFormat() {
-        return format;
-    }
-
-    /**
-     * Sets the CSV format before applying any changes. If {@code null}, then
-     * {@link org.apache.commons.csv.CSVFormat#DEFAULT} is used instead.
-     *
-     * @param  format CSV format
-     * @return        Current {@code CsvDataFormat}, fluent API
-     * @see           org.apache.commons.csv.CSVFormat
-     * @see           org.apache.commons.csv.CSVFormat#DEFAULT
-     */
-    public CsvDataFormat setFormat(CSVFormat format) {
-        this.format = (format == null) ? CSVFormat.DEFAULT : format;
-        return this;
-    }
-
-    /**
      * Sets the {@link CsvMarshaller} factory. If {@code null}, then {@link CsvMarshallerFactory#DEFAULT} is used
      * instead.
      *
@@ -241,31 +225,16 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         return marshallerFactory;
     }
 
-    /**
-     * Sets the CSV format by name before applying any changes.
-     *
-     * @param  name CSV format name
-     * @return      Current {@code CsvDataFormat}, fluent API
-     * @see         #setFormat(org.apache.commons.csv.CSVFormat)
-     * @see         org.apache.commons.csv.CSVFormat
-     */
-    public CsvDataFormat setFormatName(String name) {
-        if (name == null) {
-            setFormat(null);
-        } else if ("DEFAULT".equals(name)) {
-            setFormat(CSVFormat.DEFAULT);
-        } else if ("RFC4180".equals(name)) {
-            setFormat(CSVFormat.RFC4180);
-        } else if ("EXCEL".equals(name)) {
-            setFormat(CSVFormat.EXCEL);
-        } else if ("TDF".equals(name)) {
-            setFormat(CSVFormat.TDF);
-        } else if ("MYSQL".equals(name)) {
-            setFormat(CSVFormat.MYSQL);
-        } else {
-            throw new IllegalArgumentException("Unsupported format");
-        }
-        return this;
+    public CSVFormat getCsvFormat() {
+        return csvFormat;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     /**

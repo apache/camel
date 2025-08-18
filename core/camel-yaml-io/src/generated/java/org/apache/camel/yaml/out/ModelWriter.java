@@ -2505,18 +2505,17 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("escape", def.getEscape(), null);
         doWriteAttribute("nullStringDisabled", def.getNullStringDisabled(), null);
         doWriteAttribute("commentMarker", def.getCommentMarker(), null);
-        doWriteAttribute("formatRef", def.getFormatRef(), null);
         doWriteAttribute("quoteMode", def.getQuoteMode(), null);
-        doWriteAttribute("formatName", def.getFormatName(), "DEFAULT");
+        doWriteAttribute("format", def.getFormat(), "DEFAULT");
         doWriteAttribute("ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), null);
         doWriteAttribute("quoteDisabled", def.getQuoteDisabled(), null);
         doWriteAttribute("useOrderedMaps", def.getUseOrderedMaps(), null);
         doWriteAttribute("ignoreHeaderCase", def.getIgnoreHeaderCase(), null);
+        doWriteAttribute("header", def.getHeader(), null);
         doWriteAttribute("recordSeparatorDisabled", def.getRecordSeparatorDisabled(), null);
         doWriteAttribute("captureHeaderRecord", def.getCaptureHeaderRecord(), null);
         doWriteAttribute("marshallerFactoryRef", def.getMarshallerFactoryRef(), null);
         doWriteAttribute("recordSeparator", def.getRecordSeparator(), null);
-        doWriteList(null, "header", def.getHeader(), this::doWriteString);
         endElement(name);
     }
     protected void doWriteCustomDataFormat(String name, CustomDataFormat def) throws IOException {

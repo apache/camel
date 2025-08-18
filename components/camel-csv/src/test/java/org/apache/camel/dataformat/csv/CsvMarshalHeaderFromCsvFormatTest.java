@@ -112,8 +112,6 @@ public class CsvMarshalHeaderFromCsvFormatTest extends CamelTestSupport {
                 .setIgnoreSurroundingSpaces(true)
                 .setHeader("first_name", "last_name")
                 .get();
-        CsvDataFormat dataFormat = new CsvDataFormat();
-        dataFormat.setFormat(format);
-        return dataFormat;
+        return new CsvDataFormat(format);
     }
 }
