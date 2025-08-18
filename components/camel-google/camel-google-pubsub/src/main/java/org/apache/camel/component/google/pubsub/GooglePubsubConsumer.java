@@ -142,11 +142,16 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                 }
 
                 localLog.debug("Exit run for subscription {}", subscriptionName);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                localLog.error("Failure getting messages from PubSub", e);
             } catch (Exception e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
                 localLog.error("Failure getting messages from PubSub", e);
+
+                // allow camel error handler to be aware
+                if (endpoint.isBridgeErrorHandler()) {
+                    getExceptionHandler().handleException(e);
+                }
             }
         }
 
@@ -161,6 +166,11 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                     subscriber.awaitTerminated();
                 } catch (Exception e) {
                     localLog.error("Failure getting messages from PubSub", e);
+
+                    // allow camel error handler to be aware
+                    if (endpoint.isBridgeErrorHandler()) {
+                        getExceptionHandler().handleException(e);
+                    }
                 } finally {
                     localLog.debug("Stopping async subscriber {}", subscriptionName);
                     subscriber.stopAsync();
