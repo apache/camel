@@ -7928,7 +7928,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ignoreJAXBElement", type = "boolean", description = "Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.", displayName = "Ignore JAXBElement"),
                     @YamlProperty(name = "jaxbProviderProperties", type = "string", description = "Refers to a custom java.util.Map to lookup in the registry containing custom JAXB provider properties to be used with the JAXB marshaller.", displayName = "Jaxb Provider Properties"),
                     @YamlProperty(name = "mustBeJAXBElement", type = "boolean", description = "Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be set to false to relax that, such as when the data is already in XML format.", displayName = "Must Be JAXBElement"),
-                    @YamlProperty(name = "namespacePrefixRef", type = "string", description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.", displayName = "Namespace Prefix Ref"),
+                    @YamlProperty(name = "namespacePrefix", type = "string", description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.", displayName = "Namespace Prefix"),
                     @YamlProperty(name = "noNamespaceSchemaLocation", type = "string", description = "To define the location of the namespaceless schema", displayName = "No Namespace Schema Location"),
                     @YamlProperty(name = "objectFactory", type = "boolean", description = "Whether to allow using ObjectFactory classes to create the POJO classes during marshalling. This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.", displayName = "Object Factory"),
                     @YamlProperty(name = "partClass", type = "string", description = "Name of class used for fragment parsing. See more details at the fragment option.", displayName = "Part Class"),
@@ -8010,9 +8010,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setMustBeJAXBElement(val);
                     break;
                 }
-                case "namespacePrefixRef": {
+                case "namespacePrefix": {
                     String val = asText(node);
-                    target.setNamespacePrefixRef(val);
+                    target.setNamespacePrefix(val);
                     break;
                 }
                 case "noNamespaceSchemaLocation": {
@@ -17182,10 +17182,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "contextPath", type = "string", required = true, description = "Package name where your JAXB classes are located.", displayName = "Context Path"),
-                    @YamlProperty(name = "elementNameStrategyRef", type = "string", description = "Refers to an element strategy to lookup from the registry. An element name strategy is used for two purposes. The first is to find a xml element name for a given object and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name. The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and namespace from the XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault All three classes is located in the package name org.apache.camel.dataformat.soap.name If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy.", displayName = "Element Name Strategy Ref"),
+                    @YamlProperty(name = "elementNameStrategy", type = "string", description = "Refers to an element strategy to lookup from the registry. An element name strategy is used for two purposes. The first is to find a xml element name for a given object and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name. The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and namespace from the XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault All three classes is located in the package name org.apache.camel.dataformat.soap.name If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy.", displayName = "Element Name Strategy"),
                     @YamlProperty(name = "encoding", type = "string", description = "To overrule and use a specific encoding", displayName = "Encoding"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "namespacePrefixRef", type = "string", description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.", displayName = "Namespace Prefix Ref"),
+                    @YamlProperty(name = "namespacePrefix", type = "string", description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.", displayName = "Namespace Prefix"),
                     @YamlProperty(name = "schema", type = "string", description = "To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource should be resolved. You can separate multiple schema files by using the ',' character.", displayName = "Schema"),
                     @YamlProperty(name = "version", type = "enum:1.1,1.2", defaultValue = "1.1", description = "SOAP version should either be 1.1 or 1.2. Is by default 1.1", displayName = "Version")
             }
@@ -17215,9 +17215,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setContextPath(val);
                     break;
                 }
-                case "elementNameStrategyRef": {
+                case "elementNameStrategy": {
                     String val = asText(node);
-                    target.setElementNameStrategyRef(val);
+                    target.setElementNameStrategy(val);
                     break;
                 }
                 case "encoding": {
@@ -17230,9 +17230,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setId(val);
                     break;
                 }
-                case "namespacePrefixRef": {
+                case "namespacePrefix": {
                     String val = asText(node);
-                    target.setNamespacePrefixRef(val);
+                    target.setNamespacePrefix(val);
                     break;
                 }
                 case "schema": {

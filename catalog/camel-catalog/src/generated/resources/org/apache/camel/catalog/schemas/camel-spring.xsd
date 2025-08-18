@@ -9346,12 +9346,12 @@ XML namespace to use for fragment parsing. See more details at the fragment opti
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="namespacePrefixRef" type="xs:string">
+        <xs:attribute name="namespacePrefix" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2,
-ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.
+When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes, such as
+ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10051,7 +10051,7 @@ To overrule and use a specific encoding.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="elementNameStrategyRef" type="xs:string">
+        <xs:attribute name="elementNameStrategy" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -10078,7 +10078,7 @@ SOAP version should either be 1.1 or 1.2. Is by default 1.1. Default value: 1.1
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="namespacePrefixRef" type="xs:string">
+        <xs:attribute name="namespacePrefix" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
