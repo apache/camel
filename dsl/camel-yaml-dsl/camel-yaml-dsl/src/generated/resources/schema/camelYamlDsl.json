@@ -10377,9 +10377,9 @@
             "title" : "Algorithm",
             "description" : "The JCE algorithm name indicating the cryptographic algorithm that will be used."
           },
-          "algorithmParameterRef" : {
+          "algorithmParameterSpec" : {
             "type" : "string",
-            "title" : "Algorithm Parameter Ref",
+            "title" : "Algorithm Parameter Spec",
             "description" : "A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type."
           },
           "bufferSize" : {
@@ -10398,9 +10398,9 @@
             "title" : "Id",
             "description" : "The id of this node"
           },
-          "initVectorRef" : {
+          "initVector" : {
             "type" : "string",
-            "title" : "Init Vector Ref",
+            "title" : "Init Vector",
             "description" : "Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher."
           },
           "inline" : {
@@ -10408,9 +10408,9 @@
             "title" : "Inline",
             "description" : "Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false."
           },
-          "keyRef" : {
+          "key" : {
             "type" : "string",
-            "title" : "Key Ref",
+            "title" : "Key",
             "description" : "Refers to the secret key to lookup from the register to use."
           },
           "macAlgorithm" : {

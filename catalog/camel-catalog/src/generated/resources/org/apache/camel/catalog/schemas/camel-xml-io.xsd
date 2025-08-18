@@ -6851,7 +6851,7 @@ The JCE algorithm name indicating the cryptographic algorithm that will be used.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="keyRef" type="xs:string">
+        <xs:attribute name="key" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -6869,7 +6869,7 @@ The name of the JCE Security Provider that should be used.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="initVectorRef" type="xs:string">
+        <xs:attribute name="initVector" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -6878,7 +6878,7 @@ Refers to a byte array containing the Initialization Vector that will be used to
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="algorithmParameterRef" type="xs:string">
+        <xs:attribute name="algorithmParameterSpec" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[

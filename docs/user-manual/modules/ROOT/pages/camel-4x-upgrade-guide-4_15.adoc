@@ -5,3 +5,16 @@ from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then 
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.14 to 4.15
+
+=== Data Formats
+
+The data formats has been refactored to ensure their options are consistent and can be mapped from the DSL
+to their implementation using reflection-free configurers. A few data formats has therefore changed some option names:
+
+|===
+|**Data Format** |**Old Name** |**New Name**
+|crypto|algorithmParameterRef|algorithmParameterSpec
+|crypto|keyRef|key
+|crypto|initVectorRef|initVector
+|===
+

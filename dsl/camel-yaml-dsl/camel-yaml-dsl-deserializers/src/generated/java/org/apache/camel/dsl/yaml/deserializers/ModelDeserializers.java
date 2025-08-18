@@ -2874,13 +2874,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "algorithm", type = "string", description = "The JCE algorithm name indicating the cryptographic algorithm that will be used.", displayName = "Algorithm"),
-                    @YamlProperty(name = "algorithmParameterRef", type = "string", description = "A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type.", displayName = "Algorithm Parameter Ref"),
+                    @YamlProperty(name = "algorithmParameterSpec", type = "string", description = "A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type.", displayName = "Algorithm Parameter Spec"),
                     @YamlProperty(name = "bufferSize", type = "number", defaultValue = "4096", description = "The size of the buffer used in the signature process.", displayName = "Buffer Size"),
                     @YamlProperty(name = "cryptoProvider", type = "string", description = "The name of the JCE Security Provider that should be used.", displayName = "Crypto Provider"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "initVectorRef", type = "string", description = "Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.", displayName = "Init Vector Ref"),
+                    @YamlProperty(name = "initVector", type = "string", description = "Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.", displayName = "Init Vector"),
                     @YamlProperty(name = "inline", type = "boolean", description = "Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false.", displayName = "Inline"),
-                    @YamlProperty(name = "keyRef", type = "string", description = "Refers to the secret key to lookup from the register to use.", displayName = "Key Ref"),
+                    @YamlProperty(name = "key", type = "string", description = "Refers to the secret key to lookup from the register to use.", displayName = "Key"),
                     @YamlProperty(name = "macAlgorithm", type = "string", defaultValue = "HmacSHA1", description = "The JCE algorithm name indicating the Message Authentication algorithm.", displayName = "Mac Algorithm"),
                     @YamlProperty(name = "shouldAppendHMAC", type = "boolean", description = "Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.", displayName = "Should Append HMAC")
             }
@@ -2905,9 +2905,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAlgorithm(val);
                     break;
                 }
-                case "algorithmParameterRef": {
+                case "algorithmParameterSpec": {
                     String val = asText(node);
-                    target.setAlgorithmParameterRef(val);
+                    target.setAlgorithmParameterSpec(val);
                     break;
                 }
                 case "bufferSize": {
@@ -2925,9 +2925,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setId(val);
                     break;
                 }
-                case "initVectorRef": {
+                case "initVector": {
                     String val = asText(node);
-                    target.setInitVectorRef(val);
+                    target.setInitVector(val);
                     break;
                 }
                 case "inline": {
@@ -2935,9 +2935,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInline(val);
                     break;
                 }
-                case "keyRef": {
+                case "key": {
                     String val = asText(node);
-                    target.setKeyRef(val);
+                    target.setKey(val);
                     break;
                 }
                 case "macAlgorithm": {
