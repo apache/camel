@@ -2017,15 +2017,6 @@ Throws an exception
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="tidyMarkup" type="tns:tidyMarkupDataFormat">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Parse (potentially invalid) HTML into valid HTML or DOM.
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="to" type="tns:toDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -6251,7 +6242,6 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
-            <xs:element ref="tns:tidyMarkup"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
@@ -8794,15 +8784,6 @@ The flag indicating that messages must be marshalled in a JSON format. Default v
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
-        <xs:attribute name="writeConfigRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to a specific configuration to use when marshalling a message to lookup from the registry.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="writeInJson" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -8822,11 +8803,20 @@ the namespace used.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="readConfigRef" type="xs:string">
+        <xs:attribute name="readConfig" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
 Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="writeConfig" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a specific configuration to use when marshalling a message to lookup from the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8920,32 +8910,6 @@ value is binary. Default value: binary
 Whether the data format should set the Content-Type header with the type from the data format. For example
 application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON. Default
 value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="tidyMarkupDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="dataObjectType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node.
-Default value: org.w3c.dom.Node
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="omitXmlDeclaration" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-When returning a String, do we omit the XML declaration in the top. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13595,7 +13559,6 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
-            <xs:element ref="tns:tidyMarkup"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
@@ -15870,7 +15833,6 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:syslog"/>
         <xs:element ref="tns:tarFile"/>
         <xs:element ref="tns:thrift"/>
-        <xs:element ref="tns:tidyMarkup"/>
         <xs:element ref="tns:univocityCsv"/>
         <xs:element ref="tns:univocityFixed"/>
         <xs:element ref="tns:univocityTsv"/>
@@ -16720,7 +16682,6 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
-            <xs:element ref="tns:tidyMarkup"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>

@@ -173,7 +173,6 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
-import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
@@ -3523,7 +3522,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "tidyMarkup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "toType", type = "string", description = "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'.", displayName = "To Type"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
@@ -3729,11 +3727,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "tidyMarkup": {
-                    org.apache.camel.model.dataformat.TidyMarkupDataFormat val = asType(node, org.apache.camel.model.dataformat.TidyMarkupDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
                 case "univocityCsv": {
                     org.apache.camel.model.dataformat.UniVocityCsvDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityCsvDataFormat.class);
                     target.setDataFormatType(val);
@@ -3846,7 +3839,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
-                    @YamlProperty(name = "tidyMarkup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
@@ -4228,16 +4220,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "thrift": {
                     org.apache.camel.model.dataformat.ThriftDataFormat val = asType(node, org.apache.camel.model.dataformat.ThriftDataFormat.class);
-                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setDataFormats(existing);
-                    break;
-                }
-                case "tidyMarkup": {
-                    org.apache.camel.model.dataformat.TidyMarkupDataFormat val = asType(node, org.apache.camel.model.dataformat.TidyMarkupDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -9752,7 +9734,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "tidyMarkup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
@@ -9961,11 +9942,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "thrift": {
                     org.apache.camel.model.dataformat.ThriftDataFormat val = asType(node, org.apache.camel.model.dataformat.ThriftDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "tidyMarkup": {
-                    org.apache.camel.model.dataformat.TidyMarkupDataFormat val = asType(node, org.apache.camel.model.dataformat.TidyMarkupDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -18002,9 +17978,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "readConfigRef", type = "string", description = "Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry.", displayName = "Read Config Ref"),
+                    @YamlProperty(name = "readConfig", type = "string", description = "Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry.", displayName = "Read Config"),
                     @YamlProperty(name = "readMessageId", type = "string", description = "The type of MX message to produce when unmarshalling an input stream. If not set, it will be automatically detected from the namespace used.", displayName = "Read Message Id"),
-                    @YamlProperty(name = "writeConfigRef", type = "string", description = "Refers to a specific configuration to use when marshalling a message to lookup from the registry.", displayName = "Write Config Ref"),
+                    @YamlProperty(name = "writeConfig", type = "string", description = "Refers to a specific configuration to use when marshalling a message to lookup from the registry.", displayName = "Write Config"),
                     @YamlProperty(name = "writeInJson", type = "boolean", description = "The flag indicating that messages must be marshalled in a JSON format.", displayName = "Write In Json")
             }
     )
@@ -18028,9 +18004,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setId(val);
                     break;
                 }
-                case "readConfigRef": {
+                case "readConfig": {
                     String val = asText(node);
-                    target.setReadConfigRef(val);
+                    target.setReadConfig(val);
                     break;
                 }
                 case "readMessageId": {
@@ -18038,9 +18014,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setReadMessageId(val);
                     break;
                 }
-                case "writeConfigRef": {
+                case "writeConfig": {
                     String val = asText(node);
-                    target.setWriteConfigRef(val);
+                    target.setWriteConfig(val);
                     break;
                 }
                 case "writeInJson": {
@@ -18636,57 +18612,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     String val = asText(node);
                     target.setDescription(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "tidyMarkup",
-            types = org.apache.camel.model.dataformat.TidyMarkupDataFormat.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "TidyMarkup",
-            description = "Parse (potentially invalid) HTML into valid HTML or DOM.",
-            deprecated = false,
-            properties = {
-                    @YamlProperty(name = "dataObjectType", type = "enum:org.w3c.dom.Node,java.lang.String", defaultValue = "org.w3c.dom.Node", description = "What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node", displayName = "Data Object Type"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "omitXmlDeclaration", type = "boolean", description = "When returning a String, do we omit the XML declaration in the top.", displayName = "Omit Xml Declaration")
-            }
-    )
-    public static class TidyMarkupDataFormatDeserializer extends YamlDeserializerBase<TidyMarkupDataFormat> {
-        public TidyMarkupDataFormatDeserializer() {
-            super(TidyMarkupDataFormat.class);
-        }
-
-        @Override
-        protected TidyMarkupDataFormat newInstance() {
-            return new TidyMarkupDataFormat();
-        }
-
-        @Override
-        protected boolean setProperty(TidyMarkupDataFormat target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "dataObjectType": {
-                    String val = asText(node);
-                    target.setDataObjectTypeName(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "omitXmlDeclaration": {
-                    String val = asText(node);
-                    target.setOmitXmlDeclaration(val);
                     break;
                 }
                 default: {
@@ -19981,7 +19906,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "tidyMarkup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
@@ -20195,11 +20119,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "thrift": {
                     org.apache.camel.model.dataformat.ThriftDataFormat val = asType(node, org.apache.camel.model.dataformat.ThriftDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "tidyMarkup": {
-                    org.apache.camel.model.dataformat.TidyMarkupDataFormat val = asType(node, org.apache.camel.model.dataformat.TidyMarkupDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

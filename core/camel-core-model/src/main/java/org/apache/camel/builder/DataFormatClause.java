@@ -18,8 +18,6 @@ package org.apache.camel.builder;
 
 import java.util.Map;
 
-import org.w3c.dom.Node;
-
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.ProcessorDefinition;

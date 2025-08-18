@@ -17,7 +17,6 @@
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
-import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;

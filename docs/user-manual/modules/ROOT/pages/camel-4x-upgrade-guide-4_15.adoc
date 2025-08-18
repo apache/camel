@@ -47,3 +47,5 @@ Should be changed to:
 <csv format="EXCEL" delimiter="|" skipHeaderRecord="true" header="orderId,amount"/>
 ----
 
+Removed the `tidyMarkup` DataFormat in the DSL as the implementation has been removed in earlier version,
+but we forgot to remove it from the DSL model.

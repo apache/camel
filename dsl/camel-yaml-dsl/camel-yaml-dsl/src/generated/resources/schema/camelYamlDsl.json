@@ -2906,8 +2906,6 @@
               }, {
                 "required" : [ "thrift" ]
               }, {
-                "required" : [ "tidyMarkup" ]
-              }, {
                 "required" : [ "univocityCsv" ]
               }, {
                 "required" : [ "univocityFixed" ]
@@ -3213,14 +3211,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tidyMarkup" ],
-            "properties" : {
-              "tidyMarkup" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "univocityCsv" ],
             "properties" : {
               "univocityCsv" : {
@@ -3340,7 +3330,6 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
-          "tidyMarkup" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
           "univocityTsv" : { },
@@ -7820,7 +7809,6 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
-          "tidyMarkup" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
           "univocityTsv" : { },
@@ -7914,8 +7902,6 @@
                 "required" : [ "tarFile" ]
               }, {
                 "required" : [ "thrift" ]
-              }, {
-                "required" : [ "tidyMarkup" ]
               }, {
                 "required" : [ "univocityCsv" ]
               }, {
@@ -8218,14 +8204,6 @@
             "properties" : {
               "thrift" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
-              }
-            }
-          }, {
-            "type" : "object",
-            "required" : [ "tidyMarkup" ],
-            "properties" : {
-              "tidyMarkup" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
               }
             }
           }, {
@@ -10723,9 +10701,6 @@
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
           },
-          "tidyMarkup" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
-          },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
@@ -11984,9 +11959,9 @@
             "title" : "Id",
             "description" : "The id of this node"
           },
-          "readConfigRef" : {
+          "readConfig" : {
             "type" : "string",
-            "title" : "Read Config Ref",
+            "title" : "Read Config",
             "description" : "Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry."
           },
           "readMessageId" : {
@@ -11994,9 +11969,9 @@
             "title" : "Read Message Id",
             "description" : "The type of MX message to produce when unmarshalling an input stream. If not set, it will be automatically detected from the namespace used."
           },
-          "writeConfigRef" : {
+          "writeConfig" : {
             "type" : "string",
-            "title" : "Write Config Ref",
+            "title" : "Write Config",
             "description" : "Refers to a specific configuration to use when marshalling a message to lookup from the registry."
           },
           "writeInJson" : {
@@ -12086,31 +12061,6 @@
             }
           }
         } ]
-      },
-      "org.apache.camel.model.dataformat.TidyMarkupDataFormat" : {
-        "title" : "TidyMarkup",
-        "description" : "Parse (potentially invalid) HTML into valid HTML or DOM.",
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "dataObjectType" : {
-            "type" : "string",
-            "title" : "Data Object Type",
-            "description" : "What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node",
-            "default" : "org.w3c.dom.Node",
-            "enum" : [ "org.w3c.dom.Node", "java.lang.String" ]
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node"
-          },
-          "omitXmlDeclaration" : {
-            "type" : "boolean",
-            "title" : "Omit Xml Declaration",
-            "description" : "When returning a String, do we omit the XML declaration in the top."
-          }
-        }
       },
       "org.apache.camel.model.dataformat.UniVocityCsvDataFormat" : {
         "title" : "uniVocity CSV",
@@ -16501,8 +16451,6 @@
               }, {
                 "required" : [ "thrift" ]
               }, {
-                "required" : [ "tidyMarkup" ]
-              }, {
                 "required" : [ "univocityCsv" ]
               }, {
                 "required" : [ "univocityFixed" ]
@@ -16800,14 +16748,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tidyMarkup" ],
-            "properties" : {
-              "tidyMarkup" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "univocityCsv" ],
             "properties" : {
               "univocityCsv" : {
@@ -16921,7 +16861,6 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
-          "tidyMarkup" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
           "univocityTsv" : { },

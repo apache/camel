@@ -319,8 +319,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     }
 
     /**
-     * When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes, such
-     * as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired
+     * When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes,
+     * such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired
      * mapping.
      */
     public void setNamespacePrefix(String namespacePrefix) {
