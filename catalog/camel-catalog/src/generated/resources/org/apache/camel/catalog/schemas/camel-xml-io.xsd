@@ -7528,7 +7528,7 @@ If the text is qualified with a character. Uses quote character by default.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="parserFactoryRef" type="xs:string">
+        <xs:attribute name="parserFactory" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -7639,6 +7639,15 @@ Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}). 
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
+        <xs:attribute name="parser" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a custom HL7 parser.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="validate" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

@@ -6168,7 +6168,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreExtraColumns", type = "boolean", description = "Allows for lines to be longer than expected and ignores the extra characters.", displayName = "Ignore Extra Columns"),
                     @YamlProperty(name = "ignoreFirstRecord", type = "boolean", description = "Whether the first line is ignored for delimited files (for the column headers). Is by default true.", displayName = "Ignore First Record"),
-                    @YamlProperty(name = "parserFactoryRef", type = "string", description = "References to a custom parser factory to lookup in the registry", displayName = "Parser Factory Ref"),
+                    @YamlProperty(name = "parserFactory", type = "string", description = "References to a custom parser factory to lookup in the registry", displayName = "Parser Factory"),
                     @YamlProperty(name = "textQualifier", type = "string", description = "If the text is qualified with a character. Uses quote character by default.", displayName = "Text Qualifier")
             }
     )
@@ -6222,9 +6222,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setIgnoreFirstRecord(val);
                     break;
                 }
-                case "parserFactoryRef": {
+                case "parserFactory": {
                     String val = asText(node);
-                    target.setParserFactoryRef(val);
+                    target.setParserFactory(val);
                     break;
                 }
                 case "textQualifier": {
@@ -6731,6 +6731,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "parser", type = "string", description = "To use a custom HL7 parser", displayName = "Parser"),
                     @YamlProperty(name = "validate", type = "boolean", description = "Whether to validate the HL7 message Is by default true.", displayName = "Validate")
             }
     )
@@ -6752,6 +6753,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "parser": {
+                    String val = asText(node);
+                    target.setParser(val);
                     break;
                 }
                 case "validate": {

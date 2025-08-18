@@ -11034,9 +11034,9 @@
             "title" : "Ignore First Record",
             "description" : "Whether the first line is ignored for delimited files (for the column headers). Is by default true."
           },
-          "parserFactoryRef" : {
+          "parserFactory" : {
             "type" : "string",
-            "title" : "Parser Factory Ref",
+            "title" : "Parser Factory",
             "description" : "References to a custom parser factory to lookup in the registry"
           },
           "textQualifier" : {
@@ -11136,6 +11136,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "parser" : {
+            "type" : "string",
+            "title" : "Parser",
+            "description" : "To use a custom HL7 parser"
           },
           "validate" : {
             "type" : "boolean",
