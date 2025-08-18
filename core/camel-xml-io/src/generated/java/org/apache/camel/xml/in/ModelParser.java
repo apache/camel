@@ -2008,7 +2008,7 @@ public class ModelParser extends BaseParser {
                 case "ignoreJAXBElement": def.setIgnoreJAXBElement(val); yield true;
                 case "jaxbProviderProperties": def.setJaxbProviderProperties(val); yield true;
                 case "mustBeJAXBElement": def.setMustBeJAXBElement(val); yield true;
-                case "namespacePrefixRef": def.setNamespacePrefixRef(val); yield true;
+                case "namespacePrefix": def.setNamespacePrefix(val); yield true;
                 case "noNamespaceSchemaLocation": def.setNoNamespaceSchemaLocation(val); yield true;
                 case "objectFactory": def.setObjectFactory(val); yield true;
                 case "partClass": def.setPartClass(val); yield true;
@@ -2138,9 +2138,9 @@ public class ModelParser extends BaseParser {
     protected SoapDataFormat doParseSoapDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SoapDataFormat(), (def, key, val) -> switch (key) {
                 case "contextPath": def.setContextPath(val); yield true;
-                case "elementNameStrategyRef": def.setElementNameStrategyRef(val); yield true;
+                case "elementNameStrategy": def.setElementNameStrategy(val); yield true;
                 case "encoding": def.setEncoding(val); yield true;
-                case "namespacePrefixRef": def.setNamespacePrefixRef(val); yield true;
+                case "namespacePrefix": def.setNamespacePrefix(val); yield true;
                 case "schema": def.setSchema(val); yield true;
                 case "version": def.setVersion(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);

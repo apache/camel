@@ -41,7 +41,7 @@ public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
         properties.put("partClass", definition.getPartClass());
         properties.put("partNamespace", definition.getPartNamespace());
         properties.put("encoding", definition.getEncoding());
-        properties.put("namespacePrefix", asRef(definition.getNamespacePrefixRef()));
+        properties.put("namespacePrefix", asRef(definition.getNamespacePrefix()));
         properties.put("schema", definition.getSchema());
         properties.put("schemaSeverityLevel", definition.getSchemaSeverityLevel());
         properties.put("xmlStreamWriterWrapper", definition.getXmlStreamWriterWrapper());

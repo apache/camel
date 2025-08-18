@@ -2714,11 +2714,11 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("contextPath", def.getContextPath(), null);
         doWriteAttribute("noNamespaceSchemaLocation", def.getNoNamespaceSchemaLocation(), null);
         doWriteAttribute("encoding", def.getEncoding(), null);
+        doWriteAttribute("namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute("fragment", def.getFragment(), null);
         doWriteAttribute("filterNonXmlChars", def.getFilterNonXmlChars(), null);
         doWriteAttribute("mustBeJAXBElement", def.getMustBeJAXBElement(), null);
         doWriteAttribute("objectFactory", def.getObjectFactory(), "true");
-        doWriteAttribute("namespacePrefixRef", def.getNamespacePrefixRef(), null);
         doWriteAttribute("partClass", def.getPartClass(), null);
         doWriteAttribute("jaxbProviderProperties", def.getJaxbProviderProperties(), null);
         doWriteAttribute("partNamespace", def.getPartNamespace(), null);
@@ -2844,11 +2844,11 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("schema", def.getSchema(), null);
-        doWriteAttribute("namespacePrefixRef", def.getNamespacePrefixRef(), null);
-        doWriteAttribute("elementNameStrategyRef", def.getElementNameStrategyRef(), null);
         doWriteAttribute("contextPath", def.getContextPath(), null);
         doWriteAttribute("encoding", def.getEncoding(), null);
+        doWriteAttribute("namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute("version", def.getVersion(), "1.1");
+        doWriteAttribute("elementNameStrategy", def.getElementNameStrategy(), null);
         endElement(name);
     }
     protected void doWriteSwiftMtDataFormat(String name, SwiftMtDataFormat def) throws IOException {

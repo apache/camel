@@ -19,6 +19,9 @@ to their implementation using reflection-free configurers. A few data formats ha
 |csv|formatRef|format
 |csv|formatName|format
 |flatpack|parserFactoryRef|parserFactory
+|jaxb|namespacePrefixRef|namespacePrefix
+|soap|namespacePrefixRef|namespacePrefix
+|soap|elementNameStrategyRef|elementNameStrategy
 |===
 
 And in XML DSL the csv dataformat have changed `header` from a `List<String>` to be a single `String`

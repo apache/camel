@@ -22,6 +22,7 @@ public class SoapDataFormatConfigurer extends org.apache.camel.support.component
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ElementNameStrategy", org.apache.camel.dataformat.soap.name.ElementNameStrategy.class);
         map.put("Version", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -30,6 +31,8 @@ public class SoapDataFormatConfigurer extends org.apache.camel.support.component
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SoapDataFormat target = (SoapDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "elementnamestrategy":
+        case "elementNameStrategy": target.setElementNameStrategy(property(camelContext, org.apache.camel.dataformat.soap.name.ElementNameStrategy.class, value)); return true;
         case "version": target.setVersion(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -43,6 +46,8 @@ public class SoapDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "elementnamestrategy":
+        case "elementNameStrategy": return org.apache.camel.dataformat.soap.name.ElementNameStrategy.class;
         case "version": return java.lang.String.class;
         default: return null;
         }
@@ -52,6 +57,8 @@ public class SoapDataFormatConfigurer extends org.apache.camel.support.component
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SoapDataFormat target = (SoapDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "elementnamestrategy":
+        case "elementNameStrategy": return target.getElementNameStrategy();
         case "version": return target.getVersion();
         default: return null;
         }

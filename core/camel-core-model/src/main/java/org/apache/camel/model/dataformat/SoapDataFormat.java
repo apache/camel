@@ -34,21 +34,22 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SoapDataFormat extends DataFormatDefinition {
 
+    @XmlTransient
+    private Object elementNameStrategyObject;
+
     @XmlAttribute(required = true)
     private String contextPath;
     @XmlAttribute
     private String encoding;
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private String elementNameStrategyRef;
-    @XmlTransient
-    private Object elementNameStrategy;
+    @Metadata(label = "advanced", javaType = "org.apache.camel.dataformat.soap.name.ElementNameStrategy")
+    private String elementNameStrategy;
     @XmlAttribute
     @Metadata(defaultValue = "1.1", enums = "1.1,1.2")
     private String version;
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private String namespacePrefixRef;
+    @Metadata(label = "advanced", javaType = "java.util.Map")
+    private String namespacePrefix;
     @XmlAttribute
     private String schema;
 
@@ -60,10 +61,10 @@ public class SoapDataFormat extends DataFormatDefinition {
         super(source);
         this.contextPath = source.contextPath;
         this.encoding = source.encoding;
-        this.elementNameStrategyRef = source.elementNameStrategyRef;
         this.elementNameStrategy = source.elementNameStrategy;
+        this.elementNameStrategyObject = source.elementNameStrategyObject;
         this.version = source.version;
-        this.namespacePrefixRef = source.namespacePrefixRef;
+        this.namespacePrefix = source.namespacePrefix;
         this.schema = source.schema;
     }
 
@@ -75,23 +76,23 @@ public class SoapDataFormat extends DataFormatDefinition {
     public SoapDataFormat(String contextPath, String elementNameStrategyRef) {
         this();
         setContextPath(contextPath);
-        setElementNameStrategyRef(elementNameStrategyRef);
+        setElementNameStrategy(elementNameStrategyRef);
     }
 
-    public SoapDataFormat(String contextPath, Object elementNameStrategy) {
+    public SoapDataFormat(String contextPath, Object elementNameStrategyObject) {
         this();
         setContextPath(contextPath);
-        setElementNameStrategy(elementNameStrategy);
+        setElementNameStrategyObject(elementNameStrategyObject);
     }
 
     private SoapDataFormat(Builder builder) {
         this();
         this.contextPath = builder.contextPath;
         this.encoding = builder.encoding;
-        this.elementNameStrategyRef = builder.elementNameStrategyRef;
         this.elementNameStrategy = builder.elementNameStrategy;
+        this.elementNameStrategyObject = builder.elementNameStrategyObject;
         this.version = builder.version;
-        this.namespacePrefixRef = builder.namespacePrefixRef;
+        this.namespacePrefix = builder.namespacePrefix;
         this.schema = builder.schema;
     }
 
@@ -141,12 +142,12 @@ public class SoapDataFormat extends DataFormatDefinition {
      * use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use
      * QNameStrategy or TypeNameStrategy.
      */
-    public void setElementNameStrategyRef(String elementNameStrategyRef) {
-        this.elementNameStrategyRef = elementNameStrategyRef;
+    public void setElementNameStrategy(String elementNameStrategy) {
+        this.elementNameStrategy = elementNameStrategy;
     }
 
-    public String getElementNameStrategyRef() {
-        return elementNameStrategyRef;
+    public String getElementNameStrategy() {
+        return elementNameStrategy;
     }
 
     public String getVersion() {
@@ -181,16 +182,16 @@ public class SoapDataFormat extends DataFormatDefinition {
      * use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use
      * QNameStrategy or TypeNameStrategy.
      */
-    public void setElementNameStrategy(Object elementNameStrategy) {
-        this.elementNameStrategy = elementNameStrategy;
+    public void setElementNameStrategyObject(Object elementNameStrategyObject) {
+        this.elementNameStrategyObject = elementNameStrategyObject;
     }
 
-    public Object getElementNameStrategy() {
-        return elementNameStrategy;
+    public Object getElementNameStrategyObject() {
+        return elementNameStrategyObject;
     }
 
-    public String getNamespacePrefixRef() {
-        return namespacePrefixRef;
+    public String getNamespacePrefix() {
+        return namespacePrefix;
     }
 
     /**
@@ -198,8 +199,8 @@ public class SoapDataFormat extends DataFormatDefinition {
      * as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired
      * mapping.
      */
-    public void setNamespacePrefixRef(String namespacePrefixRef) {
-        this.namespacePrefixRef = namespacePrefixRef;
+    public void setNamespacePrefix(String namespacePrefix) {
+        this.namespacePrefix = namespacePrefix;
     }
 
     public String getSchema() {
@@ -222,10 +223,10 @@ public class SoapDataFormat extends DataFormatDefinition {
 
         private String contextPath;
         private String encoding;
-        private String elementNameStrategyRef;
-        private Object elementNameStrategy;
+        private String elementNameStrategy;
+        private Object elementNameStrategyObject;
         private String version;
-        private String namespacePrefixRef;
+        private String namespacePrefix;
         private String schema;
 
         /**
@@ -263,8 +264,8 @@ public class SoapDataFormat extends DataFormatDefinition {
          * want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use
          * QNameStrategy or TypeNameStrategy.
          */
-        public Builder elementNameStrategyRef(String elementNameStrategyRef) {
-            this.elementNameStrategyRef = elementNameStrategyRef;
+        public Builder elementNameStrategy(String elementNameStrategy) {
+            this.elementNameStrategy = elementNameStrategy;
             return this;
         }
 
@@ -297,8 +298,8 @@ public class SoapDataFormat extends DataFormatDefinition {
          * want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use
          * QNameStrategy or TypeNameStrategy.
          */
-        public Builder elementNameStrategy(Object elementNameStrategy) {
-            this.elementNameStrategy = elementNameStrategy;
+        public Builder elementNameStrategyObject(Object elementNameStrategyObject) {
+            this.elementNameStrategyObject = elementNameStrategyObject;
             return this;
         }
 
@@ -307,8 +308,8 @@ public class SoapDataFormat extends DataFormatDefinition {
          * such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the
          * desired mapping.
          */
-        public Builder namespacePrefixRef(String namespacePrefixRef) {
-            this.namespacePrefixRef = namespacePrefixRef;
+        public Builder namespacePrefix(String namespacePrefix) {
+            this.namespacePrefix = namespacePrefix;
             return this;
         }
 
