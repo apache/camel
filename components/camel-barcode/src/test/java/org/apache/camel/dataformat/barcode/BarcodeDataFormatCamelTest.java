@@ -27,9 +27,6 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-/**
- * This class tests all Camel dependend cases for {@link BarcodeDataFormat}.
- */
 public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
     @TempDir
@@ -37,8 +34,6 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
     /**
      * tests barcode (QR-Code) generation and reading.
-     *
-     * @throws Exception
      */
     @Test
     void testDefaultQRCode() throws Exception {
@@ -54,8 +49,6 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
     /**
      * tests barcode (QR-Code) generation with modified size and reading.
-     *
-     * @throws Exception
      */
     @Test
     void testQRCodeWithModifiedSize() throws Exception {
@@ -71,8 +64,6 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
     /**
      * tests barcode (QR-Code) generation with modified image type and reading.
-     *
-     * @throws Exception
      */
     @Test
     void testQRCodeWithJPEGType() throws Exception {
@@ -87,9 +78,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
     }
 
     /**
-     * tests barcode (PDF-417) with modiefied size and image taype generation and reading.
-     *
-     * @throws Exception
+     * tests barcode (PDF-417) with modified size and image type generation and reading.
      */
     @Test
     void testPDF417CodeWidthModifiedSizeAndImageType() throws Exception {
@@ -105,9 +94,6 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
     /**
      * tests barcode (AZTEC).
-     *
-     * @throws Exception
-     * @see              CAMEL-7681
      */
     @Test
     void testAZTECWidthModifiedSizeAndImageType() throws Exception {

@@ -2419,10 +2419,10 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteBarcodeDataFormat(String name, BarcodeDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("barcodeFormat", def.getBarcodeFormat(), null);
-        doWriteAttribute("width", def.getWidth(), null);
-        doWriteAttribute("imageType", def.getImageType(), null);
-        doWriteAttribute("height", def.getHeight(), null);
+        doWriteAttribute("barcodeFormat", def.getBarcodeFormat(), "QR_CODE");
+        doWriteAttribute("width", def.getWidth(), "100");
+        doWriteAttribute("imageType", def.getImageType(), "PNG");
+        doWriteAttribute("height", def.getHeight(), "100");
         endElement(name);
     }
     protected void doWriteBase64DataFormat(String name, Base64DataFormat def) throws IOException {

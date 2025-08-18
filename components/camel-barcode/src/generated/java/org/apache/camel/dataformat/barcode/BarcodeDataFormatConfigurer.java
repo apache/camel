@@ -22,12 +22,25 @@ public class BarcodeDataFormatConfigurer extends org.apache.camel.support.compon
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("BarcodeFormat", com.google.zxing.BarcodeFormat.class);
+        map.put("Height", java.lang.Integer.class);
+        map.put("ImageType", org.apache.camel.dataformat.barcode.BarcodeImageType.class);
+        map.put("Width", java.lang.Integer.class);
         ALL_OPTIONS = map;
     }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        return false;
+        BarcodeDataFormat target = (BarcodeDataFormat) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "barcodeformat":
+        case "barcodeFormat": target.setBarcodeFormat(property(camelContext, com.google.zxing.BarcodeFormat.class, value)); return true;
+        case "height": target.setHeight(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "imagetype":
+        case "imageType": target.setImageType(property(camelContext, org.apache.camel.dataformat.barcode.BarcodeImageType.class, value)); return true;
+        case "width": target.setWidth(property(camelContext, java.lang.Integer.class, value)); return true;
+        default: return false;
+        }
     }
 
     @Override
@@ -37,12 +50,29 @@ public class BarcodeDataFormatConfigurer extends org.apache.camel.support.compon
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        return null;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "barcodeformat":
+        case "barcodeFormat": return com.google.zxing.BarcodeFormat.class;
+        case "height": return java.lang.Integer.class;
+        case "imagetype":
+        case "imageType": return org.apache.camel.dataformat.barcode.BarcodeImageType.class;
+        case "width": return java.lang.Integer.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
-        return null;
+        BarcodeDataFormat target = (BarcodeDataFormat) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "barcodeformat":
+        case "barcodeFormat": return target.getBarcodeFormat();
+        case "height": return target.getHeight();
+        case "imagetype":
+        case "imageType": return target.getImageType();
+        case "width": return target.getWidth();
+        default: return null;
+        }
     }
 }
 

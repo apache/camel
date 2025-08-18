@@ -32,7 +32,7 @@ public class BarcodeDataFormatReifier extends DataFormatReifier<BarcodeDataForma
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("width", definition.getWidth());
         properties.put("height", definition.getHeight());
-        properties.put("barcodeImageType", definition.getImageType());
+        properties.put("imageType", definition.getImageType());
         properties.put("barcodeFormat", definition.getBarcodeFormat());
     }
 
