@@ -22,6 +22,7 @@ public class ParquetAvroDataFormatConfigurer extends org.apache.camel.support.co
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("CompressionCodecName", org.apache.parquet.hadoop.metadata.CompressionCodecName.class);
         map.put("LazyLoad", boolean.class);
         map.put("UnmarshalType", java.lang.Class.class);
         ALL_OPTIONS = map;
@@ -31,6 +32,8 @@ public class ParquetAvroDataFormatConfigurer extends org.apache.camel.support.co
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ParquetAvroDataFormat target = (ParquetAvroDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "compressioncodecname":
+        case "compressionCodecName": target.setCompressionCodecName(property(camelContext, org.apache.parquet.hadoop.metadata.CompressionCodecName.class, value)); return true;
         case "lazyload":
         case "lazyLoad": target.setLazyLoad(property(camelContext, boolean.class, value)); return true;
         case "unmarshaltype":
@@ -47,6 +50,8 @@ public class ParquetAvroDataFormatConfigurer extends org.apache.camel.support.co
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "compressioncodecname":
+        case "compressionCodecName": return org.apache.parquet.hadoop.metadata.CompressionCodecName.class;
         case "lazyload":
         case "lazyLoad": return boolean.class;
         case "unmarshaltype":
@@ -59,6 +64,8 @@ public class ParquetAvroDataFormatConfigurer extends org.apache.camel.support.co
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ParquetAvroDataFormat target = (ParquetAvroDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "compressioncodecname":
+        case "compressionCodecName": return target.getCompressionCodecName();
         case "lazyload":
         case "lazyLoad": return target.isLazyLoad();
         case "unmarshaltype":

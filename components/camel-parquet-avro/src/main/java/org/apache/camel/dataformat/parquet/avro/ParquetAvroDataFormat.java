@@ -153,10 +153,6 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
         // no-op
     }
 
-    public String getCompressionCodecName() {
-        return compressionCodecName.name();
-    }
-
     /**
      * Compression codec to use when marshalling. You can find the supported codecs at
      * https://github.com/apache/parquet-format/blob/master/Compression.md#codecs. Note that some codecs may require you
@@ -164,6 +160,14 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
      */
     public void setCompressionCodecName(String compressionCodecName) {
         this.compressionCodecName = CompressionCodecName.valueOf(compressionCodecName);
+    }
+
+    public void setCompressionCodecName(CompressionCodecName compressionCodecName) {
+        this.compressionCodecName = compressionCodecName;
+    }
+
+    public String getCompressionCodecName() {
+        return compressionCodecName.name();
     }
 
     public Class<?> getUnmarshalType() {
@@ -187,9 +191,8 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
     /**
      * Sets whether the unmarshalling should produce an iterator of records or read all the records at once.
      */
-    public ParquetAvroDataFormat setLazyLoad(boolean lazyLoad) {
+    public void setLazyLoad(boolean lazyLoad) {
         this.lazyLoad = lazyLoad;
-        return this;
     }
 
 }
