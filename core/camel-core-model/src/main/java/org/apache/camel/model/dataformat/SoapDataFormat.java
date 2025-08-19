@@ -52,6 +52,9 @@ public class SoapDataFormat extends DataFormatDefinition {
     private String namespacePrefix;
     @XmlAttribute
     private String schema;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String ignoreUnmarshalledHeaders;
 
     public SoapDataFormat() {
         super("soap");
@@ -66,6 +69,7 @@ public class SoapDataFormat extends DataFormatDefinition {
         this.version = source.version;
         this.namespacePrefix = source.namespacePrefix;
         this.schema = source.schema;
+        this.ignoreUnmarshalledHeaders = source.ignoreUnmarshalledHeaders;
     }
 
     public SoapDataFormat(String contextPath) {
@@ -94,6 +98,7 @@ public class SoapDataFormat extends DataFormatDefinition {
         this.version = builder.version;
         this.namespacePrefix = builder.namespacePrefix;
         this.schema = builder.schema;
+        this.ignoreUnmarshalledHeaders = builder.ignoreUnmarshalledHeaders;
     }
 
     @Override
@@ -215,6 +220,19 @@ public class SoapDataFormat extends DataFormatDefinition {
         this.schema = schema;
     }
 
+    public String getIgnoreUnmarshalledHeaders() {
+        return ignoreUnmarshalledHeaders;
+    }
+
+    /**
+     * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled
+     * is recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect
+     * any problematic header.
+     */
+    public void setIgnoreUnmarshalledHeaders(String ignoreUnmarshalledHeaders) {
+        this.ignoreUnmarshalledHeaders = ignoreUnmarshalledHeaders;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link SoapDataFormat}.
      */
@@ -228,6 +246,7 @@ public class SoapDataFormat extends DataFormatDefinition {
         private String version;
         private String namespacePrefix;
         private String schema;
+        private String ignoreUnmarshalledHeaders;
 
         /**
          * Package name where your JAXB classes are located.
@@ -319,6 +338,25 @@ public class SoapDataFormat extends DataFormatDefinition {
          */
         public Builder schema(String schema) {
             this.schema = schema;
+            return this;
+        }
+
+        /**
+         * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled
+         * is recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect
+         * any problematic header.
+         */
+        public Builder ignoreUnmarshalledHeaders(boolean ignoreUnmarshalledHeaders) {
+            return ignoreUnmarshalledHeaders(Boolean.valueOf(ignoreUnmarshalledHeaders));
+        }
+
+        /**
+         * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled
+         * is recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect
+         * any problematic header.
+         */
+        public Builder ignoreUnmarshalledHeaders(String ignoreUnmarshalledHeaders) {
+            this.ignoreUnmarshalledHeaders = ignoreUnmarshalledHeaders;
             return this;
         }
 

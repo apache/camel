@@ -2835,6 +2835,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("schema", def.getSchema(), null);
+        doWriteAttribute("ignoreUnmarshalledHeaders", def.getIgnoreUnmarshalledHeaders(), null);
         doWriteAttribute("contextPath", def.getContextPath(), null);
         doWriteAttribute("encoding", def.getEncoding(), null);
         doWriteAttribute("namespacePrefix", def.getNamespacePrefix(), null);

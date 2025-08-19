@@ -2140,6 +2140,7 @@ public class ModelParser extends BaseParser {
                 case "contextPath": def.setContextPath(val); yield true;
                 case "elementNameStrategy": def.setElementNameStrategy(val); yield true;
                 case "encoding": def.setEncoding(val); yield true;
+                case "ignoreUnmarshalledHeaders": def.setIgnoreUnmarshalledHeaders(val); yield true;
                 case "namespacePrefix": def.setNamespacePrefix(val); yield true;
                 case "schema": def.setSchema(val); yield true;
                 case "version": def.setVersion(val); yield true;
