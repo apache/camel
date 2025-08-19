@@ -25,9 +25,6 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
@@ -67,7 +64,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     private String unmarshalTypeName;
     private Class<?> unmarshalType;
     private List<TypeDescription> typeDescriptions;
-    private ConcurrentMap<Class<?>, Tag> classTags;
     private boolean useApplicationContextClassLoader = true;
     private boolean prettyFlow;
     private boolean allowAnyType;
@@ -268,22 +264,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         this.typeDescriptions.add(new TypeDescription(type, tag));
     }
 
-    public Map<Class<?>, Tag> getClassTags() {
-        return classTags;
-    }
-
-    public void setClassTags(Map<Class<?>, Tag> classTags) {
-        this.classTags = new ConcurrentHashMap<>();
-        this.classTags.putAll(classTags);
-    }
-
-    public void addClassTags(Class<?> type, Tag tag) {
-        if (this.classTags == null) {
-            this.classTags = new ConcurrentHashMap<>();
-        }
-        this.classTags.put(type, tag);
-    }
-
     public boolean isUseApplicationContextClassLoader() {
         return useApplicationContextClassLoader;
     }
@@ -298,11 +278,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
 
     public void setPrettyFlow(boolean prettyFlow) {
         this.prettyFlow = prettyFlow;
-    }
-
-    public void addTag(Class<?> type, Tag tag) {
-        addClassTags(type, tag);
-        addTypeDescription(type, tag);
     }
 
     public boolean isAllowAnyType() {
@@ -361,13 +336,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     }
 
     private Representer defaultRepresenter() {
-        Representer yamlRepresenter = new Representer(new DumperOptions());
-        if (classTags != null) {
-            for (Map.Entry<Class<?>, Tag> entry : classTags.entrySet()) {
-                yamlRepresenter.addClassTag(entry.getKey(), entry.getValue());
-            }
-        }
-        return yamlRepresenter;
+        return new Representer(new DumperOptions());
     }
 
     private DumperOptions defaultDumperOptions() {
