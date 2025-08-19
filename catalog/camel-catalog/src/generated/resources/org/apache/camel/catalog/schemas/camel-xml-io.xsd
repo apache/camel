@@ -8752,6 +8752,17 @@ should be resolved. You can separate multiple schema files by using the ',' char
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="ignoreUnmarshalledHeaders" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled is recorded in
+the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect any problematic header.
+Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

@@ -2,7 +2,6 @@
 package org.apache.camel.dataformat.soap;
 
 import javax.annotation.processing.Generated;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -35,7 +34,7 @@ public class SoapDataFormatConfigurer extends org.apache.camel.converter.jaxb.Ja
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new LinkedHashMap<>(super.getAllOptions(target));
+        Map<String, Object> answer = new java.util.LinkedHashMap<>(super.getAllOptions(target));
         answer.put("elementNameStrategy", org.apache.camel.dataformat.soap.name.ElementNameStrategy.class);
         answer.put("ignoreUnmarshalledHeaders", boolean.class);
         answer.put("version", java.lang.String.class);

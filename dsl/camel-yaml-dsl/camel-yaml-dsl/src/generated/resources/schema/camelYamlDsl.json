@@ -11905,6 +11905,11 @@
               "title" : "Id",
               "description" : "The id of this node"
             },
+            "ignoreUnmarshalledHeaders" : {
+              "type" : "boolean",
+              "title" : "Ignore Unmarshalled Headers",
+              "description" : "Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled is recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect any problematic header."
+            },
             "namespacePrefix" : {
               "type" : "string",
               "title" : "Namespace Prefix",

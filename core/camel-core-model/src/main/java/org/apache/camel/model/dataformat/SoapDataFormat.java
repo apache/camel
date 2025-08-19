@@ -225,9 +225,9 @@ public class SoapDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled
-     * is recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect
-     * any problematic header.
+     * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled is
+     * recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect any
+     * problematic header.
      */
     public void setIgnoreUnmarshalledHeaders(String ignoreUnmarshalledHeaders) {
         this.ignoreUnmarshalledHeaders = ignoreUnmarshalledHeaders;
@@ -342,18 +342,18 @@ public class SoapDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled
-         * is recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect
-         * any problematic header.
+         * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled is
+         * recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect any
+         * problematic header.
          */
         public Builder ignoreUnmarshalledHeaders(boolean ignoreUnmarshalledHeaders) {
             return ignoreUnmarshalledHeaders(Boolean.valueOf(ignoreUnmarshalledHeaders));
         }
 
         /**
-         * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled
-         * is recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect
-         * any problematic header.
+         * Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled is
+         * recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect any
+         * problematic header.
          */
         public Builder ignoreUnmarshalledHeaders(String ignoreUnmarshalledHeaders) {
             this.ignoreUnmarshalledHeaders = ignoreUnmarshalledHeaders;
