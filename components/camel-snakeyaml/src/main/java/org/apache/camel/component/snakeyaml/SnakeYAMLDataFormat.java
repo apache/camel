@@ -148,7 +148,13 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         }
     }
 
-    protected Yaml getYaml() {
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        yamlCache.remove();
+    }
+
+    private Yaml getYaml() {
         Yaml yaml = null;
         WeakReference<Yaml> ref = yamlCache.get();
 
