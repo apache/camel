@@ -29,14 +29,11 @@
         <dataFormats>
             <yaml id="yaml-safe-constructor"/>
 
-            <yaml id="yaml-type-constructor" library="SnakeYAML">
-                <typeFilter value="org.apache.camel.component.snakeyaml.model.TestPojo"/>
-            </yaml>
+            <yaml id="yaml-type-constructor" library="SnakeYAML"
+                  typeFilter="org.apache.camel.component.snakeyaml.model.TestPojo"/>
 
-            <yaml id="yaml-type-constructor-strdef" library="SnakeYAML">
-                <typeFilter value="org.apache.camel.component.snakeyaml.model.TestPojo"/>
-                <typeFilter value="org.apache.camel.component.snakeyaml.model.Rex.*" type="regexp"/>
-            </yaml>
+            <yaml id="yaml-type-constructor-strdef" library="SnakeYAML"
+                  typeFilter="org.apache.camel.component.snakeyaml.model.TestPojo,org.apache.camel.component.snakeyaml.model.Rex.*"/>
 
             <yaml id="yaml-all-constructor" allowAnyType="true"/>
         </dataFormats>

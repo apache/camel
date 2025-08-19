@@ -48,7 +48,5 @@ UniVocityTsvDataFormat
 XMLSecurityDataFormat
 YAMLDataFormat
 YAMLLibrary
-YAMLTypeFilterDefinition
-YAMLTypeFilterType
 ZipDeflaterDataFormat
 ZipFileDataFormat

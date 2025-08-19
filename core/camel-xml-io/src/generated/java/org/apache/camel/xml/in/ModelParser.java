@@ -2263,19 +2263,10 @@ public class ModelParser extends BaseParser {
                 case "prettyFlow": def.setPrettyFlow(val); yield true;
                 case "representer": def.setRepresenter(val); yield true;
                 case "resolver": def.setResolver(val); yield true;
+                case "typeFilter": def.setTypeFilter(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
                 case "useApplicationContextClassLoader": def.setUseApplicationContextClassLoader(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "typeFilter": doAdd(doParseYAMLTypeFilterDefinition(), def.getTypeFilters(), def::setTypeFilters); yield true;
-                default: yield false;
-            }, noValueHandler());
-    }
-    protected YAMLTypeFilterDefinition doParseYAMLTypeFilterDefinition() throws IOException, XmlPullParserException {
-        return doParse(new YAMLTypeFilterDefinition(), (def, key, val) -> switch (key) {
-                case "type": def.setType(val); yield true;
-                case "value": def.setValue(val); yield true;
-                default: yield false;
             }, noElementHandler(), noValueHandler());
     }
     protected ZipDeflaterDataFormat doParseZipDeflaterDataFormat() throws IOException, XmlPullParserException {

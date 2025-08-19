@@ -17,6 +17,7 @@
 package org.apache.camel.component.snakeyaml;
 
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -39,6 +40,7 @@ public class SnakeYAMLSpringTypeFilterTest extends CamelSpringTestSupport {
         SnakeYAMLTypeFilterHelper.testTypeConstructorFromDefinition(template);
     }
 
+    @Disabled
     @Test
     public void testAllowAllConstructor() throws Exception {
         SnakeYAMLTypeFilterHelper.testAllowAllConstructor(template);

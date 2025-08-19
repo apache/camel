@@ -24,7 +24,6 @@ import java.io.Reader;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,11 +33,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.snakeyaml.custom.CustomClassLoaderConstructor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -72,7 +71,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     private boolean useApplicationContextClassLoader = true;
     private boolean prettyFlow;
     private boolean allowAnyType;
-    private List<TypeFilter> typeFilters;
+    private String typeFilters;
     private int maxAliasesForCollections = 50;
     private boolean allowRecursiveKeys;
 
@@ -129,11 +128,21 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
 
         if (unmarshalTypeName != null && unmarshalType == null) {
             setUnmarshalType(camelContext.getClassResolver().resolveClass(unmarshalTypeName));
+        }
+        if (unmarshalType != null) {
+            if (this.typeFilters == null) {
+                this.typeFilters = unmarshalType.getName();
+            } else {
+                this.typeFilters += "," + unmarshalType.getName();
+            }
+        }
+        if (allowAnyType) {
+            typeFilters = null;
         }
         if (this.constructor == null) {
             this.constructor = defaultConstructor(camelContext);
@@ -146,10 +155,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         }
         if (this.resolver == null) {
             this.resolver = defaultResolver();
-        }
-        if (unmarshalType != null) {
-            this.typeFilters = new CopyOnWriteArrayList<>();
-            this.typeFilters.add(TypeFilters.types(unmarshalType));
         }
     }
 
@@ -205,6 +210,14 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         this.resolver = resolver;
     }
 
+    public void setTypeFilters(String typeFilters) {
+        this.typeFilters = typeFilters;
+    }
+
+    public void setTypeFilters(Class<?> typeFilters) {
+        this.typeFilters = typeFilters.getName();
+    }
+
     public ClassLoader getClassLoader() {
         return classLoader;
     }
@@ -227,7 +240,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
 
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
-        addTypeFilters(TypeFilters.types(unmarshalType));
     }
 
     public List<TypeDescription> getTypeDescriptions() {
@@ -293,32 +305,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         addTypeDescription(type, tag);
     }
 
-    public List<TypeFilter> getTypeFilters() {
-        return typeFilters;
-    }
-
-    public void setTypeFilters(List<TypeFilter> typeFilters) {
-        this.typeFilters = new CopyOnWriteArrayList<>(typeFilters);
-    }
-
-    public void setTypeFilterDefinitions(List<String> typeFilterDefinitions) {
-        this.typeFilters = new CopyOnWriteArrayList<>();
-        for (String definition : typeFilterDefinitions) {
-            TypeFilters.valueOf(definition).ifPresent(this.typeFilters::add);
-        }
-    }
-
-    public void addTypeFilters(Collection<TypeFilter> typeFilters) {
-        if (this.typeFilters == null) {
-            this.typeFilters = new CopyOnWriteArrayList<>();
-        }
-        this.typeFilters.addAll(typeFilters);
-    }
-
-    public void addTypeFilters(TypeFilter... typeFilters) {
-        addTypeFilters(Arrays.asList(typeFilters));
-    }
-
     public boolean isAllowAnyType() {
         return allowAnyType;
     }
@@ -348,26 +334,20 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     // ***************************
 
     private BaseConstructor defaultConstructor(CamelContext context) {
-        Collection<TypeFilter> yamlTypeFilters = this.typeFilters;
-        if (allowAnyType) {
-            yamlTypeFilters = Collections.singletonList(TypeFilters.allowAll());
-        }
-
         LoaderOptions options = new LoaderOptions();
         options.setTagInspector(new TrustedTagInspector());
         options.setAllowRecursiveKeys(allowRecursiveKeys);
         options.setMaxAliasesForCollections(maxAliasesForCollections);
 
         BaseConstructor yamlConstructor;
-        if (yamlTypeFilters != null) {
+        if (typeFilters != null) {
             ClassLoader yamlClassLoader = this.classLoader;
             if (yamlClassLoader == null && useApplicationContextClassLoader) {
                 yamlClassLoader = context.getApplicationContextClassLoader();
             }
-
             yamlConstructor = yamlClassLoader != null
-                    ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters, options)
-                    : typeFilterConstructor(yamlTypeFilters, options);
+                    ? typeFilterConstructor(yamlClassLoader, options)
+                    : typeFilterConstructor(options);
         } else {
             yamlConstructor = new SafeConstructor(options);
         }
@@ -377,7 +357,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
                 con.addTypeDescription(typeDescription);
             }
         }
-
         return yamlConstructor;
     }
 
@@ -405,29 +384,33 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     // Constructors
     // ***************************
 
-    private static Constructor typeFilterConstructor(final Collection<TypeFilter> typeFilters, LoaderOptions options) {
+    private boolean allowTypeFilter(String className) {
+        if (typeFilters == null) {
+            return true;
+        }
+        return PatternHelper.matchPatterns(className, typeFilters.split(","));
+    }
+
+    private Constructor typeFilterConstructor(LoaderOptions options) {
         return new Constructor(options) {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {
-                if (typeFilters.stream().noneMatch(f -> f.test(name))) {
+                if (!allowTypeFilter(name)) {
                     throw new IllegalArgumentException("Type " + name + " is not allowed");
                 }
-
                 return super.getClassForName(name);
             }
         };
     }
 
-    private static Constructor typeFilterConstructor(
-            final ClassLoader classLoader, final Collection<TypeFilter> typeFilters,
-            LoaderOptions options) {
+    private Constructor typeFilterConstructor(
+            final ClassLoader classLoader, LoaderOptions options) {
         return new CustomClassLoaderConstructor(classLoader, options) {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {
-                if (typeFilters.stream().noneMatch(f -> f.test(name))) {
+                if (!allowTypeFilter(name)) {
                     throw new IllegalArgumentException("Type " + name + " is not allowed");
                 }
-
                 return super.getClassForName(name);
             }
         };

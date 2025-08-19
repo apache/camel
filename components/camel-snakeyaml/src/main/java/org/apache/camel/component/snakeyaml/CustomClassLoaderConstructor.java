@@ -14,12 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.dataformat;
+package org.apache.camel.component.snakeyaml;
 
-import jakarta.xml.bind.annotation.XmlEnum;
+import java.util.Objects;
 
-@XmlEnum
-public enum YAMLTypeFilterType {
-    type,
-    regexp
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.constructor.Constructor;
+
+/**
+ * A CustomClassLoaderConstructor which allows to set the LoaderOptions
+ */
+class CustomClassLoaderConstructor extends Constructor {
+
+    private final ClassLoader loader;
+
+    CustomClassLoaderConstructor(ClassLoader theLoader, LoaderOptions options) {
+        super(Object.class, options);
+        this.loader = Objects.requireNonNull(theLoader, "Loader must be provided.");
+    }
+
+    @Override
+    protected Class<?> getClassForName(String name) throws ClassNotFoundException {
+        return Class.forName(name, true, loader);
+    }
 }

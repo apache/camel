@@ -571,9 +571,6 @@ public class ModelWriter extends BaseWriter {
     public void writeYAMLDataFormat(YAMLDataFormat def) throws IOException {
         doWriteYAMLDataFormat("yaml", def);
     }
-    public void writeYAMLTypeFilterDefinition(YAMLTypeFilterDefinition def) throws IOException {
-        doWriteYAMLTypeFilterDefinition("typeFilter", def);
-    }
     public void writeZipDeflaterDataFormat(ZipDeflaterDataFormat def) throws IOException {
         doWriteZipDeflaterDataFormat("zipDeflater", def);
     }
@@ -2967,17 +2964,11 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("representer", def.getRepresenter(), null);
         doWriteAttribute("constructor", def.getConstructor(), null);
         doWriteAttribute("library", toString(def.getLibrary()), "SnakeYAML");
+        doWriteAttribute("typeFilter", def.getTypeFilter(), null);
         doWriteAttribute("maxAliasesForCollections", def.getMaxAliasesForCollections(), "50");
         doWriteAttribute("dumperOptions", def.getDumperOptions(), null);
         doWriteAttribute("useApplicationContextClassLoader", def.getUseApplicationContextClassLoader(), "true");
         doWriteAttribute("allowRecursiveKeys", def.getAllowRecursiveKeys(), null);
-        doWriteList(null, "typeFilter", def.getTypeFilters(), this::doWriteYAMLTypeFilterDefinition);
-        endElement(name);
-    }
-    protected void doWriteYAMLTypeFilterDefinition(String name, YAMLTypeFilterDefinition def) throws IOException {
-        startElement(name);
-        doWriteAttribute("type", def.getType(), "type");
-        doWriteAttribute("value", def.getValue(), null);
         endElement(name);
     }
     protected void doWriteZipDeflaterDataFormat(String name, ZipDeflaterDataFormat def) throws IOException {

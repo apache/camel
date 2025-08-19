@@ -28,7 +28,7 @@ to their implementation using reflection-free configurers. A few data formats ha
 |===
 
 And in XML DSL the csv dataformat have changed `header` from a `List<String>` to be a single `String`
-where the header values are seperated by comma. This is more tooling friendly and also how other components
+where the header values are separated by comma. This is more tooling friendly and also how other components
 and dataformats are configured.
 
 For example:
@@ -46,6 +46,26 @@ Should be changed to:
 [source,xml]
 ----
 <csv format="EXCEL" delimiter="|" skipHeaderRecord="true" header="orderId,amount"/>
+----
+
+Likewise in XML DSL the YAML data format has changed `typeFilter` from a `List`> to be a single `String`
+where the types values are separated by comma. This is more tooling friendly and also how other components
+and dataformats are configured.
+
+[source,xml]
+----
+<yaml id="yaml-type-constructor-strdef" library="SnakeYAML">
+    <typeFilter value="org.apache.camel.component.snakeyaml.model.TestPojo"/>
+    <typeFilter value="org.apache.camel.component.snakeyaml.model.Rex.*" type="regexp"/>
+</yaml>
+----
+
+Should be changed to:
+
+[source,xml]
+----
+<yaml id="yaml-type-constructor-strdef" library="SnakeYAML"
+      typeFilter="org.apache.camel.component.snakeyaml.model.TestPojo,org.apache.camel.component.snakeyaml.model.Rex.*"/>
 ----
 
 Removed the `tidyMarkup` DataFormat in the DSL as the implementation has been removed in earlier version,
