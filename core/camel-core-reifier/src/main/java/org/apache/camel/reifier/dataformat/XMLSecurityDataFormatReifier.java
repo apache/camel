@@ -36,7 +36,8 @@ public class XMLSecurityDataFormatReifier extends DataFormatReifier<XMLSecurityD
         properties.put("xmlCipherAlgorithm", definition.getXmlCipherAlgorithm());
         properties.put("keyCipherAlgorithm", definition.getKeyCipherAlgorithm());
         properties.put("recipientKeyAlias", definition.getRecipientKeyAlias());
-        properties.put("keyOrTrustStoreParameters", or(definition.getKeyStoreParameters(), asRef(definition.getKeyOrTrustStoreParameters())));
+        properties.put("keyOrTrustStoreParameters",
+                or(definition.getKeyStoreParameters(), asRef(definition.getKeyOrTrustStoreParameters())));
         properties.put("namespaces", or(definition.getNamespaces(), asRef(definition.getNamespaceRef())));
         properties.put("keyPassword", definition.getKeyPassword());
         properties.put("digestAlgorithm", definition.getDigestAlgorithm());
