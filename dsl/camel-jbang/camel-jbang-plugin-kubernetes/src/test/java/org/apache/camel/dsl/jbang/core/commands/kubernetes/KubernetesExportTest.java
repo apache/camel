@@ -764,4 +764,16 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void ingressTrait(RuntimeType rt) throws Exception {
+        KubernetesExport command
+                = createCommand(new String[] { "classpath:route.yaml", "src/test/resources/application.properties", },
+                        "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Assertions.assertTrue(hasIngress(rt));
+    }
+
 }
