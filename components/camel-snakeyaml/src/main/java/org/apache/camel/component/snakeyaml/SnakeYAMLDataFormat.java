@@ -22,10 +22,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -38,7 +34,6 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.BaseConstructor;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -63,7 +58,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     private ClassLoader classLoader;
     private String unmarshalTypeName;
     private Class<?> unmarshalType;
-    private List<TypeDescription> typeDescriptions;
     private boolean useApplicationContextClassLoader = true;
     private boolean prettyFlow;
     private boolean allowAnyType;
@@ -238,32 +232,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         this.unmarshalType = unmarshalType;
     }
 
-    public List<TypeDescription> getTypeDescriptions() {
-        return typeDescriptions;
-    }
-
-    public void setTypeDescriptions(List<TypeDescription> typeDescriptions) {
-        this.typeDescriptions = new CopyOnWriteArrayList<>(typeDescriptions);
-    }
-
-    public void addTypeDescriptions(Collection<TypeDescription> typeDescriptions) {
-        if (this.typeDescriptions == null) {
-            this.typeDescriptions = new CopyOnWriteArrayList<>();
-        }
-        this.typeDescriptions.addAll(typeDescriptions);
-    }
-
-    public void addTypeDescriptions(TypeDescription... typeDescriptions) {
-        addTypeDescriptions(Arrays.asList(typeDescriptions));
-    }
-
-    public void addTypeDescription(Class<?> type, Tag tag) {
-        if (this.typeDescriptions == null) {
-            this.typeDescriptions = new CopyOnWriteArrayList<>();
-        }
-        this.typeDescriptions.add(new TypeDescription(type, tag));
-    }
-
     public boolean isUseApplicationContextClassLoader() {
         return useApplicationContextClassLoader;
     }
@@ -325,12 +293,6 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
                     : typeFilterConstructor(options);
         } else {
             yamlConstructor = new SafeConstructor(options);
-        }
-
-        if (typeDescriptions != null && yamlConstructor instanceof Constructor con) {
-            for (TypeDescription typeDescription : typeDescriptions) {
-                con.addTypeDescription(typeDescription);
-            }
         }
         return yamlConstructor;
     }
