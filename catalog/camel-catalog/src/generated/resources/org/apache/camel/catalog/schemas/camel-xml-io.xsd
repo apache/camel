@@ -2089,15 +2089,6 @@ To configure transformers.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="typeFilter" type="tns:yamlTypeFilterDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="univocityCsv" type="tns:uniVocityCsvDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -9451,9 +9442,7 @@ verification is executed. no_signature_allowed: The PGP message must not contain
   <xs:complexType name="yamlDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:typeFilter"/>
-        </xs:sequence>
+        <xs:sequence/>
         <xs:attribute name="library" type="tns:yamlLibrary">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -9535,6 +9524,15 @@ Allow any class to be un-marshaled. Default value: false
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="typeFilter" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set the types SnakeYAML is allowed to un-marshall. Multiple types can be separated by comma.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="maxAliasesForCollections" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -9555,27 +9553,6 @@ Set whether recursive keys are allowed. Default value: false
         </xs:attribute>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="yamlTypeFilterDefinition">
-    <xs:sequence/>
-    <xs:attribute name="value" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Value of type such as class name or regular expression.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="type" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to filter by class type or regular expression. Default value: type
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="zipDeflaterDataFormat">
     <xs:complexContent>
@@ -17039,12 +17016,6 @@ Set the URI of the Endpoint.
       <xs:enumeration value="Csv"/>
       <xs:enumeration value="Fixed"/>
       <xs:enumeration value="KeyValue"/>
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:simpleType name="yamlTypeFilterType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="type"/>
-      <xs:enumeration value="regexp"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="option">

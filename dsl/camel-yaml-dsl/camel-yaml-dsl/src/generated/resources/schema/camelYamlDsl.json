@@ -12526,12 +12526,9 @@
             "description" : "Resolver to detect implicit type"
           },
           "typeFilter" : {
-            "type" : "array",
+            "type" : "string",
             "title" : "Type Filter",
-            "description" : "Set the types SnakeYAML is allowed to un-marshall",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLTypeFilterDefinition"
-            }
+            "description" : "Set the types SnakeYAML is allowed to un-marshall. Multiple types can be separated by comma."
           },
           "unmarshalType" : {
             "type" : "string",
@@ -12542,25 +12539,6 @@
             "type" : "boolean",
             "title" : "Use Application Context Class Loader",
             "description" : "Use ApplicationContextClassLoader as custom ClassLoader"
-          }
-        }
-      },
-      "org.apache.camel.model.dataformat.YAMLTypeFilterDefinition" : {
-        "title" : "YAML Type Filter",
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "type" : {
-            "type" : "string",
-            "title" : "Type",
-            "description" : "Whether to filter by class type or regular expression",
-            "default" : "type",
-            "enum" : [ "type", "regexp" ]
-          },
-          "value" : {
-            "type" : "string",
-            "title" : "Value",
-            "description" : "Value of type such as class name or regular expression"
           }
         }
       },

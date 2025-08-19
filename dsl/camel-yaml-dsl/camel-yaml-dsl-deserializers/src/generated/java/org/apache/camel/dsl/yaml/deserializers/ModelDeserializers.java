@@ -179,7 +179,6 @@ import org.apache.camel.model.dataformat.UniVocityHeader;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
-import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
@@ -21238,7 +21237,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "prettyFlow", type = "boolean", description = "Force the emitter to produce a pretty YAML document when using the flow style.", displayName = "Pretty Flow"),
                     @YamlProperty(name = "representer", type = "string", description = "Representer to emit outgoing objects.", displayName = "Representer"),
                     @YamlProperty(name = "resolver", type = "string", description = "Resolver to detect implicit type", displayName = "Resolver"),
-                    @YamlProperty(name = "typeFilter", type = "array:org.apache.camel.model.dataformat.YAMLTypeFilterDefinition", description = "Set the types SnakeYAML is allowed to un-marshall", displayName = "Type Filter"),
+                    @YamlProperty(name = "typeFilter", type = "string", description = "Set the types SnakeYAML is allowed to un-marshall. Multiple types can be separated by comma.", displayName = "Type Filter"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useApplicationContextClassLoader", type = "boolean", description = "Use ApplicationContextClassLoader as custom ClassLoader", displayName = "Use Application Context Class Loader")
             }
@@ -21308,8 +21307,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "typeFilter": {
-                    java.util.List<org.apache.camel.model.dataformat.YAMLTypeFilterDefinition> val = asFlatList(node, org.apache.camel.model.dataformat.YAMLTypeFilterDefinition.class);
-                    target.setTypeFilters(val);
+                    String val = asText(node);
+                    target.setTypeFilter(val);
                     break;
                 }
                 case "unmarshalType": {
@@ -21320,50 +21319,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "useApplicationContextClassLoader": {
                     String val = asText(node);
                     target.setUseApplicationContextClassLoader(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "typeFilter",
-            types = org.apache.camel.model.dataformat.YAMLTypeFilterDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "YAML Type Filter",
-            deprecated = false,
-            properties = {
-                    @YamlProperty(name = "type", type = "enum:type,regexp", defaultValue = "type", description = "Whether to filter by class type or regular expression", displayName = "Type"),
-                    @YamlProperty(name = "value", type = "string", description = "Value of type such as class name or regular expression", displayName = "Value")
-            }
-    )
-    public static class YAMLTypeFilterDefinitionDeserializer extends YamlDeserializerBase<YAMLTypeFilterDefinition> {
-        public YAMLTypeFilterDefinitionDeserializer() {
-            super(YAMLTypeFilterDefinition.class);
-        }
-
-        @Override
-        protected YAMLTypeFilterDefinition newInstance() {
-            return new YAMLTypeFilterDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(YAMLTypeFilterDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "type": {
-                    String val = asText(node);
-                    target.setType(val);
-                    break;
-                }
-                case "value": {
-                    String val = asText(node);
-                    target.setValue(val);
                     break;
                 }
                 default: {
