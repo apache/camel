@@ -10898,7 +10898,7 @@ Value of type such as class name or regular expression.
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to filter by class type or regular expression.
+Whether to filter by class type or regular expression. Default value: type
 ]]>
         </xs:documentation>
       </xs:annotation>

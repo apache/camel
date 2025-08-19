@@ -32,7 +32,7 @@ public class YAMLTypeFilterDefinition implements CopyableDefinition<YAMLTypeFilt
     @XmlAttribute
     private String value;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.model.dataformat.YAMLTypeFilterType")
+    @Metadata(javaType = "org.apache.camel.model.dataformat.YAMLTypeFilterType", enums = "type,regexp", defaultValue = "type")
     private String type;
 
     public YAMLTypeFilterDefinition() {

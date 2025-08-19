@@ -21337,7 +21337,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             displayName = "YAML Type Filter",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "type", type = "string", description = "Whether to filter by class type or regular expression", displayName = "Type"),
+                    @YamlProperty(name = "type", type = "enum:type,regexp", defaultValue = "type", description = "Whether to filter by class type or regular expression", displayName = "Type"),
                     @YamlProperty(name = "value", type = "string", description = "Value of type such as class name or regular expression", displayName = "Value")
             }
     )

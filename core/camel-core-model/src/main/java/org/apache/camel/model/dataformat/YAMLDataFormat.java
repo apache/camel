@@ -69,6 +69,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String allowAnyType;
     @XmlElement(name = "typeFilter")
+    @Metadata(label = "advanced")
     private List<YAMLTypeFilterDefinition> typeFilters;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "50")

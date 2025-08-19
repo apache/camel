@@ -12553,7 +12553,9 @@
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "Whether to filter by class type or regular expression"
+            "description" : "Whether to filter by class type or regular expression",
+            "default" : "type",
+            "enum" : [ "type", "regexp" ]
           },
           "value" : {
             "type" : "string",

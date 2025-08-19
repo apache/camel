@@ -24,12 +24,12 @@ public class SnakeYAMLDataFormatConfigurer extends org.apache.camel.support.comp
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AllowAnyType", boolean.class);
         map.put("AllowRecursiveKeys", boolean.class);
-        map.put("Constructor", java.util.function.Function.class);
-        map.put("DumperOptions", java.util.function.Function.class);
+        map.put("Constructor", org.yaml.snakeyaml.constructor.BaseConstructor.class);
+        map.put("DumperOptions", org.yaml.snakeyaml.DumperOptions.class);
         map.put("MaxAliasesForCollections", int.class);
         map.put("PrettyFlow", boolean.class);
-        map.put("Representer", java.util.function.Function.class);
-        map.put("Resolver", java.util.function.Function.class);
+        map.put("Representer", org.yaml.snakeyaml.representer.Representer.class);
+        map.put("Resolver", org.yaml.snakeyaml.resolver.Resolver.class);
         map.put("UnmarshalType", java.lang.Class.class);
         map.put("UseApplicationContextClassLoader", boolean.class);
         ALL_OPTIONS = map;
@@ -43,15 +43,15 @@ public class SnakeYAMLDataFormatConfigurer extends org.apache.camel.support.comp
         case "allowAnyType": target.setAllowAnyType(property(camelContext, boolean.class, value)); return true;
         case "allowrecursivekeys":
         case "allowRecursiveKeys": target.setAllowRecursiveKeys(property(camelContext, boolean.class, value)); return true;
-        case "constructor": target.setConstructor(property(camelContext, java.util.function.Function.class, value)); return true;
+        case "constructor": target.setConstructor(property(camelContext, org.yaml.snakeyaml.constructor.BaseConstructor.class, value)); return true;
         case "dumperoptions":
-        case "dumperOptions": target.setDumperOptions(property(camelContext, java.util.function.Function.class, value)); return true;
+        case "dumperOptions": target.setDumperOptions(property(camelContext, org.yaml.snakeyaml.DumperOptions.class, value)); return true;
         case "maxaliasesforcollections":
         case "maxAliasesForCollections": target.setMaxAliasesForCollections(property(camelContext, int.class, value)); return true;
         case "prettyflow":
         case "prettyFlow": target.setPrettyFlow(property(camelContext, boolean.class, value)); return true;
-        case "representer": target.setRepresenter(property(camelContext, java.util.function.Function.class, value)); return true;
-        case "resolver": target.setResolver(property(camelContext, java.util.function.Function.class, value)); return true;
+        case "representer": target.setRepresenter(property(camelContext, org.yaml.snakeyaml.representer.Representer.class, value)); return true;
+        case "resolver": target.setResolver(property(camelContext, org.yaml.snakeyaml.resolver.Resolver.class, value)); return true;
         case "unmarshaltype":
         case "unmarshalType": target.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
         case "useapplicationcontextclassloader":
@@ -72,15 +72,15 @@ public class SnakeYAMLDataFormatConfigurer extends org.apache.camel.support.comp
         case "allowAnyType": return boolean.class;
         case "allowrecursivekeys":
         case "allowRecursiveKeys": return boolean.class;
-        case "constructor": return java.util.function.Function.class;
+        case "constructor": return org.yaml.snakeyaml.constructor.BaseConstructor.class;
         case "dumperoptions":
-        case "dumperOptions": return java.util.function.Function.class;
+        case "dumperOptions": return org.yaml.snakeyaml.DumperOptions.class;
         case "maxaliasesforcollections":
         case "maxAliasesForCollections": return int.class;
         case "prettyflow":
         case "prettyFlow": return boolean.class;
-        case "representer": return java.util.function.Function.class;
-        case "resolver": return java.util.function.Function.class;
+        case "representer": return org.yaml.snakeyaml.representer.Representer.class;
+        case "resolver": return org.yaml.snakeyaml.resolver.Resolver.class;
         case "unmarshaltype":
         case "unmarshalType": return java.lang.Class.class;
         case "useapplicationcontextclassloader":

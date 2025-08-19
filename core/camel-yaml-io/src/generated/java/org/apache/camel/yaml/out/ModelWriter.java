@@ -2976,7 +2976,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteYAMLTypeFilterDefinition(String name, YAMLTypeFilterDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("type", def.getType(), "type");
         doWriteAttribute("value", def.getValue(), null);
         endElement(name);
     }
