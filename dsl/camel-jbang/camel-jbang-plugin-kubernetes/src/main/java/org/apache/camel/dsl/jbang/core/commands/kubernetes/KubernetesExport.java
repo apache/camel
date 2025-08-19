@@ -201,6 +201,9 @@ public class KubernetesExport extends Export {
                 RunHelper.dirToFiles(name, files);
             }
         }
+        if (exportBaseDir == null) {
+            exportBaseDir = Paths.get(".");
+        }
 
         printer().println("Exporting application ...");
 
@@ -290,6 +293,15 @@ public class KubernetesExport extends Export {
             // override from profile specific configuration
             applicationProfileProperties
                     = extractPropertiesTraits(exportBaseDir.resolve("application-" + profile + ".properties"));
+        } else {
+            for (String f : files) {
+                String name = FileUtil.stripPath(f);
+                if ("application.properties".equals(name)) {
+                    // load default properties configuration
+                    applicationProfileProperties
+                            = extractPropertiesTraits(exportBaseDir.resolve(f));
+                }
+            }
         }
 
         Traits traitsSpec = getTraitSpec(applicationProfileProperties, applicationProperties);

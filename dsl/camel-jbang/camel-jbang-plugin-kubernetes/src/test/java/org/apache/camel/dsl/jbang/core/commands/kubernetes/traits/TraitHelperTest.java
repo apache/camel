@@ -74,11 +74,13 @@ public class TraitHelperTest {
         Properties properties = new Properties();
         properties.setProperty("camel.jbang.trait.container.port", "8080");
         properties.setProperty("camel.jbang.trait.container.port-name", "custom");
+        properties.setProperty("camel.jbang.trait.environment.FOO", "my value");
         properties.setProperty("camel.jbang.name", "MyRoute");
         String[] result = TraitHelper.extractTraitsFromProperties(properties);
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(2, result.length);
+        Assertions.assertEquals(3, result.length);
         Assertions.assertTrue(Arrays.asList(result).contains("container.port-name=custom"));
+        Assertions.assertTrue(Arrays.asList(result).contains("environment.FOO=my value"));
 
         String[] resultEmpty = TraitHelper.extractTraitsFromProperties(new Properties());
         Assertions.assertNotNull(resultEmpty);
