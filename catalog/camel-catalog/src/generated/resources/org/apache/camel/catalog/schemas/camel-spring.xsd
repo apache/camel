@@ -2206,15 +2206,6 @@ Throws an exception
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="tidyMarkup" type="tns:tidyMarkupDataFormat">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Parse (potentially invalid) HTML into valid HTML or DOM.
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="to" type="tns:toDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -2283,15 +2274,6 @@ Transforms the message body based on an expression
       <xs:documentation xml:lang="en">
 <![CDATA[
 To configure transformers.
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="typeFilter" type="tns:yamlTypeFilterDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-null
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -7578,7 +7560,6 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
-            <xs:element ref="tns:tidyMarkup"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
@@ -7850,7 +7831,7 @@ When not disabled, the SchemaResolver will be looked up into the registry. Defau
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Barcode format such as QR-Code.
+Barcode format such as QR-Code. Default value: QR_CODE
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7859,7 +7840,7 @@ Barcode format such as QR-Code.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Image type of the barcode such as png.
+Image type of the barcode such as png. Default value: PNG
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7868,7 +7849,7 @@ Image type of the barcode such as png.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Width of the barcode.
+Width of the barcode. Default value: 100
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7877,7 +7858,7 @@ Width of the barcode.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Height of the barcode.
+Height of the barcode. Default value: 100
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8178,7 +8159,7 @@ The JCE algorithm name indicating the cryptographic algorithm that will be used.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="keyRef" type="xs:string">
+        <xs:attribute name="key" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -8196,7 +8177,7 @@ The name of the JCE Security Provider that should be used.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="initVectorRef" type="xs:string">
+        <xs:attribute name="initVector" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -8205,7 +8186,7 @@ Refers to a byte array containing the Initialization Vector that will be used to
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="algorithmParameterRef" type="xs:string">
+        <xs:attribute name="algorithmParameterSpec" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -8259,31 +8240,12 @@ value: false
   <xs:complexType name="csvDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="header" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-To configure the CSV headers.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute name="formatRef" type="xs:string">
+        <xs:sequence/>
+        <xs:attribute name="format" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="formatName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The name of the format to use, the default value is CSVFormat.DEFAULT. Default value: DEFAULT
+The format to use. Default value: DEFAULT
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8338,6 +8300,15 @@ Sets the escape character to use.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Use for disabling headers. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="header" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To configure the CSV headers. Multiple headers can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8865,7 +8836,7 @@ If the text is qualified with a character. Uses quote character by default.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="parserFactoryRef" type="xs:string">
+        <xs:attribute name="parserFactory" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -8976,6 +8947,15 @@ Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}). 
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
+        <xs:attribute name="parser" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To use a custom HL7 parser.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="validate" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -9347,12 +9327,12 @@ XML namespace to use for fragment parsing. See more details at the fragment opti
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="namespacePrefixRef" type="xs:string">
+        <xs:attribute name="namespacePrefix" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2,
-ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.
+When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes, such as
+ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10052,7 +10032,7 @@ To overrule and use a specific encoding.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="elementNameStrategyRef" type="xs:string">
+        <xs:attribute name="elementNameStrategy" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -10079,7 +10059,7 @@ SOAP version should either be 1.1 or 1.2. Is by default 1.1. Default value: 1.1
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="namespacePrefixRef" type="xs:string">
+        <xs:attribute name="namespacePrefix" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -10095,6 +10075,17 @@ ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which 
 <![CDATA[
 To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource
 should be resolved. You can separate multiple schema files by using the ',' character.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ignoreUnmarshalledHeaders" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled is recorded in
+the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect any problematic header.
+Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10122,15 +10113,6 @@ The flag indicating that messages must be marshalled in a JSON format. Default v
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
-        <xs:attribute name="writeConfigRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to a specific configuration to use when marshalling a message to lookup from the registry.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="writeInJson" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -10150,11 +10132,20 @@ the namespace used.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="readConfigRef" type="xs:string">
+        <xs:attribute name="readConfig" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
 Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="writeConfig" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a specific configuration to use when marshalling a message to lookup from the registry.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10248,32 +10239,6 @@ value is binary. Default value: binary
 Whether the data format should set the Content-Type header with the type from the data format. For example
 application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON. Default
 value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="tidyMarkupDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="dataObjectType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node.
-Default value: org.w3c.dom.Node
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="omitXmlDeclaration" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-When returning a String, do we omit the XML declaration in the top. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10598,7 +10563,7 @@ asymmetric key encryption or decryption.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="keyOrTrustStoreParametersRef" type="xs:string">
+        <xs:attribute name="keyOrTrustStoreParameters" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -10644,6 +10609,15 @@ Default value: MGF1_SHA1
 <![CDATA[
 Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.
 Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="namespace" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a Map XML Namespaces of prefix - uri mappings.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10806,9 +10780,7 @@ verification is executed. no_signature_allowed: The PGP message must not contain
   <xs:complexType name="yamlDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:typeFilter"/>
-        </xs:sequence>
+        <xs:sequence/>
         <xs:attribute name="library" type="tns:yamlLibrary">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -10890,6 +10862,15 @@ Allow any class to be un-marshaled. Default value: false
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="typeFilter" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set the types SnakeYAML is allowed to un-marshall. Multiple types can be separated by comma.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="maxAliasesForCollections" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -10910,27 +10891,6 @@ Set whether recursive keys are allowed. Default value: false
         </xs:attribute>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="yamlTypeFilterDefinition">
-    <xs:sequence/>
-    <xs:attribute name="value" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Value of type such as class name or regular expression.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="type" type="xs:string">
-      <xs:annotation>
-        <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to filter by class type or regular expression.
-]]>
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="zipDeflaterDataFormat">
     <xs:complexContent>
@@ -14902,7 +14862,6 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
-            <xs:element ref="tns:tidyMarkup"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
@@ -17177,7 +17136,6 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:syslog"/>
         <xs:element ref="tns:tarFile"/>
         <xs:element ref="tns:thrift"/>
-        <xs:element ref="tns:tidyMarkup"/>
         <xs:element ref="tns:univocityCsv"/>
         <xs:element ref="tns:univocityFixed"/>
         <xs:element ref="tns:univocityTsv"/>
@@ -18027,7 +17985,6 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
             <xs:element ref="tns:thrift"/>
-            <xs:element ref="tns:tidyMarkup"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
@@ -19060,12 +19017,6 @@ An optional certificate alias to use. This is useful when the keystore has multi
       <xs:enumeration value="Csv"/>
       <xs:enumeration value="Fixed"/>
       <xs:enumeration value="KeyValue"/>
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:simpleType name="yamlTypeFilterType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="type"/>
-      <xs:enumeration value="regexp"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="option">

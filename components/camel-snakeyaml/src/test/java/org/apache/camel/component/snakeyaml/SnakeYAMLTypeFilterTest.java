@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.snakeyaml;
 
-import java.util.Arrays;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.snakeyaml.model.TestPojo;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -57,16 +55,15 @@ public class SnakeYAMLTypeFilterTest extends CamelTestSupport {
 
                 // Type filter Constructor
                 SnakeYAMLDataFormat typeConstructorDf = new SnakeYAMLDataFormat();
-                typeConstructorDf.addTypeFilters(TypeFilters.types(TestPojo.class));
+                typeConstructorDf.setTypeFilters(TestPojo.class);
 
                 from("direct:type-constructor")
                         .unmarshal(typeConstructorDf);
 
                 // Type filter Constructor from string definitions
                 SnakeYAMLDataFormat typeConstructorStrDf = new SnakeYAMLDataFormat();
-                typeConstructorStrDf.setTypeFilterDefinitions(Arrays.asList(
-                        "type:org.apache.camel.component.snakeyaml.model.TestPojo",
-                        "regexp:org.apache.camel.component.snakeyaml.model.R.*"));
+                typeConstructorStrDf.setTypeFilters(
+                        "org.apache.camel.component.snakeyaml.model.TestPojo,org.apache.camel.component.snakeyaml.model.R.*");
 
                 from("direct:type-constructor-strdef")
                         .unmarshal(typeConstructorStrDf);

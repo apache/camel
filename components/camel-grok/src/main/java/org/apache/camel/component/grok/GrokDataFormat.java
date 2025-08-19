@@ -41,12 +41,11 @@ import org.apache.camel.util.ObjectHelper;
 
 @Dataformat("grok")
 public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+
     private CamelContext camelContext;
-
     private Grok grok;
-
+    private final Set<GrokPattern> customPatterns = new HashSet<>();
     private boolean allowMultipleMatchesPerLine = true;
-    private Set<GrokPattern> customPatterns = new HashSet<>();
     private boolean flattened;
     private boolean namedOnly;
     private String pattern;

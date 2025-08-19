@@ -295,20 +295,6 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @Test
-    public void testParseTidyMarkupDataFormat() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithTidyMarkupDataFormat.xml");
-        assertFrom(route, "seda:a");
-    }
-
-    @Test
-    public void testParseTidyMarkupDataFormatAndAllowNullBody() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithTidyMarkupDataFormatAndAllowNullBody.xml");
-        assertFrom(route, "seda:a");
-        UnmarshalDefinition unmarshal = assertNthProcessorInstanceOf(UnmarshalDefinition.class, route, 0);
-        assertEquals("true", unmarshal.getAllowNullBody(), "The unmarshaller should allow null body");
-    }
-
-    @Test
     public void testParseRSSDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithRSSDataFormat.xml");
         assertFrom(route, "seda:a");

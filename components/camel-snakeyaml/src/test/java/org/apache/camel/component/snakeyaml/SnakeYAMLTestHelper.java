@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.snakeyaml.model.TestPojo;
-import org.yaml.snakeyaml.nodes.Tag;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,13 +56,6 @@ public final class SnakeYAMLTestHelper {
     public static SnakeYAMLDataFormat createPrettyFlowDataFormat(Class<?> type, boolean prettyFlow) {
         SnakeYAMLDataFormat format = createDataFormat(type);
         format.setPrettyFlow(prettyFlow);
-
-        return format;
-    }
-
-    public static SnakeYAMLDataFormat createClassTagDataFormat(Class<?> type, Tag tag) {
-        SnakeYAMLDataFormat format = createDataFormat(type);
-        format.addTag(type, tag);
 
         return format;
     }

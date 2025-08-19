@@ -83,7 +83,7 @@ public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
             public void configure() {
                 JaxbDataFormat df = new JaxbDataFormat();
                 df.setContextPath("org.apache.camel.example");
-                df.setNamespacePrefixRef("myPrefix");
+                df.setNamespacePrefix("myPrefix");
 
                 from("direct:start")
                         .marshal(df)

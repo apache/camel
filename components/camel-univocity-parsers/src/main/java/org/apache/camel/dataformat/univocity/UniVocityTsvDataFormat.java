@@ -32,65 +32,37 @@ import org.apache.camel.spi.annotations.Dataformat;
 public class UniVocityTsvDataFormat
         extends
         AbstractUniVocityDataFormat<TsvFormat, TsvWriterSettings, TsvWriter, TsvParserSettings, TsvParser, UniVocityTsvDataFormat> {
-    protected Character escapeChar;
 
-    /**
-     * Gets the escape character symbol. If {@code null} then the default format value is used.
-     *
-     * @return the escape character symbol
-     * @see    com.univocity.parsers.tsv.TsvFormat#getEscapeChar()
-     */
+    private Character escapeChar;
+
     public Character getEscapeChar() {
         return escapeChar;
     }
 
-    /**
-     * Sets the escape character symbol. If {@code null} then the default settings value is used.
-     *
-     * @param  escapeChar the escape character symbol
-     * @return            current data format instance, fluent API
-     * @see               com.univocity.parsers.tsv.TsvFormat#setEscapeChar(char)
-     */
-    public UniVocityTsvDataFormat setEscapeChar(Character escapeChar) {
+    public void setEscapeChar(Character escapeChar) {
         this.escapeChar = escapeChar;
-        return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected TsvWriterSettings createWriterSettings() {
         return new TsvWriterSettings();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected TsvWriter createWriter(Writer writer, TsvWriterSettings settings) {
         return new TsvWriter(writer, settings);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected TsvParserSettings createParserSettings() {
         return new TsvParserSettings();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected TsvParser createParser(TsvParserSettings settings) {
         return new TsvParser(settings);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void configureFormat(TsvFormat format) {
         super.configureFormat(format);

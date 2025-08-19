@@ -30,7 +30,7 @@ public class FlatpackDataFormatReifier extends DataFormatReifier<FlatpackDataFor
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("parserFactory", asRef(definition.getParserFactoryRef()));
+        properties.put("parserFactory", asRef(definition.getParserFactory()));
         properties.put("definition", definition.getDefinition());
         properties.put("fixed", definition.getFixed());
         properties.put("ignoreFirstRecord", definition.getIgnoreFirstRecord());

@@ -28,9 +28,7 @@
     <route>
       <from uri="direct:start"/>
       <marshal>
-        <csv delimiter="|" skipHeaderRecord="true" quoteMode="ALL">
-          <header>item</header>
-        </csv>
+        <csv delimiter="|" skipHeaderRecord="true" quoteMode="ALL" header="item"/>
       </marshal>
       <convertBodyTo type="java.lang.String"/>
       <to uri="mock:result"/>
@@ -39,19 +37,12 @@
     <route>
       <from uri="direct:start2"/>
       <marshal>
-        <csv formatRef="excelFormat" delimiter="|" skipHeaderRecord="true">
-          <header>orderId</header>
-          <header>amount</header>
-        </csv>
+        <csv format="EXCEL" delimiter="|" skipHeaderRecord="true" header="orderId,amount"/>
       </marshal>
       <convertBodyTo type="java.lang.String"/>
       <to uri="mock:result2"/>
     </route>
 
   </camelContext>
-
-  <bean id="excelFormat" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-    <property name="staticField" value="org.apache.commons.csv.CSVFormat.EXCEL"/>
-  </bean>
 
 </beans>

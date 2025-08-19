@@ -1,0 +1,72 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.14 to 4.15
+
+=== Data Formats
+
+The data formats has been refactored to ensure their options are consistent and can be mapped from the DSL
+to their implementation using reflection-free configurers. A few data formats has therefore changed some option names:
+
+|===
+|**Data Format** |**Old Name** |**New Name**
+|crypto|algorithmParameterRef|algorithmParameterSpec
+|crypto|keyRef|key
+|crypto|initVectorRef|initVector
+|csv|formatRef|format
+|csv|formatName|format
+|flatpack|parserFactoryRef|parserFactory
+|jaxb|namespacePrefixRef|namespacePrefix
+|soap|namespacePrefixRef|namespacePrefix
+|soap|elementNameStrategyRef|elementNameStrategy
+|swiftMx|readConfigRef|readConfig
+|swiftMx|writeConfigRef|writeConfig
+|xmlSecurity|keyOrTrustStoreParametersRef|keyOrTrustStoreParameters
+|===
+
+And in XML DSL the csv dataformat have changed `header` from a `List<String>` to be a single `String`
+where the header values are separated by comma. This is more tooling friendly and also how other components
+and dataformats are configured.
+
+For example:
+
+[source,xml]
+----
+<csv format="EXCEL" delimiter="|" skipHeaderRecord="true">
+  <header>orderId</header>
+  <header>amount</header>
+</csv>
+----
+
+Should be changed to:
+
+[source,xml]
+----
+<csv format="EXCEL" delimiter="|" skipHeaderRecord="true" header="orderId,amount"/>
+----
+
+Likewise in XML DSL the YAML data format has changed `typeFilter` from a `List`> to be a single `String`
+where the types values are separated by comma. This is more tooling friendly and also how other components
+and dataformats are configured.
+
+[source,xml]
+----
+<yaml id="yaml-type-constructor-strdef" library="SnakeYAML">
+    <typeFilter value="org.apache.camel.component.snakeyaml.model.TestPojo"/>
+    <typeFilter value="org.apache.camel.component.snakeyaml.model.Rex.*" type="regexp"/>
+</yaml>
+----
+
+Should be changed to:
+
+[source,xml]
+----
+<yaml id="yaml-type-constructor-strdef" library="SnakeYAML"
+      typeFilter="org.apache.camel.component.snakeyaml.model.TestPojo,org.apache.camel.component.snakeyaml.model.Rex.*"/>
+----
+
+Removed the `tidyMarkup` DataFormat in the DSL as the implementation has been removed in earlier version,
+but we forgot to remove it from the DSL model.

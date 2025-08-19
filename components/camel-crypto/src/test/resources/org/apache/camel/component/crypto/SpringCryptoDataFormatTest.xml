@@ -26,28 +26,28 @@
   <!-- START SNIPPET: e1 -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <dataFormats>
-      <crypto id="basic" algorithm="DES" keyRef="desKey" />
+      <crypto id="basic" algorithm="DES" key="desKey" />
 
       <!-- START SNIPPET: init-vector -->
-      <crypto id="initvector" algorithm="DES/CBC/PKCS5Padding" keyRef="desKey" initVectorRef="initializationVector" />
+      <crypto id="initvector" algorithm="DES/CBC/PKCS5Padding" key="desKey" initVector="initializationVector" />
       <!-- END SNIPPET: init-vector -->
 
       <!-- START SNIPPET: inline -->
-      <crypto id="inline" algorithm="DES/CBC/PKCS5Padding" keyRef="desKey" initVectorRef="initializationVector"
+      <crypto id="inline" algorithm="DES/CBC/PKCS5Padding" key="desKey" initVector="initializationVector"
         inline="true" />
-      <crypto id="inline-decrypt" algorithm="DES/CBC/PKCS5Padding" keyRef="desKey" inline="true" />
+      <crypto id="inline-decrypt" algorithm="DES/CBC/PKCS5Padding" key="desKey" inline="true" />
       <!-- END SNIPPET: inline -->
 
       <!-- START SNIPPET: hmac -->
-      <crypto id="hmac" algorithm="DES" keyRef="desKey" shouldAppendHMAC="true" />
+      <crypto id="hmac" algorithm="DES" key="desKey" shouldAppendHMAC="true" />
       <!-- END SNIPPET: hmac -->
 
       <!-- START SNIPPET: hmac-algorithm -->
-      <crypto id="hmac-algorithm" algorithm="DES" keyRef="desKey" macAlgorithm="HmacMD5" shouldAppendHMAC="true" />
+      <crypto id="hmac-algorithm" algorithm="DES" key="desKey" macAlgorithm="HmacMD5" shouldAppendHMAC="true" />
       <!-- END SNIPPET: hmac-algorithm -->
       
       <!-- START SNIPPET: hmac-sha-256-algorithm -->
-      <crypto id="hmac-sha-256-algorithm" algorithm="DES" keyRef="desKey" macAlgorithm="HmacSHA256" shouldAppendHMAC="true" />
+      <crypto id="hmac-sha-256-algorithm" algorithm="DES" key="desKey" macAlgorithm="HmacSHA256" shouldAppendHMAC="true" />
       <!-- END SNIPPET: hmac-sha-256-algorithm -->
       
       <!-- START SNIPPET: header-key -->
@@ -55,22 +55,22 @@
       <!-- END SNIPPET: header-key -->
       
       <!-- START SNIPPET: tripledes-ecb-encryption -->
-      <crypto id="tripledes-ecb-encryption" algorithm="DESede/ECB/PKCS5Padding" keyRef="desEdeKey" />
+      <crypto id="tripledes-ecb-encryption" algorithm="DESede/ECB/PKCS5Padding" key="desEdeKey" />
       <!-- END SNIPPET: tripledes-ecb-encryption -->
       
       <!-- START SNIPPET: tripledes-cbc-encryption -->
-      <crypto id="tripledes-cbc-encryption-encrypt" algorithm="DESede/CBC/PKCS5Padding" keyRef="desEdeKey" initVectorRef="initializationVector" inline="true" />
-      <crypto id="tripledes-cbc-encryption-decrypt" algorithm="DESede/CBC/PKCS5Padding" keyRef="desEdeKey" inline="true" />
+      <crypto id="tripledes-cbc-encryption-encrypt" algorithm="DESede/CBC/PKCS5Padding" key="desEdeKey" initVector="initializationVector" inline="true" />
+      <crypto id="tripledes-cbc-encryption-decrypt" algorithm="DESede/CBC/PKCS5Padding" key="desEdeKey" inline="true" />
       <!-- END SNIPPET: tripledes-cbc-encryption -->
       
       <!-- START SNIPPET: aes-128-ecb-encryption -->
-      <crypto id="aes-128-ecb-encryption" algorithm="AES/ECB/PKCS5Padding" keyRef="aesKey" />
+      <crypto id="aes-128-ecb-encryption" algorithm="AES/ECB/PKCS5Padding" key="aesKey" />
       <!-- END SNIPPET: aes-128-ecb-encryption -->
       
-      <crypto id="aes-gcm-encryption" algorithm="AES/GCM/NoPadding" keyRef="aesKey" algorithmParameterRef="gcmParamSpec" />
-      <crypto id="inline-aes-gcm-encryption" algorithm="AES/GCM/NoPadding" keyRef="aesKey" algorithmParameterRef="gcmParamSpec" initVectorRef="initializationVector" inline="true"/>
+      <crypto id="aes-gcm-encryption" algorithm="AES/GCM/NoPadding" key="aesKey" algorithmParameterSpec="gcmParamSpec" />
+      <crypto id="inline-aes-gcm-encryption" algorithm="AES/GCM/NoPadding" key="aesKey" algorithmParameterSpec="gcmParamSpec" initVector="initializationVector" inline="true"/>
       
-      <crypto id="des-no-algorithm" keyRef="desKey" initVectorRef="initializationVector" />
+      <crypto id="des-no-algorithm" key="desKey" initVector="initializationVector" />
     </dataFormats>
     
     <route>

@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class SwiftMtDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean")
     private String writeInJson;
 
     public SwiftMtDataFormat() {

@@ -173,14 +173,12 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
-import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
-import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
@@ -788,11 +786,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Transform strings to various 1D/2D barcode bitmap formats and back.",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "barcodeFormat", type = "string", description = "Barcode format such as QR-Code", displayName = "Barcode Format"),
-                    @YamlProperty(name = "height", type = "number", description = "Height of the barcode", displayName = "Height"),
+                    @YamlProperty(name = "barcodeFormat", type = "enum:AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION", defaultValue = "QR_CODE", description = "Barcode format such as QR-Code", displayName = "Barcode Format"),
+                    @YamlProperty(name = "height", type = "number", defaultValue = "100", description = "Height of the barcode", displayName = "Height"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "imageType", type = "string", description = "Image type of the barcode such as png", displayName = "Image Type"),
-                    @YamlProperty(name = "width", type = "number", description = "Width of the barcode", displayName = "Width")
+                    @YamlProperty(name = "imageType", type = "enum:JPG,GIF,PNG", defaultValue = "PNG", description = "Image type of the barcode such as png", displayName = "Image Type"),
+                    @YamlProperty(name = "width", type = "number", defaultValue = "100", description = "Width of the barcode", displayName = "Width")
             }
     )
     public static class BarcodeDataFormatDeserializer extends YamlDeserializerBase<BarcodeDataFormat> {
@@ -2874,13 +2872,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "algorithm", type = "string", description = "The JCE algorithm name indicating the cryptographic algorithm that will be used.", displayName = "Algorithm"),
-                    @YamlProperty(name = "algorithmParameterRef", type = "string", description = "A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type.", displayName = "Algorithm Parameter Ref"),
+                    @YamlProperty(name = "algorithmParameterSpec", type = "string", description = "A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type.", displayName = "Algorithm Parameter Spec"),
                     @YamlProperty(name = "bufferSize", type = "number", defaultValue = "4096", description = "The size of the buffer used in the signature process.", displayName = "Buffer Size"),
                     @YamlProperty(name = "cryptoProvider", type = "string", description = "The name of the JCE Security Provider that should be used.", displayName = "Crypto Provider"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "initVectorRef", type = "string", description = "Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.", displayName = "Init Vector Ref"),
+                    @YamlProperty(name = "initVector", type = "string", description = "Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.", displayName = "Init Vector"),
                     @YamlProperty(name = "inline", type = "boolean", description = "Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false.", displayName = "Inline"),
-                    @YamlProperty(name = "keyRef", type = "string", description = "Refers to the secret key to lookup from the register to use.", displayName = "Key Ref"),
+                    @YamlProperty(name = "key", type = "string", description = "Refers to the secret key to lookup from the register to use.", displayName = "Key"),
                     @YamlProperty(name = "macAlgorithm", type = "string", defaultValue = "HmacSHA1", description = "The JCE algorithm name indicating the Message Authentication algorithm.", displayName = "Mac Algorithm"),
                     @YamlProperty(name = "shouldAppendHMAC", type = "boolean", description = "Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.", displayName = "Should Append HMAC")
             }
@@ -2905,9 +2903,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setAlgorithm(val);
                     break;
                 }
-                case "algorithmParameterRef": {
+                case "algorithmParameterSpec": {
                     String val = asText(node);
-                    target.setAlgorithmParameterRef(val);
+                    target.setAlgorithmParameterSpec(val);
                     break;
                 }
                 case "bufferSize": {
@@ -2925,9 +2923,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setId(val);
                     break;
                 }
-                case "initVectorRef": {
+                case "initVector": {
                     String val = asText(node);
-                    target.setInitVectorRef(val);
+                    target.setInitVector(val);
                     break;
                 }
                 case "inline": {
@@ -2935,9 +2933,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setInline(val);
                     break;
                 }
-                case "keyRef": {
+                case "key": {
                     String val = asText(node);
-                    target.setKeyRef(val);
+                    target.setKey(val);
                     break;
                 }
                 case "macAlgorithm": {
@@ -2974,9 +2972,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "delimiter", type = "string", description = "Sets the delimiter to use. The default value is , (comma)", displayName = "Delimiter"),
                     @YamlProperty(name = "escape", type = "string", description = "Sets the escape character to use", displayName = "Escape"),
                     @YamlProperty(name = "escapeDisabled", type = "boolean", description = "Use for disabling using escape character", displayName = "Escape Disabled"),
-                    @YamlProperty(name = "formatName", type = "enum:DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180", defaultValue = "DEFAULT", description = "The name of the format to use, the default value is CSVFormat.DEFAULT", displayName = "Format Name"),
-                    @YamlProperty(name = "formatRef", type = "string", description = "The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT", displayName = "Format Ref"),
-                    @YamlProperty(name = "header", type = "array:string", description = "To configure the CSV headers", displayName = "Header"),
+                    @YamlProperty(name = "format", type = "enum:DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MONGODB_CSV,MONGODB_TSV,MYSQL,ORACLE,POSTGRESQL_CSV,POSTGRESQL_TEXT,RFC4180", defaultValue = "DEFAULT", description = "The format to use.", displayName = "Format"),
+                    @YamlProperty(name = "header", type = "string", description = "To configure the CSV headers. Multiple headers can be separated by comma.", displayName = "Header"),
                     @YamlProperty(name = "headerDisabled", type = "boolean", description = "Use for disabling headers", displayName = "Header Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreEmptyLines", type = "boolean", description = "Whether to ignore empty lines.", displayName = "Ignore Empty Lines"),
@@ -3054,18 +3051,13 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setEscapeDisabled(val);
                     break;
                 }
-                case "formatName": {
+                case "format": {
                     String val = asText(node);
-                    target.setFormatName(val);
-                    break;
-                }
-                case "formatRef": {
-                    String val = asText(node);
-                    target.setFormatRef(val);
+                    target.setFormat(val);
                     break;
                 }
                 case "header": {
-                    java.util.List<String> val = asStringList(node);
+                    String val = asText(node);
                     target.setHeader(val);
                     break;
                 }
@@ -3529,7 +3521,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "tidyMarkup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "toType", type = "string", description = "Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be picked up if destination type is 'json:XYZ'. If you specify just 'json', the transformer matches with all of 'json' destination type like 'json:ABC' or 'json:DEF'.", displayName = "To Type"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
@@ -3735,11 +3726,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
-                case "tidyMarkup": {
-                    org.apache.camel.model.dataformat.TidyMarkupDataFormat val = asType(node, org.apache.camel.model.dataformat.TidyMarkupDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
                 case "univocityCsv": {
                     org.apache.camel.model.dataformat.UniVocityCsvDataFormat val = asType(node, org.apache.camel.model.dataformat.UniVocityCsvDataFormat.class);
                     target.setDataFormatType(val);
@@ -3852,7 +3838,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
-                    @YamlProperty(name = "tidyMarkup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
@@ -4234,16 +4219,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "thrift": {
                     org.apache.camel.model.dataformat.ThriftDataFormat val = asType(node, org.apache.camel.model.dataformat.ThriftDataFormat.class);
-                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setDataFormats(existing);
-                    break;
-                }
-                case "tidyMarkup": {
-                    org.apache.camel.model.dataformat.TidyMarkupDataFormat val = asType(node, org.apache.camel.model.dataformat.TidyMarkupDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -6174,7 +6149,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreExtraColumns", type = "boolean", description = "Allows for lines to be longer than expected and ignores the extra characters.", displayName = "Ignore Extra Columns"),
                     @YamlProperty(name = "ignoreFirstRecord", type = "boolean", description = "Whether the first line is ignored for delimited files (for the column headers). Is by default true.", displayName = "Ignore First Record"),
-                    @YamlProperty(name = "parserFactoryRef", type = "string", description = "References to a custom parser factory to lookup in the registry", displayName = "Parser Factory Ref"),
+                    @YamlProperty(name = "parserFactory", type = "string", description = "References to a custom parser factory to lookup in the registry", displayName = "Parser Factory"),
                     @YamlProperty(name = "textQualifier", type = "string", description = "If the text is qualified with a character. Uses quote character by default.", displayName = "Text Qualifier")
             }
     )
@@ -6228,9 +6203,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setIgnoreFirstRecord(val);
                     break;
                 }
-                case "parserFactoryRef": {
+                case "parserFactory": {
                     String val = asText(node);
-                    target.setParserFactoryRef(val);
+                    target.setParserFactory(val);
                     break;
                 }
                 case "textQualifier": {
@@ -6737,6 +6712,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "parser", type = "string", description = "To use a custom HL7 parser", displayName = "Parser"),
                     @YamlProperty(name = "validate", type = "boolean", description = "Whether to validate the HL7 message Is by default true.", displayName = "Validate")
             }
     )
@@ -6758,6 +6734,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "parser": {
+                    String val = asText(node);
+                    target.setParser(val);
                     break;
                 }
                 case "validate": {
@@ -7928,7 +7909,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ignoreJAXBElement", type = "boolean", description = "Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.", displayName = "Ignore JAXBElement"),
                     @YamlProperty(name = "jaxbProviderProperties", type = "string", description = "Refers to a custom java.util.Map to lookup in the registry containing custom JAXB provider properties to be used with the JAXB marshaller.", displayName = "Jaxb Provider Properties"),
                     @YamlProperty(name = "mustBeJAXBElement", type = "boolean", description = "Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be set to false to relax that, such as when the data is already in XML format.", displayName = "Must Be JAXBElement"),
-                    @YamlProperty(name = "namespacePrefixRef", type = "string", description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.", displayName = "Namespace Prefix Ref"),
+                    @YamlProperty(name = "namespacePrefix", type = "string", description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.", displayName = "Namespace Prefix"),
                     @YamlProperty(name = "noNamespaceSchemaLocation", type = "string", description = "To define the location of the namespaceless schema", displayName = "No Namespace Schema Location"),
                     @YamlProperty(name = "objectFactory", type = "boolean", description = "Whether to allow using ObjectFactory classes to create the POJO classes during marshalling. This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.", displayName = "Object Factory"),
                     @YamlProperty(name = "partClass", type = "string", description = "Name of class used for fragment parsing. See more details at the fragment option.", displayName = "Part Class"),
@@ -8010,9 +7991,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setMustBeJAXBElement(val);
                     break;
                 }
-                case "namespacePrefixRef": {
+                case "namespacePrefix": {
                     String val = asText(node);
-                    target.setNamespacePrefixRef(val);
+                    target.setNamespacePrefix(val);
                     break;
                 }
                 case "noNamespaceSchemaLocation": {
@@ -9752,7 +9733,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "tidyMarkup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
@@ -9961,11 +9941,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "thrift": {
                     org.apache.camel.model.dataformat.ThriftDataFormat val = asType(node, org.apache.camel.model.dataformat.ThriftDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "tidyMarkup": {
-                    org.apache.camel.model.dataformat.TidyMarkupDataFormat val = asType(node, org.apache.camel.model.dataformat.TidyMarkupDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -17182,10 +17157,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "contextPath", type = "string", required = true, description = "Package name where your JAXB classes are located.", displayName = "Context Path"),
-                    @YamlProperty(name = "elementNameStrategyRef", type = "string", description = "Refers to an element strategy to lookup from the registry. An element name strategy is used for two purposes. The first is to find a xml element name for a given object and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name. The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and namespace from the XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault All three classes is located in the package name org.apache.camel.dataformat.soap.name If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy.", displayName = "Element Name Strategy Ref"),
+                    @YamlProperty(name = "elementNameStrategy", type = "string", description = "Refers to an element strategy to lookup from the registry. An element name strategy is used for two purposes. The first is to find a xml element name for a given object and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name. The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and namespace from the XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault All three classes is located in the package name org.apache.camel.dataformat.soap.name If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy.", displayName = "Element Name Strategy"),
                     @YamlProperty(name = "encoding", type = "string", description = "To overrule and use a specific encoding", displayName = "Encoding"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "namespacePrefixRef", type = "string", description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.", displayName = "Namespace Prefix Ref"),
+                    @YamlProperty(name = "ignoreUnmarshalledHeaders", type = "boolean", description = "Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled is recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect any problematic header.", displayName = "Ignore Unmarshalled Headers"),
+                    @YamlProperty(name = "namespacePrefix", type = "string", description = "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.", displayName = "Namespace Prefix"),
                     @YamlProperty(name = "schema", type = "string", description = "To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource should be resolved. You can separate multiple schema files by using the ',' character.", displayName = "Schema"),
                     @YamlProperty(name = "version", type = "enum:1.1,1.2", defaultValue = "1.1", description = "SOAP version should either be 1.1 or 1.2. Is by default 1.1", displayName = "Version")
             }
@@ -17215,9 +17191,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setContextPath(val);
                     break;
                 }
-                case "elementNameStrategyRef": {
+                case "elementNameStrategy": {
                     String val = asText(node);
-                    target.setElementNameStrategyRef(val);
+                    target.setElementNameStrategy(val);
                     break;
                 }
                 case "encoding": {
@@ -17230,9 +17206,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setId(val);
                     break;
                 }
-                case "namespacePrefixRef": {
+                case "ignoreUnmarshalledHeaders": {
                     String val = asText(node);
-                    target.setNamespacePrefixRef(val);
+                    target.setIgnoreUnmarshalledHeaders(val);
+                    break;
+                }
+                case "namespacePrefix": {
+                    String val = asText(node);
+                    target.setNamespacePrefix(val);
                     break;
                 }
                 case "schema": {
@@ -18002,9 +17983,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "readConfigRef", type = "string", description = "Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry.", displayName = "Read Config Ref"),
+                    @YamlProperty(name = "readConfig", type = "string", description = "Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry.", displayName = "Read Config"),
                     @YamlProperty(name = "readMessageId", type = "string", description = "The type of MX message to produce when unmarshalling an input stream. If not set, it will be automatically detected from the namespace used.", displayName = "Read Message Id"),
-                    @YamlProperty(name = "writeConfigRef", type = "string", description = "Refers to a specific configuration to use when marshalling a message to lookup from the registry.", displayName = "Write Config Ref"),
+                    @YamlProperty(name = "writeConfig", type = "string", description = "Refers to a specific configuration to use when marshalling a message to lookup from the registry.", displayName = "Write Config"),
                     @YamlProperty(name = "writeInJson", type = "boolean", description = "The flag indicating that messages must be marshalled in a JSON format.", displayName = "Write In Json")
             }
     )
@@ -18028,9 +18009,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setId(val);
                     break;
                 }
-                case "readConfigRef": {
+                case "readConfig": {
                     String val = asText(node);
-                    target.setReadConfigRef(val);
+                    target.setReadConfig(val);
                     break;
                 }
                 case "readMessageId": {
@@ -18038,9 +18019,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setReadMessageId(val);
                     break;
                 }
-                case "writeConfigRef": {
+                case "writeConfig": {
                     String val = asText(node);
-                    target.setWriteConfigRef(val);
+                    target.setWriteConfig(val);
                     break;
                 }
                 case "writeInJson": {
@@ -18636,57 +18617,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     String val = asText(node);
                     target.setDescription(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "tidyMarkup",
-            types = org.apache.camel.model.dataformat.TidyMarkupDataFormat.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "TidyMarkup",
-            description = "Parse (potentially invalid) HTML into valid HTML or DOM.",
-            deprecated = false,
-            properties = {
-                    @YamlProperty(name = "dataObjectType", type = "enum:org.w3c.dom.Node,java.lang.String", defaultValue = "org.w3c.dom.Node", description = "What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node", displayName = "Data Object Type"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "omitXmlDeclaration", type = "boolean", description = "When returning a String, do we omit the XML declaration in the top.", displayName = "Omit Xml Declaration")
-            }
-    )
-    public static class TidyMarkupDataFormatDeserializer extends YamlDeserializerBase<TidyMarkupDataFormat> {
-        public TidyMarkupDataFormatDeserializer() {
-            super(TidyMarkupDataFormat.class);
-        }
-
-        @Override
-        protected TidyMarkupDataFormat newInstance() {
-            return new TidyMarkupDataFormat();
-        }
-
-        @Override
-        protected boolean setProperty(TidyMarkupDataFormat target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "dataObjectType": {
-                    String val = asText(node);
-                    target.setDataObjectTypeName(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "omitXmlDeclaration": {
-                    String val = asText(node);
-                    target.setOmitXmlDeclaration(val);
                     break;
                 }
                 default: {
@@ -19981,7 +19911,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "tidyMarkup", type = "object:org.apache.camel.model.dataformat.TidyMarkupDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
@@ -20195,11 +20124,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "thrift": {
                     org.apache.camel.model.dataformat.ThriftDataFormat val = asType(node, org.apache.camel.model.dataformat.ThriftDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "tidyMarkup": {
-                    org.apache.camel.model.dataformat.TidyMarkupDataFormat val = asType(node, org.apache.camel.model.dataformat.TidyMarkupDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -20878,9 +20802,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "digestAlgorithm", type = "enum:SHA1,SHA256,SHA512", defaultValue = "SHA1", description = "The digest algorithm to use with the RSA OAEP algorithm. The available choices are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default value is XMLCipher.SHA1", displayName = "Digest Algorithm"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "keyCipherAlgorithm", type = "enum:RSA_v1dot5,RSA_OAEP,RSA_OAEP_11", defaultValue = "RSA_OAEP", description = "The cipher algorithm to be used for encryption/decryption of the asymmetric key. The available choices are: XMLCipher.RSA_v1dot5 XMLCipher.RSA_OAEP XMLCipher.RSA_OAEP_11 The default value is XMLCipher.RSA_OAEP", displayName = "Key Cipher Algorithm"),
-                    @YamlProperty(name = "keyOrTrustStoreParametersRef", type = "string", description = "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.", displayName = "Key Or Trust Store Parameters Ref"),
+                    @YamlProperty(name = "keyOrTrustStoreParameters", type = "string", description = "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.", displayName = "Key Or Trust Store Parameters"),
                     @YamlProperty(name = "keyPassword", type = "string", description = "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.", displayName = "Key Password"),
                     @YamlProperty(name = "mgfAlgorithm", type = "enum:MGF1_SHA1,MGF1_SHA256,MGF1_SHA512", defaultValue = "MGF1_SHA1", description = "The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are: EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256 EncryptionConstants.MGF1_SHA512 The default value is EncryptionConstants.MGF1_SHA1", displayName = "Mgf Algorithm"),
+                    @YamlProperty(name = "namespace", type = "string", description = "Refers to a Map XML Namespaces of prefix - uri mappings", displayName = "Namespace"),
                     @YamlProperty(name = "passPhrase", type = "string", description = "A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the passPhase can be a Only another 24 Byte key", displayName = "Pass Phrase"),
                     @YamlProperty(name = "passPhraseByte", type = "string", format = "binary", description = "A byte used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm. For example using TRIPLEDES the passPhase can be a Only another 24 Byte key", displayName = "Pass Phrase Byte"),
                     @YamlProperty(name = "recipientKeyAlias", type = "string", description = "The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.", displayName = "Recipient Key Alias"),
@@ -20924,9 +20849,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setKeyCipherAlgorithm(val);
                     break;
                 }
-                case "keyOrTrustStoreParametersRef": {
+                case "keyOrTrustStoreParameters": {
                     String val = asText(node);
-                    target.setKeyOrTrustStoreParametersRef(val);
+                    target.setKeyOrTrustStoreParameters(val);
                     break;
                 }
                 case "keyPassword": {
@@ -20937,6 +20862,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "mgfAlgorithm": {
                     String val = asText(node);
                     target.setMgfAlgorithm(val);
+                    break;
+                }
+                case "namespace": {
+                    String val = asText(node);
+                    target.setNamespaceRef(val);
                     break;
                 }
                 case "passPhrase": {
@@ -21313,7 +21243,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "prettyFlow", type = "boolean", description = "Force the emitter to produce a pretty YAML document when using the flow style.", displayName = "Pretty Flow"),
                     @YamlProperty(name = "representer", type = "string", description = "Representer to emit outgoing objects.", displayName = "Representer"),
                     @YamlProperty(name = "resolver", type = "string", description = "Resolver to detect implicit type", displayName = "Resolver"),
-                    @YamlProperty(name = "typeFilter", type = "array:org.apache.camel.model.dataformat.YAMLTypeFilterDefinition", description = "Set the types SnakeYAML is allowed to un-marshall", displayName = "Type Filter"),
+                    @YamlProperty(name = "typeFilter", type = "string", description = "Set the types SnakeYAML is allowed to un-marshall. Multiple types can be separated by comma.", displayName = "Type Filter"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useApplicationContextClassLoader", type = "boolean", description = "Use ApplicationContextClassLoader as custom ClassLoader", displayName = "Use Application Context Class Loader")
             }
@@ -21383,8 +21313,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "typeFilter": {
-                    java.util.List<org.apache.camel.model.dataformat.YAMLTypeFilterDefinition> val = asFlatList(node, org.apache.camel.model.dataformat.YAMLTypeFilterDefinition.class);
-                    target.setTypeFilters(val);
+                    String val = asText(node);
+                    target.setTypeFilter(val);
                     break;
                 }
                 case "unmarshalType": {
@@ -21395,50 +21325,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "useApplicationContextClassLoader": {
                     String val = asText(node);
                     target.setUseApplicationContextClassLoader(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "typeFilter",
-            types = org.apache.camel.model.dataformat.YAMLTypeFilterDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "YAML Type Filter",
-            deprecated = false,
-            properties = {
-                    @YamlProperty(name = "type", type = "string", description = "Whether to filter by class type or regular expression", displayName = "Type"),
-                    @YamlProperty(name = "value", type = "string", description = "Value of type such as class name or regular expression", displayName = "Value")
-            }
-    )
-    public static class YAMLTypeFilterDefinitionDeserializer extends YamlDeserializerBase<YAMLTypeFilterDefinition> {
-        public YAMLTypeFilterDefinitionDeserializer() {
-            super(YAMLTypeFilterDefinition.class);
-        }
-
-        @Override
-        protected YAMLTypeFilterDefinition newInstance() {
-            return new YAMLTypeFilterDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(YAMLTypeFilterDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "type": {
-                    String val = asText(node);
-                    target.setType(val);
-                    break;
-                }
-                case "value": {
-                    String val = asText(node);
-                    target.setValue(val);
                     break;
                 }
                 default: {

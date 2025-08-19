@@ -440,8 +440,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ThrottleDefinition": return new ModelDeserializers.ThrottleDefinitionDeserializer();
             case "throwException": return new ModelDeserializers.ThrowExceptionDefinitionDeserializer();
             case "org.apache.camel.model.ThrowExceptionDefinition": return new ModelDeserializers.ThrowExceptionDefinitionDeserializer();
-            case "tidyMarkup": return new ModelDeserializers.TidyMarkupDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.TidyMarkupDataFormat": return new ModelDeserializers.TidyMarkupDataFormatDeserializer();
             case "to": return new ModelDeserializers.ToDefinitionDeserializer();
             case "org.apache.camel.model.ToDefinition": return new ModelDeserializers.ToDefinitionDeserializer();
             case "toD": return new ModelDeserializers.ToDynamicDefinitionDeserializer();
@@ -497,8 +495,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.XQueryExpression": return new ModelDeserializers.XQueryExpressionDeserializer();
             case "yaml": return new ModelDeserializers.YAMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.YAMLDataFormat": return new ModelDeserializers.YAMLDataFormatDeserializer();
-            case "typeFilter": return new ModelDeserializers.YAMLTypeFilterDefinitionDeserializer();
-            case "org.apache.camel.model.dataformat.YAMLTypeFilterDefinition": return new ModelDeserializers.YAMLTypeFilterDefinitionDeserializer();
             case "zipDeflater": return new ModelDeserializers.ZipDeflaterDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ZipDeflaterDataFormat": return new ModelDeserializers.ZipDeflaterDataFormatDeserializer();
             case "zipFile": return new ModelDeserializers.ZipFileDataFormatDeserializer();

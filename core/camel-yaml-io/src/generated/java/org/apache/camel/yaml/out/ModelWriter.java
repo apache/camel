@@ -553,9 +553,6 @@ public class ModelWriter extends BaseWriter {
     public void writeThriftDataFormat(ThriftDataFormat def) throws IOException {
         doWriteThriftDataFormat("thrift", def);
     }
-    public void writeTidyMarkupDataFormat(TidyMarkupDataFormat def) throws IOException {
-        doWriteTidyMarkupDataFormat("tidyMarkup", def);
-    }
     public void writeUniVocityCsvDataFormat(UniVocityCsvDataFormat def) throws IOException {
         doWriteUniVocityCsvDataFormat("univocityCsv", def);
     }
@@ -573,9 +570,6 @@ public class ModelWriter extends BaseWriter {
     }
     public void writeYAMLDataFormat(YAMLDataFormat def) throws IOException {
         doWriteYAMLDataFormat("yaml", def);
-    }
-    public void writeYAMLTypeFilterDefinition(YAMLTypeFilterDefinition def) throws IOException {
-        doWriteYAMLTypeFilterDefinition("typeFilter", def);
     }
     public void writeZipDeflaterDataFormat(ZipDeflaterDataFormat def) throws IOException {
         doWriteZipDeflaterDataFormat("zipDeflater", def);
@@ -1240,7 +1234,6 @@ public class ModelWriter extends BaseWriter {
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
-                case "TidyMarkupDataFormat" -> doWriteTidyMarkupDataFormat("tidyMarkup", (TidyMarkupDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
@@ -2001,7 +1994,6 @@ public class ModelWriter extends BaseWriter {
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
-                case "TidyMarkupDataFormat" -> doWriteTidyMarkupDataFormat("tidyMarkup", (TidyMarkupDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
@@ -2419,10 +2411,10 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteBarcodeDataFormat(String name, BarcodeDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("barcodeFormat", def.getBarcodeFormat(), null);
-        doWriteAttribute("width", def.getWidth(), null);
-        doWriteAttribute("imageType", def.getImageType(), null);
-        doWriteAttribute("height", def.getHeight(), null);
+        doWriteAttribute("barcodeFormat", def.getBarcodeFormat(), "QR_CODE");
+        doWriteAttribute("width", def.getWidth(), "100");
+        doWriteAttribute("imageType", def.getImageType(), "PNG");
+        doWriteAttribute("height", def.getHeight(), "100");
         endElement(name);
     }
     protected void doWriteBase64DataFormat(String name, Base64DataFormat def) throws IOException {
@@ -2477,10 +2469,10 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("shouldAppendHMAC", def.getShouldAppendHMAC(), "true");
         doWriteAttribute("inline", def.getInline(), "false");
         doWriteAttribute("macAlgorithm", def.getMacAlgorithm(), "HmacSHA1");
-        doWriteAttribute("algorithmParameterRef", def.getAlgorithmParameterRef(), null);
-        doWriteAttribute("initVectorRef", def.getInitVectorRef(), null);
+        doWriteAttribute("initVector", def.getInitVector(), null);
         doWriteAttribute("cryptoProvider", def.getCryptoProvider(), null);
-        doWriteAttribute("keyRef", def.getKeyRef(), null);
+        doWriteAttribute("algorithmParameterSpec", def.getAlgorithmParameterSpec(), null);
+        doWriteAttribute("key", def.getKey(), null);
         doWriteAttribute("bufferSize", def.getBufferSize(), "4096");
         doWriteAttribute("algorithm", def.getAlgorithm(), null);
         endElement(name);
@@ -2505,18 +2497,17 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("escape", def.getEscape(), null);
         doWriteAttribute("nullStringDisabled", def.getNullStringDisabled(), null);
         doWriteAttribute("commentMarker", def.getCommentMarker(), null);
-        doWriteAttribute("formatRef", def.getFormatRef(), null);
         doWriteAttribute("quoteMode", def.getQuoteMode(), null);
-        doWriteAttribute("formatName", def.getFormatName(), "DEFAULT");
+        doWriteAttribute("format", def.getFormat(), "DEFAULT");
         doWriteAttribute("ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), null);
         doWriteAttribute("quoteDisabled", def.getQuoteDisabled(), null);
         doWriteAttribute("useOrderedMaps", def.getUseOrderedMaps(), null);
         doWriteAttribute("ignoreHeaderCase", def.getIgnoreHeaderCase(), null);
+        doWriteAttribute("header", def.getHeader(), null);
         doWriteAttribute("recordSeparatorDisabled", def.getRecordSeparatorDisabled(), null);
         doWriteAttribute("captureHeaderRecord", def.getCaptureHeaderRecord(), null);
         doWriteAttribute("marshallerFactoryRef", def.getMarshallerFactoryRef(), null);
         doWriteAttribute("recordSeparator", def.getRecordSeparator(), null);
-        doWriteList(null, "header", def.getHeader(), this::doWriteString);
         endElement(name);
     }
     protected void doWriteCustomDataFormat(String name, CustomDataFormat def) throws IOException {
@@ -2565,7 +2556,6 @@ public class ModelWriter extends BaseWriter {
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
-                case "TidyMarkupDataFormat" -> doWriteTidyMarkupDataFormat("tidyMarkup", (TidyMarkupDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
@@ -2626,10 +2616,10 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("allowShortLines", def.getAllowShortLines(), null);
         doWriteAttribute("delimiter", def.getDelimiter(), ",");
+        doWriteAttribute("parserFactory", def.getParserFactory(), null);
         doWriteAttribute("fixed", def.getFixed(), null);
         doWriteAttribute("definition", def.getDefinition(), null);
         doWriteAttribute("ignoreFirstRecord", def.getIgnoreFirstRecord(), "true");
-        doWriteAttribute("parserFactoryRef", def.getParserFactoryRef(), null);
         doWriteAttribute("textQualifier", def.getTextQualifier(), null);
         doWriteAttribute("ignoreExtraColumns", def.getIgnoreExtraColumns(), null);
         endElement(name);
@@ -2660,6 +2650,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteHL7DataFormat(String name, HL7DataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("parser", def.getParser(), null);
         doWriteAttribute("validate", def.getValidate(), "true");
         endElement(name);
     }
@@ -2714,11 +2705,11 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("contextPath", def.getContextPath(), null);
         doWriteAttribute("noNamespaceSchemaLocation", def.getNoNamespaceSchemaLocation(), null);
         doWriteAttribute("encoding", def.getEncoding(), null);
+        doWriteAttribute("namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute("fragment", def.getFragment(), null);
         doWriteAttribute("filterNonXmlChars", def.getFilterNonXmlChars(), null);
         doWriteAttribute("mustBeJAXBElement", def.getMustBeJAXBElement(), null);
         doWriteAttribute("objectFactory", def.getObjectFactory(), "true");
-        doWriteAttribute("namespacePrefixRef", def.getNamespacePrefixRef(), null);
         doWriteAttribute("partClass", def.getPartClass(), null);
         doWriteAttribute("jaxbProviderProperties", def.getJaxbProviderProperties(), null);
         doWriteAttribute("partNamespace", def.getPartNamespace(), null);
@@ -2844,11 +2835,12 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("schema", def.getSchema(), null);
-        doWriteAttribute("namespacePrefixRef", def.getNamespacePrefixRef(), null);
-        doWriteAttribute("elementNameStrategyRef", def.getElementNameStrategyRef(), null);
+        doWriteAttribute("ignoreUnmarshalledHeaders", def.getIgnoreUnmarshalledHeaders(), null);
         doWriteAttribute("contextPath", def.getContextPath(), null);
         doWriteAttribute("encoding", def.getEncoding(), null);
+        doWriteAttribute("namespacePrefix", def.getNamespacePrefix(), null);
         doWriteAttribute("version", def.getVersion(), "1.1");
+        doWriteAttribute("elementNameStrategy", def.getElementNameStrategy(), null);
         endElement(name);
     }
     protected void doWriteSwiftMtDataFormat(String name, SwiftMtDataFormat def) throws IOException {
@@ -2860,10 +2852,10 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSwiftMxDataFormat(String name, SwiftMxDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("readConfig", def.getReadConfig(), null);
+        doWriteAttribute("writeConfig", def.getWriteConfig(), null);
         doWriteAttribute("readMessageId", def.getReadMessageId(), null);
         doWriteAttribute("writeInJson", def.getWriteInJson(), null);
-        doWriteAttribute("writeConfigRef", def.getWriteConfigRef(), null);
-        doWriteAttribute("readConfigRef", def.getReadConfigRef(), null);
         endElement(name);
     }
     protected void doWriteSyslogDataFormat(String name, SyslogDataFormat def) throws IOException {
@@ -2886,13 +2878,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute("contentTypeFormat", def.getContentTypeFormat(), "binary");
         doWriteAttribute("instanceClass", def.getInstanceClass(), null);
-        endElement(name);
-    }
-    protected void doWriteTidyMarkupDataFormat(String name, TidyMarkupDataFormat def) throws IOException {
-        startElement(name);
-        doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("omitXmlDeclaration", def.getOmitXmlDeclaration(), null);
-        doWriteAttribute("dataObjectType", def.getDataObjectTypeName(), "org.w3c.dom.Node");
         endElement(name);
     }
     protected void doWriteUniVocityAbstractDataFormatAttributes(UniVocityAbstractDataFormat def) throws IOException {
@@ -2958,11 +2943,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("addKeyValueForEncryptedKey", def.getAddKeyValueForEncryptedKey(), "true");
         doWriteAttribute("keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "RSA_OAEP");
         doWriteAttribute("recipientKeyAlias", def.getRecipientKeyAlias(), null);
-        doWriteAttribute("keyOrTrustStoreParametersRef", def.getKeyOrTrustStoreParametersRef(), null);
         doWriteAttribute("digestAlgorithm", def.getDigestAlgorithm(), "SHA1");
         doWriteAttribute("mgfAlgorithm", def.getMgfAlgorithm(), "MGF1_SHA1");
         doWriteAttribute("secureTagContents", def.getSecureTagContents(), null);
+        doWriteAttribute("namespace", def.getNamespaceRef(), null);
         doWriteAttribute("passPhraseByte", toString(def.getPassPhraseByte()), null);
+        doWriteAttribute("keyOrTrustStoreParameters", def.getKeyOrTrustStoreParameters(), null);
         doWriteAttribute("keyPassword", def.getKeyPassword(), null);
         doWriteAttribute("secureTag", def.getSecureTag(), null);
         doWriteAttribute("xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
@@ -2979,17 +2965,11 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("representer", def.getRepresenter(), null);
         doWriteAttribute("constructor", def.getConstructor(), null);
         doWriteAttribute("library", toString(def.getLibrary()), "SnakeYAML");
+        doWriteAttribute("typeFilter", def.getTypeFilter(), null);
         doWriteAttribute("maxAliasesForCollections", def.getMaxAliasesForCollections(), "50");
         doWriteAttribute("dumperOptions", def.getDumperOptions(), null);
         doWriteAttribute("useApplicationContextClassLoader", def.getUseApplicationContextClassLoader(), "true");
         doWriteAttribute("allowRecursiveKeys", def.getAllowRecursiveKeys(), null);
-        doWriteList(null, "typeFilter", def.getTypeFilters(), this::doWriteYAMLTypeFilterDefinition);
-        endElement(name);
-    }
-    protected void doWriteYAMLTypeFilterDefinition(String name, YAMLTypeFilterDefinition def) throws IOException {
-        startElement(name);
-        doWriteAttribute("type", def.getType(), null);
-        doWriteAttribute("value", def.getValue(), null);
         endElement(name);
     }
     protected void doWriteZipDeflaterDataFormat(String name, ZipDeflaterDataFormat def) throws IOException {
@@ -3708,7 +3688,6 @@ public class ModelWriter extends BaseWriter {
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
-                case "TidyMarkupDataFormat" -> doWriteTidyMarkupDataFormat("tidyMarkup", (TidyMarkupDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);

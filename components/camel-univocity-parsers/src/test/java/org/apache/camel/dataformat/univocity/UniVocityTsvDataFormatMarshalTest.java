@@ -125,13 +125,15 @@ public final class UniVocityTsvDataFormatMarshalTest extends CamelTestSupport {
         tests.put("default", new UniVocityTsvDataFormat());
 
         // Write a TSV with specific headers
-        tests.put("header", new UniVocityTsvDataFormat()
-                .setHeaders(new String[] { "A", "C" }));
+        var df = new UniVocityTsvDataFormat();
+        df.setHeaders("A,C");
+        tests.put("header", df);
 
         // Write a TSV with an advanced configuration
-        tests.put("advanced", new UniVocityTsvDataFormat()
-                .setNullValue("N/A")
-                .setEmptyValue("empty"));
+        df = new UniVocityTsvDataFormat();
+        df.setNullValue("N/A");
+        df.setEmptyValue("empty");
+        tests.put("advanced", df);
 
         return new RouteBuilder() {
             @Override

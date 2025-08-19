@@ -2906,8 +2906,6 @@
               }, {
                 "required" : [ "thrift" ]
               }, {
-                "required" : [ "tidyMarkup" ]
-              }, {
                 "required" : [ "univocityCsv" ]
               }, {
                 "required" : [ "univocityFixed" ]
@@ -3213,14 +3211,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tidyMarkup" ],
-            "properties" : {
-              "tidyMarkup" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "univocityCsv" ],
             "properties" : {
               "univocityCsv" : {
@@ -3340,7 +3330,6 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
-          "tidyMarkup" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
           "univocityTsv" : { },
@@ -7820,7 +7809,6 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
-          "tidyMarkup" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
           "univocityTsv" : { },
@@ -7914,8 +7902,6 @@
                 "required" : [ "tarFile" ]
               }, {
                 "required" : [ "thrift" ]
-              }, {
-                "required" : [ "tidyMarkup" ]
               }, {
                 "required" : [ "univocityCsv" ]
               }, {
@@ -8218,14 +8204,6 @@
             "properties" : {
               "thrift" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
-              }
-            }
-          }, {
-            "type" : "object",
-            "required" : [ "tidyMarkup" ],
-            "properties" : {
-              "tidyMarkup" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
               }
             }
           }, {
@@ -10151,12 +10129,15 @@
           "barcodeFormat" : {
             "type" : "string",
             "title" : "Barcode Format",
-            "description" : "Barcode format such as QR-Code"
+            "description" : "Barcode format such as QR-Code",
+            "default" : "QR_CODE",
+            "enum" : [ "AZTEC", "CODABAR", "CODE_39", "CODE_93", "CODE_128", "DATA_MATRIX", "EAN_8", "EAN_13", "ITF", "MAXICODE", "PDF_417", "QR_CODE", "RSS_14", "RSS_EXPANDED", "UPC_A", "UPC_E", "UPC_EAN_EXTENSION" ]
           },
           "height" : {
             "type" : "number",
             "title" : "Height",
-            "description" : "Height of the barcode"
+            "description" : "Height of the barcode",
+            "default" : "100"
           },
           "id" : {
             "type" : "string",
@@ -10166,12 +10147,15 @@
           "imageType" : {
             "type" : "string",
             "title" : "Image Type",
-            "description" : "Image type of the barcode such as png"
+            "description" : "Image type of the barcode such as png",
+            "default" : "PNG",
+            "enum" : [ "JPG", "GIF", "PNG" ]
           },
           "width" : {
             "type" : "number",
             "title" : "Width",
-            "description" : "Width of the barcode"
+            "description" : "Width of the barcode",
+            "default" : "100"
           }
         }
       },
@@ -10371,9 +10355,9 @@
             "title" : "Algorithm",
             "description" : "The JCE algorithm name indicating the cryptographic algorithm that will be used."
           },
-          "algorithmParameterRef" : {
+          "algorithmParameterSpec" : {
             "type" : "string",
-            "title" : "Algorithm Parameter Ref",
+            "title" : "Algorithm Parameter Spec",
             "description" : "A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type."
           },
           "bufferSize" : {
@@ -10392,9 +10376,9 @@
             "title" : "Id",
             "description" : "The id of this node"
           },
-          "initVectorRef" : {
+          "initVector" : {
             "type" : "string",
-            "title" : "Init Vector Ref",
+            "title" : "Init Vector",
             "description" : "Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher."
           },
           "inline" : {
@@ -10402,9 +10386,9 @@
             "title" : "Inline",
             "description" : "Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false."
           },
-          "keyRef" : {
+          "key" : {
             "type" : "string",
-            "title" : "Key Ref",
+            "title" : "Key",
             "description" : "Refers to the secret key to lookup from the register to use."
           },
           "macAlgorithm" : {
@@ -10464,25 +10448,17 @@
               "title" : "Escape Disabled",
               "description" : "Use for disabling using escape character"
             },
-            "formatName" : {
+            "format" : {
               "type" : "string",
-              "title" : "Format Name",
-              "description" : "The name of the format to use, the default value is CSVFormat.DEFAULT",
+              "title" : "Format",
+              "description" : "The format to use.",
               "default" : "DEFAULT",
-              "enum" : [ "DEFAULT", "EXCEL", "INFORMIX_UNLOAD", "INFORMIX_UNLOAD_CSV", "MYSQL", "RFC4180" ]
-            },
-            "formatRef" : {
-              "type" : "string",
-              "title" : "Format Ref",
-              "description" : "The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT"
+              "enum" : [ "DEFAULT", "EXCEL", "INFORMIX_UNLOAD", "INFORMIX_UNLOAD_CSV", "MONGODB_CSV", "MONGODB_TSV", "MYSQL", "ORACLE", "POSTGRESQL_CSV", "POSTGRESQL_TEXT", "RFC4180" ]
             },
             "header" : {
-              "type" : "array",
+              "type" : "string",
               "title" : "Header",
-              "description" : "To configure the CSV headers",
-              "items" : {
-                "type" : "string"
-              }
+              "description" : "To configure the CSV headers. Multiple headers can be separated by comma."
             },
             "headerDisabled" : {
               "type" : "boolean",
@@ -10724,9 +10700,6 @@
           },
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
-          },
-          "tidyMarkup" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
           },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
@@ -11036,9 +11009,9 @@
             "title" : "Ignore First Record",
             "description" : "Whether the first line is ignored for delimited files (for the column headers). Is by default true."
           },
-          "parserFactoryRef" : {
+          "parserFactory" : {
             "type" : "string",
-            "title" : "Parser Factory Ref",
+            "title" : "Parser Factory",
             "description" : "References to a custom parser factory to lookup in the registry"
           },
           "textQualifier" : {
@@ -11138,6 +11111,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "parser" : {
+            "type" : "string",
+            "title" : "Parser",
+            "description" : "To use a custom HL7 parser"
           },
           "validate" : {
             "type" : "boolean",
@@ -11353,10 +11331,10 @@
             "title" : "Must Be JAXBElement",
             "description" : "Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be set to false to relax that, such as when the data is already in XML format."
           },
-          "namespacePrefixRef" : {
+          "namespacePrefix" : {
             "type" : "string",
-            "title" : "Namespace Prefix Ref",
-            "description" : "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping."
+            "title" : "Namespace Prefix",
+            "description" : "When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping."
           },
           "noNamespaceSchemaLocation" : {
             "type" : "string",
@@ -11912,9 +11890,9 @@
               "title" : "Context Path",
               "description" : "Package name where your JAXB classes are located."
             },
-            "elementNameStrategyRef" : {
+            "elementNameStrategy" : {
               "type" : "string",
-              "title" : "Element Name Strategy Ref",
+              "title" : "Element Name Strategy",
               "description" : "Refers to an element strategy to lookup from the registry. An element name strategy is used for two purposes. The first is to find a xml element name for a given object and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name. The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and namespace from the XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault All three classes is located in the package name org.apache.camel.dataformat.soap.name If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy."
             },
             "encoding" : {
@@ -11927,9 +11905,14 @@
               "title" : "Id",
               "description" : "The id of this node"
             },
-            "namespacePrefixRef" : {
+            "ignoreUnmarshalledHeaders" : {
+              "type" : "boolean",
+              "title" : "Ignore Unmarshalled Headers",
+              "description" : "Whether to ignore headers that was not unmarshalled. By default, headers which could not be unmarshalled is recorded in the org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST header which allows to inspect any problematic header."
+            },
+            "namespacePrefix" : {
               "type" : "string",
-              "title" : "Namespace Prefix Ref",
+              "title" : "Namespace Prefix",
               "description" : "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping."
             },
             "schema" : {
@@ -11981,9 +11964,9 @@
             "title" : "Id",
             "description" : "The id of this node"
           },
-          "readConfigRef" : {
+          "readConfig" : {
             "type" : "string",
-            "title" : "Read Config Ref",
+            "title" : "Read Config",
             "description" : "Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry."
           },
           "readMessageId" : {
@@ -11991,9 +11974,9 @@
             "title" : "Read Message Id",
             "description" : "The type of MX message to produce when unmarshalling an input stream. If not set, it will be automatically detected from the namespace used."
           },
-          "writeConfigRef" : {
+          "writeConfig" : {
             "type" : "string",
-            "title" : "Write Config Ref",
+            "title" : "Write Config",
             "description" : "Refers to a specific configuration to use when marshalling a message to lookup from the registry."
           },
           "writeInJson" : {
@@ -12083,31 +12066,6 @@
             }
           }
         } ]
-      },
-      "org.apache.camel.model.dataformat.TidyMarkupDataFormat" : {
-        "title" : "TidyMarkup",
-        "description" : "Parse (potentially invalid) HTML into valid HTML or DOM.",
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "dataObjectType" : {
-            "type" : "string",
-            "title" : "Data Object Type",
-            "description" : "What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node",
-            "default" : "org.w3c.dom.Node",
-            "enum" : [ "org.w3c.dom.Node", "java.lang.String" ]
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node"
-          },
-          "omitXmlDeclaration" : {
-            "type" : "boolean",
-            "title" : "Omit Xml Declaration",
-            "description" : "When returning a String, do we omit the XML declaration in the top."
-          }
-        }
       },
       "org.apache.camel.model.dataformat.UniVocityCsvDataFormat" : {
         "title" : "uniVocity CSV",
@@ -12456,9 +12414,9 @@
             "default" : "RSA_OAEP",
             "enum" : [ "RSA_v1dot5", "RSA_OAEP", "RSA_OAEP_11" ]
           },
-          "keyOrTrustStoreParametersRef" : {
+          "keyOrTrustStoreParameters" : {
             "type" : "string",
-            "title" : "Key Or Trust Store Parameters Ref",
+            "title" : "Key Or Trust Store Parameters",
             "description" : "Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore."
           },
           "keyPassword" : {
@@ -12472,6 +12430,11 @@
             "description" : "The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are: EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256 EncryptionConstants.MGF1_SHA512 The default value is EncryptionConstants.MGF1_SHA1",
             "default" : "MGF1_SHA1",
             "enum" : [ "MGF1_SHA1", "MGF1_SHA256", "MGF1_SHA512" ]
+          },
+          "namespace" : {
+            "type" : "string",
+            "title" : "Namespace",
+            "description" : "Refers to a Map XML Namespaces of prefix - uri mappings"
           },
           "passPhrase" : {
             "type" : "string",
@@ -12568,12 +12531,9 @@
             "description" : "Resolver to detect implicit type"
           },
           "typeFilter" : {
-            "type" : "array",
+            "type" : "string",
             "title" : "Type Filter",
-            "description" : "Set the types SnakeYAML is allowed to un-marshall",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLTypeFilterDefinition"
-            }
+            "description" : "Set the types SnakeYAML is allowed to un-marshall. Multiple types can be separated by comma."
           },
           "unmarshalType" : {
             "type" : "string",
@@ -12584,23 +12544,6 @@
             "type" : "boolean",
             "title" : "Use Application Context Class Loader",
             "description" : "Use ApplicationContextClassLoader as custom ClassLoader"
-          }
-        }
-      },
-      "org.apache.camel.model.dataformat.YAMLTypeFilterDefinition" : {
-        "title" : "YAML Type Filter",
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "type" : {
-            "type" : "string",
-            "title" : "Type",
-            "description" : "Whether to filter by class type or regular expression"
-          },
-          "value" : {
-            "type" : "string",
-            "title" : "Value",
-            "description" : "Value of type such as class name or regular expression"
           }
         }
       },
@@ -16498,8 +16441,6 @@
               }, {
                 "required" : [ "thrift" ]
               }, {
-                "required" : [ "tidyMarkup" ]
-              }, {
                 "required" : [ "univocityCsv" ]
               }, {
                 "required" : [ "univocityFixed" ]
@@ -16797,14 +16738,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "tidyMarkup" ],
-            "properties" : {
-              "tidyMarkup" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.TidyMarkupDataFormat"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "univocityCsv" ],
             "properties" : {
               "univocityCsv" : {
@@ -16918,7 +16851,6 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
-          "tidyMarkup" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
           "univocityTsv" : { },

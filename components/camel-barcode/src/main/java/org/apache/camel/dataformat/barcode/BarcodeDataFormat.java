@@ -58,6 +58,11 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
 
     private static final Logger LOG = LoggerFactory.getLogger(BarcodeDataFormat.class);
 
+    private BarcodeFormat barcodeFormat;
+    private BarcodeImageType imageType;
+    private Integer width;
+    private Integer height;
+
     /**
      * The bean for the default parameters.
      */
@@ -77,8 +82,6 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * Create instance with default parameters.
      */
     public BarcodeDataFormat() {
-        this.setDefaultParameters();
-        this.optimizeHints();
     }
 
     /**
@@ -87,9 +90,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * @param format the barcode format
      */
     public BarcodeDataFormat(final BarcodeFormat format) {
-        this.setDefaultParameters();
-        this.params.setFormat(format);
-        this.optimizeHints();
+        setBarcodeFormat(format);
     }
 
     /**
@@ -99,10 +100,8 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * @param width  the image width
      */
     public BarcodeDataFormat(final int width, final int height) {
-        this.setDefaultParameters();
-        this.params.setHeight(height);
-        this.params.setWidth(width);
-        this.optimizeHints();
+        setWidth(width);
+        setHeight(height);
     }
 
     /**
@@ -111,9 +110,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * @param type the type (format) of the image. e.g. PNG
      */
     public BarcodeDataFormat(final BarcodeImageType type) {
-        this.setDefaultParameters();
-        this.params.setType(type);
-        this.optimizeHints();
+        setImageType(type);
     }
 
     /**
@@ -125,12 +122,10 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * @param format the barcode format
      */
     public BarcodeDataFormat(final int width, final int height, final BarcodeImageType type, final BarcodeFormat format) {
-        this.setDefaultParameters();
-        this.params.setHeight(height);
-        this.params.setWidth(width);
-        this.params.setType(type);
-        this.params.setFormat(format);
-        this.optimizeHints();
+        setWidth(width);
+        setHeight(height);
+        setImageType(type);
+        setBarcodeFormat(format);
     }
 
     @Override
@@ -152,13 +147,6 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
         return this.readImage(exchange, stream);
-    }
-
-    /**
-     * Sets the default parameters.
-     */
-    protected final void setDefaultParameters() {
-        this.params = new BarcodeParameters();
     }
 
     /**
@@ -295,28 +283,54 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
         return readerHintMap;
     }
 
-    // these set method is used for BarcodeDataFormat XML DSL
-    public void setBarcodeImageType(BarcodeImageType type) {
-        this.params.setType(type);
-        this.optimizeHints();
+    public BarcodeFormat getBarcodeFormat() {
+        return barcodeFormat;
     }
 
-    public void setBarcodeFormat(BarcodeFormat format) {
-        this.params.setFormat(format);
-        this.optimizeHints();
+    public void setBarcodeFormat(BarcodeFormat barcodeFormat) {
+        this.barcodeFormat = barcodeFormat;
+    }
+
+    public BarcodeImageType getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(BarcodeImageType imageType) {
+        this.imageType = imageType;
+    }
+
+    public Integer getWidth() {
+        return width;
     }
 
     public void setWidth(Integer width) {
-        this.params.setWidth(width);
+        this.width = width;
+    }
+
+    public Integer getHeight() {
+        return height;
     }
 
     public void setHeight(Integer height) {
-        this.params.setHeight(height);
+        this.height = height;
     }
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        this.params = new BarcodeParameters();
+        if (barcodeFormat != null) {
+            this.params.setFormat(barcodeFormat);
+        }
+        if (imageType != null) {
+            this.params.setType(imageType);
+        }
+        if (width != null) {
+            this.params.setWidth(width);
+        }
+        if (height != null) {
+            this.params.setHeight(height);
+        }
+        this.optimizeHints();
     }
 
     @Override

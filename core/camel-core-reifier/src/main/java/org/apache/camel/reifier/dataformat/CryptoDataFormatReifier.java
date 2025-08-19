@@ -30,11 +30,11 @@ public class CryptoDataFormatReifier extends DataFormatReifier<CryptoDataFormat>
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("key", asRef(definition.getKeyRef()));
-        properties.put("algorithmParameterSpec", asRef(definition.getAlgorithmParameterRef()));
-        properties.put("initializationVector", asRef(definition.getInitVectorRef()));
+        properties.put("key", asRef(definition.getKey()));
+        properties.put("algorithmParameterSpec", asRef(definition.getAlgorithmParameterSpec()));
+        properties.put("initVector", asRef(definition.getInitVector()));
         properties.put("shouldAppendHMAC", definition.getShouldAppendHMAC());
-        properties.put("shouldInlineInitializationVector", definition.getInline());
+        properties.put("inline", definition.getInline());
         properties.put("algorithm", definition.getAlgorithm());
         properties.put("cryptoProvider", definition.getCryptoProvider());
         properties.put("macAlgorithm", definition.getMacAlgorithm());

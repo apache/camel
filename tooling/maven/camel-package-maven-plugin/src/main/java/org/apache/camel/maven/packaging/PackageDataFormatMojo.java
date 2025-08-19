@@ -60,6 +60,8 @@ import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
+import static org.apache.camel.maven.packaging.MojoHelper.getType;
+
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
  * Camel.
@@ -224,21 +226,31 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             log.debug("Generated " + out + " containing JSON schema for " + name + " data format");
                         }
 
+                        boolean hasSuper = false;
+                        String pfqn = "org.apache.camel.support.component.PropertyConfigurerSupport";
+                        if ("soap".equals(name)) {
+                            hasSuper = true;
+                            pfqn = "org.apache.camel.converter.jaxb.JaxbDataFormatConfigurer";
+                        } else if ("protobufJackson".equals(name)) {
+                            hasSuper = true;
+                            pfqn = "org.apache.camel.component.jackson.JacksonDataFormatConfigurer";
+                        }
+
                         String cn = javaType.substring(javaType.lastIndexOf('.') + 1);
                         String pn = javaType.substring(0, javaType.length() - cn.length() - 1);
                         Set<String> names = dataFormatModel.getOptions().stream().map(DataFormatOptionModel::getName)
                                 .collect(Collectors.toSet());
                         List<DataFormatOptionModel> options = parseConfigurationSource(project, javaType);
                         options.removeIf(o -> !names.contains(o.getName()));
-                        options.stream().map(DataFormatOptionModel::getName).collect(Collectors.toList())
-                                .forEach(names::remove);
+                        options.stream().map(DataFormatOptionModel::getName).toList().forEach(names::remove);
                         names.removeAll(List.of("id"));
                         if (!names.isEmpty()) {
                             log.warn("Unmapped options: " + String.join(",", names));
                         }
+
                         updateResource(configurerSourceOutDir.toPath(),
                                 pn.replace('.', '/') + "/" + cn + "Configurer.java",
-                                generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
+                                generatePropertyConfigurer(pn, cn + "Configurer", pfqn, cn, hasSuper, options));
                         updateResource(configurerResourceOutDir.toPath(),
                                 "META-INF/services/org/apache/camel/configurer/" + name + "-dataformat",
                                 generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
@@ -525,6 +537,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 DataFormatOptionModel model = new DataFormatOptionModel();
                 model.setName(name);
                 model.setJavaType(javaType);
+                model.setType(getType(javaType, false, false));
                 answer.add(model);
             }
         });
@@ -554,7 +567,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         }
     }
 
-    public String generatePropertyConfigurer(String pn, String cn, String en, Collection<DataFormatOptionModel> options)
+    public String generatePropertyConfigurer(
+            String pn, String cn, String pfqn, String en, boolean hasSuper,
+            Collection<DataFormatOptionModel> options)
             throws IOException {
 
         options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).toList();
@@ -564,9 +579,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         ctx.put("package", pn);
         ctx.put("className", cn);
         ctx.put("type", en);
-        ctx.put("pfqn", pn + "." + en);
-        ctx.put("psn", "org.apache.camel.support.component.PropertyConfigurerSupport");
-        ctx.put("hasSuper", false);
+        ctx.put("pfqn", pfqn);
+        ctx.put("psn", pfqn);
+        ctx.put("hasSuper", hasSuper);
         ctx.put("component", false);
         ctx.put("extended", true);
         ctx.put("bootstrap", false);

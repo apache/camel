@@ -1801,12 +1801,12 @@ public class ModelParser extends BaseParser {
     protected CryptoDataFormat doParseCryptoDataFormat() throws IOException, XmlPullParserException {
         return doParse(new CryptoDataFormat(), (def, key, val) -> switch (key) {
                 case "algorithm": def.setAlgorithm(val); yield true;
-                case "algorithmParameterRef": def.setAlgorithmParameterRef(val); yield true;
+                case "algorithmParameterSpec": def.setAlgorithmParameterSpec(val); yield true;
                 case "bufferSize": def.setBufferSize(val); yield true;
                 case "cryptoProvider": def.setCryptoProvider(val); yield true;
-                case "initVectorRef": def.setInitVectorRef(val); yield true;
+                case "initVector": def.setInitVector(val); yield true;
                 case "inline": def.setInline(val); yield true;
-                case "keyRef": def.setKeyRef(val); yield true;
+                case "key": def.setKey(val); yield true;
                 case "macAlgorithm": def.setMacAlgorithm(val); yield true;
                 case "shouldAppendHMAC": def.setShouldAppendHMAC(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
@@ -1821,8 +1821,8 @@ public class ModelParser extends BaseParser {
                 case "delimiter": def.setDelimiter(val); yield true;
                 case "escape": def.setEscape(val); yield true;
                 case "escapeDisabled": def.setEscapeDisabled(val); yield true;
-                case "formatName": def.setFormatName(val); yield true;
-                case "formatRef": def.setFormatRef(val); yield true;
+                case "format": def.setFormat(val); yield true;
+                case "header": def.setHeader(val); yield true;
                 case "headerDisabled": def.setHeaderDisabled(val); yield true;
                 case "ignoreEmptyLines": def.setIgnoreEmptyLines(val); yield true;
                 case "ignoreHeaderCase": def.setIgnoreHeaderCase(val); yield true;
@@ -1843,10 +1843,7 @@ public class ModelParser extends BaseParser {
                 case "useMaps": def.setUseMaps(val); yield true;
                 case "useOrderedMaps": def.setUseOrderedMaps(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "header": doAdd(doParseText(), def.getHeader(), def::setHeader); yield true;
-                default: yield false;
-            }, noValueHandler());
+            }, noElementHandler(), noValueHandler());
     }
     protected CustomDataFormat doParseCustomDataFormat() throws IOException, XmlPullParserException {
         return doParse(new CustomDataFormat(), (def, key, val) -> switch (key) {
@@ -1930,7 +1927,7 @@ public class ModelParser extends BaseParser {
                 case "fixed": def.setFixed(val); yield true;
                 case "ignoreExtraColumns": def.setIgnoreExtraColumns(val); yield true;
                 case "ignoreFirstRecord": def.setIgnoreFirstRecord(val); yield true;
-                case "parserFactoryRef": def.setParserFactoryRef(val); yield true;
+                case "parserFactory": def.setParserFactory(val); yield true;
                 case "textQualifier": def.setTextQualifier(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
@@ -1958,6 +1955,7 @@ public class ModelParser extends BaseParser {
     }
     protected HL7DataFormat doParseHL7DataFormat() throws IOException, XmlPullParserException {
         return doParse(new HL7DataFormat(), (def, key, val) -> switch (key) {
+                case "parser": def.setParser(val); yield true;
                 case "validate": def.setValidate(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
@@ -2010,7 +2008,7 @@ public class ModelParser extends BaseParser {
                 case "ignoreJAXBElement": def.setIgnoreJAXBElement(val); yield true;
                 case "jaxbProviderProperties": def.setJaxbProviderProperties(val); yield true;
                 case "mustBeJAXBElement": def.setMustBeJAXBElement(val); yield true;
-                case "namespacePrefixRef": def.setNamespacePrefixRef(val); yield true;
+                case "namespacePrefix": def.setNamespacePrefix(val); yield true;
                 case "noNamespaceSchemaLocation": def.setNoNamespaceSchemaLocation(val); yield true;
                 case "objectFactory": def.setObjectFactory(val); yield true;
                 case "partClass": def.setPartClass(val); yield true;
@@ -2140,9 +2138,10 @@ public class ModelParser extends BaseParser {
     protected SoapDataFormat doParseSoapDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SoapDataFormat(), (def, key, val) -> switch (key) {
                 case "contextPath": def.setContextPath(val); yield true;
-                case "elementNameStrategyRef": def.setElementNameStrategyRef(val); yield true;
+                case "elementNameStrategy": def.setElementNameStrategy(val); yield true;
                 case "encoding": def.setEncoding(val); yield true;
-                case "namespacePrefixRef": def.setNamespacePrefixRef(val); yield true;
+                case "ignoreUnmarshalledHeaders": def.setIgnoreUnmarshalledHeaders(val); yield true;
+                case "namespacePrefix": def.setNamespacePrefix(val); yield true;
                 case "schema": def.setSchema(val); yield true;
                 case "version": def.setVersion(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
@@ -2156,9 +2155,9 @@ public class ModelParser extends BaseParser {
     }
     protected SwiftMxDataFormat doParseSwiftMxDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SwiftMxDataFormat(), (def, key, val) -> switch (key) {
-                case "readConfigRef": def.setReadConfigRef(val); yield true;
+                case "readConfig": def.setReadConfig(val); yield true;
                 case "readMessageId": def.setReadMessageId(val); yield true;
-                case "writeConfigRef": def.setWriteConfigRef(val); yield true;
+                case "writeConfig": def.setWriteConfig(val); yield true;
                 case "writeInJson": def.setWriteInJson(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
@@ -2180,13 +2179,6 @@ public class ModelParser extends BaseParser {
                 case "contentTypeFormat": def.setContentTypeFormat(val); yield true;
                 case "contentTypeHeader": def.setContentTypeHeader(val); yield true;
                 case "instanceClass": def.setInstanceClass(val); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, noElementHandler(), noValueHandler());
-    }
-    protected TidyMarkupDataFormat doParseTidyMarkupDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new TidyMarkupDataFormat(), (def, key, val) -> switch (key) {
-                case "dataObjectType": def.setDataObjectTypeName(val); yield true;
-                case "omitXmlDeclaration": def.setOmitXmlDeclaration(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
@@ -2248,9 +2240,10 @@ public class ModelParser extends BaseParser {
                 case "addKeyValueForEncryptedKey": def.setAddKeyValueForEncryptedKey(val); yield true;
                 case "digestAlgorithm": def.setDigestAlgorithm(val); yield true;
                 case "keyCipherAlgorithm": def.setKeyCipherAlgorithm(val); yield true;
-                case "keyOrTrustStoreParametersRef": def.setKeyOrTrustStoreParametersRef(val); yield true;
+                case "keyOrTrustStoreParameters": def.setKeyOrTrustStoreParameters(val); yield true;
                 case "keyPassword": def.setKeyPassword(val); yield true;
                 case "mgfAlgorithm": def.setMgfAlgorithm(val); yield true;
+                case "namespace": def.setNamespaceRef(val); yield true;
                 case "passPhrase": def.setPassPhrase(val); yield true;
                 case "passPhraseByte": def.setPassPhraseByte(asByteArray(val)); yield true;
                 case "recipientKeyAlias": def.setRecipientKeyAlias(val); yield true;
@@ -2271,19 +2264,10 @@ public class ModelParser extends BaseParser {
                 case "prettyFlow": def.setPrettyFlow(val); yield true;
                 case "representer": def.setRepresenter(val); yield true;
                 case "resolver": def.setResolver(val); yield true;
+                case "typeFilter": def.setTypeFilter(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
                 case "useApplicationContextClassLoader": def.setUseApplicationContextClassLoader(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "typeFilter": doAdd(doParseYAMLTypeFilterDefinition(), def.getTypeFilters(), def::setTypeFilters); yield true;
-                default: yield false;
-            }, noValueHandler());
-    }
-    protected YAMLTypeFilterDefinition doParseYAMLTypeFilterDefinition() throws IOException, XmlPullParserException {
-        return doParse(new YAMLTypeFilterDefinition(), (def, key, val) -> switch (key) {
-                case "type": def.setType(val); yield true;
-                case "value": def.setValue(val); yield true;
-                default: yield false;
             }, noElementHandler(), noValueHandler());
     }
     protected ZipDeflaterDataFormat doParseZipDeflaterDataFormat() throws IOException, XmlPullParserException {
@@ -2984,7 +2968,6 @@ public class ModelParser extends BaseParser {
             case "syslog": return doParseSyslogDataFormat();
             case "tarFile": return doParseTarFileDataFormat();
             case "thrift": return doParseThriftDataFormat();
-            case "tidyMarkup": return doParseTidyMarkupDataFormat();
             case "univocityCsv": return doParseUniVocityCsvDataFormat();
             case "univocityFixed": return doParseUniVocityFixedDataFormat();
             case "univocityTsv": return doParseUniVocityTsvDataFormat();

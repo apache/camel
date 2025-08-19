@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public final class UniVocityTsvDataFormatTest {
     @Test
     public void shouldConfigureNullValue() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setNullValue("N/A");
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setNullValue("N/A");
 
         assertEquals("N/A", dataFormat.getNullValue());
         assertEquals("N/A", dataFormat.createAndConfigureWriterSettings().getNullValue());
@@ -39,8 +39,8 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureSkipEmptyLines() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setSkipEmptyLines(true);
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setSkipEmptyLines(true);
 
         assertTrue(dataFormat.getSkipEmptyLines());
         assertTrue(dataFormat.createAndConfigureWriterSettings().getSkipEmptyLines());
@@ -49,8 +49,8 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureIgnoreTrailingWhitespaces() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setIgnoreTrailingWhitespaces(true);
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setIgnoreTrailingWhitespaces(true);
 
         assertTrue(dataFormat.getIgnoreTrailingWhitespaces());
         assertTrue(dataFormat.createAndConfigureWriterSettings().getIgnoreTrailingWhitespaces());
@@ -59,8 +59,8 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureIgnoreLeadingWhitespaces() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setIgnoreLeadingWhitespaces(true);
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setIgnoreLeadingWhitespaces(true);
 
         assertTrue(dataFormat.getIgnoreLeadingWhitespaces());
         assertTrue(dataFormat.createAndConfigureWriterSettings().getIgnoreLeadingWhitespaces());
@@ -69,8 +69,8 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureHeadersDisabled() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setHeadersDisabled(true);
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setHeadersDisabled(true);
 
         assertTrue(dataFormat.isHeadersDisabled());
         assertNull(dataFormat.createAndConfigureWriterSettings().getHeaders());
@@ -79,18 +79,17 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureHeaders() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setHeaders(new String[] { "A", "B", "C" });
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setHeaders("A,B,C");
 
-        assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.getHeaders());
         assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.createAndConfigureWriterSettings().getHeaders());
         assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.createAndConfigureParserSettings().getHeaders());
     }
 
     @Test
     public void shouldConfigureHeaderExtractionEnabled() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setHeaderExtractionEnabled(true);
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setHeaderExtractionEnabled(true);
 
         assertTrue(dataFormat.getHeaderExtractionEnabled());
         assertTrue(dataFormat.createAndConfigureParserSettings().isHeaderExtractionEnabled());
@@ -98,8 +97,8 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureNumberOfRecordsToRead() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setNumberOfRecordsToRead(42);
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setNumberOfRecordsToRead(42);
 
         assertEquals(Integer.valueOf(42), dataFormat.getNumberOfRecordsToRead());
         assertEquals(42, dataFormat.createAndConfigureParserSettings().getNumberOfRecordsToRead());
@@ -107,8 +106,8 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureEmptyValue() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setEmptyValue("empty");
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setEmptyValue("empty");
 
         assertEquals("empty", dataFormat.getEmptyValue());
         assertEquals("empty", dataFormat.createAndConfigureWriterSettings().getEmptyValue());
@@ -116,8 +115,8 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureLineSeparator() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setLineSeparator("ls");
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setLineSeparator("ls");
 
         assertEquals("ls", dataFormat.getLineSeparator());
         assertEquals("ls", dataFormat.createAndConfigureWriterSettings().getFormat().getLineSeparatorString());
@@ -126,8 +125,8 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureNormalizedLineSeparator() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setNormalizedLineSeparator('n');
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setNormalizedLineSeparator('n');
 
         assertEquals(Character.valueOf('n'), dataFormat.getNormalizedLineSeparator());
         assertEquals('n', dataFormat.createAndConfigureWriterSettings().getFormat().getNormalizedNewline());
@@ -136,8 +135,8 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureComment() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setComment('c');
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setComment('c');
 
         assertEquals(Character.valueOf('c'), dataFormat.getComment());
         assertEquals('c', dataFormat.createAndConfigureWriterSettings().getFormat().getComment());
@@ -146,24 +145,24 @@ public final class UniVocityTsvDataFormatTest {
 
     @Test
     public void shouldConfigureLazyLoad() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setLazyLoad(true);
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setLazyLoad(true);
 
         assertTrue(dataFormat.isLazyLoad());
     }
 
     @Test
     public void shouldConfigureAsMap() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setAsMap(true);
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setAsMap(true);
 
         assertTrue(dataFormat.isAsMap());
     }
 
     @Test
     public void shouldConfigureEscapeChar() {
-        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setEscapeChar('e');
+        UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat();
+        dataFormat.setEscapeChar('e');
 
         assertEquals(Character.valueOf('e'), dataFormat.getEscapeChar());
         assertEquals('e', dataFormat.createAndConfigureWriterSettings().getFormat().getEscapeChar());

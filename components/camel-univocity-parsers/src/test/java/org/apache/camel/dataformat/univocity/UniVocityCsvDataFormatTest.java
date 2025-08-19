@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public final class UniVocityCsvDataFormatTest {
     @Test
     public void shouldConfigureNullValue() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setNullValue("N/A");
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setNullValue("N/A");
 
         assertEquals("N/A", dataFormat.getNullValue());
         assertEquals("N/A", dataFormat.createAndConfigureWriterSettings().getNullValue());
@@ -39,8 +39,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureSkipEmptyLines() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setSkipEmptyLines(true);
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setSkipEmptyLines(true);
 
         assertTrue(dataFormat.getSkipEmptyLines());
         assertTrue(dataFormat.createAndConfigureWriterSettings().getSkipEmptyLines());
@@ -49,8 +49,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureIgnoreTrailingWhitespaces() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setIgnoreTrailingWhitespaces(true);
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setIgnoreTrailingWhitespaces(true);
 
         assertTrue(dataFormat.getIgnoreTrailingWhitespaces());
         assertTrue(dataFormat.createAndConfigureWriterSettings().getIgnoreTrailingWhitespaces());
@@ -59,8 +59,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureIgnoreLeadingWhitespaces() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setIgnoreLeadingWhitespaces(true);
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setIgnoreLeadingWhitespaces(true);
 
         assertTrue(dataFormat.getIgnoreLeadingWhitespaces());
         assertTrue(dataFormat.createAndConfigureWriterSettings().getIgnoreLeadingWhitespaces());
@@ -69,8 +69,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureHeadersDisabled() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setHeadersDisabled(true);
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setHeadersDisabled(true);
 
         assertTrue(dataFormat.isHeadersDisabled());
         assertNull(dataFormat.createAndConfigureWriterSettings().getHeaders());
@@ -79,18 +79,17 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureHeaders() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setHeaders(new String[] { "A", "B", "C" });
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setHeaders("A,B,C");
 
-        assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.getHeaders());
         assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.createAndConfigureWriterSettings().getHeaders());
         assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.createAndConfigureParserSettings().getHeaders());
     }
 
     @Test
     public void shouldConfigureHeaderExtractionEnabled() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setHeaderExtractionEnabled(true);
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setHeaderExtractionEnabled(true);
 
         assertTrue(dataFormat.getHeaderExtractionEnabled());
         assertTrue(dataFormat.createAndConfigureParserSettings().isHeaderExtractionEnabled());
@@ -98,8 +97,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureNumberOfRecordsToRead() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setNumberOfRecordsToRead(42);
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setNumberOfRecordsToRead(42);
 
         assertEquals(Integer.valueOf(42), dataFormat.getNumberOfRecordsToRead());
         assertEquals(42, dataFormat.createAndConfigureParserSettings().getNumberOfRecordsToRead());
@@ -107,8 +106,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureEmptyValue() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setEmptyValue("empty");
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setEmptyValue("empty");
 
         assertEquals("empty", dataFormat.getEmptyValue());
         assertEquals("empty", dataFormat.createAndConfigureWriterSettings().getEmptyValue());
@@ -117,8 +116,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureLineSeparator() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setLineSeparator("ls");
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setLineSeparator("ls");
 
         assertEquals("ls", dataFormat.getLineSeparator());
         assertEquals("ls", dataFormat.createAndConfigureWriterSettings().getFormat().getLineSeparatorString());
@@ -127,8 +126,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureNormalizedLineSeparator() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setNormalizedLineSeparator('n');
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setNormalizedLineSeparator('n');
 
         assertEquals(Character.valueOf('n'), dataFormat.getNormalizedLineSeparator());
         assertEquals('n', dataFormat.createAndConfigureWriterSettings().getFormat().getNormalizedNewline());
@@ -137,8 +136,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureComment() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setComment('c');
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setComment('c');
 
         assertEquals(Character.valueOf('c'), dataFormat.getComment());
         assertEquals('c', dataFormat.createAndConfigureWriterSettings().getFormat().getComment());
@@ -147,24 +146,24 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureLazyLoad() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setLazyLoad(true);
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setLazyLoad(true);
 
         assertTrue(dataFormat.isLazyLoad());
     }
 
     @Test
     public void shouldConfigureAsMap() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setAsMap(true);
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setAsMap(true);
 
         assertTrue(dataFormat.isAsMap());
     }
 
     @Test
     public void shouldConfigureQuoteAllFields() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setQuoteAllFields(true);
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setQuoteAllFields(true);
 
         assertTrue(dataFormat.getQuoteAllFields());
         assertTrue(dataFormat.createAndConfigureWriterSettings().getQuoteAllFields());
@@ -172,8 +171,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureQuote() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setQuote('q');
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setQuote('q');
 
         assertEquals(Character.valueOf('q'), dataFormat.getQuote());
         assertEquals('q', dataFormat.createAndConfigureWriterSettings().getFormat().getQuote());
@@ -182,8 +181,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureQuoteEscape() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setQuoteEscape('e');
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setQuoteEscape('e');
 
         assertEquals(Character.valueOf('e'), dataFormat.getQuoteEscape());
         assertEquals('e', dataFormat.createAndConfigureWriterSettings().getFormat().getQuoteEscape());
@@ -192,8 +191,8 @@ public final class UniVocityCsvDataFormatTest {
 
     @Test
     public void shouldConfigureDelimiter() {
-        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat()
-                .setDelimiter('d');
+        UniVocityCsvDataFormat dataFormat = new UniVocityCsvDataFormat();
+        dataFormat.setDelimiter('d');
 
         assertEquals(Character.valueOf('d'), dataFormat.getDelimiter());
         assertEquals('d', dataFormat.createAndConfigureWriterSettings().getFormat().getDelimiter());

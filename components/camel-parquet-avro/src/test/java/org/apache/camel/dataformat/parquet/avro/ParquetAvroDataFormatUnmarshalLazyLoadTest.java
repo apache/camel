@@ -81,12 +81,12 @@ public class ParquetAvroDataFormatUnmarshalLazyLoadTest extends CamelTestSupport
 
             @Override
             public void configure() throws Exception {
-                ParquetAvroDataFormat format = new ParquetAvroDataFormat()
-                        .setLazyLoad(true);
+                ParquetAvroDataFormat format = new ParquetAvroDataFormat();
+                format.setLazyLoad(true);
                 format.setUnmarshalType(Pojo.class);
 
-                ParquetAvroDataFormat formatNoUnmarshalType = new ParquetAvroDataFormat()
-                        .setLazyLoad(true);
+                ParquetAvroDataFormat formatNoUnmarshalType = new ParquetAvroDataFormat();
+                formatNoUnmarshalType.setLazyLoad(true);
 
                 from("direct:start")
                         .unmarshal(format)

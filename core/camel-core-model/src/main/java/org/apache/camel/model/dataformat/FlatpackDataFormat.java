@@ -56,8 +56,8 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     @Metadata(label = "advanced")
     private String textQualifier;
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private String parserFactoryRef;
+    @Metadata(label = "advanced", javaType = "net.sf.flatpack.ParserFactory")
+    private String parserFactory;
 
     public FlatpackDataFormat() {
         super("flatpack");
@@ -72,7 +72,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         this.allowShortLines = source.allowShortLines;
         this.ignoreExtraColumns = source.ignoreExtraColumns;
         this.textQualifier = source.textQualifier;
-        this.parserFactoryRef = source.parserFactoryRef;
+        this.parserFactory = source.parserFactory;
     }
 
     private FlatpackDataFormat(Builder builder) {
@@ -84,7 +84,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         this.allowShortLines = builder.allowShortLines;
         this.ignoreExtraColumns = builder.ignoreExtraColumns;
         this.textQualifier = builder.textQualifier;
-        this.parserFactoryRef = builder.parserFactoryRef;
+        this.parserFactory = builder.parserFactory;
     }
 
     @Override
@@ -173,15 +173,15 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         this.ignoreExtraColumns = ignoreExtraColumns;
     }
 
-    public String getParserFactoryRef() {
-        return parserFactoryRef;
+    public String getParserFactory() {
+        return parserFactory;
     }
 
     /**
      * References to a custom parser factory to lookup in the registry
      */
-    public void setParserFactoryRef(String parserFactoryRef) {
-        this.parserFactoryRef = parserFactoryRef;
+    public void setParserFactory(String parserFactory) {
+        this.parserFactory = parserFactory;
     }
 
     /**
@@ -197,7 +197,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         private String allowShortLines;
         private String ignoreExtraColumns;
         private String textQualifier;
-        private String parserFactoryRef;
+        private String parserFactory;
 
         /**
          * The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the
@@ -297,8 +297,8 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         /**
          * References to a custom parser factory to lookup in the registry
          */
-        public Builder parserFactoryRef(String parserFactoryRef) {
-            this.parserFactoryRef = parserFactoryRef;
+        public Builder parserFactory(String parserFactory) {
+            this.parserFactory = parserFactory;
             return this;
         }
 

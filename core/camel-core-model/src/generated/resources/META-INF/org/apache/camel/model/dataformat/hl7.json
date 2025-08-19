@@ -14,6 +14,7 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "validate": { "index": 1, "kind": "attribute", "displayName": "Validate", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to validate the HL7 message Is by default true." }
+    "parser": { "index": 1, "kind": "attribute", "displayName": "Parser", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "ca.uhn.hl7v2.parser.Parser", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom HL7 parser" },
+    "validate": { "index": 2, "kind": "attribute", "displayName": "Validate", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to validate the HL7 message Is by default true." }
   }
 }

@@ -212,8 +212,6 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new TarFileDataFormatReifier(camelContext, definition);
         } else if (definition instanceof ThriftDataFormat) {
             return new ThriftDataFormatReifier(camelContext, definition);
-        } else if (definition instanceof TidyMarkupDataFormat) {
-            return new TidyMarkupDataFormatReifier(camelContext, definition);
         } else if (definition instanceof UniVocityCsvDataFormat) {
             return new UniVocityCsvDataFormatReifier(camelContext, definition);
         } else if (definition instanceof UniVocityFixedDataFormat) {

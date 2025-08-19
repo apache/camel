@@ -110,6 +110,14 @@ public class Iso8583DataFormat extends ServiceSupport implements DataFormat, Dat
         this.isoType = isoType;
     }
 
+    public boolean isAllowAutoWiredMessageFormat() {
+        return allowAutoWiredMessageFormat;
+    }
+
+    public void setAllowAutoWiredMessageFormat(boolean allowAutoWiredMessageFormat) {
+        this.allowAutoWiredMessageFormat = allowAutoWiredMessageFormat;
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();

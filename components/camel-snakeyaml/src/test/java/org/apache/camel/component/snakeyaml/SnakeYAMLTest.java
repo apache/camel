@@ -26,9 +26,7 @@ import org.apache.camel.test.junit5.params.Parameter;
 import org.apache.camel.test.junit5.params.Parameterized;
 import org.apache.camel.test.junit5.params.Parameters;
 import org.apache.camel.test.junit5.params.Test;
-import org.yaml.snakeyaml.nodes.Tag;
 
-import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createClassTagDataFormat;
 import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createDataFormat;
 import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createPrettyFlowDataFormat;
 import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createTestMap;
@@ -61,11 +59,6 @@ public class SnakeYAMLTest extends CamelTestSupport {
                         createPrettyFlowDataFormat(TestPojo.class, true),
                         createTestPojo(),
                         "!!org.apache.camel.component.snakeyaml.model.TestPojo {\n  name: Camel\n}"
-                },
-                {
-                        createClassTagDataFormat(TestPojo.class, new Tag("!tpojo")),
-                        createTestPojo(),
-                        "!tpojo {name: Camel}"
                 }
         });
     }

@@ -44,7 +44,7 @@ public class ForyDataFormat extends ServiceSupport implements DataFormat, DataFo
     private String unmarshalTypeName;
     private boolean requireClassRegistration = true;
     private boolean threadSafe = true;
-    private boolean allowAutoWiredFury = true;
+    private boolean allowAutoWiredFory = true;
     private BaseFory fory;
 
     public ForyDataFormat() {
@@ -86,7 +86,7 @@ public class ForyDataFormat extends ServiceSupport implements DataFormat, DataFo
             unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
 
-        if (fory == null && isAllowAutoWiredFury()) {
+        if (fory == null && isAllowAutoWiredFory()) {
             fory = getCamelContext().getRegistry().findSingleByType(BaseFory.class);
         }
 
@@ -144,11 +144,11 @@ public class ForyDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.threadSafe = threadSafe;
     }
 
-    public boolean isAllowAutoWiredFury() {
-        return allowAutoWiredFury;
+    public boolean isAllowAutoWiredFory() {
+        return allowAutoWiredFory;
     }
 
-    public void setAllowAutoWiredFury(boolean allowAutoWiredFury) {
-        this.allowAutoWiredFury = allowAutoWiredFury;
+    public void setAllowAutoWiredFory(boolean allowAutoWiredFory) {
+        this.allowAutoWiredFory = allowAutoWiredFory;
     }
 }

@@ -41,7 +41,6 @@ SwiftMxDataFormat
 SyslogDataFormat
 TarFileDataFormat
 ThriftDataFormat
-TidyMarkupDataFormat
 UniVocityCsvDataFormat
 UniVocityFixedDataFormat
 UniVocityHeader
@@ -49,7 +48,5 @@ UniVocityTsvDataFormat
 XMLSecurityDataFormat
 YAMLDataFormat
 YAMLLibrary
-YAMLTypeFilterDefinition
-YAMLTypeFilterType
 ZipDeflaterDataFormat
 ZipFileDataFormat

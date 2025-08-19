@@ -59,7 +59,7 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripCHACHA7539Test extends 
     protected RouteBuilder createRouteBuilder() {
         CryptoDataFormat cryptoFormat = new CryptoDataFormat("CHACHA7539", null);
         byte[] initializationVector = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b };
-        cryptoFormat.setInitializationVector(initializationVector);
+        cryptoFormat.setInitVector(initializationVector);
         return new RouteBuilder() {
             @Override
             public void configure() {

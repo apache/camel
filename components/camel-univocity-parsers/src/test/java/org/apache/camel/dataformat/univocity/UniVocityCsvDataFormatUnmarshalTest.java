@@ -159,27 +159,31 @@ public final class UniVocityCsvDataFormatUnmarshalTest extends CamelTestSupport 
         tests.put("default", new UniVocityCsvDataFormat());
 
         // Reading CSV as Map
-        tests.put("map", new UniVocityCsvDataFormat()
-                .setAsMap(true)
-                .setHeaderExtractionEnabled(true));
+        var df = new UniVocityCsvDataFormat();
+        df.setAsMap(true);
+        df.setHeaderExtractionEnabled(true);
+        tests.put("map", df);
 
         // Reading CSV as Map with specific headers
-        tests.put("mapWithHeaders", new UniVocityCsvDataFormat()
-                .setAsMap(true)
-                .setHeaders(new String[] { "A", "B", "C" }));
+        df = new UniVocityCsvDataFormat();
+        df.setAsMap(true);
+        df.setHeaders("A,B,C");
+        tests.put("mapWithHeaders", df);
 
         // Reading CSV using an iterator
-        tests.put("lazy", new UniVocityCsvDataFormat()
-                .setLazyLoad(true));
+        df = new UniVocityCsvDataFormat();
+        df.setLazyLoad(true);
+        tests.put("lazy", df);
 
         // Reading CSV using advanced configuration
-        tests.put("advanced", new UniVocityCsvDataFormat()
-                .setNullValue("N/A")
-                .setDelimiter(';')
-                .setIgnoreLeadingWhitespaces(true)
-                .setIgnoreTrailingWhitespaces(false)
-                .setComment('!')
-                .setSkipEmptyLines(true));
+        df = new UniVocityCsvDataFormat();
+        df.setNullValue("N/A");
+        df.setDelimiter(';');
+        df.setIgnoreLeadingWhitespaces(true);
+        df.setIgnoreTrailingWhitespaces(false);
+        df.setComment('!');
+        df.setSkipEmptyLines(true);
+        tests.put("advanced", df);
 
         return new RouteBuilder() {
             @Override

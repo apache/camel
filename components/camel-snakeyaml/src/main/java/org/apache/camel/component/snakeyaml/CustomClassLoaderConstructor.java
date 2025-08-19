@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.reifier.dataformat;
+package org.apache.camel.component.snakeyaml;
 
-import java.util.Map;
+import java.util.Objects;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.constructor.Constructor;
 
-public class TidyMarkupDataFormatReifier extends DataFormatReifier<TidyMarkupDataFormat> {
+/**
+ * A CustomClassLoaderConstructor which allows to set the LoaderOptions
+ */
+class CustomClassLoaderConstructor extends Constructor {
 
-    public TidyMarkupDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (TidyMarkupDataFormat) definition);
+    private final ClassLoader loader;
+
+    CustomClassLoaderConstructor(ClassLoader theLoader, LoaderOptions options) {
+        super(Object.class, options);
+        this.loader = Objects.requireNonNull(theLoader, "Loader must be provided.");
     }
 
     @Override
-    protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("dataObjectType", or(definition.getDataObjectType(), definition.getDataObjectTypeName()));
-        properties.put("omitXmlDeclaration", definition.getOmitXmlDeclaration());
+    protected Class<?> getClassForName(String name) throws ClassNotFoundException {
+        return Class.forName(name, true, loader);
     }
-
 }

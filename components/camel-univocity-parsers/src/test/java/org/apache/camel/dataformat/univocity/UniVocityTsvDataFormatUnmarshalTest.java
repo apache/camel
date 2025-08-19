@@ -157,27 +157,28 @@ public final class UniVocityTsvDataFormatUnmarshalTest extends CamelTestSupport 
         // Default reading of TSV
         tests.put("default", new UniVocityTsvDataFormat());
 
-        // Reading TSV as Map
-        tests.put("map", new UniVocityTsvDataFormat()
-                .setAsMap(true)
-                .setHeaderExtractionEnabled(true));
+        var df = new UniVocityTsvDataFormat();
+        df.setAsMap(true);
+        df.setHeaderExtractionEnabled(true);
+        tests.put("map", df);
 
-        // Reading TSV as Map with specific headers
-        tests.put("mapWithHeaders", new UniVocityTsvDataFormat()
-                .setAsMap(true)
-                .setHeaders(new String[] { "A", "B", "C" }));
+        df = new UniVocityTsvDataFormat();
+        df.setAsMap(true);
+        df.setHeaders("A,B,C");
+        tests.put("mapWithHeaders", df);
 
-        // Reading TSV using an iterator
-        tests.put("lazy", new UniVocityTsvDataFormat()
-                .setLazyLoad(true));
+        df = new UniVocityTsvDataFormat();
+        df.setLazyLoad(true);
+        tests.put("lazy", df);
 
         // Reading TSV using advanced configuration
-        tests.put("advanced", new UniVocityTsvDataFormat()
-                .setNullValue("N/A")
-                .setIgnoreLeadingWhitespaces(true)
-                .setIgnoreTrailingWhitespaces(false)
-                .setComment('!')
-                .setSkipEmptyLines(true));
+        df = new UniVocityTsvDataFormat();
+        df.setNullValue("N/A");
+        df.setIgnoreLeadingWhitespaces(true);
+        df.setIgnoreTrailingWhitespaces(false);
+        df.setComment('!');
+        df.setSkipEmptyLines(true);
+        tests.put("advanced", df);
 
         return new RouteBuilder() {
             @Override

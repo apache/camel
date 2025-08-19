@@ -143,9 +143,9 @@ public class ${className} extends ${psn} implements GeneratedPropertyConfigurer,
         #if ( $model || !$hasSuper )
         return ALL_OPTIONS;
         #else
-        Map<String, Object> answer = super.getAllOptions(target);
+        Map<String, Object> answer = new java.util.LinkedHashMap<>(super.getAllOptions(target));
             #foreach ( $option in $options )
-        answer.put(${option.name}, ${mojo.canonicalClassName($option.type)});
+        answer.put("${option.name}", ${mojo.canonicalClassName($option.javaType)}.class);
             #end
         return answer;
         #end

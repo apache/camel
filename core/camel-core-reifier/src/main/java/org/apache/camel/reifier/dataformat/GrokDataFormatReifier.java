@@ -32,11 +32,7 @@ public class GrokDataFormatReifier extends DataFormatReifier<GrokDataFormat> {
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("pattern", definition.getPattern());
         properties.put("flattened", definition.getFlattened());
-        if (definition.getAllowMultipleMatchesPerLine() == null) {
-            properties.put("allowMultipleMatchesPerLine", "true");
-        } else {
-            properties.put("allowMultipleMatchesPerLine", definition.getAllowMultipleMatchesPerLine());
-        }
+        properties.put("allowMultipleMatchesPerLine", definition.getAllowMultipleMatchesPerLine());
         properties.put("namedOnly", definition.getNamedOnly());
     }
 }

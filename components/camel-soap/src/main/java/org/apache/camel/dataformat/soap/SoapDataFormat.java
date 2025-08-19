@@ -35,6 +35,7 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ import static org.apache.camel.dataformat.soap.SoapConstants.SOAP_METHOD_NAME;
  * Data format supporting SOAP 1.1 and 1.2.
  */
 @Dataformat("soap")
+@Metadata(excludeProperties = "library,instanceClass,contentTypeFormat,defaultInstance")
 public class SoapDataFormat extends JaxbDataFormat {
 
     public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
@@ -52,7 +54,7 @@ public class SoapDataFormat extends JaxbDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(SoapDataFormat.class);
 
     private SoapDataFormatAdapter adapter;
-    private ElementNameStrategy elementNameStrategy = new TypeNameStrategy();
+    private ElementNameStrategy elementNameStrategy;
     private boolean ignoreUnmarshalledHeaders;
     private String version;
 
@@ -85,6 +87,9 @@ public class SoapDataFormat extends JaxbDataFormat {
 
     @Override
     protected void doStart() throws Exception {
+        if (elementNameStrategy == null) {
+            elementNameStrategy = new TypeNameStrategy();
+        }
         if ("1.2".equals(version)) {
             LOG.debug("Using SOAP 1.2 adapter");
             adapter = new Soap12DataFormatAdapter(this);
@@ -137,12 +142,10 @@ public class SoapDataFormat extends JaxbDataFormat {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private JAXBElement<?> getElement(Object fromObj, QName name) {
-
-        Object value = null;
+        Object value;
 
         // In the case of a parameter, the class of the value of the holder class
         // is used for the mapping rather than the holder class itself.
-
         if (fromObj instanceof jakarta.xml.ws.Holder) {
             jakarta.xml.ws.Holder holder = (jakarta.xml.ws.Holder) fromObj;
             value = holder.value;
@@ -214,16 +217,8 @@ public class SoapDataFormat extends JaxbDataFormat {
         return elementNameStrategy;
     }
 
-    public void setElementNameStrategy(Object nameStrategy) {
-        if (nameStrategy != null) {
-            if (nameStrategy instanceof ElementNameStrategy) {
-                this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
-            } else {
-                throw new IllegalArgumentException(
-                        "The argument for setElementNameStrategy should be subClass of "
-                                                   + ElementNameStrategy.class.getName());
-            }
-        }
+    public void setElementNameStrategy(ElementNameStrategy nameStrategy) {
+        this.elementNameStrategy = nameStrategy;
     }
 
     public boolean isIgnoreUnmarshalledHeaders() {

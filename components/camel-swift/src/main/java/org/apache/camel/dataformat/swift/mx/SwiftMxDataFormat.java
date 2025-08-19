@@ -128,30 +128,6 @@ public class SwiftMxDataFormat extends ServiceSupport implements DataFormat, Dat
         }
     }
 
-    /**
-     * @return the specific configuration to use when marshalling a message. Ignored if {@code writeInJson} is set to
-     *         {@code true}.
-     */
-    public MxWriteConfiguration getWriteConfig() {
-        return writeConfig;
-    }
-
-    public void setWriteConfig(Object writeConfig) {
-        if (writeConfig != null) {
-            if (writeConfig instanceof MxWriteConfiguration) {
-                this.writeConfig = (MxWriteConfiguration) writeConfig;
-            } else {
-                throw new IllegalArgumentException(
-                        String.format("The argument for setWriteConfig should be subClass of %s",
-                                MxWriteConfiguration.class.getName()));
-            }
-        }
-    }
-
-    /**
-     * @return the type of MX message to produce when unmarshalling an input stream. If not set, it will be
-     *         automatically detected from the namespace used.
-     */
     public MxId getReadMessageId() {
         return readMessageId;
     }
@@ -160,28 +136,22 @@ public class SwiftMxDataFormat extends ServiceSupport implements DataFormat, Dat
         this.readMessageId = readMessageId;
     }
 
-    /**
-     * @return the specific configuration to use when unmarshalling an input stream.
-     */
     public MxReadConfiguration getReadConfig() {
         return readConfig;
     }
 
-    public void setReadConfig(Object readConfig) {
-        if (readConfig != null) {
-            if (readConfig instanceof MxReadConfiguration) {
-                this.readConfig = (MxReadConfiguration) readConfig;
-            } else {
-                throw new IllegalArgumentException(
-                        String.format("The argument for setReadConfig should be subClass of %s",
-                                MxReadConfiguration.class.getName()));
-            }
-        }
+    public void setReadConfig(MxReadConfiguration readConfig) {
+        this.readConfig = readConfig;
     }
 
-    /**
-     * @return {@code true} if messages must be marshalled in a JSON format, {@code false} otherwise.
-     */
+    public MxWriteConfiguration getWriteConfig() {
+        return writeConfig;
+    }
+
+    public void setWriteConfig(MxWriteConfiguration writeConfig) {
+        this.writeConfig = writeConfig;
+    }
+
     public boolean isWriteInJson() {
         return writeInJson;
     }
