@@ -19,7 +19,6 @@ package org.apache.camel.component.snakeyaml;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.snakeyaml.model.TestPojo;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SnakeYAMLTypeFilterTest extends CamelTestSupport {
@@ -39,7 +38,6 @@ public class SnakeYAMLTypeFilterTest extends CamelTestSupport {
     }
 
     @Test
-    @Disabled
     public void testAllowAllConstructor() throws Exception {
         SnakeYAMLTypeFilterHelper.testAllowAllConstructor(template);
     }

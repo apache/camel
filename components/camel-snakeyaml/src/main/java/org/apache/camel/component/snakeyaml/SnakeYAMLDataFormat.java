@@ -142,7 +142,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
             }
         }
         if (allowAnyType) {
-            typeFilters = null;
+            typeFilters = "*";
         }
         if (this.constructor == null) {
             this.constructor = defaultConstructor(camelContext);
