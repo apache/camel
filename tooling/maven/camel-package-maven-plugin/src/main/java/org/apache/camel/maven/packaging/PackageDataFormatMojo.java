@@ -231,6 +231,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         if ("soap".equals(name)) {
                             hasSuper = true;
                             pfqn = "org.apache.camel.converter.jaxb.JaxbDataFormatConfigurer";
+                        } else if ("protobufJackson".equals(name)) {
+                            hasSuper = true;
+                            pfqn = "org.apache.camel.component.jackson.JacksonDataFormatConfigurer";
                         }
 
                         String cn = javaType.substring(javaType.lastIndexOf('.') + 1);

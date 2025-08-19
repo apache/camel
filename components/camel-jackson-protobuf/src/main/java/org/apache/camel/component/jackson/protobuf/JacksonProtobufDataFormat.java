@@ -18,7 +18,7 @@ package org.apache.camel.component.jackson.protobuf;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.protobuf.ProtobufMapper;
-import org.apache.camel.component.jackson.AbstractJacksonDataFormat;
+import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 
@@ -27,8 +27,8 @@ import org.apache.camel.spi.annotations.Dataformat;
  */
 @Dataformat("protobufJackson")
 @Metadata(firstVersion = "3.10.0", title = "Protobuf Jackson",
-          excludeProperties = "library,instanceClass,contentTypeFormat,defaultInstance")
-public class JacksonProtobufDataFormat extends AbstractJacksonDataFormat {
+          excludeProperties = "library,permissions,dateFormatPattern,instanceClass,contentTypeFormat,defaultInstance")
+public class JacksonProtobufDataFormat extends JacksonDataFormat {
 
     /**
      * Use the default Jackson {@link ProtobufMapper} and {@link Object}
