@@ -45,8 +45,6 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
         properties.put("classLoader", definition.getClassLoader());
         if (definition.getUseApplicationContextClassLoader() != null) {
             properties.put("useApplicationContextClassLoader", definition.getUseApplicationContextClassLoader());
-        } else {
-            properties.put("useApplicationContextClassLoader", "true");
         }
         properties.put("prettyFlow", definition.getPrettyFlow());
         properties.put("allowAnyType", definition.getAllowAnyType());
