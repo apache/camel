@@ -70,6 +70,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -393,6 +394,35 @@ public class EntityParserTest {
                 "Decrypted entity has unexpected content type");
         assertEquals("This is a super secret messatge!", ((TextPlainEntity) decryptedMimeEntity).getText(),
                 "Decrypted entity has unexpected content");
+    }
+
+    @Test
+    public void parseMultipartReportOmittingContentTypeOnTextPlainPartTest() throws Exception {
+        String reportContentWithoutContentType = "\r\n"
+                                                 + "------=_Part_56_1672293592.1028122454656\r\n"
+                                                 // Intentionally omit Content-Type: text/plain
+                                                 + "Content-Transfer-Encoding: 7bit\r\n"
+                                                 + "\r\n"
+                                                 + EXPECTED_TEXT_PLAIN_CONTENT + "\r\n"
+                                                 + "------=_Part_56_1672293592.1028122454656\r\n"
+                                                 + "Content-Type: message/disposition-notification\r\n"
+                                                 + "Content-Transfer-Encoding: 7bit\r\n"
+                                                 + "\r\n"
+                                                 + DISPOSITION_NOTIFICATION_CONTENT
+                                                 + "------=_Part_56_1672293592.1028122454656--\r\n";
+
+        DispositionNotificationMultipartReportEntity multipartReportEntity
+                = createMdnEntity(reportContentWithoutContentType, DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
+
+        assertEquals(2, multipartReportEntity.getPartCount(), "Unexpected number of parts");
+
+        assertInstanceOf(TextPlainEntity.class, multipartReportEntity.getPart(0),
+                "First part should default to TextPlainEntity");
+        TextPlainEntity textPlainPart = (TextPlainEntity) multipartReportEntity.getPart(0);
+        assertEquals(EXPECTED_TEXT_PLAIN_CONTENT, textPlainPart.getText(), "Unexpected text/plain content");
+
+        assertInstanceOf(AS2MessageDispositionNotificationEntity.class, multipartReportEntity.getPart(1),
+                "Second part should be a disposition-notification entity");
     }
 
     /**
