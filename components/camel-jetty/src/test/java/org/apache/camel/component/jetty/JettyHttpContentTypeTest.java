@@ -32,7 +32,8 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
     @Test
     public void testContentType() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain; charset=" + CHARSET);
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE,
+                "text/plain; charset=" + CHARSET.toLowerCase());
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, CHARSET);
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://127.0.0.1:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, CHARSET);
@@ -49,7 +50,7 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
     public void testContentTypeWithAction() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE,
-                "text/plain; charset=" + CHARSET + "; action=\"http://somewhere.com/foo\"");
+                "text/plain; charset=" + CHARSET.toLowerCase() + "; action=\"http://somewhere.com/foo\"");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "ISO-8859-1");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://127.0.0.1:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "ISO-8859-1");

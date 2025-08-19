@@ -55,7 +55,9 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
         File jpg = new File("src/test/resources/java.jpg");
         String body = "TEST";
         HttpPost method = new HttpPost("http://localhost:" + port2 + "/test/hello");
-        HttpEntity entity = MultipartEntityBuilder.create().addTextBody("body", body).addBinaryBody(jpg.getName(), jpg).build();
+        HttpEntity entity = MultipartEntityBuilder.create()
+                .addTextBody("body", body)
+                .addBinaryBody(jpg.getName(), jpg).build();
         method.setEntity(entity);
 
         try (CloseableHttpClient client = HttpClients.createDefault();
