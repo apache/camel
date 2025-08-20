@@ -603,6 +603,42 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets whether to use manual acknowledgements for the client. By
+         * default, this is false and message will be automatically
+         * acknowledged. If set to true, the acknowledgement is added in the
+         * exchange's completion callback.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAcksEnabled the value to set
+         * @return the dsl builder
+         */
+        default PahoEndpointConsumerBuilder manualAcksEnabled(boolean manualAcksEnabled) {
+            doSetProperty("manualAcksEnabled", manualAcksEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to use manual acknowledgements for the client. By
+         * default, this is false and message will be automatically
+         * acknowledged. If set to true, the acknowledgement is added in the
+         * exchange's completion callback.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAcksEnabled the value to set
+         * @return the dsl builder
+         */
+        default PahoEndpointConsumerBuilder manualAcksEnabled(String manualAcksEnabled) {
+            doSetProperty("manualAcksEnabled", manualAcksEnabled);
+            return this;
+        }
+        /**
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 

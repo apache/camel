@@ -463,6 +463,26 @@ public interface PahoComponentBuilderFactory {
     
         
         /**
+         * Sets whether to use manual acknowledgements for the client. By
+         * default, this is false and message will be automatically
+         * acknowledged. If set to true, the acknowledgement is added in the
+         * exchange's completion callback.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAcksEnabled the value to set
+         * @return the dsl builder
+         */
+        default PahoComponentBuilder manualAcksEnabled(boolean manualAcksEnabled) {
+            doSetProperty("manualAcksEnabled", manualAcksEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -738,6 +758,7 @@ public interface PahoComponentBuilderFactory {
             case "willRetained": getOrCreateConfiguration((PahoComponent) component).setWillRetained((boolean) value); return true;
             case "willTopic": getOrCreateConfiguration((PahoComponent) component).setWillTopic((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((PahoComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "manualAcksEnabled": getOrCreateConfiguration((PahoComponent) component).setManualAcksEnabled((boolean) value); return true;
             case "lazyStartProducer": ((PahoComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((PahoComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "client": ((PahoComponent) component).setClient((org.eclipse.paho.client.mqttv3.MqttClient) value); return true;
