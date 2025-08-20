@@ -52,6 +52,8 @@ public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements
         case "keepAliveInterval": target.getConfiguration().setKeepAliveInterval(property(camelContext, int.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "manualacksenabled":
+        case "manualAcksEnabled": target.getConfiguration().setManualAcksEnabled(property(camelContext, boolean.class, value)); return true;
         case "maxinflight":
         case "maxInflight": target.getConfiguration().setMaxInflight(property(camelContext, int.class, value)); return true;
         case "maxreconnectdelay":
@@ -116,6 +118,8 @@ public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements
         case "keepAliveInterval": return int.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "manualacksenabled":
+        case "manualAcksEnabled": return boolean.class;
         case "maxinflight":
         case "maxInflight": return int.class;
         case "maxreconnectdelay":
@@ -181,6 +185,8 @@ public class PahoEndpointConfigurer extends PropertyConfigurerSupport implements
         case "keepAliveInterval": return target.getConfiguration().getKeepAliveInterval();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "manualacksenabled":
+        case "manualAcksEnabled": return target.getConfiguration().isManualAcksEnabled();
         case "maxinflight":
         case "maxInflight": return target.getConfiguration().getMaxInflight();
         case "maxreconnectdelay":

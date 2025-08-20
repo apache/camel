@@ -84,6 +84,8 @@ public class PahoConfiguration implements Cloneable {
     private Properties customWebSocketHeaders;
     @UriParam(label = "advanced", defaultValue = "1")
     private int executorServiceTimeout = 1;
+    @UriParam(label = "consumer")
+    private boolean manualAcksEnabled;
 
     public String getClientId() {
         return clientId;
@@ -528,6 +530,20 @@ public class PahoConfiguration implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    /**
+     * Sets whether to use manual acknowledgements for the client.
+     *
+     * By default, this is false and message will be automatically acknowledged. If set to true, the acknowledgement is
+     * added in the exchange's completion callback.
+     */
+    public boolean isManualAcksEnabled() {
+        return this.manualAcksEnabled;
+    }
+
+    public void setManualAcksEnabled(boolean manualAcksEnabled) {
+        this.manualAcksEnabled = manualAcksEnabled;
     }
 
 }

@@ -23,7 +23,7 @@ public class PahoEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(33);
         props.add("automaticReconnect");
         props.add("bridgeErrorHandler");
         props.add("brokerUrl");
@@ -39,6 +39,7 @@ public class PahoEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("httpsHostnameVerificationEnabled");
         props.add("keepAliveInterval");
         props.add("lazyStartProducer");
+        props.add("manualAcksEnabled");
         props.add("maxInflight");
         props.add("maxReconnectDelay");
         props.add("mqttVersion");
