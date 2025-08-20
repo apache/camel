@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.function.Supplier;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -25,6 +26,33 @@ import org.apache.camel.util.StringHelper;
 public final class VersionHelper {
 
     private VersionHelper() {
+    }
+
+    /**
+     * Retrieves the Spring Boot version to use, with support for overriding via system property. This is particularly
+     * useful when the Camel version differs from the Camel Spring Boot version, allowing for explicit version control
+     * in JBang scenarios.
+     *
+     * <p>
+     * The method follows this precedence order:
+     * <ol>
+     * <li>System property {@code camel.jbang.camelSpringBootVersion} if set</li>
+     * <li>Value from the provided supplier if not null</li>
+     * <li>Returns null if neither option is available</li>
+     * </ol>
+     *
+     * @param  supplier a supplier that provides the default Spring Boot version when no system property override is
+     *                  present. May be null.
+     * @return          the Spring Boot version string, or null if no version can be determined
+     */
+    public static String getSpringBootVersion(Supplier<String> supplier) {
+        if (System.getProperty("camel.jbang.camelSpringBootVersion") != null) {
+            return System.getProperty("camel.jbang.camelSpringBootVersion");
+        } else if (supplier != null) {
+            return supplier.get();
+        }
+
+        return null;
     }
 
     public static String getJBangVersion() {

@@ -1029,7 +1029,8 @@ public class Run extends CamelCommand {
         eq.gradleWrapper = false;
         eq.springBootVersion = this.springBootVersion;
         eq.camelVersion = this.camelVersion;
-        eq.camelSpringBootVersion = this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion;
+        eq.camelSpringBootVersion = VersionHelper.getSpringBootVersion(
+                () -> this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion);
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
         eq.localKameletDir = this.localKameletDir;
