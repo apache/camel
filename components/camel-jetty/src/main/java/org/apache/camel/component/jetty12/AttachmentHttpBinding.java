@@ -104,35 +104,45 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         // attachment is optional
         AttachmentMessage am = new DefaultAttachmentMessage(message);
 
-        Enumeration<?> names = request.getParameterNames();
-        while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
-            if (am.getAttachment(name) != null) {
-                DataHandler dh = am.getAttachment(name);
-                Object value = dh;
-                if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
-                    value = request.getParameter(name);
-                }
-                if (getHeaderFilterStrategy() != null
-                        && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                    HttpHelper.appendHeader(headers, name, value);
-                }
-                continue;
-            }
-
-            // there may be multiple values for the same name
-            String[] values = request.getParameterValues(name);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("HTTP parameter {} = {}", name, HttpHelper.sanitizeLog(values));
-            }
-
-            if (values != null) {
-                for (String value : values) {
+        try {
+            Enumeration<?> names = request.getParameterNames();
+            while (names.hasMoreElements()) {
+                String name = (String) names.nextElement();
+                if (am.getAttachment(name) != null) {
+                    DataHandler dh = am.getAttachment(name);
+                    Object value = dh;
+                    if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
+                        value = request.getParameter(name);
+                    }
                     if (getHeaderFilterStrategy() != null
                             && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
                         HttpHelper.appendHeader(headers, name, value);
                     }
+                    continue;
                 }
+
+                // there may be multiple values for the same name
+                String[] values = request.getParameterValues(name);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("HTTP parameter {} = {}", name, HttpHelper.sanitizeLog(values));
+                }
+
+                if (values != null) {
+                    for (String value : values) {
+                        if (getHeaderFilterStrategy() != null
+                                && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value,
+                                        message.getExchange())) {
+                            HttpHelper.appendHeader(headers, name, value);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // In Jetty 12.1.0+, getParameterNames() may fail for multipart requests
+            // when multipart filter is disabled. This is expected behavior when
+            // enableMultipartFilter=false is used, so we silently skip parameter processing
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Failed to populate request parameters, likely due to multipart parsing failure: {}", e.getMessage());
             }
         }
     }

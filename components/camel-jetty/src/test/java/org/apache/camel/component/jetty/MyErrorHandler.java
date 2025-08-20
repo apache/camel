@@ -27,12 +27,12 @@ public class MyErrorHandler extends ErrorHandler {
 
     @Override
     protected void writeErrorHtml(
-            Request request, Writer writer, Charset charset, int code, String message, Throwable cause, boolean showStacks)
+            Request request, Writer writer, Charset charset, int code, String message, Throwable cause)
             throws IOException {
         String uri = request.getHttpURI().toString();
 
         writeErrorHtmlMessage(request, writer, code, message, cause, uri);
-        if (showStacks) {
+        if (isShowStacks()) {
             writeErrorHtmlStacks(request, writer);
         }
         writer.write("<hr /><i><small>MyErrorHandler</small></i>");
