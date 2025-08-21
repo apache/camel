@@ -126,6 +126,10 @@ Developed first draft component which cover this document specification. We have
 
 Developed concrete mock/debugging component implementing the `camel-telemetry` specification that can be used for development purposes.
 
-=== `camel-telemetry2` component (2025-02-24)
+=== `camel-opentelemetry2` component (2025-02-24)
 
 Developed concrete OpenTelemetry component implementing the `camel-telemetry` specification. This component will eventually replace `camel-opentelemetry` component.
+
+=== `camel-micrometer-observability` component (2025-08-21)
+
+Developed concrete Micrometer Observability component implementing the `camel-telemetry` specification. This component will eventually replace `camel-observation` component.
