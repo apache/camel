@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_SIZE;
 import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_TIMEOUT;
-import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.UNCOMPLETED;
 
 public class EventHubsConsumer extends DefaultConsumer {
 
@@ -170,21 +169,28 @@ public class EventHubsConsumer extends DefaultConsumer {
         }
 
         try {
-            var completionCondition = processCheckpoint(exchange);
-            if (completionCondition.equals(COMPLETED_BY_SIZE)) {
+            var cnt = processedEvents.incrementAndGet();
+            if (cnt == getConfiguration().getCheckpointBatchSize()) {
+                processedEvents.set(0);
+                exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
+                LOG.debug("eventhub consumer batch size of reached");
+                if (lastTask != null) {
+                    lastTask.cancel();
+                }
                 eventContext.updateCheckpointAsync()
                         .subscribe(unused -> LOG.debug("Processed one event..."),
                                 error -> LOG.debug("Error when updating Checkpoint: {}", error.getMessage()),
                                 () -> {
-                                    processedEvents.set(0);
                                     LOG.debug("Checkpoint updated.");
                                 });
-
-            } else if (!completionCondition.equals(COMPLETED_BY_TIMEOUT)) {
-                processedEvents.incrementAndGet();
+            } else if (System.currentTimeMillis() >= lastTask.scheduledExecutionTime()) {
+                exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_TIMEOUT);
+                LOG.debug("eventhub consumer batch timeout reached");
+            } else {
+                LOG.debug("neither eventhub consumer batch size of {}/{} nor batch timeout reached yet", cnt,
+                        getConfiguration().getCheckpointBatchSize());
             }
             // we assume that the timer task has done the update by its side
-
         } catch (Exception ex) {
             getExceptionHandler().handleException("Error occurred during updating the checkpoint. This exception is ignored.",
                     exchange, ex);
@@ -201,40 +207,5 @@ public class EventHubsConsumer extends DefaultConsumer {
         if (cause != null) {
             getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
         }
-    }
-
-    /**
-     * Checks either the batch size or the batch timeout is reached
-     *
-     * @param  exchange the exchange
-     * @return          the completion condition (batch size or batch timeout) if one of them is reached, else the
-     *                  'uncompleted' state adds a header {@value EventHubsConstants#CHECKPOINT_UPDATED_BY} with the
-     *                  completion condition (
-     */
-    private String processCheckpoint(Exchange exchange) {
-        // Check if the batch size is reached
-        if (processedEvents.get() % getConfiguration().getCheckpointBatchSize() == 0) {
-            exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
-            LOG.debug("eventhub consumer batch size of reached");
-            // no need to run task if the batch size already did the checkpointing
-            if (lastTask != null) {
-                lastTask.cancel();
-            }
-
-            return COMPLETED_BY_SIZE;
-        } else {
-            LOG.debug("eventhub consumer batch size of {}/{} not reached yet", processedEvents.get(),
-                    getConfiguration().getCheckpointBatchSize());
-        }
-
-        // Check if the batch timeout is reached
-        if (System.currentTimeMillis() >= lastTask.scheduledExecutionTime()) {
-            exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_TIMEOUT);
-            LOG.debug("eventhub consumer batch timeout reached");
-
-            return COMPLETED_BY_TIMEOUT;
-        }
-
-        return UNCOMPLETED;
     }
 }
