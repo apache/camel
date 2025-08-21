@@ -73,7 +73,6 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
 
         InMemoryMetricReader metricReader = InMemoryMetricReader.create();
         SdkMeterProvider meterProvider = SdkMeterProvider.builder().registerMetricReader(metricReader).build();
-
         InMemoryLogRecordExporter logRecordExporter = InMemoryLogRecordExporter.create();
         SdkLoggerProvider loggerProvider = SdkLoggerProvider.builder()
                 .addLogRecordProcessor(SimpleLogRecordProcessor.create(logRecordExporter))

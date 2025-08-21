@@ -215,6 +215,7 @@
         <module>camel-mapstruct</module>
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
+        <module>camel-micrometer-observability</module>
         <module>camel-micrometer-prometheus</module>
         <module>camel-microprofile</module>
         <module>camel-mina</module>

@@ -1,17 +1,23 @@
-= Telemetry Dev Component
-:doctitle: Micrometer Observability
-:shortname: micrometed-observability
-:artifactid: camel-micrometed-observability
-:description: Implementation of Camel Micrometer Observability based on the Camel Telemetry spec
+= Micrometer Observability 2 Component
+:doctitle: Micrometer Observability 2
+:shortname: micrometer-observability
+:artifactid: camel-micrometer-observability
+:description: Micrometer Observability implementation of Camel Telemetry
 :since: 4.15
 :supportlevel: Preview
 :tabs-sync-option:
 
 *Since Camel {since}*
 
-This module is the implementation of the common `camel-telemetry` interface based on https://micrometer.io/[Micrometer Application Observability] technology. The name used here as `Micrometer Observability 2` is done to distinguish on the existing `camel-observation` component which was based on an older Camel tracing and Micrometer specification. You're invited to start replacing the older `camel-observation` with this one instead as it may become the default component in future version of Camel.
+This module is the implementation of the common `camel-telemetry` interface based on https://micrometer.io/[Micrometer Application Observability] technology. The name used here as `Micrometer Observability 2` is done to distinguish on the existing `camel-observation` component which was based on an older Camel tracing and Micrometer Observability specification. You're invited to start replacing the older `camel-observation` with this one instead as it may become the default component in future version of Camel.
+
+This component is significantly more difficult to setup than other telemetry components. This is because you will need to configure the tracing mechanism at a low level. If you're looking for a telemetry component to configure in a simpler fashion you may have a look at the others `camel-telemetry` implementations.
 
 NOTE: this component has slight differences compared to the `camel-observation` and is meant to solve a few inconsistencies identified.
+
+== Micrometer Application Observability framework
+
+Mind that the framework is an abstraction layer, therefore it is expected that the integration developers configure the Registry and the Context Propagation mechanisms (more info in a dedicated chapter later) adding the concrete technology (Opentelemetry, Brave/Zipkin) of choice.
 
 == Configuration
 
@@ -23,47 +29,101 @@ The configuration properties for the component are:
 |`excludePatterns` |  | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
 uses the rules from Intercept.
-|`traceProcessors` | `false` | Setting this to true will create new OpenTelemetry Spans for each Camel Processors.
+|`traceProcessors` | `false` | Setting this to true will create new spans for each Camel Processors.
 Use the excludePattern property to filter out Processors
 |=======================================================================
 
-== Tracing format
+=== Using with standalone Camel
 
-The component provides a few different traces representation formats you can use, depending on the scope of your telemetry or the integration with any third party telemetry collectors.
+If you use `camel-main` as standalone Camel, add `camel-micrometer-observability` component in your POM, and setup the proper configuration. Mind that, since the component is a facade to a concrete implementation, you are in charge to provide the configuration programmatically. The minimum required for the component to start is the following snippet of code:
 
-=== Tree
-
-As the component is mainly targeted to have a quick visualization of a running application, then, the `tree` format is the recommended one. The output will be like the following:
-
-```
-| d6c36bc6f3374ed0bd6edb638535f130
-├── | timer://start (camel-timer) [2030 millis] <--
-    ├── | process (to1-to) [2021 millis]
-        ├── | direct://new (camel-direct) [2020 millis] -->
-            ├── | direct://new (camel-direct) [2019 millis] <--
-                ├── | process (delay1-delay) [2002 millis]
-                ├── | process (log2-log) [2 millis]
-                └── | process (to3-to) [3 millis]
-                    └── | log://new (camel-log) [2 millis] -->
-                └── | process (to4-to) [1 millis]
-                    └── | mock://end (camel-mock) [0 millis] -->
-    ├── | process (log1-log) [0 millis]
-    └── | process (to2-to) [2 millis]
-        └── | log://info (camel-log) [1 millis] -->
+```java
+import org.apache.camel.micrometer.observability.MicrometerObservabilityTracer;
+...
+    @Override
+    public void configure() throws Exception {
+        MicrometerObservabilityTracer myTracer = new MicrometerObservabilityTracer();
+        getContext().getRegistry().bind("myTracer", myTracer);
+        myTracer.init(getContext());
+        ...
+    }
 ```
 
-This is a quick visual tree Trace representation of a given execution of a Camel route. You can quickly verify the Camel URI, the component and the time spent to execute each Span.
+You can run this, for example, directly via Camel JBang using `camel run MyTest.java --dep camel-micrometer-observability`. This basic configuration will start an "in-memory" simple implementation with a "no-op" context propagation. You may want to use this exclusively for development purposes. In order to configure it for a production environment you will need to setup a `Tracer`, an `ObservationRegistry` and a `Propagator`.
 
-NOTE: the --> and <-- represents an outgoing or incoming message.
+If you need to setup the specific component parameters, you may do it directly on the tracer object, for example:
 
-=== Json
-
-This format is suitable if you need to integrate with any third party. The output of each trace will come in the following format:
-
-```json
-{"traceId":"4ee161eb055644fca713f4c02ab2fb50","spans":[{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"8785debcdc09409abeed65d08aaaca1b","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_RECEIVED","component":"camel-timer","url.path":"start","initTimestamp":"4085653460994","camel.uri":"timer://start","url.scheme":"timer","endTimestamp":"4087698388888","isDone":"true"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"51cc3929d34e45218d8b7eacabbd1791","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"to1-to","initTimestamp":"4085657493896","endTimestamp":"4087694416371","isDone":"true","parentSpan":"8785debcdc09409abeed65d08aaaca1b"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"d0139a2ce41840e793870aa41cee1fdb","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_SENT","component":"camel-direct","url.path":"new","initTimestamp":"4085658724372","camel.uri":"direct://new","url.scheme":"direct","endTimestamp":"4087694351732","isDone":"true","parentSpan":"51cc3929d34e45218d8b7eacabbd1791"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"481705e45eb5440da3c4d80b1cb72782","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_RECEIVED","component":"camel-direct","url.path":"new","initTimestamp":"4085659711482","camel.uri":"direct://new","url.scheme":"direct","endTimestamp":"4087694171231","isDone":"true","parentSpan":"d0139a2ce41840e793870aa41cee1fdb"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"f60cda25f0b94d339d4cd46c71675273","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"delay1-delay","initTimestamp":"4085660053232","endTimestamp":"4087662537085","isDone":"true","parentSpan":"481705e45eb5440da3c4d80b1cb72782"},{"logEntries":[{"fields":{"message":"A new message"}}],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"43f759e7904e4255937f395b2b8447ce","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"log2-log","initTimestamp":"4087668469960","endTimestamp":"4087683763263","isDone":"true","parentSpan":"481705e45eb5440da3c4d80b1cb72782"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"f84fabb0dc9e4549bf544f3e22833747","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"to3-to","initTimestamp":"4087686094066","endTimestamp":"4087691026432","isDone":"true","parentSpan":"481705e45eb5440da3c4d80b1cb72782"},{"logEntries":[{"fields":{"message":"Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null]]"}}],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"1f468061fb914db8a809ac6660b64e5f","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_SENT","component":"camel-log","url.path":"new","initTimestamp":"4087687679924","camel.uri":"log://new","url.scheme":"log","endTimestamp":"4087690877575","isDone":"true","parentSpan":"f84fabb0dc9e4549bf544f3e22833747"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"124d4c89f7124941bcc3a383d0548382","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"to4-to","initTimestamp":"4087692103508","endTimestamp":"4087693840549","isDone":"true","parentSpan":"481705e45eb5440da3c4d80b1cb72782"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"d9a50630958a47fca126dd33015b8595","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_SENT","component":"camel-mock","url.path":"end","initTimestamp":"4087692840068","camel.uri":"mock://end","url.scheme":"mock","endTimestamp":"4087693765128","isDone":"true","parentSpan":"124d4c89f7124941bcc3a383d0548382"},{"logEntries":[{"fields":{"message":"A direct message"}}],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"c63fa5fc1fef4c219ba38d4a94144bb8","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"log1-log","initTimestamp":"4087695240589","endTimestamp":"4087696229225","isDone":"true","parentSpan":"8785debcdc09409abeed65d08aaaca1b"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"a09ad1afe037420bb518e9dd1e21b096","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"to2-to","initTimestamp":"4087696762964","endTimestamp":"4087698248033","isDone":"true","parentSpan":"8785debcdc09409abeed65d08aaaca1b"},{"logEntries":[{"fields":{"message":"Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null]]"}}],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"56f736f7a8be481e8bffea23e43b7f15","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_SENT","component":"camel-log","url.path":"info","initTimestamp":"4087697222908","camel.uri":"log://info","url.scheme":"log","endTimestamp":"4087698189820","isDone":"true","parentSpan":"a09ad1afe037420bb518e9dd1e21b096"}]}
+```java
+     myTracer.setTraceProcessors(true);
+     myTracer.setExcludePatterns("log*,to*");
 ```
 
-=== Default
+The production configuration vary based on the concrete technology you use (likely, `Opentelemetry` or `Brave/Zipkin`). What you need to do is to include the specific Maven dependency and to bind a concrete implementation for each of the following beans:
 
-Default is a very simple serialization into the default Java object `toString()` representation.
+     * io.micrometer.tracing.Tracer
+     * io.micrometer.observation.ObservationRegistry
+     * io.micrometer.tracing.propagation.Propagator
+
+=== Opentelemetry example
+
+Here it follows an example to configure the component to work with Opentelemetry bridge. First of all, you need to include in your project the dependencies for `io.micrometer:micrometer-tracing-bridge-otel` and `io.opentelemetry:opentelemetry-sdk:x.y.z` (you need to explicitly set the version for the last dependency).
+
+```java
+import org.apache.camel.micrometer.observability.MicrometerObservabilityTracer;
+import io.micrometer.tracing.otel.bridge.OtelCurrentTraceContext;
+import io.micrometer.tracing.otel.bridge.OtelPropagator;
+import io.micrometer.tracing.otel.bridge.OtelTracer;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+//import io.opentelemetry.exporter.zipkin.ZipkinSpanExporter;
+import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+...
+
+        SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
+            // inmemory implementation
+            .addSpanProcessor(SimpleSpanProcessor.create(
+                io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter.create()))
+            // or
+            // .addSpanProcessor(
+            //     BatchSpanProcessor.builder(
+            //         ZipkinSpanExporter.builder()
+            //             .setEndpoint("http://localhost:9411/api/v2/spans")
+            //             .build()
+            //     ).build()
+            // which requires a Zipkin server listening to that port
+            // )
+            .build();
+        ContextPropagators propagators =  ContextPropagators.create(
+                    W3CTraceContextPropagator.getInstance());
+        OpenTelemetrySdk openTelemetry = OpenTelemetrySdk.builder()
+            .setTracerProvider(sdkTracerProvider)
+            .setPropagators(propagators)
+            .build();
+        io.opentelemetry.api.trace.Tracer otelTracer =
+            openTelemetry.getTracer("camel-app");
+        io.micrometer.tracing.Tracer micrometerTracer = new OtelTracer(
+                otelTracer,
+                new OtelCurrentTraceContext(),
+                null);
+        OtelPropagator otelPropagator = new OtelPropagator(propagators, otelTracer);
+        getContext().getRegistry().bind("MicrometerObservabilityTracer", micrometerTracer);
+        getContext().getRegistry().bind("OpentelemetryPropagators", otelPropagator);
+        MicrometerObservabilityTracer myTracer = new MicrometerObservabilityTracer();
+        getContext().getRegistry().bind("myTracer", myTracer);
+        myTracer.init(getContext());
+        ...
+```
+
+NOTE: this is an example that can be used as a reference. It may not work exactly as it is, since, the related dependency can change from version to version. You will need to check in details looking at the concrete implementation documentation.
+
+You can see that the configuration of this component may get a bit difficult, unless you are already familiar with the tracing technology you're going to implement.
+
+=== How to trace
+
+Once the application is instrumented and configured, you can observe the traces produced with the tooling compatible to the concrete implementation you have in place. You are invited to follow the specific documentation of each technology.
+
+=== Java Agents
+
+Your application may require a Java agent in order to get the traces generated by the Camel application and push to the tracing server (ie, Opentelemetry based instrumentation). You may need to configure such agent (or any other tool) directly via Java parameters.

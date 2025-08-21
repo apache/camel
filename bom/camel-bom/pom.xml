@@ -1459,6 +1459,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-micrometer-observability</artifactId>
+        <version>4.15.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-micrometer-prometheus</artifactId>
         <version>4.15.0-SNAPSHOT</version>
       </dependency>
