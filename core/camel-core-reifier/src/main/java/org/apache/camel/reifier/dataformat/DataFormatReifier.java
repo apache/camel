@@ -170,6 +170,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new ForyDataFormatReifier(camelContext, definition);
         } else if (definition instanceof GrokDataFormat) {
             return new GrokDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof GroovyXmlDataFormat) {
+            return new GroovyXmlDataFormatReifier(camelContext, definition);
         } else if (definition instanceof GzipDeflaterDataFormat) {
             return new GzipDataFormatReifier(camelContext, definition);
         } else if (definition instanceof HL7DataFormat) {

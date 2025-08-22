@@ -1950,6 +1950,9 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
+    protected GroovyXmlDataFormat doParseGroovyXmlDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new GroovyXmlDataFormat(), identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
+    }
     protected GzipDeflaterDataFormat doParseGzipDeflaterDataFormat() throws IOException, XmlPullParserException {
         return doParse(new GzipDeflaterDataFormat(), identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
     }
@@ -2947,6 +2950,7 @@ public class ModelParser extends BaseParser {
             case "flatpack": return doParseFlatpackDataFormat();
             case "fory": return doParseForyDataFormat();
             case "grok": return doParseGrokDataFormat();
+            case "groovyXml": return doParseGroovyXmlDataFormat();
             case "gzipDeflater": return doParseGzipDeflaterDataFormat();
             case "hl7": return doParseHL7DataFormat();
             case "ical": return doParseIcalDataFormat();

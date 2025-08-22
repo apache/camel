@@ -18,6 +18,7 @@ FhirXmlDataFormat
 FlatpackDataFormat
 ForyDataFormat
 GrokDataFormat
+GroovyXmlDataFormat
 GzipDeflaterDataFormat
 HL7DataFormat
 IcalDataFormat

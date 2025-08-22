@@ -152,6 +152,7 @@ import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.ForyDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
+import org.apache.camel.model.dataformat.GroovyXmlDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
@@ -3498,6 +3499,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fory", type = "object:org.apache.camel.model.dataformat.ForyDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fromType", type = "string", description = "Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or 'xml:DEF'.", displayName = "From Type"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "groovyXml", type = "object:org.apache.camel.model.dataformat.GroovyXmlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat", oneOf = "dataFormatType"),
@@ -3623,6 +3625,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "grok": {
                     org.apache.camel.model.dataformat.GrokDataFormat val = asType(node, org.apache.camel.model.dataformat.GrokDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "groovyXml": {
+                    org.apache.camel.model.dataformat.GroovyXmlDataFormat val = asType(node, org.apache.camel.model.dataformat.GroovyXmlDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3817,6 +3824,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
                     @YamlProperty(name = "fory", type = "object:org.apache.camel.model.dataformat.ForyDataFormat"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat"),
+                    @YamlProperty(name = "groovyXml", type = "object:org.apache.camel.model.dataformat.GroovyXmlDataFormat"),
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
@@ -4009,6 +4017,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "grok": {
                     org.apache.camel.model.dataformat.GrokDataFormat val = asType(node, org.apache.camel.model.dataformat.GrokDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "groovyXml": {
+                    org.apache.camel.model.dataformat.GroovyXmlDataFormat val = asType(node, org.apache.camel.model.dataformat.GroovyXmlDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -6660,6 +6678,43 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "groovyXml",
+            types = org.apache.camel.model.dataformat.GroovyXmlDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Groovy XML",
+            description = "Transform between XML and Java Map via Groovy",
+            deprecated = false,
+            properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
+    )
+    public static class GroovyXmlDataFormatDeserializer extends YamlDeserializerBase<GroovyXmlDataFormat> {
+        public GroovyXmlDataFormatDeserializer() {
+            super(GroovyXmlDataFormat.class);
+        }
+
+        @Override
+        protected GroovyXmlDataFormat newInstance() {
+            return new GroovyXmlDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(GroovyXmlDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                default: {
+                    return false;
                 }
             }
             return true;
@@ -9711,6 +9766,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fory", type = "object:org.apache.camel.model.dataformat.ForyDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "groovyXml", type = "object:org.apache.camel.model.dataformat.GroovyXmlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat", oneOf = "dataFormatType"),
@@ -9841,6 +9897,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "grok": {
                     org.apache.camel.model.dataformat.GrokDataFormat val = asType(node, org.apache.camel.model.dataformat.GrokDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "groovyXml": {
+                    org.apache.camel.model.dataformat.GroovyXmlDataFormat val = asType(node, org.apache.camel.model.dataformat.GroovyXmlDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -19889,6 +19950,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fory", type = "object:org.apache.camel.model.dataformat.ForyDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "groovyXml", type = "object:org.apache.camel.model.dataformat.GroovyXmlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat", oneOf = "dataFormatType"),
@@ -20024,6 +20086,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "grok": {
                     org.apache.camel.model.dataformat.GrokDataFormat val = asType(node, org.apache.camel.model.dataformat.GrokDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "groovyXml": {
+                    org.apache.camel.model.dataformat.GroovyXmlDataFormat val = asType(node, org.apache.camel.model.dataformat.GroovyXmlDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

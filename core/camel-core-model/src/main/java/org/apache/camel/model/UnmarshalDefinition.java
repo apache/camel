@@ -39,6 +39,7 @@ import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.ForyDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
+import org.apache.camel.model.dataformat.GroovyXmlDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
@@ -94,6 +95,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(name = "flatpack", type = FlatpackDataFormat.class),
             @XmlElement(name = "fory", type = ForyDataFormat.class),
             @XmlElement(name = "grok", type = GrokDataFormat.class),
+            @XmlElement(name = "groovyXml", type = GroovyXmlDataFormat.class),
             @XmlElement(name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
             @XmlElement(name = "hl7", type = HL7DataFormat.class),
             @XmlElement(name = "ical", type = IcalDataFormat.class),

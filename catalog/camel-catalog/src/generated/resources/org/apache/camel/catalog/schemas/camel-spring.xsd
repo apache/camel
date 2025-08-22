@@ -683,6 +683,15 @@ Evaluates a Groovy script.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="groovyXml" type="tns:groovyXmlDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Transform between XML and Java Map via Groovy
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="gzipDeflater" type="tns:gzipDeflaterDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -7540,6 +7549,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:fory"/>
             <xs:element ref="tns:grok"/>
+            <xs:element ref="tns:groovyXml"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
@@ -8933,6 +8943,13 @@ Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}). 
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="groovyXmlDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -14842,6 +14859,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:fory"/>
             <xs:element ref="tns:grok"/>
+            <xs:element ref="tns:groovyXml"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
@@ -17115,6 +17133,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:flatpack"/>
         <xs:element ref="tns:fory"/>
         <xs:element ref="tns:grok"/>
+        <xs:element ref="tns:groovyXml"/>
         <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
         <xs:element ref="tns:ical"/>
@@ -17965,6 +17984,7 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:fory"/>
             <xs:element ref="tns:grok"/>
+            <xs:element ref="tns:groovyXml"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
             <xs:element ref="tns:ical"/>
