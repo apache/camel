@@ -18,6 +18,7 @@
 ** xref:flatpack-dataformat.adoc[Flatpack]
 ** xref:fory-dataformat.adoc[Fory]
 ** xref:grok-dataformat.adoc[Grok]
+** xref:groovyXml-dataformat.adoc[Groovy XML]
 ** xref:gzipDeflater-dataformat.adoc[GZip Deflater]
 ** xref:hl7-dataformat.adoc[HL7]
 ** xref:ical-dataformat.adoc[iCal]

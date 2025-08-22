@@ -1,0 +1,21 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "groovyXml",
+    "title": "Groovy XML",
+    "description": "Transform between XML and Java Map via Groovy",
+    "deprecated": false,
+    "firstVersion": "4.15.0",
+    "label": "dataformat,transformation,xml",
+    "javaType": "org.apache.camel.groovy.xml.GroovyXmlDataFormat",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-groovy-xml",
+    "version": "4.15.0-SNAPSHOT",
+    "modelName": "groovyXml",
+    "modelJavaType": "org.apache.camel.model.dataformat.GroovyXmlDataFormat"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

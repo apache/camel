@@ -490,6 +490,9 @@ public class ModelWriter extends BaseWriter {
     public void writeGrokDataFormat(GrokDataFormat def) throws IOException {
         doWriteGrokDataFormat("grok", def);
     }
+    public void writeGroovyXmlDataFormat(GroovyXmlDataFormat def) throws IOException {
+        doWriteGroovyXmlDataFormat("groovyXml", def);
+    }
     public void writeGzipDeflaterDataFormat(GzipDeflaterDataFormat def) throws IOException {
         doWriteGzipDeflaterDataFormat("gzipDeflater", def);
     }
@@ -1214,6 +1217,7 @@ public class ModelWriter extends BaseWriter {
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
                 case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
+                case "GroovyXmlDataFormat" -> doWriteGroovyXmlDataFormat("groovyXml", (GroovyXmlDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
                 case "IcalDataFormat" -> doWriteIcalDataFormat("ical", (IcalDataFormat) v);
@@ -1974,6 +1978,7 @@ public class ModelWriter extends BaseWriter {
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
                 case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
+                case "GroovyXmlDataFormat" -> doWriteGroovyXmlDataFormat("groovyXml", (GroovyXmlDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
                 case "IcalDataFormat" -> doWriteIcalDataFormat("ical", (IcalDataFormat) v);
@@ -2535,6 +2540,7 @@ public class ModelWriter extends BaseWriter {
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
                 case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
+                case "GroovyXmlDataFormat" -> doWriteGroovyXmlDataFormat("groovyXml", (GroovyXmlDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
                 case "IcalDataFormat" -> doWriteIcalDataFormat("ical", (IcalDataFormat) v);
@@ -2640,6 +2646,11 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("namedOnly", def.getNamedOnly(), null);
         doWriteAttribute("pattern", def.getPattern(), null);
         doWriteAttribute("allowMultipleMatchesPerLine", def.getAllowMultipleMatchesPerLine(), "true");
+        endElement(name);
+    }
+    protected void doWriteGroovyXmlDataFormat(String name, GroovyXmlDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
         endElement(name);
     }
     protected void doWriteGzipDeflaterDataFormat(String name, GzipDeflaterDataFormat def) throws IOException {
@@ -3668,6 +3679,7 @@ public class ModelWriter extends BaseWriter {
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
                 case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
+                case "GroovyXmlDataFormat" -> doWriteGroovyXmlDataFormat("groovyXml", (GroovyXmlDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
                 case "IcalDataFormat" -> doWriteIcalDataFormat("ical", (IcalDataFormat) v);

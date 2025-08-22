@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "groovyXml",
+    "title": "Groovy XML",
+    "description": "Transform between XML and Groovy Node (Map structure) objects.",
+    "deprecated": false,
+    "firstVersion": "4.15.0",
+    "label": "dataformat,transformation,xml",
+    "javaType": "org.apache.camel.model.dataformat.GroovyXmlDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+  }
+}

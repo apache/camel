@@ -2864,6 +2864,8 @@
               }, {
                 "required" : [ "grok" ]
               }, {
+                "required" : [ "groovyXml" ]
+              }, {
                 "required" : [ "gzipDeflater" ]
               }, {
                 "required" : [ "hl7" ]
@@ -3039,6 +3041,14 @@
             "properties" : {
               "grok" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "groovyXml" ],
+            "properties" : {
+              "groovyXml" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GroovyXmlDataFormat"
               }
             }
           }, {
@@ -3309,6 +3319,7 @@
           "flatpack" : { },
           "fory" : { },
           "grok" : { },
+          "groovyXml" : { },
           "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
@@ -7788,6 +7799,7 @@
           "flatpack" : { },
           "fory" : { },
           "grok" : { },
+          "groovyXml" : { },
           "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
@@ -7860,6 +7872,8 @@
                 "required" : [ "fory" ]
               }, {
                 "required" : [ "grok" ]
+              }, {
+                "required" : [ "groovyXml" ]
               }, {
                 "required" : [ "gzipDeflater" ]
               }, {
@@ -8036,6 +8050,14 @@
             "properties" : {
               "grok" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "groovyXml" ],
+            "properties" : {
+              "groovyXml" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GroovyXmlDataFormat"
               }
             }
           }, {
@@ -10638,6 +10660,9 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
+          "groovyXml" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GroovyXmlDataFormat"
+          },
           "gzipDeflater" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GzipDeflaterDataFormat"
           },
@@ -11087,6 +11112,19 @@
           }
         },
         "required" : [ "pattern" ]
+      },
+      "org.apache.camel.model.dataformat.GroovyXmlDataFormat" : {
+        "title" : "Groovy XML",
+        "description" : "Transform between XML and Groovy Node (Map structure) objects.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          }
+        }
       },
       "org.apache.camel.model.dataformat.GzipDeflaterDataFormat" : {
         "title" : "GZip Deflater",
@@ -16399,6 +16437,8 @@
               }, {
                 "required" : [ "grok" ]
               }, {
+                "required" : [ "groovyXml" ]
+              }, {
                 "required" : [ "gzipDeflater" ]
               }, {
                 "required" : [ "hl7" ]
@@ -16566,6 +16606,14 @@
             "properties" : {
               "grok" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "groovyXml" ],
+            "properties" : {
+              "groovyXml" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GroovyXmlDataFormat"
               }
             }
           }, {
@@ -16830,6 +16878,7 @@
           "flatpack" : { },
           "fory" : { },
           "grok" : { },
+          "groovyXml" : { },
           "gzipDeflater" : { },
           "hl7" : { },
           "ical" : { },
