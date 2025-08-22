@@ -140,9 +140,9 @@ For example, you can use JQ in a xref:manual::predicate.adoc[Predicate] with the
 ----
 from("queue:books.new")
   .choice()
-    .when().jq(".store.book.price < 10)")
+    .when().jq(".store.book.price < 10")
       .to("jms:queue:book.cheap")
-    .when().jq(".store.book.price < 30)")
+    .when().jq(".store.book.price < 30")
       .to("jms:queue:book.average")
     .otherwise()
       .to("jms:queue:book.expensive");
