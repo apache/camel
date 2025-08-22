@@ -6691,7 +6691,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             displayName = "Groovy XML",
             description = "Transform between XML and Groovy Node (Map structure) objects.",
             deprecated = false,
-            properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
+            properties = {
+                    @YamlProperty(name = "attributeMapping", type = "boolean", description = "To turn on or off attribute mapping. When enabled then keys that start with _ or character will be mapped to an XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses.", displayName = "Attribute Mapping"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
+            }
     )
     public static class GroovyXmlDataFormatDeserializer extends YamlDeserializerBase<GroovyXmlDataFormat> {
         public GroovyXmlDataFormatDeserializer() {
@@ -6708,6 +6711,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "attributeMapping": {
+                    String val = asText(node);
+                    target.setAttributeMapping(val);
+                    break;
+                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);

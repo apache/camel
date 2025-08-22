@@ -30,7 +30,7 @@ public class GroovyXmlDataFormatReifier extends DataFormatReifier<GroovyXmlDataF
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        // noop
+        properties.put("attributeMapping", definition.getAttributeMapping());
     }
 
 }

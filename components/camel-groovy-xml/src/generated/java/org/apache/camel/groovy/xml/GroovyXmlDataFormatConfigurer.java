@@ -22,12 +22,18 @@ public class GroovyXmlDataFormatConfigurer extends org.apache.camel.support.comp
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AttributeMapping", boolean.class);
         ALL_OPTIONS = map;
     }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        return false;
+        GroovyXmlDataFormat target = (GroovyXmlDataFormat) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "attributemapping":
+        case "attributeMapping": target.setAttributeMapping(property(camelContext, boolean.class, value)); return true;
+        default: return false;
+        }
     }
 
     @Override
@@ -37,12 +43,21 @@ public class GroovyXmlDataFormatConfigurer extends org.apache.camel.support.comp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        return null;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "attributemapping":
+        case "attributeMapping": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
-        return null;
+        GroovyXmlDataFormat target = (GroovyXmlDataFormat) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "attributemapping":
+        case "attributeMapping": return target.isAttributeMapping();
+        default: return null;
+        }
     }
 }
 

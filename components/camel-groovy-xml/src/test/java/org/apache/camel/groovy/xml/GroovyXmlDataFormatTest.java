@@ -192,6 +192,42 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
         b1.put("author", "F. Scott Fitzgerald");
         b1.put("year", 1925);
         b1.put("genre", "Classic");
+        b1.put("@id", "bk101");
+
+        JsonObject b2 = new JsonObject();
+        b2.put("title", "1984");
+        b2.put("author", "George Orwell");
+        b2.put("year", 1949);
+        b2.put("genre", "Dystopian");
+        b2.put("@id", "bk102");
+
+        arr.add(b1);
+        arr.add(b2);
+        JsonObject books = new JsonObject();
+        books.put("book", arr);
+        root.put("library", books);
+
+        Object out = template.requestBody("direct:marshal", root);
+        Assertions.assertNotNull(out);
+        Assertions.assertInstanceOf(byte[].class, out);
+
+        String xml = context.getTypeConverter().convertTo(String.class, out);
+        Assertions.assertEquals(BOOKS, xml);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testMarshalCamelJSonNoAttr() throws Exception {
+        getMockEndpoint("mock:marshal").expectedMessageCount(1);
+
+        JsonObject root = new JsonObject();
+        JsonArray arr = new JsonArray();
+        JsonObject b1 = new JsonObject();
+        b1.put("title", "No Title");
+        b1.put("author", "F. Scott Fitzgerald");
+        b1.put("year", 1925);
+        b1.put("genre", "Classic");
 
         JsonObject b2 = new JsonObject();
         b2.put("title", "1984");
@@ -205,7 +241,7 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
         books.put("book", arr);
         root.put("library", books);
 
-        Object out = template.requestBody("direct:marshal", root);
+        Object out = template.requestBody("direct:marshalNoAttr", root);
         Assertions.assertNotNull(out);
         Assertions.assertInstanceOf(byte[].class, out);
 
@@ -223,6 +259,23 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
         JsonNode root = om.readTree(BOOKS_JSON);
 
         Object out = template.requestBody("direct:marshal", root);
+        Assertions.assertNotNull(out);
+        Assertions.assertInstanceOf(byte[].class, out);
+
+        String xml = context.getTypeConverter().convertTo(String.class, out);
+        Assertions.assertEquals(BOOKS, xml);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testMarshalJacksonJSonNoAttr() throws Exception {
+        getMockEndpoint("mock:marshal").expectedMessageCount(1);
+
+        ObjectMapper om = new JsonMapper();
+        JsonNode root = om.readTree(BOOKS_JSON);
+
+        Object out = template.requestBody("direct:marshalNoAttr", root);
         Assertions.assertNotNull(out);
         Assertions.assertInstanceOf(byte[].class, out);
 
@@ -275,6 +328,10 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:marshal").streamCache(false)
                         .marshal().groovyXml()
+                        .to("mock:marshal");
+
+                from("direct:marshalNoAttr").streamCache(false)
+                        .marshal(dataFormat().groovyXml().attributeMapping(false).end())
                         .to("mock:marshal");
 
                 from("direct:unmarshal")

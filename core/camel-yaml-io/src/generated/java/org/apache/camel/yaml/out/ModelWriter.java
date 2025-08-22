@@ -2651,6 +2651,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteGroovyXmlDataFormat(String name, GroovyXmlDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("attributeMapping", def.getAttributeMapping(), "true");
         endElement(name);
     }
     protected void doWriteGzipDeflaterDataFormat(String name, GzipDeflaterDataFormat def) throws IOException {

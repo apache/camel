@@ -1951,7 +1951,10 @@ public class ModelParser extends BaseParser {
             }, noElementHandler(), noValueHandler());
     }
     protected GroovyXmlDataFormat doParseGroovyXmlDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new GroovyXmlDataFormat(), identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
+        return doParse(new GroovyXmlDataFormat(), (def, key, val) -> switch (key) {
+                case "attributeMapping": def.setAttributeMapping(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
     }
     protected GzipDeflaterDataFormat doParseGzipDeflaterDataFormat() throws IOException, XmlPullParserException {
         return doParse(new GzipDeflaterDataFormat(), identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());

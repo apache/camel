@@ -8950,6 +8950,16 @@ Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}). 
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
+        <xs:attribute name="attributeMapping" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To turn on or off attribute mapping. When enabled then keys that start with _ or character will be mapped to an XML
+attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

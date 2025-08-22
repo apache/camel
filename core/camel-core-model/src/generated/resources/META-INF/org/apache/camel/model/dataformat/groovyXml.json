@@ -13,6 +13,7 @@
     "output": false
   },
   "properties": {
-    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" }
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "attributeMapping": { "index": 1, "kind": "attribute", "displayName": "Attribute Mapping", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "To turn on or off attribute mapping. When enabled then keys that start with _ or character will be mapped to an XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses." }
   }
 }

@@ -18,6 +18,7 @@ package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
@@ -33,16 +34,22 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GroovyXmlDataFormat extends DataFormatDefinition {
 
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    private String attributeMapping;
+
     public GroovyXmlDataFormat() {
         super("groovyXml");
     }
 
     protected GroovyXmlDataFormat(GroovyXmlDataFormat source) {
         super(source);
+        this.attributeMapping = source.attributeMapping;
     }
 
     private GroovyXmlDataFormat(Builder builder) {
         this();
+        this.attributeMapping = builder.attributeMapping;
     }
 
     @Override
@@ -50,12 +57,50 @@ public class GroovyXmlDataFormat extends DataFormatDefinition {
         return new GroovyXmlDataFormat(this);
     }
 
+    public String getAttributeMapping() {
+        return attributeMapping;
+    }
+
+    /**
+     * To turn on or off attribute mapping. When enabled then keys that start with _ or @ character will
+     * be mapped to an XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses.
+     */
+    public void setAttributeMapping(String attributeMapping) {
+        this.attributeMapping = attributeMapping;
+    }
+
+    @Override
+    public String toString() {
+        return "GroovyXmlDataFormat'";
+    }
+
     @XmlTransient
     public static class Builder implements DataFormatBuilder<GroovyXmlDataFormat> {
+
+        private String attributeMapping;
+
+        /**
+         * To turn on or off attribute mapping. When enabled then keys that start with _ or @ character will
+         * be mapped to an XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses.
+         */
+        public Builder attributeMapping(String attributeMapping) {
+            this.attributeMapping = attributeMapping;
+            return this;
+        }
+
+        /**
+         * To turn on or off attribute mapping. When enabled then keys that start with _ or @ character will
+         * be mapped to an XML attribute, and vise versa. This rule is what Jackson and other XML or JSon libraries uses.
+         */
+        public Builder attributeMapping(boolean attributeMapping) {
+            this.attributeMapping = Boolean.toString(attributeMapping);
+            return this;
+        }
 
         @Override
         public GroovyXmlDataFormat end() {
             return new GroovyXmlDataFormat(this);
         }
+
     }
 }

@@ -20,8 +20,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import groovy.util.Node;
 import groovy.xml.XmlNodePrinter;
@@ -42,6 +44,16 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
     private static final int START_TAG = 1;
     private static final int VALUE = 2;
     private static final int END_TAG = 3;
+
+    private boolean attributeMapping = true;
+
+    public boolean isAttributeMapping() {
+        return attributeMapping;
+    }
+
+    public void setAttributeMapping(boolean attributeMapping) {
+        this.attributeMapping = attributeMapping;
+    }
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -83,7 +95,7 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
 
     private void printLines(List<Line> lines, OutputStream os) throws Exception {
         // add missing root end tag
-        lines.add(new Line(lines.get(0).key, null, END_TAG));
+        lines.add(new Line(lines.get(0).key, null, END_TAG, null));
         int level = 0;
         for (Line line : lines) {
             int kind = line.kind;
@@ -92,6 +104,16 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
                 os.write(pad.getBytes());
                 os.write("<".getBytes());
                 os.write(line.key.getBytes());
+                if (line.attrs != null) {
+                    StringJoiner sj = new StringJoiner(" ");
+                    for (var a : line.attrs.entrySet()) {
+                        sj.add(a.getKey() + "=\"" + a.getValue() + "\"");
+                    }
+                    if (sj.length() > 0) {
+                        os.write(" ".getBytes());
+                        os.write(sj.toString().getBytes());
+                    }
+                }
                 os.write(">\n".getBytes());
                 level++;
             } else if (kind == END_TAG) {
@@ -122,19 +144,45 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
     }
 
     private void doSerialize(CamelContext context, Map<String, Object> map, List<Line> lines) {
+
+        // attributes
+        Map<String, String> attrs = new LinkedHashMap<>();
+        if (attributeMapping) {
+            for (String key : map.keySet()) {
+                if (key.startsWith("_") || key.startsWith("@")) {
+                    String val = context.getTypeConverter().convertTo(String.class, map.get(key));
+                    if (val != null) {
+                        val = val.trim();
+                        if (!val.isBlank()) {
+                            attrs.put(key.substring(1), val);
+                        }
+                    }
+                }
+            }
+        }
+
         boolean root = false;
         for (var e : map.entrySet()) {
             String key = e.getKey();
 
-            // attributes are not yet supported
-            if (key.startsWith("_")) {
+            // attribute mappings are disabled
+            if (key.startsWith("_") || key.startsWith("@")) {
                 continue;
+            }
+
+            if (!attrs.isEmpty() && !lines.isEmpty()) {
+                int pos = lines.size() - 1;
+                Line prev = lines.get(pos);
+                lines.remove(pos);
+                Line updated = new Line(prev.key, prev.value, prev.kind, new LinkedHashMap<>(attrs));
+                lines.add(updated);
+                attrs.clear();
             }
 
             // root tag
             if (lines.isEmpty()) {
                 root = true;
-                lines.add(new Line(key, null, START_TAG));
+                lines.add(new Line(key, null, START_TAG, null));
             }
 
             if (e.getValue() != null) {
@@ -142,13 +190,13 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
                 if (e.getValue() instanceof Map cm) {
                     doSerialize(context, cm, lines);
                 } else if (e.getValue() instanceof List cl) {
-                    doSerialize(context, cl, key, lines, root);
+                    doSerialize(context, cl, key, attrs, lines, root);
                 } else {
                     String val = context.getTypeConverter().convertTo(String.class, e.getValue());
                     if (val != null) {
                         val = val.trim();
                         if (!val.isBlank()) {
-                            lines.add(new Line(key, val, VALUE));
+                            lines.add(new Line(key, val, VALUE, null));
                         }
                     }
                 }
@@ -156,21 +204,22 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         }
     }
 
-    private void doSerialize(CamelContext context, List list, String key, List<Line> lines, boolean root) {
+    private void doSerialize(
+            CamelContext context, List list, String key, Map<String, String> attrs, List<Line> lines, boolean root) {
         for (var e : list) {
             if (!root) {
-                lines.add(new Line(key, null, START_TAG));
+                lines.add(new Line(key, null, START_TAG, attrs));
             }
             if (e instanceof Map map) {
                 doSerialize(context, map, lines);
             }
             if (!root) {
-                lines.add(new Line(key, null, END_TAG));
+                lines.add(new Line(key, null, END_TAG, null));
             }
         }
     }
 
-    record Line(String key, String value, int kind) {
+    record Line(String key, String value, int kind, Map<String, String> attrs) {
     }
 
 }
