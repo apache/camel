@@ -687,7 +687,7 @@ Evaluates a Groovy script.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transform between XML and Java Map via Groovy
+Transform between XML and Groovy Node (Map structure) objects.
 ]]>
       </xs:documentation>
     </xs:annotation>

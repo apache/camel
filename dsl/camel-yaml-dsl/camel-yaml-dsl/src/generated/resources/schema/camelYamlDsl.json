@@ -11115,7 +11115,7 @@
       },
       "org.apache.camel.model.dataformat.GroovyXmlDataFormat" : {
         "title" : "Groovy XML",
-        "description" : "Transform between XML and Java Map via Groovy",
+        "description" : "Transform between XML and Groovy Node (Map structure) objects.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {

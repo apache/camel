@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "groovyXml",
     "title": "Groovy XML",
-    "description": "Transform between XML and Java Map via Groovy",
+    "description": "Transform between XML and Groovy Node (Map structure) objects.",
     "deprecated": false,
     "firstVersion": "4.15.0",
     "label": "dataformat,transformation,xml",

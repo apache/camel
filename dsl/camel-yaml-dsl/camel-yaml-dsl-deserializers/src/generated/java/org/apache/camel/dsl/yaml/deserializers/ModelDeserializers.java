@@ -6689,7 +6689,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.GroovyXmlDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Groovy XML",
-            description = "Transform between XML and Java Map via Groovy",
+            description = "Transform between XML and Groovy Node (Map structure) objects.",
             deprecated = false,
             properties = @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id")
     )

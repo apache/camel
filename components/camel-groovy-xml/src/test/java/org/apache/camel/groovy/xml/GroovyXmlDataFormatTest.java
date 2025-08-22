@@ -72,26 +72,26 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
 
     private static final String BOOKS_JSON
             = """
-                                    {
-                                        "library": {
-                                            "book": [
-                                                {
-                                                    "title": "No Title",
-                                                    "author": "F. Scott Fitzgerald",
-                                                    "year": "1925",
-                                                    "genre": "Classic",
-                                                    "_id": "bk101"
-                                                },
-                                                {
-                                                    "title": "1984",
-                                                    "author": "George Orwell",
-                                                    "year": "1949",
-                                                    "genre": "Dystopian",
-                                                    "_id": "bk102"
-                                                }
-                                            ]
-                                        }
-                                    }
+                    {
+                        "library": {
+                            "book": [
+                                {
+                                    "title": "No Title",
+                                    "author": "F. Scott Fitzgerald",
+                                    "year": "1925",
+                                    "genre": "Classic",
+                                    "_id": "bk101"
+                                },
+                                {
+                                    "title": "1984",
+                                    "author": "George Orwell",
+                                    "year": "1949",
+                                    "genre": "Dystopian",
+                                    "_id": "bk102"
+                                }
+                            ]
+                        }
+                    }
                     """;
 
     @Test
