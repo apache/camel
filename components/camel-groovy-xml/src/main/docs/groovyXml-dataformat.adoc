@@ -2,7 +2,7 @@
 :doctitle: Groovy XML
 :shortname: groovyXml
 :artifactid: camel-groovy-xml
-:description: Transform between XML and Java Map via Groovy
+:description: Transform between XML and Groovy Node (Map structure) objects.
 :since: 4.15
 :supportlevel: Preview
 :tabs-sync-option:

@@ -94,6 +94,40 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
                     }
                     """;
 
+    private static final String COUNTRIES
+            = """
+                    <countries>
+                      <country>Norway</country>
+                      <country>Denmark</country>
+                      <country>Sweden</country>
+                      <country>Germany</country>
+                      <country>Finland</country>
+                    </countries>
+                    """;
+
+    private static final String COUNTRIES_JSON
+            = """
+                    {
+                        "countries": [
+                          {
+                            "country": "Norway"
+                          },
+                          {
+                            "country": "Denmark"
+                          },
+                          {
+                            "country": "Sweden"
+                          },
+                          {
+                            "country": "Germany"
+                          },
+                          {
+                            "country": "Finland"
+                          }
+                        ]
+                    }
+                    """;
+
     @Test
     public void testUnmarshal() throws Exception {
         getMockEndpoint("mock:unmarshal").expectedMessageCount(1);
@@ -194,6 +228,42 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
 
         String xml = context.getTypeConverter().convertTo(String.class, out);
         Assertions.assertEquals(BOOKS_NO_ATTR, xml);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testUnmarshalArray() throws Exception {
+        getMockEndpoint("mock:unmarshal").expectedMessageCount(1);
+
+        Object out = template.requestBody("direct:unmarshal", COUNTRIES);
+        Assertions.assertNotNull(out);
+        Assertions.assertInstanceOf(Node.class, out);
+
+        Node n = (Node) out;
+        Assertions.assertEquals(5, n.children().size());
+        Assertions.assertEquals("country[attributes={}; value=[Norway]]", n.children().get(0).toString());
+        Assertions.assertEquals("country[attributes={}; value=[Denmark]]", n.children().get(1).toString());
+        Assertions.assertEquals("country[attributes={}; value=[Sweden]]", n.children().get(2).toString());
+        Assertions.assertEquals("country[attributes={}; value=[Germany]]", n.children().get(3).toString());
+        Assertions.assertEquals("country[attributes={}; value=[Finland]]", n.children().get(4).toString());
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testMarshalArrayJacksonJSon() throws Exception {
+        getMockEndpoint("mock:marshal").expectedMessageCount(1);
+
+        ObjectMapper om = new JsonMapper();
+        JsonNode root = om.readTree(COUNTRIES_JSON);
+
+        Object out = template.requestBody("direct:marshal", root);
+        Assertions.assertNotNull(out);
+        Assertions.assertInstanceOf(byte[].class, out);
+
+        String xml = context.getTypeConverter().convertTo(String.class, out);
+        Assertions.assertEquals(COUNTRIES, xml);
 
         MockEndpoint.assertIsSatisfied(context);
     }

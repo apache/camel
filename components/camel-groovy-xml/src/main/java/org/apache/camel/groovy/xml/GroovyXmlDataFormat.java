@@ -39,9 +39,9 @@ import org.apache.camel.util.StringHelper;
 @Dataformat("groovyXml")
 public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
-    int START_TAG = 1;
-    int VALUE = 2;
-    int END_TAG = 3;
+    private static final int START_TAG = 1;
+    private static final int VALUE = 2;
+    private static final int END_TAG = 3;
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -122,6 +122,7 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
     }
 
     private void doSerialize(CamelContext context, Map<String, Object> map, List<Line> lines) {
+        boolean root = false;
         for (var e : map.entrySet()) {
             String key = e.getKey();
 
@@ -132,6 +133,7 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
 
             // root tag
             if (lines.isEmpty()) {
+                root = true;
                 lines.add(new Line(key, null, START_TAG));
             }
 
@@ -140,7 +142,7 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
                 if (e.getValue() instanceof Map cm) {
                     doSerialize(context, cm, lines);
                 } else if (e.getValue() instanceof List cl) {
-                    doSerialize(context, cl, key, lines);
+                    doSerialize(context, cl, key, lines, root);
                 } else {
                     String val = context.getTypeConverter().convertTo(String.class, e.getValue());
                     if (val != null) {
@@ -154,14 +156,17 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         }
     }
 
-    private void doSerialize(CamelContext context, List list, String key, List<Line> lines) {
-        // list of map or value entries
+    private void doSerialize(CamelContext context, List list, String key, List<Line> lines, boolean root) {
         for (var e : list) {
-            lines.add(new Line(key, null, START_TAG));
+            if (!root) {
+                lines.add(new Line(key, null, START_TAG));
+            }
             if (e instanceof Map map) {
                 doSerialize(context, map, lines);
             }
-            lines.add(new Line(key, null, END_TAG));
+            if (!root) {
+                lines.add(new Line(key, null, END_TAG));
+            }
         }
     }
 
