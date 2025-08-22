@@ -159,7 +159,7 @@
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
         <flink-version>1.20.2</flink-version>
-        <flowable-version>7.1.0</flowable-version>
+        <flowable-version>7.2.0</flowable-version>
         <fop-version>2.11</fop-version>
         <formatter-maven-plugin-version>2.27.0</formatter-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
