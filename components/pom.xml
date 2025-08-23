@@ -149,6 +149,7 @@
         <module>camel-grape</module>
         <module>camel-graphql</module>
         <module>camel-grok</module>
+        <module>camel-groovy-xml</module>
         <module>camel-grpc</module>
         <module>camel-gson</module>
         <module>camel-guava-eventbus</module>
