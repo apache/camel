@@ -1153,6 +1153,18 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateJQLanguage() {
+        LanguageValidationResult result = catalog.validateLanguagePredicate(null, "jq", ".foo == \"bar\"");
+        assertTrue(result.isSuccess());
+        assertEquals(".foo == \"bar\"", result.getText());
+
+        result = catalog.validateLanguageExpression(null, "jq", ". ^^+ [{\"array\": body()}]");
+        assertFalse(result.isSuccess());
+        assertEquals(". ^^+ [{\"array\": body()}]", result.getText());
+        assertEquals("Cannot compile query: . ^^+ [{\"array\": body()}]", result.getError());
+    }
+
+    @Test
     public void testValidateGroovyLanguage() {
         LanguageValidationResult result = catalog.validateLanguageExpression(null, "groovy", "4 * 3");
         assertTrue(result.isSuccess());

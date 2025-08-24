@@ -72,7 +72,7 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
 
             this.typeConverter = camelContext.getTypeConverter();
             try {
-                this.query = JsonQuery.compile(this.expression, Versions.JQ_1_6);
+                this.query = JsonQuery.compile(this.expression, Versions.JQ_1_7);
             } catch (JsonQueryException e) {
                 throw new ExpressionIllegalSyntaxException(this.expression, e);
             }

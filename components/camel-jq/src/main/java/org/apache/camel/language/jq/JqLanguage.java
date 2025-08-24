@@ -16,14 +16,15 @@
  */
 package org.apache.camel.language.jq;
 
+import net.thisptr.jackson.jq.JsonQuery;
 import net.thisptr.jackson.jq.Scope;
+import net.thisptr.jackson.jq.Versions;
 import net.thisptr.jackson.jq.module.loaders.BuiltinModuleLoader;
 import org.apache.camel.Expression;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
-import org.apache.camel.util.ObjectHelper;
 
 @Language("jq")
 public class JqLanguage extends SingleInputTypedLanguageSupport implements StaticService {
@@ -32,16 +33,20 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
 
     @Override
     public void init() {
-        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
-
-        this.rootScope = CamelContextHelper.findSingleByType(getCamelContext(), Scope.class);
+        if (getCamelContext() != null) {
+            this.rootScope = CamelContextHelper.findSingleByType(getCamelContext(), Scope.class);
+        }
         if (this.rootScope == null) {
             this.rootScope = Scope.newEmptyScope();
             this.rootScope.setModuleLoader(BuiltinModuleLoader.getInstance());
-            JqFunctions.load(getCamelContext(), rootScope);
+            if (getCamelContext() != null) {
+                JqFunctions.load(getCamelContext(), rootScope);
+            }
         }
 
-        JqFunctions.loadFromRegistry(getCamelContext(), rootScope);
+        if (getCamelContext() != null) {
+            JqFunctions.loadFromRegistry(getCamelContext(), rootScope);
+        }
         JqFunctions.loadLocal(rootScope);
     }
 
@@ -68,6 +73,20 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
             answer.init(getCamelContext());
         }
         return answer;
+    }
+
+    // use by tooling
+    public boolean validateExpression(String expression) throws Exception {
+        init();
+        JsonQuery jq = JsonQuery.compile(expression, Versions.JQ_1_7);
+        return true;
+    }
+
+    // use by tooling
+    public boolean validatePredicate(String expression) throws Exception {
+        init();
+        JsonQuery.compile(expression, Versions.JQ_1_7);
+        return true;
     }
 
 }
