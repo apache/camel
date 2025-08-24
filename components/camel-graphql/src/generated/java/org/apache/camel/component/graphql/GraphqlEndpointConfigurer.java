@@ -25,6 +25,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpclient":
+        case "httpClient": target.setHttpClient(property(camelContext, org.apache.hc.client5.http.classic.HttpClient.class, value)); return true;
         case "jwtauthorizationtype":
         case "jwtAuthorizationType": target.setJwtAuthorizationType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -52,6 +54,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "httpclient":
+        case "httpClient": return org.apache.hc.client5.http.classic.HttpClient.class;
         case "jwtauthorizationtype":
         case "jwtAuthorizationType": return java.lang.String.class;
         case "lazystartproducer":
@@ -80,6 +84,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
+        case "httpclient":
+        case "httpClient": return target.getHttpClient();
         case "jwtauthorizationtype":
         case "jwtAuthorizationType": return target.getJwtAuthorizationType();
         case "lazystartproducer":

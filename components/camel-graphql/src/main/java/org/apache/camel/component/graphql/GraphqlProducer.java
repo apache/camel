@@ -22,7 +22,9 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.ContentType;
@@ -37,6 +39,27 @@ public class GraphqlProducer extends DefaultAsyncProducer {
         super(endpoint);
     }
 
+    private HttpClient httpClient;
+    private boolean closeHttpClient;
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        httpClient = getEndpoint().getHttpClient();
+        if (httpClient == null) {
+            httpClient = getEndpoint().createHttpClient();
+            closeHttpClient = true;
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (closeHttpClient && httpClient instanceof CloseableHttpClient chc) {
+            IOHelper.close(chc);
+        }
+    }
+
     @Override
     public GraphqlEndpoint getEndpoint() {
         return (GraphqlEndpoint) super.getEndpoint();
@@ -45,7 +68,6 @@ public class GraphqlProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            CloseableHttpClient httpClient = getEndpoint().getHttpclient();
             URI httpUri = getEndpoint().getHttpUri();
             String requestBody = buildRequestBody(getQuery(exchange), getEndpoint().getOperationName(),
                     getVariables(exchange));

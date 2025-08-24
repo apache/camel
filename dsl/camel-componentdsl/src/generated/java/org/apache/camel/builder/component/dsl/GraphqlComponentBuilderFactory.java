@@ -96,6 +96,24 @@ public interface GraphqlComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * To use a custom pre-existing Http Client. Beware that when using
+         * this, then other configurations such as proxy, access token, is not
+         * applied and all this must be pre-configured on the Http Client.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.hc.client5.http.classic.HttpClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param httpClient the value to set
+         * @return the dsl builder
+         */
+        default GraphqlComponentBuilder httpClient(org.apache.hc.client5.http.classic.HttpClient httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
     }
 
     class GraphqlComponentBuilderImpl
@@ -113,6 +131,7 @@ public interface GraphqlComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((GraphqlComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((GraphqlComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "httpClient": ((GraphqlComponent) component).setHttpClient((org.apache.hc.client5.http.classic.HttpClient) value); return true;
             default: return false;
             }
         }

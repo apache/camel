@@ -39,6 +39,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.CredentialsStore;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -53,6 +54,8 @@ import org.apache.hc.core5.http.message.BasicHeader;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri",
              category = { Category.API }, producerOnly = true, lenientProperties = true)
 public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+
+    private boolean closeHttpClient;
 
     @UriPath
     @Metadata(required = true)
@@ -79,8 +82,8 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     private String variablesHeader;
     @UriParam
     private String queryHeader;
-
-    private CloseableHttpClient httpClient;
+    @UriParam(label = "advanced")
+    private HttpClient httpClient;
 
     public GraphqlEndpoint(String uri, Component component) {
         super(uri, component);
@@ -108,13 +111,6 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     @Override
-    protected void doStop() throws Exception {
-        if (httpClient != null) {
-            httpClient.close();
-        }
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
         return new GraphqlProducer(this);
     }
@@ -124,14 +120,7 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
         throw new UnsupportedOperationException("You cannot receive messages at this endpoint: " + getEndpointUri());
     }
 
-    public CloseableHttpClient getHttpclient() {
-        if (httpClient == null) {
-            this.httpClient = createHttpClient();
-        }
-        return httpClient;
-    }
-
-    private CloseableHttpClient createHttpClient() {
+    CloseableHttpClient createHttpClient() {
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
         if (proxyHost != null) {
             String[] parts = proxyHost.split(":");
@@ -296,11 +285,15 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
         this.queryHeader = queryHeader;
     }
 
-    public CloseableHttpClient getHttpClient() {
+    public HttpClient getHttpClient() {
         return httpClient;
     }
 
-    public void setHttpClient(CloseableHttpClient httpClient) {
+    /**
+     * To use a custom pre-existing Http Client. Beware that when using this, then other configurations such as proxy,
+     * access token, is not applied and all this must be pre-configured on the Http Client.
+     */
+    public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
 

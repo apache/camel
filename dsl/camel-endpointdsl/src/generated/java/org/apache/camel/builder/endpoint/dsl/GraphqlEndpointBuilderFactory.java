@@ -274,6 +274,40 @@ public interface GraphqlEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * To use a custom pre-existing Http Client. Beware that when using
+         * this, then other configurations such as proxy, access token, is not
+         * applied and all this must be pre-configured on the Http Client.
+         * 
+         * The option is a:
+         * <code>org.apache.hc.client5.http.classic.HttpClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param httpClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGraphqlEndpointBuilder httpClient(org.apache.hc.client5.http.classic.HttpClient httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
+         * To use a custom pre-existing Http Client. Beware that when using
+         * this, then other configurations such as proxy, access token, is not
+         * applied and all this must be pre-configured on the Http Client.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.hc.client5.http.classic.HttpClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param httpClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGraphqlEndpointBuilder httpClient(String httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
     }
 
     public interface GraphqlBuilders {
