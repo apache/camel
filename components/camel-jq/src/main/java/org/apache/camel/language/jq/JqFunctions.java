@@ -53,14 +53,14 @@ public final class JqFunctions {
                         camelContext.getApplicationContextClassLoader() != null
                                 ? camelContext.getApplicationContextClassLoader()
                                 : BuiltinFunctionLoader.class.getClassLoader(),
-                        Versions.JQ_1_6);
+                        Versions.JQ_1_7);
 
         Map<String, Function> fromJq = BuiltinFunctionLoader.getInstance()
                 .loadFunctionsFromJsonJq(
                         camelContext.getApplicationContextClassLoader() != null
                                 ? camelContext.getApplicationContextClassLoader()
                                 : BuiltinFunctionLoader.class.getClassLoader(),
-                        Versions.JQ_1_6,
+                        Versions.JQ_1_7,
                         scope);
 
         if (fromServiceLoader != null) {

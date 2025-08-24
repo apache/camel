@@ -104,6 +104,12 @@
             <artifactId>camel-jsonpath</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- for testing jq language -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jq</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- for testing groovy language -->
         <dependency>
             <groupId>org.apache.camel</groupId>
