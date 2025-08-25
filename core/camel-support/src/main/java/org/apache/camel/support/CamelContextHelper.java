@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -40,6 +41,7 @@ import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.TimeUtils;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -55,6 +57,30 @@ public final class CamelContextHelper {
      * Utility classes should not have a public constructor.
      */
     private CamelContextHelper() {
+    }
+
+    /**
+     * Whether the given configuration property contains a sensitive key (such as password, accesstoken, etc.)
+     *
+     * @param  camelContext the camel context
+     * @param  text         the configuration property
+     * @return              true if sensitive, false otherwise
+     */
+    public static boolean containsSensitive(CamelContext camelContext, String text) {
+        if (SensitiveUtils.containsSensitive(text)) {
+            return true;
+        }
+        if (camelContext.getCamelContextExtension().getAdditionalSensitiveKeywords() != null) {
+            // same logic as in SensitiveUtils
+            int lastPeriod = text.lastIndexOf('.');
+            if (lastPeriod >= 0) {
+                text = text.substring(lastPeriod + 1);
+            }
+            text = text.toLowerCase(Locale.ENGLISH);
+            text = text.replace("-", "");
+            return camelContext.getCamelContextExtension().getAdditionalSensitiveKeywords().contains(text);
+        }
+        return false;
     }
 
     /**
