@@ -402,6 +402,7 @@ class ExportQuarkus extends Export {
 
     @Override
     protected void copyDockerFiles(String buildDir) throws Exception {
+        super.copyDockerFiles(buildDir);
         Path docker = Path.of(buildDir).resolve("src/main/docker");
         Files.createDirectories(docker);
         // copy files
@@ -409,7 +410,6 @@ class ExportQuarkus extends Export {
         // Deprecated, use Dockerfile instead
         PathUtils.copyFromStream(is, docker.resolve("Dockerfile.jvm"), true);
         is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
-        PathUtils.copyFromStream(is, docker.resolve("Dockerfile"), true);
         // Deprecated, to be removed in the future
         is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.legacy-jar");
         PathUtils.copyFromStream(is, docker.resolve("Dockerfile.legacy-jar"), true);
