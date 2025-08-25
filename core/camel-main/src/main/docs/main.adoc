@@ -19,11 +19,12 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 124 options, which are listed below.
+The camel.main supports 125 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.main.additionalSensitive{zwsp}Keywords* | Camel comes with a default set of sensitive keywords which are automatically masked. This option allows to add additional custom keywords to be masked as well. Multiple keywords can be separated by comma. |  | String
 | *camel.main.allowUseOriginal{zwsp}Message* | Sets whether to allow access to the original message from Camel's error handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive copy of the original message is not needed. Default is false. | false | boolean
 | *camel.main.autoConfiguration{zwsp}Enabled* | Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the configuration parameters are loaded from the properties component. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the org.apache.camel.spi.Registry#bind(String,Object) method or by using the org.apache.camel.BindToRegistry annotation style. This option is default enabled. | true | boolean
 | *camel.main.autoConfiguration{zwsp}EnvironmentVariablesEnabled* | Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5. This option is default enabled. | true | boolean

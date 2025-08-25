@@ -23,6 +23,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalsensitivekeywords":
+        case "additionalSensitiveKeywords": target.setAdditionalSensitiveKeywords(property(camelContext, java.lang.String.class, value)); return true;
         case "basepackagescan":
         case "basePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "bootstrapfactoryfinder":
@@ -60,6 +62,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalsensitivekeywords":
+        case "additionalSensitiveKeywords": return java.lang.String.class;
         case "basepackagescan":
         case "basePackageScan": return java.lang.String.class;
         case "bootstrapfactoryfinder":
@@ -98,6 +102,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalsensitivekeywords":
+        case "additionalSensitiveKeywords": return target.getAdditionalSensitiveKeywords();
         case "basepackagescan":
         case "basePackageScan": return target.getBasePackageScan();
         case "bootstrapfactoryfinder":

@@ -73,6 +73,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "HeadersMapFactory class name")
     String getHeadersMapFactoryClassName();
 
+    @ManagedAttribute(description = "Additional sensitive keywords (such as passwords) that should be masked when logging")
+    String getAdditionalSensitiveKeywords();
+
     /**
      * Gets the value of a CamelContext global option
      *

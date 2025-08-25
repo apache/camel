@@ -28,8 +28,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -49,13 +51,15 @@ public final class URISupport {
     public static final char[] RAW_TOKEN_START = { '(', '{' };
     public static final char[] RAW_TOKEN_END = { ')', '}' };
 
+    @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
+    private static final String PRE_SECRETS_FORMAT = "([?&][^=]*(?:%s)[^=]*)=(RAW(([{][^}]*[}])|([(][^)]*[)]))|[^&]*)";
+
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
-    @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
-    private static final Pattern ALL_SECRETS = Pattern.compile(
-            "([?&][^=]*(?:" + SensitiveUtils.getSensitivePattern() + ")[^=]*)=(RAW(([{][^}]*[}])|([(][^)]*[)]))|[^&]*)",
-            Pattern.CASE_INSENSITIVE);
+    private static final Pattern ALL_SECRETS
+            = Pattern.compile(PRE_SECRETS_FORMAT.formatted(SensitiveUtils.getSensitivePattern()),
+                    Pattern.CASE_INSENSITIVE);
 
     // Match the user password in the URI as second capture group
     // (applies to URI with authority component and userinfo token in the form
@@ -71,8 +75,29 @@ public final class URISupport {
 
     private static final String EMPTY_QUERY_STRING = "";
 
+    private static Pattern EXTRA_SECRETS;
+
     private URISupport() {
         // Helper class
+    }
+
+    /**
+     * Adds custom keywords for sanitizing sensitive information (such as passwords) from URIs. Notice that when a key
+     * has been added it cannot be removed.
+     *
+     * @param keywords keywords separated by comma
+     */
+    public static synchronized void addSanitizeKeywords(String keywords) {
+        StringJoiner pattern = new StringJoiner("|");
+        for (String key : keywords.split(",")) {
+            // skip existing keys
+            key = key.toLowerCase(Locale.ROOT).trim();
+            if (!SensitiveUtils.containsSensitive(key)) {
+                pattern.add("\\Q" + key.toLowerCase(Locale.ROOT) + "\\E");
+            }
+        }
+        EXTRA_SECRETS = Pattern.compile(PRE_SECRETS_FORMAT.formatted(pattern),
+                Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -88,6 +113,9 @@ public final class URISupport {
         String sanitized = uri;
         if (uri != null) {
             sanitized = ALL_SECRETS.matcher(sanitized).replaceAll("$1=xxxxxx");
+            if (EXTRA_SECRETS != null) {
+                sanitized = EXTRA_SECRETS.matcher(sanitized).replaceFirst("$1=xxxxxx");
+            }
             sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1xxxxxx$3");
         }
         return sanitized;

@@ -85,6 +85,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.DefaultStartupStepRecorder;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,6 +144,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Deprecated(since = "3.17.0")
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
+    private String additionalSensitiveKeywords;
 
     private final Lock lock = new ReentrantLock();
 
@@ -570,6 +572,18 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setBasePackageScan(String basePackageScan) {
         this.basePackageScan = basePackageScan;
+    }
+
+    @Override
+    public String getAdditionalSensitiveKeywords() {
+        return additionalSensitiveKeywords;
+    }
+
+    @Override
+    public void setAdditionalSensitiveKeywords(String additionalSensitiveKeywords) {
+        this.additionalSensitiveKeywords = additionalSensitiveKeywords;
+        // re-configure sensitive keywords asap so they take effect immediately
+        URISupport.addSanitizeKeywords(additionalSensitiveKeywords);
     }
 
     @Override

@@ -22,6 +22,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AdditionalSensitiveKeywords", java.lang.String.class);
         map.put("AllowUseOriginalMessage", boolean.class);
         map.put("AutoConfigurationEnabled", boolean.class);
         map.put("AutoConfigurationEnvironmentVariablesEnabled", boolean.class);
@@ -153,6 +154,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MainConfigurationProperties target = (org.apache.camel.main.MainConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalsensitivekeywords":
+        case "additionalSensitiveKeywords": target.setAdditionalSensitiveKeywords(property(camelContext, java.lang.String.class, value)); return true;
         case "allowuseoriginalmessage":
         case "allowUseOriginalMessage": target.setAllowUseOriginalMessage(property(camelContext, boolean.class, value)); return true;
         case "autoconfigurationenabled":
@@ -407,6 +410,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalsensitivekeywords":
+        case "additionalSensitiveKeywords": return java.lang.String.class;
         case "allowuseoriginalmessage":
         case "allowUseOriginalMessage": return boolean.class;
         case "autoconfigurationenabled":
@@ -657,6 +662,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MainConfigurationProperties target = (org.apache.camel.main.MainConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalsensitivekeywords":
+        case "additionalSensitiveKeywords": return target.getAdditionalSensitiveKeywords();
         case "allowuseoriginalmessage":
         case "allowUseOriginalMessage": return target.isAllowUseOriginalMessage();
         case "autoconfigurationenabled":
