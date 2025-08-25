@@ -264,6 +264,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    public String getAdditionalSensitiveKeywords() {
+        return context.getCamelContextExtension().getAdditionalSensitiveKeywords();
+    }
+
+    @Override
     public Map<String, String> getGlobalOptions() {
         if (context.getGlobalOptions().isEmpty()) {
             return null;

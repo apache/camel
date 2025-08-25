@@ -16,10 +16,12 @@
  */
 package org.apache.camel.support.processor;
 
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.util.SensitiveUtils;
 import org.slf4j.Logger;
@@ -47,6 +49,21 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
 
     public DefaultMaskingFormatter() {
         this(SensitiveUtils.getSensitiveKeys(), true, true, true);
+    }
+
+    public DefaultMaskingFormatter(CamelContext camelContext) {
+        this.keywords = new TreeSet<>(SensitiveUtils.getSensitiveKeys());
+        if (camelContext.getCamelContextExtension().getAdditionalSensitiveKeywords() != null) {
+            for (String key : camelContext.getCamelContextExtension().getAdditionalSensitiveKeywords().split(",")) {
+                key = key.toLowerCase(Locale.ROOT).trim();
+                this.keywords.add(key);
+            }
+        }
+        setMaskKeyValue(true);
+        setMaskXmlElement(true);
+        setMaskJson(true);
+
+        initPatterns();
     }
 
     public DefaultMaskingFormatter(boolean maskKeyValue, boolean maskXml, boolean maskJson) {

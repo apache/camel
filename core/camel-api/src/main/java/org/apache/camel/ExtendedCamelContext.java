@@ -522,6 +522,22 @@ public interface ExtendedCamelContext {
     void setBasePackageScan(String basePackageScan);
 
     /**
+     * Camel comes with a default set of sensitive keywords which are automatically masked. This option allows to add
+     * additional custom keywords to be masked as well. Multiple keywords can be separated by comma.
+     *
+     * @see org.apache.camel.util.SensitiveUtils
+     */
+    String getAdditionalSensitiveKeywords();
+
+    /**
+     * Camel comes with a default set of sensitive keywords which are automatically masked. This option allows to add
+     * additional custom keywords to be masked as well. Multiple keywords can be separated by comma.
+     *
+     * @see org.apache.camel.util.SensitiveUtils
+     */
+    void setAdditionalSensitiveKeywords(String additionalSensitiveKeywords);
+
+    /**
      * The {@link CamelContext} have additional phases that are not defined in {@link ServiceStatus} and this method
      * provides the phase ordinal value.
      */

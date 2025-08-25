@@ -108,7 +108,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
-import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
@@ -613,19 +612,19 @@ public abstract class BaseMainSupport extends BaseService {
 
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
-            logConfigurationSummary(autoConfiguredProperties);
+            logConfigurationSummary(camelContext, autoConfiguredProperties);
         }
 
         // we are now done with the main helper during bootstrap
         helper.bootstrapDone();
     }
 
-    private static void logConfigurationSummary(OrderedLocationProperties autoConfiguredProperties) {
+    private static void logConfigurationSummary(CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties) {
         // first log variables
-        MainHelper.logConfigurationSummary(LOG, autoConfiguredProperties, "Variables summary",
+        MainHelper.logConfigurationSummary(camelContext, LOG, autoConfiguredProperties, "Variables summary",
                 (k) -> k.startsWith("camel.variable."));
         // then log standard options
-        MainHelper.logConfigurationSummary(LOG, autoConfiguredProperties, "Auto-configuration summary", null);
+        MainHelper.logConfigurationSummary(camelContext, LOG, autoConfiguredProperties, "Auto-configuration summary", null);
     }
 
     protected void configureStartupRecorder(CamelContext camelContext) {
@@ -948,7 +947,8 @@ public abstract class BaseMainSupport extends BaseService {
         // we want to log the property placeholder summary after routes has been started,
         // but before camel context logs that it has been started, so we need to use an event listener
         if (standalone && mainConfigurationProperties.isAutoConfigurationLogSummary()) {
-            camelContext.getManagementStrategy().addEventNotifier(new PlaceholderSummaryEventNotifier(propertyPlaceholders));
+            camelContext.getManagementStrategy()
+                    .addEventNotifier(new PlaceholderSummaryEventNotifier(camelContext, propertyPlaceholders));
         }
     }
 
@@ -2476,7 +2476,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
-            logConfigurationSummary(autoConfiguredProperties);
+            logConfigurationSummary(camelContext, autoConfiguredProperties);
         }
     }
 
@@ -2637,7 +2637,7 @@ public abstract class BaseMainSupport extends BaseService {
                         header = true;
                     }
 
-                    MainHelper.sensitiveAwareLogging(LOG, k, v, loc, debug);
+                    MainHelper.sensitiveAwareLogging(camelContext, LOG, k, v, loc, debug);
                 }
             }
         } catch (Exception e) {
@@ -2745,9 +2745,11 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     private static class PlaceholderSummaryEventNotifier extends SimpleEventNotifierSupport implements NonManagedService {
+        private final CamelContext camelContext;
         private final OrderedLocationProperties propertyPlaceholders;
 
-        public PlaceholderSummaryEventNotifier(OrderedLocationProperties propertyPlaceholders) {
+        public PlaceholderSummaryEventNotifier(CamelContext camelContext, OrderedLocationProperties propertyPlaceholders) {
+            this.camelContext = camelContext;
             this.propertyPlaceholders = propertyPlaceholders;
         }
 
@@ -2775,7 +2777,7 @@ public abstract class BaseMainSupport extends BaseService {
                             header = false;
                         }
                         String loc = locationSummary(propertyPlaceholders, k);
-                        if (SensitiveUtils.containsSensitive(k)) {
+                        if (CamelContextHelper.containsSensitive(camelContext, k)) {
                             LOG.info("    {} {} = xxxxxx", loc, k);
                         } else {
                             LOG.info("    {} {} = {}", loc, k, v);

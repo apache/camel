@@ -637,6 +637,18 @@ public class URISupportTest {
 
         dec = URISupport.getDecodeQuery(enc);
         assertEquals(out, dec);
-
     }
+
+    @Test
+    public void testSanitizeCustomKeys() {
+        String uri1 = "http://foo?username=me&password=secret&domain=foobar&database=customers";
+        String expected = "http://foo?username=xxxxxx&password=xxxxxx&domain=foobar&database=customers";
+        assertEquals(expected, URISupport.sanitizeUri(uri1));
+
+        URISupport.addSanitizeKeywords("domain,system,cheese");
+        assertNotEquals(expected, URISupport.sanitizeUri(uri1));
+        expected = "http://foo?username=xxxxxx&password=xxxxxx&domain=xxxxxx&database=customers";
+        assertEquals(expected, URISupport.sanitizeUri(uri1));
+    }
+
 }

@@ -137,7 +137,7 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         if (route.isLogMask()) {
             MaskingFormatter formatter = lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
-                formatter = new DefaultMaskingFormatter();
+                formatter = new DefaultMaskingFormatter(getCamelContext());
             }
             return formatter;
         }

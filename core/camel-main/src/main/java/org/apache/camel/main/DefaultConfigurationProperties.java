@@ -84,6 +84,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean logExhaustedMessageBody;
     private String logName;
     private String logLanguage;
+    private String additionalSensitiveKeywords;
     private boolean autoStartup = true;
     private String autoStartupExcludePattern;
     private boolean allowUseOriginalMessage;
@@ -787,6 +788,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setLogLanguage(String logLanguage) {
         this.logLanguage = logLanguage;
+    }
+
+    public String getAdditionalSensitiveKeywords() {
+        return additionalSensitiveKeywords;
+    }
+
+    /**
+     * Camel comes with a default set of sensitive keywords which are automatically masked. This option allows to add
+     * additional custom keywords to be masked as well. Multiple keywords can be separated by comma.
+     */
+    public void setAdditionalSensitiveKeywords(String additionalSensitiveKeywords) {
+        this.additionalSensitiveKeywords = additionalSensitiveKeywords;
     }
 
     public boolean isAutoStartup() {
@@ -2127,6 +2140,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withLogLanguage(String logLanguage) {
         this.logLanguage = logLanguage;
+        return (T) this;
+    }
+
+    /**
+     * Camel comes with a default set of sensitive keywords which are automatically masked. This option allows to add
+     * additional custom keywords to be masked as well. Multiple keywords can be separated by comma.
+     */
+    public T withAdditionalSensitiveKeywords(String additionalSensitiveKeywords) {
+        this.additionalSensitiveKeywords = additionalSensitiveKeywords;
         return (T) this;
     }
 
