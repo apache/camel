@@ -16,7 +16,7 @@
 #
 
 ####
-# This Dockerfile is used in order to build a container that runs the Quarkus application in native (no JVM) mode.
+# This Dockerfile is used in order to build a container that runs the Quarkus application in Native mode.
 #
 # Before building the container image run:
 #
@@ -28,7 +28,7 @@
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/code-with-quarkus
+# docker run -i quarkus/code-with-quarkus
 #
 # The ` registry.access.redhat.com/ubi9/ubi-minimal:9.5` base image is based on UBI 9.
 # To use UBI 8, switch to `quay.io/ubi8/ubi-minimal:8.10`.
@@ -40,7 +40,10 @@ RUN chown 1001 /work \
     && chown 1001:root /work
 COPY --chown=1001:root --chmod=0755 target/*-runner /work/application
 
-EXPOSE 8080
+# Uncomment to expose any given port
+# EXPOSE 8080
 USER 1001
 
-ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]
+# Use this if you're exposing some port
+# ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]
+ENTRYPOINT ["./application"]
