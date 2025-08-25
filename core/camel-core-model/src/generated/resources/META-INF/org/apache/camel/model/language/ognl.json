@@ -4,7 +4,7 @@
     "name": "ognl",
     "title": "OGNL",
     "description": "Evaluates an OGNL expression (Apache Commons OGNL).",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "1.1.0",
     "label": "language,java",
     "javaType": "org.apache.camel.model.language.OgnlExpression",

@@ -28,7 +28,7 @@
 
     <artifactId>camel-ognl</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: OGNL</name>
+    <name>Camel :: OGNL (deprecated)</name>
     <description>Camel OGNL support</description>
 
     <properties>
