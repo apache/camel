@@ -346,6 +346,8 @@ public class Export extends ExportBaseCommand {
         IOHelper.close(is);
 
         String appJar = ids[1] + "-" + ids[2] + ".jar";
+        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceAll("\\{\\{ \\.AppJar }}", appJar);
         Files.writeString(docker.resolve("Dockerfile"), context);
     }
