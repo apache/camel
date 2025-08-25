@@ -256,6 +256,20 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
             return "CamelLangChain4jEmbeddingsTotalTokenCount";
         }
         /**
+         * Embedding representation of a text.
+         * 
+         * The option is a: {@code dev.langchain4j.data.embedding.Embedding}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jEmbeddingsEmbedding}.
+         */
+        public String langChain4jEmbeddingsEmbedding() {
+            return "CamelLangChain4jEmbeddingsEmbedding";
+        }
+        /**
          * A dense vector embedding of a text.
          * 
          * The option is a: {@code float[]} type.

@@ -20,6 +20,7 @@ package org.apache.camel.ai;
  * Common Langchain4j Attributes shared by multiple components
  */
 public interface CamelLangchain4jAttributes {
+    String CAMEL_LANGCHAIN4J_EMBEDDING = "CamelLangChain4jEmbeddingsEmbedding";
     String CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR = "CamelLangChain4jEmbeddingsVector";
     String CAMEL_LANGCHAIN4J_TEXT_SEGMENT = "CamelLangChain4jEmbeddingsTextSegment";
 }
