@@ -406,18 +406,21 @@ class ExportQuarkus extends Export {
         Path docker = Path.of(buildDir).resolve("src/main/docker");
         Files.createDirectories(docker);
         // copy files
-        InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
-        // Deprecated, use Dockerfile instead
-        PathUtils.copyFromStream(is, docker.resolve("Dockerfile.jvm"), true);
-        is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
-        // Deprecated, to be removed in the future
-        is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.legacy-jar");
-        PathUtils.copyFromStream(is, docker.resolve("Dockerfile.legacy-jar"), true);
-        is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native");
+        InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native");
         PathUtils.copyFromStream(is, docker.resolve("Dockerfile.native"), true);
-        // Deprecated, to be removed in the future
-        is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native-micro");
-        PathUtils.copyFromStream(is, docker.resolve("Dockerfile.native-micro"), true);
+    }
+
+    @Override
+    protected void copyReadme(String buildDir, String appJar) throws Exception {
+        String[] ids = gav.split(":");
+        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/readme.native.md.tmpl");
+        String context = IOHelper.loadText(is);
+        IOHelper.close(is);
+
+        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceAll("\\{\\{ \\.AppRuntimeJar }}", appJar);
+        Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
     }
 
     private void createMavenPom(Path settings, Path pom, Set<String> deps) throws Exception {
