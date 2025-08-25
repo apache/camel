@@ -13858,6 +13858,7 @@
       "org.apache.camel.model.language.OgnlExpression" : {
         "title" : "OGNL",
         "description" : "Evaluates an OGNL expression (Apache Commons OGNL).",
+        "deprecated" : true,
         "oneOf" : [ {
           "type" : "string"
         }, {

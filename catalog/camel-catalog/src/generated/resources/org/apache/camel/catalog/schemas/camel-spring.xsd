@@ -1115,7 +1115,7 @@ Rest security OAuth2 definition
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluates an OGNL expression (Apache Commons OGNL).
+Deprecated: Evaluates an OGNL expression (Apache Commons OGNL).
 ]]>
       </xs:documentation>
     </xs:annotation>
