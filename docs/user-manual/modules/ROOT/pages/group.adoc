@@ -1,0 +1,127 @@
+= Group
+
+A group is an identifier for multiple routes that belong together. For example, an order integration that consists of 2 different routes can be identified by the group name "order". 
+A group can either be used purely as a label, or to perform tasks or monitor a whole group at once.
+
+== Examples
+
+In the route below, we use the group name to identify two routes:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:queue:order.in")
+    .routeId("validate")
+    .group("order") 
+    .to("bean:orderServer?method=validate")
+    .to("direct:processOrder");
+
+from("direct:processOrder")
+    .routeId("process")
+    .group("order")
+    .to("bean:orderService?method=process")
+    .to("activemq:queue:order.out");
+----
+
+XML::
++
+[source,xml]
+----
+<route id="validate" group="order">
+ <from uri="activemq:queue:order.in"/>
+ <to uri="bean:orderService?method=validate"/>
+ <to uri="direct:processOrder"/>
+</route>
+
+<route id="process" group="order">
+ <from uri="direct:processOrder"/>
+ <to uri="bean:orderService?method=process"/>
+ <to uri="activemq:queue:order.out"/>
+</route>
+----
+====
+
+== Creating a route from a route template
+
+It's also possible to call a route template and add the created route to a group.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+templatedRoute("myTemplate")
+        .group("greetings")
+        .parameter("name", "one")
+        .parameter("greeting", "Hello");
+templatedRoute("myTemplate")
+        .group("greetings")
+        .parameter("name", "two")
+        .parameter("greeting", "Bonjour")
+        .parameter("myPeriod", "5s");
+----
+
+XML::
++
+[source,xml]
+----
+<templatedRoutes xmlns="http://camel.apache.org/schema/spring">
+  <templatedRoute routeTemplateRef="myTemplate" group="greetings">
+    <parameter name="name" value="one"/>
+    <parameter name="greeting" value="Hello"/>
+  </templatedRoute>
+  <templatedRoute routeTemplateRef="myTemplate" group="greetings">
+    <parameter name="name" value="two"/>
+    <parameter name="greeting" value="Bonjour"/>
+    <parameter name="myPeriod" value="5s"/>
+  </templatedRoute>
+</templatedRoutes>
+----
+====
+
+== Performing Tasks
+
+The camel API allows to retrieve all routes of a group and then perform various tasks. 
+
+Here is an example to suspend all routes of a group:
+
+```java
+List<Route> routes = context.getRoutesByGroup("order");
+
+for (Route route : routes) {
+    System.out.println("Suspend routeId=" + route.getId() + " for group=" + route.getGroup());
+    route.getRouteController().suspendRoute(route.getId());
+}
+```
+
+
+== Monitoring
+
+Camel has optional support for xref:jmx.adoc[JMX management]. This includes management of groups.
+
+To get all failed changes for a group:
+
+```java
+ManagedCamelContext managedContext = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+ManagedRouteGroupMBean managedRouteGroup = managedContext.getManagedRouteGroup("order");
+
+if(managedRouteGroup!=null){
+    System.out.println("Group order has " + managedRouteGroup.getExchangesFailed() + " failed exchanges");
+}
+```
+
+To get all failed changes for every route in a group:
+
+```java
+ManagedCamelContext managedContext = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+
+List<ManagedRouteMBean> routes = managedContext.getManagedRoutesByGroup(flowId);
+
+for (ManagedRouteMBean route : routes) {
+	System.out.println("RouteId=" + route.getRouteId() + " has " + route.getExchangesFailed() + " failed exchanges");
+}
+```
