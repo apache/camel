@@ -108,6 +108,8 @@ from("platform-http:/upload?httpMethodRestrict=POST&useStreaming=true")
     .to("file:/uploads?fileName=uploaded.txt")
 ----
 
+NOTE: This requires to upload the content as `application/octet-stream` to leverage streaming mode. You cannot upload using `multipart`.
+
 == Setting up http authentication
 
 Http authentication is disabled by default. In can be enabled by calling `setEnabled(true)` of `AuthenticationConfig`.
