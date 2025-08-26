@@ -221,7 +221,6 @@ public class JmsProducer extends DefaultAsyncProducer {
             in.setHeader(correlationPropertyToUse, GENERATED_CORRELATION_ID_PREFIX + getUuidGenerator().generateUuid());
         }
 
-        final String to = destinationName != null ? destinationName : getDestinationName(destination);
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message answer = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
@@ -257,12 +256,7 @@ public class JmsProducer extends DefaultAsyncProducer {
             }
         };
 
-        doSend(true, destinationName, destination, messageCreator, messageSentCallback);
-
-        // record where we sent the message
-        if (to != null) {
-            exchange.getMessage().setHeader(JmsConstants.JMS_DESTINATION_NAME_PRODUCED, to);
-        }
+        doSend(exchange, true, destinationName, destination, messageCreator, messageSentCallback);
 
         // continue routing asynchronously (reply will be processed async when its received)
         return false;
@@ -399,14 +393,10 @@ public class JmsProducer extends DefaultAsyncProducer {
             }
         };
 
-        doSend(false, destinationName, destination, messageCreator, messageSentCallback);
+        doSend(exchange, false, destinationName, destination, messageCreator, messageSentCallback);
 
         // after sending then set the OUT message id to the JMSMessageID so its identical
         setMessageId(exchange);
-        // record where we sent the message
-        if (to != null) {
-            exchange.getMessage().setHeader(JmsConstants.JMS_DESTINATION_NAME_PRODUCED, to);
-        }
 
         // we are synchronous so return true
         callback.done(true);
@@ -416,6 +406,7 @@ public class JmsProducer extends DefaultAsyncProducer {
     /**
      * Sends the message using the JmsTemplate.
      *
+     * @param exchange        the exchange
      * @param inOut           use inOut or inOnly template
      * @param destinationName the destination name
      * @param destination     the destination (if no name provided)
@@ -423,8 +414,15 @@ public class JmsProducer extends DefaultAsyncProducer {
      * @param callback        optional callback to invoke when message has been sent
      */
     protected void doSend(
+            Exchange exchange,
             boolean inOut, String destinationName, Destination destination,
             MessageCreator messageCreator, MessageSentCallback callback) {
+
+        // record where we sent the message
+        String to = destinationName != null ? destinationName : getDestinationName(destination);
+        if (to != null) {
+            exchange.getMessage().setHeader(JmsConstants.JMS_DESTINATION_NAME_PRODUCED, to);
+        }
 
         CamelJmsTemplate template = (CamelJmsTemplate) (inOut ? getInOutTemplate() : getInOnlyTemplate());
 
