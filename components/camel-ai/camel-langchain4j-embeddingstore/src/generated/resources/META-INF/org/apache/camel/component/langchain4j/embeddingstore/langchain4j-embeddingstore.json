@@ -1,0 +1,45 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "langchain4j-embeddingstore",
+    "title": "LangChain4j Embedding Store",
+    "description": "Perform operations on the Langchain4jEmbeddingStores.",
+    "deprecated": false,
+    "firstVersion": "4.14.0",
+    "label": "database,ai",
+    "javaType": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-langchain4j-embeddingstore",
+    "version": "4.15.0-SNAPSHOT",
+    "scheme": "langchain4j-embeddingstore",
+    "extendsScheme": "",
+    "syntax": "langchain4j-embeddingstore:embeddingStoreId",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "configuration": { "index": 0, "kind": "property", "displayName": "Configuration", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration", "deprecated": false, "autowired": false, "secret": false, "description": "The configuration;" },
+    "embeddingStore": { "index": 1, "kind": "property", "displayName": "Embedding Store", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "dev.langchain4j.store.embedding.EmbeddingStore<dev.langchain4j.data.segment.TextSegment>", "deprecated": false, "deprecationNote": "", "autowired": true, "secret": false, "configurationClass": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration", "configurationField": "configuration", "description": "Direct embedding store instance for vector operations" },
+    "embeddingStoreFactory": { "index": 2, "kind": "property", "displayName": "Embedding Store Factory", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.langchain4j.embeddingstore.EmbeddingStoreFactory", "deprecated": false, "deprecationNote": "", "autowired": true, "secret": false, "configurationClass": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration", "configurationField": "configuration", "description": "The embedding store factory to use for creating embedding stores if no embeddingstore is provided" },
+    "lazyStartProducer": { "index": 3, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 4, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "CamelLangchain4jEmbeddingStoreAction": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "enum": [ "ADD", "REMOVE", "SEARCH" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The action to be performed.", "constantName": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStore$Headers#ACTION" },
+    "CamelLangchain4jEmbeddingStoreMaxResults": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": "5", "description": "Maximum number of search results to return", "constantName": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStore$Headers#MAX_RESULTS" },
+    "CamelLangchain4jEmbeddingStoreMinScore": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Double", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Minimum similarity score for search results", "constantName": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStore$Headers#MIN_SCORE" },
+    "CamelLangchain4jEmbeddingStoreFilter": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "dev.langchain4j.store.embedding.filter.Filter", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Search filter for metadata-based constraints", "constantName": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStore$Headers#FILTER" }
+  },
+  "properties": {
+    "embeddingStoreId": { "index": 0, "kind": "path", "displayName": "Embedding Store Id", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The id of the embedding store" },
+    "embeddingStore": { "index": 1, "kind": "parameter", "displayName": "Embedding Store", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "dev.langchain4j.store.embedding.EmbeddingStore<dev.langchain4j.data.segment.TextSegment>", "deprecated": false, "deprecationNote": "", "autowired": true, "secret": false, "configurationClass": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration", "configurationField": "configuration", "description": "Direct embedding store instance for vector operations" },
+    "embeddingStoreFactory": { "index": 2, "kind": "parameter", "displayName": "Embedding Store Factory", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.langchain4j.embeddingstore.EmbeddingStoreFactory", "deprecated": false, "deprecationNote": "", "autowired": true, "secret": false, "configurationClass": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration", "configurationField": "configuration", "description": "The embedding store factory to use for creating embedding stores if no embeddingstore is provided" },
+    "lazyStartProducer": { "index": 3, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}
