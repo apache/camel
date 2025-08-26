@@ -261,8 +261,6 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Http responseCode: {}", responseCode);
                             }
-                            populateResponseCode(exchange.getOut(), httpResponse, responseCode);
-
                             if (!throwException) {
                                 // if we do not use failed exception then populate response for all response codes
                                 HttpProducer.this.populateResponse(exchange, httpRequest, httpResponse, strategy, responseCode);
@@ -279,6 +277,9 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                                     HttpProducer.this.populateResponse(exchange, httpRequest, httpResponse, strategy,
                                             responseCode);
                                 } else {
+                                    // also store response code when throwing exception
+                                    populateResponseCode(exchange.getMessage(), httpResponse, responseCode);
+
                                     // operation failed so populate exception to throw
                                     throw HttpProducer.this.populateHttpOperationFailedException(exchange, httpRequest,
                                             httpResponse, responseCode);
@@ -354,9 +355,12 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             Exchange exchange, HttpUriRequest httpRequest, ClassicHttpResponse httpResponse,
             HeaderFilterStrategy strategy, int responseCode)
             throws IOException, ClassNotFoundException {
+
+        Message answer = exchange.getOut();
+        populateResponseCode(answer, httpResponse, responseCode);
+
         // We just make the out message is not create when extractResponseBody throws exception
         Object response = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
-        Message answer = exchange.getOut();
         answer.setBody(response);
 
         if (!getEndpoint().isSkipResponseHeaders()) {
