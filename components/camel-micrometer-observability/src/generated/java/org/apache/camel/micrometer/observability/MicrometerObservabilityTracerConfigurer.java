@@ -27,10 +27,14 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "excludepatterns":
         case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
+        case "observationregistry":
+        case "observationRegistry": target.setObservationRegistry(property(camelContext, io.micrometer.observation.ObservationRegistry.class, value)); return true;
+        case "propagator": target.setPropagator(property(camelContext, io.micrometer.tracing.propagation.Propagator.class, value)); return true;
         case "spanlifecyclemanager":
         case "spanLifecycleManager": target.setSpanLifecycleManager(property(camelContext, org.apache.camel.telemetry.SpanLifecycleManager.class, value)); return true;
         case "traceprocessors":
         case "traceProcessors": target.setTraceProcessors(property(camelContext, boolean.class, value)); return true;
+        case "tracer": target.setTracer(property(camelContext, io.micrometer.tracing.Tracer.class, value)); return true;
         default: return false;
         }
     }
@@ -42,10 +46,14 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         case "camelContext": return org.apache.camel.CamelContext.class;
         case "excludepatterns":
         case "excludePatterns": return java.lang.String.class;
+        case "observationregistry":
+        case "observationRegistry": return io.micrometer.observation.ObservationRegistry.class;
+        case "propagator": return io.micrometer.tracing.propagation.Propagator.class;
         case "spanlifecyclemanager":
         case "spanLifecycleManager": return org.apache.camel.telemetry.SpanLifecycleManager.class;
         case "traceprocessors":
         case "traceProcessors": return boolean.class;
+        case "tracer": return io.micrometer.tracing.Tracer.class;
         default: return null;
         }
     }
@@ -58,10 +66,14 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         case "camelContext": return target.getCamelContext();
         case "excludepatterns":
         case "excludePatterns": return target.getExcludePatterns();
+        case "observationregistry":
+        case "observationRegistry": return target.getObservationRegistry();
+        case "propagator": return target.getPropagator();
         case "spanlifecyclemanager":
         case "spanLifecycleManager": return target.getSpanLifecycleManager();
         case "traceprocessors":
         case "traceProcessors": return target.isTraceProcessors();
+        case "tracer": return target.getTracer();
         default: return null;
         }
     }

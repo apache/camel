@@ -50,6 +50,30 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
     private ObservationRegistry observationRegistry;
     private Propagator propagator;
 
+    public Tracer getTracer() {
+        return tracer;
+    }
+
+    public void setTracer(Tracer tracer) {
+        this.tracer = tracer;
+    }
+
+    public ObservationRegistry getObservationRegistry() {
+        return observationRegistry;
+    }
+
+    public void setObservationRegistry(ObservationRegistry observationRegistry) {
+        this.observationRegistry = observationRegistry;
+    }
+
+    public Propagator getPropagator() {
+        return propagator;
+    }
+
+    public void setPropagator(Propagator propagator) {
+        this.propagator = propagator;
+    }
+
     @Override
     protected void initTracer() {
         if (tracer == null) {
