@@ -76,6 +76,7 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
     @Test
     public void httpGetWhichReturnsHttp501ShouldThrowAnException() {
         Exchange reply = template.request(baseUrl + "/XXX?throwExceptionOnFailure=true", exchange -> {
+            exchange.getMessage().setHeader("cheese", "gauda");
         });
 
         Exception e = reply.getException();
@@ -88,6 +89,8 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
         Map<String, Object> headers = out.getHeaders();
         assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, headers.get(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("Not Implemented", headers.get(Exchange.HTTP_RESPONSE_TEXT));
+        // header should be preserved
+        assertEquals("gauda", headers.get("cheese"));
     }
 
     @Test
