@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.platform.http.main.authentication;
 
+import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.auth.properties.PropertyFileAuthentication;
+import io.vertx.ext.web.handler.AuthenticationHandler;
 import io.vertx.ext.web.handler.BasicAuthHandler;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.AuthenticationConfigEntry;
 import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 
+import static io.vertx.ext.web.handler.BasicAuthHandler.DEFAULT_REALM;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 public class BasicAuthenticationConfigurer implements MainAuthenticationConfigurer {
@@ -38,10 +41,17 @@ public class BasicAuthenticationConfigurer implements MainAuthenticationConfigur
         if ("/".equals(path)) {
             path = "/*";
         }
+        String realm = properties.getAuthenticationRealm() != null ? properties.getAuthenticationRealm() : DEFAULT_REALM;
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);
-        entry.setAuthenticationHandlerFactory(BasicAuthHandler::create);
+        entry.setAuthenticationHandlerFactory(new AuthenticationConfig.AuthenticationHandlerFactory() {
+            @Override
+            public <T extends AuthenticationProvider> AuthenticationHandler createAuthenticationHandler(
+                    T authenticationProvider) {
+                return BasicAuthHandler.create(authenticationProvider, realm);
+            }
+        });
         entry.setAuthenticationProviderFactory(
                 vertx -> PropertyFileAuthentication.create(vertx, authPropertiesFileName));
 
@@ -60,10 +70,17 @@ public class BasicAuthenticationConfigurer implements MainAuthenticationConfigur
         if ("/".equals(path)) {
             path = "/*";
         }
+        String realm = properties.getAuthenticationRealm() != null ? properties.getAuthenticationRealm() : DEFAULT_REALM;
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);
-        entry.setAuthenticationHandlerFactory(BasicAuthHandler::create);
+        entry.setAuthenticationHandlerFactory(new AuthenticationConfig.AuthenticationHandlerFactory() {
+            @Override
+            public <T extends AuthenticationProvider> AuthenticationHandler createAuthenticationHandler(
+                    T authenticationProvider) {
+                return BasicAuthHandler.create(authenticationProvider, realm);
+            }
+        });
         entry.setAuthenticationProviderFactory(
                 vertx -> PropertyFileAuthentication.create(vertx, authPropertiesFileName));
 

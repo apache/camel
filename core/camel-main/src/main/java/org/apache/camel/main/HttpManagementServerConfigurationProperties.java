@@ -60,6 +60,8 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     @Metadata(label = "security")
     private String authenticationPath;
     @Metadata(label = "security")
+    private String authenticationRealm;
+    @Metadata(label = "security")
     private String basicPropertiesFile;
     @Metadata(label = "security")
     private String jwtKeystoreType;
@@ -301,6 +303,17 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
         this.authenticationPath = authenticationPath;
     }
 
+    public String getAuthenticationRealm() {
+        return authenticationRealm;
+    }
+
+    /**
+     * Sets the authentication realm
+     */
+    public void setAuthenticationRealm(String authenticationRealm) {
+        this.authenticationRealm = authenticationRealm;
+    }
+
     public String getBasicPropertiesFile() {
         return basicPropertiesFile;
     }
@@ -482,6 +495,14 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public HttpManagementServerConfigurationProperties withAuthenticationPath(String authenticationPath) {
         this.authenticationPath = authenticationPath;
+        return this;
+    }
+
+    /**
+     * Sets the authentication realm
+     */
+    public HttpManagementServerConfigurationProperties withAuthenticationRealm(String authenticationRealm) {
+        this.authenticationRealm = authenticationRealm;
         return this;
     }
 

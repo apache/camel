@@ -43,6 +43,7 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
         if ("/".equals(path)) {
             path = "/*";
         }
+        String realm = properties.getAuthenticationRealm() != null ? properties.getAuthenticationRealm() : null;
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);
@@ -51,7 +52,7 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
             public <T extends AuthenticationProvider> AuthenticationHandler createAuthenticationHandler(
                     T authenticationProvider) {
                 JWTAuth authProvider = (JWTAuth) authenticationProvider;
-                return JWTAuthHandler.create(authProvider);
+                return JWTAuthHandler.create(authProvider, realm);
             }
         });
         entry.setAuthenticationProviderFactory(vertx -> JWTAuth.create(
@@ -77,6 +78,7 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
         if ("/".equals(path)) {
             path = "/*";
         }
+        String realm = properties.getAuthenticationRealm() != null ? properties.getAuthenticationRealm() : null;
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);
@@ -85,7 +87,7 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
             public <T extends AuthenticationProvider> AuthenticationHandler createAuthenticationHandler(
                     T authenticationProvider) {
                 JWTAuth authProvider = (JWTAuth) authenticationProvider;
-                return JWTAuthHandler.create(authProvider);
+                return JWTAuthHandler.create(authProvider, realm);
             }
         });
         entry.setAuthenticationProviderFactory(vertx -> JWTAuth.create(

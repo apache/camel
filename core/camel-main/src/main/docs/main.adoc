@@ -190,13 +190,14 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 17 options, which are listed below.
+The camel.server supports 18 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.server.authentication{zwsp}Enabled* | Whether to enable HTTP authentication for embedded server (for standalone applications; not Spring Boot or Quarkus). | false | boolean
 | *camel.server.authentication{zwsp}Path* | Set HTTP url path of embedded server that is protected by authentication configuration. |  | String
+| *camel.server.authentication{zwsp}Realm* | Sets the authentication realm |  | String
 | *camel.server.basicProperties{zwsp}File* | Name of the file that contains basic authentication info for Vert.x file auth provider. |  | String
 | *camel.server.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
 | *camel.server.fileUpload{zwsp}Directory* | Directory to temporary store file uploads while Camel routes the incoming request. If no directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory. |  | String
@@ -216,13 +217,14 @@ The camel.server supports 17 options, which are listed below.
 
 
 === Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.management supports 23 options, which are listed below.
+The camel.management supports 24 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.management.authentication{zwsp}Enabled* | Whether to enable HTTP authentication for embedded server (for standalone applications; not Spring Boot or Quarkus). | false | boolean
 | *camel.management.authentication{zwsp}Path* | Set HTTP url path of embedded server that is protected by authentication configuration. |  | String
+| *camel.management.authentication{zwsp}Realm* | Sets the authentication realm |  | String
 | *camel.management.basic{zwsp}PropertiesFile* | Name of the file that contains basic authentication info for Vert.x file auth provider. |  | String
 | *camel.management.devConsole{zwsp}Enabled* | Whether to enable developer console (not intended for production use). Dev console must also be enabled on CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code camelContext.setDevConsole(true); If enabled then you can access a basic developer console on context-path: /q/dev. | false | boolean
 | *camel.management.download{zwsp}Enabled* | Whether to enable file download via HTTP. This makes it possible to browse and download resource source files such as Camel XML or YAML routes. Only enable this for development, troubleshooting or special situations for management and monitoring. | false | boolean
