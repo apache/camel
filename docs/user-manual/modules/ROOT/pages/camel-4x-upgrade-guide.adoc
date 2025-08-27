@@ -24,3 +24,8 @@ You can find the upgrade guide for each release in the following pages:
 - xref:camel-4x-upgrade-guide-4_13.adoc[Upgrade guide 4.12 -> 4.13]
 - xref:camel-4x-upgrade-guide-4_14.adoc[Upgrade guide 4.13 -> 4.14]
 - xref:camel-4x-upgrade-guide-4_15.adoc[Upgrade guide 4.14 -> 4.15]
+
+
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
