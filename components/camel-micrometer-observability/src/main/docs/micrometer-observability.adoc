@@ -6,6 +6,8 @@
 :since: 4.15
 :supportlevel: Preview
 :tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: micrometer-observability
 
 *Since Camel {since}*
 
@@ -33,7 +35,13 @@ uses the rules from Intercept.
 Use the excludePattern property to filter out Processors
 |=======================================================================
 
-=== Using with standalone Camel
+include::spring-boot:partial$starter.adoc[]
+
+=== Spring Boot context propagation
+
+The starter is in charge to autoconfigure the component. Additionally you will need to specify the concrete Propagation implementation by adding the dependency you wish to use (for example, `io.micrometer:micrometer-tracing-bridge-otel`, 'io.micrometer:micrometer-tracing-bridge-brave' or any other technology you wish to use). If none is provided, a "no-op" implementation will be defined as default.
+
+== Using with standalone Camel
 
 If you use `camel-main` as standalone Camel, add `camel-micrometer-observability` component in your POM, and setup the proper configuration. Mind that, since the component is a facade to a concrete implementation, you are in charge to provide the configuration programmatically. The minimum required for the component to start is the following snippet of code:
 
