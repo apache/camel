@@ -1,4 +1,4 @@
-= Group
+= Route Group
 
 A group is an identifier for multiple routes that belong together. For example, an order integration that consists of 2 different routes can be identified by the group name "order". A route group can either be used purely as a label, or to perform tasks or monitor a whole group at once.
 
