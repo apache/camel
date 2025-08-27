@@ -35,6 +35,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.AuthenticationConfigEntry;
+import org.apache.camel.component.platform.http.vertx.auth.Default401ErrorHandler;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -192,6 +193,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
 
         AuthenticationConfig authenticationConfig = configuration.getAuthenticationConfig();
         if (authenticationConfig.isEnabled()) {
+            router.errorHandler(401, new Default401ErrorHandler());
             addAuthenticationHandlersStartingFromMoreSpecificPaths(authenticationConfig);
         }
 
