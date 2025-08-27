@@ -39,7 +39,7 @@
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
         <camel.surefire.parallel>false</camel.surefire.parallel>
-        <citrus.version>4.7.0</citrus.version>
+        <citrus.version>4.8.0</citrus.version>
     </properties>
 
     <dependencies>
