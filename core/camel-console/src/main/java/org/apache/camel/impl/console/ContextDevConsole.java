@@ -59,6 +59,10 @@ public class ContextDevConsole extends AbstractDevConsole {
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
+                int total = mb.getTotalRoutes();
+                int started = mb.getStartedRoutes();
+                sb.append(String.format("\n    Routes: %s (started: %s)", total, started));
+
                 int reloaded = 0;
                 int reloadedFailed = 0;
                 Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
@@ -135,6 +139,11 @@ public class ContextDevConsole extends AbstractDevConsole {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
                 JsonObject stats = new JsonObject();
+
+                int total = mb.getTotalRoutes();
+                int started = mb.getStartedRoutes();
+                stats.put("routesTotal", total);
+                stats.put("routesStarted", started);
 
                 String load1 = getLoad1(mb);
                 String load5 = getLoad5(mb);

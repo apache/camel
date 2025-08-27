@@ -267,18 +267,38 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Assertions.assertTrue(names.contains("reverse"));
     }
 
+    @Test
+    public void testRouteIdAndGroup() throws Exception {
+        context.getRegistry().bind("reverse", new RefDataFormatTest.MyReverseDataFormat());
+        DataFormat df = context.resolveDataFormat("reverse");
+        assertNotNull(df);
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getContextObjectName();
+
+        Set<String> names = (Set<String>) mbeanServer.invoke(on, "routeIds", null, null);
+        Assertions.assertEquals(3, names.size());
+        Assertions.assertTrue(names.contains("aaa"));
+        Assertions.assertTrue(names.contains("bbb"));
+        Assertions.assertTrue(names.contains("ccc"));
+
+        names = (Set<String>) mbeanServer.invoke(on, "routeGroups", null, null);
+        Assertions.assertEquals(1, names.size());
+        Assertions.assertTrue(names.contains("cheese"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").group("cheese")
+                from("direct:start").group("cheese").routeId("aaa")
                         .delay(10)
                         .to("mock:result");
 
-                from("direct:bar").to("mock:bar");
+                from("direct:bar").to("mock:bar").routeId("bbb");
 
-                from("direct:foo").group("cheese")
+                from("direct:foo").group("cheese").routeId("ccc")
                         .delay(10)
                         .transform(constant("Bye World")).id("myTransform");
             }

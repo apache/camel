@@ -509,6 +509,20 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     List<Route> getRoutes();
 
     /**
+     * Returns all the ids of all the routes (sorted)
+     *
+     * @return ids of all the current routes
+     */
+    Set<String> getRouteIds();
+
+    /**
+     * Returns all the names of the route groups (sorted). Is empty if groups are not assigned to any routes
+     *
+     * @return names of all the current route groups (is empty if groups are not assigned to any routes)
+     */
+    Set<String> getRouteGroupIds();
+
+    /**
      * To get all the routes that matches the filter.
      *
      * @param  filter to filter to include only accepted routes

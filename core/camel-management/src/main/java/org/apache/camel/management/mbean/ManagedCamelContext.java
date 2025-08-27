@@ -962,6 +962,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return context.getDataFormatNames();
     }
 
+    @Override
+    public Set<String> routeIds() {
+        return context.getRouteIds();
+    }
+
+    @Override
+    public Set<String> routeGroups() {
+        return context.getRouteGroupIds();
+    }
+
     /**
      * Used for sorting the processor mbeans accordingly to their index.
      */

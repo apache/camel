@@ -969,6 +969,44 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public Set<String> getRouteIds() {
+        if (routes.isEmpty()) {
+            return Collections.emptySet();
+        } else {
+            routesLock.lock();
+            try {
+                Set<String> answer = new TreeSet<>();
+                for (Route route : routes) {
+                    answer.add(route.getRouteId());
+                }
+                return answer;
+            } finally {
+                routesLock.unlock();
+            }
+        }
+    }
+
+    @Override
+    public Set<String> getRouteGroupIds() {
+        if (routes.isEmpty()) {
+            return Collections.emptySet();
+        } else {
+            routesLock.lock();
+            try {
+                Set<String> answer = new TreeSet<>();
+                for (Route route : routes) {
+                    if (route.getGroup() != null) {
+                        answer.add(route.getGroup());
+                    }
+                }
+                return answer;
+            } finally {
+                routesLock.unlock();
+            }
+        }
+    }
+
+    @Override
     public List<Route> getRoutes(Predicate<Route> filter) {
         routesLock.lock();
         try {
@@ -987,7 +1025,7 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public List<Route> getRoutesByGroup(String groupId) {
         if (groupId == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return getRoutes(f -> groupId.equals(f.getGroup()));
     }
