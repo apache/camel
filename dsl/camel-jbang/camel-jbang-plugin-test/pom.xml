@@ -39,7 +39,6 @@
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
         <camel.surefire.parallel>false</camel.surefire.parallel>
-        <citrus.version>4.8.0</citrus.version>
     </properties>
 
     <dependencies>
@@ -51,7 +50,7 @@
         <dependency>
             <groupId>org.citrusframework</groupId>
             <artifactId>citrus-jbang-connector</artifactId>
-            <version>${citrus.version}</version>
+            <version>${citrus-version}</version>
         </dependency>
 
        <!-- Test dependencies -->
