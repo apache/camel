@@ -53,5 +53,6 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
 
         message.setHeader(LangChain4jEmbeddings.Headers.VECTOR, result.content().vector());
         message.setHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT, in);
+        message.setHeader(LangChain4jEmbeddings.Headers.EMBEDDING, result.content());
     }
 }
