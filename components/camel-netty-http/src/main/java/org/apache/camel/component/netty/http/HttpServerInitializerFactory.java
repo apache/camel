@@ -43,8 +43,6 @@ import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.netty.http.InitializerHelper.logConfiguration;
-
 /**
  * {@link ServerInitializerFactory} for the Netty HTTP server.
  */
@@ -150,27 +148,15 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         if (configuration.getSslContextParameters() != null) {
             answer = configuration.getSslContextParameters().createSSLContext(camelContext);
         } else {
-            logConfiguration(configuration);
             char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
 
-            SSLEngineFactory sslEngineFactory;
-            if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
-                sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(camelContext,
-                        configuration.getKeyStoreFormat(),
-                        configuration.getSecurityProvider(),
-                        "file:" + configuration.getKeyStoreFile().getPath(),
-                        "file:" + configuration.getTrustStoreFile().getPath(),
-                        pw);
-            } else {
-                sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(camelContext,
-                        configuration.getKeyStoreFormat(),
-                        configuration.getSecurityProvider(),
-                        configuration.getKeyStoreResource(),
-                        configuration.getTrustStoreResource(),
-                        pw);
-            }
+            SSLEngineFactory sslEngineFactory = new SSLEngineFactory();
+            answer = sslEngineFactory.createSSLContext(camelContext,
+                    configuration.getKeyStoreFormat(),
+                    configuration.getSecurityProvider(),
+                    configuration.getKeyStoreResource(),
+                    configuration.getTrustStoreResource(),
+                    pw);
         }
 
         return answer;

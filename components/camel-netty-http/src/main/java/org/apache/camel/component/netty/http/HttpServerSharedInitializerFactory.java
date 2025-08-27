@@ -110,28 +110,15 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         if (configuration.getSslContextParameters() != null) {
             answer = configuration.getSslContextParameters().createSSLContext(null);
         } else {
-            InitializerHelper.logConfiguration(configuration);
-
             char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
 
-            SSLEngineFactory sslEngineFactory;
-            if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
-                sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(camelContext,
-                        configuration.getKeyStoreFormat(),
-                        configuration.getSecurityProvider(),
-                        "file:" + configuration.getKeyStoreFile().getPath(),
-                        "file:" + configuration.getTrustStoreFile().getPath(),
-                        pw);
-            } else {
-                sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(camelContext,
-                        configuration.getKeyStoreFormat(),
-                        configuration.getSecurityProvider(),
-                        configuration.getKeyStoreResource(),
-                        configuration.getTrustStoreResource(),
-                        pw);
-            }
+            SSLEngineFactory sslEngineFactory = new SSLEngineFactory();
+            answer = sslEngineFactory.createSSLContext(camelContext,
+                    configuration.getKeyStoreFormat(),
+                    configuration.getSecurityProvider(),
+                    configuration.getKeyStoreResource(),
+                    configuration.getTrustStoreResource(),
+                    pw);
         }
 
         return answer;

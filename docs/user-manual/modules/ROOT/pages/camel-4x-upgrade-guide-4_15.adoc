@@ -70,3 +70,8 @@ Should be changed to:
 
 Removed the `tidyMarkup` DataFormat in the DSL as the implementation has been removed in earlier version,
 but we forgot to remove it from the DSL model.
+
+=== camel-netty / camel-netty-http
+
+Removed deprecated options `keyStoreFile` and `trustStoreFile`. Use `keyStoreResource` and `trustStoreResources` instead,
+and prefix the value with `file:` as documented.

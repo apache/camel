@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -99,12 +98,6 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     @UriParam(label = "consumer,security",
               description = "Configures whether the server needs client authentication when using SSL.")
     protected boolean needClientAuth;
-    @Deprecated
-    @UriParam(label = "security", description = "Client side certificate keystore to be used for encryption")
-    protected File keyStoreFile;
-    @Deprecated
-    @UriParam(label = "security", description = "Server side certificate keystore to be used for encryption")
-    protected File trustStoreFile;
     @UriParam(label = "security",
               description = "Client side certificate keystore to be used for encryption. Is loaded by default from classpath, but you can"
                             + " prefix with classpath:, file:, or http: to load the resource from different systems.")
@@ -449,32 +442,6 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.needClientAuth = needClientAuth;
     }
 
-    @Deprecated
-    public File getKeyStoreFile() {
-        return keyStoreFile;
-    }
-
-    /**
-     * Client side certificate keystore to be used for encryption
-     */
-    @Deprecated
-    public void setKeyStoreFile(File keyStoreFile) {
-        this.keyStoreFile = keyStoreFile;
-    }
-
-    @Deprecated
-    public File getTrustStoreFile() {
-        return trustStoreFile;
-    }
-
-    /**
-     * Server side certificate keystore to be used for encryption
-     */
-    @Deprecated
-    public void setTrustStoreFile(File trustStoreFile) {
-        this.trustStoreFile = trustStoreFile;
-    }
-
     public String getKeyStoreResource() {
         return keyStoreResource;
     }
@@ -530,22 +497,6 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
      */
     public void setPassphrase(String passphrase) {
         this.passphrase = passphrase;
-    }
-
-    /**
-     * @deprecated use #getServerInitializerFactory
-     */
-    @Deprecated
-    public ServerInitializerFactory getServerPipelineFactory() {
-        return serverInitializerFactory;
-    }
-
-    /**
-     * @deprecated use #setServerInitializerFactory
-     */
-    @Deprecated
-    public void setServerPipelineFactory(ServerInitializerFactory serverPipelineFactory) {
-        this.serverInitializerFactory = serverPipelineFactory;
     }
 
     public ServerInitializerFactory getServerInitializerFactory() {
@@ -757,10 +708,6 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
             isCompatible = false;
         } else if (needClientAuth != other.needClientAuth) {
             isCompatible = false;
-        } else if (keyStoreFile != other.keyStoreFile) {
-            isCompatible = false;
-        } else if (trustStoreFile != other.trustStoreFile) {
-            isCompatible = false;
         } else if (keyStoreResource != null && !keyStoreResource.equals(other.keyStoreResource)) {
             isCompatible = false;
         } else if (trustStoreResource != null && !trustStoreResource.equals(other.trustStoreResource)) {
@@ -812,8 +759,6 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                + ", sslContextParameters='" + sslContextParameters + '\''
                + ", needClientAuth=" + needClientAuth
                + ", enabledProtocols='" + enabledProtocols
-               + ", keyStoreFile=" + keyStoreFile
-               + ", trustStoreFile=" + trustStoreFile
                + ", keyStoreResource='" + keyStoreResource + '\''
                + ", trustStoreResource='" + trustStoreResource + '\''
                + ", keyStoreFormat='" + keyStoreFormat + '\''

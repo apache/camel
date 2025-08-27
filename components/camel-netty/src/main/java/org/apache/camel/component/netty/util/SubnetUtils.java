@@ -193,11 +193,9 @@ public class SubnetUtils {
         /**
          * Get the count of available addresses. Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is false.
          *
-         * @return                      the count of addresses, may be zero.
-         * @throws     RuntimeException if the correct count is greater than {@code Integer.MAX_VALUE}
-         * @deprecated                  use {@link #getAddressCountLong()} instead
+         * @return                  the count of addresses, may be zero.
+         * @throws RuntimeException if the correct count is greater than {@code Integer.MAX_VALUE}
          */
-        @Deprecated
         public int getAddressCount() {
             long countLong = getAddressCountLong();
             if (countLong > Integer.MAX_VALUE) {
@@ -217,10 +215,6 @@ public class SubnetUtils {
             long n = networkLong();
             long count = b - n + (isInclusiveHostCount() ? 1 : -1);
             return count < 0 ? 0 : count;
-        }
-
-        public int asInteger(String address) {
-            return toInteger(address);
         }
 
         public String getCidrSignature() {
@@ -243,11 +237,6 @@ public class SubnetUtils {
             return addresses;
         }
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 2.2
-         */
         @Override
         public String toString() {
             final StringBuilder buf = new StringBuilder();

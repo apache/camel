@@ -40,20 +40,6 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
     private NettyConsumer consumer;
     private SSLContext sslContext;
 
-    @Deprecated
-    public DefaultServerInitializerFactory(NettyServerBootstrapConfiguration configuration) {
-        this.consumer = null;
-        try {
-            this.sslContext = createSSLContext(null, configuration);
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-
-        if (sslContext != null) {
-            LOG.info("Created SslContext {}", sslContext);
-        }
-    }
-
     public DefaultServerInitializerFactory(NettyConsumer consumer) {
         this.consumer = consumer;
         try {
@@ -132,34 +118,13 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         if (configuration.getSslContextParameters() != null) {
             answer = configuration.getSslContextParameters().createSSLContext(camelContext);
         } else {
-            if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
-                LOG.debug("keystorefile is null");
-            }
-            if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
-                LOG.debug("truststorefile is null");
-            }
-            if (configuration.getPassphrase().toCharArray() == null) {
-                LOG.debug("passphrase is null");
-            }
-
-            SSLEngineFactory sslEngineFactory;
-            if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
-                sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(camelContext,
-                        configuration.getKeyStoreFormat(),
-                        configuration.getSecurityProvider(),
-                        "file:" + configuration.getKeyStoreFile().getPath(),
-                        "file:" + configuration.getTrustStoreFile().getPath(),
-                        configuration.getPassphrase().toCharArray());
-            } else {
-                sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(camelContext,
-                        configuration.getKeyStoreFormat(),
-                        configuration.getSecurityProvider(),
-                        configuration.getKeyStoreResource(),
-                        configuration.getTrustStoreResource(),
-                        configuration.getPassphrase().toCharArray());
-            }
+            SSLEngineFactory sslEngineFactory = new SSLEngineFactory();
+            answer = sslEngineFactory.createSSLContext(camelContext,
+                    configuration.getKeyStoreFormat(),
+                    configuration.getSecurityProvider(),
+                    configuration.getKeyStoreResource(),
+                    configuration.getTrustStoreResource(),
+                    configuration.getPassphrase().toCharArray());
         }
 
         return answer;

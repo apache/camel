@@ -96,10 +96,6 @@ not set
 |`securityProvider` |Security provider to be used for payload encryption. Defaults to
 `SunX509` if not set.
 
-|`keyStoreFile` |*deprecated:* Client side certificate keystore to be used for encryption
-
-|`trustStoreFile` |*deprecated:* Server side certificate keystore to be used for encryption
-
 |`keyStoreResource` |Client side certificate keystore to be used for
 encryption. It is loaded by default from classpath, but you can prefix with
 `"classpath:"`, `"file:"`, or `"http:"` to load the resource from
@@ -615,16 +611,11 @@ Using Basic SSL/TLS configuration on the Jetty Component
 
 [source,java]
 ----
-Registry registry = context.getRegistry();
-registry.bind("password", "changeit");
-registry.bind("ksf", new File("src/test/resources/keystore.jks"));
-registry.bind("tsf", new File("src/test/resources/keystore.jks"));
-
 context.addRoutes(new RouteBuilder() {
   public void configure() {
       String netty_ssl_endpoint =
-         "netty:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=#password"
-         + "&keyStoreFile=#ksf&trustStoreFile=#tsf";
+         "netty:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=changeit"
+         + "&keyStoreResource=file:src/test/resources/keystore.jks&trustStoreResource=file:src/test/resources/keystore.jks";
       String return_string =
          "When You Go Home, Tell Them Of Us And Say,"
          + "For Your Tomorrow, We Gave Our Today.";

@@ -1316,22 +1316,6 @@ public interface NettyHttpComponentBuilderFactory {
         }
     
         /**
-         * Client side certificate keystore to be used for encryption.
-         * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param keyStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpComponentBuilder keyStoreFile(java.io.File keyStoreFile) {
-            doSetProperty("keyStoreFile", keyStoreFile);
-            return this;
-        }
-    
-        /**
          * Keystore format to be used for payload encryption. Defaults to JKS if
          * not set.
          * 
@@ -1506,22 +1490,6 @@ public interface NettyHttpComponentBuilderFactory {
         }
     
         /**
-         * Server side certificate keystore to be used for encryption.
-         * 
-         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param trustStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpComponentBuilder trustStoreFile(java.io.File trustStoreFile) {
-            doSetProperty("trustStoreFile", trustStoreFile);
-            return this;
-        }
-    
-        /**
          * Server side certificate keystore to be used for encryption. Is loaded
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
@@ -1645,7 +1613,6 @@ public interface NettyHttpComponentBuilderFactory {
             case "textline": getOrCreateConfiguration((NettyHttpComponent) component).setTextline((boolean) value); return true;
             case "enabledProtocols": getOrCreateConfiguration((NettyHttpComponent) component).setEnabledProtocols((java.lang.String) value); return true;
             case "hostnameVerification": getOrCreateConfiguration((NettyHttpComponent) component).setHostnameVerification((boolean) value); return true;
-            case "keyStoreFile": getOrCreateConfiguration((NettyHttpComponent) component).setKeyStoreFile((java.io.File) value); return true;
             case "keyStoreFormat": getOrCreateConfiguration((NettyHttpComponent) component).setKeyStoreFormat((java.lang.String) value); return true;
             case "keyStoreResource": getOrCreateConfiguration((NettyHttpComponent) component).setKeyStoreResource((java.lang.String) value); return true;
             case "needClientAuth": getOrCreateConfiguration((NettyHttpComponent) component).setNeedClientAuth((boolean) value); return true;
@@ -1656,7 +1623,6 @@ public interface NettyHttpComponentBuilderFactory {
             case "sslClientCertHeaders": getOrCreateConfiguration((NettyHttpComponent) component).setSslClientCertHeaders((boolean) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((NettyHttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "sslHandler": getOrCreateConfiguration((NettyHttpComponent) component).setSslHandler((io.netty.handler.ssl.SslHandler) value); return true;
-            case "trustStoreFile": getOrCreateConfiguration((NettyHttpComponent) component).setTrustStoreFile((java.io.File) value); return true;
             case "trustStoreResource": getOrCreateConfiguration((NettyHttpComponent) component).setTrustStoreResource((java.lang.String) value); return true;
             case "useGlobalSslContextParameters": ((NettyHttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

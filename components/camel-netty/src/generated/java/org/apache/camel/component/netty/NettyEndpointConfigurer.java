@@ -66,8 +66,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "hostnameVerification": target.getConfiguration().setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "keepalive":
         case "keepAlive": target.getConfiguration().setKeepAlive(property(camelContext, boolean.class, value)); return true;
-        case "keystorefile":
-        case "keyStoreFile": target.getConfiguration().setKeyStoreFile(property(camelContext, java.io.File.class, value)); return true;
         case "keystoreformat":
         case "keyStoreFormat": target.getConfiguration().setKeyStoreFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "keystoreresource":
@@ -141,8 +139,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "textline": target.getConfiguration().setTextline(property(camelContext, boolean.class, value)); return true;
         case "transferexchange":
         case "transferExchange": target.getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
-        case "truststorefile":
-        case "trustStoreFile": target.getConfiguration().setTrustStoreFile(property(camelContext, java.io.File.class, value)); return true;
         case "truststoreresource":
         case "trustStoreResource": target.getConfiguration().setTrustStoreResource(property(camelContext, java.lang.String.class, value)); return true;
         case "udpbytearraycodec":
@@ -209,8 +205,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "hostnameVerification": return boolean.class;
         case "keepalive":
         case "keepAlive": return boolean.class;
-        case "keystorefile":
-        case "keyStoreFile": return java.io.File.class;
         case "keystoreformat":
         case "keyStoreFormat": return java.lang.String.class;
         case "keystoreresource":
@@ -284,8 +278,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "textline": return boolean.class;
         case "transferexchange":
         case "transferExchange": return boolean.class;
-        case "truststorefile":
-        case "trustStoreFile": return java.io.File.class;
         case "truststoreresource":
         case "trustStoreResource": return java.lang.String.class;
         case "udpbytearraycodec":
@@ -353,8 +345,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "hostnameVerification": return target.getConfiguration().isHostnameVerification();
         case "keepalive":
         case "keepAlive": return target.getConfiguration().isKeepAlive();
-        case "keystorefile":
-        case "keyStoreFile": return target.getConfiguration().getKeyStoreFile();
         case "keystoreformat":
         case "keyStoreFormat": return target.getConfiguration().getKeyStoreFormat();
         case "keystoreresource":
@@ -428,8 +418,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "textline": return target.getConfiguration().isTextline();
         case "transferexchange":
         case "transferExchange": return target.getConfiguration().isTransferExchange();
-        case "truststorefile":
-        case "trustStoreFile": return target.getConfiguration().getTrustStoreFile();
         case "truststoreresource":
         case "trustStoreResource": return target.getConfiguration().getTrustStoreResource();
         case "udpbytearraycodec":

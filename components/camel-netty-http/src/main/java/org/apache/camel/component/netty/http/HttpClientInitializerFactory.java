@@ -144,19 +144,10 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
                 sniServerNames = answer.getSupportedSSLParameters().getServerNames();
             }
         } else {
-            InitializerHelper.logConfiguration(configuration);
             char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
 
             SSLEngineFactory sslEngineFactory;
-            if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
-                sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(producer.getContext(),
-                        configuration.getKeyStoreFormat(),
-                        configuration.getSecurityProvider(),
-                        "file:" + configuration.getKeyStoreFile().getPath(),
-                        "file:" + configuration.getTrustStoreFile().getPath(),
-                        pw);
-            } else if (configuration.getKeyStoreResource() != null || configuration.getTrustStoreResource() != null) {
+            if (configuration.getKeyStoreResource() != null || configuration.getTrustStoreResource() != null) {
                 sslEngineFactory = new SSLEngineFactory();
                 answer = sslEngineFactory.createSSLContext(producer.getContext(),
                         configuration.getKeyStoreFormat(),

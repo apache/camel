@@ -45,8 +45,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "clientInitializerFactory": target.setClientInitializerFactory(property(camelContext, org.apache.camel.component.netty.ClientInitializerFactory.class, value)); return true;
         case "clientmode":
         case "clientMode": target.setClientMode(property(camelContext, boolean.class, value)); return true;
-        case "clientpipelinefactory":
-        case "clientPipelineFactory": target.setClientPipelineFactory(property(camelContext, org.apache.camel.component.netty.ClientInitializerFactory.class, value)); return true;
         case "compression": target.setCompression(property(camelContext, boolean.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.setConnectTimeout(property(camelContext, int.class, value)); return true;
@@ -74,8 +72,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "hostnameVerification": target.setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "keepalive":
         case "keepAlive": target.setKeepAlive(property(camelContext, boolean.class, value)); return true;
-        case "keystorefile":
-        case "keyStoreFile": target.setKeyStoreFile(property(camelContext, java.io.File.class, value)); return true;
         case "keystoreformat":
         case "keyStoreFormat": target.setKeyStoreFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "keystoreresource":
@@ -152,8 +148,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "serverExceptionCaughtLogLevel": target.setServerExceptionCaughtLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "serverinitializerfactory":
         case "serverInitializerFactory": target.setServerInitializerFactory(property(camelContext, org.apache.camel.component.netty.ServerInitializerFactory.class, value)); return true;
-        case "serverpipelinefactory":
-        case "serverPipelineFactory": target.setServerPipelineFactory(property(camelContext, org.apache.camel.component.netty.ServerInitializerFactory.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": target.setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "ssl": target.setSsl(property(camelContext, boolean.class, value)); return true;
@@ -174,8 +168,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
         case "transferexchange":
         case "transferExchange": target.setTransferExchange(property(camelContext, boolean.class, value)); return true;
-        case "truststorefile":
-        case "trustStoreFile": target.setTrustStoreFile(property(camelContext, java.io.File.class, value)); return true;
         case "truststoreresource":
         case "trustStoreResource": target.setTrustStoreResource(property(camelContext, java.lang.String.class, value)); return true;
         case "udpbytearraycodec":
@@ -225,8 +217,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "clientInitializerFactory": return org.apache.camel.component.netty.ClientInitializerFactory.class;
         case "clientmode":
         case "clientMode": return boolean.class;
-        case "clientpipelinefactory":
-        case "clientPipelineFactory": return org.apache.camel.component.netty.ClientInitializerFactory.class;
         case "compression": return boolean.class;
         case "connecttimeout":
         case "connectTimeout": return int.class;
@@ -254,8 +244,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "hostnameVerification": return boolean.class;
         case "keepalive":
         case "keepAlive": return boolean.class;
-        case "keystorefile":
-        case "keyStoreFile": return java.io.File.class;
         case "keystoreformat":
         case "keyStoreFormat": return java.lang.String.class;
         case "keystoreresource":
@@ -332,8 +320,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "serverExceptionCaughtLogLevel": return org.apache.camel.LoggingLevel.class;
         case "serverinitializerfactory":
         case "serverInitializerFactory": return org.apache.camel.component.netty.ServerInitializerFactory.class;
-        case "serverpipelinefactory":
-        case "serverPipelineFactory": return org.apache.camel.component.netty.ServerInitializerFactory.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return int.class;
         case "ssl": return boolean.class;
@@ -354,8 +340,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "transferException": return boolean.class;
         case "transferexchange":
         case "transferExchange": return boolean.class;
-        case "truststorefile":
-        case "trustStoreFile": return java.io.File.class;
         case "truststoreresource":
         case "trustStoreResource": return java.lang.String.class;
         case "udpbytearraycodec":
@@ -406,8 +390,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "clientInitializerFactory": return target.getClientInitializerFactory();
         case "clientmode":
         case "clientMode": return target.isClientMode();
-        case "clientpipelinefactory":
-        case "clientPipelineFactory": return target.getClientPipelineFactory();
         case "compression": return target.isCompression();
         case "connecttimeout":
         case "connectTimeout": return target.getConnectTimeout();
@@ -435,8 +417,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "hostnameVerification": return target.isHostnameVerification();
         case "keepalive":
         case "keepAlive": return target.isKeepAlive();
-        case "keystorefile":
-        case "keyStoreFile": return target.getKeyStoreFile();
         case "keystoreformat":
         case "keyStoreFormat": return target.getKeyStoreFormat();
         case "keystoreresource":
@@ -513,8 +493,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "serverExceptionCaughtLogLevel": return target.getServerExceptionCaughtLogLevel();
         case "serverinitializerfactory":
         case "serverInitializerFactory": return target.getServerInitializerFactory();
-        case "serverpipelinefactory":
-        case "serverPipelineFactory": return target.getServerPipelineFactory();
         case "shutdowntimeout":
         case "shutdownTimeout": return target.getShutdownTimeout();
         case "ssl": return target.isSsl();
@@ -535,8 +513,6 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "transferException": return target.isTransferException();
         case "transferexchange":
         case "transferExchange": return target.isTransferExchange();
-        case "truststorefile":
-        case "trustStoreFile": return target.getTrustStoreFile();
         case "truststoreresource":
         case "trustStoreResource": return target.getTrustStoreResource();
         case "udpbytearraycodec":

@@ -646,22 +646,6 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.allowDefaultCodec = allowDefaultCodec;
     }
 
-    /**
-     * @deprecated use #setClientInitializerFactory
-     */
-    @Deprecated
-    public void setClientPipelineFactory(ClientInitializerFactory clientPipelineFactory) {
-        this.clientInitializerFactory = clientPipelineFactory;
-    }
-
-    /**
-     * @deprecated use #getClientInitializerFactory
-     */
-    @Deprecated
-    public ClientInitializerFactory getClientPipelineFactory() {
-        return clientInitializerFactory;
-    }
-
     public ClientInitializerFactory getClientInitializerFactory() {
         return clientInitializerFactory;
     }

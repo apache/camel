@@ -463,36 +463,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client side certificate keystore to be used for encryption.
-         * 
-         * The option is a: <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param keyStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder keyStoreFile(java.io.File keyStoreFile) {
-            doSetProperty("keyStoreFile", keyStoreFile);
-            return this;
-        }
-        /**
-         * Client side certificate keystore to be used for encryption.
-         * 
-         * The option will be converted to a <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param keyStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder keyStoreFile(String keyStoreFile) {
-            doSetProperty("keyStoreFile", keyStoreFile);
-            return this;
-        }
-        /**
          * Keystore format to be used for payload encryption. Defaults to JKS if
          * not set.
          * 
@@ -788,36 +758,6 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder sslHandler(String sslHandler) {
             doSetProperty("sslHandler", sslHandler);
-            return this;
-        }
-        /**
-         * Server side certificate keystore to be used for encryption.
-         * 
-         * The option is a: <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param trustStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder trustStoreFile(java.io.File trustStoreFile) {
-            doSetProperty("trustStoreFile", trustStoreFile);
-            return this;
-        }
-        /**
-         * Server side certificate keystore to be used for encryption.
-         * 
-         * The option will be converted to a <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param trustStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder trustStoreFile(String trustStoreFile) {
-            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -2759,36 +2699,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client side certificate keystore to be used for encryption.
-         * 
-         * The option is a: <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param keyStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder keyStoreFile(java.io.File keyStoreFile) {
-            doSetProperty("keyStoreFile", keyStoreFile);
-            return this;
-        }
-        /**
-         * Client side certificate keystore to be used for encryption.
-         * 
-         * The option will be converted to a <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param keyStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder keyStoreFile(String keyStoreFile) {
-            doSetProperty("keyStoreFile", keyStoreFile);
-            return this;
-        }
-        /**
          * Keystore format to be used for payload encryption. Defaults to JKS if
          * not set.
          * 
@@ -2977,36 +2887,6 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder sslHandler(String sslHandler) {
             doSetProperty("sslHandler", sslHandler);
-            return this;
-        }
-        /**
-         * Server side certificate keystore to be used for encryption.
-         * 
-         * The option is a: <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param trustStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder trustStoreFile(java.io.File trustStoreFile) {
-            doSetProperty("trustStoreFile", trustStoreFile);
-            return this;
-        }
-        /**
-         * Server side certificate keystore to be used for encryption.
-         * 
-         * The option will be converted to a <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param trustStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder trustStoreFile(String trustStoreFile) {
-            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -4420,36 +4300,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client side certificate keystore to be used for encryption.
-         * 
-         * The option is a: <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param keyStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder keyStoreFile(java.io.File keyStoreFile) {
-            doSetProperty("keyStoreFile", keyStoreFile);
-            return this;
-        }
-        /**
-         * Client side certificate keystore to be used for encryption.
-         * 
-         * The option will be converted to a <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param keyStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder keyStoreFile(String keyStoreFile) {
-            doSetProperty("keyStoreFile", keyStoreFile);
-            return this;
-        }
-        /**
          * Keystore format to be used for payload encryption. Defaults to JKS if
          * not set.
          * 
@@ -4638,36 +4488,6 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder sslHandler(String sslHandler) {
             doSetProperty("sslHandler", sslHandler);
-            return this;
-        }
-        /**
-         * Server side certificate keystore to be used for encryption.
-         * 
-         * The option is a: <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param trustStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder trustStoreFile(java.io.File trustStoreFile) {
-            doSetProperty("trustStoreFile", trustStoreFile);
-            return this;
-        }
-        /**
-         * Server side certificate keystore to be used for encryption.
-         * 
-         * The option will be converted to a <code>java.io.File</code> type.
-         * 
-         * Group: security
-         * 
-         * @param trustStoreFile the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder trustStoreFile(String trustStoreFile) {
-            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
