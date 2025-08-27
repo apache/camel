@@ -23,7 +23,7 @@ import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.
 import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 
-import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 public class BasicAuthenticationConfigurer implements MainAuthenticationConfigurer {
 
@@ -32,7 +32,12 @@ public class BasicAuthenticationConfigurer implements MainAuthenticationConfigur
             AuthenticationConfig authenticationConfig,
             HttpServerConfigurationProperties properties) {
         String authPropertiesFileName = properties.getBasicPropertiesFile();
-        String path = isEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : "/*";
+        String path
+                = isNotEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : properties.getPath();
+        // root means to authenticate everything
+        if ("/".equals(path)) {
+            path = "/*";
+        }
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);
@@ -49,7 +54,12 @@ public class BasicAuthenticationConfigurer implements MainAuthenticationConfigur
             AuthenticationConfig authenticationConfig,
             HttpManagementServerConfigurationProperties properties) {
         String authPropertiesFileName = properties.getBasicPropertiesFile();
-        String path = isEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : "/*";
+        String path
+                = isNotEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : properties.getPath();
+        // root means to authenticate everything
+        if ("/".equals(path)) {
+            path = "/*";
+        }
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
         entry.setPath(path);
