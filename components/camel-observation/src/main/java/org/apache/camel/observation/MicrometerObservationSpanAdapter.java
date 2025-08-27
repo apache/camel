@@ -108,10 +108,22 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     public void log(Map<String, String> fields) {
         String event = fields.get("event");
         if ("error".equalsIgnoreCase(event)) {
-            setError(true);
+            if (fields.containsKey("message")) {
+                observation.error(new RuntimeException(fields.get("message")));
+            } else {
+                setError(true);
+            }
         } else {
-            observation.event(() -> DEFAULT_EVENT_NAME);
+            observation.event(() -> getMessageNameFromFields(fields));
         }
+    }
+
+    String getMessageNameFromFields(Map<String, ?> fields) {
+        Object eventValue = fields == null ? null : fields.get("message");
+        if (eventValue != null) {
+            return eventValue.toString();
+        }
+        return DEFAULT_EVENT_NAME;
     }
 
     @Override
