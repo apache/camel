@@ -592,6 +592,9 @@ such as in the following:
 
 The profile-specific configuration will override values in the common configuration.
 
+NOTE: You MUST include the properties files in the files path when using `camel run` or `camel export` to include the files, such as `camel run hello.java application.properties`.
+
+
 === Downloading JARs over the internet
 
 By default, Camel JBang will automatically resolve dependencies needed to run Camel, which is done
@@ -670,29 +673,12 @@ with the key `camel.jbang.repos` as shown:
 camel.jbang.repos=https://packages.atlassian.com/maven-external
 ----
 
-And when running Camel then `application.properties` is automatically loaded:
-
-[source,bash]
-----
-camel run foo.java
-----
-
-However, you can also explicitly specify the properties file to use:
+When running Camel you need to include the properties file to use:
 
 [source,bash]
 ----
 camel run foo.java application.properties
 ----
-
-And even better if you specify this as a profile:
-
-[source,bash]
-----
-camel run foo.java --profile=application
-----
-
-Where the profile id is the name of the properties file.
-
 
 === Configuration of Maven usage
 
