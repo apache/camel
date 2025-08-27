@@ -2755,6 +2755,9 @@ This is typically in use when you use Java DSL and have Camel routes in .java so
 To let JBang understand which dependencies are in use, then you need to use JBang style for specifying
 dependencies by using `//DEPS` code comments in Java code.
 
+TIP: If you specify `//DEPS` in YAML DSL then this must be in the syntax as `\#//DEPS`
+as YAML uses leading `#` in commented lines.
+
 Given the following source file in `foo.java` file:
 
 [source,java]
