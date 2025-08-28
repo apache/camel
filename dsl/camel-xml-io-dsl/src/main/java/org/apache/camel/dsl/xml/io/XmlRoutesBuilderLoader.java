@@ -186,6 +186,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                                 .parseRouteConfigurationsDefinition()
                                 .ifPresent(this::addConfigurations);
                     }
+                    default: {
+                        // NO-OP
+                    }
                 }
             }
 

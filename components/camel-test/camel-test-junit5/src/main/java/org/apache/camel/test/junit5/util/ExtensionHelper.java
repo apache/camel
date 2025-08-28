@@ -46,10 +46,11 @@ public final class ExtensionHelper {
                 throw new RuntimeException(
                         "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
             }
+            default: {
+                throw new RuntimeException(
+                        "Unspecified class detected: The " + name + " class is not intended for Camel testing");
+            }
         }
-
-        throw new RuntimeException(
-                "Unspecified class detected: The " + name + " class is not intended for Camel testing");
     }
 
     public static boolean hasUnsupported(Class<?> clazz) {

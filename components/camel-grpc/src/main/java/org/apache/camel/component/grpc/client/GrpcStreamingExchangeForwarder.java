@@ -55,6 +55,9 @@ class GrpcStreamingExchangeForwarder implements GrpcExchangeForwarder {
                 case GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT -> streamObserver.onNext(message.getBody());
                 case GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR -> streamObserver.onError((Throwable) message.getBody());
                 case GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED -> streamObserver.onCompleted();
+                default -> {
+                    // NO-OP
+                }
             }
         } else {
             streamObserver.onNext(message.getBody());

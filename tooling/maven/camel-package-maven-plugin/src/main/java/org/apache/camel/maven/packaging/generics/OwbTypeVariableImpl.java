@@ -75,6 +75,9 @@ public class OwbTypeVariableImpl {
                     return getGenericDeclaration();
                 case "getBounds":
                     return getBounds();
+                default: {
+                    // NO-OP
+                }
             }
 
             // new method from java8...

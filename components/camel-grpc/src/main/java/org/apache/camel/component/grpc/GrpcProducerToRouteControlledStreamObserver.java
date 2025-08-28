@@ -36,6 +36,9 @@ public class GrpcProducerToRouteControlledStreamObserver extends DefaultProducer
             case GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT -> observer.onNext(exchange.getMessage().getBody());
             case GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED -> observer.onCompleted();
             case GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR -> observer.onError((Throwable) exchange.getMessage().getBody());
+            default -> {
+                // NO-OP
+            }
         }
     }
 }

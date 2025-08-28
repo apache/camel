@@ -1091,6 +1091,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "ftps":
                     component = "ftp";
                     break;
+                default: {
+                    // NO-OP
+                }
             }
             String name = component + "-component";
             if (!docs.contains(name)
