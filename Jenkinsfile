@@ -62,7 +62,7 @@ pipeline {
                 axes {
                     axis {
                         name 'JDK_NAME'
-                        values 'jdk_17_latest', 'jdk_21_latest'
+                        values 'jdk_17_latest', 'jdk_21_latest', 'ibm-semeru-21.0.2_13'
                     }
                     axis {
                         name 'PLATFORM'
