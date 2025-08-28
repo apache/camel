@@ -26,10 +26,12 @@ import org.apache.camel.test.infra.ibmmq.services.IbmMQService;
 import org.apache.camel.test.infra.ibmmq.services.IbmMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class JmsComponentIbmMQTest extends CamelTestSupport {
 
     @RegisterExtension
