@@ -84,11 +84,11 @@ public class ClickUpServiceApiImpl implements ClickUpService {
             switch (result.getErrorCode()) {
                 case WEBHOOK_CREATION_ERROR_WEBHOOK_ALREADY_EXISTS:
                     throw new WebhookAlreadyExistsException();
+                default:
+                    throw new RuntimeException(
+                            "The error " + result.getErrorCode() + " has occurred during the webhook registration: "
+                                               + result.getError());
             }
-
-            throw new RuntimeException(
-                    "The error " + result.getErrorCode() + " has occurred during the webhook registration: "
-                                       + result.getError());
         }
 
         return result.getWebhook();

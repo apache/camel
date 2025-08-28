@@ -129,6 +129,9 @@ public class ClaimCheckProcessor extends BaseProcessorSupport implements IdAware
                 case "GetAndRemove" -> operationGetAndRemoveHandler(exchange, claimKey, repo);
                 case "Push" -> operationPushHandler(exchange, claimKey, repo);
                 case "Pop" -> operationPopHandler(exchange, claimKey, repo);
+                default -> {
+                    // NO-OP
+                }
             }
         } catch (Exception e) {
             exchange.setException(e);

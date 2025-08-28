@@ -55,6 +55,9 @@ public abstract class ApplicationEntity extends MimeEntity {
                 case "base64":
                 case "binary":
                     return new ByteArrayInputStream(ediContent);
+                default: {
+                    // NO-OP
+                }
             }
         }
         try {

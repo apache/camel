@@ -103,6 +103,9 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             case PUBSUB_SUBSCRIBE -> {
                 consumer = new PubSubApiConsumer(this, processor);
             }
+            default -> {
+                // NO OP
+            }
         }
         configureConsumer(consumer);
         return consumer;

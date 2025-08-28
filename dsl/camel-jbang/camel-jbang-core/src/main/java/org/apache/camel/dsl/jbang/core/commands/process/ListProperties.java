@@ -205,6 +205,7 @@ public class ListProperties extends ProcessWatchCommand {
             case "SYS" -> loc = "JVM System Property";
             case "ENV", "env" -> loc = "OS Environment Variable";
             case "arguments", "CLI" -> loc = "Command Line";
+            default -> loc = "";
         }
         return loc;
     }
