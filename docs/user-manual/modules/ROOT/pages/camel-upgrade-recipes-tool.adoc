@@ -20,7 +20,7 @@ To upgrade to the latest version of Camel, you can either execute the following 
 $ mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:camel-upgrade-recipes:LATEST -Drewrite.activeRecipes=org.apache.camel.upgrade.CamelMigrationRecipe
 ----
 
-or use camel-jbang https://camel.apache.org/manual/camel-jbang.html#_update[update] action:
+or use camel-jbang xref:camel-jbang.adoc#_update[update] action:
 
 [source,bas]
 ----
