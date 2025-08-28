@@ -798,7 +798,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // autoStartup
         docComment = findJavaDoc(null, "autoStartup", null, classElement, true);
-        ep = createOption("autoStartup", "Auto Startup", "attribute", "java.lang.String", false, "true", "", docComment, false,
+        ep = createOption("autoStartup", "Auto Startup", "attribute", "java.lang.Boolean", false, "true", "", docComment, false,
                 null, false, null, null, false, false);
         eipOptions.add(ep);
 
@@ -812,33 +812,33 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // stream cache
         docComment = findJavaDoc(null, "streamCache", null, classElement, true);
-        ep = createOption("streamCache", "Stream Cache", "attribute", "java.lang.String", false, "", "", docComment, false,
+        ep = createOption("streamCache", "Stream Cache", "attribute", "java.lang.Booleam", false, "", "", docComment, false,
                 null,
                 false, null, null, false, false);
         eipOptions.add(ep);
 
         // trace
         docComment = findJavaDoc(null, "trace", null, classElement, true);
-        ep = createOption("trace", "Trace", "attribute", "java.lang.String", false, "", "", docComment, false, null, false,
+        ep = createOption("trace", "Trace", "attribute", "java.lang.Boolean", false, "", "", docComment, false, null, false,
                 null,
                 null, false, false);
         eipOptions.add(ep);
 
         // message history
         docComment = findJavaDoc(null, "messageHistory", null, classElement, true);
-        ep = createOption("messageHistory", "Message History", "attribute", "java.lang.String", false, "", "", docComment,
+        ep = createOption("messageHistory", "Message History", "attribute", "java.lang.Boolean", false, "", "", docComment,
                 false, null, false, null, null, false, false);
         eipOptions.add(ep);
 
         // log mask
         docComment = findJavaDoc(null, "logMask", null, classElement, true);
-        ep = createOption("logMask", "Log Mask", "attribute", "java.lang.String", false, "false", "", docComment, false, null,
+        ep = createOption("logMask", "Log Mask", "attribute", "java.lang.Boolean", false, "false", "", docComment, false, null,
                 false, null, null, false, false);
         eipOptions.add(ep);
 
         // delayer
         docComment = findJavaDoc(null, "delayer", null, classElement, true);
-        ep = createOption("delayer", "Delayer", "attribute", "java.lang.String", false, "advanced", "", docComment, false, null,
+        ep = createOption("delayer", "Delayer", "attribute", "java.lang.Long", false, "advanced", "", docComment, false, null,
                 false,
                 null, null, false, true);
         eipOptions.add(ep);
