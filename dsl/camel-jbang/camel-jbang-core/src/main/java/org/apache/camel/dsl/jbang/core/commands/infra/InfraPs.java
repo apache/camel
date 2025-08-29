@@ -31,6 +31,9 @@ import picocli.CommandLine;
                      showDefaultValues = true)
 public class InfraPs extends InfraBaseCommand {
 
+    @CommandLine.Parameters(description = "Service name", arity = "0..1")
+    private List<String> serviceName;
+
     public InfraPs(CamelJBangMain main) {
         super(main);
     }
@@ -46,7 +49,13 @@ public class InfraPs extends InfraBaseCommand {
         Set<String> runningAliases = new HashSet<>();
         try {
             List<Path> pidFiles = Files.list(CommandLineHelper.getCamelDir())
-                    .filter(p -> p.getFileName().toString().startsWith("infra-"))
+                    .filter(p -> {
+                        if (serviceName == null) {
+                            return p.getFileName().toString().startsWith("infra-");
+                        } else {
+                            return p.getFileName().toString().startsWith("infra-" + serviceName.get(0));
+                        }
+                    })
                     .toList();
 
             for (Path pidFile : pidFiles) {
