@@ -52,6 +52,8 @@ public class CamelJob implements Job, InterruptableJob {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        LOG.debug("Triggering job instance id: {}", context.getFireInstanceId());
+
         Exchange exchange = null;
         try {
             if (hasTriggerExpired(context)) {
@@ -99,14 +101,12 @@ public class CamelJob implements Job, InterruptableJob {
             }
             throw new JobExecutionException(e);
         }
+
+        LOG.debug("Completed job instance id: {}", context.getFireInstanceId());
     }
 
     /**
      * Validates if the Fire Time lies within the Start Time and End Time
-     *
-     * @param  context
-     *
-     * @return
      */
     private boolean hasTriggerExpired(JobExecutionContext context) {
         Date fireTime = context.getFireTime();
