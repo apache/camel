@@ -102,11 +102,10 @@ URI. This will result in the entity being processed in each poll.
 
 If you would rather perform some update on the entity to mark it as
 processed (such as to exclude it from a future query), then you can
-annotate a method with
-https://www.javadoc.io/doc/org.apache.camel/camel-jpa/current/org/apache/camel/component/jpa/Consumed.html[@Consumed].
+annotate a method with `@Consumed` (org.apache.camel.component.jpa.Consumed).
 It will be invoked on your entity bean when the entity bean has been processed (and when routing is done).
 
-You can use https://www.javadoc.io/doc/org.apache.camel/camel-jpa/current/org/apache/camel/component/jpa/PreConsumed.html[@PreConsumed]
+You can use `@PreConsumed` (org.apache.camel.component.jpa.PreConsumed)
 which will be invoked on your entity bean before it has been processed
 (before routing).
 
