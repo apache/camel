@@ -49,6 +49,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
@@ -64,7 +65,6 @@ public abstract class InfraBaseCommand extends CamelCommand {
         super(main);
 
         jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
         jsonMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
         jsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
         jsonMapper.configure(MapperFeature.REQUIRE_HANDLERS_FOR_JAVA8_OPTIONALS, false);
@@ -143,14 +143,16 @@ public abstract class InfraBaseCommand extends CamelCommand {
         int width = 0;
         for (Map.Entry<String, InfraServiceAlias> entry : services.entrySet()) {
             width = Math.max(width, entry.getKey().length());
+            String pid = findPid(entry.getKey());
             rows.add(new InfraList.Row(
-                    findPid(entry.getKey()),
+                    pid,
                     entry.getKey(),
                     entry.getValue().getAliasImplementation()
                             .stream()
                             .sorted()
                             .collect(Collectors.joining(", ")),
-                    entry.getValue().getDescription()));
+                    entry.getValue().getDescription(),
+                    getServiceData(entry.getKey(), pid)));
         }
 
         rows.sort(Comparator.comparing(InfraList.Row::alias));
@@ -161,10 +163,20 @@ public abstract class InfraBaseCommand extends CamelCommand {
         if (jsonOutput) {
             printer().println(
                     Jsoner.serialize(
-                            rows.stream().map(row -> Map.of(
-                                    "alias", row.alias(),
-                                    "aliasImplementation", row.aliasImplementation(),
-                                    "description", row.description() == null ? "" : row.description()))
+                            rows.stream().map(row -> {
+                                Object serviceDataObj = null;
+                                try {
+                                    serviceDataObj = Jsoner.deserialize(row.serviceData());
+                                } catch (DeserializationException e) {
+                                    // ignore
+                                }
+
+                                return Map.of(
+                                        "alias", row.alias(),
+                                        "aliasImplementation", row.aliasImplementation(),
+                                        "description", row.description() == null ? "" : row.description(),
+                                        "serviceData", serviceDataObj);
+                            })
                                     .collect(Collectors.toList())));
         } else {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
@@ -173,10 +185,24 @@ public abstract class InfraBaseCommand extends CamelCommand {
                             .with(Row::alias),
                     new Column().header("IMPLEMENTATION").maxWidth(35, OverflowBehaviour.NEWLINE)
                             .dataAlign(HorizontalAlign.LEFT).with(Row::aliasImplementation),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(Row::description))));
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(Row::description),
+                    new Column().header("SERVICE_DATA").dataAlign(HorizontalAlign.LEFT).with(Row::serviceData))));
         }
 
         return 0;
+    }
+
+    private String getServiceData(String key, String pid) {
+        Path jsonFilePath = CommandLineHelper.getCamelDir().resolve(getJsonFileName(key, pid));
+        if (jsonFilePath.toFile().exists()) {
+            try {
+                return Files.readString(jsonFilePath);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        return null;
     }
 
     private String findPid(String key) {
@@ -213,7 +239,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
             String version) {
     }
 
-    record Row(String pid, String alias, String aliasImplementation, String description) {
+    record Row(String pid, String alias, String aliasImplementation, String description, String serviceData) {
     }
 
     private static class InfraServiceAlias {
