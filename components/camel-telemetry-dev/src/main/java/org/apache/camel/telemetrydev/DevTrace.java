@@ -16,10 +16,14 @@
  */
 package org.apache.camel.telemetrydev;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
-public class DevTrace {
+public class DevTrace implements Iterable<DevSpanAdapter> {
 
     private String traceId;
     private List<DevSpanAdapter> spans;
@@ -51,8 +55,74 @@ public class DevTrace {
         return this.spans;
     }
 
+    public List<DevSpanAdapter> sortSpans() {
+        List<DevSpanAdapter> spans = new ArrayList<>();
+        for (DevSpanAdapter span : this) {
+            spans.add(span);
+        }
+        return spans;
+    }
+
     void setSpans(List<DevSpanAdapter> spans) {
         this.spans = spans;
+    }
+
+    @Override
+    public Iterator<DevSpanAdapter> iterator() {
+        return new DevSpanAdapterIterator();
+    }
+
+    class DevSpanAdapterIterator implements Iterator<DevSpanAdapter> {
+
+        Stack<DevSpanAdapter> actual = new Stack<>();
+        private HashMap<String, Boolean> scanned;
+
+        DevSpanAdapterIterator() {
+            this.scanned = new HashMap<>();
+            this.actual = new Stack<>();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return scanned.size() < spans.size();
+        }
+
+        @Override
+        public DevSpanAdapter next() {
+            DevSpanAdapter next;
+            if (actual.empty()) {
+                next = getWithParent(null);
+            } else {
+                next = getWithParent(actual.peek().getSpanId());
+            }
+            while (next == null && !actual.empty()) {
+                // it's a leaf, let's find out the upper branch
+                DevSpanAdapter upperLevel = actual.pop();
+                next = getWithParent(upperLevel.getParentSpanId());
+            }
+
+            actual.push(next);
+            scanned.put(next.getSpanId(), true);
+            return next;
+        }
+
+        private DevSpanAdapter getWithParent(String parentSpanId) {
+            for (DevSpanAdapter span : spans) {
+                if (parentSpanId == null &&
+                        span.getParentSpanId() == null &&
+                        !scanned.containsKey(span.getSpanId())) {
+                    return span;
+                }
+                if (span.getParentSpanId() != null &&
+                        span.getParentSpanId().equals(parentSpanId) &&
+                        !scanned.containsKey(span.getSpanId())) {
+                    return span;
+                }
+            }
+
+            return null;
+        }
+
     }
 }
 

@@ -105,9 +105,17 @@ public class DevSpanAdapter implements Span {
         }
     }
 
+    public String getSpanId() {
+        return this.tags.get("spanid");
+    }
+
+    public String getParentSpanId() {
+        return this.tags.get("parentSpan");
+    }
+
     @Override
     public String toString() {
-        String toString = this.tags.get("traceid") + "-" + this.tags.get("spanid") + "-[";
+        String toString = this.tags.get("traceid") + "-" + getSpanId() + "-[";
         for (Entry<String, String> entry : this.tags().entrySet()) {
             if (!entry.getKey().equals("traceid") && !entry.getKey().equals("spanid")) {
                 toString += entry.getKey() + "=" + entry.getValue() + ",";

@@ -18,6 +18,7 @@ package org.apache.camel.telemetrydev;
 
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,10 +80,11 @@ class DevTraceFormatTree implements DevTraceFormat {
         sw.append("\n| " + trace.getTraceId() + "\n");
         HashMap<String, Integer> depths = new HashMap<>();
         int depth = 0;
-        for (int j = 0; j < trace.getSpans().size(); j++) {
-            DevSpanAdapter span = trace.getSpans().get(j);
-            String marker = getMarker(depths, span, j + 1 < trace.getSpans().size() ? trace.getSpans().get(j + 1) : null);
-            String actualParentSpan = span.getTag("parentSpan");
+        List<DevSpanAdapter> spans = trace.sortSpans();
+        for (int j = 0; j < spans.size(); j++) {
+            DevSpanAdapter span = spans.get(j);
+            String marker = getMarker(depths, span, j + 1 < spans.size() ? spans.get(j + 1) : null);
+            String actualParentSpan = span.getParentSpanId();
             if (depths.containsKey(actualParentSpan)) {
                 depth = depths.get(actualParentSpan);
             } else if (actualParentSpan != null) {
@@ -131,9 +133,10 @@ class DevTraceFormatTree implements DevTraceFormat {
         String component = span.getTag("component");
         String camelUri = span.getTag("camel.uri");
         return String.format(
-                "| %s (%s) [%d millis] %s",
+                "| %s (%s) [%s] [%d millis] %s",
                 camelUri == null ? "process" : camelUri,
                 component,
+                span.getSpanId(),
                 nanos,
                 sentOrReceived);
     }
@@ -142,8 +145,8 @@ class DevTraceFormatTree implements DevTraceFormat {
         if (next == null) {
             return "└";
         }
-        Integer thisDepth = depths.get(span.getTag("parentSpan"));
-        Integer nextDepth = depths.get(next.getTag("parentSpan"));
+        Integer thisDepth = depths.get(span.getParentSpanId());
+        Integer nextDepth = depths.get(next.getParentSpanId());
         if (thisDepth == null && nextDepth == null) {
             return "├";
         }
