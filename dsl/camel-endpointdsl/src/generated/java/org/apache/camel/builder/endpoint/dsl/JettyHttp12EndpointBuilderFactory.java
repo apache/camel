@@ -602,6 +602,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          * 
          * @param useContinuation the value to set
@@ -617,6 +618,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: consumer
          * 
          * @param useContinuation the value to set

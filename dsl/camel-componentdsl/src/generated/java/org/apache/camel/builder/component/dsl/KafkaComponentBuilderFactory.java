@@ -1286,7 +1286,6 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * The producer groups together any records that arrive in between
          * request transmissions into a single, batched, request. Normally, this
@@ -1309,7 +1308,6 @@ public interface KafkaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param lingerMs the value to set

@@ -96,7 +96,7 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", "localhost", false, copy);
-        uri = buildPathParameter(syntax, uri, "port", "2775", false, copy);
+        uri = buildPathParameter(syntax, uri, "port", 2775, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

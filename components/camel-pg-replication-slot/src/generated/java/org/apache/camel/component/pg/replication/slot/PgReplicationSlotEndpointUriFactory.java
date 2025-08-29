@@ -77,7 +77,7 @@ public class PgReplicationSlotEndpointUriFactory extends org.apache.camel.suppor
 
         uri = buildPathParameter(syntax, uri, "slot", null, true, copy);
         uri = buildPathParameter(syntax, uri, "host", "localhost", false, copy);
-        uri = buildPathParameter(syntax, uri, "port", "5432", false, copy);
+        uri = buildPathParameter(syntax, uri, "port", 5432, false, copy);
         uri = buildPathParameter(syntax, uri, "database", null, true, copy);
         uri = buildPathParameter(syntax, uri, "outputPlugin", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
