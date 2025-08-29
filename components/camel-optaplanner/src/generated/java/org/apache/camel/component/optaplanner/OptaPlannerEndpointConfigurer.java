@@ -35,7 +35,7 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "problemid":
-        case "problemId": target.getConfiguration().setProblemId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "problemId": target.getConfiguration().setProblemId(property(camelContext, long.class, value)); return true;
         case "solverid":
         case "solverId": target.getConfiguration().setSolverId(property(camelContext, java.lang.String.class, value)); return true;
         case "solvermanager":
@@ -61,7 +61,7 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "problemid":
-        case "problemId": return java.lang.Long.class;
+        case "problemId": return long.class;
         case "solverid":
         case "solverId": return java.lang.String.class;
         case "solvermanager":

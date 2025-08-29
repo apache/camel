@@ -65,12 +65,14 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Whether or not a file changed event raised indicates completion
          * (true) or modification (false).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param close the value to set
@@ -81,11 +83,13 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * check for closing stream after read.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -327,11 +331,13 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * recursively include all paths.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param recursive the value to set
@@ -357,12 +363,14 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Whether or not uncommitted data is to be retained after the
          * operation.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param retainUncommitedData the value to set
@@ -450,11 +458,13 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * whether or not to use upn.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param userPrincipalNameReturned the value to set

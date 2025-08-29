@@ -26,7 +26,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangeformatter":
         case "exchangeFormatter": target.setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
         case "groupactiveonly":
-        case "groupActiveOnly": target.setGroupActiveOnly(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "groupActiveOnly": target.setGroupActiveOnly(property(camelContext, boolean.class, value)); return true;
         case "groupdelay":
         case "groupDelay": target.setGroupDelay(property(camelContext, java.lang.Long.class, value)); return true;
         case "groupinterval":
@@ -94,7 +94,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangeformatter":
         case "exchangeFormatter": return org.apache.camel.spi.ExchangeFormatter.class;
         case "groupactiveonly":
-        case "groupActiveOnly": return java.lang.Boolean.class;
+        case "groupActiveOnly": return boolean.class;
         case "groupdelay":
         case "groupDelay": return java.lang.Long.class;
         case "groupinterval":
@@ -163,7 +163,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangeformatter":
         case "exchangeFormatter": return target.getExchangeFormatter();
         case "groupactiveonly":
-        case "groupActiveOnly": return target.getGroupActiveOnly();
+        case "groupActiveOnly": return target.isGroupActiveOnly();
         case "groupdelay":
         case "groupDelay": return target.getGroupDelay();
         case "groupinterval":

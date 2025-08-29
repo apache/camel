@@ -391,7 +391,6 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
     
-        
         /**
          * A user-controlled value that you can use to track requests. The value
          * of the sequence number must be between 0 and 263 - 1.The default
@@ -399,7 +398,6 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
-         * Default: 0
          * Group: producer
          * 
          * @param blobSequenceNumber the value to set

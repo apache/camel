@@ -718,7 +718,9 @@ public final class JsonMapper {
         prop.put("deprecationNote", option.getDeprecationNote());
         prop.put("autowired", option.isAutowired());
         prop.put("secret", option.isSecret());
-        prop.put("defaultValue", option.getDefaultValue());
+        if (option.getDefaultValue() != null) {
+            prop.put("defaultValue", option.resolveDefaultValue());
+        }
         if (option.isSupportFileReference()) {
             // only include if supported to not regen all files
             prop.put("supportFileReference", option.isSupportFileReference());
@@ -836,7 +838,7 @@ public final class JsonMapper {
             j.put("type", prop.getType());
             j.put("javaType", prop.getJavaType());
             if (prop.getDefaultValue() != null) {
-                j.put("defaultValue", prop.getDefaultValue());
+                j.put("defaultValue", prop.resolveDefaultValue());
             }
             j.put("secret", prop.isSecret());
             if (prop.getEnums() != null) {
@@ -889,7 +891,7 @@ public final class JsonMapper {
             j.put("type", prop.getType());
             j.put("javaType", prop.getJavaType());
             if (prop.getDefaultValue() != null) {
-                j.put("defaultValue", prop.getDefaultValue());
+                j.put("defaultValue", prop.resolveDefaultValue());
             }
             j.put("secret", prop.isSecret());
             if (prop.getEnums() != null) {

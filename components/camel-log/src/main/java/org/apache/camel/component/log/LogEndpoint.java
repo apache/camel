@@ -64,7 +64,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
     @UriParam
     private Long groupInterval;
     @UriParam(defaultValue = "true")
-    private Boolean groupActiveOnly;
+    private boolean groupActiveOnly = true;
     @UriParam
     private Long groupDelay;
     @UriParam
@@ -294,7 +294,6 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
         if (getGroupSize() != null) {
             answer = new ThroughputLogger(camelLogger, getGroupSize());
         } else if (getGroupInterval() != null) {
-            Boolean groupActiveOnly = getGroupActiveOnly() != null ? getGroupActiveOnly() : Boolean.TRUE;
             Long groupDelay = getGroupDelay();
             answer = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
         } else {
@@ -383,7 +382,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
      * If true, will hide stats when no new messages have been received for a time interval, if false, show stats
      * regardless of message traffic.
      */
-    public Boolean getGroupActiveOnly() {
+    public boolean isGroupActiveOnly() {
         return groupActiveOnly;
     }
 
@@ -391,7 +390,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
      * If true, will hide stats when no new messages have been received for a time interval, if false, show stats
      * regardless of message traffic.
      */
-    public void setGroupActiveOnly(Boolean groupActiveOnly) {
+    public void setGroupActiveOnly(boolean groupActiveOnly) {
         this.groupActiveOnly = groupActiveOnly;
     }
 

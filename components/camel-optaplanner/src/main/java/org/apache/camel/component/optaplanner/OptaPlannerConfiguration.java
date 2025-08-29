@@ -34,8 +34,8 @@ public class OptaPlannerConfiguration {
     private int threadPoolSize = 10;
     @UriParam(label = "producer")
     private boolean async;
-    @UriParam(label = "common", defaultValue = "1L")
-    private Long problemId = 1L;
+    @UriParam(label = "common", defaultValue = "1")
+    private long problemId = 1;
     @UriParam(label = "common")
     private String configFile;
     @UriParam(label = "advanced")
@@ -97,14 +97,14 @@ public class OptaPlannerConfiguration {
         this.async = async;
     }
 
-    public Long getProblemId() {
+    public long getProblemId() {
         return problemId;
     }
 
     /**
      * In case of using SolverManager : the problem id
      */
-    public void setProblemId(Long problemId) {
+    public void setProblemId(long problemId) {
         this.problemId = problemId;
     }
 

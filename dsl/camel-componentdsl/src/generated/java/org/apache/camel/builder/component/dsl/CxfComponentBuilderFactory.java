@@ -122,6 +122,7 @@ public interface CxfComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * This option controls whether the CXF component, when running in
          * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
@@ -130,6 +131,7 @@ public interface CxfComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: advanced
          * 
          * @param allowStreaming the value to set

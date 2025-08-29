@@ -60,7 +60,7 @@ public class PgEventEndpointUriFactory extends org.apache.camel.support.componen
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", "localhost", false, copy);
-        uri = buildPathParameter(syntax, uri, "port", "5432", false, copy);
+        uri = buildPathParameter(syntax, uri, "port", 5432, false, copy);
         uri = buildPathParameter(syntax, uri, "database", null, true, copy);
         uri = buildPathParameter(syntax, uri, "channel", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
