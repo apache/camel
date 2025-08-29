@@ -123,7 +123,7 @@ public final class YamlProperties {
             if (node.isMissingNode()) {
                 return this;
             }
-            if (!node.isTextual()) {
+            if (!node.isTextual() && !node.isNumber() && !node.isBoolean()) {
                 return this;
             }
 
