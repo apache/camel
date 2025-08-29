@@ -340,6 +340,17 @@ public abstract class BaseOptionModel {
         return Character.toLowerCase(text.charAt(0)) + text.substring(1);
     }
 
+    public Object resolveDefaultValue() {
+        // special for boolean as the value should then not be a string
+        if ("boolean".equals(type) || "java.lang.Boolean".equals(javaType)) {
+            return defaultValue != null && "true".equalsIgnoreCase(defaultValue.toString());
+        }
+        if (defaultValue != null && "integer".equals(type) && !defaultValue.toString().isBlank()) {
+            return Long.parseLong(defaultValue.toString());
+        }
+        return defaultValue;
+    }
+
     @Override
     public String toString() {
         return name;

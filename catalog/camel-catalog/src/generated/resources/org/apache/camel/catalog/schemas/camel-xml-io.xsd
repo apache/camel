@@ -11596,7 +11596,7 @@ Whether security mask for Logging is enabled on this route. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether message history is enabled on this route.
+Whether message history is enabled on this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11682,7 +11682,7 @@ Whether stream caching is enabled on this route.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether tracing is enabled on this route.
+Whether tracing is enabled on this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>

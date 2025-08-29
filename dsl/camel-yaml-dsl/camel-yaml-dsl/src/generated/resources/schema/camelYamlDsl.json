@@ -1862,14 +1862,12 @@
           "bulkheadMaxConcurrentCalls" : {
             "type" : "number",
             "title" : "Bulkhead Max Concurrent Calls",
-            "description" : "Configures the max amount of concurrent calls the bulkhead will support.",
-            "default" : "10"
+            "description" : "Configures the max amount of concurrent calls the bulkhead will support."
           },
           "bulkheadWaitingTaskQueue" : {
             "type" : "number",
             "title" : "Bulkhead Waiting Task Queue",
-            "description" : "Configures the task queue size for holding waiting tasks to be processed by the bulkhead.",
-            "default" : "10"
+            "description" : "Configures the task queue size for holding waiting tasks to be processed by the bulkhead."
           },
           "delay" : {
             "type" : "string",
@@ -1880,8 +1878,7 @@
           "failureRatio" : {
             "type" : "number",
             "title" : "Failure Ratio",
-            "description" : "Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.",
-            "default" : "50"
+            "description" : "Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage."
           },
           "id" : {
             "type" : "string",
@@ -1891,14 +1888,12 @@
           "requestVolumeThreshold" : {
             "type" : "number",
             "title" : "Request Volume Threshold",
-            "description" : "Controls the size of the rolling window used when the circuit breaker is closed",
-            "default" : "20"
+            "description" : "Controls the size of the rolling window used when the circuit breaker is closed"
           },
           "successThreshold" : {
             "type" : "number",
             "title" : "Success Threshold",
-            "description" : "Controls the number of trial calls which are allowed when the circuit breaker is half-open",
-            "default" : "1"
+            "description" : "Controls the number of trial calls which are allowed when the circuit breaker is half-open"
           },
           "threadOffloadExecutorService" : {
             "type" : "string",
@@ -1919,8 +1914,7 @@
           "timeoutPoolSize" : {
             "type" : "number",
             "title" : "Timeout Pool Size",
-            "description" : "Configures the pool size of the thread pool when timeout is enabled. Default value is 10.",
-            "default" : "10"
+            "description" : "Configures the pool size of the thread pool when timeout is enabled. Default value is 10."
           },
           "typedGuard" : {
             "type" : "string",
@@ -4688,8 +4682,7 @@
           "retryAttemptedLogInterval" : {
             "type" : "number",
             "title" : "Retry Attempted Log Interval",
-            "description" : "Sets the interval to use for logging retry attempts",
-            "default" : "1"
+            "description" : "Sets the interval to use for logging retry attempts"
           },
           "retryAttemptedLogLevel" : {
             "type" : "string",
@@ -5061,14 +5054,12 @@
           "bulkheadMaxConcurrentCalls" : {
             "type" : "number",
             "title" : "Bulkhead Max Concurrent Calls",
-            "description" : "Configures the max amount of concurrent calls the bulkhead will support.",
-            "default" : "25"
+            "description" : "Configures the max amount of concurrent calls the bulkhead will support."
           },
           "bulkheadMaxWaitDuration" : {
             "type" : "number",
             "title" : "Bulkhead Max Wait Duration",
-            "description" : "Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. If bulkhead has space available, entry is guaranteed and immediate. If bulkhead is full, calling threads will contest for space, if it becomes available. maxWaitDuration can be set to 0. Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0 is highly recommended. Blocking an event-loop thread will most likely have a negative effect on application throughput.",
-            "default" : "0"
+            "description" : "Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. If bulkhead has space available, entry is guaranteed and immediate. If bulkhead is full, calling threads will contest for space, if it becomes available. maxWaitDuration can be set to 0. Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0 is highly recommended. Blocking an event-loop thread will most likely have a negative effect on application throughput."
           },
           "circuitBreaker" : {
             "type" : "string",
@@ -5102,14 +5093,12 @@
           "minimumNumberOfCalls" : {
             "type" : "number",
             "title" : "Minimum Number Of Calls",
-            "description" : "Configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate. For example, if minimumNumberOfCalls is 10, then at least 10 calls must be recorded, before the failure rate can be calculated. If only 9 calls have been recorded the CircuitBreaker will not transition to open even if all 9 calls have failed. Default minimumNumberOfCalls is 100",
-            "default" : "100"
+            "description" : "Configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate. For example, if minimumNumberOfCalls is 10, then at least 10 calls must be recorded, before the failure rate can be calculated. If only 9 calls have been recorded the CircuitBreaker will not transition to open even if all 9 calls have failed. Default minimumNumberOfCalls is 100"
           },
           "permittedNumberOfCallsInHalfOpenState" : {
             "type" : "number",
             "title" : "Permitted Number Of Calls In Half Open State",
-            "description" : "Configures the number of permitted calls when the CircuitBreaker is half open. The size must be greater than 0. Default size is 10.",
-            "default" : "10"
+            "description" : "Configures the number of permitted calls when the CircuitBreaker is half open. The size must be greater than 0. Default size is 10."
           },
           "recordException" : {
             "type" : "array",
@@ -5122,8 +5111,7 @@
           "slidingWindowSize" : {
             "type" : "number",
             "title" : "Sliding Window Size",
-            "description" : "Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. slidingWindowSize configures the size of the sliding window. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. The slidingWindowSize must be greater than 0. The minimumNumberOfCalls must be greater than 0. If the slidingWindowType is COUNT_BASED, the minimumNumberOfCalls cannot be greater than slidingWindowSize . If the slidingWindowType is TIME_BASED, you can pick whatever you want. Default slidingWindowSize is 100.",
-            "default" : "100"
+            "description" : "Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. slidingWindowSize configures the size of the sliding window. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. The slidingWindowSize must be greater than 0. The minimumNumberOfCalls must be greater than 0. If the slidingWindowType is COUNT_BASED, the minimumNumberOfCalls cannot be greater than slidingWindowSize . If the slidingWindowType is TIME_BASED, you can pick whatever you want. Default slidingWindowSize is 100."
           },
           "slidingWindowType" : {
             "type" : "string",
@@ -5135,8 +5123,7 @@
           "slowCallDurationThreshold" : {
             "type" : "number",
             "title" : "Slow Call Duration Threshold",
-            "description" : "Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage. Default value is 60 seconds.",
-            "default" : "60"
+            "description" : "Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage. Default value is 60 seconds."
           },
           "slowCallRateThreshold" : {
             "type" : "number",
@@ -5157,8 +5144,7 @@
           "timeoutDuration" : {
             "type" : "number",
             "title" : "Timeout Duration",
-            "description" : "Configures the thread execution timeout. Default value is 1 second.",
-            "default" : "1000"
+            "description" : "Configures the thread execution timeout. Default value is 1 second."
           },
           "timeoutEnabled" : {
             "type" : "boolean",
@@ -5173,8 +5159,7 @@
           "waitDurationInOpenState" : {
             "type" : "number",
             "title" : "Wait Duration In Open State",
-            "description" : "Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it switches to half open. Default value is 60 seconds.",
-            "default" : "60"
+            "description" : "Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it switches to half open. Default value is 60 seconds."
           },
           "writableStackTraceEnabled" : {
             "type" : "boolean",
@@ -8818,8 +8803,7 @@
           "timeout" : {
             "type" : "number",
             "title" : "Timeout",
-            "description" : "Set the time the services will be retained.",
-            "default" : "60"
+            "description" : "Set the time the services will be retained."
           },
           "units" : {
             "type" : "string",
@@ -8918,8 +8902,7 @@
           "blockSeconds" : {
             "type" : "number",
             "title" : "Block Seconds",
-            "description" : "The seconds to wait for a watch event, default 10 seconds",
-            "default" : "10"
+            "description" : "The seconds to wait for a watch event, default 10 seconds"
           },
           "connectTimeoutMillis" : {
             "type" : "number",
@@ -9934,8 +9917,7 @@
           "batchSize" : {
             "type" : "number",
             "title" : "Batch Size",
-            "description" : "Sets the size of the batch to be re-ordered. The default size is 100.",
-            "default" : "100"
+            "description" : "Sets the size of the batch to be re-ordered. The default size is 100."
           },
           "batchTimeout" : {
             "type" : "string",
@@ -9964,8 +9946,7 @@
           "capacity" : {
             "type" : "number",
             "title" : "Capacity",
-            "description" : "Sets the capacity of the resequencer inbound queue.",
-            "default" : "1000"
+            "description" : "Sets the capacity of the resequencer inbound queue."
           },
           "comparator" : {
             "type" : "string",
@@ -10158,8 +10139,7 @@
           "height" : {
             "type" : "number",
             "title" : "Height",
-            "description" : "Height of the barcode",
-            "default" : "100"
+            "description" : "Height of the barcode"
           },
           "id" : {
             "type" : "string",
@@ -10176,8 +10156,7 @@
           "width" : {
             "type" : "number",
             "title" : "Width",
-            "description" : "Width of the barcode",
-            "default" : "100"
+            "description" : "Width of the barcode"
           }
         }
       },
@@ -10195,8 +10174,7 @@
           "lineLength" : {
             "type" : "number",
             "title" : "Line Length",
-            "description" : "To specific a maximum line length for the encoded data. By default 76 is used.",
-            "default" : "76"
+            "description" : "To specific a maximum line length for the encoded data. By default 76 is used."
           },
           "lineSeparator" : {
             "type" : "string",
@@ -10385,8 +10363,7 @@
           "bufferSize" : {
             "type" : "number",
             "title" : "Buffer Size",
-            "description" : "The size of the buffer used in the signature process.",
-            "default" : "4096"
+            "description" : "The size of the buffer used in the signature process."
           },
           "cryptoProvider" : {
             "type" : "string",
@@ -12061,8 +12038,7 @@
           "maxDecompressedSize" : {
             "type" : "number",
             "title" : "Max Decompressed Size",
-            "description" : "Set the maximum decompressed size of a tar file (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
-            "default" : "1073741824"
+            "description" : "Set the maximum decompressed size of a tar file (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size."
           },
           "preservePathElements" : {
             "type" : "boolean",
@@ -12555,8 +12531,7 @@
           "maxAliasesForCollections" : {
             "type" : "number",
             "title" : "Max Aliases For Collections",
-            "description" : "Set the maximum amount of aliases allowed for collections.",
-            "default" : "50"
+            "description" : "Set the maximum amount of aliases allowed for collections."
           },
           "prettyFlow" : {
             "type" : "boolean",
@@ -12629,8 +12604,7 @@
           "maxDecompressedSize" : {
             "type" : "number",
             "title" : "Max Decompressed Size",
-            "description" : "Set the maximum decompressed size of a zip file (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size.",
-            "default" : "1073741824"
+            "description" : "Set the maximum decompressed size of a zip file (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size."
           },
           "preservePathElements" : {
             "type" : "boolean",

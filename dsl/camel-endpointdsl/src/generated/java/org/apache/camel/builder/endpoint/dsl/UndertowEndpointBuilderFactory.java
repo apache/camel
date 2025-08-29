@@ -1121,6 +1121,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: websocket
          * 
          * @param sendToAll the value to set
@@ -1138,6 +1139,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: websocket
          * 
          * @param sendToAll the value to set

@@ -48,7 +48,7 @@ public interface LogEndpointBuilderFactory {
          * If true, will hide stats when no new messages have been received for
          * a time interval, if false, show stats regardless of message traffic.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -56,7 +56,7 @@ public interface LogEndpointBuilderFactory {
          * @param groupActiveOnly the value to set
          * @return the dsl builder
          */
-        default LogEndpointBuilder groupActiveOnly(Boolean groupActiveOnly) {
+        default LogEndpointBuilder groupActiveOnly(boolean groupActiveOnly) {
             doSetProperty("groupActiveOnly", groupActiveOnly);
             return this;
         }
@@ -64,8 +64,7 @@ public interface LogEndpointBuilderFactory {
          * If true, will hide stats when no new messages have been received for
          * a time interval, if false, show stats regardless of message traffic.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
          * Group: producer
@@ -185,6 +184,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param logMask the value to set
@@ -201,6 +201,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param logMask the value to set

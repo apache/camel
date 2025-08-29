@@ -32,7 +32,7 @@ public class LogEndpointOptionsTest extends ContextTestSupport {
         assertEquals("DEBUG", log.getLevel());
         assertEquals("bar", log.getMarker());
         assertEquals(Integer.valueOf(20), (Object) log.getGroupSize());
-        assertNull(log.getGroupActiveOnly());
+        assertTrue(log.isGroupActiveOnly());
         assertNull(log.getGroupDelay());
         assertNull(log.getGroupInterval());
     }

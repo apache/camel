@@ -62,24 +62,24 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: <code>long</code> type.
          * 
-         * Default: 1L
+         * Default: 1
          * Group: common
          * 
          * @param problemId the value to set
          * @return the dsl builder
          */
-        default OptaPlannerEndpointConsumerBuilder problemId(Long problemId) {
+        default OptaPlannerEndpointConsumerBuilder problemId(long problemId) {
             doSetProperty("problemId", problemId);
             return this;
         }
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 1L
+         * Default: 1
          * Group: common
          * 
          * @param problemId the value to set
@@ -293,24 +293,24 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: <code>long</code> type.
          * 
-         * Default: 1L
+         * Default: 1
          * Group: common
          * 
          * @param problemId the value to set
          * @return the dsl builder
          */
-        default OptaPlannerEndpointProducerBuilder problemId(Long problemId) {
+        default OptaPlannerEndpointProducerBuilder problemId(long problemId) {
             doSetProperty("problemId", problemId);
             return this;
         }
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 1L
+         * Default: 1
          * Group: common
          * 
          * @param problemId the value to set
@@ -513,24 +513,24 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: <code>long</code> type.
          * 
-         * Default: 1L
+         * Default: 1
          * Group: common
          * 
          * @param problemId the value to set
          * @return the dsl builder
          */
-        default OptaPlannerEndpointBuilder problemId(Long problemId) {
+        default OptaPlannerEndpointBuilder problemId(long problemId) {
             doSetProperty("problemId", problemId);
             return this;
         }
         /**
          * In case of using SolverManager : the problem id.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 1L
+         * Default: 1
          * Group: common
          * 
          * @param problemId the value to set

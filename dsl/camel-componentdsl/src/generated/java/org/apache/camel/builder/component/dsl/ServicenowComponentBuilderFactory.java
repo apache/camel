@@ -104,12 +104,14 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * True to exclude Table API links for reference fields (default:
          * false).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param excludeReferenceLink the value to set
@@ -120,12 +122,14 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Set this parameter to true to return only scorecards that are
          * favorites of the querying user.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param favorites the value to set
@@ -136,6 +140,7 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Set this parameter to true to always return all available aggregates
          * for an indicator, including when an aggregate has already been
@@ -144,6 +149,7 @@ public interface ServicenowComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param includeAggregates the value to set
@@ -154,6 +160,7 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Set this parameter to true to return all available aggregates for an
          * indicator when no aggregate has been applied. If a value is not
@@ -162,6 +169,7 @@ public interface ServicenowComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param includeAvailableAggregates the value to set
@@ -172,6 +180,7 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Set this parameter to true to return all available breakdowns for an
          * indicator. If a value is not specified, this parameter defaults to
@@ -179,6 +188,7 @@ public interface ServicenowComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param includeAvailableBreakdowns the value to set
@@ -189,6 +199,7 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Set this parameter to true to return all notes associated with the
          * score. The note element contains the note text as well as the author
@@ -196,6 +207,7 @@ public interface ServicenowComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param includeScoreNotes the value to set
@@ -206,6 +218,7 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Set this parameter to true to return all scores for a scorecard. If a
          * value is not specified, this parameter defaults to false and returns
@@ -213,6 +226,7 @@ public interface ServicenowComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param includeScores the value to set
@@ -223,11 +237,13 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * True to set raw value of input fields (default: false).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param inputDisplayValue the value to set
@@ -238,12 +254,14 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Set this parameter to true to return only scorecards for key
          * indicators.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param key the value to set
@@ -419,11 +437,13 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * True to suppress auto generation of system fields (default: false).
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param suppressAutoSysField the value to set
@@ -434,6 +454,7 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Set this value to true to remove the Link header from the response.
          * The Link header allows you to request additional pages of data when
@@ -441,6 +462,7 @@ public interface ServicenowComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param suppressPaginationHeader the value to set
@@ -466,12 +488,14 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Set this parameter to true to return only scorecards that have a
          * target.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param target the value to set
@@ -482,11 +506,13 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Gets only those categories whose parent is a catalog.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: producer
          * 
          * @param topLevelOnly the value to set

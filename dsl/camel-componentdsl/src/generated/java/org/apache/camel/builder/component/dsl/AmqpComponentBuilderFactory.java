@@ -313,11 +313,13 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Whether to enable SSL when connecting to the AMQP Broker.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param useSsl the value to set
@@ -328,11 +330,13 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Whether to configure topics with a topic:// prefix.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param useTopicPrefix the value to set

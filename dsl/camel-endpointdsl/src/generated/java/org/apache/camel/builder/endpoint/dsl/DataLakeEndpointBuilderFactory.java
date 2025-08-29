@@ -63,6 +63,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param close the value to set
@@ -79,6 +80,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param close the value to set
@@ -93,6 +95,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -108,6 +111,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -471,6 +475,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param recursive the value to set
@@ -486,6 +491,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param recursive the value to set
@@ -515,6 +521,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param retainUncommitedData the value to set
@@ -531,6 +538,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param retainUncommitedData the value to set
@@ -666,6 +674,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param userPrincipalNameReturned the value to set
@@ -681,6 +690,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param userPrincipalNameReturned the value to set
@@ -1477,6 +1487,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param close the value to set
@@ -1493,6 +1504,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param close the value to set
@@ -1507,6 +1519,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -1522,6 +1535,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -1885,6 +1899,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param recursive the value to set
@@ -1900,6 +1915,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param recursive the value to set
@@ -1929,6 +1945,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param retainUncommitedData the value to set
@@ -1945,6 +1962,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param retainUncommitedData the value to set
@@ -2080,6 +2098,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param userPrincipalNameReturned the value to set
@@ -2095,6 +2114,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param userPrincipalNameReturned the value to set
@@ -2327,6 +2347,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param close the value to set
@@ -2343,6 +2364,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param close the value to set
@@ -2357,6 +2379,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -2372,6 +2395,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param closeStreamAfterRead the value to set
@@ -2735,6 +2759,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param recursive the value to set
@@ -2750,6 +2775,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param recursive the value to set
@@ -2779,6 +2805,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param retainUncommitedData the value to set
@@ -2795,6 +2822,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param retainUncommitedData the value to set
@@ -2930,6 +2958,7 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param userPrincipalNameReturned the value to set
@@ -2945,6 +2974,7 @@ public interface DataLakeEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          * 
          * @param userPrincipalNameReturned the value to set
