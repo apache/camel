@@ -184,7 +184,7 @@ public class InfraRun extends InfraBaseCommand {
             }
         }
 
-        String jsonProperties = jsonMapper.writeValueAsString(properties);
+        String jsonProperties = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(properties);
         printer().println(jsonProperties);
 
         String name = getLogFileName(testService, RuntimeUtil.getPid());
@@ -192,7 +192,7 @@ public class InfraRun extends InfraBaseCommand {
 
         String jsonName = getJsonFileName(testService, RuntimeUtil.getPid());
         Path jsonFile = createFile(jsonName);
-        Files.write(jsonFile, jsonProperties.getBytes());
+        Files.write(jsonFile, jsonMapper.writeValueAsString(properties).getBytes());
 
         if (Arrays.stream(actualService.getClass().getInterfaces()).anyMatch(c -> c.getName().contains("ContainerService"))) {
             Object containerLogConsumer = cl.loadClass("org.apache.camel.test.infra.common.CamelLogConsumer")
