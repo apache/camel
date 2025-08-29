@@ -21,14 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pqc.crypto.*;
-import org.apache.camel.component.pqc.crypto.kem.PQCDefaultBIKEMaterial;
-import org.apache.camel.component.pqc.crypto.kem.PQCDefaultCMCEMaterial;
-import org.apache.camel.component.pqc.crypto.kem.PQCDefaultFRODOMaterial;
-import org.apache.camel.component.pqc.crypto.kem.PQCDefaultHQCMaterial;
-import org.apache.camel.component.pqc.crypto.kem.PQCDefaultMLKEMMaterial;
-import org.apache.camel.component.pqc.crypto.kem.PQCDefaultNTRULPRimeMaterial;
-import org.apache.camel.component.pqc.crypto.kem.PQCDefaultNTRUMaterial;
-import org.apache.camel.component.pqc.crypto.kem.PQCDefaultSABERMaterial;
+import org.apache.camel.component.pqc.crypto.kem.*;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
@@ -143,6 +136,10 @@ public class PQCComponent extends HealthCheckComponent {
                     case "NTRULPRime":
                         configuration.setKeyGenerator(PQCDefaultNTRULPRimeMaterial.keyGenerator);
                         configuration.setKeyPair(PQCDefaultNTRULPRimeMaterial.keyPair);
+                        break;
+                    case "KYBER":
+                        configuration.setKeyGenerator(PQCDefaultKYBERMaterial.keyGenerator);
+                        configuration.setKeyPair(PQCDefaultKYBERMaterial.keyPair);
                         break;
                     default:
                         break;
