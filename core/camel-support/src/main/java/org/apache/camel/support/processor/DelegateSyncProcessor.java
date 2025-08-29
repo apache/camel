@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.DisabledAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -41,8 +42,9 @@ import org.apache.camel.support.service.ServiceSupport;
  * @see DelegateProcessor
  */
 public class DelegateSyncProcessor extends ServiceSupport
-        implements org.apache.camel.DelegateProcessor, AsyncProcessor, Navigate<Processor> {
+        implements org.apache.camel.DelegateProcessor, AsyncProcessor, Navigate<Processor>, DisabledAware {
     protected final Processor processor;
+    private boolean disabled;
 
     public DelegateSyncProcessor(Processor processor) {
         this.processor = processor;
@@ -98,6 +100,16 @@ public class DelegateSyncProcessor extends ServiceSupport
         List<Processor> answer = new ArrayList<>(1);
         answer.add(processor);
         return answer;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @Override
