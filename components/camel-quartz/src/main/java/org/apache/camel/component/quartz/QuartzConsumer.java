@@ -18,13 +18,14 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.DefaultConsumer;
 
 /**
  * This consumer process QuartzMessage when scheduler job is executed per scheduled time. When the job runs, it will
  * call this consumer's processor to process a new exchange with QuartzMessage.
  */
-public class QuartzConsumer extends DefaultConsumer {
+public class QuartzConsumer extends DefaultConsumer implements Suspendable {
 
     public QuartzConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -47,4 +48,15 @@ public class QuartzConsumer extends DefaultConsumer {
         super.doStop();
     }
 
+    @Override
+    protected void doSuspend() throws Exception {
+        super.doSuspend();
+        getEndpoint().onConsumerStop(this);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        super.doResume();
+        getEndpoint().onConsumerStart(this);
+    }
 }
