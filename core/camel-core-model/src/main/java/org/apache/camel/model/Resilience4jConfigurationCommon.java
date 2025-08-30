@@ -90,6 +90,9 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String timeoutCancelRunningFuture;
+    @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String micrometerEnabled;
     @XmlElement(name = "recordException")
     @Metadata(label = "advanced")
     private List<String> recordExceptions = new ArrayList<>();
@@ -118,6 +121,7 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
         this.bulkheadMaxConcurrentCalls = source.bulkheadMaxConcurrentCalls;
         this.bulkheadMaxWaitDuration = source.bulkheadMaxWaitDuration;
         this.timeoutEnabled = source.timeoutEnabled;
+        this.micrometerEnabled = source.micrometerEnabled;
         this.timeoutExecutorService = source.timeoutExecutorService;
         this.timeoutDuration = source.timeoutDuration;
         this.timeoutCancelRunningFuture = source.timeoutCancelRunningFuture;
@@ -401,6 +405,18 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
      */
     public void setTimeoutCancelRunningFuture(String timeoutCancelRunningFuture) {
         this.timeoutCancelRunningFuture = timeoutCancelRunningFuture;
+    }
+
+    public String getMicrometerEnabled() {
+        return micrometerEnabled;
+    }
+
+    /**
+     * Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR
+     * to the classpath.
+     */
+    public void setMicrometerEnabled(String micrometerEnabled) {
+        this.micrometerEnabled = micrometerEnabled;
     }
 
     public List<String> getRecordExceptions() {

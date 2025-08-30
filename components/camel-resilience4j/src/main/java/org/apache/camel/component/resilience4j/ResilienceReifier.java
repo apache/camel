@@ -26,9 +26,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Predicate;
 
 import io.github.resilience4j.bulkhead.BulkheadConfig;
+import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
+import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.CircuitBreakerDefinition;
@@ -92,7 +96,38 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             CircuitBreaker cb = mandatoryLookup(parseString(config.getCircuitBreaker()), CircuitBreaker.class);
             answer.setCircuitBreaker(cb);
         }
+        configureResilience4jRegistries(camelContext, answer);
         return answer;
+    }
+
+    private void configureResilience4jRegistries(CamelContext camelContext, ResilienceProcessor processor) {
+        CircuitBreakerRegistry registry = CamelContextHelper.findSingleByType(camelContext, CircuitBreakerRegistry.class);
+        if (registry == null) {
+            registry = camelContext.getCamelContextExtension().getContextPlugin(CircuitBreakerRegistry.class);
+        }
+        if (registry == null) {
+            registry = CircuitBreakerRegistry.ofDefaults();
+            camelContext.getCamelContextExtension().addContextPlugin(CircuitBreakerRegistry.class, registry);
+        }
+        processor.setCircuitBreakerRegistry(registry);
+        TimeLimiterRegistry registry2 = CamelContextHelper.findSingleByType(camelContext, TimeLimiterRegistry.class);
+        if (registry2 == null) {
+            registry2 = camelContext.getCamelContextExtension().getContextPlugin(TimeLimiterRegistry.class);
+        }
+        if (registry2 == null) {
+            registry2 = TimeLimiterRegistry.ofDefaults();
+            camelContext.getCamelContextExtension().addContextPlugin(TimeLimiterRegistry.class, registry2);
+        }
+        processor.setTimeLimiterRegistry(registry2);
+        BulkheadRegistry registry3 = CamelContextHelper.findSingleByType(camelContext, BulkheadRegistry.class);
+        if (registry3 == null) {
+            registry3 = camelContext.getCamelContextExtension().getContextPlugin(BulkheadRegistry.class);
+        }
+        if (registry3 == null) {
+            registry3 = BulkheadRegistry.ofDefaults();
+            camelContext.getCamelContextExtension().addContextPlugin(BulkheadRegistry.class, registry3);
+        }
+        processor.setBulkheadRegistry(registry3);
     }
 
     private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config) throws ClassNotFoundException {

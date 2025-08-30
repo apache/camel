@@ -5218,6 +5218,12 @@
               "type" : "string"
             }
           },
+          "micrometerEnabled" : {
+            "type" : "boolean",
+            "title" : "Micrometer Enabled",
+            "description" : "Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR to the classpath.",
+            "default" : "false"
+          },
           "minimumNumberOfCalls" : {
             "type" : "number",
             "title" : "Minimum Number Of Calls",

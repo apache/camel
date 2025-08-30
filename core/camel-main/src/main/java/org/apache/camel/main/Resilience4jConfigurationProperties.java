@@ -63,6 +63,8 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     private Integer timeoutDuration;
     @Metadata(defaultValue = "true")
     private Boolean timeoutCancelRunningFuture;
+    @Metadata(defaultValue = "false")
+    private Boolean micrometerEnabled;
 
     public Resilience4jConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -348,6 +350,18 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
         this.timeoutCancelRunningFuture = timeoutCancelRunningFuture;
     }
 
+    public Boolean getMicrometerEnabled() {
+        return micrometerEnabled;
+    }
+
+    /**
+     * Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR
+     * to the classpath.
+     */
+    public void setMicrometerEnabled(Boolean micrometerEnabled) {
+        this.micrometerEnabled = micrometerEnabled;
+    }
+
     /**
      * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the
      * registry. When using this, then any other circuit breaker options are not in use.
@@ -553,6 +567,15 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
      */
     public Resilience4jConfigurationProperties withTimeoutCancelRunningFuture(Boolean timeoutCancelRunningFuture) {
         this.timeoutCancelRunningFuture = timeoutCancelRunningFuture;
+        return this;
+    }
+
+    /**
+     * Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR
+     * to the classpath.
+     */
+    public Resilience4jConfigurationProperties withMicrometerEnabled(Boolean micrometerEnabled) {
+        this.micrometerEnabled = micrometerEnabled;
         return this;
     }
 

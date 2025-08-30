@@ -29,6 +29,7 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         map.put("CircuitBreaker", java.lang.String.class);
         map.put("Config", java.lang.String.class);
         map.put("FailureRateThreshold", java.lang.Float.class);
+        map.put("MicrometerEnabled", java.lang.Boolean.class);
         map.put("MinimumNumberOfCalls", java.lang.Integer.class);
         map.put("PermittedNumberOfCallsInHalfOpenState", java.lang.Integer.class);
         map.put("SlidingWindowSize", java.lang.Integer.class);
@@ -62,6 +63,8 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         case "config": target.setConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "failureratethreshold":
         case "failureRateThreshold": target.setFailureRateThreshold(property(camelContext, java.lang.Float.class, value)); return true;
+        case "micrometerenabled":
+        case "micrometerEnabled": target.setMicrometerEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "minimumnumberofcalls":
         case "minimumNumberOfCalls": target.setMinimumNumberOfCalls(property(camelContext, java.lang.Integer.class, value)); return true;
         case "permittednumberofcallsinhalfopenstate":
@@ -113,6 +116,8 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         case "config": return java.lang.String.class;
         case "failureratethreshold":
         case "failureRateThreshold": return java.lang.Float.class;
+        case "micrometerenabled":
+        case "micrometerEnabled": return java.lang.Boolean.class;
         case "minimumnumberofcalls":
         case "minimumNumberOfCalls": return java.lang.Integer.class;
         case "permittednumberofcallsinhalfopenstate":
@@ -160,6 +165,8 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         case "config": return target.getConfig();
         case "failureratethreshold":
         case "failureRateThreshold": return target.getFailureRateThreshold();
+        case "micrometerenabled":
+        case "micrometerEnabled": return target.getMicrometerEnabled();
         case "minimumnumberofcalls":
         case "minimumNumberOfCalls": return target.getMinimumNumberOfCalls();
         case "permittednumberofcallsinhalfopenstate":
