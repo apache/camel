@@ -32,10 +32,14 @@ import org.apache.camel.spi.Resilience4jMicrometerFactory;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @JdkService(Resilience4jMicrometerFactory.FACTORY)
 public class DefaultResilience4jMicrometerFactory extends ServiceSupport
         implements Resilience4jMicrometerFactory, NonManagedService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultResilience4jMicrometerFactory.class);
 
     private MeterRegistry meterRegistry;
     private CamelContext camelContext;
@@ -101,6 +105,8 @@ public class DefaultResilience4jMicrometerFactory extends ServiceSupport
         TaggedBulkheadMetrics
                 .ofBulkheadRegistry(bulkheadRegistry)
                 .bindTo(meterRegistry);
+
+        LOG.info("Enabled Micrometer statistics with Resilience4j Circuit Breakers");
     }
 
 }
