@@ -60,6 +60,8 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.BacklogTracer;
@@ -76,6 +78,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.Resilience4jMicrometerFactory;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupCondition;
@@ -925,6 +928,8 @@ public abstract class BaseMainSupport extends BaseService {
         if (standalone) {
             // detect if camel-debug JAR is on classpath as we need to know this before configuring routes
             detectCamelDebugJar(camelContext);
+            // detect micrometer for resilience4j circuit breakers
+            detectResilience4jMicrometer(camelContext);
             step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");
             configureRoutes(camelContext);
             recorder.endStep(step);
@@ -958,6 +963,24 @@ public abstract class BaseMainSupport extends BaseService {
         if (df != null) {
             // if camel-debug is on classpath then we need to eager to turn on source location which is needed for Java DSL
             camelContext.setSourceLocationEnabled(true);
+        }
+    }
+
+    protected void detectResilience4jMicrometer(CamelContext camelContext) throws Exception {
+        // optional discover camel-resilience4j-micrometer
+        Resilience4jMicrometerFactory mf = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+                .newInstance(Resilience4jMicrometerFactory.FACTORY, Resilience4jMicrometerFactory.class).orElse(null);
+        if (mf == null) {
+            ModelCamelContext model = (ModelCamelContext) camelContext;
+            Resilience4jConfigurationDefinition config = model.getResilience4jConfiguration(null);
+            boolean micrometer = config != null && CamelContextHelper.parseBoolean(camelContext, config.getMicrometerEnabled());
+            if (micrometer) {
+                throw new IllegalArgumentException(
+                        "Cannot find Resilience4jMicrometerFactory on classpath. Add camel-resilience4j-micrometer to classpath.");
+            }
+        }
+        if (mf != null) {
+            camelContext.addService(mf);
         }
     }
 

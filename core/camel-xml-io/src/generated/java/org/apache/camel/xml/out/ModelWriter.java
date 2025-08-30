@@ -1545,6 +1545,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
         doWriteAttribute("throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
         doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
+        doWriteAttribute("micrometerEnabled", def.getMicrometerEnabled(), "false");
         doWriteAttribute("writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
         doWriteAttribute("automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
         doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), null);

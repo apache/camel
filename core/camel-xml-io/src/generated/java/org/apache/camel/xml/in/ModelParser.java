@@ -790,6 +790,7 @@ public class ModelParser extends BaseParser {
             case "circuitBreaker": def.setCircuitBreaker(val); yield true;
             case "config": def.setConfig(val); yield true;
             case "failureRateThreshold": def.setFailureRateThreshold(val); yield true;
+            case "micrometerEnabled": def.setMicrometerEnabled(val); yield true;
             case "minimumNumberOfCalls": def.setMinimumNumberOfCalls(val); yield true;
             case "permittedNumberOfCallsInHalfOpenState": def.setPermittedNumberOfCallsInHalfOpenState(val); yield true;
             case "slidingWindowSize": def.setSlidingWindowSize(val); yield true;

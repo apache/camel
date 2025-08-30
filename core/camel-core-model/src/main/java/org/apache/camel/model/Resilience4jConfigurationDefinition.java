@@ -264,6 +264,15 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR
+     * to the classpath.
+     */
+    public Resilience4jConfigurationDefinition micrometerEnabled(boolean micrometerEnabled) {
+        setMicrometerEnabled(Boolean.toString(micrometerEnabled));
+        return this;
+    }
+
+    /**
      * Configure a list of exceptions that are recorded as a failure and thus increase the failure rate. Any exception
      * matching or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.
      */

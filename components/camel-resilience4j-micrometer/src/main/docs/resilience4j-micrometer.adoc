@@ -1,0 +1,50 @@
+= Resilience4j Micrometer Component
+:doctitle: Resilience4j Micrometer
+:shortname: resilience4j-micrometer
+:artifactid: camel-resilience4j-micrometer
+:description: Micrometer statistics for Resilience4j
+:since: 4.15
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: resilience4j-micrometer
+
+*Since Camel {since}*
+
+This component adds Micrometer statistics for Circuit Breaker EIP with the https://resilience4j.readme.io/[Resilience4j] library.
+
+For more details, see the xref:eips:circuitBreaker-eip.adoc[Circuit Breaker EIP] documentation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-resilience4j-micrometer</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Configuring Resilience4j Micrometer
+
+When adding `camel-resilience4j-micrometer` JAR to the classpath, then CircuitBreakers will automatically enable gathering
+statistics using Micrometer.
+
+However, this can explicit be configured via: `application.properties` such as:
+
+[source,properties]
+----
+camel.resilience4j.micrometerEnabled = true
+----
+
+Or to turn it off:
+
+[source,properties]
+----
+camel.resilience4j.micrometerEnabled = false
+----
+
+include::spring-boot:partial$starter.adoc[]

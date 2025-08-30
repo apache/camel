@@ -1,0 +1,1 @@
+../../../../../components/camel-resilience4j-micrometer/src/main/docs/resilience4j-micrometer.adoc

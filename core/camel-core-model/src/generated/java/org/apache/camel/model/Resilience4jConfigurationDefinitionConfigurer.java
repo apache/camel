@@ -31,6 +31,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         map.put("FailureRateThreshold", java.lang.String.class);
         map.put("Id", java.lang.String.class);
         map.put("IgnoreExceptions", java.util.List.class);
+        map.put("MicrometerEnabled", java.lang.String.class);
         map.put("MinimumNumberOfCalls", java.lang.String.class);
         map.put("PermittedNumberOfCallsInHalfOpenState", java.lang.String.class);
         map.put("RecordExceptions", java.util.List.class);
@@ -68,6 +69,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
         case "ignoreexceptions":
         case "ignoreExceptions": target.setIgnoreExceptions(property(camelContext, java.util.List.class, value)); return true;
+        case "micrometerenabled":
+        case "micrometerEnabled": target.setMicrometerEnabled(property(camelContext, java.lang.String.class, value)); return true;
         case "minimumnumberofcalls":
         case "minimumNumberOfCalls": target.setMinimumNumberOfCalls(property(camelContext, java.lang.String.class, value)); return true;
         case "permittednumberofcallsinhalfopenstate":
@@ -124,6 +127,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "id": return java.lang.String.class;
         case "ignoreexceptions":
         case "ignoreExceptions": return java.util.List.class;
+        case "micrometerenabled":
+        case "micrometerEnabled": return java.lang.String.class;
         case "minimumnumberofcalls":
         case "minimumNumberOfCalls": return java.lang.String.class;
         case "permittednumberofcallsinhalfopenstate":
@@ -176,6 +181,8 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
         case "id": return target.getId();
         case "ignoreexceptions":
         case "ignoreExceptions": return target.getIgnoreExceptions();
+        case "micrometerenabled":
+        case "micrometerEnabled": return target.getMicrometerEnabled();
         case "minimumnumberofcalls":
         case "minimumNumberOfCalls": return target.getMinimumNumberOfCalls();
         case "permittednumberofcallsinhalfopenstate":

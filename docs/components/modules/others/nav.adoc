@@ -47,6 +47,7 @@
 ** xref:reactor.adoc[Reactor]
 ** xref:redis.adoc[Redis]
 ** xref:resilience4j.adoc[Resilience4j]
+** xref:resilience4j-micrometer.adoc[Resilience4j Micrometer]
 ** xref:resourceresolver-github.adoc[Resourceresolver Github]
 ** xref:rxjava.adoc[RxJava]
 ** xref:shiro.adoc[Shiro]

@@ -5054,6 +5054,16 @@ Configures whether cancel is called on the running future. Defaults to true. Def
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="micrometerEnabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR to the
+classpath. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

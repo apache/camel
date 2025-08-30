@@ -14019,6 +14019,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "failureRateThreshold", type = "number", defaultValue = "50", description = "Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.", displayName = "Failure Rate Threshold"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "ignoreException", type = "array:string", description = "Configure a list of exceptions that are ignored and neither count as a failure nor success. Any exception matching or inheriting from one of the list will not count as a failure nor success, even if the exceptions is part of recordExceptions.", displayName = "Ignore Exception"),
+                    @YamlProperty(name = "micrometerEnabled", type = "boolean", defaultValue = "false", description = "Whether to enable collecting statistics using Micrometer. This requires adding camel-resilience4j-micrometer JAR to the classpath.", displayName = "Micrometer Enabled"),
                     @YamlProperty(name = "minimumNumberOfCalls", type = "number", defaultValue = "100", description = "Configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate. For example, if minimumNumberOfCalls is 10, then at least 10 calls must be recorded, before the failure rate can be calculated. If only 9 calls have been recorded the CircuitBreaker will not transition to open even if all 9 calls have failed. Default minimumNumberOfCalls is 100", displayName = "Minimum Number Of Calls"),
                     @YamlProperty(name = "permittedNumberOfCallsInHalfOpenState", type = "number", defaultValue = "10", description = "Configures the number of permitted calls when the CircuitBreaker is half open. The size must be greater than 0. Default size is 10.", displayName = "Permitted Number Of Calls In Half Open State"),
                     @YamlProperty(name = "recordException", type = "array:string", description = "Configure a list of exceptions that are recorded as a failure and thus increase the failure rate. Any exception matching or inheriting from one of the list counts as a failure, unless explicitly ignored via ignoreExceptions.", displayName = "Record Exception"),
@@ -14093,6 +14094,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "ignoreException": {
                     java.util.List<String> val = asStringList(node);
                     target.setIgnoreExceptions(val);
+                    break;
+                }
+                case "micrometerEnabled": {
+                    String val = asText(node);
+                    target.setMicrometerEnabled(val);
                     break;
                 }
                 case "minimumNumberOfCalls": {

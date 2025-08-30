@@ -254,8 +254,8 @@
         <module>camel-printer</module>
         <module>camel-protobuf</module>
         <module>camel-pubnub</module>
-	<module>camel-pulsar</module>
-	<module>camel-pqc</module>
+        <module>camel-pulsar</module>
+        <module>camel-pqc</module>
         <module>camel-python</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
@@ -265,6 +265,7 @@
         <module>camel-reactor</module>
         <module>camel-redis</module>
         <module>camel-resilience4j</module>
+        <module>camel-resilience4j-micrometer</module>
         <module>camel-resourceresolver-github</module>
         <module>camel-robotframework</module>
         <module>camel-rocketmq</module>
