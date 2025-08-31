@@ -263,14 +263,14 @@ public class Debug extends Run {
 
     @Override
     protected int runDebug(KameletMain main) throws Exception {
-        // is this a maven project
         File pom = new File("pom.xml");
         if (pom.isFile() && pom.exists()) {
-            // is this a spring-boot project
             try (InputStream is = new FileInputStream(pom)) {
                 String text = IOHelper.loadText(is);
                 if (text.contains("camel-spring-boot-bom")) {
                     return doRunDebugSpringBoot(main);
+                } else if (text.contains("org.apache.camel.quarkus")) {
+                    return doRunDebugQuarkus(main);
                 }
             }
         }
@@ -383,6 +383,122 @@ public class Debug extends Run {
                 printer().println("Debugging Camel Spring Boot integration: " + name + " with PID: " + p.pid());
             } else {
                 printer().printErr("Timed out preparing Camel Spring Boot for debugging");
+                this.spawnError = p.getErrorStream();
+                this.spawnPid = p.pid();
+                p.destroy();
+                return -1;
+            }
+        }
+
+        return 0;
+    }
+
+    private int doRunDebugQuarkus(KameletMain main) throws Exception {
+        Path pom = Paths.get("pom.xml");
+        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+        try (Reader reader = Files.newBufferedReader(pom)) {
+            Model model = mavenReader.read(reader);
+
+            // include camel-debug dependency
+            Dependency d = new Dependency();
+            d.setGroupId("org.apache.camel.quarkus");
+            d.setArtifactId("camel-quarkus-debug");
+            model.getDependencies().add(d);
+            d = new Dependency();
+            d.setGroupId("org.apache.camel.quarkus");
+            d.setArtifactId("camel-quarkus-cli-connector");
+            model.getDependencies().add(d);
+
+            Profile mp = new Profile();
+            model.addProfile(mp);
+            mp.setId("camel-debug");
+            Activation a = new Activation();
+            a.setActiveByDefault(true);
+            mp.setActivation(a);
+
+            Build b = new Build();
+            mp.setBuild(b);
+
+            Plugin pi = new Plugin();
+            b.addPlugin(pi);
+            pi.setGroupId(quarkusGroupId);
+            pi.setArtifactId("quarkus-maven-plugin");
+            pi.setVersion(quarkusVersion);
+            PluginExecution pe = new PluginExecution();
+            pe.addGoal("build");
+            pi.addExecution(pe);
+            Xpp3Dom cfg = new Xpp3Dom("finalName");
+            cfg.setValue("camel-jbang-debug");
+            Xpp3Dom root = new Xpp3Dom("configuration");
+            root.addChild(cfg);
+            pi.setConfiguration(root);
+
+            MavenXpp3Writer w = new MavenXpp3Writer();
+            FileOutputStream fos = new FileOutputStream("camel-jbang-debug-pom.xml", false);
+            w.write(fos, model);
+            IOHelper.close(fos);
+
+            printer().println("Preparing Camel Quarkus for debugging ...");
+
+            // use maven wrapper if present
+            String mvnw = "/mvnw";
+            if (FileUtil.isWindows()) {
+                mvnw = "/mvnw.cmd";
+            }
+            if (!new File(mvnw).exists()) {
+                mvnw = "mvn";
+            }
+            // use maven to build the JAR and then run the JAR after-wards
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command(mvnw, "-Dmaven.test.skip", "--file", "camel-jbang-debug-pom.xml", "package", "quarkus:build");
+            Process p = pb.start();
+
+            if (p.waitFor(30, TimeUnit.SECONDS)) {
+                AtomicReference<Process> processRef = new AtomicReference<>();
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    try {
+                        // We need to wait for the process to exit before doing any cleanup
+                        Process process = processRef.get();
+                        if (process != null) {
+                            process.destroy();
+                            for (int i = 0; i < 30; i++) {
+                                if (!process.isAlive()) {
+                                    break;
+                                }
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                }
+                            }
+                        }
+                        removeDir(Paths.get(RUN_PLATFORM_DIR));
+                        removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                        Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
+                    } catch (Exception e) {
+                        // Ignore
+                    }
+                }));
+
+                // okay build is complete then run java
+                pb = new ProcessBuilder();
+                pb.command("java",
+                        "-Dcamel.debug.enabled=true",
+                        (breakpoint == null
+                                ? "-Dcamel.debug.breakpoints=_all_routes_" : "-Dcamel.debug.breakpoints=" + breakpoint),
+                        "-Dcamel.debug.loggingLevel=DEBUG",
+                        "-Dcamel.debug.singleStepIncludeStartEnd=true",
+                        "-Dcamel.main.sourceLocationEnabled=true",
+                        "-jar", "target/quarkus-app/quarkus-run.jar");
+
+                p = pb.start();
+                processRef.set(p);
+                this.spawnOutput = p.getInputStream();
+                this.spawnError = p.getErrorStream();
+                this.spawnPid = p.pid();
+                printer().println("Debugging Camel Quarkus integration: " + name + " with PID: " + p.pid());
+            } else {
+                printer().printErr("Timed out preparing Camel Quarkus for debugging");
                 this.spawnError = p.getErrorStream();
                 this.spawnPid = p.pid();
                 p.destroy();
