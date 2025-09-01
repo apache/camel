@@ -64,7 +64,8 @@ public interface AgentFactory extends CamelContextAware {
      * configuration remains unchanged. The returned agent will be fully configured and ready to handle chat
      * interactions.
      * </p>
-     * @param exchange the exchange being processed which is triggering the creation of the agent
+     *
+     * @param  exchange  the exchange being processed which is triggering the creation of the agent
      *
      * @return           a configured {@link Agent} instance ready for chat interactions
      * @throws Exception if unable to create the agent due to configuration issues, missing dependencies, or
