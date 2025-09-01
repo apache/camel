@@ -17,6 +17,11 @@
 package org.apache.camel.component.langchain4j.agent.api;
 
 import dev.langchain4j.service.tool.ToolProvider;
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadRuntimeException;
+
+import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
 
 /**
  * Core agent interface that abstracts different types of AI agents within the Apache Camel LangChain4j integration.
@@ -43,6 +48,60 @@ import dev.langchain4j.service.tool.ToolProvider;
  * @see   AgentWithoutMemory
  */
 public interface Agent {
+
+    /**
+     * Processes and normalizes the exchange message payload into an {@link AiAgentBody} instance.
+     *
+     * <p>
+     * This method serves as a payload adapter that ensures consistent input format for AI agent chat interactions. It
+     * handles different payload types and automatically extracts relevant headers to construct a properly formatted
+     * {@link AiAgentBody} object.
+     * </p>
+     *
+     * <p>
+     * The method performs the following transformations:
+     * </p>
+     * <ul>
+     * <li>If the payload is already an {@link AiAgentBody}, it returns it unchanged</li>
+     * <li>If the payload is a {@link String}, it creates a new {@link AiAgentBody} with:
+     * <ul>
+     * <li>The string as the user message</li>
+     * <li>The {@link Headers#SYSTEM_MESSAGE} header value as the system message (if present)</li>
+     * <li>The {@link Headers#MEMORY_ID} header value as the memory identifier (if present)</li>
+     * </ul>
+     * </li>
+     * <li>For any other payload type, it throws an {@link InvalidPayloadRuntimeException}</li>
+     * </ul>
+     *
+     * <p>
+     * This method is typically called automatically by the LangChain4j agent component before invoking the
+     * {@link #chat(AiAgentBody, ToolProvider)} method, ensuring that the agent always receives a properly structured
+     * request body regardless of how the original message was formatted.
+     * </p>
+     *
+     * @param  messagePayload                 the message payload from the exchange body; must be either an
+     *                                        {@link AiAgentBody} or a {@link String}
+     * @param  exchange                       the Camel exchange containing headers and context information
+     * @return                                an {@link AiAgentBody} instance ready for agent processing; returns the
+     *                                        original payload if it's already an {@link AiAgentBody}, or creates a new
+     *                                        one from a string payload and relevant headers
+     * @throws InvalidPayloadRuntimeException if the payload is neither an {@link AiAgentBody} nor a {@link String}
+     * @throws Exception                      if any other error occurs during payload processing
+     */
+    default AiAgentBody processBody(Object messagePayload, Exchange exchange) throws Exception {
+        if (messagePayload instanceof AiAgentBody) {
+            return (AiAgentBody) messagePayload;
+        }
+
+        if (!(messagePayload instanceof String)) {
+            throw new InvalidPayloadRuntimeException(exchange, AiAgentBody.class);
+        }
+
+        String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
+        Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
+
+        return new AiAgentBody((String) messagePayload, systemMessage, memoryId);
+    }
 
     /**
      * Executes a chat interaction with the AI agent using the provided request body and tool provider.
