@@ -131,6 +131,8 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     private String rangeEndKey = "";
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean fullDocument = true;
+    @UriParam(label = "consumer", defaultValue = "5000")
+    private int consumerRetryPause = DEFAULT_PAUSE_BETWEEN_RETRIES;
 
     // Consumer strategy
     @UriParam(label = "consumer", defaultValue = DEFAULT_CONSUME_PROCESSED_STRATEGY)
@@ -380,10 +382,21 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     }
 
     /**
-     * Define the retry pause between different attempts
+     * Define the producer retry pause between different attempts
      */
     public void setProducerRetryPause(int producerRetryPause) {
         this.producerRetryPause = producerRetryPause;
+    }
+
+    public int getConsumerRetryPause() {
+        return consumerRetryPause;
+    }
+
+    /**
+     * Define the consumer retry pause between different attempts
+     */
+    public void setConsumerRetryPause(int consumerRetryPause) {
+        this.consumerRetryPause = consumerRetryPause;
     }
 
     public String getDesignDocumentName() {

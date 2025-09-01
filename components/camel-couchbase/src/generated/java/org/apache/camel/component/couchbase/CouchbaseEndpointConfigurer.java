@@ -41,6 +41,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectTimeout": target.setConnectTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": target.setConsumerProcessedStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumerretrypause":
+        case "consumerRetryPause": target.setConsumerRetryPause(property(camelContext, int.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "descending": target.setDescending(property(camelContext, boolean.class, value)); return true;
         case "designdocumentname":
@@ -125,6 +127,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectTimeout": return long.class;
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": return java.lang.String.class;
+        case "consumerretrypause":
+        case "consumerRetryPause": return int.class;
         case "delay": return long.class;
         case "descending": return boolean.class;
         case "designdocumentname":
@@ -210,6 +214,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectTimeout": return target.getConnectTimeout();
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": return target.getConsumerProcessedStrategy();
+        case "consumerretrypause":
+        case "consumerRetryPause": return target.getConsumerRetryPause();
         case "delay": return target.getDelay();
         case "descending": return target.isDescending();
         case "designdocumentname":

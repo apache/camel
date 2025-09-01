@@ -143,7 +143,7 @@ public class CouchbaseProducer extends DefaultProducer {
             exchange.getMessage().setBody(result);
         } else if (endpoint.getOperation().equals(COUCHBASE_GET)) {
             LOG.trace("Type of operation: GET");
-            GetResult result = CouchbaseCollectionOperation.getDocument(collection, id, queryTimeout);
+            GetResult result = CouchbaseCollectionOperation.getDocument(collection, id, queryTimeout, producerRetryPause);
             exchange.getMessage().setBody(result);
         } else if (endpoint.getOperation().equals(COUCHBASE_DELETE)) {
             LOG.trace("Type of operation: DELETE");

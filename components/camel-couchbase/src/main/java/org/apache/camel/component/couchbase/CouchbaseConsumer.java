@@ -137,7 +137,8 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
                 Object doc;
                 String id = row.id().get();
                 if (endpoint.isFullDocument()) {
-                    doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout());
+                    doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout(),
+                            endpoint.getConsumerRetryPause());
                 } else {
                     doc = row.valueAs(Object.class);
                 }
@@ -158,7 +159,7 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
                         LOG.trace("Deleting doc with ID {}", id);
                     }
                     CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
-                            endpoint.getProducerRetryPause());
+                            endpoint.getConsumerRetryPause());
                 } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Filtering out ID {}", id);
