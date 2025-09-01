@@ -60,7 +60,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         Agent agent;
         if (agentFactory != null) {
-            agent = agentFactory.createAgent();
+            agent = agentFactory.createAgent(exchange);
         } else {
             agent = endpoint.getConfiguration().getAgent();
         }
