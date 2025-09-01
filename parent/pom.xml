@@ -471,7 +471,7 @@
         <smallrye-fault-tolerance-version>6.9.2</smallrye-fault-tolerance-version>
         <smbj-version>0.14.0</smbj-version>
         <smooks-version>2.2.1</smooks-version>
-        <snakeyaml-version>2.4</snakeyaml-version>
+        <snakeyaml-version>2.5</snakeyaml-version>
         <snakeyaml-engine-version>2.10</snakeyaml-engine-version>
         <snmp4j-version>3.9.6</snmp4j-version>
         <solr-version>9.9.0</solr-version>
