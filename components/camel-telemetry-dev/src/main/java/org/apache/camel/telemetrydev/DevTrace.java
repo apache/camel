@@ -101,8 +101,10 @@ public class DevTrace implements Iterable<DevSpanAdapter> {
                 next = getWithParent(upperLevel.getParentSpanId());
             }
 
-            actual.push(next);
-            scanned.put(next.getSpanId(), true);
+            if (next != null) {
+                actual.push(next);
+                scanned.put(next.getSpanId(), true);
+            }
             return next;
         }
 
