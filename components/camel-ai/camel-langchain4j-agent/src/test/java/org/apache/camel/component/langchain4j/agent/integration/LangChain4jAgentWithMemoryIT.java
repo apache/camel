@@ -33,8 +33,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.apache.camel.component.langchain4j.agent.Headers.MEMORY_ID;
-import static org.apache.camel.component.langchain4j.agent.Headers.SYSTEM_MESSAGE;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

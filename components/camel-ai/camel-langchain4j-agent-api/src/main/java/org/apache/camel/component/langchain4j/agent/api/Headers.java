@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.langchain4j.agent;
+package org.apache.camel.component.langchain4j.agent.api;
 
 import org.apache.camel.spi.Metadata;
 
