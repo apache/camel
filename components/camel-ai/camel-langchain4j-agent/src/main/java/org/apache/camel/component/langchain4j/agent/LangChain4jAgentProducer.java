@@ -27,7 +27,6 @@ import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
@@ -37,9 +36,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.langchain4j.agent.Headers.MEMORY_ID;
-import static org.apache.camel.component.langchain4j.agent.Headers.SYSTEM_MESSAGE;
 
 public class LangChain4jAgentProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jAgentProducer.class);
@@ -58,6 +54,9 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         Object messagePayload = exchange.getIn().getBody();
         ObjectHelper.notNull(messagePayload, "body");
 
+        // tags for Camel Routes as Tools
+        String tags = endpoint.getConfiguration().getTags();
+
         Agent agent;
         if (agentFactory != null) {
             agent = agentFactory.createAgent(exchange);
@@ -65,35 +64,11 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             agent = endpoint.getConfiguration().getAgent();
         }
 
-        AiAgentBody aiAgentBody = processBody(messagePayload, exchange);
-
-        // tags for Camel Routes as Tools
-        String tags = endpoint.getConfiguration().getTags();
+        AiAgentBody aiAgentBody = agent.processBody(messagePayload, exchange);
 
         ToolProvider toolProvider = createCamelToolProvider(tags, exchange);
         String response = agent.chat(aiAgentBody, toolProvider);
         exchange.getMessage().setBody(response);
-    }
-
-    /**
-     * No matter if the user uses an AiAgentBody or headers, we manipulate an AiAgentBody
-     *
-     * @param messagePayload
-     * @param exchange
-     */
-    private AiAgentBody processBody(Object messagePayload, Exchange exchange) {
-        if (messagePayload instanceof AiAgentBody) {
-            return (AiAgentBody) messagePayload;
-        }
-
-        if (!(messagePayload instanceof String)) {
-            throw new InvalidPayloadRuntimeException(exchange, AiAgentBody.class);
-        }
-
-        String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
-        Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
-
-        return new AiAgentBody((String) messagePayload, systemMessage, memoryId);
     }
 
     /**
