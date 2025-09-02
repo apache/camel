@@ -76,9 +76,11 @@ public final class CouchbaseCollectionOperation {
      * @param  queryTimeout
      * @return
      */
-    protected static GetResult getDocument(Collection collection, String id, long queryTimeout) {
+    protected static GetResult getDocument(Collection collection, String id, long queryTimeout, long retryPause) {
         GetOptions options = GetOptions.getOptions()
-                .timeout(Duration.ofMillis(queryTimeout));
+                .timeout(Duration.ofMillis(queryTimeout))
+                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(retryPause),
+                        Duration.ofMillis(retryPause), 1));
         return collection.get(id, options);
     }
 

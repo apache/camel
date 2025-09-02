@@ -117,6 +117,36 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the consumer retry pause between different attempts.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param consumerRetryPause the value to set
+         * @return the dsl builder
+         */
+        default CouchbaseEndpointConsumerBuilder consumerRetryPause(int consumerRetryPause) {
+            doSetProperty("consumerRetryPause", consumerRetryPause);
+            return this;
+        }
+        /**
+         * Define the consumer retry pause between different attempts.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param consumerRetryPause the value to set
+         * @return the dsl builder
+         */
+        default CouchbaseEndpointConsumerBuilder consumerRetryPause(String consumerRetryPause) {
+            doSetProperty("consumerRetryPause", consumerRetryPause);
+            return this;
+        }
+        /**
          * Define if this operation is descending or not.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1228,7 +1258,7 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the retry pause between different attempts.
+         * Define the producer retry pause between different attempts.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1243,7 +1273,7 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the retry pause between different attempts.
+         * Define the producer retry pause between different attempts.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

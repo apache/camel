@@ -23,7 +23,7 @@ public class CouchbaseEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(48);
+        Set<String> props = new HashSet<>(49);
         props.add("additionalHosts");
         props.add("autoStartIdForInserts");
         props.add("backoffErrorThreshold");
@@ -34,6 +34,7 @@ public class CouchbaseEndpointUriFactory extends org.apache.camel.support.compon
         props.add("collection");
         props.add("connectTimeout");
         props.add("consumerProcessedStrategy");
+        props.add("consumerRetryPause");
         props.add("delay");
         props.add("descending");
         props.add("designDocumentName");
