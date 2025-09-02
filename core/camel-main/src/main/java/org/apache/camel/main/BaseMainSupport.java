@@ -973,7 +973,10 @@ public abstract class BaseMainSupport extends BaseService {
         if (mf == null) {
             ModelCamelContext model = (ModelCamelContext) camelContext;
             Resilience4jConfigurationDefinition config = model.getResilience4jConfiguration(null);
-            boolean micrometer = config != null && CamelContextHelper.parseBoolean(camelContext, config.getMicrometerEnabled());
+            //enabled flag can be null (in Camel-Quarkus, which does not support resilience)
+            //see https://github.com/apache/camel-quarkus/issues/7682
+            boolean micrometer = config != null && config.getMicrometerEnabled() != null
+                    && CamelContextHelper.parseBoolean(camelContext, config.getMicrometerEnabled());
             if (micrometer) {
                 throw new IllegalArgumentException(
                         "Cannot find Resilience4jMicrometerFactory on classpath. Add camel-resilience4j-micrometer to classpath.");
