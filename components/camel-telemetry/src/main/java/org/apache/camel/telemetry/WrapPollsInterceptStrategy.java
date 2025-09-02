@@ -24,13 +24,14 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 /**
- * TraceProcessorsInterceptStrategy is used to wrap each processor calls and generate a Span for each process execution.
+ * WrapPollsInterceptStrategy is used for any regular process in order to include any potential external generated trace
+ * (for instance, any http call used in polling components) under the specific trace parent.
  */
-public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
+public class WrapPollsInterceptStrategy implements InterceptStrategy {
 
     private Tracer tracer;
 
-    public TraceProcessorsInterceptStrategy(Tracer tracer) {
+    public WrapPollsInterceptStrategy(Tracer tracer) {
         this.tracer = tracer;
     }
 
@@ -55,12 +56,7 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         public void process(Exchange exchange) throws Exception {
             String processor = processorDefinition.getId() + "-" + processorDefinition.getShortName();
             if (!tracer.exclude(processor, exchange.getContext())) {
-                tracer.beginProcessorSpan(exchange, processor);
-                try {
-                    target.process(exchange);
-                } finally {
-                    tracer.endProcessorSpan(exchange, processor);
-                }
+                target.process(exchange);
             }
         }
     }
