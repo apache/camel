@@ -145,10 +145,13 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
             camelContext.addRoutePolicyFactory(this);
         }
         camelContext.getCamelContextExtension().addLogListener(new TracingLogListener());
+        InterceptStrategy interceptStrategy;
         if (isTraceProcessors()) {
-            InterceptStrategy traceProcessorsStrategy = new TraceProcessorsInterceptStrategy(this);
-            camelContext.getCamelContextExtension().addInterceptStrategy(traceProcessorsStrategy);
+            interceptStrategy = new TraceProcessorsInterceptStrategy(this);
+        } else {
+            interceptStrategy = new WrapPollsInterceptStrategy(this);
         }
+        camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
         initTracer();
         ServiceHelper.startService(eventNotifier);
     }
