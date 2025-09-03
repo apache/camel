@@ -25,7 +25,7 @@ package org.apache.camel.spi;
  * This is used by camel-test for the auto mocking feature (such as @MockEndpoint). See the
  * org.apache.camel.processor.AutoMockInterceptProducer.
  */
-public interface InterceptSendToEndpointStrategy {
+public interface AutoMockInterceptStrategy {
 
     /**
      * Intercept sending to the uri or uri pattern.

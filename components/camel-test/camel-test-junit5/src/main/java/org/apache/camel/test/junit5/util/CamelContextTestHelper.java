@@ -38,7 +38,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.DefaultInterceptSendToEndpointStrategy;
+import org.apache.camel.support.DefaultAutoMockInterceptStrategy;
 import org.apache.camel.test.junit5.StubComponentAutowireStrategy;
 import org.apache.camel.test.junit5.StubComponentResolver;
 import org.apache.camel.test.junit5.TestExecutionConfiguration;
@@ -154,12 +154,12 @@ public final class CamelContextTestHelper {
     public static void enableAutoMocking(CamelContext context, String pattern, String mockAndSkipPattern) throws Exception {
         if (pattern != null) {
             context.getCamelContextExtension()
-                    .registerInterceptSendToEndpointStrategy(new DefaultInterceptSendToEndpointStrategy(pattern, false));
+                    .registerAutoMockInterceptStrategy(new DefaultAutoMockInterceptStrategy(pattern, false));
         }
         if (mockAndSkipPattern != null) {
             context.getCamelContextExtension()
-                    .registerInterceptSendToEndpointStrategy(
-                            new DefaultInterceptSendToEndpointStrategy(mockAndSkipPattern, true));
+                    .registerAutoMockInterceptStrategy(
+                            new DefaultAutoMockInterceptStrategy(mockAndSkipPattern, true));
         }
     }
 

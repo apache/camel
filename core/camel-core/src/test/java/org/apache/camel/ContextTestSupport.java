@@ -45,7 +45,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.BreakpointSupport;
-import org.apache.camel.support.DefaultInterceptSendToEndpointStrategy;
+import org.apache.camel.support.DefaultAutoMockInterceptStrategy;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
@@ -427,12 +427,12 @@ public abstract class ContextTestSupport extends TestSupport
         final String pattern = isMockEndpoints();
         if (pattern != null) {
             context.getCamelContextExtension()
-                    .registerInterceptSendToEndpointStrategy(new DefaultInterceptSendToEndpointStrategy(pattern, false));
+                    .registerAutoMockInterceptStrategy(new DefaultAutoMockInterceptStrategy(pattern, false));
         }
         final String patternSkip = isMockEndpointsAndSkip();
         if (patternSkip != null) {
             context.getCamelContextExtension()
-                    .registerInterceptSendToEndpointStrategy(new DefaultInterceptSendToEndpointStrategy(patternSkip, true));
+                    .registerAutoMockInterceptStrategy(new DefaultAutoMockInterceptStrategy(patternSkip, true));
         }
 
         // configure properties component (mandatory for testing)

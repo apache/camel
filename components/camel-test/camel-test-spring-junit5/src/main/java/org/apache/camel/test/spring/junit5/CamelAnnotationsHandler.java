@@ -38,7 +38,7 @@ import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.support.DefaultInterceptSendToEndpointStrategy;
+import org.apache.camel.support.DefaultAutoMockInterceptStrategy;
 import org.apache.camel.test.junit5.StubComponentAutowireStrategy;
 import org.apache.camel.test.junit5.StubComponentResolver;
 import org.slf4j.Logger;
@@ -348,7 +348,7 @@ public final class CamelAnnotationsHandler {
                 LOGGER.info("Enabling auto mocking of endpoints matching pattern [{}] on CamelContext with name [{}].",
                         pattern, contextName);
                 camelContext.getCamelContextExtension()
-                        .registerInterceptSendToEndpointStrategy(new DefaultInterceptSendToEndpointStrategy(pattern, false));
+                        .registerAutoMockInterceptStrategy(new DefaultAutoMockInterceptStrategy(pattern, false));
             });
         }
     }
@@ -370,8 +370,8 @@ public final class CamelAnnotationsHandler {
                         "Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].",
                         patternAndSkip, contextName);
                 camelContext.getCamelContextExtension()
-                        .registerInterceptSendToEndpointStrategy(
-                                new DefaultInterceptSendToEndpointStrategy(patternAndSkip, true));
+                        .registerAutoMockInterceptStrategy(
+                                new DefaultAutoMockInterceptStrategy(patternAndSkip, true));
             });
         }
     }

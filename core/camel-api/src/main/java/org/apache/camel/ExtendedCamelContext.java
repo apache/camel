@@ -30,7 +30,7 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.InterceptSendToEndpointStrategy;
+import org.apache.camel.spi.AutoMockInterceptStrategy;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
@@ -174,12 +174,13 @@ public interface ExtendedCamelContext {
     void registerEndpointCallback(EndpointStrategy strategy);
 
     /**
-     * Registers a {@link org.apache.camel.spi.InterceptSendToEndpointStrategy callback} to allow you to do custom logic
-     * when an {@link Producer} is about to send {@link Exchange} to an {@link Endpoint}.
+     * Registers an {@link AutoMockInterceptStrategy callback} which is used
+     * for intercepting sending messages to endpoints, and sending a copy to mock endpoints.
+     * This is a feature available with camel-test.
      *
      * @param strategy callback to be invoked
      */
-    void registerInterceptSendToEndpointStrategy(InterceptSendToEndpointStrategy strategy);
+    void registerAutoMockInterceptStrategy(AutoMockInterceptStrategy strategy);
 
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype). If the name has a
@@ -547,9 +548,9 @@ public interface ExtendedCamelContext {
     void setAdditionalSensitiveKeywords(String additionalSensitiveKeywords);
 
     /**
-     * Gets the {@link InterceptSendToEndpointStrategy} strategies.
+     * Gets the {@link AutoMockInterceptStrategy} strategies.
      */
-    Set<InterceptSendToEndpointStrategy> getInterceptSendToEndpointStrategies();
+    Set<AutoMockInterceptStrategy> getAutoMockInterceptStrategies();
 
     /**
      * The {@link CamelContext} have additional phases that are not defined in {@link ServiceStatus} and this method

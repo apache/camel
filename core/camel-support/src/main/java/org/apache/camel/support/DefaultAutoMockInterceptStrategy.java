@@ -16,22 +16,22 @@
  */
 package org.apache.camel.support;
 
-import org.apache.camel.spi.InterceptSendToEndpointStrategy;
+import org.apache.camel.spi.AutoMockInterceptStrategy;
 
 /**
- * Default {@link InterceptSendToEndpointStrategy}.
+ * Default {@link AutoMockInterceptStrategy}.
  */
-public class DefaultInterceptSendToEndpointStrategy implements InterceptSendToEndpointStrategy {
+public class DefaultAutoMockInterceptStrategy implements AutoMockInterceptStrategy {
 
     private String pattern;
     private boolean skip;
 
-    public DefaultInterceptSendToEndpointStrategy(String pattern, boolean skip) {
+    public DefaultAutoMockInterceptStrategy(String pattern, boolean skip) {
         this.pattern = pattern;
         this.skip = skip;
     }
 
-    public DefaultInterceptSendToEndpointStrategy() {
+    public DefaultAutoMockInterceptStrategy() {
     }
 
     @Override

@@ -126,7 +126,7 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
-import org.apache.camel.spi.InterceptSendToEndpointStrategy;
+import org.apache.camel.spi.AutoMockInterceptStrategy;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
@@ -219,7 +219,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final Set<EndpointStrategy> endpointStrategies = ConcurrentHashMap.newKeySet();
-    private final Set<InterceptSendToEndpointStrategy> interceptSendToEndpointStrategies = ConcurrentHashMap.newKeySet();
+    private final Set<AutoMockInterceptStrategy> autoMockInterceptStrategies = ConcurrentHashMap.newKeySet();
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
@@ -4577,8 +4577,8 @@ public abstract class AbstractCamelContext extends BaseService
         return endpointStrategies;
     }
 
-    Set<InterceptSendToEndpointStrategy> getInterceptSendToEndpointStrategies() {
-        return interceptSendToEndpointStrategies;
+    Set<AutoMockInterceptStrategy> getAutoMockInterceptStrategies() {
+        return autoMockInterceptStrategies;
     }
 
     List<RouteStartupOrder> getRouteStartupOrder() {

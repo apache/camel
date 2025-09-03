@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.InterceptSendToEndpointStrategy;
+import org.apache.camel.spi.AutoMockInterceptStrategy;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -63,8 +63,8 @@ public class AutoMockInterceptProducer extends DelegateAsyncProcessor implements
         boolean mock = false;
         boolean skip = false;
         try {
-            for (InterceptSendToEndpointStrategy strategy : camelContext.getCamelContextExtension()
-                    .getInterceptSendToEndpointStrategies()) {
+            for (AutoMockInterceptStrategy strategy : camelContext.getCamelContextExtension()
+                    .getAutoMockInterceptStrategies()) {
                 if (matchPattern(getEndpoint(), strategy.getPattern())) {
                     noMatched = false;
                     mock = true;
