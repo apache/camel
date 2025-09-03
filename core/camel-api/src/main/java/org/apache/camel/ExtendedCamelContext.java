@@ -30,6 +30,7 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
+import org.apache.camel.spi.InterceptSendToEndpointStrategy;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
@@ -171,6 +172,14 @@ public interface ExtendedCamelContext {
      * @param strategy callback to be invoked
      */
     void registerEndpointCallback(EndpointStrategy strategy);
+
+    /**
+     * Registers a {@link org.apache.camel.spi.InterceptSendToEndpointStrategy callback} to allow you to do custom logic
+     * when an {@link Producer} is about to send {@link Exchange} to an {@link Endpoint}.
+     *
+     * @param strategy callback to be invoked
+     */
+    void registerInterceptSendToEndpointStrategy(InterceptSendToEndpointStrategy strategy);
 
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype). If the name has a
@@ -536,6 +545,11 @@ public interface ExtendedCamelContext {
      * @see org.apache.camel.util.SensitiveUtils
      */
     void setAdditionalSensitiveKeywords(String additionalSensitiveKeywords);
+
+    /**
+     * Gets the {@link InterceptSendToEndpointStrategy} strategies.
+     */
+    Set<InterceptSendToEndpointStrategy> getInterceptSendToEndpointStrategies();
 
     /**
      * The {@link CamelContext} have additional phases that are not defined in {@link ServiceStatus} and this method

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.mock;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.DefaultInterceptSendToEndpoint;
@@ -25,8 +27,6 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * A {@link EndpointStrategy} which is capable of mocking endpoints.
@@ -84,32 +84,34 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
             // should be false by default
             InterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
 
-            // create mock endpoint which we will use as interceptor
-            // replace :// from scheme to make it easy to look up the mock endpoint without having double :// in uri
-            String key = "mock:" + endpoint.getEndpointKey().replaceFirst("://", ":");
-            // strip off parameters as well
-            if (key.contains("?")) {
-                key = StringHelper.before(key, "?");
-            }
-            LOG.info("Adviced endpoint [{}] with mock endpoint [{}]", uri, key);
-
-            Endpoint mock = endpoint.getCamelContext().getEndpoint(key, Endpoint.class);
-            Producer producer;
             try {
-                producer = mock.createProducer();
+                Producer producer = createProducer(endpoint.getCamelContext(), uri, proxy);
+                // allow custom logic
+                producer = onInterceptEndpoint(uri, endpoint, producer.getEndpoint(), producer);
+                proxy.setBefore(producer);
             } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
+                throw new RuntimeCamelException(e);
             }
-
-            // allow custom logic
-            producer = onInterceptEndpoint(uri, endpoint, mock, producer);
-            proxy.setBefore(producer);
 
             return proxy;
         } else {
             // no proxy so return regular endpoint
             return endpoint;
         }
+    }
+
+    protected Producer createProducer(CamelContext camelContext, String uri, Endpoint endpoint) throws Exception {
+        // create mock endpoint which we will use as interceptor
+        // replace :// from scheme to make it easy to look up the mock endpoint without having double :// in uri
+        String key = "mock:" + endpoint.getEndpointKey().replaceFirst("://", ":");
+        // strip off parameters as well
+        if (key.contains("?")) {
+            key = StringHelper.before(key, "?");
+        }
+        LOG.info("Adviced endpoint [{}] with mock endpoint [{}]", uri, key);
+
+        Endpoint mock = endpoint.getCamelContext().getEndpoint(key, Endpoint.class);
+        return mock.createProducer();
     }
 
     /**

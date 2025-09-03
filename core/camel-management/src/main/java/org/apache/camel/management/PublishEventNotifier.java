@@ -24,7 +24,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -108,7 +110,8 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
             endpoint = getCamelContext().getEndpoint(endpointUri);
         }
 
-        producer = endpoint.createProducer();
+        InternalProcessorFactory pf = PluginHelper.getInternalProcessorFactory(getCamelContext());
+        producer = pf.createProducer(endpoint);
         ServiceHelper.startService(producer);
     }
 

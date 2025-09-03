@@ -37,12 +37,14 @@ import org.apache.camel.spi.annotations.JdkService;
 @JdkService(InternalProcessorFactory.FACTORY)
 public class DefaultInternalProcessorFactory implements InternalProcessorFactory {
 
+    @Override
     public InternalProcessor addUnitOfWorkProcessorAdvice(CamelContext camelContext, Processor processor, Route route) {
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
         return internal;
     }
 
+    @Override
     public SharedInternalProcessor createSharedCamelInternalProcessor(CamelContext camelContext) {
         return new SharedCamelInternalProcessor(
                 camelContext, new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null, camelContext));
@@ -52,17 +54,39 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
         return new DefaultChannel(camelContext);
     }
 
+    @Override
     public AsyncProducer createInterceptSendToEndpointProcessor(
             InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip, Predicate onWhen) {
         return new InterceptSendToEndpointProcessor(endpoint, delegate, producer, skip, onWhen);
     }
 
+    @Override
     public AsyncProcessor createWrapProcessor(Processor processor, Processor wrapped) {
         return new WrapProcessor(processor, wrapped);
     }
 
+    @Override
     public AsyncProducer createUnitOfWorkProducer(Producer producer) {
         return new UnitOfWorkProducer(producer);
     }
 
+    @Override
+    public AsyncProducer createAsyncProducer(Endpoint endpoint) throws Exception {
+        // is auto mocked intercepting enabled?
+        AsyncProducer answer = endpoint.createAsyncProducer();
+        if (!endpoint.getCamelContext().getCamelContextExtension().getInterceptSendToEndpointStrategies().isEmpty()) {
+            answer = new AutoMockInterceptProducer(answer);
+        }
+        return answer;
+    }
+
+    @Override
+    public Producer createProducer(Endpoint endpoint) throws Exception {
+        // is auto mocked intercepting enabled?
+        Producer answer = endpoint.createProducer();
+        if (!endpoint.getCamelContext().getCamelContextExtension().getInterceptSendToEndpointStrategies().isEmpty()) {
+            answer = new AutoMockInterceptProducer(answer);
+        }
+        return answer;
+    }
 }

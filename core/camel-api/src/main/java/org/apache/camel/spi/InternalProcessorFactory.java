@@ -54,4 +54,8 @@ public interface InternalProcessorFactory {
 
     AsyncProducer createUnitOfWorkProducer(Producer producer);
 
+    AsyncProducer createAsyncProducer(Endpoint endpoint) throws Exception;
+
+    Producer createProducer(Endpoint endpoint) throws Exception;
+
 }

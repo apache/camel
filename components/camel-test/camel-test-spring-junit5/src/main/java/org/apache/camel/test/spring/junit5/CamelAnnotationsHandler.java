@@ -28,7 +28,6 @@ import java.util.function.Function;
 
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
-import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
@@ -39,6 +38,7 @@ import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.support.DefaultInterceptSendToEndpointStrategy;
 import org.apache.camel.test.junit5.StubComponentAutowireStrategy;
 import org.apache.camel.test.junit5.StubComponentResolver;
 import org.slf4j.Logger;
@@ -343,10 +343,35 @@ public final class CamelAnnotationsHandler {
         if (testClass.isAnnotationPresent(MockEndpoints.class)) {
             final String mockEndpoints = testClass.getAnnotation(MockEndpoints.class).value();
             CamelSpringTestHelper.doToSpringCamelContexts(context, (contextName, camelContext) -> {
+                // resolve the property placeholders of the mockEndpoints
+                String pattern = camelContext.resolvePropertyPlaceholders(mockEndpoints);
                 LOGGER.info("Enabling auto mocking of endpoints matching pattern [{}] on CamelContext with name [{}].",
-                        mockEndpoints, contextName);
+                        pattern, contextName);
                 camelContext.getCamelContextExtension()
-                        .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints));
+                        .registerInterceptSendToEndpointStrategy(new DefaultInterceptSendToEndpointStrategy(pattern, false));
+            });
+        }
+    }
+
+    /**
+     * Handles auto-intercepting of endpoints with mocks based on {@link MockEndpointsAndSkip} and skipping the original
+     * endpoint.
+     *
+     * @param context   the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    public static void handleMockEndpointsAndSkip(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
+        if (testClass.isAnnotationPresent(MockEndpointsAndSkip.class)) {
+            final String mockEndpoints = testClass.getAnnotation(MockEndpointsAndSkip.class).value();
+            CamelSpringTestHelper.doToSpringCamelContexts(context, (contextName, camelContext) -> {
+                // resolve the property placeholders of the mockEndpoints
+                String patternAndSkip = camelContext.resolvePropertyPlaceholders(mockEndpoints);
+                LOGGER.info(
+                        "Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].",
+                        patternAndSkip, contextName);
+                camelContext.getCamelContextExtension()
+                        .registerInterceptSendToEndpointStrategy(
+                                new DefaultInterceptSendToEndpointStrategy(patternAndSkip, true));
             });
         }
     }
@@ -376,28 +401,6 @@ public final class CamelAnnotationsHandler {
                 camelContext.getLifecycleStrategies()
                         .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy"));
                 camelContext.getLifecycleStrategies().add(new StubComponentAutowireStrategy(camelContext, stubEndpoints));
-            });
-        }
-    }
-
-    /**
-     * Handles auto-intercepting of endpoints with mocks based on {@link MockEndpointsAndSkip} and skipping the original
-     * endpoint.
-     *
-     * @param context   the initialized Spring context
-     * @param testClass the test class being executed
-     */
-    public static void handleMockEndpointsAndSkip(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
-        if (testClass.isAnnotationPresent(MockEndpointsAndSkip.class)) {
-            final String mockEndpoints = testClass.getAnnotation(MockEndpointsAndSkip.class).value();
-            CamelSpringTestHelper.doToSpringCamelContexts(context, (contextName, camelContext) -> {
-                // resolve the property place holders of the mockEndpoints
-                String mockEndpointsValue = camelContext.resolvePropertyPlaceholders(mockEndpoints);
-                LOGGER.info(
-                        "Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].",
-                        mockEndpointsValue, contextName);
-                camelContext.getCamelContextExtension()
-                        .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
             });
         }
     }

@@ -126,6 +126,7 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
+import org.apache.camel.spi.InterceptSendToEndpointStrategy;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
@@ -218,6 +219,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final Set<EndpointStrategy> endpointStrategies = ConcurrentHashMap.newKeySet();
+    private final Set<InterceptSendToEndpointStrategy> interceptSendToEndpointStrategies = ConcurrentHashMap.newKeySet();
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
@@ -850,7 +852,7 @@ public abstract class AbstractCamelContext extends BaseService
                         addPrototypeService(answer);
                         // if there is endpoint strategies, then use the endpoints they return
                         // as this allows to intercept endpoints etc.
-                        for (EndpointStrategy strategy : endpointStrategies) {
+                        for (EndpointStrategy strategy : getEndpointStrategies()) {
                             answer = strategy.registerEndpoint(uri, answer);
                         }
                     }
@@ -901,7 +903,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // if there is endpoint strategies, then use the endpoints they return
         // as this allows to intercept endpoints etc.
-        for (EndpointStrategy strategy : endpointStrategies) {
+        for (EndpointStrategy strategy : getEndpointStrategies()) {
             endpoint = strategy.registerEndpoint(uri, endpoint);
         }
         endpoints.put(getEndpointKey(uri, endpoint), endpoint);
@@ -4573,6 +4575,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     Set<EndpointStrategy> getEndpointStrategies() {
         return endpointStrategies;
+    }
+
+    Set<InterceptSendToEndpointStrategy> getInterceptSendToEndpointStrategies() {
+        return interceptSendToEndpointStrategies;
     }
 
     List<RouteStartupOrder> getRouteStartupOrder() {

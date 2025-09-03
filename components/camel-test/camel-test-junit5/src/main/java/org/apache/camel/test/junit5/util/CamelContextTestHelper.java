@@ -27,7 +27,6 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
-import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -39,6 +38,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultInterceptSendToEndpointStrategy;
 import org.apache.camel.test.junit5.StubComponentAutowireStrategy;
 import org.apache.camel.test.junit5.StubComponentResolver;
 import org.apache.camel.test.junit5.TestExecutionConfiguration;
@@ -150,19 +150,16 @@ public final class CamelContextTestHelper {
 
     /**
      * Enables auto mocking
-     *
-     * @param context
-     * @param pattern
-     * @param mockAndSkipPattern
      */
-    public static void enableAutoMocking(CamelContext context, String pattern, String mockAndSkipPattern) {
+    public static void enableAutoMocking(CamelContext context, String pattern, String mockAndSkipPattern) throws Exception {
         if (pattern != null) {
             context.getCamelContextExtension()
-                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
+                    .registerInterceptSendToEndpointStrategy(new DefaultInterceptSendToEndpointStrategy(pattern, false));
         }
         if (mockAndSkipPattern != null) {
             context.getCamelContextExtension()
-                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockAndSkipPattern, true));
+                    .registerInterceptSendToEndpointStrategy(
+                            new DefaultInterceptSendToEndpointStrategy(mockAndSkipPattern, true));
         }
     }
 

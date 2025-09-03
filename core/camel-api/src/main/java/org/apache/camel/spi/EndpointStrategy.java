@@ -22,7 +22,7 @@ import org.apache.camel.Endpoint;
  * Endpoint strategy with callback invoked when an {@link org.apache.camel.Endpoint} is about to be registered to the
  * endpoint registry in {@link org.apache.camel.CamelContext}. This callback allows you to intervene and return a mixed
  * in {@link org.apache.camel.Endpoint}.
- * <p/>
+ *
  * The InterceptSendToEndpointDefinition uses this to allow it to proxy endpoints so it can intercept sending to the
  * given endpoint.
  */

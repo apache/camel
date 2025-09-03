@@ -52,6 +52,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptSendToEndpointStrategy;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
@@ -298,6 +299,16 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
                 }
             }
         }
+    }
+
+    @Override
+    public void registerInterceptSendToEndpointStrategy(InterceptSendToEndpointStrategy strategy) {
+        camelContext.getInterceptSendToEndpointStrategies().add(strategy);
+    }
+
+    @Override
+    public Set<InterceptSendToEndpointStrategy> getInterceptSendToEndpointStrategies() {
+        return camelContext.getInterceptSendToEndpointStrategies();
     }
 
     @Override

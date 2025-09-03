@@ -32,7 +32,6 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.LanguageBuilderFactory;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -46,6 +45,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.BreakpointSupport;
+import org.apache.camel.support.DefaultInterceptSendToEndpointStrategy;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PluginHelper;
@@ -424,15 +424,15 @@ public abstract class ContextTestSupport extends TestSupport
         THREAD_CONSUMER.set(consumer);
 
         // enable auto mocking if enabled
-        String pattern = isMockEndpoints();
+        final String pattern = isMockEndpoints();
         if (pattern != null) {
             context.getCamelContextExtension()
-                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
+                    .registerInterceptSendToEndpointStrategy(new DefaultInterceptSendToEndpointStrategy(pattern, false));
         }
-        pattern = isMockEndpointsAndSkip();
-        if (pattern != null) {
+        final String patternSkip = isMockEndpointsAndSkip();
+        if (patternSkip != null) {
             context.getCamelContextExtension()
-                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
+                    .registerInterceptSendToEndpointStrategy(new DefaultInterceptSendToEndpointStrategy(patternSkip, true));
         }
 
         // configure properties component (mandatory for testing)
