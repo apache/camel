@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.spi.AutoMockInterceptStrategy;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.EndpointStrategy;
@@ -30,7 +31,6 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.AutoMockInterceptStrategy;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
@@ -174,9 +174,8 @@ public interface ExtendedCamelContext {
     void registerEndpointCallback(EndpointStrategy strategy);
 
     /**
-     * Registers an {@link AutoMockInterceptStrategy callback} which is used
-     * for intercepting sending messages to endpoints, and sending a copy to mock endpoints.
-     * This is a feature available with camel-test.
+     * Registers an {@link AutoMockInterceptStrategy callback} which is used for intercepting sending messages to
+     * endpoints, and sending a copy to mock endpoints. This is a feature available with camel-test.
      *
      * @param strategy callback to be invoked
      */
