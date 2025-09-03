@@ -46,5 +46,3 @@ Or to turn it off:
 ----
 camel.resilience4j.micrometerEnabled = false
 ----
-
-include::spring-boot:partial$starter.adoc[]
