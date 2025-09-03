@@ -62,7 +62,7 @@ pipeline {
                 axes {
                     axis {
                         name 'JDK_NAME'
-                        values 'jdk_17_latest', 'jdk_21_latest', 'ibm-semeru-21.0.2_13'
+                        values 'jdk_17_latest', 'jdk_21_latest'
                     }
                     axis {
                         name 'PLATFORM'
@@ -73,7 +73,7 @@ pipeline {
                     exclude {
                         axis {
                             name 'JDK_NAME'
-                            values 'jdk_21_latest', 'ibm-semeru-21.0.2_13'
+                            values 'jdk_21_latest'
                         }
                         axis {
                             name 'PLATFORM'
@@ -83,7 +83,7 @@ pipeline {
                     exclude {
                         axis {
                             name 'JDK_NAME'
-                            values 'jdk_21_latest', 'ibm-semeru-21.0.2_13'
+                            values 'jdk_21_latest'
                         }
                         axis {
                             name 'PLATFORM'
