@@ -16,6 +16,15 @@
  */
 package org.apache.camel.spi;
 
+/**
+ * Strategy for intercepting sending messages to endpoints.
+ *
+ * The strategy can match by uri or pattern, and determine whether to skip sending the message to the original intended
+ * endpoints.
+ *
+ * This is used by camel-test for the auto mocking feature (such as @MockEndpoint). See the
+ * org.apache.camel.processor.AutoMockInterceptProducer.
+ */
 public interface InterceptSendToEndpointStrategy {
 
     /**

@@ -72,8 +72,8 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
 
     @Override
     public AsyncProducer createAsyncProducer(Endpoint endpoint) throws Exception {
-        // is auto mocked intercepting enabled?
         AsyncProducer answer = endpoint.createAsyncProducer();
+        // is auto mocked intercepting enabled?
         if (!endpoint.getCamelContext().getCamelContextExtension().getInterceptSendToEndpointStrategies().isEmpty()) {
             answer = new AutoMockInterceptProducer(answer);
         }
@@ -82,8 +82,8 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
 
     @Override
     public Producer createProducer(Endpoint endpoint) throws Exception {
-        // is auto mocked intercepting enabled?
         Producer answer = endpoint.createProducer();
+        // is auto mocked intercepting enabled?
         if (!endpoint.getCamelContext().getCamelContextExtension().getInterceptSendToEndpointStrategies().isEmpty()) {
             answer = new AutoMockInterceptProducer(answer);
         }

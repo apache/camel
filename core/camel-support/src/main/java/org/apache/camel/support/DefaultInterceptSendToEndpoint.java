@@ -36,7 +36,6 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * This is an endpoint when sending to it, is intercepted and is routed in a detour (before and optionally after).
  */
-@Deprecated
 public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, ShutdownableService {
 
     private final CamelContext camelContext;

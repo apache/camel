@@ -31,6 +31,9 @@ public class DefaultInterceptSendToEndpointStrategy implements InterceptSendToEn
         this.skip = skip;
     }
 
+    public DefaultInterceptSendToEndpointStrategy() {
+    }
+
     @Override
     public String getPattern() {
         return pattern;
