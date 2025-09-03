@@ -38,6 +38,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.AutoMockInterceptStrategy;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -298,6 +299,16 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
                 }
             }
         }
+    }
+
+    @Override
+    public void registerAutoMockInterceptStrategy(AutoMockInterceptStrategy strategy) {
+        camelContext.getAutoMockInterceptStrategies().add(strategy);
+    }
+
+    @Override
+    public Set<AutoMockInterceptStrategy> getAutoMockInterceptStrategies() {
+        return camelContext.getAutoMockInterceptStrategies();
     }
 
     @Override

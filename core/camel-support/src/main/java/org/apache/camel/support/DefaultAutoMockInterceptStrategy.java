@@ -14,23 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.support;
+
+import org.apache.camel.spi.AutoMockInterceptStrategy;
 
 /**
- * Factory for intercepting sending to endpoint pattern and sending to mock component. This requires having camel-mock
- * on the classpath.
+ * Default {@link AutoMockInterceptStrategy}.
  */
-public interface MockSendToEndpointStrategyFactory {
+public class DefaultAutoMockInterceptStrategy implements AutoMockInterceptStrategy {
 
-    String FACTORY = "mock-send-to-endpoint-strategy-factory";
+    private String pattern;
+    private boolean skip;
 
-    /**
-     * Mock sending to endpoint using interceptor EIPs
-     *
-     * @param  pattern pattern for intercepting (null or * = intercept all, otherwise it's a text pattern (and regexp).
-     * @param  skip    whether to skip sending to original endpoint (only to mock endpoint).
-     * @return         the endpoint strategy that intercepts.
-     */
-    EndpointStrategy mock(String pattern, boolean skip);
+    public DefaultAutoMockInterceptStrategy(String pattern, boolean skip) {
+        this.pattern = pattern;
+        this.skip = skip;
+    }
 
+    public DefaultAutoMockInterceptStrategy() {
+    }
+
+    @Override
+    public String getPattern() {
+        return pattern;
+    }
+
+    @Override
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+    @Override
+    public boolean isSkip() {
+        return skip;
+    }
+
+    @Override
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+    }
 }

@@ -30,11 +30,13 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -321,7 +323,8 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
 
         // yes we can optimize and use the producer directly for sending
         if (destination.isSingletonProducer()) {
-            this.producer = destination.createAsyncProducer();
+            InternalProcessorFactory pf = PluginHelper.getInternalProcessorFactory(camelContext);
+            this.producer = pf.createAsyncProducer(destination);
             if (this.producer instanceof RouteIdAware ria) {
                 ria.setRouteId(getRouteId());
             }
