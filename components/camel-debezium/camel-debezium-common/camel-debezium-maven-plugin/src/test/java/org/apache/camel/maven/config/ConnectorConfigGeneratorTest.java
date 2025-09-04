@@ -70,14 +70,14 @@ public class ConnectorConfigGeneratorTest {
         Class<?> clazz = getClass();
 
         assertThrows(IllegalArgumentException.class,
-                () -> ConnectorConfigGenerator.create(connector, clazz, requiredFields, overridenDefaultValues));
+                () -> ConnectorConfigGenerator.create(connector, clazz, null, requiredFields, overridenDefaultValues));
     }
 
     private void testIfCorrectlyGeneratedFile(
             final SourceConnector connector, final Class<?> configClass, final Set<String> requiredFields,
             final Map<String, Object> overrideFields) {
         final ConnectorConfigGenerator connectorConfigGenerator
-                = ConnectorConfigGenerator.create(connector, configClass, requiredFields, overrideFields);
+                = ConnectorConfigGenerator.create(connector, configClass, null, requiredFields, overrideFields);
         final Map<String, ConnectorConfigField> connectorConfigFields = ConnectorConfigFieldsFactory
                 .createConnectorFieldsAsMap(connector.config(), configClass, requiredFields, overrideFields);
 

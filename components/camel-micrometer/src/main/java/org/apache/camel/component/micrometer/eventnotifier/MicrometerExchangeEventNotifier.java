@@ -83,25 +83,51 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
 
         inflightRepository = getCamelContext().getInflightRepository();
 
-        // need to be able to remove meter if a route is removed
+        // need to be able to add/remove meter accordingly to route changes
         getCamelContext().getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
             @Override
             public void notify(CamelEvent event) throws Exception {
-                if (event instanceof CamelEvent.RouteRemovedEvent rre) {
-                    String id = rre.getRoute().getRouteId();
-                    Meter meter = meterMap.remove(id);
-                    if (meter != null) {
-                        getMeterRegistry().remove(meter);
-                    }
+                if (event instanceof CamelEvent.RouteAddedEvent rre) {
+                    addInflightMeter(rre.getRoute());
+                } else if (event instanceof CamelEvent.RouteRemovedEvent rre) {
+                    removeInflightMeter(rre.getRoute().getRouteId());
                 }
             }
         });
+
+        // add existing routes
+        for (Route route : getCamelContext().getRoutes()) {
+            addInflightMeter(route);
+        }
+    }
+
+    private void addInflightMeter(Route route) {
+        boolean skip = (route.isCreatedByKamelet() && !registerKamelets)
+                || (route.isCreatedByRouteTemplate() && !registerTemplates);
+        if (!skip) {
+            String routeId = route.getRouteId();
+            String name = getNamingStrategy().getInflightExchangesName();
+            Tags tags = getNamingStrategy().getInflightExchangesTags(getCamelContext(), routeId);
+            Meter meter = Gauge.builder(name, () -> inflightRepository.size(routeId))
+                    .description("Route inflight messages")
+                    .tags(tags)
+                    .register(getMeterRegistry());
+            meterMap.put(routeId, meter);
+        }
+    }
+
+    private void removeInflightMeter(String routeId) {
+        Meter meter = meterMap.remove(routeId);
+        if (meter != null) {
+            getMeterRegistry().remove(meter);
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
 
+        // remove all meters
         meterMap.values().forEach(m -> getMeterRegistry().remove(m));
         meterMap.clear();
     }
@@ -128,7 +154,6 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
                 return;
             }
             if (!(getIgnoreExchanges().test(ee.getExchange()))) {
-                handleExchangeEvent(ee);
                 if (eventObject instanceof ExchangeCreatedEvent) {
                     handleCreatedEvent((ExchangeCreatedEvent) eventObject);
                 } else if (eventObject instanceof ExchangeSentEvent) {
@@ -140,45 +165,27 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         }
     }
 
-    private void handleExchangeEvent(ExchangeEvent exchangeEvent) {
-        Exchange exchange = exchangeEvent.getExchange();
-        if (exchange.getFromRouteId() != null && exchange.getFromEndpoint() != null) {
-            String name = namingStrategy.getInflightExchangesName(exchange, exchange.getFromEndpoint());
-            Tags tags = namingStrategy.getInflightExchangesTags(exchangeEvent, exchange.getFromEndpoint());
-            Meter meter = Gauge.builder(name, () -> getInflightExchangesInRoute(exchangeEvent))
-                    .description("Route inflight messages")
-                    .tags(tags)
-                    .register(getMeterRegistry());
-            meterMap.put(exchange.getFromRouteId(), meter);
-        }
-    }
-
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
-        String name = namingStrategy.getName(sentEvent.getExchange(), sentEvent.getEndpoint());
-        Tags tags = namingStrategy.getTags(sentEvent, sentEvent.getEndpoint());
+        String name = getNamingStrategy().getName(sentEvent.getExchange(), sentEvent.getEndpoint());
+        Tags tags = getNamingStrategy().getTags(sentEvent, sentEvent.getEndpoint());
         Timer timer = Timer.builder(name).tags(tags).description("Time taken to send message to the endpoint")
                 .register(getMeterRegistry());
         timer.record(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
     }
 
     protected void handleCreatedEvent(ExchangeCreatedEvent createdEvent) {
-        String name = namingStrategy.getName(createdEvent.getExchange(), createdEvent.getExchange().getFromEndpoint());
+        String name = getNamingStrategy().getName(createdEvent.getExchange(), createdEvent.getExchange().getFromEndpoint());
         createdEvent.getExchange().setProperty("eventTimer:" + name, Timer.start(getMeterRegistry()));
     }
 
     protected void handleDoneEvent(ExchangeEvent doneEvent) {
-        String name = namingStrategy.getName(doneEvent.getExchange(), doneEvent.getExchange().getFromEndpoint());
-        Tags tags = namingStrategy.getTags(doneEvent, doneEvent.getExchange().getFromEndpoint());
+        String name = getNamingStrategy().getName(doneEvent.getExchange(), doneEvent.getExchange().getFromEndpoint());
+        Tags tags = getNamingStrategy().getTags(doneEvent, doneEvent.getExchange().getFromEndpoint());
         // Would have preferred LongTaskTimer, but you cannot set the FAILED_TAG once it is registered
         Timer.Sample sample = (Timer.Sample) doneEvent.getExchange().removeProperty("eventTimer:" + name);
         if (sample != null) {
             sample.stop(getMeterRegistry().timer(name, tags));
         }
-    }
-
-    private int getInflightExchangesInRoute(ExchangeEvent exchangeEvent) {
-        String routeId = exchangeEvent.getExchange().getFromRouteId();
-        return inflightRepository.size(routeId);
     }
 
 }

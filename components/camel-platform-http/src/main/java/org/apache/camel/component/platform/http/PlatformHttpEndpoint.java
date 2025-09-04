@@ -36,6 +36,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.MimeTypeHelper;
 
 /**
  * Expose HTTP endpoints using the HTTP server available in the current platform.
@@ -241,7 +242,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     }
 
     public void setConsumes(String consumes) {
-        this.consumes = consumes;
+        this.consumes = MimeTypeHelper.sanitizeMimeType(consumes);
     }
 
     public String getProduces() {
@@ -249,7 +250,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     }
 
     public void setProduces(String produces) {
-        this.produces = produces;
+        this.produces = MimeTypeHelper.sanitizeMimeType(produces);
     }
 
     public boolean isMuteException() {

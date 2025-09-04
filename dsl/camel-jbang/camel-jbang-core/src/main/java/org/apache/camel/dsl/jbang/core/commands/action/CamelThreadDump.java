@@ -148,7 +148,7 @@ public class CamelThreadDump extends ActionWatchCommand {
         if (!rows.isEmpty()) {
             int total = jo.getInteger("threadCount");
             int peak = jo.getInteger("peakThreadCount");
-            printer().printf("PID: %s\tThreads: %d\tPeak: %d\t\tDisplay: %d/%d\n", pid, total, peak, rows.size(), total);
+            printer().printf("PID: %s\tThreads: %d\tPeak: %d\t\tDisplay: %d/%d%n", pid, total, peak, rows.size(), total);
 
             if (depth == 1) {
                 singleTable(rows);

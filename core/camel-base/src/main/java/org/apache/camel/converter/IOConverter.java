@@ -161,37 +161,42 @@ public final class IOConverter {
     }
 
     @Converter(order = 19)
+    public static InputStream toInputStream(Reader buffer, Exchange exchange) throws IOException {
+        return toInputStream(toString(buffer), exchange);
+    }
+
+    @Converter(order = 20)
     public static String toString(byte[] data, Exchange exchange) throws IOException {
         return new String(data, ExchangeHelper.getCharset(exchange));
     }
 
-    @Converter(order = 20)
+    @Converter(order = 21)
     public static String toString(File file, Exchange exchange) throws IOException {
         return toString(file.toPath(), exchange);
     }
 
-    @Converter(order = 21)
+    @Converter(order = 22)
     public static String toString(Path file, Exchange exchange) throws IOException {
         return Files.readString(file, ExchangeHelper.getCharset(exchange));
     }
 
-    @Converter(order = 22)
+    @Converter(order = 23)
     public static byte[] toByteArray(File file) throws IOException {
         return toByteArray(file.toPath());
     }
 
-    @Converter(order = 23)
+    @Converter(order = 24)
     public static byte[] toByteArray(Path file) throws IOException {
         return Files.readAllBytes(file);
     }
 
-    @Converter(order = 24)
+    @Converter(order = 25)
     public static byte[] toByteArray(BufferedReader reader, Exchange exchange) throws IOException {
         String s = toString(reader);
         return toByteArray(s, exchange);
     }
 
-    @Converter(order = 25)
+    @Converter(order = 26)
     public static String toString(URL url, Exchange exchange) throws IOException {
         InputStream is = toInputStream(url);
         try {
@@ -201,39 +206,39 @@ public final class IOConverter {
         }
     }
 
-    @Converter(order = 26)
+    @Converter(order = 27)
     public static String toString(BufferedReader reader) throws IOException {
         return IOHelper.toString(reader);
     }
 
-    @Converter(order = 27)
+    @Converter(order = 28)
     public static String toString(Reader reader) throws IOException {
         return IOHelper.toString(reader);
     }
 
-    @Converter(order = 28)
+    @Converter(order = 29)
     public static byte[] toByteArray(Reader reader, Exchange exchange) throws IOException {
         return toByteArray(IOHelper.buffered(reader), exchange);
     }
 
-    @Converter(order = 29)
+    @Converter(order = 30)
     public static byte[] toByteArray(String value, Exchange exchange) throws IOException {
         return value.getBytes(ExchangeHelper.getCharset(exchange));
     }
 
-    @Converter(order = 30)
+    @Converter(order = 31)
     public static String toString(InputStream in, Exchange exchange) throws IOException {
         return toString(toReader(in, exchange));
     }
 
-    @Converter(order = 31)
+    @Converter(order = 32)
     public static InputStream toInputStream(byte[] data) {
         // no buffering required as the complete byte input is already passed
         // over as a whole
         return new ByteArrayInputStream(data);
     }
 
-    @Converter(order = 32)
+    @Converter(order = 33)
     public static ObjectOutput toObjectOutput(OutputStream stream) throws IOException {
         if (stream instanceof ObjectOutput out) {
             return out;
@@ -242,7 +247,7 @@ public final class IOConverter {
         }
     }
 
-    @Converter(order = 33)
+    @Converter(order = 34)
     public static ObjectInput toObjectInput(final InputStream stream, final Exchange exchange) throws IOException {
         if (stream instanceof ObjectInput objectInput) {
             return objectInput;
@@ -269,7 +274,7 @@ public final class IOConverter {
         }
     }
 
-    @Converter(order = 34)
+    @Converter(order = 35)
     public static byte[] toBytes(InputStream stream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(IOHelper.buffered(stream), bos);
@@ -279,36 +284,36 @@ public final class IOConverter {
         return bos.toByteArray();
     }
 
-    @Converter(order = 35)
+    @Converter(order = 36)
     public static byte[] toByteArray(ByteArrayOutputStream os) {
         return os.toByteArray();
     }
 
-    @Converter(order = 36)
+    @Converter(order = 37)
     public static ByteBuffer covertToByteBuffer(InputStream is) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, os);
         return ByteBuffer.wrap(os.toByteArray());
     }
 
-    @Converter(order = 37)
+    @Converter(order = 38)
     public static String toString(ByteArrayOutputStream os, Exchange exchange) throws IOException {
         return os.toString(ExchangeHelper.getCharset(exchange));
     }
 
-    @Converter(order = 38)
+    @Converter(order = 39)
     public static InputStream toInputStream(ByteArrayOutputStream os) {
         // no buffering required as the complete byte array input is already
         // passed over as a whole
         return new ByteArrayInputStream(os.toByteArray());
     }
 
-    @Converter(order = 39)
+    @Converter(order = 40)
     public static Properties toProperties(File file) throws IOException {
         return toProperties(new FileInputStream(file));
     }
 
-    @Converter(order = 40)
+    @Converter(order = 41)
     public static Properties toProperties(InputStream is) throws IOException {
         Properties prop = new Properties();
         try {
@@ -319,7 +324,7 @@ public final class IOConverter {
         return prop;
     }
 
-    @Converter(order = 41)
+    @Converter(order = 42)
     public static Properties toProperties(Reader reader) throws IOException {
         Properties prop = new Properties();
         try {
@@ -330,12 +335,12 @@ public final class IOConverter {
         return prop;
     }
 
-    @Converter(order = 42)
+    @Converter(order = 43)
     public static Path toPath(File file) {
         return file.toPath();
     }
 
-    @Converter(order = 43)
+    @Converter(order = 44)
     public static File toFile(Path path) {
         return path.toFile();
     }

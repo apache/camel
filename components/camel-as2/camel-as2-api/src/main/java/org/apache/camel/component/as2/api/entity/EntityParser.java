@@ -678,9 +678,12 @@ public final class EntityParser {
                     textReportContentTransferEncoding = header.getValue();
                 }
             }
+
+            // If Content-Type is not defined, should be considered as "text/plain; charset=us-ascii" (RFC 2045 - 5.2)
             if (textReportContentType == null) {
-                throw new HttpException("Failed to find Content-Type header in EDI message body part");
+                textReportContentType = ContentType.parse("text/plain").withCharset(StandardCharsets.US_ASCII.name());
             }
+
             if (!textReportContentType.getMimeType().equalsIgnoreCase(AS2MimeType.TEXT_PLAIN)) {
                 throw new HttpException(
                         "Invalid content type '" + textReportContentType.getMimeType()
@@ -914,12 +917,10 @@ public final class EntityParser {
 
             inbuffer.setCharsetDecoder(charsetDecoder);
 
-            String ediMessageBodyPartContent = parseBodyPartText(inbuffer, is, boundary);
-            if (contentTransferEncoding != null) {
-                ediMessageBodyPartContent = EntityUtils.decode(ediMessageBodyPartContent, charset, contentTransferEncoding);
-            }
+            byte[] ediMessageBodyPartContentBytes
+                    = parseBodyPartBytes(inbuffer, is, boundary, ediMessageContentType, contentTransferEncoding);
 
-            return EntityUtils.createEDIEntity(ediMessageBodyPartContent,
+            return EntityUtils.createEDIEntity(ediMessageBodyPartContentBytes,
                     ediMessageContentType, contentTransferEncoding, false, filename);
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse EDI entity");

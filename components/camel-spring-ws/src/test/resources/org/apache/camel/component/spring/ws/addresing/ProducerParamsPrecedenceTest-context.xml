@@ -31,13 +31,13 @@
 		
 		<route>
 			<from uri="direct:wsAddressingAction" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://wsaAction.com&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>
 		<route>
 			<from uri="direct:precedenceWsAddressingAction" />
-			<to uri="bean:wsaPrecedenceResponseProcessor" />
+			<process ref="wsaPrecedenceResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://doNotUse.com&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>
@@ -45,13 +45,13 @@
 
 		<route>
 			<from uri="direct:replyTo" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://turnOnWSA.com&amp;replyTo=http://reply.to&amp;faultTo=http://fault.to&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>
 		<route>
 			<from uri="direct:precedenceReplyTo" />
-			<to uri="bean:wsaPrecedenceResponseProcessor" />
+			<process ref="wsaPrecedenceResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://turnOnWSA.com&amp;replyTo=http://doNotUse.to&amp;faultTo=http://fault.to&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>
@@ -60,13 +60,13 @@
 
 		<route>
 			<from uri="direct:faultTo" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://turnOnWSA.com&amp;faultTo=http://fault.to&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>
 		<route>
 			<from uri="direct:precedenceFaultTo" />
-			<to uri="bean:wsaPrecedenceResponseProcessor" />
+			<process ref="wsaPrecedenceResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://turnOnWSA.com&amp;faultTo=http://doNotUse.to&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>

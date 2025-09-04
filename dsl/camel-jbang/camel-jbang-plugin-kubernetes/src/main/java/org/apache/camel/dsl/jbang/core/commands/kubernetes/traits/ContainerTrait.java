@@ -23,8 +23,8 @@ import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.ContainerPortBuilder;
 import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.ResourceRequirementsBuilder;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.Container;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 
 public class ContainerTrait extends BaseTrait {
 
@@ -81,7 +81,7 @@ public class ContainerTrait extends BaseTrait {
         context.doWithDeployments(d -> d.editOrNewSpec()
                 .editOrNewTemplate()
                 .editOrNewMetadata()
-                .addToLabels(KUBERNETES_NAME_LABEL, context.getName())
+                .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
                 .endMetadata()
                 .editOrNewSpec()
                 .addToContainers(container.build())
@@ -92,7 +92,7 @@ public class ContainerTrait extends BaseTrait {
         context.doWithCronJobs(j -> j.editOrNewSpec()
                 .editOrNewJobTemplate()
                 .editOrNewMetadata()
-                .addToLabels(KUBERNETES_NAME_LABEL, context.getName())
+                .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
                 .endMetadata()
                 .editOrNewSpec()
                 .editOrNewTemplate()

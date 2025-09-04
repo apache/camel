@@ -36,7 +36,9 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.SqsServiceClientConfiguration;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequestEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResponse;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -111,9 +113,8 @@ public class AmazonSQSClientMock implements SqsClient {
         listQueuesRequests.offer(request);
 
         ListQueuesResponse.Builder result = ListQueuesResponse.builder();
-        result.queueUrls(Optional.ofNullable(queueName)
-                .map(it -> List.of("/" + it))
-                .orElseGet(() -> List.of("/queue1", "/queue2")));
+        result.queueUrls(
+                Optional.ofNullable(queueName).map(it -> List.of("/" + it)).orElseGet(() -> List.of("/queue1", "/queue2")));
         return result.build();
     }
 
@@ -246,7 +247,21 @@ public class AmazonSQSClientMock implements SqsClient {
             ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest) {
         this.changeMessageVisibilityBatchRequests.offer(changeMessageVisibilityBatchRequest);
 
-        return ChangeMessageVisibilityBatchResponse.builder().build();
+        // mark all as success
+        List<ChangeMessageVisibilityBatchResultEntry> successful
+                = changeMessageVisibilityBatchRequest.entries().stream().map(this::successVisibilityExtension).toList();
+
+        // setting empty collections to null to support hasSuccessful which
+        // perform null check rather than isEmpty checks
+        if (successful.isEmpty()) {
+            successful = null;
+        }
+
+        return ChangeMessageVisibilityBatchResponse.builder().successful(successful).build();
+    }
+
+    private ChangeMessageVisibilityBatchResultEntry successVisibilityExtension(ChangeMessageVisibilityBatchRequestEntry r) {
+        return ChangeMessageVisibilityBatchResultEntry.builder().id(r.id()).build();
     }
 
     @Override
@@ -264,7 +279,7 @@ public class AmazonSQSClientMock implements SqsClient {
         Collection<BatchResultErrorEntry> entriesFail = new ArrayList<>();
         BatchResultErrorEntry.Builder entry3 = BatchResultErrorEntry.builder();
         BatchResultErrorEntry.Builder entry4 = BatchResultErrorEntry.builder();
-        entry3.id("team1");
+        entry3.id("team3");
         entry4.id("team4");
         entriesFail.add(entry3.build());
         entriesFail.add(entry4.build());
@@ -312,9 +327,7 @@ public class AmazonSQSClientMock implements SqsClient {
         if (queueUrl == null) {
             throw QueueDoesNotExistException.builder().build();
         }
-        return GetQueueUrlResponse.builder()
-                .queueUrl(queueUrl)
-                .build();
+        return GetQueueUrlResponse.builder().queueUrl(queueUrl).build();
     }
 
     ScheduledExecutorService getScheduler() {

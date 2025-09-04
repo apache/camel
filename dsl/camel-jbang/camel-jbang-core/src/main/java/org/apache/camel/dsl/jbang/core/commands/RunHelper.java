@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -190,5 +192,16 @@ public final class RunHelper {
             }
         }
         return false;
+    }
+
+    public static void doWithFields(Class<?> clazz, ReflectionHelper.FieldCallback fc) throws IllegalArgumentException {
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                fc.doWith(field);
+            } catch (IllegalAccessException ex) {
+                // ignore
+            }
+        }
     }
 }

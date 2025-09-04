@@ -173,6 +173,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
               defaultValue = "7443", label = "common,security")
     private int pubSubPort = 7443;
 
+    @Metadata(description = "Allow the Pub/Sub API client to use the proxy detected by java.net.ProxySelector. If false then"
+                            + " no proxy server will be used.",
+              defaultValue = "true", label = "common,proxy")
+    private boolean pubsubAllowUseSystemProxy = true;
+
     @Metadata(description = "Global endpoint configuration - use to set values that are common to all endpoints",
               label = "common,advanced")
     private SalesforceEndpointConfig config;
@@ -784,6 +789,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public void setHttpProxyUseDigestAuth(boolean httpProxyUseDigestAuth) {
         this.httpProxyUseDigestAuth = httpProxyUseDigestAuth;
+    }
+
+    public boolean isPubsubAllowUseSystemProxy() {
+        return pubsubAllowUseSystemProxy;
+    }
+
+    public void setPubsubAllowUseSystemProxy(boolean pubsubAllowUseSystemProxy) {
+        this.pubsubAllowUseSystemProxy = pubsubAllowUseSystemProxy;
     }
 
     public int getWorkerPoolSize() {

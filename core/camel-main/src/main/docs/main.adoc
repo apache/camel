@@ -411,7 +411,7 @@ The camel.vault.kubernetes supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.vault.kubernetes.refresh{zwsp}Enabled* | Whether to automatically reload Camel upon secrets being updated in Kubernetes Cluster. | true | boolean
+| *camel.vault.kubernetes.refresh{zwsp}Enabled* | Whether to automatically reload Camel upon secrets being updated in Kubernetes Cluster. | false | boolean
 | *camel.vault.kubernetes.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 |===
 

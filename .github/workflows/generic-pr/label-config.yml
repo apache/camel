@@ -15,12 +15,6 @@
 # limitations under the License.
 #
 
-camel-3:
-  - base-branch:
-      - 'camel-3.21.x'
-      - 'camel-3.22.x'
-      - 'camel-3.x'
-
 camel-4:
   - base-branch:
       - 'main'

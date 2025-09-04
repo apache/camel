@@ -70,6 +70,19 @@ public final class VersionHelper {
         } else {
             t3 = "";
         }
+        // avoid NPE
+        if (s1 == null) {
+            s1 = source;
+        }
+        if (s2 == null) {
+            s2 = "";
+        }
+        if (t1 == null) {
+            t1 = target;
+        }
+        if (t2 == null) {
+            t2 = "";
+        }
         // convert to 2-digit numbers
         if (s1.length() < 2) {
             s1 = "0" + s1;

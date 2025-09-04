@@ -539,6 +539,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
                 exp = StringHelper.after(exp, ",");
+                if (input != null) {
+                    input = input.trim();
+                }
+                if (exp != null) {
+                    exp = exp.trim();
+                }
                 return ExpressionBuilder.singleInputLanguageExpression("jq", exp, input);
             }
             return ExpressionBuilder.languageExpression("jq", exp);
@@ -555,7 +561,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
                 exp = StringHelper.after(exp, ",");
-                return ExpressionBuilder.singleInputLanguageExpression("jq", exp, input);
+                if (input != null) {
+                    input = input.trim();
+                }
+                if (exp != null) {
+                    exp = exp.trim();
+                }
+                return ExpressionBuilder.singleInputLanguageExpression("jsonpath", exp, input);
             }
             return ExpressionBuilder.languageExpression("jsonpath", exp);
         }
@@ -570,7 +582,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
                 exp = StringHelper.after(exp, ",");
-                return ExpressionBuilder.singleInputLanguageExpression("jq", exp, input);
+                if (input != null) {
+                    input = input.trim();
+                }
+                if (exp != null) {
+                    exp = exp.trim();
+                }
+                return ExpressionBuilder.singleInputLanguageExpression("xpath", exp, input);
             }
             return ExpressionBuilder.languageExpression("xpath", exp);
         }

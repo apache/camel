@@ -27,7 +27,6 @@ import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.v1.Integration;
 import org.apache.camel.v1.Pipe;
-import org.apache.camel.v1.integrationspec.Traits;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "export",
@@ -100,16 +99,20 @@ public class IntegrationExport extends KubernetesExport {
     }
 
     @Override
-    protected Traits getTraitSpec(String[] applicationProperties, String[] applicationProfileProperties) {
+    protected org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits getTraitSpec(
+            String[] applicationProperties, String[] applicationProfileProperties) {
         if (integration != null && integration.getSpec().getTraits() != null) {
-            return integration.getSpec().getTraits();
+            return KubernetesHelper.yaml(this.getClass().getClassLoader())
+                    .loadAs(KubernetesHelper.dumpYaml(integration.getSpec().getTraits()),
+                            org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits.class);
         }
 
         if (pipe != null && pipe.getSpec().getIntegration() != null
                 && pipe.getSpec().getIntegration().getTraits() != null) {
             // convert pipe spec traits to integration spec traits
             return KubernetesHelper.yaml(this.getClass().getClassLoader())
-                    .loadAs(KubernetesHelper.dumpYaml(pipe.getSpec().getIntegration().getTraits()), Traits.class);
+                    .loadAs(KubernetesHelper.dumpYaml(pipe.getSpec().getIntegration().getTraits()),
+                            org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits.class);
         }
 
         return super.getTraitSpec(applicationProperties, applicationProfileProperties);

@@ -19,6 +19,7 @@ package org.apache.camel.impl.debugger;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.StopWatch;
@@ -35,6 +36,7 @@ import static org.apache.camel.support.MessageHelper.dumpExceptionAsJSonObject;
  */
 public final class DefaultBacklogTracerEventMessage implements BacklogTracerEventMessage {
 
+    private final CamelContext camelContext;
     private final StopWatch watch;
     private final boolean first;
     private final boolean last;
@@ -62,9 +64,10 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private long duration;
     private boolean done;
 
-    public DefaultBacklogTracerEventMessage(boolean first, boolean last, long uid, long timestamp,
+    public DefaultBacklogTracerEventMessage(CamelContext camelContext, boolean first, boolean last, long uid, long timestamp,
                                             String location, String routeId, String toNode, String exchangeId,
                                             boolean rest, boolean template, JsonObject data) {
+        this.camelContext = camelContext;
         this.watch = new StopWatch();
         this.first = first;
         this.last = last;
@@ -353,11 +356,12 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
                     sb.append(" type=\"").append(type).append("\"");
                 }
                 sb.append(">");
-                String value = jo.getString("value");
+                Object value = jo.get("value");
                 if (value != null) {
                     try {
+                        String text = camelContext.getTypeConverter().tryConvertTo(String.class, value);
                         // must always xml encode
-                        sb.append(StringHelper.xmlEncode(value));
+                        sb.append(StringHelper.xmlEncode(text));
                     } catch (Exception e) {
                         // ignore
                     }
@@ -381,13 +385,14 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
                     sb.append(" type=\"").append(type).append("\"");
                 }
                 sb.append(">");
-                String value = jo.getString("value");
+                Object value = jo.get("value");
                 if (value != null) {
                     try {
+                        String text = camelContext.getTypeConverter().tryConvertTo(String.class, value);
                         // must always xml encode
-                        sb.append(StringHelper.xmlEncode(value));
+                        sb.append(StringHelper.xmlEncode(text));
                     } catch (Exception e) {
-                        // ignore as the body is for logging purpose
+                        // ignore
                     }
                 }
                 sb.append("</exchangeProperty>\n");
@@ -409,11 +414,12 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
                     sb.append(" type=\"").append(type).append("\"");
                 }
                 sb.append(">");
-                String value = jo.getString("value");
+                Object value = jo.get("value");
                 if (value != null) {
                     try {
+                        String text = camelContext.getTypeConverter().tryConvertTo(String.class, value);
                         // must always xml encode
-                        sb.append(StringHelper.xmlEncode(value));
+                        sb.append(StringHelper.xmlEncode(text));
                     } catch (Exception e) {
                         // ignore
                     }
@@ -440,13 +446,14 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
                 sb.append(" position=\"").append(position).append("\"");
             }
             sb.append(">");
-            String value = jo.getString("value");
+            Object value = jo.get("value");
             if (value != null) {
                 try {
+                    String text = camelContext.getTypeConverter().tryConvertTo(String.class, value);
                     // must always xml encode
-                    sb.append(StringHelper.xmlEncode(value));
+                    sb.append(StringHelper.xmlEncode(text));
                 } catch (Exception e) {
-                    // ignore as the body is for logging purpose
+                    // ignore
                 }
             }
             sb.append("</body>\n");

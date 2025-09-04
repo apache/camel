@@ -306,20 +306,19 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     }
 
     protected RoutesBuilderLoader resolveRoutesBuilderLoader(Resource resource, boolean optional) throws Exception {
+        RoutesBuilderLoader answer = null;
+
         // the loader to use is derived from the file extension
         final String extension = FileUtil.onlyExt(resource.getLocation(), false);
 
-        if (ObjectHelper.isEmpty(extension)) {
-            throw new IllegalArgumentException(
-                    "Unable to determine file extension for resource: " + resource.getLocation());
+        if (extension != null) {
+            answer = getRoutesLoader(extension);
         }
-
-        RoutesBuilderLoader loader = getRoutesLoader(extension);
-        if (!optional && loader == null) {
+        if (!optional && answer == null) {
             throw new IllegalArgumentException(
                     "Cannot find RoutesBuilderLoader in classpath supporting file extension: " + extension);
         }
-        return loader;
+        return answer;
     }
 
 }

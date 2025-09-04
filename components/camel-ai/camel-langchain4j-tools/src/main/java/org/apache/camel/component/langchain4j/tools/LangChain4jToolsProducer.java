@@ -34,7 +34,6 @@ import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.output.Response;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolExecutorCache;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
@@ -63,7 +62,9 @@ public class LangChain4jToolsProducer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     private void processMultipleMessages(Exchange exchange) throws InvalidPayloadException {
         List<ChatMessage> messages = exchange.getIn().getMandatoryBody(List.class);
-        populateResponse(toolsChat(messages, exchange), exchange);
+
+        final String response = toolsChat(messages, exchange);
+        populateResponse(response, exchange);
     }
 
     @Override
@@ -97,10 +98,16 @@ public class LangChain4jToolsProducer extends DefaultProducer {
     private String toolsChat(List<ChatMessage> chatMessages, Exchange exchange) {
         final CamelToolExecutorCache toolCache = CamelToolExecutorCache.getInstance();
 
-        final ToolPair toolPair = computeCandidates(toolCache);
+        final ToolPair toolPair = computeCandidates(toolCache, exchange);
+        if (toolPair == null) {
+            return null;
+        }
 
         // First talk to the model to get the tools to be called
-        final Response<AiMessage> response = chatWithLLMForTools(chatMessages, toolPair);
+        final Response<AiMessage> response = chatWithLLMForTools(chatMessages, toolPair, exchange);
+        if (response == null) {
+            return null;
+        }
 
         // Then, talk again to call the tools and compute the final response
         return chatWithLLMForToolCalling(chatMessages, exchange, response, toolPair);
@@ -151,7 +158,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
      * @param  toolPair     the toolPair containing the available tools to be called
      * @return              the response provided by the model
      */
-    private Response<AiMessage> chatWithLLMForTools(List<ChatMessage> chatMessages, ToolPair toolPair) {
+    private Response<AiMessage> chatWithLLMForTools(List<ChatMessage> chatMessages, ToolPair toolPair, Exchange exchange) {
         if (chatMemory != null) {
             // first round chat, need to add System and User message. the following rounds only need to add User message.
             boolean isEmpty = chatMemory.messages().size() == 0;
@@ -166,7 +173,8 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                 .generate(chatMemory != null ? chatMemory.messages() : chatMessages, toolPair.toolSpecifications());
 
         if (!response.content().hasToolExecutionRequests()) {
-            throw new RuntimeCamelException("There are no tools to be executed");
+            exchange.getMessage().setHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER, Boolean.TRUE);
+            return null;
         }
 
         chatMessages.add(response.content());
@@ -180,7 +188,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
      * @return           It returns a record containing both the specification, and the {@link CamelToolSpecification}
      *                   that can be used to call the endpoints.
      */
-    private ToolPair computeCandidates(CamelToolExecutorCache toolCache) {
+    private ToolPair computeCandidates(CamelToolExecutorCache toolCache, Exchange exchange) {
         final List<ToolSpecification> toolSpecifications = new ArrayList<>();
         final List<CamelToolSpecification> callableTools = new ArrayList<>();
 
@@ -202,7 +210,8 @@ public class LangChain4jToolsProducer extends DefaultProducer {
         }
 
         if (toolSpecifications.isEmpty()) {
-            throw new RuntimeCamelException("No tools matching the tags provided by the producer were found");
+            exchange.getMessage().setHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER, Boolean.TRUE);
+            return null;
         }
 
         return new ToolPair(toolSpecifications, callableTools);

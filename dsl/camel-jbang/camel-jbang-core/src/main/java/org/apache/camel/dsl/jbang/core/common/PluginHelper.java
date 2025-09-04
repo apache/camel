@@ -157,7 +157,7 @@ public final class PluginHelper {
                 instance = Optional.of(Plugin.class.cast(ObjectHelper.newInstance(pluginClass)));
             } else {
                 String gav = String.join(":", group, "camel-jbang-plugin-" + command, version);
-                main.getOut().printf(String.format("ERROR: Failed to read file %s in dependency %s.\n", path, gav));
+                main.getOut().printf(String.format("ERROR: Failed to read file %s in dependency %s%n", path, gav));
             }
         } catch (IOException e) {
             throw new RuntimeCamelException(String.format("Failed to read the file %s.", path), e);

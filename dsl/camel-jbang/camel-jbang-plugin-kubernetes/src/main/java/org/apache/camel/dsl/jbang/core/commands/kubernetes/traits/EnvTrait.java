@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.api.model.EnvVarBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Environment;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.Environment;
 
 public class EnvTrait extends BaseTrait {
 

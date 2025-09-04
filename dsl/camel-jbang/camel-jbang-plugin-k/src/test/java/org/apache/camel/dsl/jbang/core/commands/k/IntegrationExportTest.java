@@ -34,8 +34,10 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Deprecated and resource intensive")
 class IntegrationExportTest extends CamelKBaseTest {
 
     private File workingDir;
@@ -61,16 +63,17 @@ class IntegrationExportTest extends CamelKBaseTest {
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals("routes", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("routes", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("routes", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("routes", containers.get(0).getName());
         Assertions.assertEquals(1, matchLabels.size());
-        Assertions.assertEquals("routes", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("routes", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("camel-test/routes:1.0-SNAPSHOT", containers.get(0).getImage());
         Assertions.assertEquals(1, containers.get(0).getEnv().size());
         Assertions.assertEquals("MY_ENV_VAR", containers.get(0).getEnv().get(0).getName());
         Assertions.assertEquals("foo", containers.get(0).getEnv().get(0).getValue());
     }
 
+    @Disabled
     @Test
     public void shouldExportFromPipe() throws Exception {
         IntegrationExport command = createCommand(
@@ -82,11 +85,11 @@ class IntegrationExportTest extends CamelKBaseTest {
         Deployment deployment = getDeployment(RuntimeType.quarkus);
         Assertions.assertEquals("timer-to-log", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("timer-to-log", deployment.getMetadata().getLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("timer-to-log", deployment.getMetadata().getLabels().get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("timer-to-log", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
         Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
         Assertions.assertEquals("timer-to-log",
-                deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
+                deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("camel-test/timer-to-log:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());

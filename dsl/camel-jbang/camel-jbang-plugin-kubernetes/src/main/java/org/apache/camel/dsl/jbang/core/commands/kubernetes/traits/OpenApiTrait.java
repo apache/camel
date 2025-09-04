@@ -20,10 +20,11 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 import java.util.Optional;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.MountBuilder;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Openapi;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.TraitsBuilder;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.TraitsBuilder;
-import org.apache.camel.v1.integrationspec.traits.Openapi;
 
 public class OpenApiTrait extends BaseTrait {
 
@@ -53,11 +54,9 @@ public class OpenApiTrait extends BaseTrait {
 
         if (ObjectHelper.isNotEmpty(openApiTrait.getConfigmaps())) {
             MountTrait delegate = new MountTrait();
-            delegate.apply(new TraitsBuilder()
-                    .withNewMount()
-                    .addAllToResources(openApiTrait.getConfigmaps())
-                    .endIntegrationspecMount()
-                    .build(), context);
+            delegate.apply(
+                    TraitsBuilder.traits().withMount(MountBuilder.mount().withResources(openApiTrait.getConfigmaps())).build(),
+                    context);
         }
     }
 }

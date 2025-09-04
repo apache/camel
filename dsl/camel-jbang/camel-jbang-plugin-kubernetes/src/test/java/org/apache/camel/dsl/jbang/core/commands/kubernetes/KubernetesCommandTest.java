@@ -29,7 +29,12 @@ import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.spi.FactoryFinder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Requires too much network resources")
+@EnabledIf("isDockerAvailable")
 class KubernetesCommandTest extends KubernetesBaseTest {
 
     @Test
@@ -56,13 +61,13 @@ class KubernetesCommandTest extends KubernetesBaseTest {
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(2, matchLabels.size());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
-        Assertions.assertEquals("docker.io/camel-test/route:1.0-SNAPSHOT",
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
+        Assertions.assertEquals("jkube", matchLabels.get(BaseTrait.KUBERNETES_LABEL_MANAGED_BY));
+        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
-        Assertions.assertEquals("Always",
+        Assertions.assertEquals("IfNotPresent",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
     }
 

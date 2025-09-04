@@ -48,7 +48,6 @@ public interface SmbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param path the value to set
@@ -910,7 +909,6 @@ public interface SmbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param path the value to set
@@ -963,6 +961,42 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointProducerBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote SMB server right after use.
+         * Disconnect will only disconnect the current connection to the SMB
+         * server. If you have a consumer which you want to stop, then you need
+         * to stop the consumer route instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder disconnect(boolean disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote SMB server right after use.
+         * Disconnect will only disconnect the current connection to the SMB
+         * server. If you have a consumer which you want to stop, then you need
+         * to stop the consumer route instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder disconnect(String disconnect) {
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -1238,7 +1272,6 @@ public interface SmbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          * 
          * @param path the value to set

@@ -120,6 +120,13 @@ public class Aws2KinesisUriDsl(
   }
 
   /**
+   * The message timestamp to start polling from. Required if iteratorType is set to AT_TIMESTAMP
+   */
+  public fun messageTimestamp(messageTimestamp: String) {
+    it.property("messageTimestamp", messageTimestamp)
+  }
+
+  /**
    * If the polling consumer did not poll any files, you can enable this option to send an empty
    * message (no body) instead.
    */

@@ -33,7 +33,7 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
         map.put("DispositionNotificationTo", java.lang.String.class);
-        map.put("EdiMessage", java.lang.String.class);
+        map.put("EdiMessage", java.lang.Object.class);
         map.put("EdiMessageContentType", org.apache.hc.core5.http.ContentType.class);
         map.put("EdiMessageTransferEncoding", java.lang.String.class);
         map.put("EdiMessageType", org.apache.hc.core5.http.ContentType.class);
@@ -92,7 +92,7 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "dispositionnotificationto":
         case "dispositionNotificationTo": target.setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
         case "edimessage":
-        case "ediMessage": target.setEdiMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "ediMessage": target.setEdiMessage(property(camelContext, java.lang.Object.class, value)); return true;
         case "edimessagecontenttype":
         case "ediMessageContentType": target.setEdiMessageContentType(property(camelContext, org.apache.hc.core5.http.ContentType.class, value)); return true;
         case "edimessagetransferencoding":
@@ -181,7 +181,7 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "dispositionnotificationto":
         case "dispositionNotificationTo": return java.lang.String.class;
         case "edimessage":
-        case "ediMessage": return java.lang.String.class;
+        case "ediMessage": return java.lang.Object.class;
         case "edimessagecontenttype":
         case "ediMessageContentType": return org.apache.hc.core5.http.ContentType.class;
         case "edimessagetransferencoding":

@@ -47,7 +47,7 @@ public class MilvusLocalContainerService implements MilvusService, ContainerServ
     }
 
     protected MilvusContainer initContainer(String imageName) {
-        return new MilvusContainer(DockerImageName.parse(imageName))
+        return new MilvusContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("milvusdb/milvus"))
                 .withStartupTimeout(Duration.ofMinutes(3L));
     }
 

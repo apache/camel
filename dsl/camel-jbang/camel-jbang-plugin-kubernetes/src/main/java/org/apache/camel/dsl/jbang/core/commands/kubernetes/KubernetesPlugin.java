@@ -30,7 +30,7 @@ public class KubernetesPlugin implements Plugin {
                 .addSubcommand("run", new CommandLine(new KubernetesRun(main)))
                 .addSubcommand("export", new CommandLine(new KubernetesExport(main)))
                 .addSubcommand("delete", new CommandLine(new KubernetesDelete(main)))
-                .addSubcommand("logs", new CommandLine(new PodLogs(main)));
+                .addSubcommand("logs", new CommandLine(new KubernetesPodLogs(main)));
 
         commandLine.addSubcommand("kubernetes", cmd, "k8s");
     }

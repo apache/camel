@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.debezium.DebeziumSqlserverComponent;
+import org.apache.camel.component.debezium.sqlserver.DebeziumSqlserverComponent;
 
 /**
  * Capture changes from an SQL Server database.
@@ -103,14 +103,14 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.debezium.sqlserver.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default DebeziumSqlserverComponentBuilder configuration(org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
+        default DebeziumSqlserverComponentBuilder configuration(org.apache.camel.component.debezium.sqlserver.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -1703,9 +1703,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         protected DebeziumSqlserverComponent buildConcreteComponent() {
             return new DebeziumSqlserverComponent();
         }
-        private org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumSqlserverComponent component) {
+        private org.apache.camel.component.debezium.sqlserver.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumSqlserverComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration());
+                component.setConfiguration(new org.apache.camel.component.debezium.sqlserver.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration());
             }
             return component.getConfiguration();
         }
@@ -1717,7 +1717,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             switch (name) {
             case "additionalProperties": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setAdditionalProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((DebeziumSqlserverComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "configuration": ((DebeziumSqlserverComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "configuration": ((DebeziumSqlserverComponent) component).setConfiguration((org.apache.camel.component.debezium.sqlserver.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration) value); return true;
             case "internalKeyConverter": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setInternalKeyConverter((java.lang.String) value); return true;
             case "internalValueConverter": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setInternalValueConverter((java.lang.String) value); return true;
             case "offsetCommitPolicy": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetCommitPolicy((java.lang.String) value); return true;

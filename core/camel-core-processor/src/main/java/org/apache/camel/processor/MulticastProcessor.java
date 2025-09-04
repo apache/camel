@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
@@ -151,7 +150,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
     }
 
-    private final class SyncScheduler implements Executor {
+    private final class TransactedScheduler implements Executor {
 
         @Override
         public void execute(Runnable command) {
@@ -180,12 +179,12 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
     private final Scheduler scheduler = new Scheduler();
-    private final SyncScheduler syncScheduler = new SyncScheduler();
+    private final TransactedScheduler txScheduler = new TransactedScheduler();
     private ExecutorService aggregateExecutorService;
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
     private final int cacheSize;
-    private final ConcurrentMap<Processor, Processor> errorHandlers;
+    private final Map<Processor, Processor> errorHandlers;
     private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors) {
@@ -196,7 +195,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                               AggregationStrategy aggregationStrategy) {
         this(camelContext, route, processors, aggregationStrategy, false, null,
              false, false, false, 0, null,
-             false, false, CamelContextHelper.getMaximumCachePoolSize(camelContext));
+             false, false, 0);
     }
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
@@ -225,9 +224,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
         this.parallelAggregate = parallelAggregate;
         this.processorExchangeFactory = camelContext.getCamelContextExtension()
                 .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
-        this.cacheSize = cacheSize;
-        if (cacheSize >= 0) {
-            this.errorHandlers = (ConcurrentMap) LRUCacheFactory.newLRUCache(cacheSize);
+        this.cacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
+        if (this.cacheSize > 0) {
+            this.errorHandlers = LRUCacheFactory.newLRUCache(this.cacheSize);
         } else {
             // no cache
             this.errorHandlers = null;
@@ -382,7 +381,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         schedule(runnable, false);
     }
 
-    protected void schedule(final Runnable runnable, boolean sync) {
+    protected void schedule(final Runnable runnable, boolean transacted) {
         if (isParallelProcessing()) {
             Runnable task = prepareParallelTask(runnable);
             try {
@@ -392,8 +391,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
                     rej.reject();
                 }
             }
-        } else if (sync) {
-            reactiveExecutor.scheduleSync(runnable);
+        } else if (transacted) {
+            reactiveExecutor.scheduleQueue(runnable);
         } else {
             reactiveExecutor.schedule(runnable);
         }
@@ -447,7 +446,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         final ScheduledFuture<?> timeoutTask;
 
         MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback, int capacity,
-                      boolean sync) {
+                      boolean transacted) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
@@ -467,9 +466,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
             }
             if (capacity > 0) {
                 this.completion
-                        = new AsyncCompletionService<>(sync ? syncScheduler : scheduler, !isStreaming(), lock, capacity);
+                        = new AsyncCompletionService<>(transacted ? txScheduler : scheduler, !isStreaming(), lock, capacity);
             } else {
-                this.completion = new AsyncCompletionService<>(sync ? syncScheduler : scheduler, !isStreaming(), lock);
+                this.completion = new AsyncCompletionService<>(transacted ? txScheduler : scheduler, !isStreaming(), lock);
             }
         }
 
@@ -1279,6 +1278,10 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
         // remove the strategy using this processor as the key
         map.remove(this);
+        // and remove map if its empty
+        if (map.isEmpty()) {
+            exchange.removeProperty(ExchangePropertyKey.AGGREGATION_STRATEGY);
+        }
     }
 
     /**

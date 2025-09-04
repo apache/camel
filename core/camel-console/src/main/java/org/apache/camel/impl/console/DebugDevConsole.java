@@ -124,6 +124,8 @@ public class DebugDevConsole extends AbstractDevConsole {
             } else {
                 backlog.stepBreakpoint();
             }
+        } else if ("stepover".equalsIgnoreCase(command)) {
+            backlog.stepOver();
         } else if ("add".equalsIgnoreCase(command) && ObjectHelper.isNotEmpty(breakpoint)) {
             backlog.addBreakpoint(breakpoint);
         } else if ("remove".equalsIgnoreCase(command)) {

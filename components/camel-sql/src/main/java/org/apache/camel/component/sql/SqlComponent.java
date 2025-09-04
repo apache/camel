@@ -93,7 +93,8 @@ public class SqlComponent extends HealthCheckComponent {
         if (onConsumeBatchComplete != null && usePlaceholder) {
             onConsumeBatchComplete = onConsumeBatchComplete.replaceAll(parameterPlaceholderSubstitute, "?");
         }
-        RowMapperFactory factory = getAndRemoveParameter(parameters, "rowMapperFactory", RowMapperFactory.class);
+        RowMapperFactory factory
+                = getAndRemoveOrResolveReferenceParameter(parameters, "rowMapperFactory", RowMapperFactory.class);
         if (factory == null) {
             factory = rowMapperFactory;
         }

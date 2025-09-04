@@ -97,7 +97,8 @@ public class MicUtilsTest {
 
         ApplicationEDIFACTEntity edifactEntity
                 = new ApplicationEDIFACTEntity(
-                        EDI_MESSAGE, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.NONE, true, "filename.txt");
+                        EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII.name(),
+                        AS2TransferEncoding.NONE, true, "filename.txt");
         InputStream is = edifactEntity.getContent();
         BasicHttpEntity basicEntity = new BasicHttpEntity(is, ContentType.create(CONTENT_TYPE_VALUE));
         request.setEntity(basicEntity);
@@ -123,7 +124,8 @@ public class MicUtilsTest {
 
         ApplicationEDIFACTEntity edifactEntity
                 = new ApplicationEDIFACTEntity(
-                        EDI_MESSAGE, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.NONE, true, "filename.txt");
+                        EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII.name(),
+                        AS2TransferEncoding.NONE, true, "filename.txt");
         InputStream is = edifactEntity.getContent();
         BasicHttpEntity basicEntity = new BasicHttpEntity(is, ContentType.create(CONTENT_TYPE_VALUE));
         request.setEntity(basicEntity);

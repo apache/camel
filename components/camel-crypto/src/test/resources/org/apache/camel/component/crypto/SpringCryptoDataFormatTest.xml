@@ -68,6 +68,7 @@
       <!-- END SNIPPET: aes-128-ecb-encryption -->
       
       <crypto id="aes-gcm-encryption" algorithm="AES/GCM/NoPadding" keyRef="aesKey" algorithmParameterRef="gcmParamSpec" />
+      <crypto id="inline-aes-gcm-encryption" algorithm="AES/GCM/NoPadding" keyRef="aesKey" algorithmParameterRef="gcmParamSpec" initVectorRef="initializationVector" inline="true"/>
       
       <crypto id="des-no-algorithm" keyRef="desKey" initVectorRef="initializationVector" />
     </dataFormats>
@@ -170,6 +171,14 @@
       <to uri="mock:unencrypted" />
     </route>
     
+    <route>
+      <from uri="direct:inline-aes-gcm-encryption" />
+      <marshal><custom ref="inline-aes-gcm-encryption" /></marshal>
+      <to uri="mock:encrypted" />
+      <unmarshal><custom ref="inline-aes-gcm-encryption" /></unmarshal>
+      <to uri="mock:unencrypted" />
+    </route>
+
     <route>
       <from uri="direct:no-algorithm" />
       <marshal><custom ref="des-no-algorithm" /></marshal>

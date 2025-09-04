@@ -21,7 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.component.debezium.configuration.OracleConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.component.debezium.oracle.DebeziumOracleComponent;
+import org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 

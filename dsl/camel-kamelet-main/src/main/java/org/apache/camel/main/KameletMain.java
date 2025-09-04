@@ -58,6 +58,7 @@ import org.apache.camel.main.download.DependencyDownloaderTransformerResolver;
 import org.apache.camel.main.download.DependencyDownloaderUriFactoryResolver;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.download.DownloadModelineParser;
+import org.apache.camel.main.download.ExportPeriodTaskResolver;
 import org.apache.camel.main.download.ExportPropertiesParser;
 import org.apache.camel.main.download.ExportTypeConverter;
 import org.apache.camel.main.download.KameletAutowiredLifecycleStrategy;
@@ -89,6 +90,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
@@ -424,6 +426,12 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
             answer.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
             answer.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
+
+            // override default period task with our export that does not run tasks
+            FactoryFinder finder = PluginHelper.getFactoryFinderResolver(answer)
+                    .resolveBootstrapFactoryFinder(answer.getClassResolver(), PeriodTaskResolver.RESOURCE_PATH);
+            ExportPeriodTaskResolver eptr = new ExportPeriodTaskResolver(finder);
+            answer.getCamelContextExtension().addContextPlugin(PeriodTaskResolver.class, eptr);
         } else {
             PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
             pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, false));
@@ -475,6 +483,22 @@ public class KameletMain extends MainCommandLineSupport {
 
         // in case we use saga
         SagaDownloader.registerDownloadReifiers(this);
+
+        // if transforming DSL then disable processors as we just want to work on the model (not runtime processors)
+        boolean transform = "true".equals(getInitialProperties().get("camel.jbang.transform"));
+        if (transform) {
+            // we just want to transform, so disable custom bean or processors as they may use code that does not work
+            answer.getGlobalOptions().put(ProcessorReifier.DISABLE_BEAN_OR_PROCESS_PROCESSORS, "true");
+            // stub everything
+            this.stubPattern = "*";
+            // turn off inlining routes
+            configure().rest().withInlineRoutes(false);
+            blueprintXmlBeansHandler.setTransform(true);
+        }
+        if (silent) {
+            // silent should not include http server
+            configure().httpServer().withEnabled(false);
+        }
 
         if (silent || "*".equals(stubPattern)) {
             // turn off auto-wiring when running in silent mode (or stub = *)
@@ -563,13 +587,6 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getPropertiesComponent().setIgnoreMissingProperty(true);
             answer.getPropertiesComponent().setIgnoreMissingLocation(true);
         }
-        // if transforming DSL then disable processors as we just want to work on the model (not runtime processors)
-        boolean transform = "true".equals(getInitialProperties().get("camel.jbang.transform"));
-        if (transform) {
-            // we just want to transform, so disable all processors
-            answer.getGlobalOptions().put(ProcessorReifier.DISABLE_ALL_PROCESSORS, "true");
-            blueprintXmlBeansHandler.setTransform(true);
-        }
         if (silent) {
             // silent should not include http server
             configure().httpServer().withEnabled(false);
@@ -632,7 +649,7 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getCamelContextExtension().setDefaultFactoryFinder(ff);
 
             answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
-                    new DependencyDownloaderComponentResolver(answer, stubPattern, silent));
+                    new DependencyDownloaderComponentResolver(answer, stubPattern, silent, transform));
             answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
                     new DependencyDownloaderDataFormatResolver(answer, stubPattern, silent));
             answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,

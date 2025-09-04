@@ -20,6 +20,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -94,5 +95,17 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
         assertEquals("http://localhost:4567", endpoint.getConfiguration().getUriEndpointOverride());
+    }
+
+    @Test
+    public void createEndpointWithMessageTimestamp() throws Exception {
+        Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component.createEndpoint("aws2-kinesis://some_stream_name" +
+                                                                                "?iteratorType=AT_TIMESTAMP&messageTimestamp=1732882967.573");
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
+        assertEquals(ShardIteratorType.AT_TIMESTAMP, endpoint.getConfiguration().getIteratorType());
+        assertEquals("1732882967.573", endpoint.getConfiguration().getMessageTimestamp());
     }
 }

@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.aws2.ddb.localstack;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -113,6 +112,40 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
         });
 
         assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ITEMS));
+        assertEquals(3, exchange.getIn().getHeader(Ddb2Constants.COUNT));
+    }
+
+    @Test
+    public void queryItemsWithAttributesToGet() {
+
+        putItem(retrieveValue, "uno");
+        putItem(retrieveValue, "dos");
+        putItem(retrieveValue, "tres");
+        putItem(notRetrieveValue, "Ignore me");
+        putItem(notRetrieveValue, "I should not be returned");
+
+        Exchange exchange = template.send("direct:start", e -> {
+            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Query);
+            e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
+            Map<String, Condition> keyConditions = new HashMap<>();
+            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
+                    ComparisonOperator.EQ.toString())
+                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
+                    .build());
+            e.getIn().setHeader(Ddb2Constants.KEY_CONDITIONS, keyConditions);
+            Collection<String> coll = new ArrayList<>();
+            coll.add("clave");
+            e.getIn().setHeader(Ddb2Constants.ATTRIBUTE_NAMES, coll);
+        });
+
+        assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ITEMS));
+        List<Map<String, AttributeValue>> items = exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class);
+        assertTrue(items.get(0).containsKey("clave"));
+        assertFalse(items.get(0).containsKey("secondary_attribute"));
+        assertTrue(items.get(1).containsKey("clave"));
+        assertFalse(items.get(1).containsKey("secondary_attribute"));
+        assertTrue(items.get(2).containsKey("clave"));
+        assertFalse(items.get(2).containsKey("secondary_attribute"));
         assertEquals(3, exchange.getIn().getHeader(Ddb2Constants.COUNT));
     }
 

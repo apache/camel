@@ -22,7 +22,7 @@ public enum AS2ClientManagerApiMethod implements ApiMethod {
     SEND(
         org.apache.hc.core5.http.protocol.HttpCoreContext.class,
         "send",
-        arg("ediMessage", String.class),
+        arg("ediMessage", Object.class),
         arg("requestUri", String.class),
         arg("subject", String.class),
         arg("from", String.class),

@@ -41,7 +41,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExceptionHelper;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.http.HttpUtil;
@@ -122,8 +121,6 @@ public final class VertxPlatformHttpSupport {
             message.setHeader(Exchange.CONTENT_TYPE, DEFAULT_CONTENT_TYPE_ON_EXCEPTION);
         }
 
-        // and mark the exception as failure handled, as we handled it by returning it as the response
-        ExchangeHelper.setFailureHandled(exchange);
         return body;
     }
 
@@ -190,6 +187,8 @@ public final class VertxPlatformHttpSupport {
             } else if (body instanceof Buffer) {
                 ctx.end((Buffer) body);
                 promise.complete();
+            } else if (body instanceof ByteBuffer bb) {
+                writeResponseAs(promise, ctx, bb);
             } else {
                 writeResponseAsFallback(promise, camelExchange, body, ctx);
             }
@@ -203,15 +202,20 @@ public final class VertxPlatformHttpSupport {
     private static void writeResponseAsFallback(Promise<Void> promise, Exchange camelExchange, Object body, RoutingContext ctx)
             throws NoTypeConversionAvailableException {
         final TypeConverter tc = camelExchange.getContext().getTypeConverter();
-        // Try to convert to ByteBuffer for performance reason
-        final ByteBuffer bb = tc.tryConvertTo(ByteBuffer.class, camelExchange, body);
+
+        // favour input stream first
+        InputStream is = tc.tryConvertTo(InputStream.class, camelExchange, body);
+        if (is != null) {
+            writeResponseAs(promise, ctx, is);
+            return;
+        }
+        // then fallback to byte buffer
+        ByteBuffer bb = tc.tryConvertTo(ByteBuffer.class, camelExchange, body);
         if (bb != null) {
             writeResponseAs(promise, ctx, bb);
-        } else {
-            // Otherwise fallback to most generic InputStream conversion
-            final InputStream is = tc.mandatoryConvertTo(InputStream.class, camelExchange, body);
-            writeResponseAs(promise, ctx, is);
+            return;
         }
+        throw new NoTypeConversionAvailableException(body, InputStream.class);
     }
 
     private static void writeResponseAs(Promise<Void> promise, RoutingContext ctx, ByteBuffer bb) {

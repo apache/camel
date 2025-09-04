@@ -18,21 +18,36 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.FileUtil;
 
 public final class CommandHelper {
 
+    private static ThreadLocal<Printer> printerAssociation = new ThreadLocal<>();
+
     private CommandHelper() {
     }
 
+    public static Printer GetPrinter() {
+        return printerAssociation.get();
+    }
+
+    public static void SetPrinter(Printer out) {
+        printerAssociation.set(out);
+    }
+
     public static void cleanExportDir(String dir) {
+        CommandHelper.cleanExportDir(dir, true);
+    }
+
+    public static void cleanExportDir(String dir, boolean keepHidden) {
         File target = new File(dir);
         File[] files = target.listFiles();
         if (files != null) {
             for (File f : files) {
-                if (!f.isHidden() && f.isDirectory()) {
+                if (f.isDirectory() && (!keepHidden || !f.isHidden())) {
                     FileUtil.removeDir(f);
-                } else if (!f.isHidden() && f.isFile()) {
+                } else if (f.isFile() && (!keepHidden || !f.isHidden())) {
                     FileUtil.deleteFile(f);
                 }
             }

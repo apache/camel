@@ -459,7 +459,8 @@ public final class RouteDefinitionHelper {
             // validate that top-level is only added on the route (eg top level)
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(child);
             boolean parentIsRoute = child.getParent() == route;
-            if (child.isTopLevelOnly() && !parentIsRoute) {
+            boolean parentIsAlreadyTop = child.getParent() == null || child.getParent().isTopLevelOnly();
+            if (child.isTopLevelOnly() && !(parentIsRoute || parentIsAlreadyTop)) {
                 throw new IllegalArgumentException(
                         "The output must be added as top-level on the route. Try moving " + child + " to the top of route.");
             }

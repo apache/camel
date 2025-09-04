@@ -54,6 +54,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
         ServiceHelper.stopService(destinationResolver);
     }
 

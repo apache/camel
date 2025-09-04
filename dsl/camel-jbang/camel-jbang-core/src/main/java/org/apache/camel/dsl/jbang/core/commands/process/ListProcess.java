@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -30,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -45,6 +47,10 @@ public class ListProcess extends ProcessWatchCommand {
     @CommandLine.Option(names = { "--pid" },
                         description = "List only pid in the output")
     boolean pid;
+
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format")
+    boolean jsonOutput;
 
     public ListProcess(CamelJBangMain main) {
         super(main);
@@ -104,22 +110,43 @@ public class ListProcess extends ProcessWatchCommand {
         // sort rows
         rows.sort(this::sortRow);
 
+        // print rows
         if (!rows.isEmpty()) {
             if (pid) {
-                rows.forEach(r -> printer().println(r.pid));
+                if (jsonOutput) {
+                    printer().println(
+                            Jsoner.serialize(
+                                    rows.stream().map(row -> row.pid).collect(Collectors.toList())));
+                } else {
+                    rows.forEach(r -> printer().println(r.pid));
+                }
             } else {
-                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                .with(r -> r.name),
-                        new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
-                        new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                                .with(r -> extractState(r.state)),
-                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                        new Column().header("TOTAL").with(this::getTotal),
-                        new Column().header("FAIL").with(this::getFailed),
-                        new Column().header("INFLIGHT").with(this::getInflight))));
+                if (jsonOutput) {
+                    printer().println(
+                            Jsoner.serialize(
+                                    rows.stream().map(row -> Map.of(
+                                            "pid", row.pid,
+                                            "name", row.name,
+                                            "ready", row.ready,
+                                            "status", extractState(row.state),
+                                            "age", row.ago,
+                                            "total", getTotal(row),
+                                            "fail", getFailed(row),
+                                            "inflight", getInflight(row))).collect(Collectors.toList())));
+                } else {
+                    printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                            new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                            new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                    .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                    .with(r -> r.name),
+                            new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
+                            new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                                    .with(r -> extractState(r.state)),
+                            new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                            new Column().header("TOTAL").with(this::getTotal),
+                            new Column().header("FAIL").with(this::getFailed),
+                            new Column().header("INFLIGHT").with(this::getInflight))));
+                }
             }
         }
 

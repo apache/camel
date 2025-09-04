@@ -22,6 +22,7 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.CassandraContainer;
+import org.testcontainers.utility.DockerImageName;
 
 /**
  * A service for a local instance of Apache Cassandra running with TestContainers
@@ -46,7 +47,7 @@ public class CassandraLocalContainerService implements CassandraService, Contain
     }
 
     protected CassandraContainer initContainer(String imageName) {
-        return new CassandraContainer(imageName);
+        return new CassandraContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("cassandra"));
     }
 
     @Override

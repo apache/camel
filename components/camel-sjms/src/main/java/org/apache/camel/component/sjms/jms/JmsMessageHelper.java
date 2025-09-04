@@ -321,6 +321,10 @@ public final class JmsMessageHelper {
      * @return         <tt>true</tt> if redelivered, <tt>false</tt> if not, <tt>null</tt> if not able to determine
      */
     public static Boolean getJMSRedelivered(Message message) {
+        if (message == null) {
+            return null;
+        }
+
         try {
             return message.getJMSRedelivered();
         } catch (Exception e) {
@@ -404,7 +408,6 @@ public final class JmsMessageHelper {
 
         if (mode != null) {
             message.setJMSDeliveryMode(mode);
-            message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
         }
     }
 
@@ -432,7 +435,12 @@ public final class JmsMessageHelper {
      */
     public static String getJMSCorrelationIDAsBytes(Message message) {
         try {
-            return new String(message.getJMSCorrelationIDAsBytes());
+            final byte[] jmsCorrelationIDAsBytes = message.getJMSCorrelationIDAsBytes();
+            if (jmsCorrelationIDAsBytes != null) {
+                return new String(jmsCorrelationIDAsBytes);
+            }
+
+            return null;
         } catch (Exception e) {
             // ignore if JMS broker do not support this
         }

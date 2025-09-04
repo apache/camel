@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-parent</artifactId>
-        <version>4.8.1</version>
+        <version>4.8.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-debezium-sqlserver</artifactId>
@@ -78,6 +78,7 @@
                 <configuration>
                     <connectorClassName>io.debezium.connector.sqlserver.SqlServerConnector</connectorClassName>
                     <connectorConfigClassName>io.debezium.connector.sqlserver.SqlServerConnectorConfig</connectorConfigClassName>
+                    <packageName>org.apache.camel.component.debezium.sqlserver.configuration</packageName>
                     <fields>
                         <database.history>io.debezium.relational.history.FileDatabaseHistory</database.history>
                         <tombstones.on.delete>false</tombstones.on.delete>

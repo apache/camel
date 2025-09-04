@@ -502,6 +502,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             // store the original caused exception in a property, so we can restore it later
             exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
+
+            // store where the exception happened
+            Route rc = ExchangeHelper.getRoute(exchange);
+            if (rc != null) {
+                exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
+            }
         }
 
         /**
@@ -1043,6 +1049,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             redeliveryCounter = incrementRedeliveryCounter(exchange);
+
+            // store where the exception happened
+            Route rc = ExchangeHelper.getRoute(exchange);
+            if (rc != null) {
+                exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
+            }
         }
 
         /**

@@ -212,13 +212,13 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
     @ParameterizedTest
     @CsvSource({
             "false,false,false", "false,false,true", "false,true,false", "false,true,true" })
-    void unencryptedBinaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) {
+    void unencryptedBinaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) throws IOException {
         binaryContentTransferEncodingTest(encrypt, sign, compress);
     }
 
     @ParameterizedTest
     @CsvSource({ "false,false", "false,true" })
-    void unencryptedCompressionSignatureOrderTest(boolean encrypt, boolean compressBeforeSign) {
+    void unencryptedCompressionSignatureOrderTest(boolean encrypt, boolean compressBeforeSign) throws IOException {
         compressionSignatureOrderTest(encrypt, compressBeforeSign);
     }
 }

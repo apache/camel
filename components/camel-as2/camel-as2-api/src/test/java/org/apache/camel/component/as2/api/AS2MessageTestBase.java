@@ -19,6 +19,7 @@ package org.apache.camel.component.as2.api;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.KeyPair;
@@ -49,6 +50,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class AS2MessageTestBase {
@@ -157,7 +159,7 @@ public class AS2MessageTestBase {
         decryptingKP = signingKP;
     }
 
-    protected void binaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) {
+    protected void binaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) throws IOException {
         // test with as2-lib because Camel AS2 client doesn't support binary content transfer encoding at the moment
         // inspired from https://github.com/phax/as2-lib/wiki/Submodule-as2%E2%80%90lib#as2-client
 
@@ -196,10 +198,14 @@ public class AS2MessageTestBase {
         if (aResponse.hasException()) {
             fail(aResponse.getException());
         }
-        assertEquals(EDI_MESSAGE, ediEntity.getEdiMessage().replaceAll("\r", ""));
+        assertTrue(ediEntity.getEdiMessage() instanceof InputStream);
+        InputStream is = (InputStream) ediEntity.getEdiMessage();
+        String rcvdMessage = new String(is.readAllBytes(), StandardCharsets.US_ASCII).replaceAll("\r", "");
+
+        assertEquals(EDI_MESSAGE, rcvdMessage, "EDI message does not match");
     }
 
-    protected void compressionSignatureOrderTest(boolean encrypt, boolean compressBeforeSign) {
+    protected void compressionSignatureOrderTest(boolean encrypt, boolean compressBeforeSign) throws IOException {
         // test with as2-lib because Camel AS2 client doesn't support different orders at the moment
         // inspired from https://github.com/phax/as2-lib/wiki/Submodule-as2%E2%80%90lib#as2-client
 
@@ -236,7 +242,11 @@ public class AS2MessageTestBase {
         if (aResponse.hasException()) {
             fail(aResponse.getException());
         }
-        assertEquals(EDI_MESSAGE, ediEntity.getEdiMessage().replaceAll("\r", ""));
+        assertTrue(ediEntity.getEdiMessage() instanceof InputStream);
+        InputStream is = (InputStream) ediEntity.getEdiMessage();
+        String rcvdMessage = new String(is.readAllBytes(), StandardCharsets.US_ASCII).replaceAll("\r", "");
+
+        assertEquals(EDI_MESSAGE, rcvdMessage, "EDI message does not match");
     }
 
     protected AS2ClientManager createDefaultClientManager() throws IOException {

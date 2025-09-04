@@ -120,7 +120,7 @@ in the consumer route `${header.userId}` can be used.
 from("direct:test")
     .to("langchain4j-tools:test1?tags=users");
 
-from("langchain4j-chat:test1?tags=users&description=Query user database by user ID&parameter.userId=integer")
+from("langchain4j-tools:test1?tags=users&description=Query user database by user ID&parameter.userId=integer")
     .to("sql:SELECT name FROM users WHERE id = :#userId");
 ----
 
@@ -185,3 +185,10 @@ Use the model in the Camel LangChain4j Chat Producer
 ====
 To switch to another Large Language Model and its corresponding dependency, replace the `langchain4j-open-ai` dependency with the appropriate dependency for the desired model. Update the initialization parameters accordingly in the code snippet provided above.
 ====
+
+
+==== Handling no Tools Called
+
+In some circumstances, the LLM may decide not to call a tool.
+This is a valid scenario that needs to be handled by application developers.
+To do so, developers can get the `LangChain4jTools.NO_TOOLS_CALLED_HEADER` from the exchange.

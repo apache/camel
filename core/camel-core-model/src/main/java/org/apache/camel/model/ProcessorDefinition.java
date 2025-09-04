@@ -212,7 +212,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // still allow if using advice-with)
         boolean parentIsRoute = RouteDefinition.class.isAssignableFrom(this.getClass())
                 || AdviceWithDefinition.class.isAssignableFrom(this.getClass());
-        if (output.isTopLevelOnly() && !parentIsRoute) {
+        boolean parentIsAlreadyTop = this.isTopLevelOnly();
+        if (output.isTopLevelOnly() && !parentIsRoute && !parentIsAlreadyTop) {
             throw new IllegalArgumentException(
                     "The output must be added as top-level on the route. Try moving " + output + " to the top of route.");
         }
@@ -664,11 +665,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             // set id on this
             setId(id);
         } else {
+            List<ProcessorDefinition<?>> outputs = null;
+            if (this instanceof NoOutputDefinition<Type>) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
+            } else {
+                outputs = getOutputs();
+            }
 
             // set it on last output as this is what the user means to do
             // for Block(s) with non empty getOutputs() the id probably refers
             // to the last definition in the current Block
-            List<ProcessorDefinition<?>> outputs = getOutputs();
             if (!blocks.isEmpty()) {
                 if (blocks.getLast() instanceof ProcessorDefinition) {
                     ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
@@ -677,7 +686,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                     }
                 }
             }
-            if (!getOutputs().isEmpty()) {
+            if (outputs != null && !outputs.isEmpty()) {
+                // set id on last output
                 outputs.get(outputs.size() - 1).setId(id);
             } else {
                 // the output could be empty

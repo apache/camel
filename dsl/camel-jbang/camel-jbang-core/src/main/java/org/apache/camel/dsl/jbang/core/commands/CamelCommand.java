@@ -115,7 +115,9 @@ public abstract class CamelCommand implements Callable<Integer> {
     }
 
     protected Printer printer() {
-        return getMain().getOut();
+        var out = getMain().getOut();
+        CommandHelper.SetPrinter(out);
+        return out;
     }
 
     protected void printConfigurationValues(String header) {

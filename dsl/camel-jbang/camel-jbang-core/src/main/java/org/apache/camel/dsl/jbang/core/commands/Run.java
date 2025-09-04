@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -133,6 +134,10 @@ public class Run extends CamelCommand {
 
     @Option(names = { "--camel-version" }, description = "To run using a different Camel version than the default version.")
     String camelVersion;
+
+    @Option(names = { "--camel-spring-boot-version" },
+            description = "To run using a different Camel Spring Boot version than the default version.")
+    String camelSpringBootVersion;
 
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
@@ -861,7 +866,15 @@ public class Run extends CamelCommand {
             return runBackground(main);
         } else {
             // run default in current JVM with same camel version
-            return runKameletMain(main);
+            try {
+                return runKameletMain(main);
+            } catch (FailedToCreateRouteException ex) {
+                if (ignoreLoadingError) {
+                    printer().printErr(ex);
+                    return 0;
+                }
+                throw ex;
+            }
         }
     }
 
@@ -890,12 +903,17 @@ public class Run extends CamelCommand {
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
+        eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
+        eq.name = this.name;
         eq.gav = this.gav;
         if (eq.gav == null) {
-            eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
+            if (eq.name == null) {
+                eq.name = "jbang-run-dummy";
+            }
+            eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
         eq.dependencies = this.dependencies;
         if (!this.exportRun) {
@@ -922,7 +940,8 @@ public class Run extends CamelCommand {
             mvnw = "/mvnw.cmd";
         }
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "package", "quarkus:" + (dev ? "dev" : "run"));
+        pb.command(runDir + mvnw, "--quiet", "--file", runDir.getCanonicalPath() + File.separatorChar + "pom.xml", "package",
+                "quarkus:" + (dev ? "dev" : "run"));
 
         if (background) {
             Process p = pb.start();
@@ -957,15 +976,21 @@ public class Run extends CamelCommand {
         eq.gradleWrapper = false;
         eq.springBootVersion = this.springBootVersion;
         eq.camelVersion = this.camelVersion;
-        eq.camelSpringBootVersion = this.camelVersion;
+        eq.camelSpringBootVersion = this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
+        eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
+        eq.name = this.name;
         eq.gav = this.gav;
+        eq.repositories = this.repositories;
         if (eq.gav == null) {
-            eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
+            if (eq.name == null) {
+                eq.name = "jbang-run-dummy";
+            }
+            eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
         eq.dependencies.addAll(dependencies);
         if (!this.exportRun) {
@@ -1000,7 +1025,8 @@ public class Run extends CamelCommand {
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
         }
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "spring-boot:run");
+        pb.command(runDir + mvnw, "--quiet", "--file", runDir.getCanonicalPath() + File.separatorChar + "pom.xml",
+                "spring-boot:run");
 
         if (background) {
             Process p = pb.start();
@@ -1276,17 +1302,17 @@ public class Run extends CamelCommand {
         sb.append(String.format("//DEPS org.apache.camel:camel-main:%s%n", camelVersion));
         sb.append(String.format("//DEPS org.apache.camel:camel-java-joor-dsl:%s%n", camelVersion));
         sb.append(String.format("//DEPS org.apache.camel:camel-kamelet:%s%n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet-main:%s%n", camelVersion));
+        if (VersionHelper.isGE(camelVersion, "3.19.0")) {
+            sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s%n", camelVersion));
+        }
         content = content.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
-        // use apache distribution of camel-jbang
+        // use apache distribution of camel-jbang/github-resolver
         String v = camelVersion.substring(0, camelVersion.lastIndexOf('.'));
         sb = new StringBuilder();
         sb.append(String.format("//DEPS org.apache.camel:camel-jbang-core:%s%n", v));
-        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet-main:%s%n", v));
         sb.append(String.format("//DEPS org.apache.camel:camel-resourceresolver-github:%s%n", v));
-        if (VersionHelper.isGE(v, "3.19.0")) {
-            sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s%n", v));
-        }
         content = content.replaceFirst("\\{\\{ \\.CamelJBangDependencies }}", sb.toString());
 
         sb = new StringBuilder();
@@ -1296,7 +1322,13 @@ public class Run extends CamelCommand {
         String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java";
         Files.writeString(Paths.get(fn), content);
 
-        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        List<String> cmds;
+        if (spec != null) {
+            cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        } else {
+            cmds = new ArrayList<>();
+            cmds.add("run");
+        }
 
         if (background) {
             cmds.remove("--background=true");
@@ -1568,10 +1600,16 @@ public class Run extends CamelCommand {
                     }
                     return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
                 } else {
-                    // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
-                    return source.content().contains("- from:") || source.content().contains("- route:")
+                    // TODO: we probably need a way to parse the content and match against the YAML DSL expected by Camel
+                    // This check looks very fragile
+                    return source.content().contains("- from:")
+                            || source.content().contains("- route:")
+                            || source.content().contains("- routeTemplate") || source.content().contains("- route-template:")
+                            || source.content().contains("- routeConfiguration:")
                             || source.content().contains("- route-configuration:")
-                            || source.content().contains("- rest:") || source.content().contains("- beans:")
+                            || source.content().contains("- rest:")
+                            || source.content().contains("- beans:")
+                            // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
                             || source.content().contains("KameletBinding")
                             || source.content().contains("Pipe")
                             || source.content().contains("kind: Integration");

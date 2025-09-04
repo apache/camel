@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.as2.api;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
@@ -158,7 +160,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
     @ParameterizedTest
     @CsvSource({
             "true,false,false", "true,false,true", "true,true,false", "true,true,true" })
-    void encryptedBinaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) {
+    void encryptedBinaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) throws IOException {
         binaryContentTransferEncodingTest(encrypt, sign, compress);
     }
 
@@ -360,7 +362,9 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertTrue(ediEntity.getContentType().startsWith(AS2MediaType.APPLICATION_EDIFACT),
                 "Unexpected content type for enveloped mime part");
         assertFalse(ediEntity.isMainBody(), "Enveloped mime type set as main body of request");
-        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediEntity.getEdiMessage().replaceAll("[\n\r]", ""),
+
+        assertTrue(ediEntity.getEdiMessage() instanceof String);
+        assertEquals(EDI_MESSAGE, ((String) ediEntity.getEdiMessage()).replaceAll("\r", ""),
                 "Unexpected content for enveloped mime part");
     }
 
@@ -470,7 +474,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
                 certList.toArray(new X509Certificate[0]), signingKP.getPrivate());
 
         // Create plain edi request message to acknowledge
-        ApplicationEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
+        ApplicationEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII),
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, false, "filename.txt");
         BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", REQUEST_URI);
         HttpMessageUtils.setHeaderValue(request, AS2Header.SUBJECT, SUBJECT);
@@ -536,11 +540,20 @@ public class AS2MessageTest extends AS2MessageTestBase {
 
     @Test
     public void signedAndCompressedMessageTest() throws Exception {
+        signedAndCompressedMessage(EDI_MESSAGE);
+    }
+
+    @Test
+    public void signedAndCompressedStreamMessageTest() throws Exception {
+        signedAndCompressedMessage(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)));
+    }
+
+    private void signedAndCompressedMessage(Object msg) throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
 
         LOG.info("Key Algorithm: {}", signingKP.getPrivate().getAlgorithm());
 
-        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+        HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED_COMPRESSED,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), "base64",
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
@@ -602,11 +615,20 @@ public class AS2MessageTest extends AS2MessageTestBase {
 
     @Test
     public void envelopedAndCompressedMessageTest() throws Exception {
+        envelopedAndCompressedMessage(EDI_MESSAGE);
+    }
+
+    @Test
+    public void envelopedAndCompressedStreamMessageTest() throws Exception {
+        envelopedAndCompressedMessage(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)));
+    }
+
+    private void envelopedAndCompressedMessage(Object msg) throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
 
         LOG.info("Key Algorithm: {}", signingKP.getPrivate().getAlgorithm());
 
-        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+        HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_COMPRESSED,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), "base64", null, null, null,
                 AS2CompressionAlgorithm.ZLIB, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS,
@@ -655,15 +677,27 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertTrue(ediEntity.getContentType().startsWith(AS2MediaType.APPLICATION_EDIFACT),
                 "Unexpected content type for compressed entity");
         assertFalse(ediEntity.isMainBody(), "Compressed entity set as main body of request");
-        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediEntity.getEdiMessage().replaceAll("[\n\r]", ""),
-                "Unexpected content for enveloped mime part");
+
+        assertTrue(ediEntity.getEdiMessage() instanceof InputStream);
+        InputStream is = (InputStream) ediEntity.getEdiMessage();
+        assertEquals(EDI_MESSAGE, new String(is.readAllBytes(), StandardCharsets.US_ASCII).replaceAll("\r", ""),
+                "EDI message does not match");
     }
 
     // Verify that the payload is compressed before being signed.
     @Test
     public void compressedAndSignedMessageTest() throws Exception {
+        compressedAndSignedMessage(EDI_MESSAGE);
+    }
+
+    @Test
+    public void compressedAndSignedStreamMessageTest() throws Exception {
+        compressedAndSignedMessage(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)));
+    }
+
+    private void compressedAndSignedMessage(Object msg) throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
-        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+        HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.COMPRESSED_SIGNED,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), "base64",
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
@@ -689,8 +723,17 @@ public class AS2MessageTest extends AS2MessageTestBase {
     // Verify that the payload is compressed before being signed and encrypted.
     @Test
     public void envelopedSignedAndCompressedMessageTest() throws Exception {
+        envelopedSignedAndCompressedMessage(EDI_MESSAGE);
+    }
+
+    @Test
+    public void envelopedSignedAndCompressedStreamMessageTest() throws Exception {
+        envelopedSignedAndCompressedMessage(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)));
+    }
+
+    private void envelopedSignedAndCompressedMessage(Object msg) throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
-        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+        HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_COMPRESSED_SIGNED,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
@@ -722,11 +765,20 @@ public class AS2MessageTest extends AS2MessageTestBase {
 
     @Test
     public void envelopedCompressedAndSignedMessageTest() throws Exception {
+        envelopedCompressedAndSignedMessage(EDI_MESSAGE);
+    }
+
+    @Test
+    public void envelopedCompressedAndSignedStreamMessageTest() throws Exception {
+        envelopedCompressedAndSignedMessage(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)));
+    }
+
+    private void envelopedCompressedAndSignedMessage(Object msg) throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
 
         LOG.info("Key Algorithm: {}", signingKP.getPrivate().getAlgorithm());
 
-        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+        HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_SIGNED_COMPRESSED,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
@@ -796,7 +848,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
 
     @ParameterizedTest
     @CsvSource({ "true,false", "true,true" })
-    void encryptedCompressionSignatureOrderTest(boolean encrypt, boolean compressBeforeSign) {
+    void encryptedCompressionSignatureOrderTest(boolean encrypt, boolean compressBeforeSign) throws IOException {
         compressionSignatureOrderTest(encrypt, compressBeforeSign);
     }
 

@@ -205,7 +205,8 @@ public class DefaultModel implements Model {
             for (RouteDefinition r : allRoutes) {
                 // loop all rest routes
                 FromDefinition from = r.getInput();
-                if (from != null) {
+                if (from != null && !r.isInlined()) {
+                    // only attempt to inline if not already inlined
                     String uri = from.getEndpointUri();
                     if (uri != null && uri.startsWith("rest:")) {
                         // find first EIP in the outputs (skip abstract which are onException/intercept etc)
@@ -242,6 +243,8 @@ public class DefaultModel implements Model {
                                 }
                                 r.getOutputs().removeAll(toBeRemovedOut);
                                 r.getOutputs().addAll(toBeInlined.getOutputs());
+                                // inlined outputs should have re-assigned parent to this route
+                                r.getOutputs().forEach(o -> o.setParent(r));
                                 // and copy over various configurations
                                 if (toBeInlined.getRouteId() != null) {
                                     r.setId(toBeInlined.getRouteId());
@@ -267,6 +270,7 @@ public class DefaultModel implements Model {
                                 if (toBeInlined.isErrorHandlerFactorySet()) {
                                     r.setErrorHandler(toBeInlined.getErrorHandler());
                                 }
+                                r.markInlined();
                             }
                         }
                     }
@@ -534,6 +538,9 @@ public class DefaultModel implements Model {
         }
 
         // assign ids to the routes and validate that the id's are all unique
+        if (prefixId == null) {
+            prefixId = def.getNodePrefixId();
+        }
         String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions, prefixId);
         if (duplicate != null) {
             throw new FailedToCreateRouteFromTemplateException(

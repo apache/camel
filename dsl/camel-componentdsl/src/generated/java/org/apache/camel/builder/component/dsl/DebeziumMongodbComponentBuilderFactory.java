@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.debezium.DebeziumMongodbComponent;
+import org.apache.camel.component.debezium.mongodb.DebeziumMongodbComponent;
 
 /**
  * Capture changes from a MongoDB database.
@@ -103,14 +103,14 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default DebeziumMongodbComponentBuilder configuration(org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
+        default DebeziumMongodbComponentBuilder configuration(org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -1392,9 +1392,9 @@ public interface DebeziumMongodbComponentBuilderFactory {
         protected DebeziumMongodbComponent buildConcreteComponent() {
             return new DebeziumMongodbComponent();
         }
-        private org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMongodbComponent component) {
+        private org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMongodbComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration());
+                component.setConfiguration(new org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration());
             }
             return component.getConfiguration();
         }
@@ -1406,7 +1406,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             switch (name) {
             case "additionalProperties": getOrCreateConfiguration((DebeziumMongodbComponent) component).setAdditionalProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((DebeziumMongodbComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "configuration": ((DebeziumMongodbComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "configuration": ((DebeziumMongodbComponent) component).setConfiguration((org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration) value); return true;
             case "internalKeyConverter": getOrCreateConfiguration((DebeziumMongodbComponent) component).setInternalKeyConverter((java.lang.String) value); return true;
             case "internalValueConverter": getOrCreateConfiguration((DebeziumMongodbComponent) component).setInternalValueConverter((java.lang.String) value); return true;
             case "offsetCommitPolicy": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetCommitPolicy((java.lang.String) value); return true;

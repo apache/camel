@@ -35,11 +35,9 @@ import org.apache.camel.v1.Integration;
 import org.apache.camel.v1.IntegrationSpec;
 import org.apache.camel.v1.Pipe;
 import org.apache.camel.v1.PipeSpec;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
+@Disabled("Deprecated and resource intensive")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CamelKBaseTest {
 

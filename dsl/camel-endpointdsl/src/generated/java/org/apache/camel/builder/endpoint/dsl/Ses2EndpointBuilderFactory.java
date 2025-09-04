@@ -733,6 +733,20 @@ public interface Ses2EndpointBuilderFactory {
             return "CamelAwsSesBcc";
         }
         /**
+         * A collection of name/value pairs to apply when sending the email.
+         * Tags are user-defined properties that are included in published email
+         * sending events.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSesTags}.
+         */
+        public String awsSesTags() {
+            return "CamelAwsSesTags";
+        }
+        /**
          * The flag to show if email content is HTML.
          * 
          * The option is a: {@code Boolean} type.

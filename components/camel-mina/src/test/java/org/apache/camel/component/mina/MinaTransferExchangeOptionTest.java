@@ -54,7 +54,8 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
 
     private Exchange sendExchange(boolean setException) throws Exception {
         Endpoint endpoint = context.getEndpoint(
-                String.format("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()));
+                String.format("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true&objectCodecPattern=*",
+                        getPort()));
         Producer producer = endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
 
@@ -99,7 +100,8 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort())
+                fromF("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true&objectCodecPattern=*",
+                        getPort())
                         .process(e -> {
                             LOG.debug("Enter Processor...");
                             assertNotNull(e.getIn().getBody());

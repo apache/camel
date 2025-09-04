@@ -27,6 +27,9 @@ public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClien
     @Override
     @Test
     public void testTransactionSuccess() throws Exception {
+        getMockEndpoint("mock:ok").expectedMessageCount(1);
+        getMockEndpoint("mock:fail").expectedMessageCount(0);
+
         MockEndpoint book = getMockEndpoint("mock:book");
         book.expectedMessageCount(2);
 
@@ -38,6 +41,9 @@ public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClien
     @Override
     @Test
     public void testTransactionRollback() throws Exception {
+        getMockEndpoint("mock:ok").expectedMessageCount(0);
+        getMockEndpoint("mock:fail").expectedMessageCount(1);
+
         MockEndpoint book = getMockEndpoint("mock:book");
         book.expectedMessageCount(1);
 

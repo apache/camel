@@ -23,7 +23,7 @@ import org.apache.hc.core5.http.ContentType;
 
 public class ApplicationEDIConsentEntity extends ApplicationEntity {
 
-    public ApplicationEDIConsentEntity(String content, String charset, String contentTransferEncoding,
+    public ApplicationEDIConsentEntity(byte[] content, String charset, String contentTransferEncoding,
                                        boolean isMainBody, String fileName) {
         super(content, ContentType.create(AS2MediaType.APPLICATION_EDI_CONSENT, charset), contentTransferEncoding, isMainBody,
               fileName);

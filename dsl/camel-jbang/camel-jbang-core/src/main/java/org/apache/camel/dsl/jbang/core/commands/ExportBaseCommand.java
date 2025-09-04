@@ -105,6 +105,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     protected RuntimeType runtime;
 
+    @CommandLine.Option(names = { "--name" },
+                        description = "The integration name. Use this when the name should not get derived otherwise.")
+    protected String name;
+
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 
@@ -310,11 +314,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.download = download;
         run.runtime = runtime;
         run.camelVersion = camelVersion;
+        run.camelSpringBootVersion = camelSpringBootVersion;
         run.quarkusVersion = quarkusVersion;
         run.springBootVersion = springBootVersion;
         run.kameletsVersion = kameletsVersion;
         run.localKameletDir = localKameletDir;
         run.ignoreLoadingError = ignoreLoadingError;
+        run.repositories = repositories;
+
         return run.runExport(ignoreLoadingError);
     }
 
@@ -532,7 +539,16 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
-            String files = prop.getProperty(k);
+            String files;
+            if ("kamelet".equals(k)) {
+                // special for kamelet as there can be multiple entries
+                files = RuntimeUtil.loadPropertiesLines(settings).stream()
+                        .filter(l -> l.startsWith("kamelet="))
+                        .map(l -> StringHelper.after(l, "="))
+                        .collect(Collectors.joining(","));
+            } else {
+                files = prop.getProperty(k);
+            }
             if (files != null && !files.isEmpty()) {
                 for (String f : files.split(",")) {
                     String scheme = getScheme(f);
@@ -559,8 +575,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     boolean web = "html".equals(ext) || "js".equals(ext) || "css".equals(ext) || "jpeg".equals(ext)
                             || "jpg".equals(ext) || "png".equals(ext) || "ico".equals(ext);
                     File srcWeb = new File(srcResourcesDir, "META-INF/resources");
-                    File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : kamelet ? srcKameletsResourcesDir
+                    File targetDir = java ? srcJavaDir : camel ? srcCamelResourcesDir : kamelet ? srcKameletsResourcesDir
                             : web ? srcWeb : srcResourcesDir;
+                    targetDir.mkdirs();
 
                     File source;
                     if ("kamelet".equals(k) && localKameletDir != null) {
@@ -571,13 +588,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     }
                     File out;
                     if (source.isDirectory()) {
-                        out = target;
+                        out = targetDir;
                     } else {
-                        out = new File(target, source.getName());
+                        out = new File(targetDir, source.getName());
                     }
                     if (!java) {
                         if (kamelet) {
-                            out.getParentFile().mkdirs();
                             safeCopy(source, out, true);
                         } else if (jkube) {
                             // file should be renamed and moved into src/main/jkube
@@ -880,7 +896,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (source.isDirectory()) {
-            // flattern files if they are from a directory
+            // flatten files if they are from a directory
             File[] children = source.listFiles();
             if (children != null) {
                 for (File child : children) {

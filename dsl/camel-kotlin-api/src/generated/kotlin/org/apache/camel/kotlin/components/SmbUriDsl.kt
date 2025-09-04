@@ -193,6 +193,24 @@ public class SmbUriDsl(
   }
 
   /**
+   * Whether or not to disconnect from remote SMB server right after use. Disconnect will only
+   * disconnect the current connection to the SMB server. If you have a consumer which you want to
+   * stop, then you need to stop the consumer route instead.
+   */
+  public fun disconnect(disconnect: String) {
+    it.property("disconnect", disconnect)
+  }
+
+  /**
+   * Whether or not to disconnect from remote SMB server right after use. Disconnect will only
+   * disconnect the current connection to the SMB server. If you have a consumer which you want to
+   * stop, then you need to stop the consumer route instead.
+   */
+  public fun disconnect(disconnect: Boolean) {
+    it.property("disconnect", disconnect.toString())
+  }
+
+  /**
    * What action to take if the SMB file already exists
    */
   public fun fileExist(fileExist: String) {

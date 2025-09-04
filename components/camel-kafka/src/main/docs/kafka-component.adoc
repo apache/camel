@@ -366,13 +366,19 @@ static {
 
 To use a Kafka batching consumer with Camel, an application has to set the configuration `batching` to `true`.
 
-
 The received records are stored in a list in the exchange used in the pipeline. As such, it is possible to commit individually
 every record or the whole batch at once by committing the last exchange on the list.
 
 The size of the batch is controlled by the option `maxPollRecords`.
 
-To avoid blocking for too long, waiting for the whole set of records to fill the batch, it is possible to use the `pollTimeoutMs` option to set a timeout for the polling. In this case, the batch may contain less messages than set in the `maxPollRecords`.
+Camel will wait until the number of records has been received per batch size (`maxPollRecords`).
+However, this can take a long time, if there are too few records and no new records is being received.
+
+To avoid blocking for too long, waiting for the whole set of records to fill the batch, it is possible to use the `pollTimeoutMs` option
+to set a timeout for the polling. The timeout is only triggered if there has not received any new messages for the given timeout period.
+So for example if `pollTimeoutMs=10000` then the timeout is 10 seconds, and this will only trigger if Camel did not receive any new messages
+from Kafka for 10 seconds. The timeout trigger will reset if a message has been received, so if you continuously and slowly receive new messages,
+then this timeout may newer trigger.
 
 ==== Automatic Commits
 

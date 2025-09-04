@@ -143,6 +143,14 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      */
     public static final String DISABLE_ALL_PROCESSORS = "DisableAllProcessors";
 
+    /**
+     * Global option on {@link CamelContext#getGlobalOptions()} that tooling can use to disable route processors (bean
+     * and custom process), which allows to startup Camel without wiring up and initializing using custom
+     * bean/processors, that may not be available, or is unwanted to be in use; for example to have fast startup, and
+     * being able to introspect CamelContext and the route models.
+     */
+    public static final String DISABLE_BEAN_OR_PROCESS_PROCESSORS = "DisableBeanOrProcessProcessors";
+
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorReifier.class);
 
     // for custom reifiers
@@ -180,6 +188,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // special if the EIP is disabled
         if (route != null && route.getCamelContext() != null) {
             Boolean disabled = CamelContextHelper.parseBoolean(route.getCamelContext(), definition.getDisabled());
+            if (disabled == null) {
+                String sn = definition.getShortName();
+                if ("process".equals(sn) || "bean".equals(sn)) {
+                    disabled = "true"
+                            .equalsIgnoreCase(route.getCamelContext().getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
+                }
+            }
             if (disabled == null) {
                 disabled = "true".equalsIgnoreCase(route.getCamelContext().getGlobalOption(DISABLE_ALL_PROCESSORS));
             }

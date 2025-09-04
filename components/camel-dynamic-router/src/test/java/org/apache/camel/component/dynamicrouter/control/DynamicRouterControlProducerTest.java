@@ -40,7 +40,6 @@ import static org.apache.camel.component.dynamicrouter.control.DynamicRouterCont
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_LIST;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_STATS;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_UNSUBSCRIBE;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_UPDATE;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_DESTINATION_URI;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_EXPRESSION_LANGUAGE;
@@ -125,14 +124,29 @@ class DynamicRouterControlProducerTest {
     }
 
     @Test
-    void performUnsubscribeAction() {
+    void performUnsubscribeActionWithControlMessage() {
         String subscriptionId = "testId";
         String subscribeChannel = "testChannel";
-        Map<String, Object> headers = Map.of(
-                CONTROL_ACTION_HEADER, CONTROL_ACTION_UNSUBSCRIBE,
-                CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel,
-                CONTROL_SUBSCRIPTION_ID, subscriptionId);
-        when(message.getHeaders()).thenReturn(headers);
+        DynamicRouterControlMessage unsubscribeMsg = DynamicRouterControlMessage.Builder.newBuilder()
+                .subscriptionId(subscriptionId)
+                .subscribeChannel(subscribeChannel)
+                .build();
+        when(message.getBody()).thenReturn(unsubscribeMsg);
+        when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(unsubscribeMsg);
+        Mockito.doNothing().when(callback).done(false);
+        producer.performUnsubscribe(message, callback);
+        Mockito.verify(controlService, Mockito.times(1))
+                .removeSubscription(subscribeChannel, subscriptionId);
+    }
+
+    @Test
+    void performUnsubscribeActionWithHeaders() {
+        String subscriptionId = "testId";
+        String subscribeChannel = "testChannel";
+        when(message.getHeader(CONTROL_SUBSCRIPTION_ID, configuration.getSubscriptionId(), String.class))
+                .thenReturn(subscriptionId);
+        when(message.getHeader(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel(), String.class))
+                .thenReturn(subscribeChannel);
         Mockito.doNothing().when(callback).done(false);
         producer.performUnsubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))

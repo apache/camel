@@ -171,6 +171,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pubSubPojoClass": getOrCreateConfig(target).setPubSubPojoClass(property(camelContext, java.lang.String.class, value)); return true;
         case "pubsubport":
         case "pubSubPort": target.setPubSubPort(property(camelContext, int.class, value)); return true;
+        case "pubsuballowusesystemproxy":
+        case "pubsubAllowUseSystemProxy": target.setPubsubAllowUseSystemProxy(property(camelContext, boolean.class, value)); return true;
         case "querylocator":
         case "queryLocator": getOrCreateConfig(target).setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
         case "rawhttpheaders":
@@ -373,6 +375,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pubSubPojoClass": return java.lang.String.class;
         case "pubsubport":
         case "pubSubPort": return int.class;
+        case "pubsuballowusesystemproxy":
+        case "pubsubAllowUseSystemProxy": return boolean.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
         case "rawhttpheaders":
@@ -576,6 +580,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pubSubPojoClass": return getOrCreateConfig(target).getPubSubPojoClass();
         case "pubsubport":
         case "pubSubPort": return target.getPubSubPort();
+        case "pubsuballowusesystemproxy":
+        case "pubsubAllowUseSystemProxy": return target.isPubsubAllowUseSystemProxy();
         case "querylocator":
         case "queryLocator": return getOrCreateConfig(target).getQueryLocator();
         case "rawhttpheaders":

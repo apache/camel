@@ -20,10 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.resequencer.MessageRejectedException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
-/**
- *
- */
+@DisabledOnOs(value = { OS.LINUX },
+              architectures = { "s390x" },
+              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
 
     @Test

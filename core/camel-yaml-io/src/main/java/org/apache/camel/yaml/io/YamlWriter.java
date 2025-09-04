@@ -32,7 +32,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -59,6 +58,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     private CamelContext camelContext;
     private final Writer writer;
     private final DefaultRuntimeCamelCatalog catalog;
+    private final ModelJSonSchemaResolver resolver;
     private final List<EipModel> roots = new ArrayList<>();
     private boolean routesIsRoot;
     private final ArrayDeque<EipModel> models = new ArrayDeque<>();
@@ -67,8 +67,9 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
 
     public YamlWriter(Writer writer) {
         this.writer = writer;
+        this.resolver = new ModelJSonSchemaResolver();
         this.catalog = new DefaultRuntimeCamelCatalog();
-        this.catalog.setJSonSchemaResolver(new ModelJSonSchemaResolver());
+        this.catalog.setJSonSchemaResolver(this.resolver);
         this.catalog.setCaching(false); // turn cache off as we store state per node
         this.catalog.start();
     }
@@ -86,11 +87,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     @Override
     protected void doStart() throws Exception {
         if (camelContext != null) {
-            DefaultRuntimeCamelCatalog runtime = (DefaultRuntimeCamelCatalog) PluginHelper.getRuntimeCamelCatalog(camelContext);
-            if (runtime != null) {
-                // use json schema resolver from camel context
-                this.catalog.setJSonSchemaResolver(runtime.getJSonSchemaResolver());
-            }
+            this.resolver.setCamelContext(camelContext);
+            this.resolver.setClassLoader(camelContext.getApplicationContextClassLoader());
         }
     }
 

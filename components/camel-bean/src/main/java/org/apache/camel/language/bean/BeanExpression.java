@@ -349,7 +349,9 @@ public class BeanExpression implements Expression, Predicate {
     private static Object invokeBean(BeanHolder beanHolder, String beanName, String methodName, Exchange exchange) {
         Object result;
 
-        try (BeanExpressionProcessor processor = new BeanExpressionProcessor(beanHolder)) {
+        try {
+            // do not close BeanExpressionProcessor as beanHolder should not be closed
+            BeanExpressionProcessor processor = new BeanExpressionProcessor(beanHolder);
 
             if (methodName != null) {
                 processor.setMethod(methodName);

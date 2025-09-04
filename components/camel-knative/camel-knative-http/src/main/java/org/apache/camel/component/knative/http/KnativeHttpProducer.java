@@ -147,6 +147,10 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
                             exceptionMessage += " with statusCode: " + response.result().statusCode();
                         }
 
+                        if (response.cause() != null) {
+                            exceptionMessage += " caused by: " + response.cause().getMessage();
+                        }
+
                         exchange.setException(new CamelException(exceptionMessage));
                     }
 

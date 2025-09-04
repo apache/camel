@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.as2;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
@@ -35,6 +37,7 @@ import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationXMLEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
@@ -70,16 +73,31 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void receivePlainEDIMessageTest() throws Exception {
-        final AS2ClientConnection clientConnection = getAs2ClientConnection();
-        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
+        receivePlainEDIMessage(EDI_MESSAGE, null);
+    }
 
-        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
-                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+    @Test
+    public void receivePlainEDIStreamMessageTest() throws Exception {
+        receivePlainEDIMessage(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)), null);
+    }
 
+    @Test
+    public void receivePlainEDIBase64StreamMessageTest() throws Exception {
+        receivePlainEDIMessage(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)), "base64");
+    }
+
+    private void receivePlainEDIMessage(Object msg, String encoding) throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
         mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+
+        final AS2ClientConnection clientConnection = getAs2ClientConnection();
+        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
+
+        clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), encoding, null, null, null,
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -121,9 +139,18 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         assertTrue(ediEntity.getContentType().startsWith(AS2MediaType.APPLICATION_EDIFACT),
                 "Unexpected content type for entity");
         assertTrue(ediEntity.isMainBody(), "Entity not set as main body of request");
-        String rcvdMessage = ediEntity.getEdiMessage().replaceAll("\r", "");
-        assertEquals(EDI_MESSAGE, rcvdMessage, "EDI message does not match");
 
+        ApplicationEntity appEntity = (ApplicationEntity) entity;
+        if (encoding == null) {
+            assertTrue(appEntity.getEdiMessage() instanceof String);
+            String rcvdMessage = ((String) appEntity.getEdiMessage()).replaceAll("\r", "");
+            assertEquals(EDI_MESSAGE, rcvdMessage, "EDI message does not match");
+        } else if ("base64".equals(encoding)) {
+            assertTrue(appEntity.getEdiMessage() instanceof InputStream);
+            InputStream is = (InputStream) appEntity.getEdiMessage();
+            String rcvdMessage = new String(is.readAllBytes(), StandardCharsets.US_ASCII).replaceAll("\r", "");
+            assertEquals(EDI_MESSAGE, rcvdMessage, "EDI message does not match");
+        }
         String rcvdMessageFromBody = message.getBody(String.class);
         assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessageFromBody.replaceAll("[\n\r]", ""),
                 "EDI message does not match");
@@ -140,19 +167,33 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void receiveMultipartSignedMessageTest() throws Exception {
+        receiveMultipartSignedMessage(EDI_MESSAGE, null);
+    }
+
+    @Test
+    public void receiveMultipartSignedStreamMessageTest() throws Exception {
+        receiveMultipartSignedMessage(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)), null);
+    }
+
+    @Test
+    public void receiveMultipartSignedBase64StreamMessageTest() throws Exception {
+        receiveMultipartSignedMessage(new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)), "base64");
+    }
+
+    private void receiveMultipartSignedMessage(Object msg, String encoding) throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
 
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
-        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+        clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), encoding,
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(1);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -218,6 +259,9 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void receiveMultipartSignedXMLMessageTest() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
 
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
@@ -228,9 +272,6 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(1);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -296,6 +337,9 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void receiveMultipartInvalidSignedMessageTest() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
 
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
@@ -318,9 +362,6 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 new Certificate[] { hackerSigningCert }, hackerSigningKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(1);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -387,18 +428,38 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
     // Verify that the payload is compressed before being signed.
     @Test
     public void receiveMultipartCompressedAndSignedMessageTest() throws Exception {
+        receiveMultipartCompressedAndSignedMessage(EDI_MESSAGE, null);
+    }
+
+    @Test
+    public void receiveMultipartCompressedAndSignedStreamMessageTest() throws Exception {
+        receiveMultipartCompressedAndSignedMessage(
+                new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)), null);
+    }
+
+    // base64 encoded stream input, compressed then signed
+    @Test
+    public void receiveMultipartCompressedAndSignedBase64StreamMessageTest() throws Exception {
+        receiveMultipartCompressedAndSignedMessage(
+                new ByteArrayInputStream(EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII)), "base64");
+    }
+
+    private void receiveMultipartCompressedAndSignedMessage(Object msg, String encoding) throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
-        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.COMPRESSED_SIGNED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+        clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.COMPRESSED_SIGNED,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), encoding,
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        verifyMock(mockEndpoint);
+        mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         verifyExchanges(exchanges);
@@ -423,6 +484,10 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void sendEditMessageToFailingProcessorTest() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(0);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
@@ -431,9 +496,6 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(0);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         HttpResponse response = context.getResponse();

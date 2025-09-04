@@ -85,7 +85,8 @@ public class PubSubApiProcessor extends AbstractSalesforceProcessor {
         this.pubSubClient = new PubSubApiClient(
                 endpoint.getComponent().getSession(),
                 endpoint.getComponent().getLoginConfig(), endpoint.getComponent().getPubSubHost(),
-                endpoint.getComponent().getPubSubPort(), 0, 0);
+                endpoint.getComponent().getPubSubPort(), 0, 0,
+                endpoint.getComponent().isPubsubAllowUseSystemProxy());
         ServiceHelper.startService(pubSubClient);
     }
 

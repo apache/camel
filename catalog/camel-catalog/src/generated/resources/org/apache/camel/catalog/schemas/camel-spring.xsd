@@ -4737,7 +4737,9 @@ size is 10. Default value: 10
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due circuit
-breaker is half open or open. Default value: false
+breaker is half open (and was not attempted but rejected immediately) or open (always rejected). This option is only in
+use when there is NOT a fallback configured on the circuit breaker. When there is a fallback then the fallback is always
+executed and CallNotPermittedException is not thrown. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8978,7 +8980,7 @@ value: 0
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default value: false
+To enable pretty printing output nicely formatted. Is by default false. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8988,7 +8990,7 @@ To enable pretty printing output nicely formatted. Is by default false. Default 
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to allow using ObjectFactory classes to create the POJO classes during marshalling. This only applies to POJO
-classes that has not been annotated with JAXB and providing jaxb.index descriptor files. Default value: false
+classes that has not been annotated with JAXB and providing jaxb.index descriptor files. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8997,7 +8999,7 @@ classes that has not been annotated with JAXB and providing jaxb.index descripto
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases. Default value: false
+Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -18427,7 +18429,6 @@ An optional certificate alias to use. This is useful when the keystore has multi
       <xs:enumeration value="Fastjson"/>
       <xs:enumeration value="Gson"/>
       <xs:enumeration value="Jackson"/>
-      <xs:enumeration value="Johnzon"/>
       <xs:enumeration value="Jsonb"/>
     </xs:restriction>
   </xs:simpleType>

@@ -212,7 +212,7 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
         try {
             client = new PubSubApiClient(
                     component.getSession(), new SalesforceLoginConfig(),
-                    "api.pubsub.salesforce.com", 7443, 0, 0);
+                    "api.pubsub.salesforce.com", 7443, 0, 0, true);
             client.start();
 
             byte[] bytes;

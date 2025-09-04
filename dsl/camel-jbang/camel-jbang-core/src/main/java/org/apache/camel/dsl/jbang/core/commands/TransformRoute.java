@@ -53,10 +53,9 @@ public class TransformRoute extends CamelCommand {
                         description = "Whether to resolve property placeholders in the dumped output")
     boolean resolvePlaceholders;
 
-    @CommandLine.Option(names = { "--uri-as-parameters" },
-                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format "
-                                      + "and recommended to enable when using Apache Camel Karavan)")
-    boolean uriAsParameters;
+    @CommandLine.Option(names = { "--uri-as-parameters" }, defaultValue = "true",
+                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
+    boolean uriAsParameters = true;
 
     @CommandLine.Option(names = { "--ignore-loading-error" },
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")

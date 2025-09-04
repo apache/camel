@@ -76,23 +76,19 @@
             </plugin>
             <plugin>
                 <groupId>org.eclipse.jkube</groupId>
-                <artifactId>${camel.springboot.jkube.maven.plugin}</artifactId>
-                <version>${camel.springboot.jkube.version}</version>
+                <artifactId>${jkube.maven.plugin}</artifactId>
+                <version>${jkube.version}</version>
                 <configuration>
-                    <imagePullPolicy>${camel.springboot.kubernetes.image-pull-policy}</imagePullPolicy>
-                    <buildStrategy>docker</buildStrategy>
+                    <buildStrategy>${jkube.build.strategy}</buildStrategy>
                     <images>
                         <image>
-                            <name>${camel.springboot.kubernetes.image-name}</name>
                             <build>
                                 <from>eclipse-temurin:{{ .JavaVersion }}</from>
+                                <!-- Supported only when using the jib build strategy -->
                                 <createImageOptions>
                                     <platform>linux/amd64</platform>
                                     <platform>linux/arm64</platform>
                                 </createImageOptions>
-                                <ports>
-                                    <port>${camel.springboot.kubernetes.ports.http.container-port}</port>
-                                </ports>
                                 <entryPoint>
                                     <exec>
                                         <arg>java</arg>
@@ -109,6 +105,7 @@
                         <goals>
                             <goal>build</goal>
                             <goal>resource</goal>
+                            <goal>push</goal>
                         </goals>
                         <phase>package</phase>
                     </execution>
@@ -124,7 +121,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <!-- For symmetry with Quarkus, copy kubernetes.yml to the same target location -->
+                            <!-- Copy kubernetes resources to target/kubernetes -->
                             <outputDirectory>${project.build.directory}/kubernetes</outputDirectory>
                             <resources>
                                 <resource>

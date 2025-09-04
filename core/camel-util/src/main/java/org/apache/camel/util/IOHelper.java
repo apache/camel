@@ -171,14 +171,12 @@ public final class IOHelper {
      * Copies the data from the input stream to the output stream. Uses the legacy copy logic. Prefer using
      * {@link IOHelper#copy(InputStream, OutputStream)} unless you have to control how data is flushed the buffer
      *
-     * @param      input       the input stream buffer
-     * @param      output      the output stream buffer
-     * @param      bufferSize  the size of the buffer used for the copies
-     * @return                 the number of bytes copied
-     * @deprecated             Prefer using {@link IOHelper#copy(InputStream, OutputStream)}
-     * @throws     IOException for I/O errors
+     * @param  input       the input stream buffer
+     * @param  output      the output stream buffer
+     * @param  bufferSize  the size of the buffer used for the copies
+     * @return             the number of bytes copied
+     * @throws IOException for I/O errors
      */
-    @Deprecated(since = "4.8.0")
     public static int copy(final InputStream input, final OutputStream output, int bufferSize) throws IOException {
         return copy(input, output, bufferSize, false);
     }
@@ -203,13 +201,12 @@ public final class IOHelper {
      * Copies the data from the input stream to the output stream. Uses the legacy copy logic. Prefer using
      * {@link IOHelper#copy(InputStream, OutputStream)} unless you have to control how data is flushed the buffer
      *
-     * @param      input            the input stream buffer
-     * @param      output           the output stream buffer
-     * @param      bufferSize       the size of the buffer used for the copies
-     * @param      flushOnEachWrite whether to flush the data everytime that data is written to the buffer
-     * @return                      the number of bytes copied
-     * @deprecated                  Prefer using {@link IOHelper#copy(InputStream, OutputStream)}
-     * @throws     IOException      for I/O errors
+     * @param  input            the input stream buffer
+     * @param  output           the output stream buffer
+     * @param  bufferSize       the size of the buffer used for the copies
+     * @param  flushOnEachWrite whether to flush the data everytime that data is written to the buffer
+     * @return                  the number of bytes copied
+     * @throws IOException      for I/O errors
      */
     public static int copy(
             final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite,

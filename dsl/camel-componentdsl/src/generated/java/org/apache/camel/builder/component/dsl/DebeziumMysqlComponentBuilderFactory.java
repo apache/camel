@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.debezium.DebeziumMySqlComponent;
+import org.apache.camel.component.debezium.mysql.DebeziumMySqlComponent;
 
 /**
  * Capture changes from a MySQL database.
@@ -103,14 +103,14 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.debezium.mysql.configuration.MySqlConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default DebeziumMysqlComponentBuilder configuration(org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
+        default DebeziumMysqlComponentBuilder configuration(org.apache.camel.component.debezium.mysql.configuration.MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -2141,9 +2141,9 @@ public interface DebeziumMysqlComponentBuilderFactory {
         protected DebeziumMySqlComponent buildConcreteComponent() {
             return new DebeziumMySqlComponent();
         }
-        private org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMySqlComponent component) {
+        private org.apache.camel.component.debezium.mysql.configuration.MySqlConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMySqlComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration());
+                component.setConfiguration(new org.apache.camel.component.debezium.mysql.configuration.MySqlConnectorEmbeddedDebeziumConfiguration());
             }
             return component.getConfiguration();
         }
@@ -2155,7 +2155,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             switch (name) {
             case "additionalProperties": getOrCreateConfiguration((DebeziumMySqlComponent) component).setAdditionalProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((DebeziumMySqlComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "configuration": ((DebeziumMySqlComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "configuration": ((DebeziumMySqlComponent) component).setConfiguration((org.apache.camel.component.debezium.mysql.configuration.MySqlConnectorEmbeddedDebeziumConfiguration) value); return true;
             case "internalKeyConverter": getOrCreateConfiguration((DebeziumMySqlComponent) component).setInternalKeyConverter((java.lang.String) value); return true;
             case "internalValueConverter": getOrCreateConfiguration((DebeziumMySqlComponent) component).setInternalValueConverter((java.lang.String) value); return true;
             case "offsetCommitPolicy": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOffsetCommitPolicy((java.lang.String) value); return true;

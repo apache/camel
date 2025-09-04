@@ -59,6 +59,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": target.getConfiguration().setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
+        case "messagetimestamp":
+        case "messageTimestamp": target.getConfiguration().setMessageTimestamp(property(camelContext, java.lang.String.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
@@ -161,6 +163,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return boolean.class;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return int.class;
+        case "messagetimestamp":
+        case "messageTimestamp": return java.lang.String.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
         case "pollstrategy":
@@ -259,6 +263,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperrequest":
         case "maxResultsPerRequest": return target.getConfiguration().getMaxResultsPerRequest();
+        case "messagetimestamp":
+        case "messageTimestamp": return target.getConfiguration().getMessageTimestamp();
         case "overrideendpoint":
         case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "pollstrategy":

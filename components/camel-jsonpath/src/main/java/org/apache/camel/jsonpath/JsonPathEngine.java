@@ -105,7 +105,11 @@ public class JsonPathEngine {
 
     private ObjectMapper findRegisteredMapper(CamelContext context) {
         if (context != null) {
-            return context.getRegistry().findSingleByType(ObjectMapper.class);
+            ObjectMapper mapper = context.getRegistry().findSingleByType(ObjectMapper.class);
+            // do not use XML mapper
+            if (mapper != null && !mapper.getClass().getSimpleName().equals("XmlMapper")) {
+                return mapper;
+            }
         }
         return null;
     }

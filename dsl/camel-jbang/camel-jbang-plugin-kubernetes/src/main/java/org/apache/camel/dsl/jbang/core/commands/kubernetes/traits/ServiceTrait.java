@@ -23,9 +23,9 @@ import java.util.Optional;
 import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServicePortBuilder;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.Container;
-import org.apache.camel.v1.integrationspec.traits.Service;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Service;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 
 public class ServiceTrait extends BaseTrait {
 
@@ -68,7 +68,7 @@ public class ServiceTrait extends BaseTrait {
                 .endMetadata()
                 .withNewSpec()
                 .withType(serviceType)
-                .withSelector(Map.of(BaseTrait.KUBERNETES_NAME_LABEL, context.getName()))
+                .withSelector(Map.of(BaseTrait.KUBERNETES_LABEL_NAME, context.getName()))
                 .addToPorts(new ServicePortBuilder()
                         .withName(Optional.ofNullable(containerTrait.getServicePortName())
                                 .orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME))

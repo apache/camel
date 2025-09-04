@@ -116,6 +116,7 @@ public class Export extends ExportBaseCommand {
         cmd.repositories = this.repositories;
         cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;
+        cmd.name = this.name;
         cmd.gav = this.gav;
         cmd.mavenSettings = this.mavenSettings;
         cmd.mavenSettingsSecurity = this.mavenSettingsSecurity;
@@ -151,6 +152,11 @@ public class Export extends ExportBaseCommand {
     }
 
     protected String getProjectName() {
+
+        if (name != null) {
+            return name;
+        }
+
         if (gav != null) {
             String[] ids = gav.split(":");
             if (ids.length > 1) {
@@ -163,7 +169,7 @@ public class Export extends ExportBaseCommand {
         }
 
         throw new RuntimeCamelException(
-                "Failed to resolve project name - please provide --gav option or at least one source file");
+                "Failed to resolve project name - please provide --name, --gav or source file");
     }
 
     protected String getVersion() {

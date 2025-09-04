@@ -691,12 +691,12 @@ public class DefaultRoute extends ServiceSupport implements Route {
             services.add(service);
         }
         for (Processor p : onCompletions.values()) {
-            if (processor instanceof Service service) {
+            if (p instanceof Service service) {
                 services.add(service);
             }
         }
         for (Processor p : onExceptions.values()) {
-            if (processor instanceof Service service) {
+            if (p instanceof Service service) {
                 services.add(service);
             }
         }

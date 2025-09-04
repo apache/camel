@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.debezium.DebeziumDb2Component;
+import org.apache.camel.component.debezium.db2.DebeziumDb2Component;
 
 /**
  * Capture changes from a DB2 database.
@@ -103,14 +103,14 @@ public interface DebeziumDb2ComponentBuilderFactory {
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.debezium.configuration.Db2ConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.debezium.db2.configuration.Db2ConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default DebeziumDb2ComponentBuilder configuration(org.apache.camel.component.debezium.configuration.Db2ConnectorEmbeddedDebeziumConfiguration configuration) {
+        default DebeziumDb2ComponentBuilder configuration(org.apache.camel.component.debezium.db2.configuration.Db2ConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -1545,9 +1545,9 @@ public interface DebeziumDb2ComponentBuilderFactory {
         protected DebeziumDb2Component buildConcreteComponent() {
             return new DebeziumDb2Component();
         }
-        private org.apache.camel.component.debezium.configuration.Db2ConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumDb2Component component) {
+        private org.apache.camel.component.debezium.db2.configuration.Db2ConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumDb2Component component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.debezium.configuration.Db2ConnectorEmbeddedDebeziumConfiguration());
+                component.setConfiguration(new org.apache.camel.component.debezium.db2.configuration.Db2ConnectorEmbeddedDebeziumConfiguration());
             }
             return component.getConfiguration();
         }
@@ -1559,7 +1559,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             switch (name) {
             case "additionalProperties": getOrCreateConfiguration((DebeziumDb2Component) component).setAdditionalProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((DebeziumDb2Component) component).setBridgeErrorHandler((boolean) value); return true;
-            case "configuration": ((DebeziumDb2Component) component).setConfiguration((org.apache.camel.component.debezium.configuration.Db2ConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "configuration": ((DebeziumDb2Component) component).setConfiguration((org.apache.camel.component.debezium.db2.configuration.Db2ConnectorEmbeddedDebeziumConfiguration) value); return true;
             case "internalKeyConverter": getOrCreateConfiguration((DebeziumDb2Component) component).setInternalKeyConverter((java.lang.String) value); return true;
             case "internalValueConverter": getOrCreateConfiguration((DebeziumDb2Component) component).setInternalValueConverter((java.lang.String) value); return true;
             case "offsetCommitPolicy": getOrCreateConfiguration((DebeziumDb2Component) component).setOffsetCommitPolicy((java.lang.String) value); return true;

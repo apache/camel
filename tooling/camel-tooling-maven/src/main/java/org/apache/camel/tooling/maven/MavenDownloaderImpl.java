@@ -77,6 +77,7 @@ import org.apache.maven.settings.validation.SettingsValidator;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.ConfigurationProperties;
+import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositorySystem;
@@ -1157,11 +1158,12 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         //            session.setRepositoryListener(null);
         //            session.setTransferListener(null);
         //            session.setResolutionErrorPolicy(null);
-        //            session.setCache(null);
         //            session.setData(null);
         //            session.setReadOnly();
         // could be useful to search through kamelet/jbang config
         session.setWorkspaceReader(null);
+
+        session.setCache(new DefaultRepositoryCache());
 
         return session;
     }
@@ -1220,48 +1222,52 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // then process the repositories from active profiles from external Maven settings
         for (String profile : settings.getActiveProfiles()) {
-            for (Repository r : settings.getProfilesAsMap().get(profile).getRepositories()) {
-                try {
-                    URL url = new URL(r.getUrl());
-                    if (repositoryURLs.add(r.getUrl())) {
-                        if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
-                                && url.getPath().startsWith("/snapshots")) {
-                            // record that Apache Snapshots repository is included in default (always used)
-                            // repositories and used preconfigured instance of o.e.aether.repository.RemoteRepository
-                            apacheSnapshotsIncluded = true;
-                            repositories.add(apacheSnapshotsRepository);
-                        } else {
-                            RemoteRepository.Builder rb = new RemoteRepository.Builder(r.getId(), r.getLayout(), r.getUrl());
-                            if (r.getReleases() == null) {
-                                // default (enabled) policy for releases
-                                rb.setPolicy(defaultPolicy);
+            Profile p = settings.getProfilesAsMap().get(profile);
+            if (p != null) {
+                for (Repository r : p.getRepositories()) {
+                    try {
+                        URL url = new URL(r.getUrl());
+                        if (repositoryURLs.add(r.getUrl())) {
+                            if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
+                                    && url.getPath().startsWith("/snapshots")) {
+                                // record that Apache Snapshots repository is included in default (always used)
+                                // repositories and used preconfigured instance of o.e.aether.repository.RemoteRepository
+                                apacheSnapshotsIncluded = true;
+                                repositories.add(apacheSnapshotsRepository);
                             } else {
-                                String updatePolicy = r.getReleases().getUpdatePolicy() == null
-                                        ? RepositoryPolicy.UPDATE_POLICY_DAILY : r.getReleases().getUpdatePolicy();
-                                String checksumPolicy = r.getReleases().getChecksumPolicy() == null
-                                        ? RepositoryPolicy.CHECKSUM_POLICY_WARN : r.getReleases().getChecksumPolicy();
-                                rb.setPolicy(new RepositoryPolicy(
-                                        r.getReleases().isEnabled(),
-                                        updatePolicy, checksumPolicy));
+                                RemoteRepository.Builder rb
+                                        = new RemoteRepository.Builder(r.getId(), r.getLayout(), r.getUrl());
+                                if (r.getReleases() == null) {
+                                    // default (enabled) policy for releases
+                                    rb.setPolicy(defaultPolicy);
+                                } else {
+                                    String updatePolicy = r.getReleases().getUpdatePolicy() == null
+                                            ? RepositoryPolicy.UPDATE_POLICY_DAILY : r.getReleases().getUpdatePolicy();
+                                    String checksumPolicy = r.getReleases().getChecksumPolicy() == null
+                                            ? RepositoryPolicy.CHECKSUM_POLICY_WARN : r.getReleases().getChecksumPolicy();
+                                    rb.setPolicy(new RepositoryPolicy(
+                                            r.getReleases().isEnabled(),
+                                            updatePolicy, checksumPolicy));
+                                }
+                                // if someone defines Apache snapshots repository, (s)he has to specify proper policy, sorry.
+                                if (r.getSnapshots() == null) {
+                                    // default (disabled) policy for releases
+                                    rb.setSnapshotPolicy(POLICY_DISABLED);
+                                } else {
+                                    String updatePolicy = r.getSnapshots().getUpdatePolicy() == null
+                                            ? RepositoryPolicy.UPDATE_POLICY_DAILY : r.getSnapshots().getUpdatePolicy();
+                                    String checksumPolicy = r.getSnapshots().getChecksumPolicy() == null
+                                            ? RepositoryPolicy.CHECKSUM_POLICY_WARN : r.getSnapshots().getChecksumPolicy();
+                                    rb.setSnapshotPolicy(new RepositoryPolicy(
+                                            r.getSnapshots().isEnabled(),
+                                            updatePolicy, checksumPolicy));
+                                }
+                                repositories.add(rb.build());
                             }
-                            // if someone defines Apache snapshots repository, (s)he has to specify proper policy, sorry.
-                            if (r.getSnapshots() == null) {
-                                // default (disabled) policy for releases
-                                rb.setSnapshotPolicy(POLICY_DISABLED);
-                            } else {
-                                String updatePolicy = r.getSnapshots().getUpdatePolicy() == null
-                                        ? RepositoryPolicy.UPDATE_POLICY_DAILY : r.getSnapshots().getUpdatePolicy();
-                                String checksumPolicy = r.getSnapshots().getChecksumPolicy() == null
-                                        ? RepositoryPolicy.CHECKSUM_POLICY_WARN : r.getSnapshots().getChecksumPolicy();
-                                rb.setSnapshotPolicy(new RepositoryPolicy(
-                                        r.getSnapshots().isEnabled(),
-                                        updatePolicy, checksumPolicy));
-                            }
-                            repositories.add(rb.build());
                         }
+                    } catch (MalformedURLException e) {
+                        LOG.warn("Cannot use {} URL from Maven settings: {}. Skipping.", r.getUrl(), e.getMessage(), e);
                     }
-                } catch (MalformedURLException e) {
-                    LOG.warn("Cannot use {} URL from Maven settings: {}. Skipping.", r.getUrl(), e.getMessage(), e);
                 }
             }
         }

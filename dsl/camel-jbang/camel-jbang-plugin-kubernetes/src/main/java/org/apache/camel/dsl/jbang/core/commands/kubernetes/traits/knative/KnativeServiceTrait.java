@@ -26,9 +26,9 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ServiceTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.KnativeService;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.KnativeService;
 
 public class KnativeServiceTrait extends KnativeBaseTrait {
 
@@ -97,7 +97,7 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
         }
 
         Map<String, String> serviceLabels = new HashMap<>();
-        serviceLabels.put(BaseTrait.KUBERNETES_NAME_LABEL, context.getName());
+        serviceLabels.put(BaseTrait.KUBERNETES_LABEL_NAME, context.getName());
 
         // Make sure the Eventing webhook will select the source resource, in order to inject the sink information.
         // This is necessary for Knative environments, that are configured with SINK_BINDING_SELECTION_MODE=inclusion.
@@ -118,11 +118,21 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
                 .withNewSpec()
                 .withNewTemplate()
                 .withNewMetadata()
-                .addToLabels(BaseTrait.KUBERNETES_NAME_LABEL, context.getName())
+                .addToLabels(BaseTrait.KUBERNETES_LABEL_NAME, context.getName())
                 .addToAnnotations(revisionAnnotations)
                 .endMetadata()
                 .endTemplate()
                 .endSpec();
+
+        if (serviceTrait.getTimeoutSeconds() != null && serviceTrait.getTimeoutSeconds() > 0) {
+            service.editSpec()
+                    .editTemplate()
+                    .editSpec()
+                    .withTimeoutSeconds(serviceTrait.getTimeoutSeconds())
+                    .endSpec()
+                    .endTemplate()
+                    .endSpec();
+        }
 
         if (context.getServiceAccount() != null) {
             service.editSpec()

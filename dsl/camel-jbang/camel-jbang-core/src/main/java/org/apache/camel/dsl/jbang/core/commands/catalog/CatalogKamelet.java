@@ -69,6 +69,7 @@ public class CatalogKamelet extends CamelCommand {
         }
 
         Map<String, Object> kamelets;
+        var tccLoader = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader cl = createClassLoader();
             MavenDependencyDownloader downloader = new MavenDependencyDownloader();
@@ -84,6 +85,8 @@ public class CatalogKamelet extends CamelCommand {
         } catch (Exception e) {
             System.err.println("Cannot download camel-kamelets-catalog due to " + e.getMessage());
             return 1;
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccLoader);
         }
 
         for (Object o : kamelets.values()) {

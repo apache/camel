@@ -29,7 +29,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="spring-ws:beanname:QuoteEndpointDispatcher"/>
-            <to uri="bean:responseProcessor"/>
+            <process ref="responseProcessor"/>
         </route>
     </camelContext>
 

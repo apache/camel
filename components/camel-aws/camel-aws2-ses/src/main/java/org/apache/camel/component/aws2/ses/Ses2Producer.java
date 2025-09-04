@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.camel.Endpoint;
@@ -39,6 +40,7 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.ses.model.Body;
 import software.amazon.awssdk.services.ses.model.Content;
 import software.amazon.awssdk.services.ses.model.Destination;
+import software.amazon.awssdk.services.ses.model.MessageTag;
 import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 import software.amazon.awssdk.services.ses.model.SendEmailResponse;
 import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
@@ -86,6 +88,7 @@ public class Ses2Producer extends DefaultProducer {
         request.returnPath(determineReturnPath(exchange));
         request.replyToAddresses(determineReplyToAddresses(exchange));
         request.message(createMessage(exchange));
+        request.tags(determineTags(exchange));
         request.configurationSetName(determineConfigurationSet(exchange));
         return request.build();
     }
@@ -95,6 +98,7 @@ public class Ses2Producer extends DefaultProducer {
         request.source(determineFrom(exchange));
         request.destinations(determineRawTo(exchange));
         request.rawMessage(createRawMessage(exchange));
+        request.tags(determineTags(exchange));
         request.configurationSetName(determineConfigurationSet(exchange));
         return request.build();
     }
@@ -129,7 +133,6 @@ public class Ses2Producer extends DefaultProducer {
         return message.build();
     }
 
-    @SuppressWarnings("unchecked")
     private Collection<String> determineReplyToAddresses(Exchange exchange) {
         String replyToAddresses = exchange.getIn().getHeader(Ses2Constants.REPLY_TO_ADDRESSES, String.class);
         if (replyToAddresses == null) {
@@ -215,6 +218,20 @@ public class Ses2Producer extends DefaultProducer {
             subject = getConfiguration().getSubject();
         }
         return subject;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<MessageTag> determineTags(Exchange exchange) {
+        Map<String, String> tagMap = exchange.getIn().getHeader(Ses2Constants.TAGS, Map.class);
+        if (tagMap == null || tagMap.isEmpty()) {
+            return null;
+        }
+        return tagMap.entrySet().stream()
+                .map(entry -> MessageTag.builder()
+                        .name(entry.getKey())
+                        .value(entry.getValue())
+                        .build())
+                .toList();
     }
 
     private String determineConfigurationSet(Exchange exchange) {

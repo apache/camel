@@ -123,6 +123,13 @@ public class CryptoDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    void testInlineAES128GCMSymmetric() throws Exception {
+        if (checkUnrestrictedPoliciesInstalled()) {
+            doRoundTripEncryptionTests("direct:inline-aes-gcm-encryption");
+        }
+    }
+
+    @Test
     void testNoAlgorithm() throws Exception {
         try {
             doRoundTripEncryptionTests("direct:no-algorithm");
@@ -352,6 +359,28 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 cryptoFormat.setAlgorithmParameterSpec(paramSpec);
 
                 from("direct:aes-gcm-encryption")
+                        .marshal(cryptoFormat)
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .to("mock:unencrypted");
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                KeyGenerator generator = KeyGenerator.getInstance("AES");
+                generator.init(128);
+
+                SecureRandom random = new SecureRandom();
+                byte[] iv = new byte[12];
+                random.nextBytes(iv);
+
+                GCMParameterSpec paramSpec = new GCMParameterSpec(128, iv);
+
+                CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES/GCM/NoPadding", generator.generateKey());
+                cryptoFormat.setInitializationVector(iv);
+                cryptoFormat.setShouldInlineInitializationVector(true);
+                cryptoFormat.setAlgorithmParameterSpec(paramSpec);
+
+                from("direct:inline-aes-gcm-encryption")
                         .marshal(cryptoFormat)
                         .to("mock:encrypted")
                         .unmarshal(cryptoFormat)

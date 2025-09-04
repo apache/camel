@@ -364,7 +364,8 @@ public interface MinaComponentBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. Also make sure to configure
+         * objectCodecPattern to (star) to allow transferring java objects.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -374,6 +375,7 @@ public interface MinaComponentBuilderFactory {
          * @param transferExchange the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default MinaComponentBuilder transferExchange(boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
@@ -483,6 +485,23 @@ public interface MinaComponentBuilderFactory {
          */
         default MinaComponentBuilder filters(java.util.List<org.apache.mina.core.filterchain.IoFilter> filters) {
             doSetProperty("filters", filters);
+            return this;
+        }
+    
+        /**
+         * Accept the wildcard specified classes for Object deserialization,
+         * unless they are otherwise rejected. Multiple patterns can be
+         * separated by comma.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: codec
+         * 
+         * @param objectCodecPattern the value to set
+         * @return the dsl builder
+         */
+        default MinaComponentBuilder objectCodecPattern(java.lang.String objectCodecPattern) {
+            doSetProperty("objectCodecPattern", objectCodecPattern);
             return this;
         }
     
@@ -599,6 +618,7 @@ public interface MinaComponentBuilderFactory {
             case "encoderMaxLineLength": getOrCreateConfiguration((MinaComponent) component).setEncoderMaxLineLength((int) value); return true;
             case "encoding": getOrCreateConfiguration((MinaComponent) component).setEncoding((java.lang.String) value); return true;
             case "filters": getOrCreateConfiguration((MinaComponent) component).setFilters((java.util.List) value); return true;
+            case "objectCodecPattern": getOrCreateConfiguration((MinaComponent) component).setObjectCodecPattern((java.lang.String) value); return true;
             case "textline": getOrCreateConfiguration((MinaComponent) component).setTextline((boolean) value); return true;
             case "textlineDelimiter": getOrCreateConfiguration((MinaComponent) component).setTextlineDelimiter((org.apache.camel.component.mina.MinaTextLineDelimiter) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((MinaComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;

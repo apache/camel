@@ -19,7 +19,7 @@
     id: myRoute
     from:
       id: from
-      uri: direct:start
+      uri: direct:start?exchangePattern=InOnly
       steps:
         - transform:
             id: transform
@@ -27,4 +27,4 @@
               expression: "Hello ${body}"
         - to:
             id: myMock
-            uri: mock:result
+            uri: mock:result?failFast=false&retainFirst=5&browseLimit=123

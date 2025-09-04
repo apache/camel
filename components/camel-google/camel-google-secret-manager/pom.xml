@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-parent</artifactId>
-        <version>4.8.1</version>
+        <version>4.8.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-secret-manager</artifactId>
@@ -36,26 +36,6 @@
         <firstVersion>3.16.0</firstVersion>
         <camel.surefire.forkTimeout>300</camel.surefire.forkTimeout>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>google-cloud-secretmanager-bom</artifactId>
-                <version>${google-cloud-secretmanager-bom-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>${google-cloud-bom-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -69,6 +49,7 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-secretmanager</artifactId>
+            <version>${google-cloud-secretmanager-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
@@ -79,6 +60,7 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-pubsub</artifactId>
+            <version>${google-cloud-pubsub-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>

@@ -74,7 +74,7 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
             if (exception != null) {
                 if (original != null) {
                     original.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
-                } else {
+                } else if (oldExchange != null) {
                     oldExchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
                 }
             }

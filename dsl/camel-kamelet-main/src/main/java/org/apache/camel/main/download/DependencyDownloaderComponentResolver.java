@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -34,20 +35,28 @@ import org.apache.camel.tooling.model.OtherModel;
  */
 public final class DependencyDownloaderComponentResolver extends DefaultComponentResolver {
 
-    private static final String ACCEPTED_STUB_NAMES
-            = "stub,bean,class,direct,kamelet,log,platform-http,rest,seda,vertx-http";
+    private static final String[] ACCEPTED_STUB_NAMES = {
+            "stub", "bean", "class", "direct", "kamelet", "log", "platform-http", "rest", "seda"
+    };
+
+    private static final String[] ACCEPTED_TRANSFORM_NAMES = {
+            "stub", "direct", "kamelet", "log", "seda"
+    };
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final CamelContext camelContext;
     private final DependencyDownloader downloader;
     private final String stubPattern;
     private final boolean silent;
+    private final boolean transform;
 
-    public DependencyDownloaderComponentResolver(CamelContext camelContext, String stubPattern, boolean silent) {
+    public DependencyDownloaderComponentResolver(CamelContext camelContext, String stubPattern, boolean silent,
+                                                 boolean transform) {
         this.camelContext = camelContext;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.stubPattern = stubPattern;
         this.silent = silent;
+        this.transform = transform;
     }
 
     @Override
@@ -64,7 +73,7 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
         } else {
             answer = super.resolveComponent("stub", context);
         }
-        if ((silent || stubPattern != null) && answer instanceof StubComponent) {
+        if ((silent || transform || stubPattern != null) && answer instanceof StubComponent) {
             StubComponent sc = (StubComponent) answer;
             // enable shadow mode on stub component
             sc.setShadow(true);
@@ -85,6 +94,13 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
             OtherModel oa = catalog.otherModel("openapi-java");
             if (oa != null) {
                 downloadLoader(oa.getGroupId(), oa.getArtifactId(), oa.getVersion());
+            }
+        }
+        if ("cron".equals(name)) {
+            // include camel-quartz when using cron
+            ComponentModel quartz = catalog.componentModel("quartz");
+            if (quartz != null) {
+                downloadLoader(quartz.getGroupId(), quartz.getArtifactId(), quartz.getVersion());
             }
         }
         if ("activemq".equals(name) || "activemq6".equals(name)) {
@@ -112,12 +128,15 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
     }
 
     private boolean accept(String name) {
+        if (transform) {
+            return Arrays.stream(ACCEPTED_TRANSFORM_NAMES).anyMatch(n -> n.equals(name));
+        }
         if (stubPattern == null) {
             return true;
         }
 
         // we are stubbing but need to accept the following
-        return ACCEPTED_STUB_NAMES.contains(name);
+        return Arrays.stream(ACCEPTED_STUB_NAMES).anyMatch(n -> n.equals(name));
     }
 
 }

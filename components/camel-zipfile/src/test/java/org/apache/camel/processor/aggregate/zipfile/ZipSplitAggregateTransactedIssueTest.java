@@ -76,11 +76,11 @@ public class ZipSplitAggregateTransactedIssueTest extends CamelTestSupport {
                 getContext().getRegistry().bind("transacted", springTransactionPolicy);
                 getContext().getRegistry().bind("zipSplitter", new ZipSplitter());
 
-                from("direct:start")
+                from("direct:start").streamCache(false)
                         .transacted("transacted")
                         .setBody().simple(zipArchiveWithTwoFiles)
                         .unmarshal().base64()
-                        .split().ref("zipSplitter").streaming().aggregationStrategy(new StringAggregationStrategy())
+                        .split().ref("zipSplitter").aggregationStrategy(new StringAggregationStrategy())
                             .log("Splitting ${header.CamelFileName}")
                         .end()
                         .to("mock:result");

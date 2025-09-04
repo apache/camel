@@ -89,8 +89,9 @@ public class MinioComponentVerifierExtension extends DefaultComponentVerifierExt
                 clientBuilderRequest.credentials(configuration.getAccessKey(), configuration.getSecretKey());
             }
 
-            MinioClient client = clientBuilderRequest.build();
-            client.listBuckets();
+            try (MinioClient client = clientBuilderRequest.build()) {
+                client.listBuckets();
+            }
         } catch (MinioException e) {
             ResultErrorBuilder errorBuilder
                     = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())

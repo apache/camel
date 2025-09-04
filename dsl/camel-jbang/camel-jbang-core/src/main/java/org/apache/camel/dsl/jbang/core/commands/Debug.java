@@ -38,7 +38,6 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
@@ -187,7 +186,7 @@ public class Debug extends Run {
                     String line = c.readLine();
                     if (line != null) {
                         line = line.trim();
-                        if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
+                        if ("q".equalsIgnoreCase(line) || "quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                             quit.set(true);
                         } else {
                             // continue breakpoint
@@ -198,7 +197,11 @@ public class Debug extends Run {
                                     logUpdated.set(true);
                                 }
                             }
-                            sendDebugCommand(spawnPid, "step", null);
+                            String cmd = "step";
+                            if (line.equalsIgnoreCase("o") || line.equalsIgnoreCase("over")) {
+                                cmd = "stepover";
+                            }
+                            sendDebugCommand(spawnPid, cmd, null);
                         }
                         // user have pressed ENTER so continue
                         waitForUser.set(false);
@@ -238,6 +241,9 @@ public class Debug extends Run {
 
         cmds.remove("--background=true");
         cmds.remove("--background");
+        cmds.remove("--background-wait=true");
+        cmds.remove("--background-wait=false");
+        cmds.remove("--background-wait");
 
         // remove args from debug that are not supported by run
         removeDebugOnlyOptions(cmds);
@@ -266,13 +272,12 @@ public class Debug extends Run {
     }
 
     private void removeDebugOnlyOptions(List<String> cmds) {
-        ReflectionHelper.doWithFields(Debug.class, fc -> {
-            cmds.removeIf(c -> {
-                String n1 = "--" + fc.getName();
-                String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
-                return c.startsWith(n1) || c.startsWith(n2);
-            });
-        });
+        // only check Debug.class (not super classes)
+        RunHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
+            String n1 = "--" + fc.getName();
+            String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
+            return c.startsWith(n1) || c.startsWith(n2);
+        }));
     }
 
     protected int doWatch() {
@@ -330,6 +335,14 @@ public class Debug extends Run {
         } catch (Exception e) {
             // ignore
         }
+    }
+
+    private static boolean isStepOverSupported(String version) {
+        // step-over is Camel 4.8.3 or 4.10 or better (not in 4.9)
+        if ("4.9.0".equals(version)) {
+            return false;
+        }
+        return version == null || VersionHelper.isGE(version, "4.8.3");
     }
 
     private void printDebugStatus(long pid, StringWriter buffer) {
@@ -473,7 +486,12 @@ public class Debug extends Run {
                     }
                 }
 
-                String msg = "    Breakpoint suspended. Press ENTER to continue.";
+                String msg;
+                if (isStepOverSupported(version)) {
+                    msg = "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue.";
+                } else {
+                    msg = "    Breakpoint suspended. Press ENTER to continue.";
+                }
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
                 } else {

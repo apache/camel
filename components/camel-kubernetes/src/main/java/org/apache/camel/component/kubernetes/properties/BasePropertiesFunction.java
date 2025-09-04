@@ -233,6 +233,10 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             return defaultValue;
         }
 
+        if (key.contains(":")) {
+            key = StringHelper.before(key, ":");
+        }
+
         // local-mode will not lookup in kubernetes but as local properties
         if (localMode) {
             String localKey = name + "/" + key;

@@ -1384,6 +1384,24 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Allow the Pub/Sub API client to use the proxy detected by
+         * java.net.ProxySelector. If false then no proxy server will be used.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: proxy
+         * 
+         * @param pubsubAllowUseSystemProxy the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pubsubAllowUseSystemProxy(boolean pubsubAllowUseSystemProxy) {
+            doSetProperty("pubsubAllowUseSystemProxy", pubsubAllowUseSystemProxy);
+            return this;
+        }
+    
         /**
          * Explicit authentication method to be used, one of USERNAME_PASSWORD,
          * REFRESH_TOKEN, CLIENT_CREDENTIALS, or JWT. Salesforce component can
@@ -1868,6 +1886,7 @@ public interface SalesforceComponentBuilderFactory {
             case "httpProxyIncludedAddresses": ((SalesforceComponent) component).setHttpProxyIncludedAddresses((java.util.Set) value); return true;
             case "httpProxyPort": ((SalesforceComponent) component).setHttpProxyPort((java.lang.Integer) value); return true;
             case "httpProxySocks4": ((SalesforceComponent) component).setHttpProxySocks4((boolean) value); return true;
+            case "pubsubAllowUseSystemProxy": ((SalesforceComponent) component).setPubsubAllowUseSystemProxy((boolean) value); return true;
             case "authenticationType": ((SalesforceComponent) component).setAuthenticationType((org.apache.camel.component.salesforce.AuthenticationType) value); return true;
             case "clientId": ((SalesforceComponent) component).setClientId((java.lang.String) value); return true;
             case "clientSecret": ((SalesforceComponent) component).setClientSecret((java.lang.String) value); return true;

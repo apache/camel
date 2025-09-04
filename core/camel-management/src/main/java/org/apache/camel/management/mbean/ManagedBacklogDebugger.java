@@ -202,6 +202,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     }
 
     @Override
+    public void stepOver() {
+        backlogDebugger.stepOver();
+    }
+
+    @Override
     public Set<String> suspendedBreakpointNodeIds() {
         return backlogDebugger.getSuspendedBreakpointNodeIds();
     }

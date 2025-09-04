@@ -130,9 +130,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             } else {
                 LOG.trace("Scheduled task completed on: {}", this.getEndpoint());
             }
-
         } catch (Error e) {
-            // must catch Error, to ensure the task is re-scheduled
+            // need to log so there is visibility as otherwise the user may not see anything in logs
+            LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}.",
+                    this.getEndpoint(), e.getMessage(), e);
+            throw e;
+        } catch (Throwable e) {
             LOG.error("Error occurred during running scheduled task on: {}, due: {}."
                       + " This exception is ignored and the task will run again on next poll.",
                     this.getEndpoint(), e.getMessage(), e);

@@ -485,14 +485,19 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
         if (cron != null) {
             LOG.debug("Creating CronTrigger: {}", cron);
-            final String startAt = (String) copy.get("startAt");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+            final String startAt = (String) copy.get("startAt");
             if (startAt != null) {
                 triggerBuilder.startAt(dateFormat.parse(startAt));
             }
             final String endAt = (String) copy.get("endAt");
             if (endAt != null) {
-                triggerBuilder.endAt(dateFormat.parse(endAt));
+                Date endDate = dateFormat.parse(endAt);
+                if (endDate.before(new Date()) && startAt == null && isIgnoreExpiredNextFireTime()) {
+                    // Trigger Builder sets startAt to current time. Hence if startAt is null, necessary to add a valid value to honor ignoreExpiredNextFireTime
+                    triggerBuilder.startAt(Date.from(endDate.toInstant().minusSeconds(1)));
+                }
+                triggerBuilder.endAt(endDate);
             }
             final String timeZone = (String) copy.get("timeZone");
             if (timeZone != null) {

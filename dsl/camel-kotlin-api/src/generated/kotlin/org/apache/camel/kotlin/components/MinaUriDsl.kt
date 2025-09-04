@@ -330,7 +330,8 @@ public class MinaUriDsl(
    * Only used for TCP. You can transfer the exchange over the wire instead of just the body. The
    * following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault
    * headers, exchange properties, exchange exception. This requires that the objects are serializable.
-   * Camel will exclude any non-serializable objects and log it at WARN level.
+   * Camel will exclude any non-serializable objects and log it at WARN level. Also make sure to
+   * configure objectCodecPattern to (star) to allow transferring java objects.
    */
   public fun transferExchange(transferExchange: String) {
     it.property("transferExchange", transferExchange)
@@ -340,7 +341,8 @@ public class MinaUriDsl(
    * Only used for TCP. You can transfer the exchange over the wire instead of just the body. The
    * following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault
    * headers, exchange properties, exchange exception. This requires that the objects are serializable.
-   * Camel will exclude any non-serializable objects and log it at WARN level.
+   * Camel will exclude any non-serializable objects and log it at WARN level. Also make sure to
+   * configure objectCodecPattern to (star) to allow transferring java objects.
    */
   public fun transferExchange(transferExchange: Boolean) {
     it.property("transferExchange", transferExchange.toString())
@@ -418,6 +420,14 @@ public class MinaUriDsl(
    */
   public fun filters(filters: String) {
     it.property("filters", filters)
+  }
+
+  /**
+   * Accept the wildcard specified classes for Object deserialization, unless they are otherwise
+   * rejected. Multiple patterns can be separated by comma.
+   */
+  public fun objectCodecPattern(objectCodecPattern: String) {
+    it.property("objectCodecPattern", objectCodecPattern)
   }
 
   /**

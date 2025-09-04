@@ -898,7 +898,11 @@ public class AggregateProcessor extends AsyncProcessorSupport
                 }
             });
             // execute the task using this thread sync (similar to multicast eip in parallel mode)
-            reactiveExecutor.scheduleSync(task);
+            if (exchange.isTransacted()) {
+                reactiveExecutor.scheduleQueue(task);
+            } else {
+                reactiveExecutor.scheduleSync(task);
+            }
         });
     }
 

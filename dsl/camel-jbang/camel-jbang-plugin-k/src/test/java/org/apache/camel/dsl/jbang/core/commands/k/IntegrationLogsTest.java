@@ -24,8 +24,10 @@ import io.fabric8.kubernetes.api.model.PodBuilder;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.v1.Integration;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Deprecated and resource intensive")
 class IntegrationLogsTest extends CamelKBaseTest {
 
     @Test

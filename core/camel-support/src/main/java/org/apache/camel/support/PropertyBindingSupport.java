@@ -1578,7 +1578,7 @@ public final class PropertyBindingSupport {
             }
             Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(className);
             if (factoryMethod != null) {
-                Class<?> factoryClass = null;
+                Class<?> factoryClass;
                 String typeOrRef = StringHelper.before(factoryMethod, ":");
                 if (typeOrRef != null) {
                     // use another class with factory method
@@ -1590,6 +1590,10 @@ public final class PropertyBindingSupport {
                     } else {
                         factoryClass = camelContext.getClassResolver().resolveMandatoryClass(typeOrRef);
                     }
+                } else {
+                    // no specific factory class given so we need to use the bean type for that
+                    factoryClass = type;
+                    type = Object.class;
                 }
                 if (parameters != null) {
                     Class<?> target = factoryClass != null ? factoryClass : type;

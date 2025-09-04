@@ -638,7 +638,7 @@ public class HttpProducer extends DefaultProducer {
 
         // create http holder objects for the request
         HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint());
-        HttpUriRequest method = methodToUse.createMethod(uri);
+        HttpUriRequest method = methodToUse.createMethod(url);
 
         // special for HTTP DELETE/GET if the message body should be included
         if (getEndpoint().isDeleteWithBody() && "DELETE".equals(method.getMethod())

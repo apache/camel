@@ -32,6 +32,9 @@ So the result from the previous iteration will *not* be used for the next iterat
 
 In the while mode, then the Loop EIP will keep looping until the expression evaluates to `false` or `null`.
 
+NOTE: The Loop EIP is not intended to be looping a very high number. So keep the number of loops to a reasonable
+number such as 10000 or less. A very high number can degrade performance.
+
 == Example
 
 The following example shows how to take a request from the `direct:x` endpoint,

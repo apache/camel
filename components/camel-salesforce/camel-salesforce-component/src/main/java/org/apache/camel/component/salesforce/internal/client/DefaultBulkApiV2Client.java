@@ -168,6 +168,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             public void onResponse(InputStream response, Map<String, String> responseHeaders, SalesforceException ex) {
                 if (ex != null) {
                     callback.onResponse(null, responseHeaders, ex);
+                    return;
                 }
                 Jobs responseJobs = null;
                 try {
@@ -272,6 +273,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             public void onResponse(InputStream response, Map<String, String> responseHeaders, SalesforceException ex) {
                 if (ex != null) {
                     callback.onResponse(null, responseHeaders, ex);
+                    return;
                 }
                 QueryJobs responseJobs = null;
                 try {
@@ -336,6 +338,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             public void onResponse(InputStream response, Map<String, String> responseHeaders, SalesforceException ex) {
                 if (ex != null) {
                     callback.onResponse(null, responseHeaders, ex);
+                    return;
                 }
                 Job responseJob = null;
                 try {
@@ -355,6 +358,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             public void onResponse(InputStream response, Map<String, String> responseHeaders, SalesforceException ex) {
                 if (ex != null) {
                     callback.onResponse(null, responseHeaders, ex);
+                    return;
                 }
                 QueryJob queryJob = null;
                 try {

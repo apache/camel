@@ -29,23 +29,23 @@ public class SmbConfiguration {
 
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
 
-    @Metadata(required = false)
+    @UriParam(description = "The path, within the share, to consume the files from")
+    private String path;
+
     @UriParam(label = "producer", description = "What action to take if the SMB file already exists",
               defaultValue = "Ignore", enums = "Override,Append,Fail,Ignore,Move,TryRename")
     private GenericFileExist fileExist;
-
-    @Metadata(required = false, defaultValue = "false")
+    @Metadata(defaultValue = "false")
     @UriParam(label = "producer", description = "Whether to create parent directory if it does not exist",
               defaultValue = "false")
     private boolean autoCreate;
-
-    @Metadata(required = false, defaultValue = "2048")
+    @Metadata(defaultValue = "2048")
     @UriParam(label = "producer", description = "Read buffer size when for file being produced", defaultValue = "2048")
     private int readBufferSize;
+    @UriParam(label = "producer", defaultValue = "false",
+              description = "Whether or not to disconnect from remote SMB server right after use. Disconnect will only disconnect the current connection to the SMB server. If you have a consumer which you want to stop, then you need to stop the consumer route instead.")
+    protected boolean disconnect;
 
-    @Metadata(required = true)
-    @UriParam(description = "The path, within the share, to consume the files from")
-    private String path;
     @UriParam(defaultValue = "*.txt", description = "The search pattern used to list the files")
     private String searchPattern;
     @UriParam(label = "security", description = "The username required to access the share", secret = true)
@@ -100,6 +100,14 @@ public class SmbConfiguration {
 
     public void setRecursive(String recursiveString) {
         this.recursive = Boolean.valueOf(recursiveString);
+    }
+
+    public boolean isDisconnect() {
+        return disconnect;
+    }
+
+    public void setDisconnect(boolean disconnect) {
+        this.disconnect = disconnect;
     }
 
     public void setDomain(String domain) {

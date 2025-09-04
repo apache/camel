@@ -83,11 +83,12 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.pubSubClient = new PubSubApiClient(
                 endpoint.getComponent().getSession(), endpoint.getComponent().getLoginConfig(),
                 endpoint.getComponent().getPubSubHost(), endpoint.getComponent().getPubSubPort(),
-                endpoint.getConfiguration().getBackoffIncrement(), endpoint.getConfiguration().getMaxBackoff());
+                endpoint.getConfiguration().getBackoffIncrement(), endpoint.getConfiguration().getMaxBackoff(),
+                endpoint.getComponent().isPubsubAllowUseSystemProxy());
         this.pubSubClient.setUsePlainTextConnection(this.usePlainTextConnection);
 
         ServiceHelper.startService(pubSubClient);
-        pubSubClient.subscribe(this, initialReplayPreset, initialReplayId);
+        pubSubClient.subscribe(this, initialReplayPreset, initialReplayId, true);
     }
 
     @Override

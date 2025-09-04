@@ -107,6 +107,27 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Test
+    void testDirectToDirectToAsync() {
+        SpanTestData[] expectedSpans = {
+                new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
+                        .setKind(SpanKind.CLIENT),
+                new SpanTestData().setLabel("direct:foo2").setUri("direct://foo2").setOperation("foo2"),
+                new SpanTestData().setLabel("direct:foo2").setUri("direct://foo2").setOperation("foo2")
+                        .setKind(SpanKind.CLIENT),
+                new SpanTestData().setLabel("direct:foo1").setUri("direct://foo1").setOperation("foo1"),
+                new SpanTestData().setLabel("direct:foo1").setUri("direct://foo1").setOperation("foo1").setKind(SpanKind.CLIENT)
+        };
+
+        // direct to direct to async pipeline
+        template.sendBody("direct:foo1", "Hello World");
+        awaitInvalidSpanContext();
+
+        List<SpanData> spans = verify(expectedSpans, false);
+        assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
+
+    }
+
+    @Test
     void testAsyncToSync() {
         // direct client spans (event spans) are not created, so we saw only two spans in previous tests
         SpanTestData[] expectedSpans = {
@@ -201,6 +222,10 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                // direct to direct to async pipeline
+                from("direct:foo1").to("direct:foo2");
+                from("direct:foo2").to("asyncmock1:result");
+
                 // sync pipeline
                 from("direct:bar").to("syncmock:result");
 

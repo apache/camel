@@ -26,6 +26,7 @@ public enum ClusterType {
     KUBERNETES,
     OPENSHIFT,
     KIND,
+    K3S,
     MINIKUBE;
 
     public static ClusterType fromName(String name) {

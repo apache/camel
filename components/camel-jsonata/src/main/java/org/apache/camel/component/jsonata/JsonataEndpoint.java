@@ -20,11 +20,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.dashjoin.jsonata.Jsonata;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
@@ -117,17 +115,14 @@ public class JsonataEndpoint extends ResourceEndpoint {
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
 
-        Map<String, Object> input;
+        Object input;
         if (getInputType() == JsonataInputOutputType.JsonString) {
             InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-            input = mapper.readValue(inputStream, new TypeReference<>() {
-            });
+            input = mapper.readValue(inputStream, Object.class);
         } else {
-            input = mapper.convertValue(exchange.getIn().getBody(), new TypeReference<>() {
-            });
+            input = mapper.convertValue(exchange.getIn().getBody(), Object.class);
         }
 
-        Object output = null;
         Jsonata expression = null;
         try (InputStreamReader inputStreamReader
                 = new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8);
@@ -139,15 +134,20 @@ public class JsonataEndpoint extends ResourceEndpoint {
         }
 
         Jsonata.Frame frame = expression.createFrame();
-        if (frameBinding != null)
+        if (frameBinding != null) {
             frameBinding.bindToFrame(frame);
-        output = expression.evaluate(input, frame);
+        }
+        Object outputLib = expression.evaluate(input, frame);
+        String bodyAsString = mapper.writeValueAsString(outputLib);
 
         // now lets output the results to the exchange
-        Object body = output;
+        final Object output;
         if (getOutputType() == JsonataInputOutputType.JsonString) {
-            body = mapper.writeValueAsString(output);
+            output = bodyAsString;
+        } else {
+            output = mapper.readTree(bodyAsString);
         }
-        ExchangeHelper.setInOutBodyPatternAware(exchange, body);
+        ExchangeHelper.setInOutBodyPatternAware(exchange, output);
     }
+
 }
