@@ -23,6 +23,8 @@ public class LangChain4jToolsConfigurationConfigurer extends org.apache.camel.su
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.tools.LangChain4jToolsConfiguration target = (org.apache.camel.component.langchain4j.tools.LangChain4jToolsConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "chatmemory":
+        case "chatMemory": target.setChatMemory(property(camelContext, dev.langchain4j.memory.ChatMemory.class, value)); return true;
         case "chatmodel":
         case "chatModel": target.setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
         default: return false;
@@ -32,6 +34,8 @@ public class LangChain4jToolsConfigurationConfigurer extends org.apache.camel.su
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "chatmemory":
+        case "chatMemory": return dev.langchain4j.memory.ChatMemory.class;
         case "chatmodel":
         case "chatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
         default: return null;
@@ -42,6 +46,8 @@ public class LangChain4jToolsConfigurationConfigurer extends org.apache.camel.su
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.tools.LangChain4jToolsConfiguration target = (org.apache.camel.component.langchain4j.tools.LangChain4jToolsConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "chatmemory":
+        case "chatMemory": return target.getChatMemory();
         case "chatmodel":
         case "chatModel": return target.getChatModel();
         default: return null;

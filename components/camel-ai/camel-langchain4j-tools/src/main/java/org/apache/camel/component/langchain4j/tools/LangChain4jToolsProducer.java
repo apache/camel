@@ -27,7 +27,9 @@ import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.ChatMessageType;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
+import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.output.Response;
 import org.apache.camel.Exchange;
@@ -43,6 +45,8 @@ public class LangChain4jToolsProducer extends DefaultProducer {
     private final LangChain4jToolsEndpoint endpoint;
 
     private ChatLanguageModel chatLanguageModel;
+
+    private ChatMemory chatMemory;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -66,6 +70,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         this.chatLanguageModel = this.endpoint.getConfiguration().getChatModel();
+        this.chatMemory = this.endpoint.getConfiguration().getChatMemory();
         ObjectHelper.notNull(chatLanguageModel, "chatLanguageModel");
     }
 
@@ -130,7 +135,12 @@ public class LangChain4jToolsProducer extends DefaultProducer {
         }
 
         final Response<AiMessage> generate = this.chatLanguageModel.generate(chatMessages);
-        return extractAiResponse(generate);
+        String result = extractAiResponse(generate);
+        if (chatMemory != null) {
+            chatMemory.add(generate.content());
+        }
+
+        return result;
     }
 
     /**
@@ -142,7 +152,18 @@ public class LangChain4jToolsProducer extends DefaultProducer {
      * @return              the response provided by the model
      */
     private Response<AiMessage> chatWithLLMForTools(List<ChatMessage> chatMessages, ToolPair toolPair) {
-        Response<AiMessage> response = this.chatLanguageModel.generate(chatMessages, toolPair.toolSpecifications());
+        if (chatMemory != null) {
+            // first round chat, need to add System and User message. the following rounds only need to add User message.
+            boolean isEmpty = chatMemory.messages().size() == 0;
+            for (ChatMessage message : chatMessages) {
+                if (isEmpty || message.type() == ChatMessageType.USER) {
+                    chatMemory.add(message);
+                }
+            }
+        }
+
+        Response<AiMessage> response = this.chatLanguageModel
+                .generate(chatMemory != null ? chatMemory.messages() : chatMessages, toolPair.toolSpecifications());
 
         if (!response.content().hasToolExecutionRequests()) {
             throw new RuntimeCamelException("There are no tools to be executed");
