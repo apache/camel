@@ -21,12 +21,14 @@ package org.apache.camel.component.langchain4j.agent.api;
  *
  * <p>
  * This class encapsulates all the information needed for a chat interaction with an AI agent, including the user's
- * message, optional system instructions, and memory identification for stateful conversations.
+ * message, optional system instructions, memory identification for stateful conversations, and content for non-text
+ * media supported by LangChain4j.
  * </p>
  *
  * <p>
  * The class provides both constructor-based initialization and fluent builder-style methods for convenient object
- * creation and configuration.
+ * creation and configuration. The generic type parameter {@code C} allows for type-safe handling of various content
+ * types such as TextContent, ImageContent, AudioContent, VideoContent, or PdfFileContent.
  * </p>
  *
  * <p>
@@ -43,19 +45,22 @@ package org.apache.camel.component.langchain4j.agent.api;
  *         "You are a helpful weather assistant",
  *         "user123");
  *
- * // Using fluent API
- * AiAgentBody body = new AiAgentBody()
- *         .withUserMessage("Tell me a joke")
- *         .withSystemMessage("You are a comedian")
- *         .withMemoryId("session456");
+ * // Using fluent API with content
+ * AiAgentBody<ImageContent> body = new AiAgentBody<ImageContent>()
+ *         .withUserMessage("What do you see in this image?")
+ *         .withSystemMessage("You are an image analysis assistant")
+ *         .withMemoryId("session456")
+ *         .withContent(imageContent);
  * }</pre>
  *
- * @since 4.9.0
+ * @param <C> the type of content (e.g., TextContent, ImageContent, AudioContent, VideoContent, PdfFileContent)
+ * @since     4.9.0
  */
-public class AiAgentBody {
+public class AiAgentBody<C> {
     private String userMessage;
     private String systemMessage;
     private Object memoryId;
+    private C content;
 
     /**
      * Creates an empty AI agent body. Use the fluent setter methods to configure the instance.
@@ -191,4 +196,49 @@ public class AiAgentBody {
     public void setMemoryId(Object memoryId) {
         this.memoryId = memoryId;
     }
+
+    /**
+     * Gets the content.
+     *
+     * <p>
+     * The content can be any non-text media supported by LangChain4j, such as TextContent, ImageContent, AudioContent,
+     * VideoContent, or PdfFileContent. This is not used by default by Camel, instead, it can be used by custom agents.
+     * </p>
+     *
+     * @return the content object, or {@code null} if not set
+     */
+    public C getContent() {
+        return content;
+    }
+
+    /**
+     * Sets the content.
+     *
+     * <p>
+     * The content can be any non-text media supported by LangChain4j, such as TextContent, ImageContent, AudioContent,
+     * VideoContent, or PdfFileContent. This is not used by default by Camel, instead, it can be used by custom agents.
+     * </p>
+     *
+     * @param content the content object to set
+     */
+    public void setContent(C content) {
+        this.content = content;
+    }
+
+    /**
+     * Sets the content and returns this instance for method chaining.
+     *
+     * <p>
+     * The content can be any non-text media supported by LangChain4j, such as TextContent, ImageContent, AudioContent,
+     * VideoContent, or PdfFileContent.This is not used by default by Camel, instead, it can be used by custom agents.
+     * </p>
+     *
+     * @param  content the content object to set
+     * @return         this AiAgentBody instance for fluent method chaining
+     */
+    public AiAgentBody<C> withContent(C content) {
+        this.content = content;
+        return this;
+    }
+
 }
