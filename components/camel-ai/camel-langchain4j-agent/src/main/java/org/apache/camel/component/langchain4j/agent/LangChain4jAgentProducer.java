@@ -64,7 +64,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             agent = endpoint.getConfiguration().getAgent();
         }
 
-        AiAgentBody aiAgentBody = agent.processBody(messagePayload, exchange);
+        AiAgentBody<?> aiAgentBody = agent.processBody(messagePayload, exchange);
 
         ToolProvider toolProvider = createCamelToolProvider(tags, exchange);
         String response = agent.chat(aiAgentBody, toolProvider);
