@@ -88,9 +88,9 @@ public interface Agent {
      * @throws InvalidPayloadRuntimeException if the payload is neither an {@link AiAgentBody} nor a {@link String}
      * @throws Exception                      if any other error occurs during payload processing
      */
-    default AiAgentBody processBody(Object messagePayload, Exchange exchange) throws Exception {
-        if (messagePayload instanceof AiAgentBody) {
-            return (AiAgentBody) messagePayload;
+    default AiAgentBody<?> processBody(Object messagePayload, Exchange exchange) throws Exception {
+        if (messagePayload instanceof AiAgentBody<?> payload) {
+            return payload;
         }
 
         if (!(messagePayload instanceof String)) {
@@ -100,7 +100,7 @@ public interface Agent {
         String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
         Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
 
-        return new AiAgentBody((String) messagePayload, systemMessage, memoryId);
+        return new AiAgentBody<>((String) messagePayload, systemMessage, memoryId);
     }
 
     /**
@@ -120,6 +120,6 @@ public interface Agent {
      * @throws RuntimeException if the chat interaction fails due to model errors, configuration issues, or tool
      *                          execution failures
      */
-    String chat(AiAgentBody aiAgentBody, ToolProvider toolProvider);
+    String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
 
 }
