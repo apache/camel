@@ -132,7 +132,8 @@ public class UpdateList extends CamelCommand {
                 // upgrade recipes 4.12.1 was released, but only Camel 4.12.0 is released, in this case,
                 // consider the major.minor only
                 if (runtimeVersion == null) {
-                    String majorMinorVersion = l[0].substring(0, l[0].lastIndexOf("."));
+                    String[] splittedVersion = l[0].split("\\.");
+                    String majorMinorVersion = splittedVersion[0] + "." + splittedVersion[1];
                     runtimeVersion
                             = recipesVersions.sbVersions().stream()
                                     .filter(v -> v[0].substring(0, v[0].lastIndexOf(".")).equals(majorMinorVersion)).findFirst()
