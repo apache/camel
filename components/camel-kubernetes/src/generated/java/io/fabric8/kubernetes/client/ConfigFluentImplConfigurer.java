@@ -23,6 +23,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         io.fabric8.kubernetes.client.ConfigBuilder target = (io.fabric8.kubernetes.client.ConfigBuilder) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": target.withAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "apiversion":
         case "apiVersion": target.withApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "authprovider":
@@ -54,6 +56,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "currentContext": target.withCurrentContext(property(camelContext, io.fabric8.kubernetes.api.model.NamedContext.class, value)); return true;
         case "customheaders":
         case "customHeaders": target.withCustomHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "defaultnamespace":
+        case "defaultNamespace": target.withDefaultNamespace(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "disablehostnameverification":
         case "disableHostnameVerification": target.withDisableHostnameVerification(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "http2disable":
@@ -128,6 +132,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
         case "authprovider":
@@ -159,6 +165,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "currentContext": return io.fabric8.kubernetes.api.model.NamedContext.class;
         case "customheaders":
         case "customHeaders": return java.util.Map.class;
+        case "defaultnamespace":
+        case "defaultNamespace": return java.lang.Boolean.class;
         case "disablehostnameverification":
         case "disableHostnameVerification": return java.lang.Boolean.class;
         case "http2disable":
@@ -234,6 +242,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         io.fabric8.kubernetes.client.ConfigBuilder target = (io.fabric8.kubernetes.client.ConfigBuilder) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return target.getAdditionalProperties();
         case "apiversion":
         case "apiVersion": return target.getApiVersion();
         case "authprovider":
@@ -265,6 +275,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "currentContext": return target.getCurrentContext();
         case "customheaders":
         case "customHeaders": return target.getCustomHeaders();
+        case "defaultnamespace":
+        case "defaultNamespace": return target.getDefaultNamespace();
         case "disablehostnameverification":
         case "disableHostnameVerification": return target.getDisableHostnameVerification();
         case "http2disable":
