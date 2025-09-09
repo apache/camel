@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,7 +61,12 @@ import static org.apache.camel.openapi.RestDefinitionsResolver.JMX_REST_DEFINITI
  */
 public class RestOpenApiSupport {
 
-    public static DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat DEFAULT_DATE_FORMAT;
+    static {
+        final SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        f.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DEFAULT_DATE_FORMAT = f;
+    }
 
     static final String HEADER_X_FORWARDED_PREFIX = "X-Forwarded-Prefix";
     static final String HEADER_X_FORWARDED_HOST = "X-Forwarded-Host";
