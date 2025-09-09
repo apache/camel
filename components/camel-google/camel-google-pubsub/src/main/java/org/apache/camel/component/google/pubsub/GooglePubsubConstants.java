@@ -27,6 +27,7 @@ public final class GooglePubsubConstants {
     @Metadata(label = "consumer", description = "The time at which the message was published",
               javaType = "com.google.protobuf.Timestamp")
     public static final String PUBLISH_TIME = "CamelGooglePubsubPublishTime";
+    @Deprecated(since = "4.15")
     @Metadata(description = "The attributes of the message.", javaType = "Map<String, String>")
     public static final String ATTRIBUTES = "CamelGooglePubsubAttributes";
     @Metadata(label = "producer",
@@ -38,6 +39,7 @@ public final class GooglePubsubConstants {
                                                 "message when ackMode=NONE.",
               javaType = "org.apache.camel.component.google.pubsub.consumer.GooglePubsubAcknowledge")
     public static final String GOOGLE_PUBSUB_ACKNOWLEDGE = "CamelGooglePubsubAcknowledge";
+    @Deprecated(since = "4.15")
     public static final String RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX = "goog";
 
     public enum AckMode {
