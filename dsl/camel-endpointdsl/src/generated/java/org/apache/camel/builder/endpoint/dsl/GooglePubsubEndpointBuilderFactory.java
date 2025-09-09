@@ -381,6 +381,40 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to include all Google headers when mapping from Pubsub to
+         * Camel Message. Setting this to true will include properties such as
+         * x-goog etc.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeAllGoogleProperties the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder includeAllGoogleProperties(boolean includeAllGoogleProperties) {
+            doSetProperty("includeAllGoogleProperties", includeAllGoogleProperties);
+            return this;
+        }
+        /**
+         * Whether to include all Google headers when mapping from Pubsub to
+         * Camel Message. Setting this to true will include properties such as
+         * x-goog etc.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeAllGoogleProperties the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder includeAllGoogleProperties(String includeAllGoogleProperties) {
+            doSetProperty("includeAllGoogleProperties", includeAllGoogleProperties);
+            return this;
+        }
+        /**
          * To use a custom logger name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -623,6 +657,40 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to include all Google headers when mapping from Pubsub to
+         * Camel Message. Setting this to true will include properties such as
+         * x-goog etc.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeAllGoogleProperties the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder includeAllGoogleProperties(boolean includeAllGoogleProperties) {
+            doSetProperty("includeAllGoogleProperties", includeAllGoogleProperties);
+            return this;
+        }
+        /**
+         * Whether to include all Google headers when mapping from Pubsub to
+         * Camel Message. Setting this to true will include properties such as
+         * x-goog etc.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeAllGoogleProperties the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder includeAllGoogleProperties(String includeAllGoogleProperties) {
+            doSetProperty("includeAllGoogleProperties", includeAllGoogleProperties);
+            return this;
+        }
+        /**
          * To use a custom logger name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -712,6 +780,40 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (GooglePubsubEndpointBuilder) this;
         }
 
+        /**
+         * Whether to include all Google headers when mapping from Pubsub to
+         * Camel Message. Setting this to true will include properties such as
+         * x-goog etc.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeAllGoogleProperties the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointBuilder includeAllGoogleProperties(boolean includeAllGoogleProperties) {
+            doSetProperty("includeAllGoogleProperties", includeAllGoogleProperties);
+            return this;
+        }
+        /**
+         * Whether to include all Google headers when mapping from Pubsub to
+         * Camel Message. Setting this to true will include properties such as
+         * x-goog etc.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeAllGoogleProperties the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointBuilder includeAllGoogleProperties(String includeAllGoogleProperties) {
+            doSetProperty("includeAllGoogleProperties", includeAllGoogleProperties);
+            return this;
+        }
         /**
          * To use a custom logger name.
          * 
@@ -852,6 +954,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * @return the name of the header {@code GooglePubsubAttributes}.
          */
+        @Deprecated
         public String googlePubsubAttributes() {
             return "CamelGooglePubsubAttributes";
         }
