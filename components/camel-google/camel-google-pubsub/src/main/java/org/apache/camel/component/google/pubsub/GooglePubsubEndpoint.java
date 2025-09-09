@@ -94,6 +94,10 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
     @UriParam(label = "producer,advanced",
               description = "A custom RetrySettings to control how the publisher handles retry-able failures")
     private RetrySettings retry;
+    @UriParam(label = "advanced",
+              description = "Whether to include all Google headers when mapping from Pubsub to Camel Message."
+                            + " Setting this to true will include properties such as x-goog etc.")
+    private boolean includeAllGoogleProperties;
 
     public GooglePubsubEndpoint(String uri, Component component) {
         super(uri, component);
@@ -203,12 +207,12 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-    public boolean isSynchronousPull() {
-        return synchronousPull;
+    public boolean isIncludeAllGoogleProperties() {
+        return includeAllGoogleProperties;
     }
 
-    public void setSynchronousPull(Boolean synchronousPull) {
-        this.synchronousPull = synchronousPull;
+    public void setIncludeAllGoogleProperties(Boolean includeAllGoogleProperties) {
+        this.includeAllGoogleProperties = includeAllGoogleProperties;
     }
 
     public GooglePubsubConstants.AckMode getAckMode() {
@@ -249,6 +253,14 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
 
     public void setRetry(RetrySettings retry) {
         this.retry = retry;
+    }
+
+    public boolean isSynchronousPull() {
+        return synchronousPull;
+    }
+
+    public void setSynchronousPull(Boolean synchronousPull) {
+        this.synchronousPull = synchronousPull;
     }
 
     public String getPubsubEndpoint() {
