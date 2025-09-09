@@ -25,6 +25,7 @@ import com.google.common.base.Strings;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.RES
 public class GooglePubsubProducer extends DefaultProducer {
 
     public Logger logger;
+    private final HeaderFilterStrategy headerFilterStrategy;
 
     public GooglePubsubProducer(GooglePubsubEndpoint endpoint) {
         super(endpoint);
@@ -50,6 +52,7 @@ public class GooglePubsubProducer extends DefaultProducer {
         }
 
         logger = LoggerFactory.getLogger(loggerId);
+        headerFilterStrategy = new GooglePubsubHeaderFilterStrategy(endpoint.isIncludeAllGoogleProperties());
     }
 
     /**
@@ -101,6 +104,9 @@ public class GooglePubsubProducer extends DefaultProducer {
         }
 
         PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
+
+        // Deprecated: start
+        // Replaced by headerFilterStrategy
         Map<String, String> attributes = exchange.getIn().getHeader(ATTRIBUTES, Map.class);
         if (attributes != null) {
             for (Map.Entry<String, String> attribute : attributes.entrySet()) {
@@ -109,9 +115,21 @@ public class GooglePubsubProducer extends DefaultProducer {
                 }
             }
         }
+        // Deprecated: end
+
         String orderingKey = exchange.getIn().getHeader(ORDERING_KEY, String.class);
         if (orderingKey != null) {
             messageBuilder.setOrderingKey(orderingKey);
+        }
+
+        // Inherit the rest of headers
+        for (String camelHeader : exchange.getIn().getHeaders().keySet()) {
+            String value = exchange.getIn().getHeader(camelHeader, String.class);
+            if (headerFilterStrategy != null
+                    && headerFilterStrategy.applyFilterToExternalHeaders(camelHeader, value, exchange)) {
+                continue;
+            }
+            messageBuilder.putAttributes(camelHeader, value);
         }
 
         PubsubMessage message = messageBuilder.build();
