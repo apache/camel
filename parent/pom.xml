@@ -135,7 +135,7 @@
         <cxf-xjc-utils-version>4.1.0</cxf-xjc-utils-version>
         <daffodil-version>3.10.0</daffodil-version>
         <dapr-version>1.15.1</dapr-version>
-        <datasonnet-mapper-version>3.0.1</datasonnet-mapper-version>
+        <datasonnet-mapper-version>3.0.1.1</datasonnet-mapper-version>
         <debezium-version>3.2.2.Final</debezium-version>
         <debezium-mysql-connector-version>9.4.0</debezium-mysql-connector-version>
         <derby-version>10.16.1.1</derby-version>
