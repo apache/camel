@@ -54,6 +54,7 @@ public final class JsonParser {
                         stack.push(newNode);
                         break;
                     }
+                    // Fall-through to default
                 case '}':
                     if (!inWord) {
                         // JsonObject end
@@ -69,6 +70,7 @@ public final class JsonParser {
                         }
                         break;
                     }
+                    // Fall-through to default
                 case '[':
                     if (!inWord) {
                         // JsonArray start
@@ -78,6 +80,7 @@ public final class JsonParser {
                         stack.push(newArray);
                         break;
                     }
+                    // Fall-through to default
                 case ']':
                     if (!inWord) {
                         // JsonArray end
@@ -86,6 +89,7 @@ public final class JsonParser {
                         }
                         break;
                     }
+                    // Fall-through to default
                 case ':':
                     if (!inWord) {
                         // Element start
@@ -93,6 +97,7 @@ public final class JsonParser {
                         curToken.delete(0, curToken.length());
                         break;
                     }
+                    // Fall-through to default
                 case ',':
                     if (!inWord) {
                         // Element separator
@@ -104,6 +109,7 @@ public final class JsonParser {
                         keyName = null;
                         break;
                     }
+                    // Fall-through to default
                 default:
                     if ('"' == c && (curToken.isEmpty() || curToken.charAt(curToken.length() - 1) != '\\')) {
                         inWord = !inWord;

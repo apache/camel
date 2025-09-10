@@ -300,6 +300,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
                 break;
             case RECEIPT:
                 apiProxy = new AS2AsyncMDNServerManager(getAS2AsyncMDNServerConnection());
+                break;
             default:
                 throw new IllegalArgumentException("Invalid API name " + apiName);
         }
