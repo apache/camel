@@ -397,7 +397,7 @@
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>5.28.9</neo4j-version>
-        <netty-version>4.1.124.Final</netty-version>
+        <netty-version>4.2.6.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.8</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.4.2</nimbus-jose-jwt>
