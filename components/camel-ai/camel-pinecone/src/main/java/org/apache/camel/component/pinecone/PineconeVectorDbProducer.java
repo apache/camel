@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import com.google.protobuf.Struct;
 import io.pinecone.clients.Index;
 import io.pinecone.clients.Pinecone;
+import io.pinecone.proto.DeleteResponse;
 import io.pinecone.proto.FetchResponse;
 import io.pinecone.proto.UpdateResponse;
 import io.pinecone.proto.UpsertResponse;
@@ -95,6 +96,9 @@ public class PineconeVectorDbProducer extends DefaultProducer {
                     break;
                 case QUERY_BY_ID:
                     queryById(exchange);
+                    break;
+                case DELETE_BY_ID:
+                    deleteByIds(exchange);
                     break;
                 default:
                     throw new UnsupportedOperationException("Unsupported action: " + action.name());
@@ -250,6 +254,23 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         this.client.deleteCollection(collectionName);
     }
 
+    private void deleteByIds(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        List elements = in.getMandatoryBody(List.class);
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
+
+        Index index = this.client.getIndexConnection(indexName);
+
+        DeleteResponse result
+                = index.deleteByIds(elements);
+
+        populateDeleteResponse(result, exchange);
+    }
+
     private void fetch(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
@@ -358,6 +379,11 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     }
 
     private void populateQueryResponse(QueryResponseWithUnsignedIndices r, Exchange exchange) {
+        Message out = exchange.getMessage();
+        out.setBody(r);
+    }
+
+    private void populateDeleteResponse(DeleteResponse r, Exchange exchange) {
         Message out = exchange.getMessage();
         out.setBody(r);
     }
