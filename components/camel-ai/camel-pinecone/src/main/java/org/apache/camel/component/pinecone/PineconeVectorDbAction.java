@@ -26,5 +26,6 @@ public enum PineconeVectorDbAction {
     DELETE_COLLECTION,
     QUERY,
     QUERY_BY_ID,
-    UPDATE
+    UPDATE,
+    DELETE_BY_ID
 }
