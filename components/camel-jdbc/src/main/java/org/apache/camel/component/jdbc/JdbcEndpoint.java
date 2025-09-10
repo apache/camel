@@ -30,6 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.sql.DataSourceFactory;
 
 /**
  * Access databases through SQL and JDBC.
@@ -43,6 +44,8 @@ public class JdbcEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String dataSourceName;
+    @UriParam(description = "The datasource factory to use for creating datasource if no dataosurce is provided.")
+    private DataSourceFactory dataSourceFactory;
     @UriParam
     private int readSize;
     @UriParam
@@ -278,6 +281,14 @@ public class JdbcEndpoint extends DefaultEndpoint {
      */
     public void setConnectionStrategy(ConnectionStrategy connectionStrategy) {
         this.connectionStrategy = connectionStrategy;
+    }
+
+    public DataSourceFactory getDataSourceFactory() {
+        return dataSourceFactory;
+    }
+
+    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+        this.dataSourceFactory = dataSourceFactory;
     }
 
     @Override

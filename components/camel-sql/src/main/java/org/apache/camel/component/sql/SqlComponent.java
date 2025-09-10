@@ -131,7 +131,10 @@ public class SqlComponent extends HealthCheckComponent {
             ds = endpoint.getDataSource();
         }
         if (ds == null) {
-            throw new IllegalArgumentException("DataSource must be configured");
+            ds = endpoint.getDataSourceFactory().createDataSource(null);
+            if (ds == null) {
+                throw new IllegalArgumentException("DataSource must be configured");
+            }
         }
 
         // create template
