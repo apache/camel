@@ -19,6 +19,7 @@ package org.apache.camel.support.sql;
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
 /**
@@ -39,10 +40,9 @@ public interface DataSourceFactory extends CamelContextAware {
     /**
      * Creates a DataSource for the given exchange.
      *
-     * @param  exchange  the Camel exchange
      * @return           a configured DataSource instance
      * @throws Exception if the DataSource cannot be created
      */
-    DataSource createDataSource(Exchange exchange) throws Exception;
+    DataSource createDataSource(Endpoint endpoint) throws Exception;
 
 }

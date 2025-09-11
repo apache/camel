@@ -597,8 +597,9 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
                 if (actual != null) {
                     ds = actual;
                 }
-            } else if (ds == null) {
-                ds = dataSourceFactory.createDataSource(null);
+            } else if (ds == null && dataSourceFactory != null) {
+                dataSourceFactory.setCamelContext(getCamelContext());
+                ds = dataSourceFactory.createDataSource(this);
             }
             serviceUrl = SqlServiceLocationHelper.getJDBCURLFromDataSource(bi, ds);
 

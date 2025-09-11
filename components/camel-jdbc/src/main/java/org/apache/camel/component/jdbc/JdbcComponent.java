@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jdbc;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,12 +46,26 @@ public class JdbcComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DataSource dataSource;
         String dataSourceRef;
+        JdbcEndpoint endpoint = createEndpoint(uri, this, null);
 
         if (this.dataSource != null) {
             // prefer to use datasource set by setter
             dataSource = this.dataSource;
             dataSourceRef = "component";
         } else {
+            // Initialize only dataSourceFactory, since it is used to create beans of type DataSource
+            if (parameters.containsKey("dataSourceFactory")) {
+                Map<String, Object> m = new HashMap<>(1);
+                m.put("dataSourceFactory", parameters.get("dataSourceFactory"));
+                setProperties(endpoint, m);
+                if (endpoint.getDataSourceFactory() != null) {
+                    endpoint.getDataSourceFactory().setCamelContext(getCamelContext());
+                    endpoint.getDataSourceFactory().createDataSource(endpoint);
+
+                    parameters.remove("dataSourceFactory");
+                }
+            }
+
             DataSource target = CamelContextHelper.lookup(getCamelContext(), remaining, DataSource.class);
             if (target == null && !isDefaultDataSourceName(remaining)) {
                 throw new NoSuchBeanException(remaining, DataSource.class.getName());
@@ -71,24 +86,15 @@ public class JdbcComponent extends DefaultComponent {
 
         Map<String, Object> params = PropertiesHelper.extractProperties(parameters, "statement.");
 
-        JdbcEndpoint jdbc = createEndpoint(uri, this, dataSource);
+        endpoint.setDataSource(dataSource);
         if (connectionStrategy != null) {
-            jdbc.setConnectionStrategy(connectionStrategy);
+            endpoint.setConnectionStrategy(connectionStrategy);
         }
-        jdbc.setDataSourceName(dataSourceRef);
-        jdbc.setParameters(params);
-        setProperties(jdbc, parameters);
+        endpoint.setDataSourceName(dataSourceRef);
+        endpoint.setParameters(params);
+        setProperties(endpoint, parameters);
 
-        if (jdbc.getDataSource() == null) {
-            DataSource ds = jdbc.getDataSourceFactory().createDataSource(null);
-            if (ds == null) {
-                throw new IllegalArgumentException("No default DataSource found in the registry");
-            } else {
-                jdbc.setDataSource(ds);
-            }
-        }
-
-        return jdbc;
+        return endpoint;
     }
 
     protected JdbcEndpoint createEndpoint(String uri, JdbcComponent component, DataSource dataSource) {
