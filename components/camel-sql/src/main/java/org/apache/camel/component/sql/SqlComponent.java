@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sql;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -123,18 +124,29 @@ public class SqlComponent extends HealthCheckComponent {
         endpoint.setOnConsumeFailed(onConsumeFailed);
         endpoint.setOnConsumeBatchComplete(onConsumeBatchComplete);
         endpoint.setRowMapperFactory(factory);
+
+        // Initialize only dataSourceFactory, since it is used to create beans of type DataSource
+        DataSource factoryDs = null;
+        if (parameters.containsKey("dataSourceFactory")) {
+            Map<String, Object> m = new HashMap<>(1);
+            m.put("dataSourceFactory", parameters.get("dataSourceFactory"));
+            setProperties(endpoint, m);
+            if (endpoint.getDataSourceFactory() != null) {
+                endpoint.getDataSourceFactory().setCamelContext(getCamelContext());
+                factoryDs = endpoint.getDataSourceFactory().createDataSource(endpoint);
+
+                parameters.remove("dataSourceFactory");
+            }
+        }
+
         setProperties(endpoint, parameters);
 
         // endpoint configured data source takes precedence
         DataSource ds = dataSource;
         if (endpoint.getDataSource() != null) {
             ds = endpoint.getDataSource();
-        }
-        if (ds == null) {
-            ds = endpoint.getDataSourceFactory().createDataSource(null);
-            if (ds == null) {
-                throw new IllegalArgumentException("DataSource must be configured");
-            }
+        } else if (endpoint.getDataSource() == null && ds == null && factoryDs != null) {
+            ds = factoryDs;
         }
 
         // create template
