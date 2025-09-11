@@ -266,5 +266,53 @@ an empty dob field. And to include a custom error message using
 The exception is stored on the Exchange as a warning with the
 key `Exchange.XSLT_WARNING.`
 
+=== Consume JSON body
+
+By default, the input body is assumed as XML. You can set `useJsonBody=true` to consume JSON data from Camel Message body.
+
+[source,java]
+----
+from("direct:transform")
+    .to("xslt-saxon:template.xsl?useJsonBody=true");
+----
+
+If `useJsonBody=true` is set, the JSON body is transformed into XML representation of JSON https://www.w3.org/TR/xslt-30/#json-to-xml-mapping[defined in XSLT 3.0 specification].
+
+For example, when we have following JSON data
+[source,json]
+----
+{
+    "name": "John Doe",
+    "age": 30,
+    "email": "john.doe@example.com",
+    "address": {
+        "street": "123 Main St",
+        "city": "New York",
+        "zipcode": "10001"
+    },
+    "hobbies": ["reading", "cycling", "swimming"]
+}
+----
+
+XSLT 3.0 XML representation of JSON is
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns="http://www.w3.org/2005/xpath-functions">
+   <string key="name">John Doe</string>
+   <number key="age">30</number>
+   <string key="email">john.doe@example.com</string>
+   <map key="address">
+      <string key="street">123 Main St</string>
+      <string key="city">New York</string>
+      <string key="zipcode">10001</string>
+   </map>
+   <array key="hobbies">
+      <string>reading</string>
+      <string>cycling</string>
+      <string>swimming</string>
+   </array>
+</map>
+----
 
 include::spring-boot:partial$starter.adoc[]

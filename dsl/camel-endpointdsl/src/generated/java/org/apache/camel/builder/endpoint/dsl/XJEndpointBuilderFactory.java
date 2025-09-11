@@ -347,6 +347,44 @@ public interface XJEndpointBuilderFactory {
             doSetProperty("transformerCacheSize", transformerCacheSize);
             return this;
         }
+        /**
+         * Whether to use JSON body as input. When enabled, the message body is
+         * expected to be JSON and will be converted to XML representation of
+         * JSON using XSLT3 json-to-xml() function before XSLT processing. This
+         * allows XSLT stylesheets to process JSON input directly using standard
+         * XPath expressions.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useJsonBody the value to set
+         * @return the dsl builder
+         */
+        default XJEndpointBuilder useJsonBody(boolean useJsonBody) {
+            doSetProperty("useJsonBody", useJsonBody);
+            return this;
+        }
+        /**
+         * Whether to use JSON body as input. When enabled, the message body is
+         * expected to be JSON and will be converted to XML representation of
+         * JSON using XSLT3 json-to-xml() function before XSLT processing. This
+         * allows XSLT stylesheets to process JSON input directly using standard
+         * XPath expressions.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useJsonBody the value to set
+         * @return the dsl builder
+         */
+        default XJEndpointBuilder useJsonBody(String useJsonBody) {
+            doSetProperty("useJsonBody", useJsonBody);
+            return this;
+        }
     }
 
     /**

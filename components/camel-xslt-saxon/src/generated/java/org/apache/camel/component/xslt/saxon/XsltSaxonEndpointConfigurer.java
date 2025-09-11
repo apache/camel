@@ -31,6 +31,8 @@ public class XsltSaxonEndpointConfigurer extends XsltEndpointConfigurer implemen
         case "saxonExtensionFunctions": target.setSaxonExtensionFunctions(property(camelContext, java.lang.String.class, value)); return true;
         case "secureprocessing":
         case "secureProcessing": target.setSecureProcessing(property(camelContext, boolean.class, value)); return true;
+        case "usejsonbody":
+        case "useJsonBody": target.setUseJsonBody(property(camelContext, boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }
@@ -46,6 +48,8 @@ public class XsltSaxonEndpointConfigurer extends XsltEndpointConfigurer implemen
         case "saxonExtensionFunctions": return java.lang.String.class;
         case "secureprocessing":
         case "secureProcessing": return boolean.class;
+        case "usejsonbody":
+        case "useJsonBody": return boolean.class;
         default: return super.getOptionType(name, ignoreCase);
         }
     }
@@ -62,6 +66,8 @@ public class XsltSaxonEndpointConfigurer extends XsltEndpointConfigurer implemen
         case "saxonExtensionFunctions": return target.getSaxonExtensionFunctions();
         case "secureprocessing":
         case "secureProcessing": return target.isSecureProcessing();
+        case "usejsonbody":
+        case "useJsonBody": return target.isUseJsonBody();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }
