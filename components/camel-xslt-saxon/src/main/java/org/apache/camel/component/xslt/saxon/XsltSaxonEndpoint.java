@@ -80,6 +80,9 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     private boolean allowStAX = true;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean secureProcessing = true;
+    @UriParam
+    @Metadata(firstVersion = "4.15.0", displayName = "Use JSON Body", defaultValue = "false", required = false)
+    private boolean useJsonBody = false;
 
     public XsltSaxonEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -171,6 +174,19 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         this.secureProcessing = secureProcessing;
     }
 
+    public boolean isUseJsonBody() {
+        return useJsonBody;
+    }
+
+    /**
+     * Whether to use JSON body as input. When enabled, the message body is expected to be JSON and will be converted to
+     * XML representation of JSON using XSLT3 `json-to-xml()` function before XSLT processing. This allows XSLT
+     * stylesheets to process JSON input directly using standard XPath expressions.
+     */
+    public void setUseJsonBody(boolean useJsonBody) {
+        this.useJsonBody = useJsonBody;
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -242,6 +258,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         xslt.setUriResolver(getUriResolver());
         xslt.setEntityResolver(getEntityResolver());
         xslt.setAllowStAX(allowStAX);
+        xslt.setUseJsonBody(useJsonBody);
         xslt.setDeleteOutputFile(isDeleteOutputFile());
         xslt.setSource(ExpressionBuilder.singleInputExpression(getSource()));
 

@@ -39,6 +39,7 @@ import org.apache.camel.support.builder.xml.StAX2SAXSource;
 public class XsltSaxonBuilder extends XsltBuilder {
 
     private boolean allowStAX = true;
+    private boolean useJsonBody = false;
 
     @Override
     protected Source prepareSource(Source source) {
@@ -65,9 +66,19 @@ public class XsltSaxonBuilder extends XsltBuilder {
         this.allowStAX = allowStAX;
     }
 
+    public boolean isUseJsonBody() {
+        return useJsonBody;
+    }
+
+    public void setUseJsonBody(boolean useJsonBody) {
+        this.useJsonBody = useJsonBody;
+    }
+
     @Override
     protected XmlSourceHandlerFactoryImpl createXmlSourceHandlerFactoryImpl() {
-        return new SaxonXmlSourceHandlerFactoryImpl();
+        SaxonXmlSourceHandlerFactoryImpl factory = new SaxonXmlSourceHandlerFactoryImpl();
+        factory.setUseJsonBody(useJsonBody);
+        return factory;
     }
 
     @Override

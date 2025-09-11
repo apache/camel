@@ -23,7 +23,7 @@ public class XJEndpointUriFactory extends org.apache.camel.support.component.End
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(23);
         props.add("allowStAX");
         props.add("allowTemplateFromHeader");
         props.add("contentCache");
@@ -45,6 +45,7 @@ public class XJEndpointUriFactory extends org.apache.camel.support.component.End
         props.add("transformerFactoryClass");
         props.add("transformerFactoryConfigurationStrategy");
         props.add("uriResolver");
+        props.add("useJsonBody");
         props.add("xsltMessageLogger");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
