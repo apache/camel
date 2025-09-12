@@ -25,6 +25,7 @@ import org.apache.camel.component.neo4j.Neo4Operation;
 import org.apache.camel.component.neo4j.Neo4jConstants;
 import org.apache.camel.component.neo4j.Neo4jEmbedding;
 import org.apache.camel.component.neo4j.Neo4jTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -45,15 +46,15 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
                 .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.CREATE_VECTOR_INDEX)
                 .request(Exchange.class);
 
-        assertNotNull(result);
+        Assertions.assertNotNull(result);
 
         Message in = result.getMessage();
-        assertNotNull(in);
+        Assertions.assertNotNull(in);
 
-        assertEquals(Neo4Operation.CREATE_VECTOR_INDEX, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        assertTrue("The executed request should contain the create vector index",
-                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
-                        .contains("CREATE VECTOR INDEX movieIdx IF NOT EXISTS"));
+        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR_INDEX, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        Assertions.assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
+                .contains("CREATE VECTOR INDEX movieIdx IF NOT EXISTS"),
+                "The executed request should contain the create vector index");
 
     }
 
@@ -68,16 +69,17 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
                 .withBody(testData.getText())
                 .request(Exchange.class);
 
-        assertNotNull(result);
+        Assertions.assertNotNull(result);
 
         Message in = result.getMessage();
-        assertNotNull(in);
+        Assertions.assertNotNull(in);
 
-        assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        assertTrue("The executed request should contain the procedure of setting vector embedding",
-                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
-                        .contains("CALL db.create.setNodeVectorProperty"));
-        assertEquals("A node creation is expected ", 1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
+        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        Assertions.assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
+                .contains("CALL db.create.setNodeVectorProperty"),
+                "The executed request should contain the procedure of setting vector embedding");
+        Assertions.assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED),
+                "A node creation is expected ");
     }
 
     @Order(2)
@@ -89,16 +91,17 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
                 .withBody(neo4jEmbedding)
                 .request(Exchange.class);
 
-        assertNotNull(result);
+        Assertions.assertNotNull(result);
 
         Message in = result.getMessage();
-        assertNotNull(in);
+        Assertions.assertNotNull(in);
 
-        assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        assertTrue("The executed request should contain the procedure of setting vector embedding",
-                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
-                        .contains("CALL db.create.setNodeVectorProperty"));
-        assertEquals("A node creation is expected ", 1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
+        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        Assertions.assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
+                .contains("CALL db.create.setNodeVectorProperty"),
+                "The executed request should contain the procedure of setting vector embedding");
+        Assertions.assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED),
+                "A node creation is expected ");
     }
 
     @Test
@@ -110,14 +113,14 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
                 .request(Exchange.class);
 
         Message in = result.getMessage();
-        assertNotNull(in);
-        assertEquals(Neo4Operation.VECTOR_SIMILARITY_SEARCH, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        assertEquals(3, in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
+        Assertions.assertNotNull(in);
+        Assertions.assertEquals(Neo4Operation.VECTOR_SIMILARITY_SEARCH, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        Assertions.assertEquals(3, in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
 
         List resultList = in.getBody(List.class);
-        assertNotNull(resultList);
+        Assertions.assertNotNull(resultList);
 
-        assertEquals(3, resultList.size());
+        Assertions.assertEquals(3, resultList.size());
 
     }
 
@@ -128,14 +131,14 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
                 .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.DROP_VECTOR_INDEX)
                 .request(Exchange.class);
 
-        assertNotNull(result);
+        Assertions.assertNotNull(result);
 
         Message in = result.getMessage();
-        assertNotNull(in);
+        Assertions.assertNotNull(in);
 
-        assertEquals(Neo4Operation.DROP_VECTOR_INDEX, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        assertTrue("The executed request should contain the drop vector index",
-                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class).contains("DROP INDEX movieIdx"));
+        Assertions.assertEquals(Neo4Operation.DROP_VECTOR_INDEX, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        Assertions.assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class).contains("DROP INDEX movieIdx"),
+                "The executed request should contain the drop vector index");
     }
 
     // Enum to provide test data
