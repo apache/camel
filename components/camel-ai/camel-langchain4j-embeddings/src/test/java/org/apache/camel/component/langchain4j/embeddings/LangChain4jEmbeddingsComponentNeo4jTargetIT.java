@@ -33,6 +33,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.test.infra.neo4j.services.Neo4jService;
 import org.apache.camel.test.infra.neo4j.services.Neo4jServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -41,9 +42,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -75,15 +73,15 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
                 .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.CREATE_VECTOR_INDEX)
                 .request(Exchange.class);
 
-        assertNotNull(result);
+        Assertions.assertNotNull(result);
 
         Message in = result.getMessage();
-        assertNotNull(in);
+        Assertions.assertNotNull(in);
 
-        assertEquals(Neo4Operation.CREATE_VECTOR_INDEX, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        assertTrue("The executed request should contain the create vector index",
-                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
-                        .contains("CREATE VECTOR INDEX myIndex IF NOT EXISTS"));
+        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR_INDEX, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        Assertions.assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
+                .contains("CREATE VECTOR INDEX myIndex IF NOT EXISTS"),
+                "The executed request should contain the create vector index");
 
     }
 
@@ -98,10 +96,12 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
         assertThat(result).isNotNull();
 
         Message in = result.getMessage();
-        assertNotNull(in);
+        Assertions.assertNotNull(in);
 
-        assertEquals("Operation is create Vector", Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        assertEquals("A node creation is expected ", 1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
+        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jConstants.Headers.OPERATION),
+                "Operation is create Vector");
+        Assertions.assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED),
+                "A node creation is expected ");
 
     }
 
@@ -117,26 +117,27 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
                 .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY)
                 .request(Exchange.class);
 
-        assertNotNull(result);
+        Assertions.assertNotNull(result);
 
         Message in = result.getMessage();
-        assertNotNull(in);
-        assertEquals(Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        assertEquals("The database should retrieve the node with id =1 that was created by previous test", 1,
-                in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
+        Assertions.assertNotNull(in);
+        Assertions.assertEquals(Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY,
+                in.getHeader(Neo4jConstants.Headers.OPERATION));
+        Assertions.assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE),
+                "The database should retrieve the node with id =1 that was created by previous test");
 
         List resultList = in.getBody(List.class);
-        assertNotNull("Body should be a list", resultList);
+        Assertions.assertNotNull(resultList, "Body should be a list");
 
-        assertEquals("The list of result should contain a unique embedding", 1, resultList.size());
+        Assertions.assertEquals(1, resultList.size(), "The list of result should contain a unique embedding");
 
         Map<String, Object> map = (Map<String, Object>) resultList.get(0);
-        assertNotNull("getting the single result that shouldn't be null", map);
-        assertTrue("The map should contain an id", map.containsKey("id"));
-        assertEquals("The id should be equal to 1", "1", map.get("id"));
-        assertTrue("The map should contain an embedding", map.containsKey("embedding"));
+        Assertions.assertNotNull(map, "getting the single result that shouldn't be null");
+        Assertions.assertTrue(map.containsKey("id"), "The map should contain an id");
+        Assertions.assertEquals("1", map.get("id"), "The id should be equal to 1");
+        Assertions.assertTrue(map.containsKey("embedding"), "The map should contain an embedding");
         List<Float> embedding = (List) map.get("embedding");
-        assertTrue("The list of embeddings should be a list of float. if no erreor, this assert is valid", true);
+        Assertions.assertTrue(true, "The list of embeddings should be a list of float. if no erreor, this assert is valid");
 
     }
 
@@ -151,7 +152,7 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
         assertThat(result.getException()).isNull();
 
         assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
-        assertTrue(result.getIn().getBody(List.class).contains("hi"));
+        Assertions.assertTrue(result.getIn().getBody(List.class).contains("hi"));
     }
 
     @Override
