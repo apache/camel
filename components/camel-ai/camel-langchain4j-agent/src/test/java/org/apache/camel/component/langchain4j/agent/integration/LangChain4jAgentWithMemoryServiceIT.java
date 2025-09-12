@@ -86,7 +86,7 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(2);
 
-        AiAgentBody firstRequest = new AiAgentBody(
+        AiAgentBody<?> firstRequest = new AiAgentBody<>(
                 "Hi! Can you look up user 123 and tell me about our rental policies?",
                 null,
                 MEMORY_ID_SESSION);
@@ -103,7 +103,7 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
                 "Response should contain rental policy information from RAG");
 
         // Second interaction: Follow-up question
-        AiAgentBody secondRequest = new AiAgentBody(
+        AiAgentBody<?> secondRequest = new AiAgentBody<>(
                 "What's his preferred vehicle type?",
                 null,
                 MEMORY_ID_SESSION);
@@ -133,7 +133,7 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        AiAgentBody request = new AiAgentBody(
+        AiAgentBody<?> request = new AiAgentBody<>(
                 """
                         Please provide user 123's information in this exact JSON format:
                         {
@@ -169,7 +169,7 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        AiAgentBody request = new AiAgentBody(
+        AiAgentBody<?> request = new AiAgentBody<>(
                 "What are your business hours on weekends?",
                 null,
                 MEMORY_ID_SESSION);

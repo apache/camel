@@ -76,7 +76,7 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(3);
 
-        AiAgentBody firstRequest = new AiAgentBody(
+        AiAgentBody<?> firstRequest = new AiAgentBody<>(
                 "Hi! Can you look up user 123 and tell me about our rental policies?",
                 null,
                 MEMORY_ID_SESSION);
@@ -93,7 +93,7 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
                 .withFailMessage("Response should contain rental policy information from RAG");
 
         // Second interaction: Follow-up question
-        AiAgentBody secondRequest = new AiAgentBody(
+        AiAgentBody<?> secondRequest = new AiAgentBody<>(
                 "What's his preferred vehicle type?",
                 null,
                 MEMORY_ID_SESSION);
@@ -107,7 +107,7 @@ public class LangChain4jAgentWithMemoryServiceTest extends BaseLangChain4jAgent 
         Assertions.assertThat(secondResponse).isEqualTo("SUV");
 
         // Third interaction: Follow-up weather question
-        AiAgentBody thirdRequest = new AiAgentBody(
+        AiAgentBody<?> thirdRequest = new AiAgentBody<>(
                 "What's the weather in London?",
                 null,
                 MEMORY_ID_SESSION);
