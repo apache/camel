@@ -317,4 +317,9 @@ public class SslAwareMongoClient implements MongoClient {
     public void setSslValidationEnabled(boolean sslValidationEnabled) {
         this.sslValidationEnabled = sslValidationEnabled;
     }
+
+    @Override
+    public void appendMetadata(MongoDriverInformation mongoDriverInformation) {
+
+    }
 }
