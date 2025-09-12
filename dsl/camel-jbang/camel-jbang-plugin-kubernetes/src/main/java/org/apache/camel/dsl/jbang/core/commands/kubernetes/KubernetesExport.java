@@ -513,7 +513,7 @@ public class KubernetesExport extends Export {
     }
 
     private void setContainerHealthPaths(int port) {
-        // the camel-observability-services artifact is set in the pom template
+        // the camel-observability-services artifact is added as dependency if observe=true in run command
         // it renames the container health base path to /observe, so this has to be in the container health probes http path
         // only quarkus and sb runtimes, because there is no published health endpoints when using runtime=main
         String probePort = port > 0 ? "" + port : "9876";
