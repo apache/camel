@@ -42,7 +42,6 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MilvusComponentIT extends MilvusTestSupport {
@@ -181,7 +180,7 @@ public class MilvusComponentIT extends MilvusTestSupport {
 
         // we cannot upsert as we lack userID field
         assertThat(result).isNotNull();
-        assertTrue(result.isFailed());
+        Assertions.assertTrue(result.isFailed());
     }
 
     @Test

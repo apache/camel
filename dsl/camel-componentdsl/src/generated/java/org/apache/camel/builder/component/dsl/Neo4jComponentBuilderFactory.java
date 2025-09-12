@@ -98,8 +98,8 @@ public interface Neo4jComponentBuilderFactory {
     
         
         /**
-         * Detach a relationship - set true if want to delete a node and detach
-         * its relationships to other nodes at same time.
+         * Detach a relationship - set true if you want to delete a node and
+         * detach its relationships to other nodes at same time.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

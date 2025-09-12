@@ -73,8 +73,8 @@ public interface Neo4jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Detach a relationship - set true if want to delete a node and detach
-         * its relationships to other nodes at same time.
+         * Detach a relationship - set true if you want to delete a node and
+         * detach its relationships to other nodes at same time.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -89,8 +89,8 @@ public interface Neo4jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Detach a relationship - set true if want to delete a node and detach
-         * its relationships to other nodes at same time.
+         * Detach a relationship - set true if you want to delete a node and
+         * detach its relationships to other nodes at same time.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

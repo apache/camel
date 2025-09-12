@@ -125,7 +125,7 @@ public class Neo4jConfiguration implements Cloneable {
     }
 
     /**
-     * Detach a relationship - set true if want to delete a node and detach its relationships to other nodes at same
+     * Detach a relationship - set true if you want to delete a node and detach its relationships to other nodes at same
      * time
      */
     public boolean isDetachRelationship() {
