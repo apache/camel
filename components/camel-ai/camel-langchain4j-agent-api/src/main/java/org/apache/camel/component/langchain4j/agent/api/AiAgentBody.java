@@ -96,7 +96,7 @@ public class AiAgentBody<C> {
      * @param  userMessage the message from the user to send to the AI agent
      * @return             this AiAgentBody instance for fluent method chaining
      */
-    public AiAgentBody withUserMessage(String userMessage) {
+    public AiAgentBody<C> withUserMessage(String userMessage) {
         this.userMessage = userMessage;
         return this;
     }
@@ -112,7 +112,7 @@ public class AiAgentBody<C> {
      * @param  systemMessage the system instructions for the AI agent behavior
      * @return               this AiAgentBody instance for fluent method chaining
      */
-    public AiAgentBody withSystemMessage(String systemMessage) {
+    public AiAgentBody<C> withSystemMessage(String systemMessage) {
         this.systemMessage = systemMessage;
         return this;
     }
@@ -129,7 +129,7 @@ public class AiAgentBody<C> {
      * @param  memoryId the identifier for conversation memory (typically a string or number)
      * @return          this AiAgentBody instance for fluent method chaining
      */
-    public AiAgentBody withMemoryId(Object memoryId) {
+    public AiAgentBody<C> withMemoryId(Object memoryId) {
         this.memoryId = memoryId;
         return this;
     }
