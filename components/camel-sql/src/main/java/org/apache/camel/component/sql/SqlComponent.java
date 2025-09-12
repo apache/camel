@@ -130,12 +130,6 @@ public class SqlComponent extends HealthCheckComponent {
         if (endpoint.getDataSource() != null) {
             ds = endpoint.getDataSource();
         }
-        if (ds == null) {
-            ds = endpoint.getDataSourceFactory().createDataSource(null);
-            if (ds == null) {
-                throw new IllegalArgumentException("DataSource must be configured");
-            }
-        }
 
         // create template
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);

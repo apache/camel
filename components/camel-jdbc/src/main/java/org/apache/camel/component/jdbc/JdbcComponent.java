@@ -63,6 +63,9 @@ public class JdbcComponent extends DefaultComponent {
                 } else if (dataSources.size() == 1) {
                     target = dataSources.iterator().next();
                 }
+                if (target == null) {
+                    throw new IllegalArgumentException("No default DataSource found in the registry");
+                }
                 LOG.debug("Using default DataSource discovered from registry: {}", target);
             }
             dataSource = target;
@@ -78,15 +81,6 @@ public class JdbcComponent extends DefaultComponent {
         jdbc.setDataSourceName(dataSourceRef);
         jdbc.setParameters(params);
         setProperties(jdbc, parameters);
-
-        if (jdbc.getDataSource() == null) {
-            DataSource ds = jdbc.getDataSourceFactory().createDataSource(null);
-            if (ds == null) {
-                throw new IllegalArgumentException("No default DataSource found in the registry");
-            } else {
-                jdbc.setDataSource(ds);
-            }
-        }
 
         return jdbc;
     }
