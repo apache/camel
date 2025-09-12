@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.langchain4j.chat.rag.LangChain4jRagAggregatorStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +50,7 @@ public class LangChain4jRagAggregatorTest {
     @Test
     void testAggregateWithNoNewData() {
         Exchange result = aggregator.aggregate(oldExchange, newExchange);
-        assertEquals(oldExchange, result);
+        Assertions.assertEquals(oldExchange, result);
     }
 
     @Test
@@ -67,16 +68,16 @@ public class LangChain4jRagAggregatorTest {
         List<Content> contents = result.getIn().getHeader(AUGMENTED_DATA, List.class);
         String prompt = result.getIn().getBody(String.class);
 
-        assertNotNull("The body should contain the old body", prompt);
-        assertEquals("Prompt Test", prompt);
+        Assertions.assertNotNull(prompt, "The body should contain the old body");
+        Assertions.assertEquals("Prompt Test", prompt);
 
-        assertNotNull("The old exchange should contain now the enriched data in type of List of Content", contents);
-        assertEquals(2, contents.size());
+        Assertions.assertNotNull(contents, "The old exchange should contain now the enriched data in type of List of Content");
+        Assertions.assertEquals(2, contents.size());
 
-        assertTrue("The first content item should match one of the new data entries.",
-                newData.contains(contents.get(0).textSegment().text()));
-        assertTrue("The second content item should match one of the new data entries.",
-                newData.contains(contents.get(1).textSegment().text()));
+        Assertions.assertTrue(newData.contains(contents.get(0).textSegment().text()),
+                "The first content item should match one of the new data entries.");
+        Assertions.assertTrue(newData.contains(contents.get(1).textSegment().text()),
+                "The second content item should match one of the new data entries.");
     }
 
     @Test
@@ -100,23 +101,24 @@ public class LangChain4jRagAggregatorTest {
         contents = result.getIn().getHeader(AUGMENTED_DATA, List.class);
         String prompt = result.getIn().getBody(String.class);
 
-        assertNotNull("The body should contain the old body", prompt);
-        assertEquals("Prompt Test", prompt);
+        Assertions.assertNotNull(prompt, "The body should contain the old body");
+        Assertions.assertEquals("Prompt Test", prompt);
 
-        assertNotNull("The old exchange should contain now the enriched data in type of List of Content", contents);
-        assertEquals(3, contents.size());
+        Assertions.assertNotNull(contents, "The old exchange should contain now the enriched data in type of List of Content");
+        Assertions.assertEquals(3, contents.size());
 
-        assertEquals("The first content item should match the old content", "Old data", contents.get(0).textSegment().text());
-        assertTrue("The second content item should match one of the new data entries.",
-                newData.contains(contents.get(1).textSegment().text()));
-        assertTrue("The third content item should match one of the new data entries.",
-                newData.contains(contents.get(2).textSegment().text()));
+        Assertions.assertEquals("Old data", contents.get(0).textSegment().text(),
+                "The first content item should match the old content");
+        Assertions.assertTrue(newData.contains(contents.get(1).textSegment().text()),
+                "The second content item should match one of the new data entries.");
+        Assertions.assertTrue(newData.contains(contents.get(2).textSegment().text()),
+                "The third content item should match one of the new data entries.");
     }
 
     @Test
     void testOldExchangeIsNull() {
         newExchange.getMessage().setHeader(AUGMENTED_DATA, "Additional data");
         Exchange result = aggregator.aggregate(null, newExchange);
-        assertEquals(newExchange, result);
+        Assertions.assertEquals(newExchange, result);
     }
 }

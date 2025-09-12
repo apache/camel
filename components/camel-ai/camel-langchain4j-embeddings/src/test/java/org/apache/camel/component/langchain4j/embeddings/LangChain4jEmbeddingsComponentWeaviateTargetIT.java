@@ -36,6 +36,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.test.infra.weaviate.services.WeaviateService;
 import org.apache.camel.test.infra.weaviate.services.WeaviateServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -44,8 +45,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -154,7 +153,7 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertNotNull(result.getIn().getBody());
+        Assertions.assertNotNull(result.getIn().getBody());
     }
 
     @Override
