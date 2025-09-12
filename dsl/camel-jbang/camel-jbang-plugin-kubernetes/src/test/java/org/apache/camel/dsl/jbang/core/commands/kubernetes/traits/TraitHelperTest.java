@@ -92,6 +92,7 @@ public class TraitHelperTest {
     @Test
     public void parseTraitsTest() {
         String[] traits = new String[] {
+                "my-prop=my-val",
                 "custom.property=custom",
                 "container.port=8080",
                 "container.port-name=custom" };
