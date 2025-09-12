@@ -88,7 +88,7 @@ public class LangChain4jSimpleAgentIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        AiAgentBody body = new AiAgentBody()
+        AiAgentBody<?> body = new AiAgentBody<>()
                 .withSystemMessage(TEST_SYSTEM_MESSAGE)
                 .withUserMessage(TEST_USER_MESSAGE_STORY);
 

@@ -52,7 +52,7 @@ public class LangChain4jAgentServiceIT extends AbstractRAGIT {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        AiAgentBody request = new AiAgentBody(
+        AiAgentBody<?> request = new AiAgentBody<>(
                 """
                         Can you look up user 123 and tell me about our rental policies?
                         Please provide the response in this JSON format:

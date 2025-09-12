@@ -93,7 +93,7 @@ public class LangChain4jAgentWithToolsIT extends CamelTestSupport {
                                "Use the available tools to provide accurate information.";
         String userMessage = "Can you tell me the name of user 123 and the weather in New York?";
 
-        AiAgentBody aiAgentBody = new AiAgentBody(systemMessage, userMessage, null);
+        AiAgentBody<?> aiAgentBody = new AiAgentBody<>(systemMessage, userMessage, null);
 
         String response = template.requestBody(
                 "direct:agent-with-multiple-tools",
