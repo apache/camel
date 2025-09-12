@@ -42,8 +42,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "datasource":
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
-        case "datasourcefactory":
-        case "dataSourceFactory": target.setDataSourceFactory(property(camelContext, org.apache.camel.support.sql.DataSourceFactory.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -119,7 +117,7 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"dataSource", "dataSourceFactory"};
+        return new String[]{"dataSource"};
     }
 
     @Override
@@ -144,8 +142,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeErrorHandler": return boolean.class;
         case "datasource":
         case "dataSource": return javax.sql.DataSource.class;
-        case "datasourcefactory":
-        case "dataSourceFactory": return org.apache.camel.support.sql.DataSourceFactory.class;
         case "delay": return long.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -242,8 +238,6 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datasource":
         case "dataSource": return target.getDataSource();
-        case "datasourcefactory":
-        case "dataSourceFactory": return target.getDataSourceFactory();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
