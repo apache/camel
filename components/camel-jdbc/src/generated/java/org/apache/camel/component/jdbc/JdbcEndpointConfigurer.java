@@ -29,8 +29,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "beanRowMapper": target.setBeanRowMapper(property(camelContext, org.apache.camel.component.jdbc.BeanRowMapper.class, value)); return true;
         case "connectionstrategy":
         case "connectionStrategy": target.setConnectionStrategy(property(camelContext, org.apache.camel.component.jdbc.ConnectionStrategy.class, value)); return true;
-        case "datasourcefactory":
-        case "dataSourceFactory": target.setDataSourceFactory(property(camelContext, org.apache.camel.support.sql.DataSourceFactory.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outputclass":
@@ -64,8 +62,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "beanRowMapper": return org.apache.camel.component.jdbc.BeanRowMapper.class;
         case "connectionstrategy":
         case "connectionStrategy": return org.apache.camel.component.jdbc.ConnectionStrategy.class;
-        case "datasourcefactory":
-        case "dataSourceFactory": return org.apache.camel.support.sql.DataSourceFactory.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "outputclass":
@@ -100,8 +96,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "beanRowMapper": return target.getBeanRowMapper();
         case "connectionstrategy":
         case "connectionStrategy": return target.getConnectionStrategy();
-        case "datasourcefactory":
-        case "dataSourceFactory": return target.getDataSourceFactory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "outputclass":

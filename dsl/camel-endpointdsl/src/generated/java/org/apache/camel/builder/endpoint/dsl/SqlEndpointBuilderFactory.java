@@ -105,38 +105,6 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * The datasource factory to use for creating datasource if no
-         * dataosurce is provided.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.sql.DataSourceFactory</code> type.
-         * 
-         * Group: common
-         * 
-         * @param dataSourceFactory the value to set
-         * @return the dsl builder
-         */
-        default SqlEndpointConsumerBuilder dataSourceFactory(org.apache.camel.support.sql.DataSourceFactory dataSourceFactory) {
-            doSetProperty("dataSourceFactory", dataSourceFactory);
-            return this;
-        }
-        /**
-         * The datasource factory to use for creating datasource if no
-         * dataosurce is provided.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.sql.DataSourceFactory</code> type.
-         * 
-         * Group: common
-         * 
-         * @param dataSourceFactory the value to set
-         * @return the dsl builder
-         */
-        default SqlEndpointConsumerBuilder dataSourceFactory(String dataSourceFactory) {
-            doSetProperty("dataSourceFactory", dataSourceFactory);
-            return this;
-        }
-        /**
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne.
          * 
@@ -1525,38 +1493,6 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * The datasource factory to use for creating datasource if no
-         * dataosurce is provided.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.sql.DataSourceFactory</code> type.
-         * 
-         * Group: common
-         * 
-         * @param dataSourceFactory the value to set
-         * @return the dsl builder
-         */
-        default SqlEndpointProducerBuilder dataSourceFactory(org.apache.camel.support.sql.DataSourceFactory dataSourceFactory) {
-            doSetProperty("dataSourceFactory", dataSourceFactory);
-            return this;
-        }
-        /**
-         * The datasource factory to use for creating datasource if no
-         * dataosurce is provided.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.sql.DataSourceFactory</code> type.
-         * 
-         * Group: common
-         * 
-         * @param dataSourceFactory the value to set
-         * @return the dsl builder
-         */
-        default SqlEndpointProducerBuilder dataSourceFactory(String dataSourceFactory) {
-            doSetProperty("dataSourceFactory", dataSourceFactory);
-            return this;
-        }
-        /**
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne.
          * 
@@ -2209,38 +2145,6 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointBuilder dataSource(String dataSource) {
             doSetProperty("dataSource", dataSource);
-            return this;
-        }
-        /**
-         * The datasource factory to use for creating datasource if no
-         * dataosurce is provided.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.sql.DataSourceFactory</code> type.
-         * 
-         * Group: common
-         * 
-         * @param dataSourceFactory the value to set
-         * @return the dsl builder
-         */
-        default SqlEndpointBuilder dataSourceFactory(org.apache.camel.support.sql.DataSourceFactory dataSourceFactory) {
-            doSetProperty("dataSourceFactory", dataSourceFactory);
-            return this;
-        }
-        /**
-         * The datasource factory to use for creating datasource if no
-         * dataosurce is provided.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.sql.DataSourceFactory</code> type.
-         * 
-         * Group: common
-         * 
-         * @param dataSourceFactory the value to set
-         * @return the dsl builder
-         */
-        default SqlEndpointBuilder dataSourceFactory(String dataSourceFactory) {
-            doSetProperty("dataSourceFactory", dataSourceFactory);
             return this;
         }
         /**

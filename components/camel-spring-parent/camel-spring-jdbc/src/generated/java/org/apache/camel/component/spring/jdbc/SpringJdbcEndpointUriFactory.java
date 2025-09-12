@@ -23,11 +23,10 @@ public class SpringJdbcEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(15);
         props.add("allowNamedParameters");
         props.add("beanRowMapper");
         props.add("connectionStrategy");
-        props.add("dataSourceFactory");
         props.add("dataSourceName");
         props.add("lazyStartProducer");
         props.add("outputClass");

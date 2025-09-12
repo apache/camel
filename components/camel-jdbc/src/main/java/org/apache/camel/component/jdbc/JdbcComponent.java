@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,26 +45,12 @@ public class JdbcComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DataSource dataSource;
         String dataSourceRef;
-        JdbcEndpoint endpoint = createEndpoint(uri, this, null);
 
         if (this.dataSource != null) {
             // prefer to use datasource set by setter
             dataSource = this.dataSource;
             dataSourceRef = "component";
         } else {
-            // Initialize only dataSourceFactory, since it is used to create beans of type DataSource
-            if (parameters.containsKey("dataSourceFactory")) {
-                Map<String, Object> m = new HashMap<>(1);
-                m.put("dataSourceFactory", parameters.get("dataSourceFactory"));
-                setProperties(endpoint, m);
-                if (endpoint.getDataSourceFactory() != null) {
-                    endpoint.getDataSourceFactory().setCamelContext(getCamelContext());
-                    endpoint.getDataSourceFactory().createDataSource(endpoint);
-
-                    parameters.remove("dataSourceFactory");
-                }
-            }
-
             DataSource target = CamelContextHelper.lookup(getCamelContext(), remaining, DataSource.class);
             if (target == null && !isDefaultDataSourceName(remaining)) {
                 throw new NoSuchBeanException(remaining, DataSource.class.getName());
@@ -78,6 +63,9 @@ public class JdbcComponent extends DefaultComponent {
                 } else if (dataSources.size() == 1) {
                     target = dataSources.iterator().next();
                 }
+                if (target == null) {
+                    throw new IllegalArgumentException("No default DataSource found in the registry");
+                }
                 LOG.debug("Using default DataSource discovered from registry: {}", target);
             }
             dataSource = target;
@@ -86,15 +74,15 @@ public class JdbcComponent extends DefaultComponent {
 
         Map<String, Object> params = PropertiesHelper.extractProperties(parameters, "statement.");
 
-        endpoint.setDataSource(dataSource);
+        JdbcEndpoint jdbc = createEndpoint(uri, this, dataSource);
         if (connectionStrategy != null) {
-            endpoint.setConnectionStrategy(connectionStrategy);
+            jdbc.setConnectionStrategy(connectionStrategy);
         }
-        endpoint.setDataSourceName(dataSourceRef);
-        endpoint.setParameters(params);
-        setProperties(endpoint, parameters);
+        jdbc.setDataSourceName(dataSourceRef);
+        jdbc.setParameters(params);
+        setProperties(jdbc, parameters);
 
-        return endpoint;
+        return jdbc;
     }
 
     protected JdbcEndpoint createEndpoint(String uri, JdbcComponent component, DataSource dataSource) {

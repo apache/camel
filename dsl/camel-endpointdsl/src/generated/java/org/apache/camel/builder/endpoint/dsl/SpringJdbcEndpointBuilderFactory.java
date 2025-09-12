@@ -75,38 +75,6 @@ public interface SpringJdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * The datasource factory to use for creating datasource if no
-         * dataosurce is provided.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.sql.DataSourceFactory</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param dataSourceFactory the value to set
-         * @return the dsl builder
-         */
-        default SpringJdbcEndpointBuilder dataSourceFactory(org.apache.camel.support.sql.DataSourceFactory dataSourceFactory) {
-            doSetProperty("dataSourceFactory", dataSourceFactory);
-            return this;
-        }
-        /**
-         * The datasource factory to use for creating datasource if no
-         * dataosurce is provided.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.sql.DataSourceFactory</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param dataSourceFactory the value to set
-         * @return the dsl builder
-         */
-        default SpringJdbcEndpointBuilder dataSourceFactory(String dataSourceFactory) {
-            doSetProperty("dataSourceFactory", dataSourceFactory);
-            return this;
-        }
-        /**
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne or SelectList.
          * 

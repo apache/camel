@@ -34,7 +34,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.support.sql.DataSourceFactory;
 import org.apache.camel.util.UnwrapHelper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,9 +52,6 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
     @Metadata(autowired = true)
     @UriParam(description = "Sets the DataSource to use to communicate with the database at endpoint level.")
     private DataSource dataSource;
-    @Metadata(autowired = true)
-    @UriParam(description = "The datasource factory to use for creating datasource if no dataosurce is provided.")
-    private DataSourceFactory dataSourceFactory;
     @UriParam(label = "consumer",
               description = "Enables or disables transaction. If enabled then if processing an exchange failed then the consumer"
                             + " breaks out processing any further exchanges to cause a rollback eager.")
@@ -507,14 +503,6 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
         this.rowMapperFactory = rowMapperFactory;
     }
 
-    public DataSourceFactory getDataSourceFactory() {
-        return dataSourceFactory;
-    }
-
-    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
-        this.dataSourceFactory = dataSourceFactory;
-    }
-
     @SuppressWarnings("unchecked")
     public List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
         if (allowMapToClass && outputClass != null) {
@@ -597,9 +585,6 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
                 if (actual != null) {
                     ds = actual;
                 }
-            } else if (ds == null && dataSourceFactory != null) {
-                dataSourceFactory.setCamelContext(getCamelContext());
-                ds = dataSourceFactory.createDataSource(this);
             }
             serviceUrl = SqlServiceLocationHelper.getJDBCURLFromDataSource(bi, ds);
 
