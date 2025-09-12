@@ -86,7 +86,7 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         try {
             if (action == null) {
                 throw new NoSuchHeaderException(
-                        "The action is a required header", exchange, LangChain4jEmbeddingStore.Headers.ACTION);
+                        "The action is a required header", exchange, LangChain4jEmbeddingStoreHeaders.ACTION);
             }
 
             switch (action) {
@@ -193,8 +193,8 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         }
 
         int maxResults = Integer.parseInt(LangChain4jEmbeddingStore.DEFAULT_MAX_RESULTS);
-        if (in.getHeader(LangChain4jEmbeddingStore.Headers.MAX_RESULTS, Integer.class) != null) {
-            maxResults = in.getHeader(LangChain4jEmbeddingStore.Headers.MAX_RESULTS, Integer.class);
+        if (in.getHeader(LangChain4jEmbeddingStoreHeaders.MAX_RESULTS, Integer.class) != null) {
+            maxResults = in.getHeader(LangChain4jEmbeddingStoreHeaders.MAX_RESULTS, Integer.class);
         }
 
         EmbeddingSearchRequestBuilder esrb = EmbeddingSearchRequest.builder()
@@ -202,12 +202,12 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
                 .maxResults(maxResults);
 
         if (in.getHeader(LangChain4jEmbeddingStore.Headers.MIN_SCORE, Integer.class) != null) {
-            Double minScore = in.getHeader(LangChain4jEmbeddingStore.Headers.MIN_SCORE, Double.class);
+            Double minScore = in.getHeader(LangChain4jEmbeddingStoreHeaders.MIN_SCORE, Double.class);
             esrb = esrb.minScore(minScore);
         }
 
         if (in.getHeader(LangChain4jEmbeddingStore.Headers.FILTER, Filter.class) != null) {
-            Filter filter = in.getHeader(LangChain4jEmbeddingStore.Headers.FILTER, Filter.class);
+            Filter filter = in.getHeader(LangChain4jEmbeddingStoreHeaders.FILTER, Filter.class);
             esrb = esrb.filter(filter);
         }
         EmbeddingSearchRequest embeddingSearchRequest = esrb.build();
