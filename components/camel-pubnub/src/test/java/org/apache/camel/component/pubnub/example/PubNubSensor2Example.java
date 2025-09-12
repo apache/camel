@@ -110,6 +110,7 @@ public final class PubNubSensor2Example {
     record DeviceWeatherInfo(String device, int humidity, int temperature) {
 
         private static SecureRandom rand = new SecureRandom();
+
         public DeviceWeatherInfo(String device) {
             this(device, rand.nextInt(100), rand.nextInt(40));
         }
