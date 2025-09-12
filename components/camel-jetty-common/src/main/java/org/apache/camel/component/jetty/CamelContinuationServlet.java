@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -201,7 +202,7 @@ public class CamelContinuationServlet extends CamelServlet {
             }
 
             String charset = request.getCharacterEncoding();
-            if (charset != null) {
+            if (charset != null && Charset.isSupported(charset)) {
                 exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             }
             // reuse existing http message if pooled
