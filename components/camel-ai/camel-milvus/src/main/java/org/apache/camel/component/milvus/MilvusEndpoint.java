@@ -46,7 +46,7 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.DATABASE,
                      Category.AI
              },
-             headersClass = Milvus.Headers.class)
+             headersClass = MilvusHeaders.class)
 public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)

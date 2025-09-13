@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.milvus.Milvus;
 import org.apache.camel.component.milvus.MilvusAction;
+import org.apache.camel.component.milvus.MilvusHeaders;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -45,13 +46,13 @@ public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
         Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
-        String textFieldName = message.getHeader(Milvus.Headers.TEXT_FIELD_NAME, () -> "text", String.class);
-        String vectorFieldName = message.getHeader(Milvus.Headers.VECTOR_FIELD_NAME, () -> "vector", String.class);
-        String collectionName = message.getHeader(Milvus.Headers.COLLECTION_NAME, () -> "embeddings", String.class);
-        String keyName = message.getHeader(Milvus.Headers.KEY_NAME, () -> "id", String.class);
-        Object keyValue = message.getHeader(Milvus.Headers.KEY_VALUE, () -> null);
+        String textFieldName = message.getHeader(MilvusHeaders.TEXT_FIELD_NAME, () -> "text", String.class);
+        String vectorFieldName = message.getHeader(MilvusHeaders.VECTOR_FIELD_NAME, () -> "vector", String.class);
+        String collectionName = message.getHeader(MilvusHeaders.COLLECTION_NAME, () -> "embeddings", String.class);
+        String keyName = message.getHeader(MilvusHeaders.KEY_NAME, () -> "id", String.class);
+        Object keyValue = message.getHeader(MilvusHeaders.KEY_VALUE, () -> null);
         TextSegment text = message.getBody(TextSegment.class);
-        final MilvusAction action = message.getHeader(Milvus.Headers.ACTION, MilvusAction.class);
+        final MilvusAction action = message.getHeader(MilvusHeaders.ACTION, MilvusAction.class);
         switch (action) {
             case INSERT -> insertEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName,
                     keyValue, keyName);

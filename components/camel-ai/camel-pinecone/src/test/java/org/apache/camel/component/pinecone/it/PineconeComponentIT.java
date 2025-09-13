@@ -22,8 +22,8 @@ import java.util.List;
 import io.pinecone.proto.FetchResponse;
 import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.pinecone.PineconeVectorDb;
 import org.apache.camel.component.pinecone.PineconeVectorDbAction;
+import org.apache.camel.component.pinecone.PineconeVectorDbHeaders;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
@@ -42,14 +42,14 @@ public class PineconeComponentIT extends CamelTestSupport {
     @Order(1)
     public void createServerlessIndex() {
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.CREATE_SERVERLESS_INDEX)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.CREATE_SERVERLESS_INDEX)
                 .withBody(
                         "hello")
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
-                .withHeader(PineconeVectorDb.Headers.COLLECTION_SIMILARITY_METRIC, "cosine")
-                .withHeader(PineconeVectorDb.Headers.COLLECTION_DIMENSION, 3)
-                .withHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD, "aws")
-                .withHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD_REGION, "us-east-1")
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, "cosine")
+                .withHeader(PineconeVectorDbHeaders.COLLECTION_DIMENSION, 3)
+                .withHeader(PineconeVectorDbHeaders.COLLECTION_CLOUD, "aws")
+                .withHeader(PineconeVectorDbHeaders.COLLECTION_CLOUD_REGION, "us-east-1")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -63,11 +63,11 @@ public class PineconeComponentIT extends CamelTestSupport {
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.0f);
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.UPSERT)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.UPSERT)
                 .withBody(
                         elements)
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
-                .withHeader(PineconeVectorDb.Headers.INDEX_ID, "elements")
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDbHeaders.INDEX_ID, "elements")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -81,11 +81,11 @@ public class PineconeComponentIT extends CamelTestSupport {
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.UPDATE)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.UPDATE)
                 .withBody(
                         elements)
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
-                .withHeader(PineconeVectorDb.Headers.INDEX_ID, "elements")
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDbHeaders.INDEX_ID, "elements")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -99,11 +99,11 @@ public class PineconeComponentIT extends CamelTestSupport {
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.QUERY)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.QUERY)
                 .withBody(
                         elements)
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
-                .withHeader(PineconeVectorDb.Headers.QUERY_TOP_K, 3)
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDbHeaders.QUERY_TOP_K, 3)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -118,15 +118,15 @@ public class PineconeComponentIT extends CamelTestSupport {
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.QUERY)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.QUERY)
                 .withBody(
                         elements)
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
-                .withHeader(PineconeVectorDb.Headers.QUERY_TOP_K, 3)
-                .withHeader(PineconeVectorDb.Headers.NAMESPACE, "defaultNamespace")
-                .withHeader(PineconeVectorDb.Headers.QUERY_FILTER, "subject\": {\"$eq\": \"marine\"}")
-                .withHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, true)
-                .withHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_METADATA, true)
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDbHeaders.QUERY_TOP_K, 3)
+                .withHeader(PineconeVectorDbHeaders.NAMESPACE, "defaultNamespace")
+                .withHeader(PineconeVectorDbHeaders.QUERY_FILTER, "subject\": {\"$eq\": \"marine\"}")
+                .withHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_VALUES, true)
+                .withHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_METADATA, true)
 
                 .request(Exchange.class);
 
@@ -140,10 +140,10 @@ public class PineconeComponentIT extends CamelTestSupport {
     public void queryById() {
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.QUERY_BY_ID)
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
-                .withHeader(PineconeVectorDb.Headers.INDEX_ID, "elements")
-                .withHeader(PineconeVectorDb.Headers.QUERY_TOP_K, 3)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.QUERY_BY_ID)
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDbHeaders.INDEX_ID, "elements")
+                .withHeader(PineconeVectorDbHeaders.QUERY_TOP_K, 3)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -156,9 +156,9 @@ public class PineconeComponentIT extends CamelTestSupport {
     public void deleteIndex() {
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.DELETE_INDEX)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.DELETE_INDEX)
                 .withBody("test")
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -172,7 +172,7 @@ public class PineconeComponentIT extends CamelTestSupport {
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.FETCH)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.FETCH)
                 .withBody(
                         elements)
                 .request(Exchange.class);

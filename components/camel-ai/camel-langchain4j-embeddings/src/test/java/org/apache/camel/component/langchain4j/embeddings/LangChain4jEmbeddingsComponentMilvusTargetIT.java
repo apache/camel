@@ -37,6 +37,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milvus.Milvus;
 import org.apache.camel.component.milvus.MilvusAction;
 import org.apache.camel.component.milvus.MilvusComponent;
+import org.apache.camel.component.milvus.MilvusHeaders;
 import org.apache.camel.test.infra.milvus.services.MilvusService;
 import org.apache.camel.test.infra.milvus.services.MilvusServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -106,7 +107,7 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 .build();
 
         Exchange result = fluentTemplate.to(MILVUS_URI)
-                .withHeader(Milvus.Headers.ACTION, MilvusAction.CREATE_COLLECTION)
+                .withHeader(MilvusHeaders.ACTION, MilvusAction.CREATE_COLLECTION)
                 .withBody(
                         createCollectionReq)
                 .request(Exchange.class);
@@ -125,7 +126,7 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 .build();
 
         result = fluentTemplate.to(MILVUS_URI)
-                .withHeader(Milvus.Headers.ACTION, MilvusAction.CREATE_INDEX)
+                .withHeader(MilvusHeaders.ACTION, MilvusAction.CREATE_INDEX)
                 .withBody(
                         createVectorIndexParam)
                 .request(Exchange.class);
@@ -159,7 +160,7 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 .withConsistencyLevel(ConsistencyLevelEnum.STRONG)
                 .build();
         Exchange result = fluentTemplate.to(MILVUS_URI)
-                .withHeader(Milvus.Headers.ACTION, MilvusAction.SEARCH)
+                .withHeader(MilvusHeaders.ACTION, MilvusAction.SEARCH)
                 .withBody(searchSimpleParam)
                 .request(Exchange.class);
 
@@ -188,17 +189,17 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
             public void configure() {
                 from("direct:in")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(Milvus.Headers.ACTION).constant(MilvusAction.INSERT)
-                        .setHeader(Milvus.Headers.KEY_NAME).constant("userID")
-                        .setHeader(Milvus.Headers.KEY_VALUE).constant(Long.valueOf("3"))
+                        .setHeader(MilvusHeaders.ACTION).constant(MilvusAction.INSERT)
+                        .setHeader(MilvusHeaders.KEY_NAME).constant("userID")
+                        .setHeader(MilvusHeaders.KEY_VALUE).constant(Long.valueOf("3"))
                         .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
 
                 from("direct:up")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(Milvus.Headers.ACTION).constant(MilvusAction.UPSERT)
-                        .setHeader(Milvus.Headers.KEY_NAME).constant("userID")
-                        .setHeader(Milvus.Headers.KEY_VALUE).constant(Long.valueOf("3"))
+                        .setHeader(MilvusHeaders.ACTION).constant(MilvusAction.UPSERT)
+                        .setHeader(MilvusHeaders.KEY_NAME).constant("userID")
+                        .setHeader(MilvusHeaders.KEY_VALUE).constant(Long.valueOf("3"))
                         .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
             }

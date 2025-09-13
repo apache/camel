@@ -30,7 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
-import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddings;
+import org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsHeaders;
 import org.apache.camel.support.DefaultProducer;
 
 /**
@@ -81,7 +81,7 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         }
 
         final LangChain4jEmbeddingStoreAction action
-                = in.getHeader(LangChain4jEmbeddingStore.Headers.ACTION, LangChain4jEmbeddingStoreAction.class);
+                = in.getHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.class);
 
         try {
             if (action == null) {
@@ -131,12 +131,12 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         TextSegment text = null;
         String id = null;
 
-        if (in.getHeader(LangChain4jEmbeddings.Headers.EMBEDDING) != null) {
-            embedding = in.getHeader(LangChain4jEmbeddings.Headers.EMBEDDING, Embedding.class);
+        if (in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING) != null) {
+            embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
         }
 
-        if (in.getHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT) != null) {
-            text = in.getHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT, dev.langchain4j.data.segment.TextSegment.class);
+        if (in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT) != null) {
+            text = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, dev.langchain4j.data.segment.TextSegment.class);
             id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding, text);
         } else {
             id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding);
@@ -188,8 +188,8 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
     private void search(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         Embedding embedding = null;
-        if (in.getHeader(LangChain4jEmbeddings.Headers.EMBEDDING) != null) {
-            embedding = in.getHeader(LangChain4jEmbeddings.Headers.EMBEDDING, Embedding.class);
+        if (in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING) != null) {
+            embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
         }
 
         int maxResults = Integer.parseInt(LangChain4jEmbeddingStore.DEFAULT_MAX_RESULTS);
@@ -201,12 +201,12 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
                 .queryEmbedding(embedding)
                 .maxResults(maxResults);
 
-        if (in.getHeader(LangChain4jEmbeddingStore.Headers.MIN_SCORE, Integer.class) != null) {
+        if (in.getHeader(LangChain4jEmbeddingStoreHeaders.MIN_SCORE, Integer.class) != null) {
             Double minScore = in.getHeader(LangChain4jEmbeddingStoreHeaders.MIN_SCORE, Double.class);
             esrb = esrb.minScore(minScore);
         }
 
-        if (in.getHeader(LangChain4jEmbeddingStore.Headers.FILTER, Filter.class) != null) {
+        if (in.getHeader(LangChain4jEmbeddingStoreHeaders.FILTER, Filter.class) != null) {
             Filter filter = in.getHeader(LangChain4jEmbeddingStoreHeaders.FILTER, Filter.class);
             esrb = esrb.filter(filter);
         }

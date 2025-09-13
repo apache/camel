@@ -42,17 +42,17 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
         final Message message = exchange.getMessage();
 
         if (result.finishReason() != null) {
-            message.setHeader(LangChain4jEmbeddings.Headers.FINISH_REASON, result.finishReason());
+            message.setHeader(LangChain4jEmbeddingsHeaders.FINISH_REASON, result.finishReason());
         }
 
         if (result.tokenUsage() != null) {
-            message.setHeader(LangChain4jEmbeddings.Headers.INPUT_TOKEN_COUNT, result.tokenUsage().inputTokenCount());
-            message.setHeader(LangChain4jEmbeddings.Headers.OUTPUT_TOKEN_COUNT, result.tokenUsage().outputTokenCount());
-            message.setHeader(LangChain4jEmbeddings.Headers.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
+            message.setHeader(LangChain4jEmbeddingsHeaders.INPUT_TOKEN_COUNT, result.tokenUsage().inputTokenCount());
+            message.setHeader(LangChain4jEmbeddingsHeaders.OUTPUT_TOKEN_COUNT, result.tokenUsage().outputTokenCount());
+            message.setHeader(LangChain4jEmbeddingsHeaders.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
         }
 
-        message.setHeader(LangChain4jEmbeddings.Headers.VECTOR, result.content().vector());
-        message.setHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT, in);
-        message.setHeader(LangChain4jEmbeddings.Headers.EMBEDDING, result.content());
+        message.setHeader(LangChain4jEmbeddingsHeaders.VECTOR, result.content().vector());
+        message.setHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, in);
+        message.setHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, result.content());
     }
 }

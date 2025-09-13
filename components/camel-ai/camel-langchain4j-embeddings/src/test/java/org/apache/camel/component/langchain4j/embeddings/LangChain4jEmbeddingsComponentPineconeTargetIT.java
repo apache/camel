@@ -26,8 +26,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.pinecone.PineconeVectorDb;
 import org.apache.camel.component.pinecone.PineconeVectorDbAction;
+import org.apache.camel.component.pinecone.PineconeVectorDbHeaders;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.*;
@@ -60,14 +60,14 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
     public void createServerlessIndex() {
 
         Exchange result = fluentTemplate.to(PINECONE_URI)
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.CREATE_SERVERLESS_INDEX)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.CREATE_SERVERLESS_INDEX)
                 .withBody(
                         "hello")
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "embeddings")
-                .withHeader(PineconeVectorDb.Headers.COLLECTION_SIMILARITY_METRIC, "cosine")
-                .withHeader(PineconeVectorDb.Headers.COLLECTION_DIMENSION, 384)
-                .withHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD, "aws")
-                .withHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD_REGION, "us-east-1")
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "embeddings")
+                .withHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, "cosine")
+                .withHeader(PineconeVectorDbHeaders.COLLECTION_DIMENSION, 384)
+                .withHeader(PineconeVectorDbHeaders.COLLECTION_CLOUD, "aws")
+                .withHeader(PineconeVectorDbHeaders.COLLECTION_CLOUD_REGION, "us-east-1")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -79,10 +79,10 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
     public void upsert() {
 
         Exchange result = fluentTemplate.to("direct:in")
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.UPSERT)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.UPSERT)
                 .withBody("hi")
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "embeddings")
-                .withHeader(PineconeVectorDb.Headers.INDEX_ID, "elements")
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "embeddings")
+                .withHeader(PineconeVectorDbHeaders.INDEX_ID, "elements")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -96,11 +96,11 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
         List<Float> elements = generateFloatVector();
 
         Exchange result = fluentTemplate.to(PINECONE_URI)
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.QUERY)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.QUERY)
                 .withBody(
                         elements)
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "embeddings")
-                .withHeader(PineconeVectorDb.Headers.QUERY_TOP_K, 384)
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "embeddings")
+                .withHeader(PineconeVectorDbHeaders.QUERY_TOP_K, 384)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -113,10 +113,10 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
     public void deleteIndex() {
 
         Exchange result = fluentTemplate.to(PINECONE_URI)
-                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.DELETE_INDEX)
+                .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.DELETE_INDEX)
                 .withBody(
                         "test")
-                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "embeddings")
+                .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "embeddings")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -129,8 +129,8 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
             public void configure() {
                 from("direct:in")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(PineconeVectorDb.Headers.ACTION).constant(PineconeVectorDbAction.UPSERT)
-                        .setHeader(PineconeVectorDb.Headers.INDEX_ID).constant(POINT_ID)
+                        .setHeader(PineconeVectorDbHeaders.ACTION).constant(PineconeVectorDbAction.UPSERT)
+                        .setHeader(PineconeVectorDbHeaders.INDEX_ID).constant(POINT_ID)
                         .transform(
                                 new DataType("pinecone:embeddings"))
                         .to(PINECONE_URI);

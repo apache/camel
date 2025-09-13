@@ -60,11 +60,11 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
-        final WeaviateVectorDbAction action = in.getHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.class);
+        final WeaviateVectorDbAction action = in.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, WeaviateVectorDb.Headers.ACTION);
+                throw new NoSuchHeaderException("The action is a required header", exchange, WeaviateVectorDbHeaders.ACTION);
             }
 
             switch (action) {
@@ -107,8 +107,8 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         final Message in = exchange.getMessage();
 
         String collectionName;
-        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
         } else {
             collectionName = getEndpoint().getCollection();
         }
@@ -129,13 +129,13 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         // Check the headers for a collection name.   Use the endpoint's
         // collection name by default
         String collectionName;
-        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
         } else {
             collectionName = getEndpoint().getCollection();
         }
 
-        HashMap<String, Object> props = in.getHeader(WeaviateVectorDb.Headers.PROPERTIES, HashMap.class);
+        HashMap<String, Object> props = in.getHeader(WeaviateVectorDbHeaders.PROPERTIES, HashMap.class);
 
         Float[] vectors = (Float[]) elements.toArray(new Float[0]);
 
@@ -151,23 +151,23 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
     private void updateById(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
-        String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDb.Headers.INDEX_ID, String.class);
+        String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDbHeaders.INDEX_ID, String.class);
 
         // Check the headers for a collection name.   Use the endpoint's
         // collection name by default
         String collectionName;
-        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
         } else {
             collectionName = getEndpoint().getCollection();
         }
 
         Float[] vectors = (Float[]) elements.toArray(new Float[0]);
-        HashMap<String, Object> props = in.getHeader(WeaviateVectorDb.Headers.PROPERTIES, HashMap.class);
+        HashMap<String, Object> props = in.getHeader(WeaviateVectorDbHeaders.PROPERTIES, HashMap.class);
 
         ObjectUpdater ou = client.data().updater();
 
-        boolean updateWithMerge = in.getHeader(WeaviateVectorDb.Headers.UPDATE_WITH_MERGE, true, Boolean.class);
+        boolean updateWithMerge = in.getHeader(WeaviateVectorDbHeaders.UPDATE_WITH_MERGE, true, Boolean.class);
         if (updateWithMerge) {
             ou.withMerge();
         }
@@ -184,13 +184,13 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
     private void deleteById(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDb.Headers.INDEX_ID, String.class);
+        String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDbHeaders.INDEX_ID, String.class);
 
         // Check the headers for a collection name.   Use the endpoint's
         // collection name by default
         String collectionName;
-        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
         } else {
             collectionName = getEndpoint().getCollection();
         }
@@ -205,8 +205,8 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         final Message in = exchange.getMessage();
 
         String collectionName;
-        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
         } else {
             collectionName = getEndpoint().getCollection();
         }
@@ -224,15 +224,15 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
         // topK default of 10
         int topK = 10;
-        if (in.getHeader(WeaviateVectorDb.Headers.QUERY_TOP_K, Integer.class) != null) {
-            topK = in.getHeader(WeaviateVectorDb.Headers.QUERY_TOP_K, Integer.class);
+        if (in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, Integer.class) != null) {
+            topK = in.getHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, Integer.class);
         }
 
         // Check the headers for a collection name.   Use the endpoint's
         // collection name by default
         String collectionName;
-        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
         } else {
             collectionName = getEndpoint().getCollection();
         }
@@ -245,8 +245,8 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
         Fields fields;
 
-        if (in.getHeader(WeaviateVectorDb.Headers.FIELDS, HashMap.class) != null) {
-            HashMap<String, Object> fieldToSearch = in.getHeader(WeaviateVectorDb.Headers.FIELDS, HashMap.class);
+        if (in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class) != null) {
+            HashMap<String, Object> fieldToSearch = in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class);
 
             Field[] fieldArray
                     = fieldToSearch.keySet().stream().map(k -> Field.builder().name(k).build()).toArray(Field[]::new);
@@ -270,13 +270,13 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
     private void queryById(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDb.Headers.INDEX_ID, String.class);
+        String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDbHeaders.INDEX_ID, String.class);
 
         // Check the headers for a collection name.   Use the endpoint's
         // collection name by default
         String collectionName;
-        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
-            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        if (in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, String.class);
         } else {
             collectionName = getEndpoint().getCollection();
         }

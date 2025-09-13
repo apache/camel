@@ -21,10 +21,10 @@ import io.grpc.StatusRuntimeException;
 import io.qdrant.client.grpc.Collections;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.qdrant.Qdrant;
 import org.apache.camel.component.qdrant.QdrantAction;
 import org.apache.camel.component.qdrant.QdrantActionException;
 import org.apache.camel.component.qdrant.QdrantEndpoint;
+import org.apache.camel.component.qdrant.QdrantHeaders;
 import org.apache.camel.component.qdrant.QdrantTestSupport;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -42,7 +42,7 @@ public class QdrantDeleteCollectionIT extends QdrantTestSupport {
     @Order(1)
     public void createCollection() {
         Exchange result = fluentTemplate.to(qdrantEndpoint)
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.CREATE_COLLECTION)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
                 .withBody(
                         Collections.VectorParams.newBuilder()
                                 .setSize(2)
@@ -57,7 +57,7 @@ public class QdrantDeleteCollectionIT extends QdrantTestSupport {
     @Order(2)
     public void collectionInfoExistent() {
         Exchange result = fluentTemplate.to(qdrantEndpoint)
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.COLLECTION_INFO)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -69,7 +69,7 @@ public class QdrantDeleteCollectionIT extends QdrantTestSupport {
     @Order(3)
     public void deleteCollection() {
         Exchange result = fluentTemplate.to(qdrantEndpoint)
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.DELETE_COLLECTION)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE_COLLECTION)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -80,7 +80,7 @@ public class QdrantDeleteCollectionIT extends QdrantTestSupport {
     @Order(4)
     public void collectionInfoNonExistent() {
         Exchange result = fluentTemplate.to(qdrantEndpoint)
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.COLLECTION_INFO)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();

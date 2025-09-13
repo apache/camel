@@ -29,9 +29,9 @@ import io.qdrant.client.VectorsFactory;
 import io.qdrant.client.grpc.Collections;
 import io.qdrant.client.grpc.Points;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.qdrant.Qdrant;
 import org.apache.camel.component.qdrant.QdrantAction;
 import org.apache.camel.component.qdrant.QdrantActionException;
+import org.apache.camel.component.qdrant.QdrantHeaders;
 import org.apache.camel.component.qdrant.QdrantTestSupport;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -49,7 +49,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Order(0)
     public void collectionInfoNonExistent() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.COLLECTION_INFO)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -69,7 +69,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Order(1)
     public void createCollection() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.CREATE_COLLECTION)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
                 .withBody(
                         Collections.VectorParams.newBuilder()
                                 .setSize(2)
@@ -84,7 +84,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Order(2)
     public void collectionInfoExistent() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.COLLECTION_INFO)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -96,7 +96,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Order(3)
     public void upsert() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.UPSERT)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.UPSERT)
                 .withBody(
                         Points.PointStruct.newBuilder()
                                 .setId(PointIdFactory.id(8))
@@ -110,13 +110,13 @@ public class QdrantComponentIT extends QdrantTestSupport {
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_ID, v -> {
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_ID, v -> {
             assertThat(v).isNotNull();
         });
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_STATUS, v -> {
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS, v -> {
             assertThat(v).isEqualTo(Points.UpdateStatus.Completed.name());
         });
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_STATUS_VALUE, v -> {
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS_VALUE, v -> {
             assertThat(v).isEqualTo(Points.UpdateStatus.Completed.getNumber());
         });
     }
@@ -126,7 +126,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @SuppressWarnings({ "unchecked" })
     public void retrieve() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.RETRIEVE)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(8))
                 .request(Exchange.class);
 
@@ -144,7 +144,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Order(5)
     public void upsertOtherVectors(TestData testData) {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.UPSERT)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.UPSERT)
                 .withBody(
                         Points.PointStruct.newBuilder()
                                 .setId(PointIdFactory.id(testData.getId()))
@@ -156,10 +156,10 @@ public class QdrantComponentIT extends QdrantTestSupport {
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_ID, v -> assertThat(v).isNotNull());
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_STATUS,
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_ID, v -> assertThat(v).isNotNull());
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS,
                 v -> assertThat(v).isEqualTo(Points.UpdateStatus.Completed.name()));
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_STATUS_VALUE,
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS_VALUE,
                 v -> assertThat(v).isEqualTo(Points.UpdateStatus.Completed.getNumber()));
     }
 
@@ -167,9 +167,9 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Order(6)
     public void similaritySeach() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.SIMILARITY_SEARCH)
-                .withHeader(Qdrant.Headers.INCLUDE_VECTORS, true)
-                .withHeader(Qdrant.Headers.INCLUDE_PAYLOAD, true)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.SIMILARITY_SEARCH)
+                .withHeader(QdrantHeaders.INCLUDE_VECTORS, true)
+                .withHeader(QdrantHeaders.INCLUDE_PAYLOAD, true)
                 .withBody(List.of(0.75f, 0.65f))
                 .request(Exchange.class);
 
@@ -186,20 +186,20 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Order(7)
     public void delete() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.DELETE)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE)
                 .withBody(ConditionFactory.matchKeyword("foo", "hello"))
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_ID, v -> {
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_ID, v -> {
             assertThat(v).isNotNull();
         });
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_STATUS, v -> {
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS, v -> {
             assertThat(v).isEqualTo(Points.UpdateStatus.Completed.name());
         });
-        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_STATUS_VALUE, v -> {
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(QdrantHeaders.OPERATION_STATUS_VALUE, v -> {
             assertThat(v).isEqualTo(Points.UpdateStatus.Completed.getNumber());
         });
     }
@@ -208,7 +208,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Order(8)
     public void retrieveAfterDelete() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.RETRIEVE)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(8))
                 .request(Exchange.class);
 

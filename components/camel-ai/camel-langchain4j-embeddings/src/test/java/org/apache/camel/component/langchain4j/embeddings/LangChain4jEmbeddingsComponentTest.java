@@ -49,10 +49,10 @@ public class LangChain4jEmbeddingsComponentTest extends CamelTestSupport {
                 .withBody("hi")
                 .request(Message.class);
 
-        Embedding firstEmbedding = first.getHeader(LangChain4jEmbeddings.Headers.VECTOR, Embedding.class);
+        Embedding firstEmbedding = first.getHeader(LangChain4jEmbeddingsHeaders.VECTOR, Embedding.class);
         assertThat(firstEmbedding.vector()).hasSize(384);
 
-        TextSegment firstTextSegment = first.getHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT, TextSegment.class);
+        TextSegment firstTextSegment = first.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class);
         assertThat(firstTextSegment).isNotNull();
         assertThat(firstTextSegment.text()).isEqualTo("hi");
 
@@ -60,13 +60,13 @@ public class LangChain4jEmbeddingsComponentTest extends CamelTestSupport {
                 .withBody("hello")
                 .request(Message.class);
 
-        Embedding secondEmbedding = second.getHeader(LangChain4jEmbeddings.Headers.VECTOR, Embedding.class);
+        Embedding secondEmbedding = second.getHeader(LangChain4jEmbeddingsHeaders.VECTOR, Embedding.class);
         assertThat(secondEmbedding.vector()).hasSize(384);
 
         double cosineSimilarity = CosineSimilarity.between(firstEmbedding, secondEmbedding);
         assertThat(RelevanceScore.fromCosineSimilarity(cosineSimilarity)).isGreaterThan(0.9);
 
-        TextSegment secondTextSegment = second.getHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT, TextSegment.class);
+        TextSegment secondTextSegment = second.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class);
         assertThat(secondTextSegment).isNotNull();
         assertThat(secondTextSegment.text()).isEqualTo("hello");
     }

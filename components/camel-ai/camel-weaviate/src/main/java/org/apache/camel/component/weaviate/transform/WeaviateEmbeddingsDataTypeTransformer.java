@@ -24,8 +24,8 @@ import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
-import org.apache.camel.component.weaviate.WeaviateVectorDb;
 import org.apache.camel.component.weaviate.WeaviateVectorDbAction;
+import org.apache.camel.component.weaviate.WeaviateVectorDbHeaders;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -41,13 +41,13 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
         Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
-        String textFieldName = message.getHeader(WeaviateVectorDb.Headers.TEXT_FIELD_NAME, () -> "text", String.class);
-        String vectorFieldName = message.getHeader(WeaviateVectorDb.Headers.VECTOR_FIELD_NAME, () -> "vector", String.class);
-        String collectionName = message.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, () -> "embeddings", String.class);
-        String keyName = message.getHeader(WeaviateVectorDb.Headers.KEY_NAME, () -> "id", String.class);
-        Object keyValue = message.getHeader(WeaviateVectorDb.Headers.KEY_VALUE, () -> null);
+        String textFieldName = message.getHeader(WeaviateVectorDbHeaders.TEXT_FIELD_NAME, () -> "text", String.class);
+        String vectorFieldName = message.getHeader(WeaviateVectorDbHeaders.VECTOR_FIELD_NAME, () -> "vector", String.class);
+        String collectionName = message.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, () -> "embeddings", String.class);
+        String keyName = message.getHeader(WeaviateVectorDbHeaders.KEY_NAME, () -> "id", String.class);
+        Object keyValue = message.getHeader(WeaviateVectorDbHeaders.KEY_VALUE, () -> null);
         TextSegment text = message.getBody(TextSegment.class);
-        final WeaviateVectorDbAction action = message.getHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.class);
+        final WeaviateVectorDbAction action = message.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
         switch (action) {
             case CREATE ->
                 createEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue,
@@ -70,7 +70,7 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
         if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {
             HashMap<String, Object> maps = new HashMap<String, Object>();
             maps.put(keyName, keyValue);
-            message.setHeader(WeaviateVectorDb.Headers.PROPERTIES, maps);
+            message.setHeader(WeaviateVectorDbHeaders.PROPERTIES, maps);
         }
     }
 
@@ -82,7 +82,7 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
         if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {
             HashMap<String, Object> maps = new HashMap<String, Object>();
             maps.put(keyName, keyValue);
-            message.setHeader(WeaviateVectorDb.Headers.PROPERTIES, maps);
+            message.setHeader(WeaviateVectorDbHeaders.PROPERTIES, maps);
         }
     }
 
@@ -94,7 +94,7 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
         if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {
             HashMap<String, Object> maps = new HashMap<String, Object>();
             maps.put(keyName, keyValue);
-            message.setHeader(WeaviateVectorDb.Headers.PROPERTIES, maps);
+            message.setHeader(WeaviateVectorDbHeaders.PROPERTIES, maps);
         }
     }
 }

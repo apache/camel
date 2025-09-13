@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.5.0", scheme = LangChain4jEmbeddings.SCHEME, title = "LangChain4j Embeddings",
              syntax = "langchain4j-embeddings:embeddingId", producerOnly = true, category = {
                      Category.AI
-             }, headersClass = LangChain4jEmbeddings.Headers.class)
+             }, headersClass = LangChain4jEmbeddingsHeaders.class)
 public class LangChain4jEmbeddingsEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id")
