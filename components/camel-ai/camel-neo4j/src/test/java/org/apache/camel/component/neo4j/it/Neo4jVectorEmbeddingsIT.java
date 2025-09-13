@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.neo4j.Neo4Operation;
-import org.apache.camel.component.neo4j.Neo4jConstants;
 import org.apache.camel.component.neo4j.Neo4jEmbedding;
+import org.apache.camel.component.neo4j.Neo4jHeaders;
 import org.apache.camel.component.neo4j.Neo4jTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -43,7 +43,7 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
     @Order(0)
     void createVectorIndex() {
         Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx&alias=m&label=Movie&dimension=2")
-                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.CREATE_VECTOR_INDEX)
+                .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.CREATE_VECTOR_INDEX)
                 .request(Exchange.class);
 
         Assertions.assertNotNull(result);
@@ -51,8 +51,8 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
         Message in = result.getMessage();
         Assertions.assertNotNull(in);
 
-        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR_INDEX, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        Assertions.assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
+        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR_INDEX, in.getHeader(Neo4jHeaders.OPERATION));
+        Assertions.assertTrue(in.getHeader(Neo4jHeaders.QUERY_RESULT, String.class)
                 .contains("CREATE VECTOR INDEX movieIdx IF NOT EXISTS"),
                 "The executed request should contain the create vector index");
 
@@ -63,8 +63,8 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
     @Order(1)
     void addVectorIndex(TestData testData) {
         Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx&label=Movie&alias=m")
-                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.CREATE_VECTOR)
-                .withHeader(Neo4jConstants.Headers.VECTOR_ID, testData.getId())
+                .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.CREATE_VECTOR)
+                .withHeader(Neo4jHeaders.VECTOR_ID, testData.getId())
                 .withHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, testData.getVectors())
                 .withBody(testData.getText())
                 .request(Exchange.class);
@@ -74,11 +74,11 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
         Message in = result.getMessage();
         Assertions.assertNotNull(in);
 
-        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        Assertions.assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
+        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jHeaders.OPERATION));
+        Assertions.assertTrue(in.getHeader(Neo4jHeaders.QUERY_RESULT, String.class)
                 .contains("CALL db.create.setNodeVectorProperty"),
                 "The executed request should contain the procedure of setting vector embedding");
-        Assertions.assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED),
+        Assertions.assertEquals(1, in.getHeader(Neo4jHeaders.QUERY_RESULT_NODES_CREATED),
                 "A node creation is expected ");
     }
 
@@ -87,7 +87,7 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
     void addGeneratedNeo4jEmbedding() {
         Neo4jEmbedding neo4jEmbedding = new Neo4jEmbedding("15", "Hello World", new float[] { 10.8f, 10.6f });
         Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx&label=Movie&alias=m")
-                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.CREATE_VECTOR)
+                .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.CREATE_VECTOR)
                 .withBody(neo4jEmbedding)
                 .request(Exchange.class);
 
@@ -96,11 +96,11 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
         Message in = result.getMessage();
         Assertions.assertNotNull(in);
 
-        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        Assertions.assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
+        Assertions.assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jHeaders.OPERATION));
+        Assertions.assertTrue(in.getHeader(Neo4jHeaders.QUERY_RESULT, String.class)
                 .contains("CALL db.create.setNodeVectorProperty"),
                 "The executed request should contain the procedure of setting vector embedding");
-        Assertions.assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED),
+        Assertions.assertEquals(1, in.getHeader(Neo4jHeaders.QUERY_RESULT_NODES_CREATED),
                 "A node creation is expected ");
     }
 
@@ -108,14 +108,14 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
     @Order(3)
     public void similaritySeach() {
         Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx&label=Movie&alias=m")
-                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.VECTOR_SIMILARITY_SEARCH)
+                .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.VECTOR_SIMILARITY_SEARCH)
                 .withBody(List.of(0.75f, 0.65f))
                 .request(Exchange.class);
 
         Message in = result.getMessage();
         Assertions.assertNotNull(in);
-        Assertions.assertEquals(Neo4Operation.VECTOR_SIMILARITY_SEARCH, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        Assertions.assertEquals(3, in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
+        Assertions.assertEquals(Neo4Operation.VECTOR_SIMILARITY_SEARCH, in.getHeader(Neo4jHeaders.OPERATION));
+        Assertions.assertEquals(3, in.getHeader(Neo4jHeaders.QUERY_RETRIEVE_SIZE));
 
         List resultList = in.getBody(List.class);
         Assertions.assertNotNull(resultList);
@@ -128,7 +128,7 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
     @Order(4)
     void dropVectorIndex() {
         Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx")
-                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.DROP_VECTOR_INDEX)
+                .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.DROP_VECTOR_INDEX)
                 .request(Exchange.class);
 
         Assertions.assertNotNull(result);
@@ -136,8 +136,8 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
         Message in = result.getMessage();
         Assertions.assertNotNull(in);
 
-        Assertions.assertEquals(Neo4Operation.DROP_VECTOR_INDEX, in.getHeader(Neo4jConstants.Headers.OPERATION));
-        Assertions.assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class).contains("DROP INDEX movieIdx"),
+        Assertions.assertEquals(Neo4Operation.DROP_VECTOR_INDEX, in.getHeader(Neo4jHeaders.OPERATION));
+        Assertions.assertTrue(in.getHeader(Neo4jHeaders.QUERY_RESULT, String.class).contains("DROP INDEX movieIdx"),
                 "The executed request should contain the drop vector index");
     }
 

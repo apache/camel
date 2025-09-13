@@ -40,7 +40,7 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.DATABASE,
                      Category.AI
              },
-             headersClass = LangChain4jEmbeddingStore.Headers.class)
+             headersClass = LangChain4jEmbeddingStoreHeaders.class)
 public class LangChain4jEmbeddingStoreEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id of the embedding store")

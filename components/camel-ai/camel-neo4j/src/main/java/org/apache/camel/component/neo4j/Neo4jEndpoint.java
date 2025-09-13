@@ -45,7 +45,7 @@ import org.neo4j.driver.GraphDatabase;
                      Category.DATABASE,
                      Category.AI
              },
-             headersClass = Neo4jConstants.Headers.class)
+             headersClass = Neo4jHeaders.class)
 public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)

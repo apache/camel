@@ -61,11 +61,11 @@ public class MilvusProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
-        final MilvusAction action = in.getHeader(Milvus.Headers.ACTION, MilvusAction.class);
+        final MilvusAction action = in.getHeader(MilvusHeaders.ACTION, MilvusAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, Milvus.Headers.ACTION);
+                throw new NoSuchHeaderException("The action is a required header", exchange, MilvusHeaders.ACTION);
             }
 
             switch (action) {
@@ -203,8 +203,8 @@ public class MilvusProducer extends DefaultProducer {
 
     private void populateResponse(R<?> r, Exchange exchange) {
         Message out = exchange.getMessage();
-        out.setHeader(Milvus.Headers.OPERATION_STATUS, r.getStatus());
-        out.setHeader(Milvus.Headers.OPERATION_STATUS_VALUE, r.getStatus().intValue());
+        out.setHeader(MilvusHeaders.OPERATION_STATUS, r.getStatus());
+        out.setHeader(MilvusHeaders.OPERATION_STATUS_VALUE, r.getStatus().intValue());
         out.setBody(r.getData());
     }
 }

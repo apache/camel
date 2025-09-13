@@ -34,6 +34,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStore;
 import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction;
 import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreComponent;
+import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreHeaders;
 import org.apache.camel.test.infra.weaviate.services.WeaviateService;
 import org.apache.camel.test.infra.weaviate.services.WeaviateServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -89,9 +90,9 @@ public class LangChain4jEmbeddingStoreComponentWeaviateTargetIT extends CamelTes
         Embedding embedding = embeddingModel.embed(segment1).content();
 
         Exchange result = fluentTemplate.to("direct:add")
-                .withHeader(LangChain4jEmbeddingStore.Headers.ACTION, LangChain4jEmbeddingStoreAction.ADD)
-                .withHeader(LangChain4jEmbeddings.Headers.EMBEDDING, embedding)
-                .withHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT, segment1)
+                .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.ADD)
+                .withHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, embedding)
+                .withHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, segment1)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -112,12 +113,12 @@ public class LangChain4jEmbeddingStoreComponentWeaviateTargetIT extends CamelTes
 
         Filter filter = metadataKey("sky").isEqualTo("blue");
         Exchange result = fluentTemplate.to("direct:search")
-                .withHeader(LangChain4jEmbeddingStore.Headers.ACTION, LangChain4jEmbeddingStoreAction.SEARCH)
-                .withHeader(LangChain4jEmbeddings.Headers.EMBEDDING, embedding)
-                .withHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT, segment1)
-                .withHeader(LangChain4jEmbeddingStore.Headers.MAX_RESULTS, 255)
-                .withHeader(LangChain4jEmbeddingStore.Headers.MIN_SCORE, "0")
-                .withHeader(LangChain4jEmbeddingStore.Headers.FILTER, filter)
+                .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.SEARCH)
+                .withHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, embedding)
+                .withHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, segment1)
+                .withHeader(LangChain4jEmbeddingStoreHeaders.MAX_RESULTS, 255)
+                .withHeader(LangChain4jEmbeddingStoreHeaders.MIN_SCORE, "0")
+                .withHeader(LangChain4jEmbeddingStoreHeaders.FILTER, filter)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -137,7 +138,7 @@ public class LangChain4jEmbeddingStoreComponentWeaviateTargetIT extends CamelTes
     @Order(3)
     public void remove() {
         Exchange result = fluentTemplate.to("direct:remove")
-                .withHeader(LangChain4jEmbeddingStore.Headers.ACTION, LangChain4jEmbeddingStoreAction.REMOVE)
+                .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.REMOVE)
                 .withBody(CREATEID)
                 .request(Exchange.class);
 
@@ -151,17 +152,17 @@ public class LangChain4jEmbeddingStoreComponentWeaviateTargetIT extends CamelTes
             public void configure() {
                 from("direct:add")
                         .to("langchain4j-embeddingstore:test")
-                        .setHeader(LangChain4jEmbeddingStore.Headers.ACTION).constant(LangChain4jEmbeddingStoreAction.ADD)
+                        .setHeader(LangChain4jEmbeddingStoreHeaders.ACTION).constant(LangChain4jEmbeddingStoreAction.ADD)
                         .to(WEAVIATE_URI);
 
                 from("direct:search")
                         .to("langchain4j-embeddingstore:test")
-                        .setHeader(LangChain4jEmbeddingStore.Headers.ACTION, constant(LangChain4jEmbeddingStoreAction.SEARCH))
+                        .setHeader(LangChain4jEmbeddingStoreHeaders.ACTION, constant(LangChain4jEmbeddingStoreAction.SEARCH))
                         .to(WEAVIATE_URI);
 
                 from("direct:remove")
                         .to("langchain4j-embeddingstore:test")
-                        .setHeader(LangChain4jEmbeddingStore.Headers.ACTION, constant(LangChain4jEmbeddingStoreAction.REMOVE))
+                        .setHeader(LangChain4jEmbeddingStoreHeaders.ACTION, constant(LangChain4jEmbeddingStoreAction.REMOVE))
                         .to(WEAVIATE_URI);
             }
         };

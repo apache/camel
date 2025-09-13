@@ -32,6 +32,7 @@ import org.apache.camel.component.qdrant.QdrantAction;
 import org.apache.camel.component.weaviate.WeaviateVectorDb;
 import org.apache.camel.component.weaviate.WeaviateVectorDbAction;
 import org.apache.camel.component.weaviate.WeaviateVectorDbComponent;
+import org.apache.camel.component.weaviate.WeaviateVectorDbHeaders;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.test.infra.weaviate.services.WeaviateService;
 import org.apache.camel.test.infra.weaviate.services.WeaviateServiceFactory;
@@ -72,7 +73,7 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
     @Order(1)
     public void createCollection() {
         Exchange result = fluentTemplate.to(WEAVIATE_URI)
-                .withHeader(WeaviateVectorDb.Headers.ACTION, QdrantAction.CREATE_COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
                 .withBody(
                         WeaviateClass.builder().className("embeddings").build())
                 .request(Exchange.class);
@@ -89,10 +90,10 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
         map.put("age", "34");
 
         Exchange result = fluentTemplate.to("direct:in")
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.CREATE)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.CREATE)
                 .withBody("hi")
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, "embeddings")
-                .withHeader(WeaviateVectorDb.Headers.PROPERTIES, map)
+                .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, "embeddings")
+                .withHeader(WeaviateVectorDbHeaders.PROPERTIES, map)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -109,11 +110,11 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
         map.put("dog", "dachshund");
 
         Exchange result = fluentTemplate.to("direct:up")
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.UPDATE_BY_ID)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.UPDATE_BY_ID)
                 .withBody("hi")
-                .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, "embeddings")
-                .withHeader(WeaviateVectorDb.Headers.PROPERTIES, map)
+                .withHeader(WeaviateVectorDbHeaders.INDEX_ID, CREATEID)
+                .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, "embeddings")
+                .withHeader(WeaviateVectorDbHeaders.PROPERTIES, map)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -124,8 +125,8 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
     @Order(8)
     public void querybyid() {
         Exchange result = fluentTemplate.to(WEAVIATE_URI)
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.QUERY_BY_ID)
-                .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.QUERY_BY_ID)
+                .withHeader(WeaviateVectorDbHeaders.INDEX_ID, CREATEID)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -147,7 +148,7 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
     @Order(9)
     public void query() {
         Exchange result = fluentTemplate.to("direct:query")
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.QUERY)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.QUERY)
                 .withBody("hi")
                 .request(Exchange.class);
 
@@ -162,7 +163,7 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
             public void configure() {
                 from("direct:in")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(WeaviateVectorDb.Headers.ACTION).constant(WeaviateVectorDbAction.CREATE)
+                        .setHeader(WeaviateVectorDbHeaders.ACTION).constant(WeaviateVectorDbAction.CREATE)
                         // transform data to embed to a vecto embeddings
                         .transform(
                                 new DataType("weaviate:embeddings"))
@@ -173,7 +174,7 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
                         // transform prompt into embeddings for search
                         .transform(
                                 new DataType("weaviate:embeddings"))
-                        .setHeader(WeaviateVectorDb.Headers.ACTION, constant(WeaviateVectorDbAction.UPDATE_BY_ID))
+                        .setHeader(WeaviateVectorDbHeaders.ACTION, constant(WeaviateVectorDbAction.UPDATE_BY_ID))
                         .to(WEAVIATE_URI)
                         // decode retrieved embeddings for RAG
                         .transform(
@@ -184,7 +185,7 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
                         // transform prompt into embeddings for search
                         .transform(
                                 new DataType("weaviate:embeddings"))
-                        .setHeader(WeaviateVectorDb.Headers.ACTION, constant(WeaviateVectorDbAction.QUERY))
+                        .setHeader(WeaviateVectorDbHeaders.ACTION, constant(WeaviateVectorDbAction.QUERY))
                         .to(WEAVIATE_URI)
                         // decode retrieved embeddings for RAG
                         .transform(

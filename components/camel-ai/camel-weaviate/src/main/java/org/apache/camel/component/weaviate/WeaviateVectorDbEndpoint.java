@@ -45,7 +45,7 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.DATABASE,
                      Category.AI
              },
-             headersClass = WeaviateVectorDb.Headers.class)
+             headersClass = WeaviateVectorDbHeaders.class)
 public class WeaviateVectorDbEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

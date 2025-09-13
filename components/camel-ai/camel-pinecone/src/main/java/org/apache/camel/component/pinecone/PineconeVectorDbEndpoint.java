@@ -41,7 +41,7 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.DATABASE,
                      Category.AI
              },
-             headersClass = PineconeVectorDb.Headers.class)
+             headersClass = PineconeVectorDbHeaders.class)
 public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

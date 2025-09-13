@@ -27,8 +27,8 @@ import io.qdrant.client.VectorsFactory;
 import io.qdrant.client.grpc.Collections;
 import io.qdrant.client.grpc.Points;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.qdrant.Qdrant;
 import org.apache.camel.component.qdrant.QdrantAction;
+import org.apache.camel.component.qdrant.QdrantHeaders;
 import org.apache.camel.component.qdrant.QdrantTestSupport;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -43,7 +43,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
     @Order(1)
     public void createCollection() {
         Exchange result = fluentTemplate.to("qdrant:testDelete")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.CREATE_COLLECTION)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
                 .withBody(
                         Collections.VectorParams.newBuilder()
                                 .setSize(2)
@@ -58,7 +58,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
     @Order(2)
     public void upsert() {
         Exchange result1 = fluentTemplate.to("qdrant:testDelete")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.UPSERT)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.UPSERT)
                 .withBody(
                         Points.PointStruct.newBuilder()
                                 .setId(PointIdFactory.id(8))
@@ -71,7 +71,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
         assertThat(result1.getException()).isNull();
 
         Exchange result2 = fluentTemplate.to("qdrant:testDelete")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.UPSERT)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.UPSERT)
                 .withBody(
                         Points.PointStruct.newBuilder()
                                 .setId(PointIdFactory.id(9))
@@ -88,7 +88,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
     @Order(3)
     public void deleteWithCondition() {
         Exchange deleteResult = fluentTemplate.to("qdrant:testDelete")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.DELETE)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE)
                 .withBody(ConditionFactory.matchKeyword("foo", "hello1"))
                 .request(Exchange.class);
 
@@ -96,7 +96,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
         assertThat(deleteResult.getException()).isNull();
 
         Exchange result = fluentTemplate.to("qdrant:testDelete")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.RETRIEVE)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(8))
                 .request(Exchange.class);
 
@@ -112,7 +112,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
     @Order(4)
     public void deleteWithFilter() {
         Exchange deleteResult = fluentTemplate.to("qdrant:testDelete")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.DELETE)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE)
                 .withBody(
                         Points.Filter.newBuilder()
                                 .addMust(ConditionFactory.matchKeyword("bar", "hello2"))
@@ -123,7 +123,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
         assertThat(deleteResult.getException()).isNull();
 
         Exchange result = fluentTemplate.to("qdrant:testDelete")
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.RETRIEVE)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(9))
                 .request(Exchange.class);
 

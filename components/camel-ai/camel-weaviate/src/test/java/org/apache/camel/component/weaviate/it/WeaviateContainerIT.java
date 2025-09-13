@@ -26,8 +26,8 @@ import io.weaviate.client.v1.data.model.WeaviateObject;
 import io.weaviate.client.v1.graphql.model.GraphQLResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.weaviate.WeaviateTestSupport;
-import org.apache.camel.component.weaviate.WeaviateVectorDb;
 import org.apache.camel.component.weaviate.WeaviateVectorDbAction;
+import org.apache.camel.component.weaviate.WeaviateVectorDbHeaders;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -55,8 +55,8 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
 
         Exchange result = fluentTemplate
                 .to(getUri())
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.CREATE_COLLECTION)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.CREATE_COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -78,10 +78,10 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
 
         Exchange result = fluentTemplate
                 .to(getUri())
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.CREATE)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.CREATE)
                 .withBody(elements)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
-                .withHeader(WeaviateVectorDb.Headers.PROPERTIES, map)
+                .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.PROPERTIES, map)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -103,11 +103,11 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
         map.put("dog", "dachshund");
 
         Exchange result = fluentTemplate.to(getUri())
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.UPDATE_BY_ID)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.UPDATE_BY_ID)
                 .withBody(elements)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
-                .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
-                .withHeader(WeaviateVectorDb.Headers.PROPERTIES, map)
+                .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.INDEX_ID, CREATEID)
+                .withHeader(WeaviateVectorDbHeaders.PROPERTIES, map)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -123,9 +123,9 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
     public void queryById() {
 
         Exchange result = fluentTemplate.to(getUri())
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.QUERY_BY_ID)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
-                .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.QUERY_BY_ID)
+                .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.INDEX_ID, CREATEID)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -156,12 +156,12 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
 
         Exchange result = fluentTemplate
                 .to(getUri())
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.QUERY)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.QUERY)
                 .withBody(
                         elements)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
-                .withHeader(WeaviateVectorDb.Headers.QUERY_TOP_K, 20)
-                .withHeader(WeaviateVectorDb.Headers.FIELDS, map)
+                .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.QUERY_TOP_K, 20)
+                .withHeader(WeaviateVectorDbHeaders.FIELDS, map)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -176,9 +176,9 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
 
         Exchange result = fluentTemplate
                 .to(getUri())
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.DELETE_BY_ID)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
-                .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.DELETE_BY_ID)
+                .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.INDEX_ID, CREATEID)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -194,8 +194,8 @@ public class WeaviateContainerIT extends WeaviateTestSupport {
     public void deleteCollection() {
         Exchange result = fluentTemplate
                 .to(getUri())
-                .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.DELETE_COLLECTION)
-                .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.DELETE_COLLECTION)
+                .withHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, COLLECTION)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();

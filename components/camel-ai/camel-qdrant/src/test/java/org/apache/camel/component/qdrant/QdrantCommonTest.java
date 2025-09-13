@@ -33,7 +33,7 @@ public final class QdrantCommonTest extends CamelTestSupport {
     @EnumSource(QdrantAction.class)
     public void upsertWithNullBody(QdrantAction action) {
         Exchange result = fluentTemplate.to("qdrant:test")
-                .withHeader(Qdrant.Headers.ACTION, action)
+                .withHeader(QdrantHeaders.ACTION, action)
                 .withBody(null)
                 .request(Exchange.class);
 
