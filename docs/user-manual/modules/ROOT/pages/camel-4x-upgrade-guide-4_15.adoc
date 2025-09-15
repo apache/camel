@@ -77,3 +77,22 @@ but we forgot to remove it from the DSL model.
 
 Removed deprecated options `keyStoreFile` and `trustStoreFile`. Use `keyStoreResource` and `trustStoreResources` instead,
 and prefix the value with `file:` as documented.
+
+=== Camel AI Nested Headers classes
+
+There were a number of nested headers classes in the camel-ai components that have been separated into a standalone Headers class.     The original class and the corresponding new class are listed below.
+For more information, the related issue is CAMEL-22334.
+
+|===
+|**Original Class** |**New Class**
+| org.apache.camel.component.langchain4j.chat.LangChain4jChat.Headers | org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders
+| org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddings.Headers| org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsHeaders
+| org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStore.Headers | org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreHeaders
+| org.apache.camel.component.milvus.Milvus.Headers | org.apache.camel.component.milvus.MilvusHeaders
+| org.apache.camel.component.neo4j.Neo4jConstants.Headers | org.apache.camel.component.neo4j.Neo4jHeaders
+| org.apache.camel.component.qdrant.Qdrant.Headers | org.apache.camel.component.qdrant.QdrantHeaders
+| org.apache.camel.component.pinecone.PineconeVectorDb.Headers | org.apache.camel.component.pinecone.PineconeVectorDbHeaders
+| org.apache.camel.component.weaviate.WeaviateVectorDb.Headers | org.apache.camel.component.weaviate.WeaviateVectorDbHeaders
+|===
+
+org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchEngine.Headers was empty and has been removed
