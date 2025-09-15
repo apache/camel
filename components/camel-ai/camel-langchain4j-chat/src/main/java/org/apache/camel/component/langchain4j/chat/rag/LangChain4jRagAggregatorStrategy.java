@@ -26,7 +26,7 @@ import dev.langchain4j.rag.content.DefaultContent;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
-import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.Headers.AUGMENTED_DATA;
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.AUGMENTED_DATA;
 
 public class LangChain4jRagAggregatorStrategy implements AggregationStrategy {
     @Override

@@ -18,9 +18,4 @@ package org.apache.camel.component.langchain4j.web.search;
 
 public class LangChain4jWebSearchEngine {
     public static final String SCHEME = "langchain4j-web-search";
-
-    public static class Headers {
-
-    }
-
 }

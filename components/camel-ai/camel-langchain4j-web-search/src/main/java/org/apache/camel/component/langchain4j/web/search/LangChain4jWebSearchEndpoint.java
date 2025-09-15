@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "4.8.0", scheme = LangChain4jWebSearchEngine.SCHEME, title = "LangChain4j Web Search",
              syntax = "langchain4j-web-search:searchId", producerOnly = true, category = {
                      Category.AI
-             }, headersClass = LangChain4jWebSearchEngine.Headers.class)
+             })
 public class LangChain4jWebSearchEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

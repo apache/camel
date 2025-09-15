@@ -35,7 +35,7 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.Headers.AUGMENTED_DATA;
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.AUGMENTED_DATA;
 
 public class LangChain4jChatProducer extends DefaultProducer {
 
@@ -66,10 +66,10 @@ public class LangChain4jChatProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private void processSingleMessageWithPrompt(Exchange exchange) throws NoSuchHeaderException, InvalidPayloadException {
-        final String promptTemplate = exchange.getIn().getHeader(LangChain4jChat.Headers.PROMPT_TEMPLATE, String.class);
+        final String promptTemplate = exchange.getIn().getHeader(LangChain4jChatHeaders.PROMPT_TEMPLATE, String.class);
         if (promptTemplate == null) {
             throw new NoSuchHeaderException(
-                    "The promptTemplate is a required header", exchange, LangChain4jChat.Headers.PROMPT_TEMPLATE);
+                    "The promptTemplate is a required header", exchange, LangChain4jChatHeaders.PROMPT_TEMPLATE);
         }
 
         Map<String, Object> variables = (Map<String, Object>) exchange.getIn().getMandatoryBody(Map.class);
