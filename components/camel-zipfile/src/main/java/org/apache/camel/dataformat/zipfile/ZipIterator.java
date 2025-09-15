@@ -86,12 +86,8 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                 parent = getNextElement();
                 if (parent == null) {
                     zipInputStream.close();
-                    availableDataInCurrentEntry = false;
                 } else {
                     availableDataInCurrentEntry = true;
-                }
-                if (first && parent == null) {
-                    throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
                 }
             }
             return availableDataInCurrentEntry;
