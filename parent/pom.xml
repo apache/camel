@@ -162,7 +162,7 @@
         <flink-version>1.20.2</flink-version>
         <flowable-version>7.2.0</flowable-version>
         <fop-version>2.11</fop-version>
-        <formatter-maven-plugin-version>2.28.0</formatter-maven-plugin-version>
+        <formatter-maven-plugin-version>2.29.0</formatter-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
         <freemarker-version>2.3.34</freemarker-version>
         <fory-version>0.12.2</fory-version>
