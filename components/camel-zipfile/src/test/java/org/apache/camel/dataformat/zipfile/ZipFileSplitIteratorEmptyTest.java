@@ -18,22 +18,18 @@ package org.apache.camel.dataformat.zipfile;
 
 import java.util.Iterator;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class ZipFileSplitIteratorCorruptTest extends CamelTestSupport {
+public class ZipFileSplitIteratorEmptyTest extends CamelTestSupport {
 
     @Test
     public void testZipFileUnmarshal() throws Exception {
-        getMockEndpoint("mock:dead").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
-                .isInstanceOf(RuntimeCamelException.class);
         getMockEndpoint("mock:end").expectedMessageCount(0);
+        getMockEndpoint("mock:end").setSleepForEmptyTest(1000);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -46,9 +42,7 @@ public class ZipFileSplitIteratorCorruptTest extends CamelTestSupport {
                 ZipFileDataFormat zf = new ZipFileDataFormat();
                 zf.setUsingIterator(true);
 
-                errorHandler(deadLetterChannel("mock:dead"));
-
-                from("file://src/test/resources?delay=10&fileName=corrupt.zip&noop=true")
+                from("file://src/test/resources?delay=10&fileName=empty.zip&noop=true")
                         .unmarshal(zf)
                         .split(bodyAs(Iterator.class)).streaming()
                         .convertBodyTo(String.class)
