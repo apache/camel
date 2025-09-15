@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.langchain4j.chat;
 
-public class LangChain4jChat {
+import org.apache.camel.spi.Metadata;
 
-    public static final String SCHEME = "langchain4j-chat";
+public class LangChain4jChatHeaders {
+    @Metadata(description = "The prompt Template.", javaType = "String")
+    public static final String PROMPT_TEMPLATE = "CamelLangChain4jChatPromptTemplate";
 
-    private LangChain4jChat() {
-    }
+    @Metadata(description = "Augmented Data for RAG", javaType = "String")
+    public static final String AUGMENTED_DATA = "CamelLangChain4jChatAugmentedData";
 }
