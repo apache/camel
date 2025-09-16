@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteTemplateContext;
+import org.apache.camel.StatefulService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleRegistry;
@@ -753,6 +754,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected StartupConditionStrategy createStartupConditionStrategy() {
         return new DefaultStartupConditionStrategy();
+    }
+
+    @Override
+    protected StatefulService createContextServiceLoaderPlugin() {
+        return new DefaultContextServiceLoaderPlugin();
     }
 
     @Override

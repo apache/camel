@@ -70,6 +70,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StartupStep;
 import org.apache.camel.StartupSummaryLevel;
+import org.apache.camel.StatefulService;
 import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
@@ -349,6 +350,7 @@ public abstract class AbstractCamelContext extends BaseService
      * Called during object construction to initialize context plugins
      */
     protected void initPlugins() {
+        camelContextExtension.addContextPlugin(StatefulService.class, createContextServiceLoaderPlugin());
         camelContextExtension.addContextPlugin(StartupConditionStrategy.class, createStartupConditionStrategy());
         camelContextExtension.addContextPlugin(CamelBeanPostProcessor.class, createBeanPostProcessor());
         camelContextExtension.addContextPlugin(CamelDependencyInjectionAnnotationFactory.class,
@@ -4470,6 +4472,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract EndpointServiceRegistry createEndpointServiceRegistry();
 
     protected abstract StartupConditionStrategy createStartupConditionStrategy();
+
+    protected abstract StatefulService createContextServiceLoaderPlugin();
 
     protected abstract BackOffTimerFactory createBackOffTimerFactory();
 
