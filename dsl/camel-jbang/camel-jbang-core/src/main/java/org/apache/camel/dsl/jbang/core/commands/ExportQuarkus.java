@@ -65,6 +65,7 @@ class ExportQuarkus extends Export {
             return 1;
         }
 
+        exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
         Path profile = exportBaseDir.resolve("application.properties");
 
         // the settings file has information what to export
