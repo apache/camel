@@ -24,6 +24,8 @@ import java.util.stream.Stream;
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServicePort;
+import io.fabric8.kubernetes.api.model.Volume;
+import io.fabric8.kubernetes.api.model.VolumeMount;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.openshift.api.model.Route;
@@ -32,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Model;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -599,52 +602,125 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("bar", labels.get("foo"));
     }
 
-    @ParameterizedTest
-    @MethodSource("runtimeProvider")
-    public void shouldAddConfigs(RuntimeType rt) throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
-        command.configs = new String[] { "secret:foo", "configmap:bar" };
+    @Test
+    public void shouldAddConfigs() throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + RuntimeType.main);
+        command.configs = new String[] {
+                "secret:foo", "secret:foo/key-foo", "configmap:bar", "configmap:bar/key-bar", "configmap:bar2/my.properties" };
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(RuntimeType.main);
+        List<Volume> volumes = deployment.getSpec().getTemplate().getSpec().getVolumes();
+        List<VolumeMount> volumeMounts = deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts();
+
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals(2,
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().size());
-        Assertions.assertEquals("foo",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_secrets/foo",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath());
-        Assertions.assertTrue(
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getReadOnly());
-        Assertions.assertEquals("bar",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(1).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(1).getMountPath());
-        Assertions.assertTrue(
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(1).getReadOnly());
+        Assertions.assertEquals(5, volumeMounts.size());
+        // secret:foo
+        Assertions.assertEquals("foo", volumeMounts.get(0).getName());
+        Assertions.assertEquals("/etc/camel/conf.d/_secrets/foo", volumeMounts.get(0).getMountPath());
+        Assertions.assertTrue(volumeMounts.get(0).getReadOnly());
+        // secret:foo/key-foo
+        Assertions.assertEquals("foo", volumeMounts.get(1).getName());
+        Assertions.assertEquals("/etc/camel/conf.d/_secrets/foo/key-foo", volumeMounts.get(1).getMountPath());
+        Assertions.assertTrue(volumeMounts.get(1).getReadOnly());
+        Assertions.assertEquals("key-foo", volumes.get(1).getSecret().getItems().get(0).getKey());
+        Assertions.assertEquals("key-foo", volumes.get(1).getSecret().getItems().get(0).getPath());
+        // configmap:bar
+        Assertions.assertEquals("bar", volumeMounts.get(2).getName());
+        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar", volumeMounts.get(2).getMountPath());
+        Assertions.assertTrue(volumeMounts.get(2).getReadOnly());
+        // configmap:bar/key-bar
+        Assertions.assertEquals("bar", volumeMounts.get(3).getName());
+        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar/key-bar", volumeMounts.get(3).getMountPath());
+        Assertions.assertTrue(volumeMounts.get(3).getReadOnly());
+        Assertions.assertEquals("key-bar", volumes.get(3).getConfigMap().getItems().get(0).getKey());
+        Assertions.assertEquals("key-bar", volumes.get(3).getConfigMap().getItems().get(0).getPath());
+        // configmap:bar2/my.properties
+        Assertions.assertEquals("bar2", volumeMounts.get(4).getName());
+        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar2/my.properties", volumeMounts.get(4).getMountPath());
+        Assertions.assertEquals("my.properties", volumes.get(4).getConfigMap().getItems().get(0).getKey());
+        Assertions.assertEquals("my.properties", volumes.get(4).getConfigMap().getItems().get(0).getPath());
     }
 
-    @ParameterizedTest
-    @MethodSource("runtimeProvider")
-    public void shouldAddResources(RuntimeType rt) throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
-        command.resources = new String[] { "configmap:foo/file.txt" };
+    @Test
+    public void shouldAddResources() throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + RuntimeType.main);
+        command.resources = new String[] {
+                "secret:foo", "secret:foo/key-foo", "secret:foo/key-foo@/etc/foodir/my-file.txt", "configmap:bar",
+                "configmap:bar/key-bar", "configmap:bar2/my.properties@/var/dir1/bar.bin" };
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(RuntimeType.main);
+        List<Volume> volumes = deployment.getSpec().getTemplate().getSpec().getVolumes();
+        List<VolumeMount> volumeMounts = deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts();
+
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals(1,
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().size());
-        Assertions.assertEquals("file",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getName());
-        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/foo/file.txt",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath());
-        Assertions.assertEquals("/file.txt",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getSubPath());
+        Assertions.assertEquals(6, volumeMounts.size());
+        // secret:foo
+        Assertions.assertEquals("foo", volumeMounts.get(0).getName());
+        Assertions.assertEquals("/etc/camel/resources.d/_secrets/foo", volumeMounts.get(0).getMountPath());
+        Assertions.assertTrue(volumeMounts.get(0).getReadOnly());
+        // secret:foo/key-foo
+        Assertions.assertEquals("foo", volumeMounts.get(1).getName());
+        Assertions.assertEquals("/etc/camel/resources.d/_secrets/foo/key-foo", volumeMounts.get(1).getMountPath());
+        Assertions.assertEquals("key-foo", volumes.get(1).getSecret().getItems().get(0).getKey());
+        Assertions.assertEquals("key-foo", volumes.get(1).getSecret().getItems().get(0).getPath());
+        // secret:foo/key-foo@/etc/foodir/my-file.txt
+        Assertions.assertEquals("foo", volumeMounts.get(2).getName());
+        Assertions.assertEquals("/etc/foodir/my-file.txt", volumeMounts.get(2).getMountPath());
+        Assertions.assertEquals("my-file.txt", volumeMounts.get(2).getSubPath());
+        Assertions.assertEquals("key-foo", volumes.get(2).getSecret().getItems().get(0).getKey());
+        Assertions.assertEquals("my-file.txt", volumes.get(2).getSecret().getItems().get(0).getPath());
+        // configmap:bar
+        Assertions.assertEquals("bar", volumeMounts.get(3).getName());
+        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/bar", volumeMounts.get(3).getMountPath());
+        // configmap:bar/key-bar
+        Assertions.assertEquals("bar", volumeMounts.get(4).getName());
+        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/bar/key-bar", volumeMounts.get(4).getMountPath());
+        Assertions.assertEquals("key-bar", volumes.get(4).getConfigMap().getItems().get(0).getKey());
+        Assertions.assertEquals("key-bar", volumes.get(4).getConfigMap().getItems().get(0).getPath());
+        // configmap:bar2/my.properties@/var/dir1/bar.bin
+        Assertions.assertEquals("bar2", volumeMounts.get(5).getName());
+        Assertions.assertEquals("/var/dir1/bar.bin", volumeMounts.get(5).getMountPath());
+        Assertions.assertEquals("bar.bin", volumeMounts.get(5).getSubPath());
+        Assertions.assertEquals("my.properties", volumes.get(5).getConfigMap().getItems().get(0).getKey());
+        Assertions.assertEquals("bar.bin", volumes.get(5).getConfigMap().getItems().get(0).getPath());
+    }
+
+    @Test
+    public void shouldAddConfigAndResources() throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + RuntimeType.main);
+        command.configs = new String[] { "configmap:bar1a/my.key1" };
+        command.resources = new String[] { "configmap:bar2/key-bar2", "configmap:bar2a/my.key2@/var/dir2/bar.bin" };
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Deployment deployment = getDeployment(RuntimeType.main);
+        List<Volume> volumes = deployment.getSpec().getTemplate().getSpec().getVolumes();
+        List<VolumeMount> volumeMounts = deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts();
+
+        // config configmap:bar1a/my.key1
+        Assertions.assertEquals("bar1a", volumeMounts.get(0).getName());
+        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar1a/my.key1", volumeMounts.get(0).getMountPath());
+        Assertions.assertEquals("my.key1", volumeMounts.get(0).getSubPath());
+        Assertions.assertEquals("my.key1", volumes.get(0).getConfigMap().getItems().get(0).getKey());
+        Assertions.assertEquals("my.key1", volumes.get(0).getConfigMap().getItems().get(0).getPath());
+        // resources configmap:bar2/key-bar2
+        Assertions.assertEquals("bar2", volumeMounts.get(1).getName());
+        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/bar2/key-bar2", volumeMounts.get(1).getMountPath());
+        Assertions.assertEquals("key-bar2", volumeMounts.get(1).getSubPath());
+        Assertions.assertEquals("key-bar2", volumes.get(1).getConfigMap().getItems().get(0).getKey());
+        Assertions.assertEquals("key-bar2", volumes.get(1).getConfigMap().getItems().get(0).getPath());
+        // resources configmap:bar2a/my.key2@/var/dir2/bar.bin
+        Assertions.assertEquals("bar2a", volumeMounts.get(2).getName());
+        Assertions.assertEquals("/var/dir2/bar.bin", volumeMounts.get(2).getMountPath());
+        Assertions.assertEquals("bar.bin", volumeMounts.get(2).getSubPath());
+        Assertions.assertEquals("my.key2", volumes.get(2).getConfigMap().getItems().get(0).getKey());
+        Assertions.assertEquals("bar.bin", volumes.get(2).getConfigMap().getItems().get(0).getPath());
     }
 
     @ParameterizedTest
@@ -661,11 +737,11 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(1,
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().size());
-        Assertions.assertEquals("spec",
+        Assertions.assertEquals("openapi",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getName());
         Assertions.assertEquals("/etc/camel/resources.d/_configmaps/openapi/spec.yaml",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath());
-        Assertions.assertEquals("/spec.yaml",
+        Assertions.assertEquals("spec.yaml",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getSubPath());
     }
 
@@ -741,7 +817,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
     @MethodSource("runtimeProvider")
     public void shouldObserveByDefault(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
-                "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
+                "--observe", "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
@@ -750,10 +826,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route", model.getArtifactId());
         Assertions.assertEquals("1.0.0", model.getVersion());
 
-        if (rt == RuntimeType.main) {
-            Assertions.assertTrue(
-                    containsDependency(model.getDependencies(), "org.apache.camel", "camel-observability-services", null));
-        } else if (rt == RuntimeType.springBoot) {
+        if (rt == RuntimeType.springBoot) {
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "org.apache.camel.springboot",
                             "camel-observability-services-starter", null));

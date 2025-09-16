@@ -69,9 +69,18 @@ public final class TraitHelper {
         Map<String, Map<String, Object>> traitConfigMap = new HashMap<>();
 
         for (String traitExpression : traits) {
+            // as the properties are merged to the traits, it may contain some property like:
+            // my-key=my-val which is invalid as a trait expression
+            // so it may be skipped
+            if (!traitExpression.contains(".")) {
+                continue;
+            }
             //traitName.key=value
             final String[] trait = traitExpression.split("\\.", 2);
             final String[] traitConfig = trait[1].split("=", 2);
+            if (traitConfig == null || traitConfig.length < 2) {
+                continue;
+            }
 
             // the CRD api is in CamelCase, then we have to
             // convert the kebab-case to CamelCase

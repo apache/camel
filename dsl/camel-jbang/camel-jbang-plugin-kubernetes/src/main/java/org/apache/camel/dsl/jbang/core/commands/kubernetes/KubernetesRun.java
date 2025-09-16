@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -24,6 +26,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
@@ -69,7 +74,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String serviceAccount;
 
     @CommandLine.Option(names = { "--property" },
-                        description = "Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value|file:/path/to/my-conf.properties|[configmap|secret]:name]).")
+                        description = "Add a runtime property or properties from a file (syntax: [my-key=my-value|file:/path/to/my-conf.properties|/path/to/my-conf.properties].")
     String[] properties;
 
     @CommandLine.Option(names = { "--config" },
@@ -315,6 +320,29 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 RunHelper.dirToFiles(name, files);
             }
         }
+        // merge the properties from files
+        if (properties != null) {
+            List<String> definiteProperties = new ArrayList<>();
+            for (String p : properties) {
+                if (p.startsWith("file:") || p.contains(File.separator)) {
+                    String filename = p.startsWith("file:") ? p.substring("file:".length()) : p;
+                    File f = new File(filename);
+                    if (f.exists()) {
+                        Properties prop = new Properties();
+                        try (FileInputStream input = new FileInputStream(f)) {
+                            prop.load(input);
+                        }
+                        prop.forEach((k, v) -> definiteProperties.add(k + "=" + v));
+                    }
+                } else {
+                    definiteProperties.add(p);
+                }
+            }
+            properties = definiteProperties.toArray(new String[definiteProperties.size()]);
+        }
+        // when user sets configuration or resources from configmap/secret
+        // the projected properties files must be set in the app runtime
+        setPropertiesLocation();
 
         String workingDir = getIndexedWorkingDir(projectName);
         KubernetesExport export = configureExport(workingDir, baseDir);
@@ -760,6 +788,84 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 printer().println(this.clusterType);
             }
         }
+    }
+
+    /*
+     * When a configmap/secret is projected as a properties file and mounted into the running pod
+     * and the properties file must be set at runtime to be discovered by the camel runtime
+     * with the camel.component.properties.location property.
+     * This is only for the --config parameter as the --resource are for any file type, not configurations.
+     */
+    private void setPropertiesLocation() {
+        if (configs != null) {
+            List<String> propertiesLocation = new ArrayList<>();
+            for (String c : configs) {
+                if (c.startsWith("configmap:")) {
+                    String name = c.substring("configmap:".length());
+                    // in case the user has set a property to filter from the configmap, the "name" var is
+                    // the configmap name and the projected file.
+                    if (name.contains("/")) {
+                        String rtProperty = String
+                                .format("camel.component.properties.location=file:/etc/camel/conf.d/_configmaps/%s", name);
+                        propertiesLocation.add(rtProperty);
+                    } else {
+                        // we have to inspect the configmap and retrieve the key names, as they are
+                        // mapped to the mounted file names.
+                        Set<String> configmapKeys = retrieveConfigmapKeys(name);
+                        configmapKeys.forEach(key -> {
+                            String rtProperty = String.format(
+                                    "camel.component.properties.location=file:/etc/camel/conf.d/_configmaps/%s/%s", name, key);
+                            propertiesLocation.add(rtProperty);
+                        });
+                    }
+                } else if (c.startsWith("secret:")) {
+                    String name = c.substring("secret:".length());
+                    if (name.contains("/")) {
+                        String rtProperty
+                                = String.format("camel.component.properties.location=file:/etc/camel/conf.d/_secrets/%s", name);
+                        propertiesLocation.add(rtProperty);
+                    } else {
+                        Set<String> secretKeys = retrieveSecretKeys(name);
+                        secretKeys.forEach(key -> {
+                            String rtProperty = String.format(
+                                    "camel.component.properties.location=file:/etc/camel/conf.d/_secrets/%s/%s", name, key);
+                            propertiesLocation.add(rtProperty);
+                        });
+                    }
+                }
+            }
+            if (propertiesLocation.size() > 0) {
+                propertiesLocation.add("camel.component.properties.ignore-missing-location=true");
+            }
+            if (properties == null) {
+                properties = propertiesLocation.toArray(new String[propertiesLocation.size()]);
+            } else {
+                for (String s : properties) {
+                    propertiesLocation.add(s);
+                }
+                properties = propertiesLocation.toArray(new String[propertiesLocation.size()]);
+            }
+        }
+    }
+
+    private Set<String> retrieveConfigmapKeys(String name) {
+        KubernetesClient client = client();
+        String ns = "default";
+        if (namespace != null || client.getNamespace() != null) {
+            ns = namespace != null ? namespace : client.getNamespace();
+        }
+        Map<String, String> data = client.configMaps().inNamespace(ns).withName(name).get().getData();
+        return data.keySet();
+    }
+
+    private Set<String> retrieveSecretKeys(String name) {
+        KubernetesClient client = client();
+        String ns = "default";
+        if (namespace != null || client.getNamespace() != null) {
+            ns = namespace != null ? namespace : client.getNamespace();
+        }
+        Map<String, String> data = client.secrets().inNamespace(ns).withName(name).get().getData();
+        return data.keySet();
     }
 
     @Override
