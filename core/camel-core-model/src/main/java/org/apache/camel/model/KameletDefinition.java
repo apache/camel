@@ -27,7 +27,11 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To call Kamelets in special situations
+ * To call Kamelets in special situations. By default, calling kamelets should be done as endpoints with the kamelet
+ * component, such as to("kamelet:mykamelet"). When a Kamelet is designed for a special use-case such as aggregating
+ * messages, and returning a response message only when a group of aggregated messages is completed. In other words,
+ * kamelet does not return a response message for every incoming message. In special situations like these, then you
+ * must use this Kamelet EIP instead of using the kamelet component.
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "kamelet")
