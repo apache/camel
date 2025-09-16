@@ -959,7 +959,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String getMavenRepositories(Path settings, Properties prop, String camelVersion) throws Exception {
         Set<String> answer = new LinkedHashSet<>();
 
-        String propRepositories = prop.getProperty(CLASSPATH_FILES);
+        String propRepositories = prop.getProperty(REPOS);
         if (propRepositories != null) {
             answer.add(propRepositories);
         }
