@@ -530,6 +530,20 @@ public interface ComponentsBuilderFactory {
         return Aws2StsComponentBuilderFactory.aws2Sts();
     }
     /**
+     * AWS Textract (camel-aws2-textract)
+     * Extract text and data from documents using AWS Textract and AWS SDK
+     * version 2.x.
+     * 
+     * Category: cloud,document
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-aws2-textract
+     * 
+     * @return the dsl builder
+     */
+    static Aws2TextractComponentBuilderFactory.Aws2TextractComponentBuilder aws2Textract() {
+        return Aws2TextractComponentBuilderFactory.aws2Textract();
+    }
+    /**
      * AWS Timestream (camel-aws2-timestream)
      * Write records and execute queries on AWS time-series database
      * 

@@ -342,6 +342,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.TahuHostEndpointBuilderFactory.TahuHostBuilders,
             org.apache.camel.builder.endpoint.dsl.TelegramEndpointBuilderFactory.TelegramBuilders,
             org.apache.camel.builder.endpoint.dsl.TensorFlowServingEndpointBuilderFactory.TensorFlowServingBuilders,
+            org.apache.camel.builder.endpoint.dsl.Textract2EndpointBuilderFactory.Textract2Builders,
             org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.ThriftBuilders,
             org.apache.camel.builder.endpoint.dsl.ThymeleafEndpointBuilderFactory.ThymeleafBuilders,
             org.apache.camel.builder.endpoint.dsl.TikaEndpointBuilderFactory.TikaBuilders,
