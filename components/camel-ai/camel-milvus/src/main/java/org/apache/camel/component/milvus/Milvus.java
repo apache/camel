@@ -16,10 +16,44 @@
  */
 package org.apache.camel.component.milvus;
 
+import org.apache.camel.spi.Metadata;
+
 public class Milvus {
     public static final String SCHEME = "milvus";
 
     private Milvus() {
+    }
+
+    /**
+     * @deprecated As of Camel 4.15, this nested Headers class has been moved to its own class. Use
+     *             {@link org.apache.camel.component.milvus.MilvusHeaders} instead.
+     */
+    @Deprecated
+    public static class Headers {
+        @Metadata(description = "The action to be performed.", javaType = "String",
+                  enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,QUERY,DELETE")
+        public static final String ACTION = "CamelMilvusAction";
+
+        @Metadata(description = "Operation Status.", javaType = "String")
+        public static final String OPERATION_STATUS = "CamelMilvusOperationStatus";
+
+        @Metadata(description = "Operation Status Value.", javaType = "int")
+        public static final String OPERATION_STATUS_VALUE = "CamelMilvusOperationStatusValue";
+
+        @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
+        public static final String TEXT_FIELD_NAME = "CamelMilvusTextFieldName";
+
+        @Metadata(description = "Vector Field Name for Insert/Upsert operation", javaType = "String")
+        public static final String VECTOR_FIELD_NAME = "CamelMilvusVectorFieldName";
+
+        @Metadata(description = "Collection Name for Insert/Upsert operation", javaType = "String")
+        public static final String COLLECTION_NAME = "CamelMilvusCollectionName";
+
+        @Metadata(description = "Key Name for Insert/Upsert operation", javaType = "String")
+        public static final String KEY_NAME = "CamelMilvusKeyName";
+
+        @Metadata(description = "Key Value for Insert/Upsert operation", javaType = "String")
+        public static final String KEY_VALUE = "CamelMilvusKeyValue";
     }
 
 }

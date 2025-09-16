@@ -24,6 +24,11 @@ public class Qdrant {
     private Qdrant() {
     }
 
+    /**
+     * @deprecated As of Camel 4.15, this nested Headers class has been moved to its own class. Use
+     *             {@link org.apache.camel.component.qdrant.QdrantHeaders} instead.
+     */
+    @Deprecated
     public static class Headers {
         @Metadata(description = "The action to be performed.", javaType = "String",
                   enums = "CREATE_COLLECTION,DELETE_COLLECTION,UPSERT,RETRIEVE,DELETE,COLLECTION_INFO,SIMILARITY_SEARCH")
