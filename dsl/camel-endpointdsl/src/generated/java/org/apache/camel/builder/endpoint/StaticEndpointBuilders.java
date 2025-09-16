@@ -1577,6 +1577,48 @@ public class StaticEndpointBuilders {
         return STS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Textract (camel-aws2-textract)
+     * Extract text and data from documents using AWS Textract and AWS SDK
+     * version 2.x.
+     * 
+     * Category: cloud,document
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-aws2-textract
+     * 
+     * Syntax: <code>aws2-textract:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Textract2EndpointBuilderFactory.Textract2EndpointBuilder aws2Textract(String path) {
+        return aws2Textract("aws2-textract", path);
+    }
+    /**
+     * AWS Textract (camel-aws2-textract)
+     * Extract text and data from documents using AWS Textract and AWS SDK
+     * version 2.x.
+     * 
+     * Category: cloud,document
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-aws2-textract
+     * 
+     * Syntax: <code>aws2-textract:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Textract2EndpointBuilderFactory.Textract2EndpointBuilder aws2Textract(String componentName, String path) {
+        return Textract2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Timestream (camel-aws2-timestream)
      * Write records and execute queries on AWS time-series database
      * 
