@@ -46,6 +46,7 @@ import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
+import org.apache.camel.spi.ContextServiceLoaderPluginResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.DumpRoutesStrategy;
@@ -753,6 +754,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected StartupConditionStrategy createStartupConditionStrategy() {
         return new DefaultStartupConditionStrategy();
+    }
+
+    @Override
+    protected ContextServiceLoaderPluginResolver createContextServiceLoaderPlugin() {
+        return new DefaultContextServiceLoaderPlugin();
     }
 
     @Override

@@ -104,6 +104,7 @@ import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
+import org.apache.camel.spi.ContextServiceLoaderPluginResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
@@ -347,6 +348,7 @@ public abstract class AbstractCamelContext extends BaseService
      * Called during object construction to initialize context plugins
      */
     protected void initPlugins() {
+        camelContextExtension.addContextPlugin(ContextServiceLoaderPluginResolver.class, createContextServiceLoaderPlugin());
         camelContextExtension.addContextPlugin(StartupConditionStrategy.class, createStartupConditionStrategy());
         camelContextExtension.addContextPlugin(CamelBeanPostProcessor.class, createBeanPostProcessor());
         camelContextExtension.addContextPlugin(CamelDependencyInjectionAnnotationFactory.class,
@@ -2339,6 +2341,15 @@ public abstract class AbstractCamelContext extends BaseService
                 getCamelContextExtension().addContextPlugin(DevConsoleRegistry.class, dcr);
             }
             startupStepRecorder.endStep(step5);
+        }
+
+        // Start context service loader plugin to discover and load third-party plugins early in build phase
+        ContextServiceLoaderPluginResolver contextServicePlugin
+                = camelContextExtension.getContextPlugin(ContextServiceLoaderPluginResolver.class);
+        if (contextServicePlugin != null) {
+            StartupStep step6 = startupStepRecorder.beginStep(CamelContext.class, null, "Start ContextServiceLoaderPlugin");
+            ServiceHelper.startService(contextServicePlugin);
+            startupStepRecorder.endStep(step6);
         }
 
         // Call all registered trackers with this context
@@ -4430,6 +4441,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract EndpointServiceRegistry createEndpointServiceRegistry();
 
     protected abstract StartupConditionStrategy createStartupConditionStrategy();
+
+    protected abstract ContextServiceLoaderPluginResolver createContextServiceLoaderPlugin();
 
     protected abstract BackOffTimerFactory createBackOffTimerFactory();
 

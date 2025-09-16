@@ -89,6 +89,7 @@ import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ContextServiceLoaderPluginResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -534,6 +535,7 @@ public class KameletMain extends MainCommandLineSupport {
                 }
             }
         }
+
         configure().withProfile(profile);
 
         // embed HTTP server if port is specified
@@ -730,6 +732,15 @@ public class KameletMain extends MainCommandLineSupport {
             }
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+
+        // Start the context service loader plugin after all dependencies and downloaders are set up
+        // This ensures the classpath is enhanced and ServiceLoader can discover third-party plugins
+        ContextServiceLoaderPluginResolver contextServicePlugin = answer
+                .getCamelContextExtension().getContextPlugin(ContextServiceLoaderPluginResolver.class);
+        if (contextServicePlugin != null) {
+            // force start context service loader plugin to discover and load third-party plugins
+            ServiceHelper.startService(contextServicePlugin);
         }
 
         return answer;
