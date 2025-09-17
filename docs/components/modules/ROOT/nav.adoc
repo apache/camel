@@ -58,6 +58,7 @@
 *** xref:aws2-step-functions-component.adoc[AWS StepFunctions]
 *** xref:aws2-textract-component.adoc[AWS Textract]
 *** xref:aws2-timestream-component.adoc[AWS Timestream]
+*** xref:aws2-transcribe-component.adoc[AWS Transcribe]
 *** xref:aws2-translate-component.adoc[AWS Translate]
 *** xref:pqc-component.adoc[PQC Algorithms]
 ** xref:azure-summary.adoc[Azure]

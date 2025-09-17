@@ -557,6 +557,19 @@ public interface ComponentsBuilderFactory {
         return Aws2TimestreamComponentBuilderFactory.aws2Timestream();
     }
     /**
+     * AWS Transcribe (camel-aws2-transcribe)
+     * Automatically convert speech to text using AWS Transcribe service
+     * 
+     * Category: cloud,messaging
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-aws2-transcribe
+     * 
+     * @return the dsl builder
+     */
+    static Aws2TranscribeComponentBuilderFactory.Aws2TranscribeComponentBuilder aws2Transcribe() {
+        return Aws2TranscribeComponentBuilderFactory.aws2Transcribe();
+    }
+    /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 

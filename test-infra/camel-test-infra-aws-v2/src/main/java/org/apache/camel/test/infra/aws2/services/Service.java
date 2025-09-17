@@ -31,7 +31,8 @@ public enum Service {
     SECRETS_MANAGER("secretsmanager"),
     SNS("sns"),
     SQS("sqs"),
-    STS("sts");
+    STS("sts"),
+    TRANSCRIBE("transcribe");
 
     private final String serviceName;
 

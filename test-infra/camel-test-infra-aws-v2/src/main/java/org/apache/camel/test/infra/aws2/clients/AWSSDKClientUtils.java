@@ -44,6 +44,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sts.StsClient;
+import software.amazon.awssdk.services.transcribe.TranscribeClient;
 
 public final class AWSSDKClientUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AWSSDKClientUtils.class);
@@ -182,5 +183,9 @@ public final class AWSSDKClientUtils {
 
     public static DynamoDbClient newDynamoDBClient() {
         return newClient("DynamoDB", DynamoDbClient::builder);
+    }
+
+    public static TranscribeClient newTranscribeClient() {
+        return newClient("Transcribe", TranscribeClient::builder);
     }
 }

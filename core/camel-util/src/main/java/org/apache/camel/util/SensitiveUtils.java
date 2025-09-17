@@ -74,6 +74,7 @@ public final class SensitiveUtils {
                     "proxyauthusername",
                     "proxypassword",
                     "proxyuser",
+                    "proxyusername",
                     "publickeyid",
                     "publishkey",
                     "queueownerawsaccountid",
@@ -155,6 +156,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qproxyauthusername\\E"
                                                     + "|\\Qproxypassword\\E"
                                                     + "|\\Qproxyuser\\E"
+                                                    + "|\\Qproxyusername\\E"
                                                     + "|\\Qpublickeyid\\E"
                                                     + "|\\Qpublishkey\\E"
                                                     + "|\\Qqueueownerawsaccountid\\E"
