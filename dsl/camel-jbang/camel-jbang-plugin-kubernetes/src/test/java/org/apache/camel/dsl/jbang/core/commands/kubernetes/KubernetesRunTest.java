@@ -17,10 +17,13 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
@@ -33,6 +36,7 @@ import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -72,6 +76,28 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals(1, exit);
 
         Assertions.assertTrue(printer.getOutput().contains("ERROR: Project export failed!"));
+    }
+
+    @Test
+    public void verifyProperties() throws Exception {
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+                "--gav=examples:route:1.0.0", "--runtime=quarkus", "--name=my-route-props",
+                "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
+                "--property=a=b", "--property=c=d", "--property=src/test/resources/my-route-props1.properties",
+                "--property=file:src/test/resources/my-route-props2.properties");
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Properties materializedProps = new Properties();
+        String propsFilepath = ".camel-jbang-run/my-route-props/src/main/resources/application.properties";
+        try (FileInputStream input = new FileInputStream(new File(propsFilepath))) {
+            materializedProps.load(input);
+        }
+
+        Assertions.assertEquals("b", materializedProps.get("a"));
+        Assertions.assertEquals("d", materializedProps.get("c"));
+        Assertions.assertEquals("v1", materializedProps.get("k1"));
+        Assertions.assertEquals("v2", materializedProps.get("k2"));
     }
 
     @ParameterizedTest
