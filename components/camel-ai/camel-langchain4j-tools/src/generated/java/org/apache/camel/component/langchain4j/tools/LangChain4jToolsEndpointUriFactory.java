@@ -23,9 +23,10 @@ public class LangChain4jToolsEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(11);
         props.add("bridgeErrorHandler");
         props.add("camelToolParameter");
+        props.add("chatMemory");
         props.add("chatModel");
         props.add("description");
         props.add("exceptionHandler");
