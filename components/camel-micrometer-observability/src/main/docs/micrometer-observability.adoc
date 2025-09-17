@@ -28,9 +28,7 @@ The configuration properties for the component are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Default |Description
-|`excludePatterns` |  | Sets exclude pattern(s) that will disable tracing for Camel
-messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
-uses the rules from Intercept.
+|`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
 |`traceProcessors` | `false` | Setting this to true will create new spans for each Camel Processors.
 Use the excludePattern property to filter out Processors
 |=======================================================================
