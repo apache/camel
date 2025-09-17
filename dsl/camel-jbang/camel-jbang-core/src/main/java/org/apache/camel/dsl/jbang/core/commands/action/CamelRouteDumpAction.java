@@ -55,7 +55,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
     String name = "*";
 
     @CommandLine.Option(names = { "--format" },
-                        description = "Output format (xml or yaml)", defaultValue = "xml")
+                        description = "Output format (xml or yaml)", defaultValue = "yaml")
     String format;
 
     @CommandLine.Option(names = { "--raw" },
@@ -63,7 +63,8 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
     boolean raw;
 
     @CommandLine.Option(names = { "--uri-as-parameters" },
-                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
+                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
+                        defaultValue = "true")
     boolean uriAsParameters;
 
     @CommandLine.Option(names = { "--filter" },
