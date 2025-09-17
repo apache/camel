@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
 import org.apache.camel.util.IOHelper;
 
@@ -56,6 +57,21 @@ public final class CamelJBangSettingsHelper {
                 // ignore
             }
         }
+    }
+
+    public static String readSettings(String key) {
+        if (FILE.exists()) {
+            try {
+                Properties prop = new Properties();
+                try (FileInputStream fis = new FileInputStream(FILE)) {
+                    prop.load(fis);
+                    return prop.getProperty(key);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
 }

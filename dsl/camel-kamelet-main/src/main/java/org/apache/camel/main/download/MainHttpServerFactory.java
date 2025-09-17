@@ -23,6 +23,7 @@ import org.apache.camel.component.platform.http.main.ManagementHttpServer;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
 import org.apache.camel.main.util.CamelJBangSettingsHelper;
+import org.apache.camel.support.CamelContextHelper;
 
 public class MainHttpServerFactory {
 
@@ -34,8 +35,13 @@ public class MainHttpServerFactory {
         if (server == null && managementHttpServer == null) {
             // set up a default http server on configured port if not already done
             HttpServerConfigurationProperties config = new HttpServerConfigurationProperties(null);
-            CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.server.port",
-                    String.valueOf(config.getPort()));
+            String port = CamelJBangSettingsHelper.readSettings("camel.server.port");
+            if (port != null) {
+                config.setPort(CamelContextHelper.parseInt(camelContext, port));
+            } else {
+                CamelJBangSettingsHelper.writeSettingsIfNotExists("camel.server.port",
+                        String.valueOf(config.getPort()));
+            }
             if (!silent) {
                 try {
                     // enable http server if not silent
