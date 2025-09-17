@@ -132,12 +132,16 @@ public class UpdateList extends CamelCommand {
                 // upgrade recipes 4.12.1 was released, but only Camel 4.12.0 is released, in this case,
                 // consider the major.minor only
                 if (runtimeVersion == null) {
-                    String majorMinorVersion = l[0].substring(0, l[0].lastIndexOf("."));
+                    String majorMinorVersion = getMajorMinorVersion(l[0]);
                     runtimeVersion
                             = recipesVersions.sbVersions().stream()
-                                    .filter(v -> v[0].substring(0, v[0].lastIndexOf(".")).equals(majorMinorVersion)).findFirst()
-                                    .orElseThrow(
-                                            () -> new IllegalStateException("No version found for " + l[0]));
+                                    .filter(v -> {
+                                        // Handle micro Camel Upgrade Recipes versions like 4.14.0.1
+                                        String actualMajorMinorVersion = getMajorMinorVersion(v[0]);
+                                        return actualMajorMinorVersion.equals(majorMinorVersion);
+                                    })
+                                    .findFirst()
+                                    .orElse(new String[] { null, "N/A" });
                 }
 
                 rows.add(new Row(
@@ -186,6 +190,12 @@ public class UpdateList extends CamelCommand {
         }
 
         return 0;
+    }
+
+    private static String getMajorMinorVersion(String l) {
+        String[] versions = l.split("\\.");
+        String majorMinorVersion = versions[0] + "." + versions[1];
+        return majorMinorVersion;
     }
 
     /**
