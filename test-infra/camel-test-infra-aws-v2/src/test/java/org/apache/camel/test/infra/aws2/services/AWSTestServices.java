@@ -66,6 +66,10 @@ public class AWSTestServices {
     public static class AWSSTSLocalContainerTestService extends AWSSTSLocalContainerInfraService implements AWSService {
     }
 
+    public static class AWSTranscribeLocalContainerTestService extends AWSTranscribeLocalContainerInfraService
+            implements AWSService {
+    }
+
     public static class AWSRemoteTestService extends AWSRemoteInfraService implements AWSService {
     }
 }

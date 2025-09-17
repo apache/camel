@@ -1667,6 +1667,46 @@ public class StaticEndpointBuilders {
         return Timestream2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Transcribe (camel-aws2-transcribe)
+     * Automatically convert speech to text using AWS Transcribe service
+     * 
+     * Category: cloud,messaging
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-aws2-transcribe
+     * 
+     * Syntax: <code>aws2-transcribe:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Transcribe2EndpointBuilderFactory.Transcribe2EndpointBuilder aws2Transcribe(String path) {
+        return aws2Transcribe("aws2-transcribe", path);
+    }
+    /**
+     * AWS Transcribe (camel-aws2-transcribe)
+     * Automatically convert speech to text using AWS Transcribe service
+     * 
+     * Category: cloud,messaging
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-aws2-transcribe
+     * 
+     * Syntax: <code>aws2-transcribe:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Transcribe2EndpointBuilderFactory.Transcribe2EndpointBuilder aws2Transcribe(String componentName, String path) {
+        return Transcribe2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
      * 

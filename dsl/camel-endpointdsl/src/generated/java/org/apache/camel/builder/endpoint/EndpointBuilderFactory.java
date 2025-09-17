@@ -349,6 +349,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.TimerEndpointBuilderFactory.TimerBuilders,
             org.apache.camel.builder.endpoint.dsl.Timestream2EndpointBuilderFactory.Timestream2Builders,
             org.apache.camel.builder.endpoint.dsl.TorchServeEndpointBuilderFactory.TorchServeBuilders,
+            org.apache.camel.builder.endpoint.dsl.Transcribe2EndpointBuilderFactory.Transcribe2Builders,
             org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2Builders,
             org.apache.camel.builder.endpoint.dsl.TwilioEndpointBuilderFactory.TwilioBuilders,
             org.apache.camel.builder.endpoint.dsl.TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageBuilders,

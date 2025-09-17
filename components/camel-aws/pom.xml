@@ -65,6 +65,7 @@
         <module>camel-aws2-sts</module>
         <module>camel-aws2-textract</module>
         <module>camel-aws2-timestream</module>
+        <module>camel-aws2-transcribe</module>
         <module>camel-aws2-translate</module>
         <module>camel-aws-xray</module>
     </modules>

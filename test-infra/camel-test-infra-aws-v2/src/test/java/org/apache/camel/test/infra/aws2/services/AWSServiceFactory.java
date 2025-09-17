@@ -139,6 +139,10 @@ public final class AWSServiceFactory {
         return createService(AWSTestServices.AWSSecretsManagerLocalContainerTestService::new);
     }
 
+    public static AWSService createTranscribeService() {
+        return createService(AWSTestServices.AWSTranscribeLocalContainerTestService::new);
+    }
+
     public static AWSService createSingletonDynamoDBService() {
         return SingletonServiceHolder.getInstance(new AWSTestServices.AWSDynamodbLocalContainerTestService(), "dynamoDB");
     }
@@ -157,6 +161,10 @@ public final class AWSServiceFactory {
 
     public static AWSService createSingletonKinesisService() {
         return SingletonServiceHolder.getInstance(new AWSTestServices.AWSKinesisLocalContainerTestService(), "kinesis");
+    }
+
+    public static AWSService createSingletonTranscribeService() {
+        return SingletonServiceHolder.getInstance(new AWSTestServices.AWSTranscribeLocalContainerTestService(), "transcribe");
     }
 
     private static class SingletonServiceHolder {
