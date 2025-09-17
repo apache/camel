@@ -653,7 +653,7 @@ public interface Textract2EndpointBuilderFactory {
             return "CamelAwsTextractOperation";
         }
         /**
-         * The S3 bucket name.
+         * The S3 bucket name containing the document to process.
          * 
          * The option is a: {@code String} type.
          * 
@@ -665,7 +665,7 @@ public interface Textract2EndpointBuilderFactory {
             return "CamelAwsTextractS3Bucket";
         }
         /**
-         * The S3 object name.
+         * The S3 object name (key) of the document to process.
          * 
          * The option is a: {@code String} type.
          * 
@@ -677,7 +677,7 @@ public interface Textract2EndpointBuilderFactory {
             return "CamelAwsTextractS3Object";
         }
         /**
-         * The S3 object version.
+         * The S3 object version of the document to process.
          * 
          * The option is a: {@code String} type.
          * 
@@ -689,7 +689,8 @@ public interface Textract2EndpointBuilderFactory {
             return "CamelAwsTextractS3ObjectVersion";
         }
         /**
-         * The job ID for async operations.
+         * The job ID for async operations (StartDocumentTextDetection,
+         * StartDocumentAnalysis).
          * 
          * The option is a: {@code String} type.
          * 
@@ -701,7 +702,7 @@ public interface Textract2EndpointBuilderFactory {
             return "CamelAwsTextractJobId";
         }
         /**
-         * The max results to return.
+         * The maximum number of results to return in paginated operations.
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -713,7 +714,8 @@ public interface Textract2EndpointBuilderFactory {
             return "CamelAwsTextractMaxResults";
         }
         /**
-         * The next token for pagination.
+         * The next token for pagination in operations that return multiple
+         * pages.
          * 
          * The option is a: {@code String} type.
          * 
@@ -725,7 +727,8 @@ public interface Textract2EndpointBuilderFactory {
             return "CamelAwsTextractNextToken";
         }
         /**
-         * The feature types for document analysis.
+         * The feature types for document analysis (TABLES, FORMS, SIGNATURES,
+         * etc.).
          * 
          * The option is a: {@code List<FeatureType>} type.
          * 
