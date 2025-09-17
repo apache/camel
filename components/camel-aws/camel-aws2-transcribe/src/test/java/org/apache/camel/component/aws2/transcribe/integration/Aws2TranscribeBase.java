@@ -33,7 +33,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2TranscribeBase extends CamelTestSupport {
     @RegisterExtension
-    public static AWSService service = AWSServiceFactory.createS3Service(); // Use S3 service as base infrastructure
+    public static AWSService service = AWSServiceFactory.createTranscribeService();
 
     @RegisterExtension
     public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();
