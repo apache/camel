@@ -1,3 +1,5 @@
+= Migration Note
+
 [NOTE]
 ====
 https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
