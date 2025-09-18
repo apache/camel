@@ -301,10 +301,12 @@ public class Run extends CamelCommand {
             description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
     boolean console;
 
+    @Deprecated
     @Option(names = { "--health" }, defaultValue = "false",
             description = "Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default)")
     boolean health;
 
+    @Deprecated
     @Option(names = { "--metrics" }, defaultValue = "false",
             description = "Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
     boolean metrics;
