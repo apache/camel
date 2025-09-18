@@ -25,7 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.StatefulService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleRegistry;
@@ -47,6 +46,7 @@ import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
+import org.apache.camel.spi.ContextServiceLoaderPluginResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.DumpRoutesStrategy;
@@ -757,7 +757,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    protected StatefulService createContextServiceLoaderPlugin() {
+    protected ContextServiceLoaderPluginResolver createContextServiceLoaderPlugin() {
         return new DefaultContextServiceLoaderPlugin();
     }
 

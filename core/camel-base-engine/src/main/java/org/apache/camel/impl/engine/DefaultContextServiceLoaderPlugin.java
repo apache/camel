@@ -20,6 +20,7 @@ import java.util.ServiceLoader;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.spi.ContextServiceLoaderPluginResolver;
 import org.apache.camel.spi.ContextServicePlugin;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -40,7 +41,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * @see ContextServicePlugin
  * @see ServiceLoader
  */
-public class DefaultContextServiceLoaderPlugin extends ServiceSupport implements CamelContextAware {
+public class DefaultContextServiceLoaderPlugin extends ServiceSupport implements ContextServiceLoaderPluginResolver {
     private CamelContext camelContext;
 
     /**
@@ -57,7 +58,8 @@ public class DefaultContextServiceLoaderPlugin extends ServiceSupport implements
      */
     @Override
     protected void doStart() throws Exception {
-        ServiceLoader<ContextServicePlugin> contextServicePlugins = ServiceLoader.load(ContextServicePlugin.class);
+        ServiceLoader<ContextServicePlugin> contextServicePlugins = ServiceLoader.load(ContextServicePlugin.class,
+                camelContext.getApplicationContextClassLoader());
         for (ContextServicePlugin plugin : contextServicePlugins) {
             plugin.load(camelContext);
         }
