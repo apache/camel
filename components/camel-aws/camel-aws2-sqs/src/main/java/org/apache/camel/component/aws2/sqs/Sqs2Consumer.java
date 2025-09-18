@@ -122,8 +122,10 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         Queue<Exchange> answer = new LinkedList<>();
         for (software.amazon.awssdk.services.sqs.model.Message message : messages) {
-            Exchange exchange = createExchange(message);
-            answer.add(exchange);
+            if (message != null) {
+                Exchange exchange = createExchange(message);
+                answer.add(exchange);
+            }
         }
 
         return answer;
