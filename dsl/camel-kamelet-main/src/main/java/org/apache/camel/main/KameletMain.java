@@ -739,14 +739,8 @@ public class KameletMain extends MainCommandLineSupport {
         ContextServiceLoaderPluginResolver contextServicePlugin = answer
                 .getCamelContextExtension().getContextPlugin(ContextServiceLoaderPluginResolver.class);
         if (contextServicePlugin != null) {
-            try {
-                // force start context service loader plugin to discover and load third-party plugins
-                ServiceHelper.startService(contextServicePlugin);
-            } catch (Exception e) {
-                LOG.warn(
-                        "Cannot start context service loader plugin due: {}. Third-party context plugins may not be loaded.",
-                        e.getMessage());
-            }
+            // force start context service loader plugin to discover and load third-party plugins
+            ServiceHelper.startService(contextServicePlugin);
         }
 
         return answer;
