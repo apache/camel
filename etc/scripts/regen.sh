@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+set -e
+
 # Move to top directory
 cd `dirname "$0"`/../..
 
