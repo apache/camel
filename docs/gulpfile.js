@@ -20,17 +20,36 @@ import gulp from 'gulp'
 import inject from 'gulp-inject'
 import map from 'map-stream'
 import path from 'path'
+import fs from 'fs'
 import rename from 'gulp-rename'
 import sort from 'gulp-sort'
 import through2 from 'through2'
 import { deleteAsync } from 'del'
 
 function titleFrom (file) {
-  let maybeName = /(?::doctitle: )(.*)/.exec(file.contents.toString())
+  let contents = null;
+
+  if (file.isSymbolic()) {
+    // Resolve the symlink target path
+    const resolvedPath = path.resolve(path.dirname(file.path), file.symlink);
+    try {
+      contents = fs.readFileSync(resolvedPath, 'utf8');
+    } catch (err) {
+      console.error(`⚠️ Failed to read symlink target: ${resolvedPath}`, err);
+      return null;
+    }
+  } else if (file.contents) {
+    contents = file.contents.toString();
+  } else {
+    console.warn(`⚠️ No content found for file: ${file.path}`);
+    return null;
+  }
+
+  let maybeName = /(?::doctitle: )(.*)/.exec(contents)
   if (maybeName === null) {
     //TODO investigate these... why dont they have them?
     // console.warn(`${file.path} doesn't contain Asciidoc doctitle attribute (':doctitle: <Title>'`);
-    maybeName = /(?:=|#) (.*)/.exec(file.contents.toString())
+    maybeName = /(?:=|#) (.*)/.exec(contents)
     if (maybeName === null) {
       throw new Error(
         `${file.path} also doesn't contain Asciidoc heading ('= <Title>') or ('# <Title')`
@@ -42,7 +61,26 @@ function titleFrom (file) {
 }
 
 function groupFrom (file) {
-  const groupName = /(?::group: )(.*)/.exec(file.contents.toString())
+
+  let contents = null;
+
+  if (file.isSymbolic()) {
+    // Resolve the symlink target path
+    const resolvedPath = path.resolve(path.dirname(file.path), file.symlink);
+    try {
+      contents = fs.readFileSync(resolvedPath, 'utf8');
+    } catch (err) {
+      console.error(`⚠️ Failed to read symlink target: ${resolvedPath}`, err);
+      return null;
+    }
+  } else if (file.contents) {
+    contents = file.contents.toString();
+  } else {
+    console.warn(`⚠️ No content found for file: ${file.path}`);
+    return null;
+  }
+
+  const groupName = /(?::group: )(.*)/.exec(contents)
   if (groupName !== null) return groupName[1]
   return null
 }
@@ -323,7 +361,9 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
           gulp.src([
             `${destination}/**/*.adoc`,
             `!${destination}/index.adoc`,
-          ])
+          ],{
+            resolveSymlinks: false,
+          })
           .pipe(filterFn)
           .pipe(sort(compare)),
           {
