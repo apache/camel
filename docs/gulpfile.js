@@ -173,13 +173,12 @@ const sources = {
     },
   },
   //IMPORTANT NOTE: some language adocs may also be copied by an undocumented process
-  //from core/camel-core-languages and core/camel-xml-jaxp.
+  //from core/camel-core-languages.
   languages: {
     asciidoc: {
       source: [
         '../components/{*,*/*}/src/main/docs/*-language.adoc',
         '../core/camel-core-languages/src/main/docs/modules/languages/pages/*-language.adoc',
-        '../core/camel-xml-jaxp/src/main/docs/modules/languages/pages/*-language.adoc',
       ],
       destination: 'components/modules/languages/pages',
     },
@@ -208,7 +207,6 @@ const sources = {
         '../core/camel-main/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../components/{*,*/*}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../dsl/**/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
-        '../core/camel-xml-jaxp/src/generated/resources/*.json',
       ],
       destination: 'components/modules/others/pages',
       keep: [
