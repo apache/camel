@@ -2093,7 +2093,8 @@ NOTE: For a service to be listed then Camel components must be able to advertise
 
 Camel JBang comes with support for using Micrometer for metrics that easily can be made available.
 
-You simply either run with `--metrics` option, or enable and have more control of the configuration in the `application.properties` file as shown below:
+You simply either run with `--observe` option (use `--metrcis` in older Camel versions),
+or enable and have more control of the configuration in the `application.properties` file as shown below:
 
 [source,properties]
 ----
