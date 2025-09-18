@@ -2387,17 +2387,9 @@ public abstract class AbstractCamelContext extends BaseService
         ContextServiceLoaderPluginResolver contextServicePlugin
                 = camelContextExtension.getContextPlugin(ContextServiceLoaderPluginResolver.class);
         if (contextServicePlugin != null) {
-            try {
-                StartupStep step6 = startupStepRecorder.beginStep(CamelContext.class, null, "Start ContextServiceLoaderPlugin");
-                ServiceHelper.startService(contextServicePlugin);
-                startupStepRecorder.endStep(step6);
-            } catch (Exception e) {
-                LOG.warn("Cannot start context service loader plugin due: {}. Third-party context plugins may not be loaded.",
-                        e.getMessage());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("", e);
-                }
-            }
+            StartupStep step6 = startupStepRecorder.beginStep(CamelContext.class, null, "Start ContextServiceLoaderPlugin");
+            ServiceHelper.startService(contextServicePlugin);
+            startupStepRecorder.endStep(step6);
         }
 
         // Call all registered trackers with this context
