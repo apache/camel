@@ -575,6 +575,19 @@ public interface Transcribe2EndpointBuilderFactory {
          * Since: 4.15
          * Maven coordinates: org.apache.camel:camel-aws2-transcribe
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Transcribe2HeaderNameBuilder aws2Transcribe() {
+            return Transcribe2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Transcribe (camel-aws2-transcribe)
+         * Automatically convert speech to text using AWS Transcribe service
+         * 
+         * Category: cloud,messaging
+         * Since: 4.15
+         * Maven coordinates: org.apache.camel:camel-aws2-transcribe
+         * 
          * Syntax: <code>aws2-transcribe:label</code>
          * 
          * Path parameter: label (required)
@@ -608,6 +621,190 @@ public interface Transcribe2EndpointBuilderFactory {
             return Transcribe2EndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the AWS Transcribe component.
+     */
+    public static class Transcribe2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Transcribe2HeaderNameBuilder INSTANCE = new Transcribe2HeaderNameBuilder();
+
+        /**
+         * The name of the transcription job.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsTranscribeTranscriptionJobName}.
+         */
+        public String awsTranscribeTranscriptionJobName() {
+            return "CamelAwsTranscribeTranscriptionJobName";
+        }
+        /**
+         * The language code for the transcription job.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeLanguageCode}.
+         */
+        public String awsTranscribeLanguageCode() {
+            return "CamelAwsTranscribeLanguageCode";
+        }
+        /**
+         * The format of the input media file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeMediaFormat}.
+         */
+        public String awsTranscribeMediaFormat() {
+            return "CamelAwsTranscribeMediaFormat";
+        }
+        /**
+         * The URI of the media file to transcribe.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeMediaUri}.
+         */
+        public String awsTranscribeMediaUri() {
+            return "CamelAwsTranscribeMediaUri";
+        }
+        /**
+         * Filter transcription jobs by name containing this string.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeJobNameContains}.
+         */
+        public String awsTranscribeJobNameContains() {
+            return "CamelAwsTranscribeJobNameContains";
+        }
+        /**
+         * The status of the transcription job.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeStatus}.
+         */
+        public String awsTranscribeStatus() {
+            return "CamelAwsTranscribeStatus";
+        }
+        /**
+         * The name of the custom vocabulary to use.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeVocabularyName}.
+         */
+        public String awsTranscribeVocabularyName() {
+            return "CamelAwsTranscribeVocabularyName";
+        }
+        /**
+         * The name of the vocabulary filter to use.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsTranscribeVocabularyFilterName}.
+         */
+        public String awsTranscribeVocabularyFilterName() {
+            return "CamelAwsTranscribeVocabularyFilterName";
+        }
+        /**
+         * List of phrases for custom vocabulary.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsTranscribeVocabularyPhrases}.
+         */
+        public String awsTranscribeVocabularyPhrases() {
+            return "CamelAwsTranscribeVocabularyPhrases";
+        }
+        /**
+         * The name of the custom language model to use.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsTranscribeLanguageModelName}.
+         */
+        public String awsTranscribeLanguageModelName() {
+            return "CamelAwsTranscribeLanguageModelName";
+        }
+        /**
+         * The name of the medical transcription job.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsTranscribeMedicalTranscriptionJobName}.
+         */
+        public String awsTranscribeMedicalTranscriptionJobName() {
+            return "CamelAwsTranscribeMedicalTranscriptionJobName";
+        }
+        /**
+         * The Amazon Resource Name (ARN) of the resource.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeResourceArn}.
+         */
+        public String awsTranscribeResourceArn() {
+            return "CamelAwsTranscribeResourceArn";
+        }
+        /**
+         * A map of tags to assign to the resource.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeTags}.
+         */
+        public String awsTranscribeTags() {
+            return "CamelAwsTranscribeTags";
+        }
+        /**
+         * A list of tag keys to remove from the resource.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranscribeTagKeys}.
+         */
+        public String awsTranscribeTagKeys() {
+            return "CamelAwsTranscribeTagKeys";
+        }
     }
     static Transcribe2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Transcribe2EndpointBuilderImpl extends AbstractEndpointBuilder implements Transcribe2EndpointBuilder, AdvancedTranscribe2EndpointBuilder {

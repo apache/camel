@@ -53,7 +53,7 @@ Required Transcribe component options
 
 You have to provide the amazonTranscribeClient in the
 Registry or your accessKey and secretKey to access
-the https://aws.amazon.com/textract/[Amazon Textract] service.
+the https://aws.amazon.com/transcribe/[Amazon Transcribe] service.
 
 // component headers: START
 include::partial$component-endpoint-headers.adoc[]
@@ -90,7 +90,7 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws2-textract</artifactId>
+    <artifactId>camel-aws2-transcribe</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------

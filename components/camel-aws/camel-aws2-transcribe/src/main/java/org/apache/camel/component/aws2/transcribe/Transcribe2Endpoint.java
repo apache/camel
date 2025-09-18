@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.transcribe.TranscribeClient;
  */
 @UriEndpoint(firstVersion = "4.15.0", scheme = "aws2-transcribe", title = "AWS Transcribe",
              syntax = "aws2-transcribe:label", category = { Category.CLOUD, Category.MESSAGING },
-             producerOnly = true)
+             producerOnly = true, headersClass = Transcribe2Constants.class)
 public class Transcribe2Endpoint extends DefaultEndpoint {
 
     private TranscribeClient transcribeClient;
