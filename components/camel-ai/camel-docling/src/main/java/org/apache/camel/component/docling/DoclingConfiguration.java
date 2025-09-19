@@ -30,7 +30,8 @@ import org.apache.camel.spi.UriParams;
 public class DoclingConfiguration implements Cloneable {
 
     @UriParam
-    @Metadata(required = true, defaultValue = "CONVERT_TO_MARKDOWN", description = "The operation to perform")
+    @Metadata(required = true, defaultValue = "CONVERT_TO_MARKDOWN", description = "The operation to perform",
+              enums = "CONVERT_TO_MARKDOWN,CONVERT_TO_HTML,CONVERT_TO_JSON,EXTRACT_TEXT,EXTRACT_STRUCTURED_DATA")
     private DoclingOperations operation = DoclingOperations.CONVERT_TO_MARKDOWN;
 
     @UriParam(label = "advanced")
@@ -46,11 +47,13 @@ public class DoclingConfiguration implements Cloneable {
     private boolean enableOCR = true;
 
     @UriParam
-    @Metadata(description = "Language code for OCR processing", defaultValue = "en")
+    @Metadata(description = "Language code for OCR processing", defaultValue = "en",
+              enums = "en,es,fr,de,it,pt,ru,zh,ja,ko,ar,hi,th,vi,tr,pl,nl,sv,da,no,fi,cs,hu,el,he,fa,ur,bn,ta,te,ml,kn,gu,pa,or,as,ne,si,my,lo,km,ka,hy,eu,mt,is,ga,cy,gd,br,oc,ca,gl,ast,an,lad,la,eo,ia,ie,vo,jbo,tlh")
     private String ocrLanguage = "en";
 
     @UriParam
-    @Metadata(description = "Output format for document conversion", defaultValue = "markdown")
+    @Metadata(description = "Output format for document conversion", defaultValue = "markdown",
+              enums = "md,json,html,html_split_page,text,doctags")
     private String outputFormat = "markdown";
 
     @UriParam(label = "advanced")
