@@ -1,6 +1,0 @@
-[NOTE]
-====
-https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
-Note that manual migration is still required.
-See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
-====
