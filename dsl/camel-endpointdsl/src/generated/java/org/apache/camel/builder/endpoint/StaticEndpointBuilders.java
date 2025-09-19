@@ -4222,6 +4222,46 @@ public class StaticEndpointBuilders {
         return DockerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Docling (camel-docling)
+     * Process documents using Docling library for parsing and conversion.
+     * 
+     * Category: transformation,ai
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-docling
+     * 
+     * Syntax: <code>docling:operationId</code>
+     * 
+     * Path parameter: operationId (required)
+     * The operation identifier
+     * 
+     * @param path operationId
+     * @return the dsl builder
+     */
+    public static DoclingEndpointBuilderFactory.DoclingEndpointBuilder docling(String path) {
+        return docling("docling", path);
+    }
+    /**
+     * Docling (camel-docling)
+     * Process documents using Docling library for parsing and conversion.
+     * 
+     * Category: transformation,ai
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-docling
+     * 
+     * Syntax: <code>docling:operationId</code>
+     * 
+     * Path parameter: operationId (required)
+     * The operation identifier
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operationId
+     * @return the dsl builder
+     */
+    public static DoclingEndpointBuilderFactory.DoclingEndpointBuilder docling(String componentName, String path) {
+        return DoclingEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
      * 

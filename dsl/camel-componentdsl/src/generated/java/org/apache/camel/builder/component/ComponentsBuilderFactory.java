@@ -1319,6 +1319,19 @@ public interface ComponentsBuilderFactory {
         return DockerComponentBuilderFactory.docker();
     }
     /**
+     * Docling (camel-docling)
+     * Process documents using Docling library for parsing and conversion.
+     * 
+     * Category: transformation,ai
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-docling
+     * 
+     * @return the dsl builder
+     */
+    static DoclingComponentBuilderFactory.DoclingComponentBuilder docling() {
+        return DoclingComponentBuilderFactory.docling();
+    }
+    /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
      * 

@@ -45,7 +45,7 @@ public final class MojoHelper {
                         dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"), dir.resolve("camel-neo4j"),
                         dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"),
                         dir.resolve("camel-torchserve"), dir.resolve("camel-tensorflow-serving"),
-                        dir.resolve("camel-weaviate"));
+                        dir.resolve("camel-weaviate"), dir.resolve("camel-docling"));
             case "camel-as2":
                 return Collections.singletonList(dir.resolve("camel-as2-component"));
             case "camel-avro-rpc":

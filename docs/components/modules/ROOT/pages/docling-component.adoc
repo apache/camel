@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-docling/src/main/docs/docling-component.adoc
