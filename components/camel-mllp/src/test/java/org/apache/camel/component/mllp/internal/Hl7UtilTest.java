@@ -102,6 +102,14 @@ public class Hl7UtilTest {
               + '\r';
     // @formatter:on
 
+    static final String MSH_SEGMENT_BEFORE_MSH9 = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20250912193919||";
+    static final String MSH_SEGMENT_AFTER_MSH9 = "|00001|D|2.5" + '\r';
+
+    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH = "|00001A|D|2.5" + '\r'
+                                                                   + "MSA|AA|00001" + '\r'
+                                                                   + MllpProtocolConstants.END_OF_BLOCK
+                                                                   + MllpProtocolConstants.END_OF_DATA;
+
     static final byte[] TEST_MESSAGE_BYTES = TEST_MESSAGE.getBytes();
 
     private final Hl7Util hl7util = new Hl7Util(5120, LOG_PHI_TRUE);
@@ -673,4 +681,89 @@ public class Hl7UtilTest {
         String result = local.convertToPrintFriendlyString(TEST_MESSAGE);
         assertEquals("MSH", result);
     }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithOnlyMsh91() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "ORM" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith("||ACK" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithEmptyMsh92() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "ORM^" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith("||ACK^" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithMultipleCaretsEmptyMsh92() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "ORM^^ORM_O01" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith("||ACK^^ACK" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithNonValidMsh92() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "ORM^01^" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith("||ACK^01^ACK" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithMultipleCaretsAndEmptyMsh92Empty93() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "ORM^^" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith("||ACK^^ACK" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithMsh92() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "MDM^T01" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith("||ACK^T01" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithMsh93() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "MDM^T01^MDM_T01" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith("||ACK^T01^ACK" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
 }
