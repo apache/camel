@@ -3158,6 +3158,47 @@ public interface ComponentsBuilderFactory {
         return MilvusComponentBuilderFactory.milvus();
     }
     /**
+     * OPC UA Browser (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for browsing the node
+     * tree.
+     * 
+     * Category: iot
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.MiloBrowseComponentBuilderFactory.MiloBrowseComponentBuilder miloBrowse() {
+        return org.apache.camel.builder.component.dsl.MiloBrowseComponentBuilderFactory.miloBrowse();
+    }
+    /**
+     * OPC UA Client (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for acquiring
+     * telemetry data.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.MiloClientComponentBuilderFactory.MiloClientComponentBuilder miloClient() {
+        return org.apache.camel.builder.component.dsl.MiloClientComponentBuilderFactory.miloClient();
+    }
+    /**
+     * OPC UA Server (camel-milo)
+     * Make telemetry data available as an OPC UA server.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.MiloServerComponentBuilderFactory.MiloServerComponentBuilder miloServer() {
+        return org.apache.camel.builder.component.dsl.MiloServerComponentBuilderFactory.miloServer();
+    }
+    /**
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
      * 
