@@ -262,8 +262,8 @@ public final class Hl7Util {
         mllpSocketBuffer.write(fieldSeparator);
         mllpSocketBuffer.write("ACK".getBytes()); // MSH-9.1
         int msh92start = -1;
+        final byte componentSeparator = hl7MessageBytes[4];
         for (int j = fieldSeparatorIndexes.get(7) + 1; j < fieldSeparatorIndexes.get(8); ++j) {
-            final byte componentSeparator = hl7MessageBytes[4];
             if (componentSeparator == hl7MessageBytes[j]) {
                 msh92start = j;
                 break;
@@ -274,7 +274,19 @@ public final class Hl7Util {
         if (-1 == msh92start) {
             LOG.warn("Didn't find component separator for MSH-9.2 - sending ACK in MSH-9");
         } else {
-            mllpSocketBuffer.write(hl7MessageBytes, msh92start, fieldSeparatorIndexes.get(8) - msh92start);
+            final String msh9Content = convertToPrintFriendlyString(hl7MessageBytes, fieldSeparatorIndexes.get(7) + 1,
+                    fieldSeparatorIndexes.get(8));
+            final int[] componentIndexesInMsh9 = caretPositionsIn(msh9Content);
+            final int componentDiff = componentIndexesInMsh9[componentIndexesInMsh9.length - 1] - componentIndexesInMsh9[0];
+
+            if (componentIndexesInMsh9.length == 2) { //MSH-9.3 is an optional field since 2.3.1, required since 2.5; this is a non-breaking change by just checking the number of the components in the field MSH-9
+                mllpSocketBuffer.write(componentSeparator);
+                mllpSocketBuffer.write(hl7MessageBytes, msh92start + 1, componentDiff - 1);
+                mllpSocketBuffer.write(componentSeparator);
+                mllpSocketBuffer.write("ACK".getBytes()); // MSH-9.3
+            } else {
+                mllpSocketBuffer.write(hl7MessageBytes, msh92start, fieldSeparatorIndexes.get(8) - msh92start);
+            }
         }
 
         // MSH-10 - use the original control ID, but add an "A" as a suffix
@@ -441,6 +453,12 @@ public final class Hl7Util {
         }
 
         return String.valueOf(c);
+    }
+
+    private int[] caretPositionsIn(String data) {
+        return java.util.stream.IntStream.range(0, data.length())
+                .filter(i -> data.charAt(i) == '^')
+                .toArray();
     }
 
     /**

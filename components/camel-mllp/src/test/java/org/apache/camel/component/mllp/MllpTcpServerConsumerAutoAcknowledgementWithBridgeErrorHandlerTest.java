@@ -55,7 +55,7 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithBridgeErrorHandlerTest
         String acknowledgement = completeExchange.getIn().getHeader(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, String.class);
 
         assertThat(acknowledgement, startsWith("MSH|^~\\&|^org^sys||APP_A|FAC_A|"));
-        assertThat(acknowledgement, endsWith("||ACK^A04^ADT_A04|||2.6\rMSA|AA|\r"));
+        assertThat(acknowledgement, endsWith("||ACK^A04^ACK|||2.6\rMSA|AA|\r"));
     }
 
     public void testAcknowledgementDeliveryFailure() throws Exception {
