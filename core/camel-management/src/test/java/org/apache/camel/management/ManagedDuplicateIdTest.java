@@ -57,6 +57,30 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
         }
     }
 
+    @Test
+    public void testDuplicateIdSingleRoute() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:foo").routeId("foo")
+                        .to("log:line").id("clash")
+                        .to("log:foo").id("cheese")
+                        .split(body()).id("mysplit")
+                        .to("log:line").id("clash")
+                        .end()
+                        .to("mock:foo");
+            }
+        });
+        try {
+            context.start();
+            fail("Should fail");
+        } catch (Exception e) {
+            assertEquals(
+                    "Failed to start route: foo because: Duplicate id detected: clash. Please correct ids to be unique among all your routes.",
+                    e.getMessage());
+        }
+    }
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
