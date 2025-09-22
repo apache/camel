@@ -57,11 +57,32 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
     }
 
     protected StrimziContainer initStrimziContainer(Network network, String instanceName, String zookeeperInstanceName) {
-        return new StrimziContainer(network, instanceName, zookeeperInstanceName);
+        class TestInfraStrimziContainer extends StrimziContainer {
+            public TestInfraStrimziContainer(Network network, String name, String zookeeperInstanceName, boolean fixedPort) {
+                super(network, name, zookeeperInstanceName);
+
+                if (fixedPort) {
+                    addFixedExposedPort(9092, 9092);
+                }
+            }
+        }
+
+        return new TestInfraStrimziContainer(
+                network, instanceName, zookeeperInstanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     protected ZookeeperContainer initZookeeperContainer(Network network, String instanceName) {
-        return new ZookeeperContainer(network, instanceName);
+        class TestInfraZookeeperContainer extends ZookeeperContainer {
+            public TestInfraZookeeperContainer(Network network, String name, boolean fixedPort) {
+                super(network, name);
+
+                if (fixedPort) {
+                    addFixedExposedPort(2181, 2181);
+                }
+            }
+        }
+
+        return new TestInfraZookeeperContainer(network, instanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     protected Integer getKafkaPort() {

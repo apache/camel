@@ -40,4 +40,24 @@ public class AzureStorageBlobLocalContainerInfraService extends AzureStorageInfr
     public AzureCredentialsHolder azureCredentials() {
         return getContainer().azureCredentials();
     }
+
+    @Override
+    public String host() {
+        return getContainer().getHost();
+    }
+
+    @Override
+    public int port() {
+        return getContainer().getMappedPort(AzureServices.BLOB_SERVICE);
+    }
+
+    @Override
+    public String accountName() {
+        return getContainer().azureCredentials().accountName();
+    }
+
+    @Override
+    public String accessKey() {
+        return getContainer().azureCredentials().accountKey();
+    }
 }

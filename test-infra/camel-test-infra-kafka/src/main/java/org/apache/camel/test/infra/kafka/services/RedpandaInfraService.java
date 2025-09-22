@@ -53,7 +53,17 @@ public class RedpandaInfraService implements KafkaInfraService, ContainerService
     }
 
     protected RedpandaContainer initRedpandaContainer(Network network, String instanceName) {
-        return new RedpandaTransactionsEnabledContainer(RedpandaTransactionsEnabledContainer.REDPANDA_CONTAINER);
+        class TestInfraRedpandaContainer extends RedpandaTransactionsEnabledContainer {
+            public TestInfraRedpandaContainer(boolean fixedPort) {
+                super(RedpandaTransactionsEnabledContainer.REDPANDA_CONTAINER);
+
+                if (fixedPort) {
+                    addFixedExposedPort(9092, 9092);
+                }
+            }
+        }
+
+        return new TestInfraRedpandaContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     protected Integer getKafkaPort() {

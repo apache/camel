@@ -63,6 +63,7 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
                 if (fixedPort) {
                     addFixedExposedPort(9092, 9092);
                 }
+                // For random ports, testcontainers will handle port mapping automatically
             }
         }
 

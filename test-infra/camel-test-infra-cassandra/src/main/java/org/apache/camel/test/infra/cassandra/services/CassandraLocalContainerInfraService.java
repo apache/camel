@@ -56,7 +56,19 @@ public class CassandraLocalContainerInfraService implements CassandraInfraServic
     }
 
     protected CassandraContainer initContainer(String imageName) {
-        return new CassandraContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("cassandra"));
+        class CassandraContainerWithFixedPort extends CassandraContainer {
+            public CassandraContainerWithFixedPort(boolean fixedPort) {
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("cassandra"));
+
+                if (fixedPort) {
+                    addFixedExposedPort(9042, 9042);
+                } else {
+                    withExposedPorts(9042);
+                }
+            }
+        }
+
+        return new CassandraContainerWithFixedPort(ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

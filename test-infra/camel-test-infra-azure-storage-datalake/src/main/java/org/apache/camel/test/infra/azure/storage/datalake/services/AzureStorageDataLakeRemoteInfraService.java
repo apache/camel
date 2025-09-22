@@ -51,4 +51,24 @@ public class AzureStorageDataLakeRemoteInfraService implements AzureInfraService
     public void shutdown() {
 
     }
+
+    @Override
+    public String host() {
+        return System.getProperty(AzureConfigs.HOST);
+    }
+
+    @Override
+    public int port() {
+        return Integer.valueOf(System.getProperty(AzureConfigs.PORT));
+    }
+
+    @Override
+    public String accountName() {
+        return System.getProperty(AzureConfigs.ACCOUNT_NAME);
+    }
+
+    @Override
+    public String accessKey() {
+        return System.getProperty(AzureConfigs.ACCOUNT_KEY);
+    }
 }
