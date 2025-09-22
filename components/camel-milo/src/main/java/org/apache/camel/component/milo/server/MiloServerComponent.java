@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -42,35 +45,29 @@ import org.apache.camel.component.milo.server.internal.CamelNamespace;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.eclipse.milo.opcua.sdk.server.EndpointConfig;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
-import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig;
-import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfigBuilder;
+import org.eclipse.milo.opcua.sdk.server.OpcUaServerConfig;
+import org.eclipse.milo.opcua.sdk.server.OpcUaServerConfigBuilder;
 import org.eclipse.milo.opcua.sdk.server.identity.AnonymousIdentityValidator;
 import org.eclipse.milo.opcua.sdk.server.identity.IdentityValidator;
 import org.eclipse.milo.opcua.sdk.server.identity.UsernameIdentityValidator;
 import org.eclipse.milo.opcua.sdk.server.util.HostnameUtil;
+import org.eclipse.milo.opcua.stack.core.NodeIds;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
-import org.eclipse.milo.opcua.stack.core.security.CertificateManager;
-import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
-import org.eclipse.milo.opcua.stack.core.security.DefaultCertificateManager;
-import org.eclipse.milo.opcua.stack.core.security.DefaultTrustListManager;
-import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
+import org.eclipse.milo.opcua.stack.core.security.*;
 import org.eclipse.milo.opcua.stack.core.transport.TransportProfile;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MessageSecurityMode;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.UserTokenType;
 import org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo;
 import org.eclipse.milo.opcua.stack.core.types.structured.UserTokenPolicy;
-import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
-import org.eclipse.milo.opcua.stack.server.security.DefaultServerCertificateValidator;
-import org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator;
+import org.eclipse.milo.opcua.stack.transport.server.tcp.OpcTcpServerTransport;
+import org.eclipse.milo.opcua.stack.transport.server.tcp.OpcTcpServerTransportConfig;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
-import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME;
-import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_X509;
 
 /**
  * OPC UA Server based component
@@ -120,9 +117,16 @@ public class MiloServerComponent extends DefaultComponent {
     @Metadata(label = "security")
     private String defaultCertificateValidator;
     @Metadata(label = "security")
-    private ServerCertificateValidator certificateValidator;
+    private CertificateValidator certificateValidator;
     @Metadata(label = "security")
     private X509Certificate certificate;
+
+    // FIXME - extract CertificateQuarantine
+    @Metadata(label = "security")
+    private CertificateQuarantine certificateQuarantine;
+    // FIXME - migration to CertificateGroup
+    @Metadata(label = "security")
+    private CertificateGroup certificateGroup;
 
     public MiloServerComponent() {
         this.opcServerConfig = null;
@@ -138,7 +142,18 @@ public class MiloServerComponent extends DefaultComponent {
 
     @Override
     protected void doStart() throws Exception {
-        this.server = new OpcUaServer(buildServerConfig());
+        // https://github.com/eclipse-milo/milo/blob/1.0/milo-examples/server-examples/src/main/java/org/eclipse/milo/examples/server/ExampleServer.java
+        OpcUaServerConfig serverConfig = buildServerConfig();
+        this.server = new OpcUaServer(
+                serverConfig,
+                transportProfile -> {
+                    assert transportProfile == TransportProfile.TCP_UASC_UABINARY;
+
+                    OpcTcpServerTransportConfig transportConfig =
+                            OpcTcpServerTransportConfig.newBuilder().build();
+
+                    return new OpcTcpServerTransport(transportConfig);
+                });
 
         this.namespace = new CamelNamespace(this.namespaceUri, this.server);
         this.namespace.startup();
@@ -153,6 +168,9 @@ public class MiloServerComponent extends DefaultComponent {
      * @return the new server configuration, never returns {@code null}
      */
     private OpcUaServerConfig buildServerConfig() {
+
+//        this.certificateGroup = createCertificateGroup();
+
         OpcUaServerConfigBuilder serverConfig
                 = this.opcServerConfig != null ? this.opcServerConfig : createDefaultConfiguration();
 
@@ -162,7 +180,7 @@ public class MiloServerComponent extends DefaultComponent {
         if (!userMap.isEmpty() || enableAnonymousAuthentication != null) {
             // set identity validator
             final boolean allowAnonymous = Boolean.TRUE.equals(this.enableAnonymousAuthentication);
-            final IdentityValidator identityValidator = new UsernameIdentityValidator(allowAnonymous, challenge -> {
+            final IdentityValidator identityValidator = new UsernameIdentityValidator(challenge -> {
                 final String pwd = userMap.get(challenge.getUsername());
                 if (pwd == null) {
                     return false;
@@ -179,9 +197,9 @@ public class MiloServerComponent extends DefaultComponent {
             if (!userMap.isEmpty()) {
                 tokenPolicies.add(getUsernamePolicy());
             }
-            serverConfig.setEndpoints(createEndpointConfigurations(tokenPolicies));
+            serverConfig.setEndpoints(createEndpointConfigs(tokenPolicies));
         } else {
-            serverConfig.setEndpoints(createEndpointConfigurations(null, securityPolicies));
+            serverConfig.setEndpoints(createEndpointConfigs(null, securityPolicies));
         }
 
         if (certificateValidator != null) {
@@ -196,7 +214,10 @@ public class MiloServerComponent extends DefaultComponent {
                     }
                 });
             }
-            serverConfig.setCertificateValidator(certificateValidator);
+//            serverConfig.setCertificateValidator(certificateValidator);
+//            // FIXME - moved to certificateManager
+            serverConfig.setCertificateManager(
+                    new DefaultCertificateManager(this.certificateQuarantine, this.certificateGroup));
         }
 
         // build final configuration
@@ -206,13 +227,15 @@ public class MiloServerComponent extends DefaultComponent {
     private OpcUaServerConfigBuilder createDefaultConfiguration() {
         final OpcUaServerConfigBuilder cfg = OpcUaServerConfig.builder();
 
-        cfg.setCertificateManager(new DefaultCertificateManager());
-        cfg.setCertificateValidator(DenyAllCertificateValidator.INSTANCE);
-        cfg.setEndpoints(createEndpointConfigurations(null));
+//        cfg.setCertificateManager(new DefaultCertificateManager()); // TODO there is already der CertificateManager intialization below
+//        cfg.setCertificateValidator(DenyAllCertificateValidator.INSTANCE); // TODO moved to createCertificateGroup
+        cfg.setEndpoints(createEndpointConfigs(null));
         cfg.setApplicationName(LocalizedText.english(applicationName == null ? "Apache Camel Milo Server" : applicationName));
         cfg.setApplicationUri("urn:org:apache:camel:milo:server");
         cfg.setProductUri("urn:org:apache:camel:milo");
         cfg.setCertificateManager(certificateManager);
+
+
         if (productUri != null) {
             cfg.setProductUri(productUri);
         }
@@ -230,13 +253,13 @@ public class MiloServerComponent extends DefaultComponent {
         return cfg;
     }
 
-    private Set<EndpointConfiguration> createEndpointConfigurations(List<UserTokenPolicy> userTokenPolicies) {
-        return createEndpointConfigurations(userTokenPolicies, securityPolicies);
+    private Set<EndpointConfig> createEndpointConfigs(List<UserTokenPolicy> userTokenPolicies) {
+        return createEndpointConfigs(userTokenPolicies, securityPolicies);
     }
 
-    private Set<EndpointConfiguration> createEndpointConfigurations(
+    private Set<EndpointConfig> createEndpointConfigs(
             List<UserTokenPolicy> userTokenPolicies, Set<SecurityPolicy> securityPolicies) {
-        Set<EndpointConfiguration> endpointConfigurations = new LinkedHashSet<>();
+        Set<EndpointConfig> endpointConfigs = new LinkedHashSet<>();
 
         //if address is not defined, return empty set
         if (bindAddresses == null) {
@@ -255,11 +278,14 @@ public class MiloServerComponent extends DefaultComponent {
                     = userTokenPolicies != null ? userTokenPolicies.toArray(new UserTokenPolicy[userTokenPolicies.size()])
                             : anonymous
                                     ? new UserTokenPolicy[] {
-                                            USER_TOKEN_POLICY_ANONYMOUS, USER_TOKEN_POLICY_USERNAME, USER_TOKEN_POLICY_X509 }
-                            : new UserTokenPolicy[] { USER_TOKEN_POLICY_USERNAME, USER_TOKEN_POLICY_X509 };
+                                            OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS,
+                                            OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME,
+                                            OpcUaServerConfig.USER_TOKEN_POLICY_X509
+            }
+                            : new UserTokenPolicy[] { OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME, OpcUaServerConfig.USER_TOKEN_POLICY_X509 };
 
             for (String hostname : hostnames) {
-                EndpointConfiguration.Builder builder = EndpointConfiguration.newBuilder()
+                EndpointConfig.Builder builder = EndpointConfig.newBuilder()
                         .setBindAddress(bindAddress)
                         .setHostname(hostname)
                         .setCertificate(certificate)
@@ -267,22 +293,22 @@ public class MiloServerComponent extends DefaultComponent {
                         .addTokenPolicies(tokenPolicies);
 
                 if (securityPolicies == null || securityPolicies.contains(SecurityPolicy.None)) {
-                    EndpointConfiguration.Builder noSecurityBuilder = builder.copy()
+                    EndpointConfig.Builder noSecurityBuilder = builder.copy()
                             .setSecurityPolicy(SecurityPolicy.None)
                             .setSecurityMode(MessageSecurityMode.None);
 
-                    endpointConfigurations.add(buildTcpEndpoint(noSecurityBuilder));
-                    endpointConfigurations.add(buildHttpsEndpoint(noSecurityBuilder));
+                    endpointConfigs.add(buildTcpEndpoint(noSecurityBuilder));
+                    endpointConfigs.add(buildHttpsEndpoint(noSecurityBuilder));
                 } else if (securityPolicies.contains(SecurityPolicy.Basic256Sha256)) {
 
                     // TCP Basic256Sha256 / SignAndEncrypt
-                    endpointConfigurations.add(buildTcpEndpoint(
+                    endpointConfigs.add(buildTcpEndpoint(
                             builder.copy()
                                     .setSecurityPolicy(SecurityPolicy.Basic256Sha256)
                                     .setSecurityMode(MessageSecurityMode.SignAndEncrypt)));
                 } else if (securityPolicies.contains(SecurityPolicy.Basic256Sha256)) {
                     // HTTPS Basic256Sha256 / Sign (SignAndEncrypt not allowed for HTTPS)
-                    endpointConfigurations.add(buildHttpsEndpoint(
+                    endpointConfigs.add(buildHttpsEndpoint(
                             builder.copy()
                                     .setSecurityPolicy(SecurityPolicy.Basic256Sha256)
                                     .setSecurityMode(MessageSecurityMode.Sign)));
@@ -298,46 +324,41 @@ public class MiloServerComponent extends DefaultComponent {
                  * different address for this Endpoint it shall create the address by appending the path "/discovery" to
                  * its base address.
                  */
-                EndpointConfiguration.Builder discoveryBuilder = builder.copy()
+                EndpointConfig.Builder discoveryBuilder = builder.copy()
                         .setPath("/discovery")
                         .setSecurityPolicy(SecurityPolicy.None)
                         .setSecurityMode(MessageSecurityMode.None);
 
-                endpointConfigurations.add(buildTcpEndpoint(discoveryBuilder));
-                endpointConfigurations.add(buildHttpsEndpoint(discoveryBuilder));
+                endpointConfigs.add(buildTcpEndpoint(discoveryBuilder));
+                endpointConfigs.add(buildHttpsEndpoint(discoveryBuilder));
             }
         }
 
-        return endpointConfigurations;
+        return endpointConfigs;
     }
 
-    private EndpointConfiguration buildTcpEndpoint(EndpointConfiguration.Builder base) {
+    private EndpointConfig buildTcpEndpoint(EndpointConfig.Builder base) {
         return base.copy()
                 .setTransportProfile(TransportProfile.TCP_UASC_UABINARY)
                 .setBindPort(this.port)
                 .build();
     }
 
-    private EndpointConfiguration buildHttpsEndpoint(EndpointConfiguration.Builder base) {
+    private EndpointConfig buildHttpsEndpoint(EndpointConfig.Builder base) {
         return base.copy()
                 .setTransportProfile(TransportProfile.HTTPS_UABINARY)
                 .setBindPort(this.port)
                 .build();
     }
 
-    private static final class DenyAllCertificateValidator implements ServerCertificateValidator {
-        public static final ServerCertificateValidator INSTANCE = new DenyAllCertificateValidator();
+    private static final class DenyAllCertificateValidator implements CertificateValidator {
+        public static final CertificateValidator INSTANCE = new DenyAllCertificateValidator();
 
         private DenyAllCertificateValidator() {
         }
 
         @Override
-        public void validateCertificateChain(List<X509Certificate> list, String s) throws UaException {
-            throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
-        }
-
-        @Override
-        public void validateCertificateChain(List<X509Certificate> list) throws UaException {
+        public void validateCertificateChain(List<X509Certificate> certificateChain, @Nullable String applicationUri, @Nullable String[] validHostnames) throws UaException {
             throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
         }
     }
@@ -423,7 +444,17 @@ public class MiloServerComponent extends DefaultComponent {
      */
     public void loadServerCertificate(final KeyPair keyPair, final X509Certificate certificate) {
         this.certificate = certificate;
-        setCertificateManager(new DefaultCertificateManager(keyPair, certificate));
+        // TODO evaluate migration to CertificateGroup
+//        setCertificateManager(new DefaultCertificateManager(keyPair, certificate));
+        try {
+            this.certificateGroup.updateCertificate(
+                    NodeIds.ServerConfiguration_CertificateGroups_DefaultApplicationGroup,
+                    keyPair,
+                    new X509Certificate[]{certificate});
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+
     }
 
     /**
@@ -576,13 +607,13 @@ public class MiloServerComponent extends DefaultComponent {
      * Server certificate manager
      */
     public void setCertificateManager(final CertificateManager certificateManager) {
-        this.certificateManager = certificateManager != null ? certificateManager : new DefaultCertificateManager();
+        this.certificateManager = certificateManager != null ? certificateManager : new DefaultCertificateManager(this.certificateQuarantine);
     }
 
     /**
      * Validator for client certificates
      */
-    public void setCertificateValidator(final ServerCertificateValidator certificateValidator) {
+    public void setCertificateValidator(final CertificateValidator certificateValidator) {
         this.certificateValidator = certificateValidator;
     }
 
@@ -592,12 +623,40 @@ public class MiloServerComponent extends DefaultComponent {
     public void setDefaultCertificateValidator(final String defaultCertificateValidator) {
         this.defaultCertificateValidator = defaultCertificateValidator;
         try {
-            DefaultTrustListManager trustListManager = new DefaultTrustListManager(new File(defaultCertificateValidator));
-            this.certificateValidator = new DefaultServerCertificateValidator(trustListManager);
-        } catch (IOException e) {
+            final Path certificateConfigurationPath = new File(defaultCertificateValidator).toPath();
+            TrustListManager trustListManager = FileBasedTrustListManager.createAndInitialize(certificateConfigurationPath);
+
+            this.certificateQuarantine = this.createCertificateQuarantine(certificateConfigurationPath);
+
+            this.certificateValidator = new DefaultServerCertificateValidator(trustListManager, certificateQuarantine);
+
+            this.certificateGroup = DefaultApplicationGroup.createAndInitialize(
+                    trustListManager,
+                    new MemoryCertificateStore(), // alternative is KeyStoreCertificateStore
+                    new RsaSha256CertificateFactory() {
+                        @Override
+                        protected X509Certificate[] createRsaSha256CertificateChain(KeyPair keyPair) {
+                            return new X509Certificate[] {certificate};
+                        }
+                    },
+                    certificateValidator);
+
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }
+
+    private CertificateQuarantine createCertificateQuarantine(Path certificateConfigurationPath)
+            throws IOException {
+        var certificateQuarantineDir = certificateConfigurationPath.resolve("rejected").resolve("certs");
+        var certificateQuarantine = FileBasedCertificateQuarantine.create(certificateQuarantineDir);
+        if (!Files.exists(certificateConfigurationPath)) {
+            Files.createDirectories(certificateConfigurationPath);
+        }
+
+        return certificateQuarantine;
+    }
+
 
     public String getDefaultCertificateValidator() {
         return defaultCertificateValidator;

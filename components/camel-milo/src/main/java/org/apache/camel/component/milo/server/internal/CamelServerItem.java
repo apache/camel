@@ -39,6 +39,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,7 @@ public class CamelServerItem {
                 .addAttributeFilter(new AttributeFilter() {
 
                     @Override
-                    public Object getAttribute(AttributeFilterContext.GetAttributeContext ctx, AttributeId attributeId) {
+                    public @Nullable Object getAttribute(AttributeFilterContext ctx, AttributeId attributeId) {
                         if (filter.test(attributeId) && ctx.getSession().isPresent()) {
                             return getDataValue();
                         }
@@ -82,8 +83,7 @@ public class CamelServerItem {
                     }
 
                     @Override
-                    public void setAttribute(
-                            AttributeFilterContext.SetAttributeContext ctx, AttributeId attributeId, Object value) {
+                    public void setAttribute(AttributeFilterContext ctx, AttributeId attributeId, @Nullable Object value) {
                         if (filter.test(attributeId) && ctx.getSession().isPresent()) {
                             setDataValue((DataValue) value);
                         }

@@ -22,10 +22,10 @@ import java.util.Map;
 
 import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
-import org.eclipse.milo.opcua.sdk.server.api.DataItem;
-import org.eclipse.milo.opcua.sdk.server.api.ManagedNamespaceWithLifecycle;
-import org.eclipse.milo.opcua.sdk.server.api.MonitoredItem;
-import org.eclipse.milo.opcua.sdk.server.dtd.DataTypeDictionaryManager;
+import org.eclipse.milo.opcua.sdk.server.ManagedNamespaceWithLifecycle;
+import org.eclipse.milo.opcua.sdk.server.dtd.BinaryDataTypeDictionaryManager;
+import org.eclipse.milo.opcua.sdk.server.items.DataItem;
+import org.eclipse.milo.opcua.sdk.server.items.MonitoredItem;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.sdk.server.util.SubscriptionModel;
@@ -45,7 +45,7 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
 
     private final Map<String, CamelServerItem> itemMap = new HashMap<>();
 
-    private final DataTypeDictionaryManager dictionaryManager;
+    private final BinaryDataTypeDictionaryManager dictionaryManager;
 
     private final Logger log = LoggerFactory.getLogger(CamelNamespace.class);
 
@@ -53,7 +53,7 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
         super(server, namespaceUri);
 
         this.subscriptionModel = new SubscriptionModel(server, this);
-        this.dictionaryManager = new DataTypeDictionaryManager(getNodeContext(), namespaceUri);
+        this.dictionaryManager = new BinaryDataTypeDictionaryManager(getNodeContext(), namespaceUri);
 
         getLifecycleManager().addLifecycle(dictionaryManager);
         getLifecycleManager().addLifecycle(subscriptionModel);

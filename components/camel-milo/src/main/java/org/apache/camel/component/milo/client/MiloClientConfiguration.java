@@ -23,18 +23,17 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import jakarta.xml.bind.annotation.XmlTransient;
-
-import com.google.common.base.Supplier;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.KeyStoreLoader.Result;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfigBuilder;
+import org.eclipse.milo.opcua.sdk.client.OpcUaClientConfigBuilder;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned;
+import org.eclipse.milo.shaded.com.google.common.base.Supplier;
 
 @UriParams
 public class MiloClientConfiguration implements Cloneable {
@@ -431,9 +430,10 @@ public class MiloClientConfiguration implements Cloneable {
         if (configuration.getRequestTimeout() != null) {
             builder.setRequestTimeout(Unsigned.uint(configuration.getRequestTimeout()));
         }
-        if (configuration.getChannelLifetime() != null) {
-            builder.setChannelLifetime(Unsigned.uint(configuration.getChannelLifetime()));
-        }
+        // FIXME - validate moving of ChannelLifetime to SubscriptionManager
+//        if (configuration.getChannelLifetime() != null) {
+//            builder.setChannelLifetime(Unsigned.uint(configuration.getChannelLifetime()));
+//        }
 
         whenHasText(configuration::getSessionName, value -> builder.setSessionName(() -> value));
         if (configuration.getSessionTimeout() != null) {
