@@ -6883,48 +6883,6 @@ public class StaticEndpointBuilders {
         return OBSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
-     * To broadcast messages and connect cloud services through notifications on
-     * Huawei Cloud
-     * 
-     * Category: cloud,messaging
-     * Since: 3.8
-     * Maven coordinates: org.apache.camel:camel-huaweicloud-smn
-     * 
-     * Syntax: <code>hwcloud-smn:smnService</code>
-     * 
-     * Path parameter: smnService (required)
-     * Name of SMN service to invoke
-     * 
-     * @param path smnService
-     * @return the dsl builder
-     */
-    public static SimpleNotificationEndpointBuilderFactory.SimpleNotificationEndpointBuilder hwcloudSmn(String path) {
-        return hwcloudSmn("hwcloud-smn", path);
-    }
-    /**
-     * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
-     * To broadcast messages and connect cloud services through notifications on
-     * Huawei Cloud
-     * 
-     * Category: cloud,messaging
-     * Since: 3.8
-     * Maven coordinates: org.apache.camel:camel-huaweicloud-smn
-     * 
-     * Syntax: <code>hwcloud-smn:smnService</code>
-     * 
-     * Path parameter: smnService (required)
-     * Name of SMN service to invoke
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path smnService
-     * @return the dsl builder
-     */
-    public static SimpleNotificationEndpointBuilderFactory.SimpleNotificationEndpointBuilder hwcloudSmn(String componentName, String path) {
-        return SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
      * 

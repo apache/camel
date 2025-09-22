@@ -2118,20 +2118,6 @@ public interface ComponentsBuilderFactory {
         return HwcloudObsComponentBuilderFactory.hwcloudObs();
     }
     /**
-     * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
-     * To broadcast messages and connect cloud services through notifications on
-     * Huawei Cloud
-     * 
-     * Category: cloud,messaging
-     * Since: 3.8
-     * Maven coordinates: org.apache.camel:camel-huaweicloud-smn
-     * 
-     * @return the dsl builder
-     */
-    static HwcloudSmnComponentBuilderFactory.HwcloudSmnComponentBuilder hwcloudSmn() {
-        return HwcloudSmnComponentBuilderFactory.hwcloudSmn();
-    }
-    /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
      * 
