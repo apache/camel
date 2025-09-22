@@ -111,6 +111,10 @@ The component behavior depends on the `contentInBody` configuration option:
 
 === Basic document conversion to Markdown
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:///data/documents?include=.*\\.pdf")
@@ -118,8 +122,29 @@ from("file:///data/documents?include=.*\\.pdf")
     .to("file:///data/output");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+      - to:
+          uri: "file:///data/output"
+----
+====
+
 === Convert to HTML with content in body
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:///data/documents?include=.*\\.pdf")
@@ -130,8 +155,31 @@ from("file:///data/documents?include=.*\\.pdf")
     });
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_HTML"
+          parameters:
+            contentInBody: true
+      - process:
+          ref: "htmlProcessor"
+----
+====
+
 === Extract structured data from documents
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:///data/documents?include=.*\\.pdf")
@@ -142,8 +190,32 @@ from("file:///data/documents?include=.*\\.pdf")
     });
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:EXTRACT_STRUCTURED_DATA"
+          parameters:
+            outputFormat: "json"
+            contentInBody: true
+      - process:
+          ref: "jsonDataProcessor"
+----
+====
+
 === Convert with OCR disabled
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:///data/documents?include=.*\\.pdf")
@@ -151,8 +223,31 @@ from("file:///data/documents?include=.*\\.pdf")
     .to("file:///data/output");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            enableOCR: false
+      - to:
+          uri: "file:///data/output"
+----
+====
+
 === Using headers to control processing
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:///data/documents?include=.*\\.pdf")
@@ -163,8 +258,38 @@ from("file:///data/documents?include=.*\\.pdf")
     .to("file:///data/output");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - setHeader:
+          name: "CamelDoclingOperation"
+          constant: "CONVERT_TO_HTML"
+      - setHeader:
+          name: "CamelDoclingEnableOCR"
+          constant: true
+      - setHeader:
+          name: "CamelDoclingOCRLanguage"
+          constant: "es"
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"  # Operation will be overridden by header
+      - to:
+          uri: "file:///data/output"
+----
+====
+
 === Processing with custom arguments
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:///data/documents?include=.*\\.pdf")
@@ -176,8 +301,35 @@ from("file:///data/documents?include=.*\\.pdf")
     .to("file:///data/output");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - setHeader:
+          name: "CamelDoclingCustomArguments"
+          expression:
+            method:
+              ref: "customArgsBean"
+              method: "createCustomArgs"
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+      - to:
+          uri: "file:///data/output"
+----
+====
+
 === Content in body vs file path output
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Get content directly in body (file is automatically deleted)
@@ -195,6 +347,96 @@ from("file:///data/documents?include=.*\\.pdf")
         String outputFilePath = exchange.getIn().getBody(String.class);
         log.info("Output file saved at: {}", outputFilePath);
     });
+----
+
+YAML::
++
+[source,yaml]
+----
+# Get content directly in body (file is automatically deleted)
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            contentInBody: true
+      - process:
+          ref: "contentProcessor"
+
+# Get file path (file is preserved)
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            contentInBody: false
+      - process:
+          ref: "filePathProcessor"
+----
+====
+
+=== Processor Bean Examples
+
+When using YAML DSL, the processor references used in the examples above would be implemented as Spring beans:
+
+[source,java]
+----
+@Component("htmlProcessor")
+public class HtmlProcessor implements Processor {
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        String htmlContent = exchange.getIn().getBody(String.class);
+        // Process the HTML content
+        log.info("Processing HTML content of length: {}", htmlContent.length());
+    }
+}
+
+@Component("jsonDataProcessor")
+public class JsonDataProcessor implements Processor {
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        String jsonData = exchange.getIn().getBody(String.class);
+        // Process the structured JSON data
+        log.info("Processing JSON data: {}", jsonData);
+    }
+}
+
+@Component("contentProcessor")
+public class ContentProcessor implements Processor {
+    private static final Logger log = LoggerFactory.getLogger(ContentProcessor.class);
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        String markdownContent = exchange.getIn().getBody(String.class);
+        log.info("Converted content: {}", markdownContent);
+    }
+}
+
+@Component("filePathProcessor")
+public class FilePathProcessor implements Processor {
+    private static final Logger log = LoggerFactory.getLogger(FilePathProcessor.class);
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        String outputFilePath = exchange.getIn().getBody(String.class);
+        log.info("Output file saved at: {}", outputFilePath);
+    }
+}
+
+@Component("customArgsBean")
+public class CustomArgsBean {
+    public List<String> createCustomArgs() {
+        return Arrays.asList("--verbose", "--preserve-tables");
+    }
+}
 ----
 
 == Error Handling
