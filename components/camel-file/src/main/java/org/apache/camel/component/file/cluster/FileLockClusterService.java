@@ -31,12 +31,14 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
     private long acquireLockInterval;
     private TimeUnit acquireLockIntervalUnit;
     private ScheduledExecutorService executor;
+    private int heartbeatTimeoutMultiplier;
 
     public FileLockClusterService() {
         this.acquireLockDelay = 1;
         this.acquireLockDelayUnit = TimeUnit.SECONDS;
         this.acquireLockInterval = 10;
         this.acquireLockIntervalUnit = TimeUnit.SECONDS;
+        this.heartbeatTimeoutMultiplier = 5;
     }
 
     @Override
@@ -76,7 +78,7 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
     }
 
     /**
-     * The time unit fo the acquireLockDelay, default to TimeUnit.SECONDS.
+     * The time unit for the acquireLockDelay, default to TimeUnit.SECONDS.
      */
     public void setAcquireLockDelayUnit(TimeUnit acquireLockDelayUnit) {
         this.acquireLockDelayUnit = acquireLockDelayUnit;
@@ -103,10 +105,26 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
     }
 
     /**
-     * The time unit fo the acquireLockInterva, default to TimeUnit.SECONDS.
+     * The time unit for the acquireLockInterval, default to TimeUnit.SECONDS.
      */
     public void setAcquireLockIntervalUnit(TimeUnit acquireLockIntervalUnit) {
         this.acquireLockIntervalUnit = acquireLockIntervalUnit;
+    }
+
+    /**
+     * Multiplier applied to the cluster leader {@code acquireLockInterval} to determine how long followers should wait
+     * before considering the leader "stale".
+     * <p>
+     * For example, if the leader updates its heartbeat every 2 seconds and the {@code heartbeatTimeoutMultiplier} is 3,
+     * followers will tolerate up to {@code 2s * 3 = 6s} of silence before declaring the leader unavailable.
+     * <p>
+     */
+    public void setHeartbeatTimeoutMultiplier(int heartbeatTimeoutMultiplier) {
+        this.heartbeatTimeoutMultiplier = heartbeatTimeoutMultiplier;
+    }
+
+    public int getHeartbeatTimeoutMultiplier() {
+        return heartbeatTimeoutMultiplier;
     }
 
     @Override
