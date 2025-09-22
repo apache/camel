@@ -42,9 +42,9 @@ public final class ValueConverterLoader implements TypeConverterLoader, CamelCon
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.eclipse.milo.opcua.stack.core.types.builtin.DataValue.class, org.eclipse.milo.opcua.stack.core.types.builtin.Variant.class, false,
-            (type, exchange, value) -> org.apache.camel.component.milo.converter.ValueConverter.toDataValue((org.eclipse.milo.opcua.stack.core.types.builtin.Variant) value));
+            (type, exchange, value) -> ValueConverter.toDataValue((org.eclipse.milo.opcua.stack.core.types.builtin.Variant) value));
         addTypeConverter(registry, org.eclipse.milo.opcua.stack.core.types.builtin.Variant.class, org.eclipse.milo.opcua.stack.core.types.builtin.DataValue.class, false,
-            (type, exchange, value) -> org.apache.camel.component.milo.converter.ValueConverter.toVariant((org.eclipse.milo.opcua.stack.core.types.builtin.DataValue) value));
+            (type, exchange, value) -> ValueConverter.toVariant((org.eclipse.milo.opcua.stack.core.types.builtin.DataValue) value));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { 

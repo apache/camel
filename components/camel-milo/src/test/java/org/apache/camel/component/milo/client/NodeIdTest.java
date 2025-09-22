@@ -18,8 +18,10 @@ package org.apache.camel.component.milo.client;
 
 import java.io.Serializable;
 
+import com.google.common.net.UrlEscapers;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.milo.AbstractMiloServerTest;
+import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,8 +29,6 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.google.common.net.UrlEscapers.urlFormParameterEscaper;
-import static org.apache.camel.component.milo.server.MiloServerComponent.DEFAULT_NAMESPACE_URI;
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,8 +52,8 @@ public class NodeIdTest extends AbstractMiloServerTest {
 
     @Test
     public void testFull1() {
-        final String s = String.format("nsu=%s;s=%s", DEFAULT_NAMESPACE_URI, "item-1");
-        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")", DEFAULT_NAMESPACE_URI,
+        final String s = String.format("nsu=%s;s=%s", MiloServerComponent.DEFAULT_NAMESPACE_URI, "item-1");
+        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")", MiloServerComponent.DEFAULT_NAMESPACE_URI,
                 "item-1");
     }
 
@@ -73,7 +73,7 @@ public class NodeIdTest extends AbstractMiloServerTest {
     public void testFull1NonRaw() {
         final String s = String.format("ns=%s;i=%s", 1, 2);
         testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node="
-                + urlFormParameterEscaper().escape(s), ushort(1), uint(2));
+                + UrlEscapers.urlFormParameterEscaper().escape(s), ushort(1), uint(2));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class NodeIdTest extends AbstractMiloServerTest {
     public void testMixed() {
         // This must fail since "node" is incomplete
         assertThrows(ResolveEndpointFailedException.class,
-                () -> testUri("milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri=" + DEFAULT_NAMESPACE_URI,
+                () -> testUri("milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri=" + MiloServerComponent.DEFAULT_NAMESPACE_URI,
                         null, null));
     }
 

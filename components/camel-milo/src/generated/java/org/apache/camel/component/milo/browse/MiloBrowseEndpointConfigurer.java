@@ -22,58 +22,58 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         MiloBrowseEndpoint target = (MiloBrowseEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedsecuritypolicies":
-        case "allowedSecurityPolicies": target.getConfiguration().setAllowedSecurityPolicies(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowedSecurityPolicies": target.getConfiguration().setAllowedSecurityPolicies(property(camelContext, String.class, value)); return true;
         case "applicationname":
-        case "applicationName": target.getConfiguration().setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationName": target.getConfiguration().setApplicationName(property(camelContext, String.class, value)); return true;
         case "applicationuri":
-        case "applicationUri": target.getConfiguration().setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationUri": target.getConfiguration().setApplicationUri(property(camelContext, String.class, value)); return true;
         case "channellifetime":
-        case "channelLifetime": target.getConfiguration().setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
+        case "channelLifetime": target.getConfiguration().setChannelLifetime(property(camelContext, Long.class, value)); return true;
         case "clientid":
-        case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientId": target.getConfiguration().setClientId(property(camelContext, String.class, value)); return true;
         case "depth": target.setDepth(property(camelContext, int.class, value)); return true;
         case "direction": target.setDirection(property(camelContext, org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection.class, value)); return true;
         case "discoveryendpointsuffix":
-        case "discoveryEndpointSuffix": target.getConfiguration().setDiscoveryEndpointSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "discoveryEndpointSuffix": target.getConfiguration().setDiscoveryEndpointSuffix(property(camelContext, String.class, value)); return true;
         case "discoveryendpointuri":
-        case "discoveryEndpointUri": target.getConfiguration().setDiscoveryEndpointUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "filter": target.setFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "discoveryEndpointUri": target.getConfiguration().setDiscoveryEndpointUri(property(camelContext, String.class, value)); return true;
+        case "filter": target.setFilter(property(camelContext, String.class, value)); return true;
         case "includesubtypes":
         case "includeSubTypes": target.setIncludeSubTypes(property(camelContext, boolean.class, value)); return true;
         case "keyalias":
-        case "keyAlias": target.getConfiguration().setKeyAlias(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyAlias": target.getConfiguration().setKeyAlias(property(camelContext, String.class, value)); return true;
         case "keypassword":
-        case "keyPassword": target.getConfiguration().setKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyPassword": target.getConfiguration().setKeyPassword(property(camelContext, String.class, value)); return true;
         case "keystorepassword":
-        case "keyStorePassword": target.getConfiguration().setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyStorePassword": target.getConfiguration().setKeyStorePassword(property(camelContext, String.class, value)); return true;
         case "keystoretype":
-        case "keyStoreType": target.getConfiguration().setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyStoreType": target.getConfiguration().setKeyStoreType(property(camelContext, String.class, value)); return true;
         case "keystoreurl":
-        case "keyStoreUrl": target.getConfiguration().setKeyStoreUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyStoreUrl": target.getConfiguration().setKeyStoreUrl(property(camelContext, String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxnodeidsperrequest":
         case "maxNodeIdsPerRequest": target.setMaxNodeIdsPerRequest(property(camelContext, int.class, value)); return true;
         case "maxpendingpublishrequests":
-        case "maxPendingPublishRequests": target.getConfiguration().setMaxPendingPublishRequests(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxPendingPublishRequests": target.getConfiguration().setMaxPendingPublishRequests(property(camelContext, Long.class, value)); return true;
         case "maxresponsemessagesize":
-        case "maxResponseMessageSize": target.getConfiguration().setMaxResponseMessageSize(property(camelContext, java.lang.Long.class, value)); return true;
-        case "node": target.setNode(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxResponseMessageSize": target.getConfiguration().setMaxResponseMessageSize(property(camelContext, Long.class, value)); return true;
+        case "node": target.setNode(property(camelContext, String.class, value)); return true;
         case "nodeclasses":
-        case "nodeClasses": target.setNodeClasses(property(camelContext, java.lang.String.class, value)); return true;
+        case "nodeClasses": target.setNodeClasses(property(camelContext, String.class, value)); return true;
         case "overridehost":
         case "overrideHost": target.getConfiguration().setOverrideHost(property(camelContext, boolean.class, value)); return true;
         case "producturi":
-        case "productUri": target.getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "productUri": target.getConfiguration().setProductUri(property(camelContext, String.class, value)); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
         case "requesttimeout":
-        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, Long.class, value)); return true;
         case "requestedpublishinginterval":
-        case "requestedPublishingInterval": target.getConfiguration().setRequestedPublishingInterval(property(camelContext, java.lang.Double.class, value)); return true;
+        case "requestedPublishingInterval": target.getConfiguration().setRequestedPublishingInterval(property(camelContext, Double.class, value)); return true;
         case "sessionname":
-        case "sessionName": target.getConfiguration().setSessionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessionName": target.getConfiguration().setSessionName(property(camelContext, String.class, value)); return true;
         case "sessiontimeout":
-        case "sessionTimeout": target.getConfiguration().setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "sessionTimeout": target.getConfiguration().setSessionTimeout(property(camelContext, Long.class, value)); return true;
         default: return false;
         }
     }
@@ -82,58 +82,58 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedsecuritypolicies":
-        case "allowedSecurityPolicies": return java.lang.String.class;
+        case "allowedSecurityPolicies": return String.class;
         case "applicationname":
-        case "applicationName": return java.lang.String.class;
+        case "applicationName": return String.class;
         case "applicationuri":
-        case "applicationUri": return java.lang.String.class;
+        case "applicationUri": return String.class;
         case "channellifetime":
-        case "channelLifetime": return java.lang.Long.class;
+        case "channelLifetime": return Long.class;
         case "clientid":
-        case "clientId": return java.lang.String.class;
+        case "clientId": return String.class;
         case "depth": return int.class;
         case "direction": return org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection.class;
         case "discoveryendpointsuffix":
-        case "discoveryEndpointSuffix": return java.lang.String.class;
+        case "discoveryEndpointSuffix": return String.class;
         case "discoveryendpointuri":
-        case "discoveryEndpointUri": return java.lang.String.class;
-        case "filter": return java.lang.String.class;
+        case "discoveryEndpointUri": return String.class;
+        case "filter": return String.class;
         case "includesubtypes":
         case "includeSubTypes": return boolean.class;
         case "keyalias":
-        case "keyAlias": return java.lang.String.class;
+        case "keyAlias": return String.class;
         case "keypassword":
-        case "keyPassword": return java.lang.String.class;
+        case "keyPassword": return String.class;
         case "keystorepassword":
-        case "keyStorePassword": return java.lang.String.class;
+        case "keyStorePassword": return String.class;
         case "keystoretype":
-        case "keyStoreType": return java.lang.String.class;
+        case "keyStoreType": return String.class;
         case "keystoreurl":
-        case "keyStoreUrl": return java.lang.String.class;
+        case "keyStoreUrl": return String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxnodeidsperrequest":
         case "maxNodeIdsPerRequest": return int.class;
         case "maxpendingpublishrequests":
-        case "maxPendingPublishRequests": return java.lang.Long.class;
+        case "maxPendingPublishRequests": return Long.class;
         case "maxresponsemessagesize":
-        case "maxResponseMessageSize": return java.lang.Long.class;
-        case "node": return java.lang.String.class;
+        case "maxResponseMessageSize": return Long.class;
+        case "node": return String.class;
         case "nodeclasses":
-        case "nodeClasses": return java.lang.String.class;
+        case "nodeClasses": return String.class;
         case "overridehost":
         case "overrideHost": return boolean.class;
         case "producturi":
-        case "productUri": return java.lang.String.class;
+        case "productUri": return String.class;
         case "recursive": return boolean.class;
         case "requesttimeout":
-        case "requestTimeout": return java.lang.Long.class;
+        case "requestTimeout": return Long.class;
         case "requestedpublishinginterval":
-        case "requestedPublishingInterval": return java.lang.Double.class;
+        case "requestedPublishingInterval": return Double.class;
         case "sessionname":
-        case "sessionName": return java.lang.String.class;
+        case "sessionName": return String.class;
         case "sessiontimeout":
-        case "sessionTimeout": return java.lang.Long.class;
+        case "sessionTimeout": return Long.class;
         default: return null;
         }
     }

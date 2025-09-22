@@ -22,13 +22,13 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         MiloServerComponent target = (MiloServerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "applicationname":
-        case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationName": target.setApplicationName(property(camelContext, String.class, value)); return true;
         case "applicationuri":
-        case "applicationUri": target.setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationUri": target.setApplicationUri(property(camelContext, String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bindaddresses":
-        case "bindAddresses": target.setBindAddresses(property(camelContext, java.lang.String.class, value)); return true;
+        case "bindAddresses": target.setBindAddresses(property(camelContext, String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "buildinfo":
@@ -39,23 +39,23 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "certificatevalidator":
         case "certificateValidator": target.setCertificateValidator(property(camelContext, org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator.class, value)); return true;
         case "defaultcertificatevalidator":
-        case "defaultCertificateValidator": target.setDefaultCertificateValidator(property(camelContext, java.lang.String.class, value)); return true;
+        case "defaultCertificateValidator": target.setDefaultCertificateValidator(property(camelContext, String.class, value)); return true;
         case "enableanonymousauthentication":
         case "enableAnonymousAuthentication": target.setEnableAnonymousAuthentication(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "namespaceuri":
-        case "namespaceUri": target.setNamespaceUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "namespaceUri": target.setNamespaceUri(property(camelContext, String.class, value)); return true;
+        case "path": target.setPath(property(camelContext, String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
         case "producturi":
-        case "productUri": target.setProductUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "productUri": target.setProductUri(property(camelContext, String.class, value)); return true;
         case "securitypolicies":
         case "securityPolicies": target.setSecurityPolicies(property(camelContext, java.util.Set.class, value)); return true;
         case "securitypoliciesbyid":
-        case "securityPoliciesById": target.setSecurityPoliciesById(property(camelContext, java.lang.String.class, value)); return true;
+        case "securityPoliciesById": target.setSecurityPoliciesById(property(camelContext, String.class, value)); return true;
         case "userauthenticationcredentials":
-        case "userAuthenticationCredentials": target.setUserAuthenticationCredentials(property(camelContext, java.lang.String.class, value)); return true;
+        case "userAuthenticationCredentials": target.setUserAuthenticationCredentials(property(camelContext, String.class, value)); return true;
         case "usernamesecuritypolicyuri":
         case "usernameSecurityPolicyUri": target.setUsernameSecurityPolicyUri(property(camelContext, org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class, value)); return true;
         default: return false;
@@ -66,13 +66,13 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "applicationname":
-        case "applicationName": return java.lang.String.class;
+        case "applicationName": return String.class;
         case "applicationuri":
-        case "applicationUri": return java.lang.String.class;
+        case "applicationUri": return String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bindaddresses":
-        case "bindAddresses": return java.lang.String.class;
+        case "bindAddresses": return String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "buildinfo":
@@ -83,23 +83,23 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "certificatevalidator":
         case "certificateValidator": return org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator.class;
         case "defaultcertificatevalidator":
-        case "defaultCertificateValidator": return java.lang.String.class;
+        case "defaultCertificateValidator": return String.class;
         case "enableanonymousauthentication":
         case "enableAnonymousAuthentication": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "namespaceuri":
-        case "namespaceUri": return java.lang.String.class;
-        case "path": return java.lang.String.class;
+        case "namespaceUri": return String.class;
+        case "path": return String.class;
         case "port": return int.class;
         case "producturi":
-        case "productUri": return java.lang.String.class;
+        case "productUri": return String.class;
         case "securitypolicies":
         case "securityPolicies": return java.util.Set.class;
         case "securitypoliciesbyid":
-        case "securityPoliciesById": return java.lang.String.class;
+        case "securityPoliciesById": return String.class;
         case "userauthenticationcredentials":
-        case "userAuthenticationCredentials": return java.lang.String.class;
+        case "userAuthenticationCredentials": return String.class;
         case "usernamesecuritypolicyuri":
         case "usernameSecurityPolicyUri": return org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class;
         default: return null;

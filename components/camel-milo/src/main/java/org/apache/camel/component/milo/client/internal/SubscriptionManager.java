@@ -39,28 +39,25 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.client.MiloClientConfiguration;
 import org.apache.camel.component.milo.client.MonitorFilterConfiguration;
+import org.eclipse.milo.opcua.sdk.client.DiscoveryClient;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
-import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfigBuilder;
-import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
-import org.eclipse.milo.opcua.sdk.client.api.identity.CompositeProvider;
-import org.eclipse.milo.opcua.sdk.client.api.identity.IdentityProvider;
-import org.eclipse.milo.opcua.sdk.client.api.identity.UsernameProvider;
-import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
-import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
-import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscriptionManager.SubscriptionListener;
-import org.eclipse.milo.opcua.stack.client.DiscoveryClient;
+import org.eclipse.milo.opcua.sdk.client.OpcUaClientConfigBuilder;
+import org.eclipse.milo.opcua.sdk.client.identity.AnonymousProvider;
+import org.eclipse.milo.opcua.sdk.client.identity.CompositeProvider;
+import org.eclipse.milo.opcua.sdk.client.identity.IdentityProvider;
+import org.eclipse.milo.opcua.sdk.client.identity.UsernameProvider;
+import org.eclipse.milo.opcua.sdk.client.subscriptions.MonitoredItemServiceOperationResult;
+import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaMonitoredItem;
+import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaSubscription;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
-import org.eclipse.milo.opcua.stack.core.types.builtin.DateTime;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExtensionObject;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
@@ -84,6 +81,8 @@ import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringFilter;
 import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringParameters;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
+import org.eclipse.milo.shaded.com.google.common.base.Strings;
+import org.eclipse.milo.shaded.com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,31 +97,21 @@ public class SubscriptionManager {
 
     private final AtomicLong clientHandleCounter = new AtomicLong();
 
-    private final class SubscriptionListenerImpl implements SubscriptionListener {
+    private final class SubscriptionListenerImpl implements OpcUaSubscription.SubscriptionListener {
+
         @Override
-        public void onSubscriptionTransferFailed(final UaSubscription subscription, final StatusCode statusCode) {
+        public void onStatusChanged(final OpcUaSubscription subscription, final StatusCode status) {
+            LOG.info("Subscription status changed {} : {}", subscription.getSubscriptionId(), status);
+        }
+
+        @Override
+        public void onTransferFailed(final OpcUaSubscription subscription, final StatusCode statusCode) {
             LOG.info("Transfer failed {} : {}", subscription.getSubscriptionId(), statusCode);
 
             // we simply tear it down and build it up again
             handleConnectionFailure(new RuntimeCamelException("Subscription failed to reconnect"));
         }
 
-        @Override
-        public void onStatusChanged(final UaSubscription subscription, final StatusCode status) {
-            LOG.info("Subscription status changed {} : {}", subscription.getSubscriptionId(), status);
-        }
-
-        @Override
-        public void onPublishFailure(final UaException exception) {
-        }
-
-        @Override
-        public void onNotificationDataLost(final UaSubscription subscription) {
-        }
-
-        @Override
-        public void onKeepAlive(final UaSubscription subscription, final DateTime publishTime) {
-        }
     }
 
     public interface Worker<T> {
@@ -162,21 +151,21 @@ public class SubscriptionManager {
                 return null;
             }
             final MonitoringFilter monitorFilter = this.monitorFilterConfiguration.createMonitoringFilter();
-            return ExtensionObject.encode(client.getStaticSerializationContext(), monitorFilter);
+            return ExtensionObject.encode(client.getStaticEncodingContext(), monitorFilter);
         }
     }
 
     private class Connected {
         private OpcUaClient client;
-        private final UaSubscription manager;
+        private final OpcUaSubscription manager;
 
         private final Map<UInteger, Subscription> badSubscriptions = new HashMap<>();
 
-        private final Map<UInteger, UaMonitoredItem> goodSubscriptions = new HashMap<>();
+        private final Map<UInteger, OpcUaMonitoredItem> goodSubscriptions = new HashMap<>();
 
         private final Map<String, UShort> namespaceCache = new ConcurrentHashMap<>();
 
-        Connected(final OpcUaClient client, final UaSubscription manager) {
+        Connected(final OpcUaClient client, final OpcUaSubscription manager) {
             this.client = client;
             this.manager = manager;
         }
@@ -189,7 +178,8 @@ public class SubscriptionManager {
 
             // convert to requests
 
-            final List<MonitoredItemCreateRequest> items = new ArrayList<>(subscriptions.size());
+//            final List<MonitoredItemCreateRequest> items = new ArrayList<>(subscriptions.size());
+            final List<OpcUaMonitoredItem> items = new ArrayList<>(subscriptions.size());
 
             for (final Map.Entry<UInteger, Subscription> entry : subscriptions.entrySet()) {
                 final Subscription s = entry.getValue();
@@ -204,14 +194,33 @@ public class SubscriptionManager {
 
                     final MonitoringParameters parameters = new MonitoringParameters(
                             entry.getKey(), samplingInterval, s.createMonitoringFilter(client), null, true);
-                    items.add(new MonitoredItemCreateRequest(itemId, MonitoringMode.Reporting, parameters));
+//                    items.add(new MonitoredItemCreateRequest(itemId, MonitoringMode.Reporting, parameters));
+                    items.add(new OpcUaMonitoredItem(itemId, MonitoringMode.Reporting));
                 }
             }
 
             if (!items.isEmpty()) {
 
                 // create monitors
+                for(OpcUaMonitoredItem item : items) {
+                    this.manager.addMonitoredItem(item);
+                }
+                List<MonitoredItemServiceOperationResult> resultList = this.manager.createMonitoredItems();
+                for(MonitoredItemServiceOperationResult result: resultList) {
+                    StatusCode statusCode = result.operationResult().get();
+                    UInteger clientHandle = result.monitoredItem().getClientHandle().get();
+                    final Subscription s = subscriptions.get(clientHandle);
+                    if(statusCode.isBad()) {
+                        handleSubscriptionError(statusCode, clientHandle, s);
+                    } else {
+                        this.goodSubscriptions.put(clientHandle, result.monitoredItem());
+//                        item.setValueConsumer(s.getValueConsumer());
+                    }
+                }
 
+
+
+                /*
                 this.manager.createMonitoredItems(TimestampsToReturn.Both, items, (item, idx) -> {
 
                     // set value listener
@@ -226,6 +235,7 @@ public class SubscriptionManager {
                     }
 
                 }).get();
+                */
             }
 
             if (!this.badSubscriptions.isEmpty()) {
@@ -254,9 +264,13 @@ public class SubscriptionManager {
         }
 
         public void deactivate(final UInteger clientHandle) throws Exception {
-            final UaMonitoredItem item = this.goodSubscriptions.remove(clientHandle);
+            final OpcUaMonitoredItem item = this.goodSubscriptions.remove(clientHandle);
             if (item != null) {
-                this.manager.deleteMonitoredItems(Collections.singletonList(item)).get();
+                // TODO is this migrated correctly?
+                this.manager.removeMonitoredItem(item);
+//                this.manager.synchronizeMonitoredItems();
+                this.manager.deleteMonitoredItems();
+//                this.manager.deleteMonitoredItems(Collections.singletonList(item)).get();
             } else {
                 this.badSubscriptions.remove(clientHandle);
             }
@@ -282,9 +296,11 @@ public class SubscriptionManager {
              */
 
             LOG.debug("Looking up namespace on server: {}", namespaceUri);
-
-            final CompletableFuture<DataValue> future
-                    = this.client.readValue(0, TimestampsToReturn.Neither, Identifiers.Server_NamespaceArray);
+//
+//            final CompletableFuture<DataValue> future
+//                    = this.client.readValue(0, TimestampsToReturn.Neither, Identifiers.Server_NamespaceArray);
+            CompletableFuture<DataValue> future = this.client.readValuesAsync(0, TimestampsToReturn.Neither, Collections.singletonList(Identifiers.Server_NamespaceArray))
+                    .thenApply(r -> r.get(0));
 
             return future.thenApply(value -> {
                 final Object rawValue = value.getValue().getValue();
@@ -305,8 +321,13 @@ public class SubscriptionManager {
 
         public void dispose() {
             if (this.client != null) {
-                this.client.disconnect();
-                this.client = null;
+                try {
+                    this.client.disconnect();
+                    this.client = null;
+                } catch (final UaException e) {
+                    LOG.warn("Failed to disconnect client", e);
+                }
+
             }
         }
 
@@ -327,11 +348,9 @@ public class SubscriptionManager {
         }
 
         public CompletableFuture<StatusCode> write(final ExpandedNodeId nodeId, final DataValue value) {
-
+            /*
             return lookupNamespace(nodeId).thenCompose(node -> {
-
                 LOG.debug("Node - expanded: {}, full: {}", nodeId, node);
-
                 return this.client.writeValue(node, value).whenComplete((status, error) -> {
                     if (status != null) {
                         LOG.debug("Write to node={} = {} -> {}", node, value, status);
@@ -339,7 +358,22 @@ public class SubscriptionManager {
                         LOG.debug("Failed to write", error);
                     }
                 });
+            });
+            */
 
+            return lookupNamespace(nodeId).thenCompose(node -> {
+
+                LOG.debug("Node - expanded: {}, full: {}", nodeId, node);
+
+                return this.client.writeValuesAsync(List.of(node), List.of(value))
+                        .thenApply(r -> r.get(0))
+                        .whenComplete((status, error) -> {
+                            if (status != null) {
+                                LOG.debug("Write to node={} = {} -> {}", node, value, status);
+                            } else {
+                                LOG.debug("Failed to write", error);
+                            }
+                        });
             });
         }
 
@@ -356,6 +390,7 @@ public class SubscriptionManager {
 
                     final CallMethodRequest cmr = new CallMethodRequest(node, method, inputArguments);
 
+                    /*
                     return this.client.call(cmr).whenComplete((status, error) -> {
                         if (status != null) {
                             LOG.debug("Call to node={}, method={} = {}-> {}", nodeId, methodId, inputArguments, status);
@@ -363,6 +398,16 @@ public class SubscriptionManager {
                             LOG.debug("Failed to call", error);
                         }
                     });
+                    */
+                    return this.client.callAsync(List.of(cmr))
+                            .thenApply(r -> r.getResults()[0])
+                            .whenComplete((status, error) -> {
+                                if (status != null) {
+                                    LOG.debug("Call to node={}, method={} = {}-> {}", nodeId, methodId, inputArguments, status);
+                                } else {
+                                    LOG.debug("Failed to call", error);
+                                }
+                            });
 
                 });
 
@@ -376,7 +421,7 @@ public class SubscriptionManager {
 
             return CompletableFuture.allOf(nodeIdFutures).thenCompose(param -> {
                 List<NodeId> nodeIds = Stream.of(nodeIdFutures).map(CompletableFuture::join).collect(Collectors.toList());
-                return this.client.readValues(0, TimestampsToReturn.Server, nodeIds);
+                return this.client.readValuesAsync(0, TimestampsToReturn.Server, nodeIds);
             });
         }
 
@@ -421,7 +466,9 @@ public class SubscriptionManager {
 
             if (previousBrowseResult.getStatusCode().isGood() && continuationPoint.isNotNull()) {
 
-                return this.client.browseNext(false, continuationPoint)
+//                return this.client.browseNext(false, continuationPoint)
+                return this.client.browseNextAsync(false, List.of(continuationPoint))
+                        .thenApply(r -> r.getResults()[0])
 
                         .thenCompose(browseResult -> {
 
@@ -499,7 +546,7 @@ public class SubscriptionManager {
                 List<BrowseDescription> browseDescriptions,
                 int depth, int maxDepth, Pattern pattern, int maxNodesPerRequest) {
 
-            return this.client.browse(browseDescriptions)
+            return this.client.browseAsync(browseDescriptions)
 
                     .thenCompose(partials -> {
 
@@ -694,16 +741,30 @@ public class SubscriptionManager {
         cfg.setEndpoint(endpoint);
 
         // create client
+        final OpcUaClient client = OpcUaClient.create(
+                cfg.build(),
+                // have been in MiloclientConfiguration before
+                transportBuilder -> {
+                    if (configuration.getChannelLifetime() != null) {
+                        transportBuilder.setChannelLifetime(Unsigned.uint(configuration.getChannelLifetime()));
+                    }
+                });
 
-        final OpcUaClient client = OpcUaClient.create(cfg.build());
-        client.connect().get();
+        client.connect();
 
         try {
-            final UaSubscription manager = client.getSubscriptionManager()
-                    .createSubscription(this.configuration.getRequestedPublishingInterval()).get();
-            client.getSubscriptionManager().addSubscriptionListener(new SubscriptionListenerImpl());
+            // FIXME validate Subscription creation
+            OpcUaSubscription subscription = new OpcUaSubscription(client);
+            subscription.setSubscriptionListener(new SubscriptionListenerImpl());
+            subscription.create();
 
-            return new Connected(client, manager);
+            return new Connected(client, subscription);
+
+//            final OpcUaSubscription manager = client.getSubscriptionManager()
+//                    .createSubscription(this.configuration.getRequestedPublishingInterval()).get();
+//            client.getSubscriptionManager().addSubscriptionListener(new SubscriptionListenerImpl());
+//
+//            return new Connected(client, manager);
         } catch (final Exception e) {
             // clean up
             client.disconnect();
