@@ -28,4 +28,16 @@ public interface AzureInfraService extends InfrastructureService {
      * @return
      */
     AzureCredentialsHolder azureCredentials();
+
+    String accountName();
+
+    String accessKey();
+
+    String host();
+
+    int port();
+
+    default String credentialType() {
+        return "SHARED_KEY_CREDENTIAL";
+    }
 }

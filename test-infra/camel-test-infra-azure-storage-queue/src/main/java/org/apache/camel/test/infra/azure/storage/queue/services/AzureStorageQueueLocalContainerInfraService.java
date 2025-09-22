@@ -40,4 +40,24 @@ public class AzureStorageQueueLocalContainerInfraService extends AzureStorageInf
     public AzureCredentialsHolder azureCredentials() {
         return getContainer().azureCredentials();
     }
+
+    @Override
+    public String host() {
+        return getContainer().getHost();
+    }
+
+    @Override
+    public int port() {
+        return getContainer().getMappedPort(AzureServices.QUEUE_SERVICE);
+    }
+
+    @Override
+    public String accountName() {
+        return getContainer().azureCredentials().accountName();
+    }
+
+    @Override
+    public String accessKey() {
+        return getContainer().azureCredentials().accountKey();
+    }
 }

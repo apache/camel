@@ -46,7 +46,7 @@ public abstract class AzureStorageInfraService implements AzureInfraService, Con
     }
 
     protected AzuriteContainer initContainer(String imageName) {
-        return new AzuriteContainer(imageName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        return new AzuriteContainer(imageName, ContainerEnvironmentUtil.isFixedPort(this.getClass().getSuperclass()));
     }
 
     public AzuriteContainer getContainer() {

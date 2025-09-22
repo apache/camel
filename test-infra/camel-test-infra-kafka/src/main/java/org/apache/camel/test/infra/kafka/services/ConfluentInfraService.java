@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.TestUtils;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
@@ -47,7 +48,17 @@ public class ConfluentInfraService implements KafkaInfraService, ContainerServic
     }
 
     protected ConfluentContainer initConfluentContainer(Network network, String instanceName) {
-        return new ConfluentContainer(network, instanceName);
+        class TestInfraConfluentContainer extends ConfluentContainer {
+            public TestInfraConfluentContainer(Network network, String name, boolean fixedPort) {
+                super(network, name);
+
+                if (fixedPort) {
+                    addFixedExposedPort(9092, 9092);
+                }
+            }
+        }
+
+        return new TestInfraConfluentContainer(network, instanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     protected Integer getKafkaPort() {
