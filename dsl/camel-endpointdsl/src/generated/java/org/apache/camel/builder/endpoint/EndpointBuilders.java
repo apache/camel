@@ -94,6 +94,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.DisruptorVmEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.DoclingEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DrillEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DynamicRouterControlEndpointBuilderFactory,

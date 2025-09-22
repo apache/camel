@@ -23,37 +23,42 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
+        <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
         <version>4.15.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-ai-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>Camel :: AI :: Parent</name>
-    <description>Camel AI parent</description>
+    <artifactId>camel-docling</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: AI :: Docling</name>
+    <description>Docling document processing component</description>
 
-    <modules>
-        <module>camel-chatscript</module>
-        <module>camel-djl</module>
-        <module>camel-docling</module>
-        <module>camel-kserve</module>
-        <module>camel-langchain4j-agent-api</module>
-        <module>camel-langchain4j-agent</module>
-        <module>camel-langchain4j-chat</module>
-        <module>camel-langchain4j-core</module>
-        <module>camel-langchain4j-embeddings</module>
-        <module>camel-langchain4j-embeddingstore</module>
-        <module>camel-langchain4j-tokenizer</module>
-        <module>camel-langchain4j-tools</module>
-        <module>camel-langchain4j-web-search</module>
-        <module>camel-milvus</module>
-        <module>camel-neo4j</module>
-        <module>camel-pinecone</module>
-        <module>camel-qdrant</module>
-        <module>camel-tensorflow-serving</module>
-        <module>camel-torchserve</module>
-        <module>camel-weaviate</module>
-    </modules>
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+
+        <!-- Docling Python integration - will use process execution -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
+
+        <!-- for testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 
 </project>
