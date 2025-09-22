@@ -51,7 +51,7 @@ public interface DoclingComponentBuilderFactory {
     interface DoclingComponentBuilder extends ComponentBuilder<DoclingComponent> {
     
         /**
-         * The configuration;.
+         * The configuration for the Docling Endpoint.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.docling.DoclingConfiguration&lt;/code&gt; type.

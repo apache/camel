@@ -55,7 +55,7 @@ public class DoclingComponent extends DefaultComponent {
     }
 
     /**
-     * The configuration;
+     * The configuration for the Docling Endpoint
      */
     public void setConfiguration(DoclingConfiguration configuration) {
         this.configuration = configuration;
