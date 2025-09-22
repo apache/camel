@@ -58,13 +58,26 @@ public final class ContainerEnvironmentUtil {
         container.setStartupAttempts(startupAttempts);
     }
 
+    /**
+     * Determines if a service class should use fixed ports (for Camel JBang compatibility) or random ports (for
+     * testcontainer isolation).
+     *
+     * Services implementing an interface with "InfraService" in the name are considered to be intended for use with
+     * Camel JBang and will use fixed default ports.
+     *
+     * @param  cls the service class to check
+     * @return     true if the service should use fixed ports, false for random ports
+     */
     public static boolean isFixedPort(@SuppressWarnings("rawtypes") Class cls) {
         for (Class<?> i : cls.getInterfaces()) {
             if (i.getName().contains("InfraService")) {
+                LOG.debug("Service {} will use fixed ports (detected InfraService interface: {})",
+                        cls.getSimpleName(), i.getSimpleName());
                 return true;
             }
         }
 
+        LOG.debug("Service {} will use random ports (no InfraService interface detected)", cls.getSimpleName());
         return false;
     }
 
