@@ -106,14 +106,11 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                 String desc = setter.getJavaDoc().getFullText();
                 boolean deprecated
                         = clazz.getAnnotation(Deprecated.class) != null || setter.getAnnotation(Deprecated.class) != null;
-                String type = fromMainToType(javaType);
                 MainModel.MainOptionModel model = new MainModel.MainOptionModel();
                 model.setName(name);
-                model.setType(type);
                 model.setJavaType(javaType);
                 model.setDescription(JavadocHelper.sanitizeDescription(desc, false));
                 model.setSourceType(sourceType);
-                model.setDefaultValue(asDefaultValue(type, defaultValue));
                 model.setDeprecated(deprecated);
                 model.setSecret(secret);
                 model.setRequired(required);
@@ -137,6 +134,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     }
                 }
                 model.setEnums(enums);
+                String type = MojoHelper.getType(javaType, enums != null && !enums.isEmpty(), false);
+                model.setType(type);
+                model.setDefaultValue(asDefaultValue(type, defaultValue));
                 answer.add(model);
             }
         });
