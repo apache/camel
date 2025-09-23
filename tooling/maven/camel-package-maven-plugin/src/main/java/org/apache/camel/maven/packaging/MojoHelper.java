@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -203,6 +204,8 @@ public final class MojoHelper {
             return "string";
         } else if (type.startsWith("java.util.List") || type.startsWith("java.util.Collection")) {
             return "array";
+        } else if (type.equals(Duration.class.getName())) {
+            return "duration";
         }
 
         String primitive = getPrimitiveType(type);

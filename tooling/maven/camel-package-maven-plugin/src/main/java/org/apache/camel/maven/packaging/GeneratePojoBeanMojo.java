@@ -258,13 +258,13 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                 javaType = fi.getType().getTypeName();
             }
             o.setJavaType(javaType);
-            o.setType(getType(javaType, false, false));
             o.setDescription(ai.description());
             String enums = ai.enums();
             if (!enums.isEmpty()) {
                 String[] values = enums.split(",");
                 o.setEnums(Stream.of(values).map(String::trim).toList());
             }
+            o.setType(getType(javaType, !enums.isEmpty(), false));
             model.addOption(o);
         }
     }

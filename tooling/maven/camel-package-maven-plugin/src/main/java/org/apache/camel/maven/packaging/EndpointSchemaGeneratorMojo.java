@@ -1099,7 +1099,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setKind("property");
                     option.setName(name);
                     option.setDisplayName(displayName);
-                    option.setType(MojoHelper.getType(fieldTypeName, false, isDuration));
+                    option.setType(MojoHelper.getType(fieldTypeName, enums != null && !enums.isEmpty(), isDuration));
                     option.setJavaType(fieldTypeName);
                     option.setRequired(required);
                     option.setDefaultValue(defaultValue);
@@ -1411,7 +1411,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         option.setName(name);
         option.setDisplayName(displayName);
-        option.setType(MojoHelper.getType(fieldTypeName, false, isDuration));
+        option.setType(MojoHelper.getType(fieldTypeName, enums != null && !enums.isEmpty(), isDuration));
         option.setJavaType(fieldTypeName);
         option.setRequired(required);
         option.setDefaultValue(defaultValue);
@@ -1441,7 +1441,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             Optional<ApiModel> op = componentModel.getApiOptions().stream()
                     .filter(o -> o.getName().equals(targetApiName))
                     .findFirst();
-            if (!op.isPresent()) {
+            if (op.isEmpty()) {
                 api = new ApiModel();
                 api.setName(apiName);
                 componentModel.getApiOptions().add(api);
@@ -1600,7 +1600,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             option.setName(name);
             option.setKind("path");
             option.setDisplayName(displayName);
-            option.setType(MojoHelper.getType(fieldTypeName, false, isDuration));
+            option.setType(MojoHelper.getType(fieldTypeName, enums != null && !enums.isEmpty(), isDuration));
             option.setJavaType(fieldTypeName);
             option.setRequired(required);
             option.setDefaultValue(defaultValue);

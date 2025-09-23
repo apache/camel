@@ -85,15 +85,12 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
                 boolean secret = "true".equals(as.getStringValue("secret"));
                 boolean required = "true".equals(as.getStringValue("required"));
                 boolean deprecated = clazz.getAnnotation(Deprecated.class) != null || f.getAnnotation(Deprecated.class) != null;
-                String type = fromMainToType(javaType);
                 JBangModel.JBangOptionModel model = new JBangModel.JBangOptionModel();
                 model.setName(name);
-                model.setType(type);
                 model.setJavaType(javaType);
                 model.setDescription(JavadocHelper.sanitizeDescription(desc, false));
                 model.setLabel(label);
                 model.setSourceType(null);
-                model.setDefaultValue(asDefaultValue(type, defaultValue));
                 model.setDeprecated(deprecated);
                 model.setSecret(secret);
                 model.setRequired(required);
@@ -103,29 +100,14 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
                     enums = Arrays.asList(text.split(","));
                 }
                 model.setEnums(enums);
+                String type = MojoHelper.getType(javaType, enums != null && !enums.isEmpty(), false);
+                model.setType(type);
+                model.setDefaultValue(asDefaultValue(type, defaultValue));
                 answer.add(model);
             }
         });
 
         return answer;
-    }
-
-    private static String fromMainToType(String type) {
-        if ("boolean".equals(type) || "java.lang.Boolean".equals(type)) {
-            return "boolean";
-        } else if ("int".equals(type) || "java.lang.Integer".equals(type)) {
-            return "integer";
-        } else if ("long".equals(type) || "java.lang.Long".equals(type)) {
-            return "integer";
-        } else if ("float".equals(type) || "java.lang.Float".equals(type)) {
-            return "number";
-        } else if ("double".equals(type) || "java.lang.Double".equals(type)) {
-            return "number";
-        } else if ("string".equals(type) || "java.lang.String".equals(type)) {
-            return "string";
-        } else {
-            return "object";
-        }
     }
 
     private static Object asDefaultValue(String type, String defaultValue) {
