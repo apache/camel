@@ -78,6 +78,9 @@ public class LogProcessor extends BaseProcessorSupport implements Traceable, IdA
                     msg = fireListeners(exchange, msg);
                 }
                 logger.doLog(msg);
+                if (listeners != null && !listeners.isEmpty()) {
+                    closeListeners(exchange, msg);
+                }
             } catch (Exception e) {
                 exchange.setException(e);
             }
@@ -103,6 +106,23 @@ public class LogProcessor extends BaseProcessorSupport implements Traceable, IdA
             }
         }
         return message;
+    }
+
+    private void closeListeners(Exchange exchange, String message) {
+        for (LogListener listener : listeners) {
+            if (listener == null) {
+                continue;
+            }
+            try {
+                listener.afterLog(exchange, logger, message);
+            } catch (Exception t) {
+                LOG.warn("Ignoring an exception: {} thrown by: {} caused by: {}", t.getClass().getName(),
+                        listener.getClass().getName(), t.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("", t);
+                }
+            }
+        }
     }
 
     @Override

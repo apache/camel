@@ -562,6 +562,15 @@ The camel.telemetryDev supports 4 options, which are listed below.
 |===
 
 
+=== Camel MDC configurations
+The camel.mdc supports 0 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+|===
+
+
 === Camel Micrometer Metrics configurations
 The camel.metrics supports 14 options, which are listed below.
 

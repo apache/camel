@@ -21,6 +21,7 @@
     { "name": "camel.opentelemetry", "description": "Camel OpenTelemetry configurations", "sourceType": "org.apache.camel.main.OtelConfigurationProperties" },
     { "name": "camel.opentelemetry2", "description": "Camel OpenTelemetry 2 configurations", "sourceType": "org.apache.camel.main.Otel2ConfigurationProperties" },
     { "name": "camel.telemetryDev", "description": "Camel Telemetry Dev configurations", "sourceType": "org.apache.camel.main.TelemetryDevConfigurationProperties" },
+    { "name": "camel.mdc", "description": "Camel MDC configurations", "sourceType": "org.apache.camel.main.MdcConfigurationProperties" },
     { "name": "camel.metrics", "description": "Camel Micrometer Metrics configurations", "sourceType": "org.apache.camel.main.MetricsConfigurationProperties" },
     { "name": "camel.faulttolerance", "description": "Fault Tolerance EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.FaultToleranceConfigurationProperties" },
     { "name": "camel.resilience4j", "description": "Resilience4j EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.Resilience4jConfigurationProperties" },
