@@ -193,8 +193,11 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             if (state.index == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.random)) {
                 state.id = UUID.randomUUID();
             }
+            if (state.index == 1 && getConfiguration().getNamingStrategy().equals(AWSS3NamingStrategyEnum.timestamp)) {
+                state.timestamp = System.currentTimeMillis();
+            }
             state.dynamicKeyName = fileNameToUpload(fileName, getConfiguration().getNamingStrategy(), extension,
-                    state.part, state.id);
+                    state.part, state.id, state.timestamp);
             CreateMultipartUploadRequest.Builder createMultipartUploadRequest
                     = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
                             .key(state.dynamicKeyName).checksumAlgorithm(algorithm);
@@ -318,7 +321,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     }
 
     private String fileNameToUpload(
-            String fileName, AWSS3NamingStrategyEnum strategy, String ext, int part, UUID id) {
+            String fileName, AWSS3NamingStrategyEnum strategy, String ext, int part, UUID id, long timestamp) {
         String dynamicKeyName;
         switch (strategy) {
             case progressive:
@@ -342,6 +345,21 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                         dynamicKeyName = fileName + "-" + id.toString() + ext;
                     } else {
                         dynamicKeyName = fileName + "-" + id.toString();
+                    }
+                } else {
+                    if (ObjectHelper.isNotEmpty(ext)) {
+                        dynamicKeyName = fileName + ext;
+                    } else {
+                        dynamicKeyName = fileName;
+                    }
+                }
+                break;
+            case timestamp:
+                if (part > 0) {
+                    if (ObjectHelper.isNotEmpty(ext)) {
+                        dynamicKeyName = fileName + "-" + timestamp + ext;
+                    } else {
+                        dynamicKeyName = fileName + "-" + timestamp;
                     }
                 } else {
                     if (ObjectHelper.isNotEmpty(ext)) {
@@ -414,6 +432,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         ByteArrayOutputStream buffer;
         String dynamicKeyName;
         UUID id;
+        long timestamp;
         CreateMultipartUploadResponse initResponse;
 
         UploadState() {
