@@ -38,4 +38,16 @@ public interface LogListener {
      */
     String onLog(Exchange exchange, CamelLogger camelLogger, String message);
 
+    /**
+     * Invoked right after Log component or Log EIP logs. The method can be used for cleaning up any transient
+     * information used during onLog execution.
+     *
+     * @param exchange    camel exchange
+     * @param camelLogger {@link CamelLogger}
+     * @param message     log message
+     */
+    default void afterLog(Exchange exchange, CamelLogger camelLogger, String message) {
+        // NO-OP
+    }
+
 }

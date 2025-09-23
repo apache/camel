@@ -1474,6 +1474,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-mdc</artifactId>
+        <version>4.15.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-metrics</artifactId>
         <version>4.15.0-SNAPSHOT</version>
       </dependency>

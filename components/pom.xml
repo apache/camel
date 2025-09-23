@@ -214,6 +214,7 @@
         <module>camel-mail</module>
         <module>camel-mail-microsoft-oauth</module>
         <module>camel-mapstruct</module>
+        <module>camel-mdc</module>
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
         <module>camel-micrometer-observability</module>

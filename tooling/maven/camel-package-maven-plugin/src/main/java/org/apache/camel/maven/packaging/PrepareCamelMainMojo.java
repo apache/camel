@@ -444,6 +444,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     "camel.telemetryDev", "Camel Telemetry Dev configurations",
                     "org.apache.camel.main.TelemetryDevConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
+                    "camel.mdc", "Camel MDC configurations",
+                    "org.apache.camel.main.MdcConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
                     "camel.metrics", "Camel Micrometer Metrics configurations",
                     "org.apache.camel.main.MetricsConfigurationProperties"));
             model.getGroups()

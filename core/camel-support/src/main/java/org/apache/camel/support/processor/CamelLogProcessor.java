@@ -102,6 +102,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
             }
             output = fireListeners(exchange, output);
             logger.log(output);
+            closeListeners(exchange, output);
         }
         callback.done(true);
         return true;
@@ -115,6 +116,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
             }
             output = fireListeners(exchange, output);
             logger.log(output, exception);
+            closeListeners(exchange, output);
         }
     }
 
@@ -126,6 +128,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
             }
             output = fireListeners(exchange, output);
             logger.log(output);
+            closeListeners(exchange, output);
         }
     }
 
@@ -148,6 +151,25 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
             }
         }
         return message;
+    }
+
+    private void closeListeners(Exchange exchange, String message) {
+        if (listeners == null || listeners.isEmpty()) {
+            return;
+        }
+        for (LogListener listener : listeners) {
+            if (listener == null) {
+                continue;
+            }
+            try {
+                listener.afterLog(exchange, logger, message);
+            } catch (Exception t) {
+                LOG.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("", t);
+                }
+            }
+        }
     }
 
     public CamelLogger getLogger() {
