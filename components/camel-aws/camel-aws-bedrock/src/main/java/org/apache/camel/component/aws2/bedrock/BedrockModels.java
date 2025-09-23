@@ -42,14 +42,24 @@ public enum BedrockModels {
     RERANK_V1("amazon.rerank-v1:0"),
 
     // AI21 Labs Models
+    /** @deprecated Deprecated October 2024, use JAMBA_1_5_LARGE instead */
+    @Deprecated(since = "4.10.0", forRemoval = true)
     JURASSIC2_ULTRA("ai21.j2-ultra-v1"),
+    /** @deprecated Deprecated October 2024, use JAMBA_1_5_MINI instead */
+    @Deprecated(since = "4.10.0", forRemoval = true)
     JURASSIC2_MID("ai21.j2-mid-v1"),
     JAMBA_1_5_LARGE("ai21.jamba-1-5-large-v1:0"),
     JAMBA_1_5_MINI("ai21.jamba-1-5-mini-v1:0"),
 
     // Anthropic Claude Models
+    /** @deprecated Deprecated July 2025, use ANTROPHIC_CLAUDE_HAIKU_V3 instead */
+    @Deprecated(since = "4.10.0", forRemoval = true)
     ANTROPHIC_CLAUDE_INSTANT_V1("anthropic.claude-instant-v1"),
+    /** @deprecated Deprecated July 2025, use ANTROPHIC_CLAUDE_V3 instead */
+    @Deprecated(since = "4.10.0", forRemoval = true)
     ANTROPHIC_CLAUDE_V2("anthropic.claude-v2"),
+    /** @deprecated Deprecated July 2025, use ANTROPHIC_CLAUDE_V3 instead */
+    @Deprecated(since = "4.10.0", forRemoval = true)
     ANTROPHIC_CLAUDE_V2_1("anthropic.claude-v2:1"),
     ANTROPHIC_CLAUDE_V3("anthropic.claude-3-sonnet-20240229-v1:0"),
     ANTROPHIC_CLAUDE_V35("anthropic.claude-3-5-sonnet-20240620-v1:0"),
@@ -58,7 +68,6 @@ public enum BedrockModels {
     ANTROPHIC_CLAUDE_HAIKU_V35("anthropic.claude-3-5-haiku-20241022-v1:0"),
     ANTROPHIC_CLAUDE_OPUS_V3("anthropic.claude-3-opus-20240229-v1:0"),
     ANTROPHIC_CLAUDE_V37("anthropic.claude-3-7-sonnet-20250219-v1:0"),
-    ANTROPHIC_CLAUDE_OPUS_V4_1("anthropic.claude-opus-4-1-20250805-v1:0"),
     ANTROPHIC_CLAUDE_OPUS_V4("anthropic.claude-opus-4-20250514-v1:0"),
     ANTROPHIC_CLAUDE_SONNET_V4("anthropic.claude-sonnet-4-20250514-v1:0"),
 
@@ -69,7 +78,7 @@ public enum BedrockModels {
     COHERE_EMBED_MULTILINGUAL_V3("cohere.embed-multilingual-v3"),
     COHERE_RERANK_V3_5("cohere.rerank-v3-5:0"),
 
-    // Meta Llama Models
+    // Meta Llama Models (Llama 2 deprecated Oct 2024, Llama 3+ supported)
     LLAMA3_8B_INSTRUCT("meta.llama3-8b-instruct-v1:0"),
     LLAMA3_70B_INSTRUCT("meta.llama3-70b-instruct-v1:0"),
     LLAMA3_1_8B_INSTRUCT("meta.llama3-1-8b-instruct-v1:0"),

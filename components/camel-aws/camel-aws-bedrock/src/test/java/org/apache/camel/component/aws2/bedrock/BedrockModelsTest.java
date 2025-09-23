@@ -81,7 +81,6 @@ class BedrockModelsTest {
         assertEquals("anthropic.claude-3-5-haiku-20241022-v1:0", BedrockModels.ANTROPHIC_CLAUDE_HAIKU_V35.model);
         assertEquals("anthropic.claude-3-opus-20240229-v1:0", BedrockModels.ANTROPHIC_CLAUDE_OPUS_V3.model);
         assertEquals("anthropic.claude-3-7-sonnet-20250219-v1:0", BedrockModels.ANTROPHIC_CLAUDE_V37.model);
-        assertEquals("anthropic.claude-opus-4-1-20250805-v1:0", BedrockModels.ANTROPHIC_CLAUDE_OPUS_V4_1.model);
         assertEquals("anthropic.claude-opus-4-20250514-v1:0", BedrockModels.ANTROPHIC_CLAUDE_OPUS_V4.model);
         assertEquals("anthropic.claude-sonnet-4-20250514-v1:0", BedrockModels.ANTROPHIC_CLAUDE_SONNET_V4.model);
     }
@@ -143,7 +142,8 @@ class BedrockModelsTest {
     @Test
     void testEnumCountAndNewModels() {
         BedrockModels[] allModels = BedrockModels.values();
-        assertEquals(61, allModels.length, "Should have exactly 61 models including new ones");
+        assertEquals(60, allModels.length,
+                "Should have exactly 60 models (including deprecated models with @Deprecated annotations)");
 
         boolean hasNovaModels = false;
         boolean hasJambaModels = false;

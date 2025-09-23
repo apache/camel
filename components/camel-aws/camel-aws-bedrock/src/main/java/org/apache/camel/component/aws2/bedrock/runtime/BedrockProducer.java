@@ -255,7 +255,7 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 break;
 
-            // Anthropic Claude Models (legacy format)
+            // Anthropic Claude Models (legacy format - deprecated)
             case "anthropic.claude-instant-v1":
             case "anthropic.claude-v2":
             case "anthropic.claude-v2:1":
@@ -274,7 +274,6 @@ public class BedrockProducer extends DefaultProducer {
             case "anthropic.claude-3-5-haiku-20241022-v1:0":
             case "anthropic.claude-3-opus-20240229-v1:0":
             case "anthropic.claude-3-7-sonnet-20250219-v1:0":
-            case "anthropic.claude-opus-4-1-20250805-v1:0":
             case "anthropic.claude-opus-4-20250514-v1:0":
             case "anthropic.claude-sonnet-4-20250514-v1:0":
                 try {
@@ -320,7 +319,7 @@ public class BedrockProducer extends DefaultProducer {
                 }
                 break;
 
-            // Meta Llama Models
+            // Meta Llama Models (Llama 3+ supported)
             case "meta.llama3-8b-instruct-v1:0":
             case "meta.llama3-70b-instruct-v1:0":
             case "meta.llama3-1-8b-instruct-v1:0":
