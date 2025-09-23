@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.servicebus.client;
 
+import java.time.Duration;
 import java.util.function.Consumer;
 
 import com.azure.core.credential.TokenCredential;
@@ -110,7 +111,7 @@ public final class ServiceBusClientFactory {
         clientBuilder
                 .subscriptionName(configuration.getSubscriptionName())
                 .receiveMode(configuration.getServiceBusReceiveMode())
-                .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
+                .maxAutoLockRenewDuration(Duration.ofMillis(configuration.getMaxAutoLockRenewDuration()))
                 .prefetchCount(configuration.getPrefetchCount())
                 .subQueue(configuration.getSubQueue())
                 .maxConcurrentCalls(configuration.getMaxConcurrentCalls())
@@ -130,7 +131,7 @@ public final class ServiceBusClientFactory {
         clientBuilder
                 .subscriptionName(configuration.getSubscriptionName())
                 .receiveMode(configuration.getServiceBusReceiveMode())
-                .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
+                .maxAutoLockRenewDuration(Duration.ofMillis(configuration.getMaxAutoLockRenewDuration()))
                 .prefetchCount(configuration.getPrefetchCount())
                 .subQueue(configuration.getSubQueue())
                 .maxConcurrentCalls(configuration.getMaxConcurrentCalls())

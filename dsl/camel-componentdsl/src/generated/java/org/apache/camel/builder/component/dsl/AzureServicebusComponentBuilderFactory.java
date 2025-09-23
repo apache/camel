@@ -223,19 +223,19 @@ public interface AzureServicebusComponentBuilderFactory {
     
         
         /**
-         * Sets the amount of time to continue auto-renewing the lock. Setting
-         * ZERO disables auto-renewal. For ServiceBus receive mode
+         * Sets the amount of time (millis) to continue auto-renewing the lock.
+         * Setting ZERO disables auto-renewal. For ServiceBus receive mode
          * (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
          * 
-         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 5m
+         * Default: 300000
          * Group: consumer
          * 
          * @param maxAutoLockRenewDuration the value to set
          * @return the dsl builder
          */
-        default AzureServicebusComponentBuilder maxAutoLockRenewDuration(java.time.Duration maxAutoLockRenewDuration) {
+        default AzureServicebusComponentBuilder maxAutoLockRenewDuration(long maxAutoLockRenewDuration) {
             doSetProperty("maxAutoLockRenewDuration", maxAutoLockRenewDuration);
             return this;
         }
@@ -607,7 +607,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "serviceBusType": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusType((org.apache.camel.component.azure.servicebus.ServiceBusType) value); return true;
             case "bridgeErrorHandler": ((ServiceBusComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "enableDeadLettering": getOrCreateConfiguration((ServiceBusComponent) component).setEnableDeadLettering((boolean) value); return true;
-            case "maxAutoLockRenewDuration": getOrCreateConfiguration((ServiceBusComponent) component).setMaxAutoLockRenewDuration((java.time.Duration) value); return true;
+            case "maxAutoLockRenewDuration": getOrCreateConfiguration((ServiceBusComponent) component).setMaxAutoLockRenewDuration((long) value); return true;
             case "maxConcurrentCalls": getOrCreateConfiguration((ServiceBusComponent) component).setMaxConcurrentCalls((int) value); return true;
             case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;
             case "processorClient": getOrCreateConfiguration((ServiceBusComponent) component).setProcessorClient((com.azure.messaging.servicebus.ServiceBusProcessorClient) value); return true;

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
 
 import com.azure.core.amqp.AmqpRetryOptions;
@@ -67,8 +66,8 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     private boolean enableDeadLettering;
     @UriParam(label = "consumer", defaultValue = "PEEK_LOCK")
     private ServiceBusReceiveMode serviceBusReceiveMode = ServiceBusReceiveMode.PEEK_LOCK;
-    @UriParam(label = "consumer", defaultValue = "5m")
-    private Duration maxAutoLockRenewDuration = Duration.ofMinutes(5);
+    @UriParam(label = "consumer", defaultValue = "300000", javaType = "java.time.Duration")
+    private long maxAutoLockRenewDuration = 300000L;
     @UriParam(label = "consumer")
     private int prefetchCount;
     @UriParam(label = "consumer")
@@ -256,14 +255,14 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Sets the amount of time to continue auto-renewing the lock. Setting ZERO disables auto-renewal. For ServiceBus
-     * receive mode (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
+     * Sets the amount of time (millis) to continue auto-renewing the lock. Setting ZERO disables auto-renewal. For
+     * ServiceBus receive mode (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
      */
-    public Duration getMaxAutoLockRenewDuration() {
+    public long getMaxAutoLockRenewDuration() {
         return maxAutoLockRenewDuration;
     }
 
-    public void setMaxAutoLockRenewDuration(Duration maxAutoLockRenewDuration) {
+    public void setMaxAutoLockRenewDuration(long maxAutoLockRenewDuration) {
         this.maxAutoLockRenewDuration = maxAutoLockRenewDuration;
     }
 
