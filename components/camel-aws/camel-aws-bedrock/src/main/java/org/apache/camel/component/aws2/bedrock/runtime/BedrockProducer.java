@@ -233,40 +233,115 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     protected void setResponseText(InvokeModelResponse result, Message message) {
-        switch (getConfiguration().getModelId()) {
-            case "amazon.titan-text-express-v1", "amazon.titan-text-lite-v1", "amazon.titan-text-premier-v1:0",
-                    "amazon.titan-embed-text-v2:0" ->
+        String modelId = getConfiguration().getModelId();
+        switch (modelId) {
+            // Amazon Titan Models
+            case "amazon.titan-text-express-v1":
+            case "amazon.titan-text-lite-v1":
+            case "amazon.titan-text-premier-v1:0":
+            case "amazon.titan-embed-text-v2:0":
                 setTitanText(result, message);
-            case "ai21.j2-ultra-v1", "ai21.j2-mid-v1" -> {
+                break;
+
+            // AI21 Labs Models
+            case "ai21.j2-ultra-v1":
+            case "ai21.j2-mid-v1":
+            case "ai21.jamba-1-5-large-v1:0":
+            case "ai21.jamba-1-5-mini-v1:0":
                 try {
                     setAi21Text(result, message);
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            case "anthropic.claude-instant-v1", "anthropic.claude-v2", "anthropic.claude-v2:1" -> {
+                break;
+
+            // Anthropic Claude Models (legacy format)
+            case "anthropic.claude-instant-v1":
+            case "anthropic.claude-v2":
+            case "anthropic.claude-v2:1":
                 try {
                     setAnthropicText(result, message);
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            case "anthropic.claude-3-sonnet-20240229-v1:0", "anthropic.claude-3-haiku-20240307-v1:0" -> {
+                break;
+
+            // Anthropic Claude Models (v3+ format)
+            case "anthropic.claude-3-sonnet-20240229-v1:0":
+            case "anthropic.claude-3-5-sonnet-20240620-v1:0":
+            case "anthropic.claude-3-5-sonnet-20241022-v2:0":
+            case "anthropic.claude-3-haiku-20240307-v1:0":
+            case "anthropic.claude-3-5-haiku-20241022-v1:0":
+            case "anthropic.claude-3-opus-20240229-v1:0":
+            case "anthropic.claude-3-7-sonnet-20250219-v1:0":
+            case "anthropic.claude-opus-4-1-20250805-v1:0":
+            case "anthropic.claude-opus-4-20250514-v1:0":
+            case "anthropic.claude-sonnet-4-20250514-v1:0":
                 try {
                     setAnthropicV3Text(result, message);
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            case "mistral.mistral-7b-instruct-v0:2", "mistral.mixtral-8x7b-instruct-v0:1",
-                    "mistral.mistral-large-2402-v1:0" -> {
+                break;
+
+            // Mistral AI Models
+            case "mistral.mistral-7b-instruct-v0:2":
+            case "mistral.mixtral-8x7b-instruct-v0:1":
+            case "mistral.mistral-large-2402-v1:0":
+            case "mistral.mistral-large-2407-v1:0":
+            case "mistral.mistral-small-2402-v1:0":
+            case "mistral.pixtral-large-2502-v1:0":
                 try {
                     setMistralText(result, message);
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + getConfiguration().getModelId());
+                break;
+
+            // Amazon Nova Models (using v3 format)
+            case "amazon.nova-lite-v1:0":
+            case "amazon.nova-micro-v1:0":
+            case "amazon.nova-premier-v1:0":
+            case "amazon.nova-pro-v1:0":
+                try {
+                    setAnthropicV3Text(result, message);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+
+            // Cohere Models
+            case "cohere.command-r-plus-v1:0":
+            case "cohere.command-r-v1:0":
+                try {
+                    setCohereText(result, message);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+
+            // Meta Llama Models
+            case "meta.llama3-8b-instruct-v1:0":
+            case "meta.llama3-70b-instruct-v1:0":
+            case "meta.llama3-1-8b-instruct-v1:0":
+            case "meta.llama3-1-70b-instruct-v1:0":
+            case "meta.llama3-1-405b-instruct-v1:0":
+            case "meta.llama3-2-1b-instruct-v1:0":
+            case "meta.llama3-2-3b-instruct-v1:0":
+            case "meta.llama3-2-11b-instruct-v1:0":
+            case "meta.llama3-2-90b-instruct-v1:0":
+            case "meta.llama3-3-70b-instruct-v1:0":
+            case "meta.llama4-maverick-17b-instruct-v1:0":
+            case "meta.llama4-scout-17b-instruct-v1:0":
+                try {
+                    setLlamaText(result, message);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+
+            default:
+                throw new IllegalStateException("Unexpected model: " + modelId);
         }
     }
 
@@ -296,6 +371,18 @@ public class BedrockProducer extends DefaultProducer {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString);
+    }
+
+    private void setCohereText(InvokeModelResponse result, Message message) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        message.setBody(jsonString.get("text"));
+    }
+
+    private void setLlamaText(InvokeModelResponse result, Message message) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
+        message.setBody(jsonString.get("generation"));
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

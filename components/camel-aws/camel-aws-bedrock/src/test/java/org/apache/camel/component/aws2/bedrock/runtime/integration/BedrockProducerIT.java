@@ -507,6 +507,400 @@ class BedrockProducerIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testInvokeNovaLiteModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_nova_lite", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+
+            ObjectNode element = mapper.createObjectNode();
+            element.putIfAbsent("role", new TextNode("user"));
+
+            ArrayNode content = mapper.createArrayNode();
+
+            ObjectNode textContent = mapper.createObjectNode();
+
+            textContent.putIfAbsent("type", new TextNode("text"));
+            textContent.putIfAbsent("text", new TextNode("Can you tell the history of Mayflower?"));
+
+            content.add(textContent);
+
+            element.putIfAbsent("content", content);
+
+            messages.add(element);
+
+            rootNode.putIfAbsent("messages", messages);
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeJamba15LargeModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_jamba_15_large", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+
+            ObjectNode element = mapper.createObjectNode();
+            element.putIfAbsent("role", new TextNode("user"));
+            element.putIfAbsent("content", new TextNode("Can you tell the history of Mayflower?"));
+
+            messages.add(element);
+
+            rootNode.putIfAbsent("messages", messages);
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.7));
+            rootNode.putIfAbsent("top_p", new DoubleNode(0.9));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeCohereCommandRModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_cohere_command_r", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("message", new TextNode("Can you tell the history of Mayflower?"));
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.7));
+            rootNode.putIfAbsent("p", new DoubleNode(0.9));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeLlama38BInstructModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_llama3_8b_instruct", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("prompt", new TextNode(
+                    "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nCan you tell the history of Mayflower?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"));
+            rootNode.putIfAbsent("max_gen_len", new IntNode(1000));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.7));
+            rootNode.putIfAbsent("top_p", new DoubleNode(0.9));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeMistralLarge2407Model() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_mistral_large_2407", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("prompt",
+                    new TextNode("\"<s>[INST] Can you tell the history of Mayflower? [/INST]\\\""));
+
+            rootNode.putIfAbsent("max_tokens", new IntNode(300));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.5));
+            rootNode.putIfAbsent("top_p", new DoubleNode(0.9));
+            rootNode.putIfAbsent("top_k", new IntNode(50));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeNovaMicroModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_nova_micro", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+
+            ObjectNode element = mapper.createObjectNode();
+            element.putIfAbsent("role", new TextNode("user"));
+
+            ArrayNode content = mapper.createArrayNode();
+
+            ObjectNode textContent = mapper.createObjectNode();
+
+            textContent.putIfAbsent("type", new TextNode("text"));
+            textContent.putIfAbsent("text", new TextNode("Can you tell the history of Mayflower?"));
+
+            content.add(textContent);
+
+            element.putIfAbsent("content", content);
+
+            messages.add(element);
+
+            rootNode.putIfAbsent("messages", messages);
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeNovaProModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_nova_pro", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+
+            ObjectNode element = mapper.createObjectNode();
+            element.putIfAbsent("role", new TextNode("user"));
+
+            ArrayNode content = mapper.createArrayNode();
+
+            ObjectNode textContent = mapper.createObjectNode();
+
+            textContent.putIfAbsent("type", new TextNode("text"));
+            textContent.putIfAbsent("text", new TextNode("Can you tell the history of Mayflower?"));
+
+            content.add(textContent);
+
+            element.putIfAbsent("content", content);
+
+            messages.add(element);
+
+            rootNode.putIfAbsent("messages", messages);
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeJamba15MiniModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_jamba_15_mini", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+
+            ObjectNode element = mapper.createObjectNode();
+            element.putIfAbsent("role", new TextNode("user"));
+            element.putIfAbsent("content", new TextNode("Can you tell the history of Mayflower?"));
+
+            messages.add(element);
+
+            rootNode.putIfAbsent("messages", messages);
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.7));
+            rootNode.putIfAbsent("top_p", new DoubleNode(0.9));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeCohereCommandRPlusModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_cohere_command_r_plus", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("message", new TextNode("Can you tell the history of Mayflower?"));
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.7));
+            rootNode.putIfAbsent("p", new DoubleNode(0.9));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeLlama31_70BInstructModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_llama31_70b_instruct", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("prompt", new TextNode(
+                    "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nCan you tell the history of Mayflower?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"));
+            rootNode.putIfAbsent("max_gen_len", new IntNode(1000));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.7));
+            rootNode.putIfAbsent("top_p", new DoubleNode(0.9));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeLlama32_11BInstructModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_llama32_11b_instruct", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("prompt", new TextNode(
+                    "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nCan you tell the history of Mayflower?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"));
+            rootNode.putIfAbsent("max_gen_len", new IntNode(1000));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.7));
+            rootNode.putIfAbsent("top_p", new DoubleNode(0.9));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeAnthropicClaude35Sonnet2Model() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_anthropic_claude_35_sonnet_2", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+
+            ObjectNode element = mapper.createObjectNode();
+            element.putIfAbsent("role", new TextNode("user"));
+
+            ArrayNode content = mapper.createArrayNode();
+
+            ObjectNode textContent = mapper.createObjectNode();
+
+            textContent.putIfAbsent("type", new TextNode("text"));
+            textContent.putIfAbsent("text", new TextNode("Can you tell the history of Mayflower?"));
+
+            content.add(textContent);
+
+            element.putIfAbsent("content", content);
+
+            messages.add(element);
+
+            rootNode.putIfAbsent("messages", messages);
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+            rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeAnthropicClaude35HaikuModel() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_anthropic_claude_35_haiku", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+
+            ObjectNode element = mapper.createObjectNode();
+            element.putIfAbsent("role", new TextNode("user"));
+
+            ArrayNode content = mapper.createArrayNode();
+
+            ObjectNode textContent = mapper.createObjectNode();
+
+            textContent.putIfAbsent("type", new TextNode("text"));
+            textContent.putIfAbsent("text", new TextNode("Can you tell the history of Mayflower?"));
+
+            content.add(textContent);
+
+            element.putIfAbsent("content", content);
+
+            messages.add(element);
+
+            rootNode.putIfAbsent("messages", messages);
+            rootNode.putIfAbsent("max_tokens", new IntNode(1000));
+            rootNode.putIfAbsent("anthropic_version", new TextNode("bedrock-2023-05-31"));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testInvokeMistralSmall2402Model() throws InterruptedException {
+
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:send_mistral_small_2402", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.putIfAbsent("prompt",
+                    new TextNode("\"<s>[INST] Can you tell the history of Mayflower? [/INST]\\\""));
+
+            rootNode.putIfAbsent("max_tokens", new IntNode(300));
+            rootNode.putIfAbsent("temperature", new DoubleNode(0.5));
+            rootNode.putIfAbsent("top_p", new DoubleNode(0.9));
+            rootNode.putIfAbsent("top_k", new IntNode(50));
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -611,6 +1005,90 @@ class BedrockProducerIT extends CamelTestSupport {
                 from("direct:send_mistral_large_model")
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
                             + BedrockModels.MISTRAL_LARGE.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_nova_lite")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.NOVA_LITE_V1.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_jamba_15_large")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.JAMBA_1_5_LARGE.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_cohere_command_r")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.COHERE_COMMAND_R.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_llama3_8b_instruct")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.LLAMA3_8B_INSTRUCT.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_mistral_large_2407")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.MISTRAL_LARGE_2407.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_nova_micro")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.NOVA_MICRO_V1.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_nova_pro")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.NOVA_PRO_V1.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_jamba_15_mini")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.JAMBA_1_5_MINI.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_cohere_command_r_plus")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.COHERE_COMMAND_R_PLUS.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_llama31_70b_instruct")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.LLAMA3_1_70B_INSTRUCT.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_llama32_11b_instruct")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.LLAMA3_2_11B_INSTRUCT.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_anthropic_claude_35_sonnet_2")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.ANTROPHIC_CLAUDE_V35_2.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_anthropic_claude_35_haiku")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.ANTROPHIC_CLAUDE_HAIKU_V35.model)
+                        .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:send_mistral_small_2402")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
+                            + BedrockModels.MISTRAL_SMALL_2402.model)
                         .log("Completions: ${body}")
                         .to(result);
             }
