@@ -55,7 +55,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxautolockrenewduration":
-        case "maxAutoLockRenewDuration": getOrCreateConfiguration(target).setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value)); return true;
+        case "maxAutoLockRenewDuration": getOrCreateConfiguration(target).setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "maxconcurrentcalls":
         case "maxConcurrentCalls": getOrCreateConfiguration(target).setMaxConcurrentCalls(property(camelContext, int.class, value)); return true;
         case "prefetchcount":
@@ -123,7 +123,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxautolockrenewduration":
-        case "maxAutoLockRenewDuration": return java.time.Duration.class;
+        case "maxAutoLockRenewDuration": return long.class;
         case "maxconcurrentcalls":
         case "maxConcurrentCalls": return int.class;
         case "prefetchcount":

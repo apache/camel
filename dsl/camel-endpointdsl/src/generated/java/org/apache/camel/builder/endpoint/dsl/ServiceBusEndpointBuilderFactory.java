@@ -276,31 +276,30 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the amount of time to continue auto-renewing the lock. Setting
-         * ZERO disables auto-renewal. For ServiceBus receive mode
+         * Sets the amount of time (millis) to continue auto-renewing the lock.
+         * Setting ZERO disables auto-renewal. For ServiceBus receive mode
          * (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: <code>long</code> type.
          * 
-         * Default: 5m
+         * Default: 300000
          * Group: consumer
          * 
          * @param maxAutoLockRenewDuration the value to set
          * @return the dsl builder
          */
-        default ServiceBusEndpointConsumerBuilder maxAutoLockRenewDuration(java.time.Duration maxAutoLockRenewDuration) {
+        default ServiceBusEndpointConsumerBuilder maxAutoLockRenewDuration(long maxAutoLockRenewDuration) {
             doSetProperty("maxAutoLockRenewDuration", maxAutoLockRenewDuration);
             return this;
         }
         /**
-         * Sets the amount of time to continue auto-renewing the lock. Setting
-         * ZERO disables auto-renewal. For ServiceBus receive mode
+         * Sets the amount of time (millis) to continue auto-renewing the lock.
+         * Setting ZERO disables auto-renewal. For ServiceBus receive mode
          * (RECEIVE_AND_DELETE RECEIVE_AND_DELETE), auto-renewal is disabled.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a <code>long</code> type.
          * 
-         * Default: 5m
+         * Default: 300000
          * Group: consumer
          * 
          * @param maxAutoLockRenewDuration the value to set
