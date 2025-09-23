@@ -307,6 +307,34 @@ Parameters (`accessKey`, `secretKey` and `region`) are mandatory for this operat
 
 NOTE: If checksum validations are enabled, the url will no longer be browser compatible because it adds a signed header that must be included in the HTTP request.
 
+- HeadBucket: this operation checks if a bucket exists and you have permission to access it
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=headBucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will check if the bucket _mycamelbucket_ exists and is accessible.
+
+- HeadObject: this operation retrieves metadata from an object without returning the object itself
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(AWS2S3Constants.KEY, "camelKey");
+      }
+  })
+  .to("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=headObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return metadata about the object camelKey in the bucket _mycamelbucket_.
+
 === AWS S3 Producer minimum permissions
 
 For making the producer work, you'll need at least PutObject and ListBuckets permissions. The following policy will be enough:
@@ -487,6 +515,56 @@ Taking the above example, you could do something like:
 In this case, the objects consumed will be moved to _myothercamelbucket_ bucket and deleted from the original one (because of deleteAfterRead set to true as default).
 
 So if the file name is test, in the _myothercamelbucket_ you should see a file called pre-test-suff.
+
+=== Additional Consumer Examples
+
+=== Consumer with prefix filtering
+
+You can configure the consumer to only process objects with a specific prefix:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&prefix=processed/&delay=30000")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This will only consume objects that start with "processed/" prefix from the _mycamelbucket_ bucket, with a 30-second polling delay.
+
+=== Consumer with custom polling and batch settings
+
+Configure custom polling intervals and batch sizes:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=60000&maxMessagesPerPoll=5&includeBody=false")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This consumer polls every 60 seconds, processes up to 5 objects per poll, and doesn't include the object body in the message (only metadata).
+
+=== Consumer with file filtering and no deletion
+
+Configure the consumer to not delete files after reading and include specific file patterns:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&deleteAfterRead=false&fileName=*.pdf")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This consumer will read PDF files but won't delete them after processing.
+
+=== Consumer with done file pattern
+
+Use a done file pattern to ensure files are completely uploaded before processing:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&doneFileName=*.done")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This consumer will only process files when a corresponding .done file exists in the bucket.
 
 === Using the customer key as encryption
 
