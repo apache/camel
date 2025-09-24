@@ -30,6 +30,7 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.xml.XmlLineNumberParser;
@@ -138,13 +139,18 @@ public class DependencyUpdate extends DependencyList {
             // find position of where the old DEPS was
             int pos = -1;
             for (int i = 0; i < lines.size(); i++) {
-                String l = lines.get(i);
-                if (l.trim().startsWith("//DEPS ")) {
+                String o = lines.get(i);
+                // remove leading comments
+                String l = o.trim();
+                while (l.startsWith("#")) {
+                    l = l.substring(1);
+                }
+                if (l.startsWith("//DEPS ")) {
                     if (pos == -1) {
                         pos = i;
                     }
                 } else {
-                    answer.add(l);
+                    answer.add(o);
                 }
             }
             // add after shebang in top
@@ -160,6 +166,11 @@ public class DependencyUpdate extends DependencyList {
             // reverse collection as we insert pos based
             Collections.reverse(deps);
             for (String dep : deps) {
+                // is this XML or YAML
+                String ext = FileUtil.onlyExt(file.getFileName().toString(), true);
+                if ("yaml".equals(ext)) {
+                    dep = "#" + dep;
+                }
                 answer.add(pos, dep);
             }
 
