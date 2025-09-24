@@ -83,6 +83,8 @@ import org.apache.camel.main.util.ExtraClassesClassLoader;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
 import org.apache.camel.main.xml.blueprint.BlueprintXmlBeansHandler;
 import org.apache.camel.main.xml.spring.SpringXmlBeansHandler;
+import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.reifier.OnExceptionReifier;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnector;
@@ -790,6 +792,10 @@ public class KameletMain extends MainCommandLineSupport {
         answer.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
         answer.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
         answer.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
+
+        // turn of validator in onException during export
+        ProcessorReifier.registerReifier(OnExceptionDefinition.class,
+                (route, def) -> new OnExceptionReifier(route, (OnExceptionDefinition) def, false));
     }
 
     private String getInstanceType() {
