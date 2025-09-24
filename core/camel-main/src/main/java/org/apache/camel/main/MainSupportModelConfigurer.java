@@ -28,7 +28,6 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
-import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
@@ -110,13 +109,10 @@ public final class MainSupportModelConfigurer {
             VariableRepository repo = camelContext.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
                     .getVariableRepository(id);
             // it may be a resource to load from disk then
-            if (value.startsWith(LanguageSupport.RESOURCE)) {
-                value = value.substring(9);
-                if (ResourceHelper.hasScheme(value)) {
-                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, value);
-                    value = IOHelper.loadText(is);
-                    IOHelper.close(is);
-                }
+            if (ResourceHelper.hasScheme(value)) {
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, value);
+                value = IOHelper.loadText(is);
+                IOHelper.close(is);
             }
             // digits should favour an int/long value true|false should be a boolean anything else is string
             Object val;
