@@ -258,7 +258,10 @@ public class DependencyUpdate extends DependencyList {
             List<MavenGav> updates = new ArrayList<>();
             for (MavenGav gav : gavs) {
                 MavenGav target;
-                if (camelVersion != null) {
+                if ("org.apache.camel.kamelets".equals(gav.getGroupId())) {
+                    // special for kamelets (should be as-is)
+                    target = gav;
+                } else if (camelVersion != null) {
                     target = MavenGav.parseGav(gav.getGroupId() + ":" + gav.getArtifactId() + ":" + camelVersion);
                 } else {
                     target = MavenGav.parseGav(gav.getGroupId() + ":" + gav.getArtifactId());

@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.XmlHelper;
+import org.apache.camel.main.util.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
@@ -152,6 +153,13 @@ public class DependencyList extends Export {
                     // version
                     if (v == null && g.equals("org.apache.camel")) {
                         v = camelVersion;
+                    }
+                    if (v == null && g.equals("org.apache.camel.kamelets")) {
+                        if (kameletsVersion != null) {
+                            v = kameletsVersion;
+                        } else {
+                            v = VersionHelper.extractKameletsVersion();
+                        }
                     }
                     if (v == null && g.equals("org.apache.camel.springboot")) {
                         v = camelVersion;
