@@ -94,8 +94,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     private static final Logger LOG = LoggerFactory.getLogger(YamlRoutesBuilderLoader.class);
 
     // API versions for Pipe
-    // we are lenient so lets just assume we can work with any of the v1 even if
-    // they evolve
+    // we are lenient so lets just assume we can work with any of the v1 even if they evolve
     @Deprecated
     private static final String PIPE_VERSION = "camel.apache.org/v1";
     private static final String STRIMZI_VERSION = "kafka.strimzi.io/v1beta2";
@@ -241,8 +240,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     CamelContextAware.trySetCamelContext(getTemplatedRouteCollection(), getCamelContext());
                     getTemplatedRouteCollection().templatedRoute((TemplatedRouteDefinition) item);
                     return true;
-                } else if (item instanceof RestDefinition) {
-                    RestDefinition definition = (RestDefinition) item;
+                } else if (item instanceof RestDefinition definition) {
                     for (VerbDefinition verb : definition.getVerbs()) {
                         verb.setRest(definition);
                     }
@@ -528,9 +526,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
      * Extracts the data type transformer name information form nodes dataTypes/in or dataTypes/out. When scheme is set
      * construct the transformer name with a prefix like scheme:format. Otherwise, just use the given format as a data
      * type transformer name.
-     *
-     * @param  node
-     * @return
      */
     private String extractDataType(MappingNode node) {
         String scheme = extractTupleValue(node.getValue(), "scheme");
@@ -538,7 +533,6 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         if (scheme != null) {
             return scheme + ":" + format;
         }
-
         return format;
     }
 
@@ -644,8 +638,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         Iterator<?> it = ObjectHelper.createIterator(target);
         while (it.hasNext()) {
             target = it.next();
-            if (target instanceof CamelContextCustomizer) {
-                CamelContextCustomizer customizer = (CamelContextCustomizer) target;
+            if (target instanceof CamelContextCustomizer customizer) {
                 customizer.configure(getCamelContext());
             }
         }
