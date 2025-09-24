@@ -70,6 +70,16 @@ public class RunCommandITCase extends JBangTestSupport {
     }
 
     @Test
+    public void runWithProperties() throws IOException {
+        copyResourceInDataFolder("route-props.yaml");
+        copyResourceInDataFolder("route-props.properties");
+        executeBackground(String.format(
+                "run %s/route-props.yaml --property=a=a --property=b=b --properties=%s/route-props.properties",
+                mountPoint(), mountPoint()));
+        checkLogContains("Hello Camel with properties a=a b=b my-key=my-val", 5);
+    }
+
+    @Test
     public void runRoutesFromMultipleFilesUsingWildcardTest() {
         execute("init one.yaml --directory=/tmp/one");
         execute("init two.xml --directory=/tmp/two");
