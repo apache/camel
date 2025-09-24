@@ -24,6 +24,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +84,14 @@ public class VersionList extends CamelCommand {
     @CommandLine.Option(names = { "--to-version" },
                         description = "Filter by Camel version (exclusive)")
     String toVersion;
+
+    @CommandLine.Option(names = { "--from-date" },
+                        description = "Filter by release date (inclusive)")
+    String fromDate;
+
+    @CommandLine.Option(names = { "--to-date" },
+                        description = "Filter by release date (exclusive)")
+    String toDate;
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by (version, date, or days)", defaultValue = "version")
@@ -272,6 +282,15 @@ public class VersionList extends CamelCommand {
                     }
                     accept = VersionHelper.isBetween(rm.getVersion(), fromVersion, toVersion);
                 }
+                if (accept && fromDate != null || toDate != null) {
+                    if (fromDate == null) {
+                        fromDate = "2000-01-01";
+                    }
+                    if (toDate == null) {
+                        toDate = "9999-01-01";
+                    }
+                    accept = rm.getDate() == null || isDateBetween(rm.getDate(), fromDate, toDate);
+                }
                 if (accept) {
                     Row row = new Row();
                     rows.add(row);
@@ -283,10 +302,9 @@ public class VersionList extends CamelCommand {
                     row.kind = rm.getKind();
                 }
             }
-        } else
+        } else {
             for (String[] v : versions) {
                 Row row = new Row();
-                rows.add(row);
                 row.coreVersion = v[0];
                 row.runtimeVersion = v[1];
 
@@ -307,19 +325,57 @@ public class VersionList extends CamelCommand {
                     row.jdks = rm.getJdk();
                     row.kind = rm.getKind();
                 }
+                boolean accept = true;
+                if (fromVersion != null || toVersion != null) {
+                    if (fromVersion == null) {
+                        fromVersion = "1.0";
+                    }
+                    if (toVersion == null) {
+                        toVersion = "99.0";
+                    }
+                    accept = VersionHelper.isBetween(row.coreVersion, fromVersion, toVersion);
+                }
+                if (accept && fromDate != null || toDate != null) {
+                    if (fromDate == null) {
+                        fromDate = "2000-01-01";
+                    }
+                    if (toDate == null) {
+                        toDate = "9999-01-01";
+                    }
+                    accept = row.releaseDate == null || isDateBetween(row.releaseDate, fromDate, toDate);
+                }
+                if (accept) {
+                    rows.add(row);
+                }
             }
+        }
     }
 
     private long daysSince(String date) {
+        if (date != null) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD);
+                Date d = sdf.parse(date);
+                Date d2 = new Date();
+                return ChronoUnit.DAYS.between(d.toInstant(), d2.toInstant());
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return -1;
+    }
+
+    private boolean isDateBetween(String date, String from, String to) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD);
-            Date d = sdf.parse(date);
-            Date d2 = new Date();
-            return ChronoUnit.DAYS.between(d.toInstant(), d2.toInstant());
+            var df = DateTimeFormatter.ofPattern(YYYY_MM_DD);
+            LocalDate d = LocalDate.parse(date, df);
+            LocalDate d2 = LocalDate.parse(from, df);
+            LocalDate d3 = LocalDate.parse(to, df);
+            return (d.isEqual(d2) || d.isAfter(d2)) && d.isBefore(d3);
         } catch (Exception e) {
             // ignore
         }
-        return -1;
+        return true;
     }
 
     private static Map<String, Object> mapOf(Row r) {
@@ -366,7 +422,7 @@ public class VersionList extends CamelCommand {
     }
 
     private String daysAgo(Row r) {
-        if (r.daysSince > 0) {
+        if (r.daysSince > -1) {
             return "" + r.daysSince;
         }
         return "";
@@ -451,7 +507,7 @@ public class VersionList extends CamelCommand {
         String coreVersion;
         String runtimeVersion;
         String releaseDate;
-        long daysSince;
+        long daysSince = -1;
         String eolDate;
         String kind;
         String jdks;
