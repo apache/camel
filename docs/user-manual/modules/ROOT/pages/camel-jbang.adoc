@@ -561,6 +561,17 @@ And if you have `jq` installed which can format and output the JSON data in colo
 curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/ | jq
 ----
 
+=== Using properties
+
+To set properties when running a route, you can use the `--property` or `--properties` parameter from `camel run` command:
+
+* `--property`: sets individual parameters, example: `--property=my-key=my-value`, you have to add more `--property` in case you need more parameters.
+* `--properties`: loads a properties file from the local filesystem, example: `--properties=/var/my-app/config.properties`.
+
+NOTE: You have to use the `=` sign right after the `--property`, as in the examples above.
+
+If both parameters are used, the properties will be merged in a single `application.properties` file.
+
 [#_using_profiles]
 === Using profiles
 
