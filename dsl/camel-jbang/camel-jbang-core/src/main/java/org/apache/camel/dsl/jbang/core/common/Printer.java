@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.util.StringJoiner;
+
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * Printer interface used by commands to write output to given print stream. By default, uses System out print stream,
  * but unit tests for instance may use a different print stream.
@@ -39,7 +43,12 @@ public interface Printer {
     }
 
     default void printErr(Exception e) {
-        printErr(e.getMessage());
+        var it = ObjectHelper.createExceptionIterable(e);
+        StringJoiner sj = new StringJoiner("\n\t --> ");
+        for (Throwable t : it) {
+            sj.add(t.getMessage());
+        }
+        printErr(sj.toString());
     }
 
     /**
