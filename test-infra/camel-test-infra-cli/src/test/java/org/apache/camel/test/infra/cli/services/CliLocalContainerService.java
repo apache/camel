@@ -131,8 +131,12 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                         execResult.getStderr()));
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("result out {}", execResult.getStdout());
-                LOG.debug("result error {}", execResult.getStderr());
+                if (StringUtils.isNotBlank(execResult.getStdout())) {
+                    LOG.debug("result out {}", execResult.getStdout());
+                }
+                if (StringUtils.isNotBlank(execResult.getStderr())) {
+                    LOG.debug("result error {}", execResult.getStderr());
+                }
             }
             return execResult.getStdout();
         } catch (Exception e) {

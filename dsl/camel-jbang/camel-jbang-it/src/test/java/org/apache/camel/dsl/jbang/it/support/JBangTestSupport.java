@@ -218,6 +218,13 @@ public abstract class JBangTestSupport {
                         .contains(contains)));
     }
 
+    protected void checkContainerLogContainsAllOf(int waitForSeconds, String... contains) {
+        Assertions.assertThatNoException().isThrownBy(() -> Awaitility.await()
+                .atMost(waitForSeconds, TimeUnit.SECONDS)
+                .untilAsserted(() -> Assertions.assertThat(getContainerLogs())
+                        .contains(contains)));
+    }
+
     protected void checkLogContains(String contains) {
         checkLogContains(contains, ASSERTION_WAIT_SECONDS);
     }
@@ -282,6 +289,10 @@ public abstract class JBangTestSupport {
         return getLogs(null);
     }
 
+    protected String getContainerLogs() {
+        return containerService.getContainerLogs();
+    }
+
     protected String getLogs(String route) {
         return execute(Optional.ofNullable(route)
                 .map(r -> String.format("log %s --follow=false", r))
@@ -301,6 +312,13 @@ public abstract class JBangTestSupport {
             Files.copy(is, Path.of(containerDataFolder, resource.getName()), StandardCopyOption.REPLACE_EXISTING);
         }
         assertFileInDataFolderExists(resource.getName());
+    }
+
+    protected void copyResourceInDataFolder(String filename) throws IOException {
+        try (InputStream is = JBangTestSupport.class.getResourceAsStream("/jbang/it/" + filename)) {
+            Files.copy(is, Path.of(containerDataFolder, filename), StandardCopyOption.REPLACE_EXISTING);
+        }
+        assertFileInDataFolderExists(filename);
     }
 
     protected void newFileInDataFolder(String fileName, String content) {

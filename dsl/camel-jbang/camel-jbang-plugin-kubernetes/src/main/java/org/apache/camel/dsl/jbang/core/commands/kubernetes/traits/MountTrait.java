@@ -47,6 +47,10 @@ public class MountTrait extends BaseTrait {
             = Pattern.compile("^([\\w.\\-_:]+)(/([\\w.\\-_:]+))?(@([\\w.\\-_:/]+))?$");
 
     public static final int MOUNT_TRAIT_ORDER = ContainerTrait.CONTAINER_TRAIT_ORDER + 10;
+    public static final String CONF_DIR = "/etc/camel/conf.d";
+    public static final String RESOURCES_DIR = "/etc/camel/resources.d";
+    public static final String SECRETS = "/_secrets";
+    public static final String CONFIGMAPS = "/_configmaps";
 
     public MountTrait() {
         super("mount", MOUNT_TRAIT_ORDER);
@@ -206,15 +210,15 @@ public class MountTrait extends BaseTrait {
 
         String baseMountPoint;
         if (mountResource.contentType == MountResource.ContentType.DATA) {
-            baseMountPoint = "/etc/camel/resources.d";
+            baseMountPoint = RESOURCES_DIR;
         } else {
-            baseMountPoint = "/etc/camel/conf.d";
+            baseMountPoint = CONF_DIR;
         }
 
         if (mountResource.storageType == MountResource.StorageType.SECRET) {
-            baseMountPoint += "/_secrets";
+            baseMountPoint += SECRETS;
         } else {
-            baseMountPoint += "/_configmaps";
+            baseMountPoint += CONFIGMAPS;
         }
 
         return Path.of(baseMountPoint, mountResource.name).toString();

@@ -17,20 +17,25 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 import io.fabric8.kubernetes.api.model.APIGroup;
 import io.fabric8.kubernetes.api.model.APIGroupBuilder;
+import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.NodeBuilder;
 import io.fabric8.kubernetes.api.model.NodeList;
 import io.fabric8.kubernetes.api.model.NodeListBuilder;
+import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -105,6 +110,43 @@ class KubernetesRunCustomTest {
         List<HasMetadata> resources = client.load(manifest).items();
         // expects Service, Deployment, Route manifests in openshift.yml
         Assertions.assertEquals(3, resources.size());
+    }
+
+    @Test
+    public void runWithProperties() throws Exception {
+        KubernetesHelper.setKubernetesClient(client);
+        setupServerExpectsConfigmap();
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+                "--runtime=quarkus", "--output=yaml", "--verbose", "--name=my-route-props", "--disable-auto=true",
+                "--property=a=val-A", "--property=b=val-B", "--property=file:src/test/resources/my-route-props1.properties",
+                "--config=configmap:multiple-config", "--config=configmap:test-config", "--config=secret:test-secret");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit, printer.getOutput());
+
+        Properties materializedProps = new Properties();
+        String propsFilepath = ".camel-jbang-run/my-route-props/src/main/resources/application.properties";
+        Assertions.assertTrue(new File(propsFilepath).exists());
+        try (FileInputStream input = new FileInputStream(new File(propsFilepath))) {
+            materializedProps.load(input);
+        }
+
+        Assertions.assertTrue(materializedProps.size() > 0, "materialized properties file is empty");
+        String camelPropLocation = materializedProps.getProperty("camel.component.properties.location");
+        Assertions.assertNotNull(camelPropLocation,
+                "camel.component.properties.location property not found in application.properties");
+        Assertions.assertTrue(camelPropLocation.contains("file:/etc/camel/conf.d/_configmaps/multiple-config/game.properties"),
+                "camel.component.properties.location property doesn't contain expected value file:/etc/camel/conf.d/_configmaps/multiple-config/game.properties");
+        Assertions.assertTrue(camelPropLocation.contains("file:/etc/camel/conf.d/_configmaps/multiple-config/ui.properties"),
+                "camel.component.properties.location property doesn't contain expected value file:/etc/camel/conf.d/_configmaps/multiple-config/ui.properties");
+        Assertions.assertTrue(camelPropLocation.contains("file:/etc/camel/conf.d/_secrets/test-secret/secret.properties"),
+                "camel.component.properties.location property doesn't contain expected value file:/etc/camel/conf.d/_configmaps/multiple-config/ui.properties");
+        Assertions.assertEquals("true", materializedProps.get("camel.component.properties.ignore-missing-location"));
+        // from my-route-props1.properties
+        Assertions.assertEquals("v1", materializedProps.get("k1"));
+        // from the --property parameter
+        Assertions.assertEquals("val-A", materializedProps.get("a"));
+        Assertions.assertEquals("val-B", materializedProps.get("b"));
     }
 
     @Test
@@ -218,6 +260,30 @@ class KubernetesRunCustomTest {
 
         server.expect().get().withPath("/apis/config.openshift.io")
                 .andReturn(HttpURLConnection.HTTP_OK, apiGroup)
+                .always();
+    }
+
+    private void setupServerExpectsConfigmap() {
+        ConfigMap cm = client.configMaps().load(getClass().getResourceAsStream("/test-configmap.yaml")).item();
+        Assertions.assertNotNull(cm);
+        Assertions.assertEquals("test-config", cm.getMetadata().getName());
+        server.expect().get().withPath("/api/v1/namespaces/test/configmaps/test-config")
+                .andReturn(HttpURLConnection.HTTP_OK, cm)
+                .always();
+
+        ConfigMap cm2 = client.configMaps().load(getClass().getResourceAsStream("/test-multiple-config.yaml")).item();
+        Assertions.assertNotNull(cm2);
+        Assertions.assertEquals("multiple-config", cm2.getMetadata().getName());
+        Assertions.assertNotNull(cm2.getData().get("ui.properties"));
+        server.expect().get().withPath("/api/v1/namespaces/test/configmaps/multiple-config")
+                .andReturn(HttpURLConnection.HTTP_OK, cm2)
+                .always();
+
+        Secret secret = client.secrets().load(getClass().getResourceAsStream("/test-secret.yaml")).item();
+        Assertions.assertNotNull(secret);
+        Assertions.assertEquals("test-secret", secret.getMetadata().getName());
+        server.expect().get().withPath("/api/v1/namespaces/test/secrets/test-secret")
+                .andReturn(HttpURLConnection.HTTP_OK, secret)
                 .always();
     }
 
