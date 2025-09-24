@@ -206,7 +206,7 @@
         <google-cloud-secretmanager-version>2.75.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.58.0</google-cloud-storage-version>
         <graaljs-version>25.0.0</graaljs-version>
-        <graphql-java-version>24.2</graphql-java-version>
+        <graphql-java-version>24.3</graphql-java-version>
         <greenmail-version>2.1.5</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.28</groovy-version>
