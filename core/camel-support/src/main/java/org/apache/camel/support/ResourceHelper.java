@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class ResourceHelper {
 
+    public static final String RESOURCE = "resource:";
+
     private static final Logger LOG = LoggerFactory.getLogger(ResourceHelper.class);
 
     private ResourceHelper() {
@@ -68,7 +70,7 @@ public final class ResourceHelper {
             return false;
         }
 
-        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("ref:") ||
+        return uri.startsWith(RESOURCE) || uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("ref:") ||
                 uri.startsWith("bean:") || uri.startsWith("http:") || uri.startsWith("https:");
     }
 
@@ -191,6 +193,9 @@ public final class ResourceHelper {
      * @return              the {@link Resource}. Or <tt>null</tt> if not found
      */
     public static Resource resolveResource(CamelContext camelContext, String uri) {
+        if (uri.startsWith(RESOURCE)) {
+            uri = uri.substring(RESOURCE.length());
+        }
         final ResourceLoader loader = PluginHelper.getResourceLoader(camelContext);
         return loader.resolveResource(uri);
     }
