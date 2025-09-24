@@ -59,6 +59,8 @@ public class DependencyList extends Export {
     @Override
     public Integer doCall() throws Exception {
         this.quiet = true; // be quiet and generate from fresh data to ensure the output is up-to-date
+        this.ignoreLoadingError = true; // also attempt to update for source files that are partly complete so ignore errors
+        this.lazyBean = true;
         return super.doCall();
     }
 
