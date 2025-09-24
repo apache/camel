@@ -130,6 +130,12 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "streamingUploadMode": getOrCreateConfiguration(target).setStreamingUploadMode(property(camelContext, boolean.class, value)); return true;
         case "streaminguploadtimeout":
         case "streamingUploadTimeout": getOrCreateConfiguration(target).setStreamingUploadTimeout(property(camelContext, long.class, value)); return true;
+        case "timestampgroupingenabled":
+        case "timestampGroupingEnabled": getOrCreateConfiguration(target).setTimestampGroupingEnabled(property(camelContext, boolean.class, value)); return true;
+        case "timestampheadername":
+        case "timestampHeaderName": getOrCreateConfiguration(target).setTimestampHeaderName(property(camelContext, java.lang.String.class, value)); return true;
+        case "timestampwindowsizemillis":
+        case "timestampWindowSizeMillis": getOrCreateConfiguration(target).setTimestampWindowSizeMillis(property(camelContext, long.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -258,6 +264,12 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "streamingUploadMode": return boolean.class;
         case "streaminguploadtimeout":
         case "streamingUploadTimeout": return long.class;
+        case "timestampgroupingenabled":
+        case "timestampGroupingEnabled": return boolean.class;
+        case "timestampheadername":
+        case "timestampHeaderName": return java.lang.String.class;
+        case "timestampwindowsizemillis":
+        case "timestampWindowSizeMillis": return long.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -382,6 +394,12 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "streamingUploadMode": return getOrCreateConfiguration(target).isStreamingUploadMode();
         case "streaminguploadtimeout":
         case "streamingUploadTimeout": return getOrCreateConfiguration(target).getStreamingUploadTimeout();
+        case "timestampgroupingenabled":
+        case "timestampGroupingEnabled": return getOrCreateConfiguration(target).isTimestampGroupingEnabled();
+        case "timestampheadername":
+        case "timestampHeaderName": return getOrCreateConfiguration(target).getTimestampHeaderName();
+        case "timestampwindowsizemillis":
+        case "timestampWindowSizeMillis": return getOrCreateConfiguration(target).getTimestampWindowSizeMillis();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "uriendpointoverride":

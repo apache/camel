@@ -2366,6 +2366,90 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable timestamp-based grouping of messages into time windows for
+         * file creation. When enabled, messages are grouped by their timestamp
+         * header into time windows.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param timestampGroupingEnabled the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder timestampGroupingEnabled(boolean timestampGroupingEnabled) {
+            doSetProperty("timestampGroupingEnabled", timestampGroupingEnabled);
+            return this;
+        }
+        /**
+         * Enable timestamp-based grouping of messages into time windows for
+         * file creation. When enabled, messages are grouped by their timestamp
+         * header into time windows.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param timestampGroupingEnabled the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder timestampGroupingEnabled(String timestampGroupingEnabled) {
+            doSetProperty("timestampGroupingEnabled", timestampGroupingEnabled);
+            return this;
+        }
+        /**
+         * The name of the message header containing the timestamp for grouping.
+         * Default is CamelMessageTimestamp.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: CamelMessageTimestamp
+         * Group: producer
+         * 
+         * @param timestampHeaderName the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder timestampHeaderName(String timestampHeaderName) {
+            doSetProperty("timestampHeaderName", timestampHeaderName);
+            return this;
+        }
+        /**
+         * The size of the time window in milliseconds for timestamp-based
+         * grouping. Messages within the same time window will be written to the
+         * same file. Default is 300000 (5 minutes).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: producer
+         * 
+         * @param timestampWindowSizeMillis the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder timestampWindowSizeMillis(long timestampWindowSizeMillis) {
+            doSetProperty("timestampWindowSizeMillis", timestampWindowSizeMillis);
+            return this;
+        }
+        /**
+         * The size of the time window in milliseconds for timestamp-based
+         * grouping. Messages within the same time window will be written to the
+         * same file. Default is 300000 (5 minutes).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: producer
+         * 
+         * @param timestampWindowSizeMillis the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder timestampWindowSizeMillis(String timestampWindowSizeMillis) {
+            doSetProperty("timestampWindowSizeMillis", timestampWindowSizeMillis);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the SQS client.
          * 
          * The option is a: <code>java.lang.String</code> type.

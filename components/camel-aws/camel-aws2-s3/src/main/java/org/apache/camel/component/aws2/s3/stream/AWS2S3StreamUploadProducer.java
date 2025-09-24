@@ -18,10 +18,15 @@ package org.apache.camel.component.aws2.s3.stream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,6 +72,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private static final String TIMEOUT_CHECKER_EXECUTOR_NAME = "S3_Streaming_Upload_Timeout_Checker";
     private AtomicInteger part = new AtomicInteger();
     private UploadState uploadAggregate = null;
+    private final Map<Long, UploadState> timestampBasedUploads = new ConcurrentHashMap<>();
     private final Lock lock = new ReentrantLock();
     private transient String s3ProducerToString;
     private ScheduledExecutorService timeoutCheckerExecutorService;
@@ -100,6 +106,15 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 uploadPart(uploadAggregate);
                 completeUpload(uploadAggregate);
             }
+
+            // Complete any pending timestamp-based uploads
+            for (UploadState state : timestampBasedUploads.values()) {
+                if (ObjectHelper.isNotEmpty(state) && state.buffer.size() > 0) {
+                    uploadPart(state);
+                    completeUpload(state);
+                }
+            }
+            timestampBasedUploads.clear();
         } finally {
             lock.unlock();
         }
@@ -125,6 +140,20 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     completeUpload(uploadAggregate);
                     uploadAggregate = null;
                 }
+
+                // Handle timestamp-based uploads timeout
+                if (getConfiguration().isTimestampGroupingEnabled()) {
+                    List<Long> keysToRemove = new ArrayList<>();
+                    for (Map.Entry<Long, UploadState> entry : timestampBasedUploads.entrySet()) {
+                        UploadState state = entry.getValue();
+                        if (ObjectHelper.isNotEmpty(state) && state.buffer.size() > 0) {
+                            uploadPart(state);
+                            completeUpload(state);
+                            keysToRemove.add(entry.getKey());
+                        }
+                    }
+                    keysToRemove.forEach(timestampBasedUploads::remove);
+                }
             } finally {
                 lock.unlock();
             }
@@ -133,6 +162,14 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
+        if (getConfiguration().isTimestampGroupingEnabled()) {
+            processWithTimestampGrouping(exchange);
+        } else {
+            processWithoutTimestampGrouping(exchange);
+        }
+    }
+
+    private void processWithoutTimestampGrouping(final Exchange exchange) throws Exception {
         InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
 
         UploadState state = null;
@@ -273,6 +310,120 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         }
     }
 
+    private void processWithTimestampGrouping(final Exchange exchange) throws Exception {
+        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+
+        // Extract timestamp from exchange
+        Long messageTimestamp = extractTimestampFromExchange(exchange);
+        if (messageTimestamp == null) {
+            LOG.warn("No valid timestamp found in exchange header '{}', falling back to current time",
+                    getConfiguration().getTimestampHeaderName());
+            messageTimestamp = System.currentTimeMillis();
+        }
+
+        // Calculate the timestamp window
+        long timestampWindow = getTimestampWindow(messageTimestamp);
+
+        byte[] b;
+        int totalSize = 0;
+        int maxRead = (getConfiguration().isMultiPartUpload()
+                ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
+
+        // Get or create upload state for this timestamp window
+        UploadState state = timestampBasedUploads.get(timestampWindow);
+        if (state != null) {
+            state.index++;
+            maxRead -= state.buffer.size();
+        }
+
+        while ((b = AWS2S3Utils.toByteArray(is, maxRead)).length > 0) {
+            totalSize += b.length;
+            if (getConfiguration().isMultiPartUpload())
+                maxRead -= b.length;
+
+            lock.lock();
+            try {
+                // Get or create upload state for this timestamp window
+                if (!timestampBasedUploads.containsKey(timestampWindow)) {
+                    UploadState newState = new UploadState();
+
+                    // Generate timestamp-based filename
+                    final String keyName = getConfiguration().getKeyName();
+                    final String fileName = AWS2S3Utils.determineFileName(keyName);
+                    final String extension = AWS2S3Utils.determineFileExtension(keyName);
+                    newState.dynamicKeyName = generateTimestampBasedFileName(fileName, extension, timestampWindow);
+
+                    // Initialize multipart upload
+                    CreateMultipartUploadRequest.Builder createMultipartUploadRequest
+                            = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
+                                    .key(newState.dynamicKeyName).checksumAlgorithm(algorithm);
+
+                    String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
+                    if (storageClass != null) {
+                        createMultipartUploadRequest.storageClass(storageClass);
+                    }
+
+                    String cannedAcl = exchange.getIn().getHeader(AWS2S3Constants.CANNED_ACL, String.class);
+                    if (cannedAcl != null) {
+                        ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
+                        createMultipartUploadRequest.acl(objectAcl);
+                    }
+
+                    BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);
+                    if (acl != null) {
+                        createMultipartUploadRequest.acl(acl.toString());
+                    }
+
+                    AWS2S3Utils.setEncryption(createMultipartUploadRequest, getConfiguration());
+
+                    LOG.trace("Initiating multipart upload [{}] for timestamp window {}", createMultipartUploadRequest,
+                            timestampWindow);
+                    newState.initResponse
+                            = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
+
+                    timestampBasedUploads.put(timestampWindow, newState);
+                }
+                state = timestampBasedUploads.get(timestampWindow);
+
+                state.buffer.write(b);
+
+                if (getConfiguration().isMultiPartUpload() && state.buffer.size() >= getConfiguration().getPartSize()) {
+                    uploadPart(state);
+                    maxRead = Math.toIntExact(getConfiguration().getPartSize());
+                    continue;
+                }
+
+                if (state.buffer.size() >= getConfiguration().getBatchSize()
+                        || (state.index >= getConfiguration().getBatchMessageNumber()
+                                && state.buffer.size() < getConfiguration().getPartSize())) {
+
+                    if (state.buffer.size() > 0)
+                        uploadPart(state);
+                    CompleteMultipartUploadResponse uploadResult = completeUpload(state);
+                    timestampBasedUploads.remove(timestampWindow);
+
+                    Message message = getMessageForResponse(exchange);
+                    message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
+                    if (uploadResult.versionId() != null) {
+                        message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
+                    }
+                }
+
+            } catch (Exception e) {
+                if (state != null && state.initResponse != null) {
+                    getEndpoint().getS3Client()
+                            .abortMultipartUpload(
+                                    AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
+                                            .key(state.dynamicKeyName).uploadId(state.initResponse.uploadId()).build());
+                    timestampBasedUploads.remove(timestampWindow);
+                }
+                throw e;
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+
     private CompleteMultipartUploadResponse completeUpload(UploadState state) {
         CompletedMultipartUpload completeMultipartUpload
                 = CompletedMultipartUpload.builder().parts(state.completedParts).build();
@@ -373,6 +524,61 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Unsupported operation");
         }
         return dynamicKeyName;
+    }
+
+    private long getTimestampWindow(long timestamp) {
+        long windowSize = getConfiguration().getTimestampWindowSizeMillis();
+        return (timestamp / windowSize) * windowSize;
+    }
+
+    private String generateTimestampBasedFileName(String baseFileName, String extension, long timestampWindow) {
+        Date windowStart = new Date(timestampWindow);
+        Date windowEnd = new Date(timestampWindow + getConfiguration().getTimestampWindowSizeMillis());
+
+        // Use seconds precision for windows smaller than 1 minute, minutes precision otherwise
+        String datePattern, timePattern;
+        if (getConfiguration().getTimestampWindowSizeMillis() < 60000) {
+            datePattern = "yyyyMMdd_HHmmss";
+            timePattern = "HHmmss";
+        } else {
+            datePattern = "yyyyMMdd_HHmm";
+            timePattern = "HHmm";
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        SimpleDateFormat timeFormat = new SimpleDateFormat(timePattern);
+        timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String timeRange = timeFormat.format(windowStart) + "-" + timeFormat.format(windowEnd);
+
+        if (extension != null && !extension.isEmpty()) {
+            return baseFileName + "_" + sdf.format(windowStart) + "_" + timeRange + extension;
+        } else {
+            return baseFileName + "_" + sdf.format(windowStart) + "_" + timeRange;
+        }
+    }
+
+    private Long extractTimestampFromExchange(Exchange exchange) {
+        String headerName = getConfiguration().getTimestampHeaderName();
+        Object timestampObj = exchange.getIn().getHeader(headerName);
+
+        if (timestampObj instanceof Long) {
+            return (Long) timestampObj;
+        } else if (timestampObj instanceof Date) {
+            return ((Date) timestampObj).getTime();
+        } else if (timestampObj instanceof String) {
+            try {
+                return Long.parseLong((String) timestampObj);
+            } catch (NumberFormatException e) {
+                LOG.warn("Cannot parse timestamp header '{}' with value '{}'", headerName, timestampObj);
+                return null;
+            }
+        } else if (timestampObj != null) {
+            LOG.warn("Unsupported timestamp header type: {} for header '{}'", timestampObj.getClass(), headerName);
+        }
+
+        return null;
     }
 
     private void setStartingPart() {

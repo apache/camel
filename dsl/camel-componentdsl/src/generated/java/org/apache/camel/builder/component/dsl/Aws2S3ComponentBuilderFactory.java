@@ -781,6 +781,62 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Enable timestamp-based grouping of messages into time windows for
+         * file creation. When enabled, messages are grouped by their timestamp
+         * header into time windows.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param timestampGroupingEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder timestampGroupingEnabled(boolean timestampGroupingEnabled) {
+            doSetProperty("timestampGroupingEnabled", timestampGroupingEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * The name of the message header containing the timestamp for grouping.
+         * Default is CamelMessageTimestamp.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: CamelMessageTimestamp
+         * Group: producer
+         * 
+         * @param timestampHeaderName the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder timestampHeaderName(java.lang.String timestampHeaderName) {
+            doSetProperty("timestampHeaderName", timestampHeaderName);
+            return this;
+        }
+    
+        
+        /**
+         * The size of the time window in milliseconds for timestamp-based
+         * grouping. Messages within the same time window will be written to the
+         * same file. Default is 300000 (5 minutes).
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: producer
+         * 
+         * @param timestampWindowSizeMillis the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder timestampWindowSizeMillis(long timestampWindowSizeMillis) {
+            doSetProperty("timestampWindowSizeMillis", timestampWindowSizeMillis);
+            return this;
+        }
+    
         /**
          * Define the id of KMS key to use in case KMS is enabled.
          * 
@@ -1202,6 +1258,9 @@ public interface Aws2S3ComponentBuilderFactory {
             case "storageClass": getOrCreateConfiguration((AWS2S3Component) component).setStorageClass((java.lang.String) value); return true;
             case "streamingUploadMode": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadMode((boolean) value); return true;
             case "streamingUploadTimeout": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadTimeout((long) value); return true;
+            case "timestampGroupingEnabled": getOrCreateConfiguration((AWS2S3Component) component).setTimestampGroupingEnabled((boolean) value); return true;
+            case "timestampHeaderName": getOrCreateConfiguration((AWS2S3Component) component).setTimestampHeaderName((java.lang.String) value); return true;
+            case "timestampWindowSizeMillis": getOrCreateConfiguration((AWS2S3Component) component).setTimestampWindowSizeMillis((long) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "conditionalWritesEnabled": getOrCreateConfiguration((AWS2S3Component) component).setConditionalWritesEnabled((boolean) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
