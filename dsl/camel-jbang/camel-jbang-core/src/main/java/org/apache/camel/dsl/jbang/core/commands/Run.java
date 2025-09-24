@@ -1000,7 +1000,7 @@ public class Run extends CamelCommand {
             // run default in current JVM with same camel version
             try {
                 return runKameletMain(main);
-            } catch (FailedToCreateRouteException ex) {
+            } catch (Exception ex) {
                 if (ignoreLoadingError) {
                     printer().printErr(ex);
                     return 0;
