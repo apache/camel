@@ -86,7 +86,6 @@ public final class AnnotationDependencyInjection {
         // quarkus
         registry.bind("QuarkusAnnotationCompilePostProcessor", new QuarkusAnnotationCompilePostProcessor());
         cbbp.addCamelBeanPostProjectInjector(new QuarkusBeanPostProcessorInjector(context));
-
     }
 
     private static class TypeConverterCompilePostProcessor implements CompilePostProcessor {
@@ -109,7 +108,6 @@ public final class AnnotationDependencyInjection {
                 }
             }
         }
-
     }
 
     private static class EventNotifierCompilePostProcessor implements CompilePostProcessor {
@@ -195,7 +193,6 @@ public final class AnnotationDependencyInjection {
                 }
             }
         }
-
     }
 
     private class SpringAnnotationCompilePostProcessor implements CompilePostProcessor {
