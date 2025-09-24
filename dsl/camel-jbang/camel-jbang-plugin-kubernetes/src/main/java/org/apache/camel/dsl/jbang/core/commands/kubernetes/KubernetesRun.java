@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
+import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
@@ -44,6 +45,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.MountTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.Printer;
@@ -798,52 +800,42 @@ public class KubernetesRun extends KubernetesBaseCommand {
      */
     private void setPropertiesLocation() {
         if (configs != null) {
-            List<String> propertiesLocation = new ArrayList<>();
+            StringJoiner propertiesLocation = new StringJoiner(",");
             for (String c : configs) {
                 if (c.startsWith("configmap:")) {
                     String name = c.substring("configmap:".length());
                     // in case the user has set a property to filter from the configmap, the "name" var is
                     // the configmap name and the projected file.
                     if (name.contains("/")) {
-                        String rtProperty = String
-                                .format("camel.component.properties.location=file:/etc/camel/conf.d/_configmaps/%s", name);
-                        propertiesLocation.add(rtProperty);
+                        propertiesLocation.add("file:" + MountTrait.CONF_DIR + MountTrait.CONFIGMAPS + "/" + name);
                     } else {
                         // we have to inspect the configmap and retrieve the key names, as they are
                         // mapped to the mounted file names.
                         Set<String> configmapKeys = retrieveConfigmapKeys(name);
-                        configmapKeys.forEach(key -> {
-                            String rtProperty = String.format(
-                                    "camel.component.properties.location=file:/etc/camel/conf.d/_configmaps/%s/%s", name, key);
-                            propertiesLocation.add(rtProperty);
-                        });
+                        configmapKeys.forEach(key -> propertiesLocation
+                                .add("file:" + MountTrait.CONF_DIR + MountTrait.CONFIGMAPS + "/" + name + "/" + key));
                     }
                 } else if (c.startsWith("secret:")) {
                     String name = c.substring("secret:".length());
                     if (name.contains("/")) {
-                        String rtProperty
-                                = String.format("camel.component.properties.location=file:/etc/camel/conf.d/_secrets/%s", name);
-                        propertiesLocation.add(rtProperty);
+                        propertiesLocation.add("file:" + MountTrait.CONF_DIR + MountTrait.SECRETS + "/" + name);
                     } else {
                         Set<String> secretKeys = retrieveSecretKeys(name);
-                        secretKeys.forEach(key -> {
-                            String rtProperty = String.format(
-                                    "camel.component.properties.location=file:/etc/camel/conf.d/_secrets/%s/%s", name, key);
-                            propertiesLocation.add(rtProperty);
-                        });
+                        secretKeys.forEach(key -> propertiesLocation
+                                .add("file:" + MountTrait.CONF_DIR + MountTrait.SECRETS + "/" + name + "/" + key));
                     }
                 }
             }
-            if (propertiesLocation.size() > 0) {
-                propertiesLocation.add("camel.component.properties.ignore-missing-location=true");
-            }
-            if (properties == null) {
-                properties = propertiesLocation.toArray(new String[propertiesLocation.size()]);
-            } else {
-                for (String s : properties) {
-                    propertiesLocation.add(s);
+            if (propertiesLocation.length() > 0) {
+                List<String> definiteProperties = new ArrayList<>();
+                definiteProperties.add("camel.component.properties.ignore-missing-location=true");
+                definiteProperties.add("camel.component.properties.location=" + propertiesLocation);
+                if (properties != null && properties.length > 0) {
+                    for (String s : properties) {
+                        definiteProperties.add(s);
+                    }
                 }
-                properties = propertiesLocation.toArray(new String[propertiesLocation.size()]);
+                properties = definiteProperties.toArray(new String[definiteProperties.size()]);
             }
         }
     }
