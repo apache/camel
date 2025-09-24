@@ -39,6 +39,6 @@ org.apache.camel.main.MainHelper.setPropertiesOnTarget(context, ds, hikari, "spr
 registry.bind(name, ds);
 
 // log summary to see what was configured
-org.apache.camel.main.MainHelper.logConfigurationSummary(null, set, "Auto-configuration Spring Datasource: " + name + " summary", null);
+org.apache.camel.main.MainHelper.logConfigurationSummary(context, null, set, "Auto-configuration Spring Datasource: " + name + " summary", null);
 
 return null;
