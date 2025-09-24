@@ -153,6 +153,12 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "streamingUploadTimeout": target.getConfiguration().setStreamingUploadTimeout(property(camelContext, long.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "timestampgroupingenabled":
+        case "timestampGroupingEnabled": target.getConfiguration().setTimestampGroupingEnabled(property(camelContext, boolean.class, value)); return true;
+        case "timestampheadername":
+        case "timestampHeaderName": target.getConfiguration().setTimestampHeaderName(property(camelContext, java.lang.String.class, value)); return true;
+        case "timestampwindowsizemillis":
+        case "timestampWindowSizeMillis": target.getConfiguration().setTimestampWindowSizeMillis(property(camelContext, long.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -313,6 +319,12 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "streamingUploadTimeout": return long.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "timestampgroupingenabled":
+        case "timestampGroupingEnabled": return boolean.class;
+        case "timestampheadername":
+        case "timestampHeaderName": return java.lang.String.class;
+        case "timestampwindowsizemillis":
+        case "timestampWindowSizeMillis": return long.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -469,6 +481,12 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "streamingUploadTimeout": return target.getConfiguration().getStreamingUploadTimeout();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
+        case "timestampgroupingenabled":
+        case "timestampGroupingEnabled": return target.getConfiguration().isTimestampGroupingEnabled();
+        case "timestampheadername":
+        case "timestampHeaderName": return target.getConfiguration().getTimestampHeaderName();
+        case "timestampwindowsizemillis":
+        case "timestampWindowSizeMillis": return target.getConfiguration().getTimestampWindowSizeMillis();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "uriendpointoverride":
