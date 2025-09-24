@@ -33,6 +33,12 @@ import org.apache.camel.util.TimeUtils;
  */
 public abstract class LanguageSupport implements Language, IsSingleton, CamelContextAware {
 
+    /**
+     * @deprecated use {@link ResourceHelper#RESOURCE}
+     */
+    @Deprecated
+    public static final String RESOURCE = "resource:";
+
     private static final String[] SIMPLE_FUNCTION_START = new String[] { "${", "$simple{" };
 
     private CamelContext camelContext;
