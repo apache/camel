@@ -51,10 +51,11 @@ public class UriAsJava17TextBlockTest extends ContextTestSupport {
                         .to("log:foo")
                         .to("log:bar")
                         .to("""
-                                mock:result
-                                ?retainFirst=123
+                                mock:result?
+                                retainFirst=123
                                 &failFast=false
                                 &resultWaitTime=5000""");
+                // the ? must always be at end of line, but & can be in beginning also
             }
         };
     }
