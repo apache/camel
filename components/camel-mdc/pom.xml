@@ -36,7 +36,7 @@
   <artifactId>camel-mdc</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: MDC</name>
-  <description>Mapped Diagnostic Context component</description>
+  <description>Logging MDC (Mapped Diagnostic Context) Service</description>
 
   <dependencies>
     <dependency>

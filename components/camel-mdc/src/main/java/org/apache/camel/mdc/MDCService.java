@@ -39,6 +39,7 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
     static String MDC_MESSAGE_ID = "camel.messageId";
     static String MDC_CORRELATION_ID = "camel.correlationId";
     static String MDC_ROUTE_ID = "camel.routeId";
+    static String MDC_CAMEL_THREAD_ID = "camel.threadId";
     static String MDC_CAMEL_CONTEXT_ID = "camel.contextId";
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCService.class);
@@ -149,6 +150,8 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
         MDC.put(MDC_EXCHANGE_ID, exchange.getExchangeId());
         MDC.put(MDC_MESSAGE_ID, exchange.getMessage().getMessageId());
         MDC.put(MDC_CAMEL_CONTEXT_ID, exchange.getContext().getName());
+        // Useful to make sure aync execution is properly propagating context
+        MDC.put(MDC_CAMEL_THREAD_ID, Thread.currentThread().getName());
         // Backward compatibility: this info may not be longer widely used
         String corrId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
         if (corrId != null) {

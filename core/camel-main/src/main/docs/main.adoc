@@ -563,11 +563,14 @@ The camel.telemetryDev supports 4 options, which are listed below.
 
 
 === Camel MDC configurations
-The camel.mdc supports 0 options, which are listed below.
+The camel.mdc supports 3 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.mdc.customExchange{zwsp}Headers* | Provide the headers you would like to use in the logging. Use &#42; value to include all available headers |  | String
+| *camel.mdc.customExchange{zwsp}Properties* | Provide the properties you would like to use in the logging. Use &#42; value to include all available properties |  | String
+| *camel.mdc.enabled* | To enable MDC service | false | boolean
 |===
 
 

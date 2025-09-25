@@ -233,6 +233,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.opentelemetry.";
                 } else if (file.getName().contains("TelemetryDev")) {
                     prefix = "camel.telemetryDev.";
+                } else if (file.getName().contains("MdcConfigurationProperties")) {
+                    prefix = "camel.mdc.";
                 } else if (file.getName().contains("Metrics")) {
                     prefix = "camel.metrics.";
                 } else if (file.getName().contains("HttpServer")) {

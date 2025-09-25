@@ -5,8 +5,8 @@ authors:
 reviewers: ["@davsclaus"]
 approvers: ["@davsclaus"]
 creation-date: 2025-03-07
-last-updated: 2025-03-21
-status: implementable
+last-updated: 2025-09-25
+status: implemented
 see-also: []
 replaces: []
 superseded-by: []
@@ -93,3 +93,7 @@ If the above is proven to work effectively, then, in any future major version we
 == Development
 
 This design proposals should not introduce any breaking compatibility changes. The old and new MDC mechanism can coexist, although it will be recommendable to deprecate the old one once the new one proves to work correctly.
+
+=== `camel-mdc` component (2025-09-25)
+
+Developed a component which cover the design specifications. See component documentation for more details.
