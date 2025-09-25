@@ -136,6 +136,15 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String DEPENDENCIES = "camel.jbang.dependencies";
 
+    @Metadata(description = "Additional dependencies for Camel Main runtime only", javaType = "String")
+    public static final String DEPENDENCIES_MAIN = "camel.jbang.dependencies.main";
+
+    @Metadata(description = "Additional dependencies for Spring Boot runtime only", javaType = "String")
+    public static final String DEPENDENCIES_SPRING_BOOT = "camel.jbang.dependencies.spring-boot";
+
+    @Metadata(description = "Additional dependencies for Quarkus runtime only", javaType = "String")
+    public static final String DEPENDENCIES_QUARKUS = "camel.jbang.dependencies.quarkus";
+
     @Metadata(description = "Version to use for jib-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options)",
               javaType = "String", defaultValue = "3.4.5", label = "kubernetes")
     public static final String JIB_MAVEN_PLUGIN_VERSION = "camel.jbang.jib-maven-plugin-version";

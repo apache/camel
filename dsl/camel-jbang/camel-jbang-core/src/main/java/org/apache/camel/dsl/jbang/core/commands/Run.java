@@ -955,6 +955,10 @@ public class Run extends CamelCommand {
 
         // merge existing dependencies with --deps
         addDependencies(RuntimeUtil.getDependenciesAsArray(profileProperties));
+
+        // Add runtime-specific dependencies
+        addRuntimeSpecificDependenciesFromProperties(profileProperties);
+
         if (!dependencies.isEmpty()) {
             var joined = String.join(",", dependencies);
             main.addInitialProperty(DEPENDENCIES, joined);
@@ -1008,6 +1012,23 @@ public class Run extends CamelCommand {
                 }
                 throw ex;
             }
+        }
+    }
+
+    private void addRuntimeSpecificDependenciesFromProperties(Properties profileProperties) {
+        if (profileProperties == null)
+            return;
+
+        String runtimeSpecificDeps = null;
+
+        switch (runtime) {
+            case main -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_MAIN);
+            case springBoot -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_SPRING_BOOT);
+            case quarkus -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_QUARKUS);
+        }
+
+        if (runtimeSpecificDeps != null && !runtimeSpecificDeps.isEmpty()) {
+            addDependencies(runtimeSpecificDeps.split(","));
         }
     }
 

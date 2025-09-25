@@ -505,6 +505,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         }
                     }
                 }
+            } else if (line.startsWith(DEPENDENCIES_MAIN + "=") && runtime == RuntimeType.main) {
+                addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_MAIN + "="), answer);
+            } else if (line.startsWith(DEPENDENCIES_SPRING_BOOT + "=") && runtime == RuntimeType.springBoot) {
+                addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_SPRING_BOOT + "="), answer);
+            } else if (line.startsWith(DEPENDENCIES_QUARKUS + "=") && runtime == RuntimeType.quarkus) {
+                addRuntimeSpecificDependencies(StringHelper.after(line, DEPENDENCIES_QUARKUS + "="), answer);
             } else if (line.startsWith(CLASSPATH_FILES + "=")) {
                 String deps = StringHelper.after(line, CLASSPATH_FILES + "=");
                 if (!deps.isEmpty()) {
@@ -612,6 +618,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
         answer.removeAll(toBeRemoved);
 
         return answer;
+    }
+
+    private static void addRuntimeSpecificDependencies(String deps, Set<String> answer) {
+        if (!deps.isEmpty()) {
+            for (String d : deps.split(",")) {
+                answer.add(d.trim());
+            }
+        }
     }
 
     protected void copySourceFiles(
