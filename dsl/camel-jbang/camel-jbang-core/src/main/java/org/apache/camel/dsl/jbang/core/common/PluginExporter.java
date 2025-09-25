@@ -40,9 +40,10 @@ public interface PluginExporter {
     /**
      * Provide additional dependencies in Maven GAV format (groupId:artifactId:version).
      *
-     * @return set of Maven GAVs.
+     * @param  runtimeType Type of runtime (defined by parameter --runtime)
+     * @return             set of Maven GAVs.
      */
-    default Set<String> getDependencies() {
+    default Set<String> getDependencies(RuntimeType runtimeType) {
         return Collections.emptySet();
     }
 

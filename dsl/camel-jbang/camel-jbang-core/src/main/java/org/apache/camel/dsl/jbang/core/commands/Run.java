@@ -1078,6 +1078,7 @@ public class Run extends CamelCommand {
         eq.port = this.port;
         eq.managementPort = this.managementPort;
         eq.gav = this.gav;
+        eq.runtime = this.runtime;
         if (eq.gav == null) {
             if (eq.name == null) {
                 eq.name = "jbang-run-dummy";
@@ -1186,6 +1187,7 @@ public class Run extends CamelCommand {
         eq.managementPort = this.managementPort;
         eq.gav = this.gav;
         eq.repositories = this.repositories;
+        eq.runtime = this.runtime;
         if (eq.gav == null) {
             if (eq.name == null) {
                 eq.name = "jbang-run-dummy";
