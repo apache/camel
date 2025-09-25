@@ -159,6 +159,24 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param valueAsString the value to set
+         * @return the dsl builder
+         */
+        default ConsulComponentBuilder valueAsString(boolean valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
+            return this;
+        }
+    
         /**
          * Write timeout for OkHttpClient.
          * 
@@ -239,24 +257,6 @@ public interface ConsulComponentBuilderFactory {
          */
         default ConsulComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    
-        
-        /**
-         * Default to transform values retrieved from Consul i.e. on KV endpoint
-         * to string.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param valueAsString the value to set
-         * @return the dsl builder
-         */
-        default ConsulComponentBuilder valueAsString(boolean valueAsString) {
-            doSetProperty("valueAsString", valueAsString);
             return this;
         }
     
@@ -519,11 +519,11 @@ public interface ConsulComponentBuilderFactory {
             case "readTimeout": getOrCreateConfiguration((ConsulComponent) component).setReadTimeout((java.time.Duration) value); return true;
             case "tags": getOrCreateConfiguration((ConsulComponent) component).setTags((java.lang.String) value); return true;
             case "url": getOrCreateConfiguration((ConsulComponent) component).setUrl((java.lang.String) value); return true;
+            case "valueAsString": getOrCreateConfiguration((ConsulComponent) component).setValueAsString((boolean) value); return true;
             case "writeTimeout": getOrCreateConfiguration((ConsulComponent) component).setWriteTimeout((java.time.Duration) value); return true;
             case "bridgeErrorHandler": ((ConsulComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "action": getOrCreateConfiguration((ConsulComponent) component).setAction((java.lang.String) value); return true;
             case "lazyStartProducer": ((ConsulComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "valueAsString": getOrCreateConfiguration((ConsulComponent) component).setValueAsString((boolean) value); return true;
             case "autowiredEnabled": ((ConsulComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((ConsulComponent) component).setConfiguration((org.apache.camel.component.consul.ConsulConfiguration) value); return true;
             case "consistencyMode": getOrCreateConfiguration((ConsulComponent) component).setConsistencyMode((org.kiwiproject.consul.option.ConsistencyMode) value); return true;

@@ -23,13 +23,14 @@ import org.kiwiproject.consul.Consul;
 
 @UriParams
 public class ConsulConfiguration extends ConsulClientConfiguration {
+
     @UriParam
     private String key;
-    @UriParam(label = "common")
+    @UriParam
     private Consul consulClient;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", enums = "CHECKS,SERVICES,AGENT,REGISTER,DEREGISTER")
     private String action;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(defaultValue = "false")
     private boolean valueAsString;
 
     public ConsulConfiguration() {

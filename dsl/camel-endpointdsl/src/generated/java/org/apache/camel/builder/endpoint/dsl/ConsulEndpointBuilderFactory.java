@@ -205,6 +205,38 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param valueAsString the value to set
+         * @return the dsl builder
+         */
+        default ConsulEndpointConsumerBuilder valueAsString(boolean valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
+            return this;
+        }
+        /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param valueAsString the value to set
+         * @return the dsl builder
+         */
+        default ConsulEndpointConsumerBuilder valueAsString(String valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
+            return this;
+        }
+        /**
          * Write timeout for OkHttpClient.
          * 
          * The option is a: <code>java.time.Duration</code> type.
@@ -777,6 +809,38 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param valueAsString the value to set
+         * @return the dsl builder
+         */
+        default ConsulEndpointProducerBuilder valueAsString(boolean valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
+            return this;
+        }
+        /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param valueAsString the value to set
+         * @return the dsl builder
+         */
+        default ConsulEndpointProducerBuilder valueAsString(String valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
+            return this;
+        }
+        /**
          * Write timeout for OkHttpClient.
          * 
          * The option is a: <code>java.time.Duration</code> type.
@@ -817,38 +881,6 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointProducerBuilder action(String action) {
             doSetProperty("action", action);
-            return this;
-        }
-        /**
-         * Default to transform values retrieved from Consul i.e. on KV endpoint
-         * to string.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param valueAsString the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointProducerBuilder valueAsString(boolean valueAsString) {
-            doSetProperty("valueAsString", valueAsString);
-            return this;
-        }
-        /**
-         * Default to transform values retrieved from Consul i.e. on KV endpoint
-         * to string.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param valueAsString the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointProducerBuilder valueAsString(String valueAsString) {
-            doSetProperty("valueAsString", valueAsString);
             return this;
         }
         /**
@@ -1229,6 +1261,38 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointBuilder url(String url) {
             doSetProperty("url", url);
+            return this;
+        }
+        /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param valueAsString the value to set
+         * @return the dsl builder
+         */
+        default ConsulEndpointBuilder valueAsString(boolean valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
+            return this;
+        }
+        /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param valueAsString the value to set
+         * @return the dsl builder
+         */
+        default ConsulEndpointBuilder valueAsString(String valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
             return this;
         }
         /**
