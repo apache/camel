@@ -32,9 +32,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
 
@@ -124,7 +124,27 @@ public final class URISupport {
     public static String textBlockToSingleLine(String uri) {
         // Java 17 text blocks have new lines with optional white space
         if (uri != null) {
-            uri = uri.lines().map(String::trim).collect(Collectors.joining());
+            // we want text blocks to be as-is before query parameters
+            // as this allows some Camel components to provide code or SQL
+            // to be provided in the context-path.
+            // query parameters are key=value pairs in Camel endpoints and therefore
+            // the lines should be trimmed (after we detect the first ? sign).
+            final AtomicBoolean query = new AtomicBoolean();
+            StringJoiner sj = new StringJoiner("");
+            // use lines() to support splitting in any OS platform (also Windows)
+            uri.lines().forEach(l -> {
+                l = l.trim();
+                if (!query.get()) {
+                    l = l + " ";
+                    if (l.indexOf('?') != -1) {
+                        query.set(true);
+                        l = l.trim();
+                    }
+                }
+                sj.add(l);
+            });
+            uri = sj.toString();
+            uri = uri.trim();
         }
         return uri;
     }
