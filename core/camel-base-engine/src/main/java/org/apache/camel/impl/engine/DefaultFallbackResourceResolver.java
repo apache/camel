@@ -14,43 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.download;
+package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.engine.DefaultResourceResolvers;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceResolver;
 import org.apache.camel.support.ResourceResolverSupport;
-import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * A fallback {@link ResourceResolver} that camel-jbang uses to be able to load resources from both classpath and file,
- * which is needed when users use camel run * and have files that should be loaded via Camels resource loader.
+ * A fallback {@link ResourceResolver} to be able to load resources from both classpath and file.
  */
-public class KameletFallbackResourceResolver extends ResourceResolverSupport {
+public class DefaultFallbackResourceResolver extends ResourceResolverSupport {
 
     private final ResourceResolver classpath;
     private final ResourceResolver file;
 
-    public KameletFallbackResourceResolver(CamelContext camelContext) {
+    public DefaultFallbackResourceResolver(CamelContext camelContext) {
         super("");
         setCamelContext(camelContext);
         classpath = new DefaultResourceResolvers.ClasspathResolver();
         classpath.setCamelContext(camelContext);
         file = new DefaultResourceResolvers.FileResolver();
         file.setCamelContext(camelContext);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        ServiceHelper.startService(classpath, file);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        ServiceHelper.startService(classpath, file);
     }
 
     @Override
@@ -64,12 +49,21 @@ public class KameletFallbackResourceResolver extends ResourceResolverSupport {
     @Override
     protected Resource createResource(String location, String remaining) {
         Resource answer = classpath.resolve(classpath.getSupportedScheme() + ":" + location);
+        if (answer == null || !answer.exists() && location.endsWith(".groovy")) {
+            // special for groovy sources as they can be located in src/main/resources/camel-groovy
+            Resource special = super.resolve(classpath.getSupportedScheme() + ":camel-groovy/" + location);
+            if (special != null && special.exists()) {
+                answer = special;
+            }
+        }
+        // fallback to file location
         if (answer == null || !answer.exists()) {
-            answer = file.resolve(file.getSupportedScheme() + ":" + location);
-            if (answer != null && !answer.exists()) {
-                answer = null;
+            Resource special = file.resolve(file.getSupportedScheme() + ":" + location);
+            if (special != null && special.exists()) {
+                answer = special;
             }
         }
         return answer;
     }
+
 }

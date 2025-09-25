@@ -60,17 +60,7 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
                     ResourceResolver.class);
         }
         if (this.fallbackResolver == null) {
-            this.fallbackResolver = new DefaultResourceResolvers.ClasspathResolver() {
-                @Override
-                public Resource resolve(String location) {
-                    Resource answer = super.resolve(DefaultResourceResolvers.ClasspathResolver.SCHEME + ":" + location);
-                    if (answer == null || !answer.exists() && location.endsWith(".groovy")) {
-                        // special for groovy sources as they can be located in src/main/resources/camel-groovy
-                        answer = super.resolve(DefaultResourceResolvers.ClasspathResolver.SCHEME + ":camel-groovy/" + location);
-                    }
-                    return answer;
-                }
-            };
+            this.fallbackResolver = new DefaultFallbackResourceResolver(camelContext);
         }
         this.fallbackResolver.setCamelContext(camelContext);
     }
