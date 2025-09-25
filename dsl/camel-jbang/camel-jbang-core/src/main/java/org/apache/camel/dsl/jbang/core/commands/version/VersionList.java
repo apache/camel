@@ -218,7 +218,7 @@ public class VersionList extends CamelCommand {
                     new Column().header("JDK")
                             .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::jdkVersion),
                     new Column().header("KIND")
-                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(this::kind),
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::kind),
                     new Column().header("RELEASED")
                             .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::releaseDate),
                     new Column().header("SUPPORTED UNTIL")
