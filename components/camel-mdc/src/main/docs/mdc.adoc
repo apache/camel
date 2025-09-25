@@ -2,9 +2,66 @@
 :doctitle: Mdc
 :shortname: mdc
 :artifactid: camel-mdc
-:description: Mapped Diagnostic Context component
+:description: Logging MDC (Mapped Diagnostic Context) Service
 :since: 4.15
 :supportlevel: Preview
 :tabs-sync-option:
 
 *Since Camel {since}*
+
+This component is in charge to provide the configuration required to work with Mapped Diagnostic Context (MDC), a specification adopted by the major logging providers to add diagnostic information in the logging traces. Camel uses the API exposed by https://www.slf4j.org/manual.html#mdc[SLF4J logging facade]. The concrete implementation will depend on the logging system adopted.
+
+When you enable the MDC Service provided in this component, you will instruct your application to automatically store certain Camel Headers into the MDC storage. You can additionally provide more headers and properties through the component configuration. The MDC is normally sharing the storage per each thread. Given the multi threading nature of Camel, the component deals with the multithreading setting the information into the context and cleaning them once they have been used (generally after a logging trace).
+
+== Usage
+
+If you want to use the feature, you need to include the `camel-mdc` dependency in your `pom.xml` and configure it with the parameters in the `application.properties` configuration file (at least set `camel.mdc.enabled=true`).
+
+The goal of this component is to avoid to work on low level API in Java. In older MDC implementations you had to hack into the code to include MDC such as:
+
+```java
+    org.slf4j.MDC.put("myCustomMDCKey", "myCustomKeyValue");
+```
+
+And later you had to make sure to provide MDC context propagation in async components (eg, `wiretap`) in order to make sure to have such context available in the new executing async thread. With this new service, the only thing to do is to add the value as a Camel Exchange header (or a property), for example:
+
+```java
+    .setHeader("myCustomMDCKey", simple("myCustomKeyValue"))
+```
+include the MDC service and additionally instruct the Camel application to treat that header as a MDC trace (via `camel.mdc.customHeaders=myCustomMDCKey` or `*` to include all headers). You won't need any longer to worry about context propagation as the propagation will be done via Camel Exchange instead.
+
+NOTE: you won't also need any longer to hack the code using Java DSL, as you can put headers in any Camel DSL.
+
+Depending on the logging technology used, you can now include the MDC parameters you want to trace in your logging configuration. For example, in `log4j2` configuration you can include them as shown below:
+
+```
+... [%X{camel.contextId}, %X{camel.routeId}, %X{camel.exchangeId}, %X{camel.messageId}, %X{customHead}, %X{customProp}]
+```
+
+During the execution you can verify the output of the log to see the traces appended to your logger.
+
+== Default headers
+
+This is the list of default MDC values included in each execution:
+
+* camel.breadcrumbId
+* camel.exchangeId
+* camel.messageId
+* camel.correlationId
+* camel.routeId
+* camel.contextId
+* camel.threadId
+
+If they exists in the Exchange, then, they will be included in the MDC. You can use `camel.mdc.customHeaders` and `camel.mdc.customProperties` to include any further header and property you need to trace.
+
+== Configuration
+
+The configuration properties for the MDC component are:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Option |Default |Description
+|`camel.mdc.enabled`| false | Enable the MDC logging.
+|`camel.mdc.customHeaders` |  | Provide the headers you would like to use in the logging. Use `*` value to include all available headers.
+|`camel.mdc.customProperties` |  | Provide the properties you would like to use in the logging. Use `*` value to include all available properties.
+|=======================================================================

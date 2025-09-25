@@ -40,13 +40,13 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
             CamelContext camelContext,
             NamedNode processorDefinition, Processor target, Processor nextTarget)
             throws Exception {
-        return new DelegateAsyncProcessor(new TraceProcessor(target));
+        return new DelegateAsyncProcessor(new MDCProcessor(target));
     }
 
-    private class TraceProcessor implements Processor {
+    private class MDCProcessor implements Processor {
         private final Processor target;
 
-        public TraceProcessor(Processor target) {
+        public MDCProcessor(Processor target) {
             this.target = target;
         }
 

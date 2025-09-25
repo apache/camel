@@ -28,6 +28,8 @@ public class MdcConfigurationProperties implements BootstrapCloseable {
     private MainConfigurationProperties parent;
 
     private boolean enabled;
+    private String customHeaders;
+    private String customProperties;
 
     public MdcConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -47,10 +49,55 @@ public class MdcConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * To enable Mdc
+     * To enable MDC service
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getCustomHeaders() {
+        return customHeaders;
+    }
+
+    /**
+     * Provide the headers you would like to use in the logging. Use `*` value to include all available headers
+     */
+    public void setCustomHeaders(String customHeaders) {
+        this.customHeaders = customHeaders;
+    }
+
+    public String getCustomProperties() {
+        return customProperties;
+    }
+
+    /**
+     * Provide the properties you would like to use in the logging. Use `*` value to include all available properties
+     */
+    public void setCustomProperties(String customProperties) {
+        this.customProperties = customProperties;
+    }
+
+    /**
+     * To enable MDC service
      */
     public MdcConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
+    }
+
+    /**
+     * Provide the headers you would like to use in the logging. Use `*` value to include all available headers
+     */
+    public MdcConfigurationProperties withCustomHeaders(String customHeaders) {
+        this.customHeaders = customHeaders;
+        return this;
+    }
+
+    /**
+     * Provide the properties you would like to use in the logging. Use `*` value to include all available properties
+     */
+    public MdcConfigurationProperties withCustomProperties(String customProperties) {
+        this.customProperties = customProperties;
         return this;
     }
 

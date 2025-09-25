@@ -70,6 +70,7 @@ public class MDCAsyncTest extends ExchangeTestSupport {
                         .simple("start")
                         .log("start: ${exchangeId}")
                         .to("direct:a")
+                        // MUST be any async component
                         .wireTap("direct:b");
 
                 from("direct:a")
@@ -81,12 +82,13 @@ public class MDCAsyncTest extends ExchangeTestSupport {
                             assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
                             assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
                             assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
+                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_THREAD_ID));
                             assertEquals("Header1", MDC.get("head"));
                             assertEquals("Property1", MDC.get("prop1"));
                             assertNull(MDC.get("prop2"));
-                            // We store the exchange of this execution in a property
-                            // as we will use this property to evaluate the exchange in the direct:b execution
-                            exchange.setProperty("directa-exchange", exchange.getExchangeId());
+                            // We store the threadId of this execution in a property
+                            // as we will use it to assert the thread is different in the direct:b execution
+                            exchange.setProperty("thread-a", MDC.get(MDCService.MDC_CAMEL_THREAD_ID));
                         })
                         .setBody()
                         .simple("Direct a")
@@ -97,16 +99,11 @@ public class MDCAsyncTest extends ExchangeTestSupport {
                         .setHeader("head", simple("Header2"))
                         .process(exchange -> {
                             LOG.info("Direct:b process");
-                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
-                            assertEquals("Header2", MDC.get("head"));
-                            // NOTE: properties are shared
+                            // Make sure this execution is spanned in a different thread
+                            // but still the context (in this case the properties) is propagated
+                            assertNotEquals(exchange.getProperty("thread-a"), MDC.get(MDCService.MDC_CAMEL_THREAD_ID));
                             assertEquals("Property1", MDC.get("prop1"));
                             assertEquals("Property2", MDC.get("prop2"));
-                            // We use as support storage the same properties
-                            assertNotEquals(exchange.getProperty("directa-exchange"), MDC.get(MDCService.MDC_EXCHANGE_ID));
                         })
                         .delay(2000)
                         .setBody()
