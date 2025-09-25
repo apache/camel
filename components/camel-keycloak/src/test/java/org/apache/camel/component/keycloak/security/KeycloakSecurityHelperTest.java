@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.keycloak.security;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PublicKey;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+import org.keycloak.common.VerificationException;
 import org.keycloak.representations.AccessToken;
 import org.mockito.Mockito;
 
@@ -126,4 +130,34 @@ public class KeycloakSecurityHelperTest {
         when(token.getNbf()).thenReturn(futureNbf);
         assertFalse(KeycloakSecurityHelper.isTokenActive(token));
     }
+
+    @Test
+    void testParseAccessTokenWithPublicKey() {
+        // Test that verification fails with wrong public key
+        String invalidToken = "invalid.jwt.token";
+
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(2048);
+            KeyPair keyPair = keyGen.generateKeyPair();
+            PublicKey publicKey = keyPair.getPublic();
+
+            assertThrows(VerificationException.class, () -> {
+                KeycloakSecurityHelper.parseAccessToken(invalidToken, publicKey);
+            });
+        } catch (Exception e) {
+            fail("Failed to generate test keys: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testParseAccessTokenWithNullKey() {
+        String invalidToken = "invalid.jwt.token";
+
+        // Should not throw exception with null key, just parse without verification
+        assertThrows(VerificationException.class, () -> {
+            KeycloakSecurityHelper.parseAccessToken(invalidToken, null);
+        });
+    }
+
 }

@@ -22,6 +22,7 @@ import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateProcessor;
+import org.apache.camel.util.ObjectHelper;
 import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,12 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
 
     private void validateRoles(String accessToken, Exchange exchange) throws Exception {
         try {
-            AccessToken token = KeycloakSecurityHelper.parseAccessToken(accessToken);
+            AccessToken token;
+            if (ObjectHelper.isEmpty(policy.getPublicKey())) {
+                token = KeycloakSecurityHelper.parseAccessToken(accessToken);
+            } else {
+                token = KeycloakSecurityHelper.parseAccessToken(accessToken, policy.getPublicKey());
+            }
             Set<String> userRoles = KeycloakSecurityHelper.extractRoles(token, policy.getRealm(), policy.getClientId());
 
             boolean hasRequiredRoles = policy.isAllRolesRequired()

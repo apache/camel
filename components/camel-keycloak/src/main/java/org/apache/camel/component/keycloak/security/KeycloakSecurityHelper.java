@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.keycloak.security;
 
+import java.security.PublicKey;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,10 +38,18 @@ public final class KeycloakSecurityHelper {
     }
 
     public static AccessToken parseAccessToken(String tokenString) throws VerificationException {
-        // Note: In production, you should verify the token signature with the public key
-        // For simplicity, we're just parsing without verification here
-        // You would typically do: TokenVerifier.create(tokenString, AccessToken.class).publicKey(publicKey).verify().getToken()
-        return TokenVerifier.create(tokenString, AccessToken.class).getToken();
+        return parseAccessToken(tokenString, null);
+    }
+
+    public static AccessToken parseAccessToken(String tokenString, PublicKey publicKey) throws VerificationException {
+        if (publicKey != null) {
+            return TokenVerifier.create(tokenString, AccessToken.class)
+                    .publicKey(publicKey)
+                    .verify()
+                    .getToken();
+        } else {
+            return TokenVerifier.create(tokenString, AccessToken.class).getToken();
+        }
     }
 
     public static Set<String> extractRoles(AccessToken token, String realm, String clientId) {

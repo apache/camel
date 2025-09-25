@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.keycloak.security;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
     private boolean allRolesRequired = true;
     private boolean allPermissionsRequired = true;
     private boolean useResourceOwnerPasswordCredentials = false;
+    private PublicKey publicKey;
 
     private Keycloak keycloakClient;
 
@@ -188,5 +190,13 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
 
     public Keycloak getKeycloakClient() {
         return keycloakClient;
+    }
+
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(PublicKey publicKey) {
+        this.publicKey = publicKey;
     }
 }
