@@ -16,12 +16,16 @@
  */
 package org.apache.camel.mdc;
 
+import java.util.concurrent.CompletableFuture;
+
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 
 /**
  * MDCProcessorsInterceptStrategy is used to wrap each processor calls and generate the MDC context for each process
@@ -37,28 +41,51 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
 
     @Override
     public Processor wrapProcessorInInterceptors(
-            CamelContext camelContext,
-            NamedNode processorDefinition, Processor target, Processor nextTarget)
+            final CamelContext context,
+            final NamedNode definition,
+            final Processor target,
+            final Processor nextTarget)
             throws Exception {
-        return new DelegateAsyncProcessor(new TraceProcessor(target));
-    }
 
-    private class TraceProcessor implements Processor {
-        private final Processor target;
+        final AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(target);
 
-        public TraceProcessor(Processor target) {
-            this.target = target;
-        }
+        return new AsyncProcessor() {
 
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            mdcService.setMDC(exchange);
-            try {
-                target.process(exchange);
-            } finally {
-                mdcService.unsetMDC();
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                mdcService.setMDC(exchange);
+                return asyncProcessor.process(exchange, doneSync -> {
+                    mdcService.unsetMDC();
+                    callback.done(doneSync);
+                });
             }
-        }
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                mdcService.setMDC(exchange);
+                try {
+                    asyncProcessor.process(exchange);
+                } finally {
+                    mdcService.unsetMDC();
+                }
+            }
+
+            @Override
+            public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+                CompletableFuture<Exchange> future = new CompletableFuture<>();
+                mdcService.setMDC(exchange);
+                asyncProcessor.process(exchange, doneSync -> {
+                    if (exchange.getException() != null) {
+                        future.completeExceptionally(exchange.getException());
+                    } else {
+                        future.complete(exchange);
+                    }
+                    mdcService.unsetMDC();
+                });
+
+                return future;
+            }
+        };
     }
 
 }

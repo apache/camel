@@ -16,27 +16,20 @@
  */
 package org.apache.camel.mdc;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.RoutesBuilder;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MDCAsyncTest extends ExchangeTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MDCAsyncTest.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -50,69 +43,49 @@ public class MDCAsyncTest extends ExchangeTestSupport {
     }
 
     @Test
-    void testRouteSingleRequest() throws IOException, InterruptedException {
-        MockEndpoint mock = getMockEndpoint("mock:end");
-        mock.expectedMessageCount(1);
-        mock.setAssertPeriod(5000);
-        context.createProducerTemplate().sendBody("direct:start", null);
-        mock.assertIsSatisfied(1000);
-        // We should get no MDC after the route has been executed
-        assertEquals(0, MDC.getCopyOfContextMap().size());
+    public void testAsyncEndpoint() throws Exception {
+        getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
+
+        String reply = template.requestBody("direct:start", "Hello Camel", String.class);
+        assertEquals("Bye Camel", reply);
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setBody()
-                        .simple("start")
-                        .log("start: ${exchangeId}")
-                        .to("direct:a")
-                        .wireTap("direct:b");
+                context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:a")
+                from("direct:start").to("mock:before").to("log:before")
                         .setProperty("prop1", simple("Property1"))
                         .setHeader("head", simple("Header1"))
-                        .process(exchange -> {
-                            LOG.info("Direct:a process");
-                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
-                            assertEquals("Header1", MDC.get("head"));
-                            assertEquals("Property1", MDC.get("prop1"));
-                            assertNull(MDC.get("prop2"));
-                            // We store the exchange of this execution in a property
-                            // as we will use this property to evaluate the exchange in the direct:b execution
-                            exchange.setProperty("directa-exchange", exchange.getExchangeId());
-                        })
-                        .setBody()
-                        .simple("Direct a")
-                        .log("directa: ${exchangeId}");
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("Header1", MDC.get("head"));
+                                assertEquals("Property1", MDC.get("prop1"));
+                                assertNull(MDC.get("prop2"));
+                                // We store the threadId of this execution in a property
+                                // as we will use it to assert the thread is different in the direct:b execution
+                                exchange.setProperty("thread-a", MDC.get(MDCService.MDC_CAMEL_THREAD_ID));
+                            }
+                        }).recipientList(constant("direct:foo"));
 
-                from("direct:b")
+                from("direct:foo").to("async:bye:camel")
                         .setProperty("prop2", simple("Property2"))
                         .setHeader("head", simple("Header2"))
-                        .process(exchange -> {
-                            LOG.info("Direct:b process");
-                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
-                            assertEquals("Header2", MDC.get("head"));
-                            // NOTE: properties are shared
-                            assertEquals("Property1", MDC.get("prop1"));
-                            assertEquals("Property2", MDC.get("prop2"));
-                            // We use as support storage the same properties
-                            assertNotEquals(exchange.getProperty("directa-exchange"), MDC.get(MDCService.MDC_EXCHANGE_ID));
-                        })
-                        .delay(2000)
-                        .setBody()
-                        .simple("Direct b")
-                        .log("directb: ${exchangeId}")
-                        .to("mock:end");
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // Make sure this execution is spanned in a different thread
+                                // but still the context (in this case the properties) is propagated
+                                assertNotEquals(exchange.getProperty("thread-a"), MDC.get(MDCService.MDC_CAMEL_THREAD_ID));
+                                assertEquals("Header2", MDC.get("head"));
+                                assertEquals("Property1", MDC.get("prop1"));
+                                assertEquals("Property2", MDC.get("prop2"));
+                            }
+                        }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

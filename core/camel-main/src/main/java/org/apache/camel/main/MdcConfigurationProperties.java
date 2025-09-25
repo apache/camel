@@ -28,6 +28,8 @@ public class MdcConfigurationProperties implements BootstrapCloseable {
     private MainConfigurationProperties parent;
 
     private boolean enabled;
+    private String customExchangeHeaders;
+    private String customExchangeProperties;
 
     public MdcConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -47,10 +49,57 @@ public class MdcConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * To enable Mdc
+     * To enable MDC service
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getCustomExchangeHeaders() {
+        return customExchangeHeaders;
+    }
+
+    /**
+     * Provide the headers you would like to use in the logging. Use `&#42;` value to include all available headers
+     */
+    public void setCustomExchangeHeaders(String customExchangeHeaders) {
+        this.customExchangeHeaders = customExchangeHeaders;
+    }
+
+    public String getCustomExchangeProperties() {
+        return customExchangeProperties;
+    }
+
+    /**
+     * Provide the properties you would like to use in the logging. Use `&#42;` value to include all available
+     * properties
+     */
+    public void setCustomExchangeProperties(String customExchangeProperties) {
+        this.customExchangeProperties = customExchangeProperties;
+    }
+
+    /**
+     * To enable MDC service
      */
     public MdcConfigurationProperties withEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
+    }
+
+    /**
+     * Provide the headers you would like to use in the logging. Use `&#42;` value to include all available headers
+     */
+    public MdcConfigurationProperties withCustomExchangeHeaders(String customExchangeHeaders) {
+        this.customExchangeHeaders = customExchangeHeaders;
+        return this;
+    }
+
+    /**
+     * Provide the properties you would like to use in the logging. Use `&#42;` value to include all available
+     * properties
+     */
+    public MdcConfigurationProperties withCustomExchangeProperties(String customExchangeProperties) {
+        this.customExchangeProperties = customExchangeProperties;
         return this;
     }
 

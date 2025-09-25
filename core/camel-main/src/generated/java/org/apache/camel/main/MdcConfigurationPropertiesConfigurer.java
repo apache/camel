@@ -22,12 +22,23 @@ public class MdcConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("CustomExchangeHeaders", java.lang.String.class);
+        map.put("CustomExchangeProperties", java.lang.String.class);
+        map.put("Enabled", boolean.class);
         ALL_OPTIONS = map;
     }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        return false;
+        org.apache.camel.main.MdcConfigurationProperties target = (org.apache.camel.main.MdcConfigurationProperties) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "customexchangeheaders":
+        case "customExchangeHeaders": target.setCustomExchangeHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "customexchangeproperties":
+        case "customExchangeProperties": target.setCustomExchangeProperties(property(camelContext, java.lang.String.class, value)); return true;
+        case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        default: return false;
+        }
     }
 
     @Override
@@ -37,12 +48,27 @@ public class MdcConfigurationPropertiesConfigurer extends org.apache.camel.suppo
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        return null;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "customexchangeheaders":
+        case "customExchangeHeaders": return java.lang.String.class;
+        case "customexchangeproperties":
+        case "customExchangeProperties": return java.lang.String.class;
+        case "enabled": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
-        return null;
+        org.apache.camel.main.MdcConfigurationProperties target = (org.apache.camel.main.MdcConfigurationProperties) obj;
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "customexchangeheaders":
+        case "customExchangeHeaders": return target.getCustomExchangeHeaders();
+        case "customexchangeproperties":
+        case "customExchangeProperties": return target.getCustomExchangeProperties();
+        case "enabled": return target.isEnabled();
+        default: return null;
+        }
     }
 }
 

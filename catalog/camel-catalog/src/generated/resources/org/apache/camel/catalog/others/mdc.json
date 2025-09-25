@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "mdc",
     "title": "Mdc",
-    "description": "Mapped Diagnostic Context component",
+    "description": "Logging MDC (Mapped Diagnostic Context) Service",
     "deprecated": false,
     "firstVersion": "4.15.0",
     "label": "logging",
