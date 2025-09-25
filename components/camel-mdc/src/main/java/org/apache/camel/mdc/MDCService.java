@@ -93,6 +93,12 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
         camelContext.getCamelContextExtension().addLogListener(new TracingLogListener());
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        LOG.info("Mapped Diagnostic Context (MDC) enabled");
+    }
+
     private final class TracingLogListener implements LogListener {
 
         @Override
@@ -101,12 +107,18 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
                 // Default values
                 prepareMDC(exchange);
                 if (getCustomHeaders() != null) {
-                    // User headers values
-                    userSelectedHeadersMDC(exchange);
+                    if (getCustomHeaders().equals("*")){
+                        allHeadersMDC(exchange);
+                    } else {
+                        userSelectedHeadersMDC(exchange);
+                    }
                 }
                 if (getCustomProperties() != null) {
-                    // User headers values
-                    userSelectedPropertiesMDC(exchange);
+                    if (getCustomProperties().equals("*")){
+                        allPropertiesMDC(exchange);
+                    } else {
+                        userSelectedPropertiesMDC(exchange);
+                    }
                 }
             } catch (Exception t) {
                 // This exception is ignored
@@ -149,12 +161,29 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
                 }
             }
         }
+        // Include all available headers
+        private void allHeadersMDC(Exchange exchange) {
+            for (String header : exchange.getIn().getHeaders().keySet()) {
+                if (exchange.getIn().getHeader(header) != null) {
+                    MDC.put(header, exchange.getIn().getHeader(header, String.class));
+                }
+            }
+        }
 
         // Include those properties selected by the user
         private void userSelectedPropertiesMDC(Exchange exchange) {
             for (String customProperty : getCustomProperties().split(",")) {
                 if (exchange.getProperty(customProperty) != null) {
                     MDC.put(customProperty, exchange.getProperty(customProperty, String.class));
+                }
+            }
+        }
+
+        // Include all available properties
+        private void allPropertiesMDC(Exchange exchange) {
+            for (String property : exchange.getAllProperties().keySet()) {
+                if (exchange.getProperty(property) != null) {
+                    MDC.put(property, exchange.getProperty(property, String.class));
                 }
             }
         }
