@@ -255,10 +255,10 @@ class KubernetesRunCustomTest {
     private void setupServerExpectsOpenshift() {
         APIGroup apiGroup = new APIGroupBuilder()
                 .withApiVersion("v1")
-                .withName("config.openshift.io")
+                .withName("route.openshift.io")
                 .build();
 
-        server.expect().get().withPath("/apis/config.openshift.io")
+        server.expect().get().withPath("/apis/route.openshift.io")
                 .andReturn(HttpURLConnection.HTTP_OK, apiGroup)
                 .always();
     }

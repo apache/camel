@@ -67,7 +67,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Properties props = model.getProperties();
         Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
         Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
-        Assertions.assertEquals("eclipse-temurin:21", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:21", props.get("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
         Assertions.assertNull(props.get("jkube.docker.push.registry"));
         Assertions.assertNull(props.get("jkube.container-image.registry"));
@@ -105,7 +105,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Properties props = model.getProperties();
         Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
         Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
-        Assertions.assertEquals("eclipse-temurin:17", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:17", props.get("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
         Assertions.assertNull(props.get("jkube.docker.push.registry"));
         Assertions.assertNull(props.get("jkube.container-image.registry"));
@@ -146,7 +146,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Properties props = model.getProperties();
         Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
         Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
-        Assertions.assertEquals("eclipse-temurin:21", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:21", props.get("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
         Assertions.assertNull(props.get("jkube.docker.push.registry"));
         Assertions.assertNull(props.get("jkube.container-image.registry"));
