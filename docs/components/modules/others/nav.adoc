@@ -25,7 +25,6 @@
 ** xref:jfr.adoc[JFR]
 ** xref:jta.adoc[JTA]
 ** xref:keycloak.adoc[Keycloak]
-** xref:keycloak-usage-examples.adoc[Keycloak Security Policy Usage Examples]
 ** xref:leveldb.adoc[LevelDB]
 ** xref:lra.adoc[LRA]
 ** xref:mail-microsoft-oauth.adoc[Mail Microsoft Oauth]
