@@ -588,7 +588,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 ResourceLoader.FACTORY,
                 ResourceLoader.class);
 
-        return result.orElseGet(DefaultResourceLoader::new);
+        return result.orElseGet(() -> new DefaultResourceLoader(this));
     }
 
     @Override
