@@ -66,22 +66,6 @@ public interface ConsulComponentBuilderFactory {
         }
     
         /**
-         * Reference to a org.kiwiproject.consul.Consul in the registry.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param consulClient the value to set
-         * @return the dsl builder
-         */
-        default ConsulComponentBuilder consulClient(org.kiwiproject.consul.Consul consulClient) {
-            doSetProperty("consulClient", consulClient);
-            return this;
-        }
-    
-        /**
          * The default key. Can be overridden by CamelConsulKey.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -318,6 +302,22 @@ public interface ConsulComponentBuilderFactory {
         }
     
         /**
+         * The consul client to use.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.kiwiproject.consul.Consul&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
+         */
+        default ConsulComponentBuilder consulClient(org.kiwiproject.consul.Consul consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+    
+        /**
          * The data center.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -513,7 +513,6 @@ public interface ConsulComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "connectTimeout": getOrCreateConfiguration((ConsulComponent) component).setConnectTimeout((java.time.Duration) value); return true;
-            case "consulClient": getOrCreateConfiguration((ConsulComponent) component).setConsulClient((org.kiwiproject.consul.Consul) value); return true;
             case "key": getOrCreateConfiguration((ConsulComponent) component).setKey((java.lang.String) value); return true;
             case "pingInstance": getOrCreateConfiguration((ConsulComponent) component).setPingInstance((boolean) value); return true;
             case "readTimeout": getOrCreateConfiguration((ConsulComponent) component).setReadTimeout((java.time.Duration) value); return true;
@@ -527,6 +526,7 @@ public interface ConsulComponentBuilderFactory {
             case "autowiredEnabled": ((ConsulComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((ConsulComponent) component).setConfiguration((org.apache.camel.component.consul.ConsulConfiguration) value); return true;
             case "consistencyMode": getOrCreateConfiguration((ConsulComponent) component).setConsistencyMode((org.kiwiproject.consul.option.ConsistencyMode) value); return true;
+            case "consulClient": getOrCreateConfiguration((ConsulComponent) component).setConsulClient((org.kiwiproject.consul.Consul) value); return true;
             case "datacenter": getOrCreateConfiguration((ConsulComponent) component).setDatacenter((java.lang.String) value); return true;
             case "nearNode": getOrCreateConfiguration((ConsulComponent) component).setNearNode((java.lang.String) value); return true;
             case "nodeMeta": getOrCreateConfiguration((ConsulComponent) component).setNodeMeta((java.lang.String) value); return true;

@@ -73,35 +73,6 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a org.kiwiproject.consul.Consul in the registry.
-         * 
-         * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
-         * 
-         * Group: common
-         * 
-         * @param consulClient the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointConsumerBuilder consulClient(org.kiwiproject.consul.Consul consulClient) {
-            doSetProperty("consulClient", consulClient);
-            return this;
-        }
-        /**
-         * Reference to a org.kiwiproject.consul.Consul in the registry.
-         * 
-         * The option will be converted to a
-         * <code>org.kiwiproject.consul.Consul</code> type.
-         * 
-         * Group: common
-         * 
-         * @param consulClient the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointConsumerBuilder consulClient(String consulClient) {
-            doSetProperty("consulClient", consulClient);
-            return this;
-        }
-        /**
          * The default key. Can be overridden by CamelConsulKey.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -594,6 +565,35 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
+         * The consul client to use.
+         * 
+         * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedConsulEndpointConsumerBuilder consulClient(org.kiwiproject.consul.Consul consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * The consul client to use.
+         * 
+         * The option will be converted to a
+         * <code>org.kiwiproject.consul.Consul</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedConsulEndpointConsumerBuilder consulClient(String consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
          * The data center.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -674,35 +674,6 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointProducerBuilder connectTimeout(String connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * Reference to a org.kiwiproject.consul.Consul in the registry.
-         * 
-         * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
-         * 
-         * Group: common
-         * 
-         * @param consulClient the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointProducerBuilder consulClient(org.kiwiproject.consul.Consul consulClient) {
-            doSetProperty("consulClient", consulClient);
-            return this;
-        }
-        /**
-         * Reference to a org.kiwiproject.consul.Consul in the registry.
-         * 
-         * The option will be converted to a
-         * <code>org.kiwiproject.consul.Consul</code> type.
-         * 
-         * Group: common
-         * 
-         * @param consulClient the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointProducerBuilder consulClient(String consulClient) {
-            doSetProperty("consulClient", consulClient);
             return this;
         }
         /**
@@ -1048,6 +1019,35 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
+         * The consul client to use.
+         * 
+         * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedConsulEndpointProducerBuilder consulClient(org.kiwiproject.consul.Consul consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * The consul client to use.
+         * 
+         * The option will be converted to a
+         * <code>org.kiwiproject.consul.Consul</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedConsulEndpointProducerBuilder consulClient(String consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
          * The data center.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1129,35 +1129,6 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointBuilder connectTimeout(String connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * Reference to a org.kiwiproject.consul.Consul in the registry.
-         * 
-         * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
-         * 
-         * Group: common
-         * 
-         * @param consulClient the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointBuilder consulClient(org.kiwiproject.consul.Consul consulClient) {
-            doSetProperty("consulClient", consulClient);
-            return this;
-        }
-        /**
-         * Reference to a org.kiwiproject.consul.Consul in the registry.
-         * 
-         * The option will be converted to a
-         * <code>org.kiwiproject.consul.Consul</code> type.
-         * 
-         * Group: common
-         * 
-         * @param consulClient the value to set
-         * @return the dsl builder
-         */
-        default ConsulEndpointBuilder consulClient(String consulClient) {
-            doSetProperty("consulClient", consulClient);
             return this;
         }
         /**
@@ -1443,6 +1414,35 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointBuilder consistencyMode(String consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
+            return this;
+        }
+        /**
+         * The consul client to use.
+         * 
+         * The option is a: <code>org.kiwiproject.consul.Consul</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedConsulEndpointBuilder consulClient(org.kiwiproject.consul.Consul consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * The consul client to use.
+         * 
+         * The option will be converted to a
+         * <code>org.kiwiproject.consul.Consul</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedConsulEndpointBuilder consulClient(String consulClient) {
+            doSetProperty("consulClient", consulClient);
             return this;
         }
         /**
