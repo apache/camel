@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "keycloak",
+    "title": "Keycloak",
+    "description": "Security using Keycloak",
+    "deprecated": false,
+    "firstVersion": "4.15.0",
+    "label": "security",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-keycloak",
+    "version": "4.15.0-SNAPSHOT"
+  }
+}

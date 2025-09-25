@@ -1,0 +1,506 @@
+= Keycloak Component
+:doctitle: Keycloak
+:shortname: keycloak
+:artifactid: camel-keycloak
+:description: Security using Keycloak
+:since: 4.15
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Keycloak security policy provides route-level authorization using Keycloak authentication and authorization services.
+
+== Features
+
+The Keycloak security policy supports:
+
+* **Role-based authorization** - Validate user roles from Keycloak tokens
+* **Permission-based authorization** - Validate fine-grained permissions using Keycloak Authorization Services
+* **Token validation** - Verify access tokens from Keycloak
+* **Flexible configuration** - Support for client credentials and resource owner password flows
+
+== Configuration
+
+=== Basic Setup
+
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+policy.setServerUrl("http://localhost:8080");
+policy.setRealm("my-realm");
+policy.setClientId("my-client");
+policy.setClientSecret("my-client-secret");
+----
+
+=== Role-based Authorization
+
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
+    "http://localhost:8080", "my-realm", "my-client", "client-secret");
+
+// Require specific roles
+policy.setRequiredRoles(Arrays.asList("admin", "user"));
+policy.setAllRolesRequired(true); // User must have ALL roles
+
+from("direct:admin")
+    .policy(policy)
+    .to("mock:admin-endpoint");
+----
+
+=== Permission-based Authorization
+
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
+    "http://localhost:8080", "my-realm", "my-client", "client-secret");
+
+// Require specific permissions
+policy.setRequiredPermissions(Arrays.asList("read:documents", "write:documents"));
+policy.setAllPermissionsRequired(false); // User needs ANY permission
+
+from("direct:documents")
+    .policy(policy)
+    .to("mock:documents-endpoint");
+----
+
+=== Resource Owner Password Credentials
+
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
+    "http://localhost:8080", "my-realm", "my-client", "username", "password");
+
+from("direct:user-flow")
+    .policy(policy)
+    .to("mock:result");
+----
+
+== Usage
+
+=== Providing Access Tokens
+
+The security policy expects access tokens to be provided in one of the following ways:
+
+1. **Header**: `CamelKeycloakAccessToken`
+2. **Authorization Header**: `Authorization: Bearer <token>`
+3. **Exchange Property**: `CamelKeycloakAccessToken`
+
+[source,java]
+----
+// Using header
+template.sendBodyAndHeader("direct:protected", "message",
+    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, accessToken);
+
+// Using Authorization header
+template.sendBodyAndHeader("direct:protected", "message",
+    "Authorization", "Bearer " + accessToken);
+----
+
+=== Route Examples
+
+[source,java]
+----
+from("direct:admin-only")
+    .policy(adminPolicy)
+    .transform().constant("Admin access granted")
+    .to("mock:admin");
+
+from("direct:user-or-admin")
+    .policy(userPolicy)
+    .transform().constant("User access granted")
+    .to("mock:user");
+
+from("rest:get:/api/documents")
+    .policy(documentsPolicy)
+    .to("direct:list-documents");
+----
+
+== Configuration Options
+
+[width="100%",cols="10%,10%,80%",options="header"]
+|===
+| Name | Default | Description
+
+| serverUrl | | Keycloak server URL (e.g., http://localhost:8080)
+| realm | | Keycloak realm name
+| clientId | | Keycloak client ID
+| clientSecret | | Keycloak client secret (for client credentials flow)
+| username | | Username (for resource owner password flow)
+| password | | Password (for resource owner password flow)
+| requiredRoles | [] | List of required roles
+| requiredPermissions | [] | List of required permissions
+| allRolesRequired | true | Whether ALL roles are required (true) or ANY role (false)
+| allPermissionsRequired | true | Whether ALL permissions are required (true) or ANY permission (false)
+| useResourceOwnerPasswordCredentials | false | Whether to use resource owner password flow
+|===
+
+== Security Considerations
+
+* Always use HTTPS in production environments
+* Store client secrets securely (environment variables, secret management systems)
+* Regularly rotate client secrets and user passwords
+* Use the principle of least privilege when assigning roles and permissions
+* Consider token expiration and refresh strategies
+
+== Error Handling
+
+The component throws `CamelAuthorizationException` when:
+
+* Access token is missing or invalid
+* User doesn't have required roles
+* User doesn't have required permissions
+* Keycloak server is unreachable
+* Token verification fails
+
+[source,java]
+----
+onException(CamelAuthorizationException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(403))
+    .transform().constant("Access denied");
+----
+
+== Examples
+
+=== Basic Role-based Authorization
+
+[source,java]
+----
+// Create Keycloak security policy
+KeycloakSecurityPolicy keycloakPolicy = new KeycloakSecurityPolicy();
+keycloakPolicy.setServerUrl("http://localhost:8080");
+keycloakPolicy.setRealm("my-company");
+keycloakPolicy.setClientId("my-service");
+keycloakPolicy.setClientSecret("client-secret-value");
+
+// Require admin role
+keycloakPolicy.setRequiredRoles(Arrays.asList("admin"));
+
+// Apply to route
+from("direct:admin-endpoint")
+    .policy(keycloakPolicy)
+    .transform().constant("Admin access granted")
+    .to("mock:admin-result");
+----
+
+=== Multiple Role Authorization
+
+[source,java]
+----
+// Require either admin OR user role
+KeycloakSecurityPolicy userPolicy = new KeycloakSecurityPolicy(
+    "http://localhost:8080", "my-company", "my-service", "client-secret");
+userPolicy.setRequiredRoles(Arrays.asList("admin", "user"));
+userPolicy.setAllRolesRequired(false); // ANY role (OR logic)
+
+from("direct:user-endpoint")
+    .policy(userPolicy)
+    .to("bean:userService?method=processUser");
+----
+
+=== REST API with Keycloak Protection
+
+[source,java]
+----
+// Configure different policies for different endpoints
+KeycloakSecurityPolicy readPolicy = new KeycloakSecurityPolicy(
+    "{{keycloak.server-url}}", "{{keycloak.realm}}",
+    "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
+readPolicy.setRequiredRoles(Arrays.asList("reader", "writer", "admin"));
+readPolicy.setAllRolesRequired(false);
+
+KeycloakSecurityPolicy writePolicy = new KeycloakSecurityPolicy(
+    "{{keycloak.server-url}}", "{{keycloak.realm}}",
+    "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
+writePolicy.setRequiredRoles(Arrays.asList("writer", "admin"));
+writePolicy.setAllRolesRequired(false);
+
+KeycloakSecurityPolicy adminPolicy = new KeycloakSecurityPolicy(
+    "{{keycloak.server-url}}", "{{keycloak.realm}}",
+    "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
+adminPolicy.setRequiredRoles(Arrays.asList("admin"));
+
+// Configure REST endpoints
+rest("/api")
+    .get("/documents")
+        .route()
+        .policy(readPolicy)
+        .to("bean:documentService?method=listDocuments")
+        .endRest()
+    .post("/documents")
+        .route()
+        .policy(writePolicy)
+        .to("bean:documentService?method=createDocument")
+        .endRest()
+    .delete("/documents/{id}")
+        .route()
+        .policy(adminPolicy)
+        .to("bean:documentService?method=deleteDocument")
+        .endRest();
+----
+
+=== Sending Requests with Tokens
+
+[source,java]
+----
+// In your client code, include the access token
+String accessToken = "eyJhbGciOiJSUzI1NiIsInR5cC..."; // From Keycloak
+
+// Option 1: Using custom header
+template.sendBodyAndHeader("direct:protected-endpoint",
+    requestBody,
+    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+    accessToken);
+
+// Option 2: Using Authorization header (standard)
+template.sendBodyAndHeader("direct:protected-endpoint",
+    requestBody,
+    "Authorization",
+    "Bearer " + accessToken);
+
+// Option 3: Using exchange property
+Exchange exchange = ExchangeBuilder.anExchange(camelContext)
+    .withBody(requestBody)
+    .withProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, accessToken)
+    .build();
+template.send("direct:protected-endpoint", exchange);
+----
+
+=== Advanced Error Handling
+
+[source,java]
+----
+// Global error handler for authorization failures
+onException(CamelAuthorizationException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(403))
+    .setHeader("Content-Type", constant("application/json"))
+    .transform().constant("{\"error\": \"Access denied\", \"message\": \"Insufficient privileges\"}")
+    .log("Authorization failed: ${exception.message}");
+
+// Route-specific error handling
+from("rest:post:/secure-data")
+    .doTry()
+        .policy(keycloakPolicy)
+        .to("bean:dataProcessor")
+    .doCatch(CamelAuthorizationException.class)
+        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(403))
+        .transform().constant("Access denied")
+    .end();
+----
+
+=== Configuration Properties
+
+[source,properties]
+----
+# application.properties
+keycloak.server-url=http://localhost:8080
+keycloak.realm=my-company
+keycloak.client-id=my-service
+keycloak.client-secret=your-client-secret
+----
+
+=== Spring Configuration
+
+[source,java]
+----
+@Configuration
+public class SecurityConfiguration {
+
+    @Value("${keycloak.server-url}")
+    private String serverUrl;
+
+    @Value("${keycloak.realm}")
+    private String realm;
+
+    @Value("${keycloak.client-id}")
+    private String clientId;
+
+    @Value("${keycloak.client-secret}")
+    private String clientSecret;
+
+    @Bean
+    public KeycloakSecurityPolicy adminPolicy() {
+        KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
+            serverUrl, realm, clientId, clientSecret);
+        policy.setRequiredRoles(Arrays.asList("admin"));
+        return policy;
+    }
+
+    @Bean
+    public KeycloakSecurityPolicy userPolicy() {
+        KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
+            serverUrl, realm, clientId, clientSecret);
+        policy.setRequiredRoles(Arrays.asList("user", "admin"));
+        policy.setAllRolesRequired(false);
+        return policy;
+    }
+}
+----
+
+=== Complete Route Configuration
+
+[source,java]
+----
+public class KeycloakSecurityRoutes extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+
+        // Admin policy - requires admin role
+        KeycloakSecurityPolicy adminPolicy = new KeycloakSecurityPolicy(
+            "{{keycloak.server-url}}", "{{keycloak.realm}}",
+            "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
+        adminPolicy.setRequiredRoles(Arrays.asList("admin"));
+
+        // User policy - requires user or admin role
+        KeycloakSecurityPolicy userPolicy = new KeycloakSecurityPolicy(
+            "{{keycloak.server-url}}", "{{keycloak.realm}}",
+            "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
+        userPolicy.setRequiredRoles(Arrays.asList("user", "admin"));
+        userPolicy.setAllRolesRequired(false); // ANY role
+
+        // Error handling
+        onException(CamelAuthorizationException.class)
+            .handled(true)
+            .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(403))
+            .transform().constant("Forbidden");
+
+        // Routes
+        from("rest:get:/admin/users")
+            .policy(adminPolicy)
+            .to("bean:userService?method=getAllUsers");
+
+        from("rest:get:/profile")
+            .policy(userPolicy)
+            .to("bean:userService?method=getCurrentUser");
+    }
+}
+----
+
+== Running Integration Tests
+
+The component includes integration tests that require a running Keycloak instance. These tests are disabled by default and only run when specific system properties are provided.
+
+=== Starting Keycloak with Docker
+
+==== 1. Start Keycloak Container
+
+[source,bash]
+----
+# Start Keycloak in development mode
+docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin \
+  quay.io/keycloak/keycloak:latest start-dev
+----
+
+==== 2. Access Keycloak Admin Console
+
+Open your browser to http://localhost:8080/admin and login with:
+- Username: `admin`
+- Password: `admin`
+
+=== Keycloak Configuration for Integration Tests
+
+==== 3. Create Test Realm
+
+1. In the Keycloak Admin Console, click **"Add realm"**
+2. Set realm name to: `test-realm`
+3. Click **"Create"**
+
+==== 4. Create Test Client
+
+1. In the `test-realm`, go to **Clients** → **"Create client"**
+2. Set the following:
+   - Client type: `OpenID Connect`
+   - Client ID: `test-client`
+   - Next → Client authentication: `ON`
+   - Authorization: `ON` (optional, for advanced features)
+   - Next → Valid redirect URIs: `*`
+   - Click **"Save"**
+3. Go to **Credentials** tab and copy the **Client Secret**
+
+==== 5. Create Test Roles
+
+1. Go to **Realm roles** → **"Create role"**
+2. Create the following roles:
+   - `admin-role`
+   - `user`
+   - `reader`
+
+==== 6. Create Test Users
+
+Create three test users with the following configuration:
+
+**User 1: myuser**
+1. Go to **Users** → **"Add user"**
+2. Set:
+   - Username: `myuser`
+   - Email: `myuser@test.com`
+   - First name: `My`
+   - Last name: `User`
+   - Click **"Create"**
+3. Go to **Credentials** tab → **"Set password"**
+   - Password: `pippo123`
+   - Temporary: `OFF`
+4. Go to **Role mapping** tab → **"Assign role"**
+   - Assign role: `admin-role`
+
+**User 2: test-user**
+1. Create user with:
+   - Username: `test-user`
+   - Password: `user123` (temporary: OFF)
+   - Assign role: `user`
+
+**User 3: reader-user**
+1. Create user with:
+   - Username: `reader-user`
+   - Password: `reader123` (temporary: OFF)
+   - Assign role: `reader`
+
+=== Running the Integration Tests
+
+==== 7. Execute Tests with Maven
+
+[source,bash]
+----
+# Run integration tests with required properties
+mvn test -Dtest=KeycloakSecurityIT \
+  -Dkeycloak.server.url=http://localhost:8080 \
+  -Dkeycloak.realm=test-realm \
+  -Dkeycloak.client.id=test-client \
+  -Dkeycloak.client.secret=YOUR_CLIENT_SECRET
+----
+
+Replace `YOUR_CLIENT_SECRET` with the actual client secret from step 4.
+
+==== 8. Alternative: Set Environment Variables
+
+[source,bash]
+----
+export KEYCLOAK_SERVER_URL=http://localhost:8080
+export KEYCLOAK_REALM=test-realm
+export KEYCLOAK_CLIENT_ID=test-client
+export KEYCLOAK_CLIENT_SECRET=YOUR_CLIENT_SECRET
+
+# Run tests
+mvn test -Dtest=KeycloakSecurityIT \
+  -Dkeycloak.server.url=$KEYCLOAK_SERVER_URL \
+  -Dkeycloak.realm=$KEYCLOAK_REALM \
+  -Dkeycloak.client.id=$KEYCLOAK_CLIENT_ID \
+  -Dkeycloak.client.secret=$KEYCLOAK_CLIENT_SECRET
+----
+
+=== Troubleshooting
+
+**Tests are skipped**: Verify all four required properties are provided and Keycloak is running on the specified URL.
+
+**401 Unauthorized**: Check that:
+- Users exist with correct passwords
+- Users have the required roles assigned
+- Client credentials are correct
+
+**Connection refused**: Ensure Keycloak is running and accessible at the specified URL.
+
+**Token validation errors**: Verify the realm name and client configuration match exactly.
