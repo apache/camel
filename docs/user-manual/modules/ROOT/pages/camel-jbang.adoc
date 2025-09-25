@@ -3947,7 +3947,7 @@ The follow options related to _exporting_ or _running_, can be configured in `ap
 
 // jbang options: START
 === Camel JBang configurations
-The camel.jbang supports 44 options, which are listed below.
+The camel.jbang supports 47 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -3959,6 +3959,9 @@ The camel.jbang supports 44 options, which are listed below.
 | *camel.jbang.compileWorkDir* | Work directory for compiler. Can be used to write compiled classes or other resources. | .camel-jbang/compile | String
 | *camel.jbang.console* | Developer console at /q/dev on local HTTP server (port 8080 by default) | false | boolean
 | *camel.jbang.dependencies* | Additional dependencies (Use commas to separate multiple dependencies). |  | String
+| *camel.jbang.dependencies.main* | Additional dependencies for Camel Main runtime only |  | String
+| *camel.jbang.dependencies.quarkus* | Additional dependencies for Quarkus runtime only |  | String
+| *camel.jbang.dependencies.spring-boot* | Additional dependencies for Spring Boot runtime only |  | String
 | *camel.jbang.download* | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | *camel.jbang.excludes* | Exclude files by name or pattern (Use commas to separate multiple files) |  | String
 | *camel.jbang.exportDir* | Directory where the project will be exported | . | String
