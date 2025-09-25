@@ -1316,8 +1316,8 @@ public interface NettyComponentBuilderFactory {
         }
     
         /**
-         * Password setting to use in order to encrypt/decrypt payloads sent
-         * using SSH.
+         * Password to use for the keyStore and trustStore. The same password
+         * must be configured for both resources.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

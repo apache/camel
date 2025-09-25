@@ -87,8 +87,7 @@ The values that could be passed in are the following:
 |===
 |Name |Description
 
-|`passphrase` |password setting to use to encrypt/decrypt payloads sent using
-SSH
+|`passphrase` |Password to use for the keyStore and trustStore. The same password must be configured for both resources.
 
 |`keyStoreFormat` |keystore format to be used for payload encryption. Defaults to `JKS` if
 not set

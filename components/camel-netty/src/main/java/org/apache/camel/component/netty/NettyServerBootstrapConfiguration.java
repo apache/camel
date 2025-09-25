@@ -117,7 +117,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
               description = "Which protocols to enable when using SSL")
     protected String enabledProtocols = DEFAULT_ENABLED_PROTOCOLS;
     @UriParam(label = "security", secret = true,
-              description = "Password setting to use in order to encrypt/decrypt payloads sent using SSH")
+              description = "Password to use for the keyStore and trustStore. The same password must be configured for both resources.")
     protected String passphrase;
     @UriParam(label = "advanced",
               description = "Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and"
@@ -493,7 +493,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     }
 
     /**
-     * Password setting to use in order to encrypt/decrypt payloads sent using SSH
+     * Password to use for the keyStore and trustStore. The same password must be configured for both resources.
      */
     public void setPassphrase(String passphrase) {
         this.passphrase = passphrase;
