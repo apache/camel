@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.CamelMDCService;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
@@ -33,12 +34,12 @@ import org.slf4j.MDC;
 @JdkService("mdc-service")
 public class MDCService extends ServiceSupport implements CamelMDCService {
 
-    private String MDC_BREADCRUMB_ID = "camel.breadcrumbId";
-    private String MDC_EXCHANGE_ID = "camel.exchangeId";
-    private String MDC_MESSAGE_ID = "camel.messageId";
-    private String MDC_CORRELATION_ID = "camel.correlationId";
-    private String MDC_ROUTE_ID = "camel.routeId";
-    private String MDC_CAMEL_CONTEXT_ID = "camel.contextId";
+    static String MDC_BREADCRUMB_ID = "camel.breadcrumbId";
+    static String MDC_EXCHANGE_ID = "camel.exchangeId";
+    static String MDC_MESSAGE_ID = "camel.messageId";
+    static String MDC_CORRELATION_ID = "camel.correlationId";
+    static String MDC_ROUTE_ID = "camel.routeId";
+    static String MDC_CAMEL_CONTEXT_ID = "camel.contextId";
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCService.class);
 
@@ -90,7 +91,9 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
     @Override
     public void doInit() {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
-        camelContext.getCamelContextExtension().addLogListener(new TracingLogListener());
+        camelContext.getCamelContextExtension().addLogListener(new MDCLogListener());
+        InterceptStrategy interceptStrategy = new MDCProcessorsInterceptStrategy(this);
+        camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
     }
 
     @Override
@@ -99,92 +102,101 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
         LOG.info("Mapped Diagnostic Context (MDC) enabled");
     }
 
-    private final class TracingLogListener implements LogListener {
+    protected void setMDC(Exchange exchange) {
+        try {
+            // Default values
+            prepareMDC(exchange);
+            if (getCustomHeaders() != null) {
+                if (getCustomHeaders().equals("*")) {
+                    allHeadersMDC(exchange);
+                } else {
+                    userSelectedHeadersMDC(exchange);
+                }
+            }
+            if (getCustomProperties() != null) {
+                if (getCustomProperties().equals("*")) {
+                    allPropertiesMDC(exchange);
+                } else {
+                    userSelectedPropertiesMDC(exchange);
+                }
+            }
+        } catch (Exception t) {
+            // This exception is ignored
+            LOG.warn("MDC: failed to store MDC data. This exception is ignored.", t);
+        }
+    }
+
+    public void unsetMDC() {
+        MDC.clear();
+    }
+
+    private final class MDCLogListener implements LogListener {
 
         @Override
         public String onLog(Exchange exchange, CamelLogger camelLogger, String message) {
-            try {
-                // Default values
-                prepareMDC(exchange);
-                if (getCustomHeaders() != null) {
-                    if (getCustomHeaders().equals("*")){
-                        allHeadersMDC(exchange);
-                    } else {
-                        userSelectedHeadersMDC(exchange);
-                    }
-                }
-                if (getCustomProperties() != null) {
-                    if (getCustomProperties().equals("*")){
-                        allPropertiesMDC(exchange);
-                    } else {
-                        userSelectedPropertiesMDC(exchange);
-                    }
-                }
-            } catch (Exception t) {
-                // This exception is ignored
-                LOG.warn("MDC: failed to store MDC data. This exception is ignored.", t);
-            }
+            setMDC(exchange);
             return message;
         }
 
         @Override
         public void afterLog(Exchange exchange, CamelLogger camelLogger, String message) {
-            MDC.clear();
+            unsetMDC();
         }
+    }
 
-        // Default basic MDC properties to set
-        private void prepareMDC(Exchange exchange) {
-            MDC.put(MDC_EXCHANGE_ID, exchange.getExchangeId());
-            MDC.put(MDC_MESSAGE_ID, exchange.getMessage().getMessageId());
-            MDC.put(MDC_CAMEL_CONTEXT_ID, exchange.getContext().getName());
-            // Backward compatibility: this info may not be longer widely used
-            String corrId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
-            if (corrId != null) {
-                MDC.put(MDC_CORRELATION_ID, corrId);
-            }
-            // Backward compatibility: this info may not be longer widely used
-            String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
-            if (breadcrumbId != null) {
-                MDC.put(MDC_BREADCRUMB_ID, breadcrumbId);
-            }
-            String routeId = exchange.getFromRouteId();
-            if (routeId != null) {
-                MDC.put(MDC_ROUTE_ID, routeId);
-            }
+    // Default basic MDC properties to set
+    private void prepareMDC(Exchange exchange) {
+        MDC.put(MDC_EXCHANGE_ID, exchange.getExchangeId());
+        MDC.put(MDC_MESSAGE_ID, exchange.getMessage().getMessageId());
+        MDC.put(MDC_CAMEL_CONTEXT_ID, exchange.getContext().getName());
+        // Backward compatibility: this info may not be longer widely used
+        String corrId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+        if (corrId != null) {
+            MDC.put(MDC_CORRELATION_ID, corrId);
         }
+        // Backward compatibility: this info may not be longer widely used
+        String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
+        if (breadcrumbId != null) {
+            MDC.put(MDC_BREADCRUMB_ID, breadcrumbId);
+        }
+        String routeId = exchange.getFromRouteId();
+        if (routeId != null) {
+            MDC.put(MDC_ROUTE_ID, routeId);
+        }
+    }
 
-        // Include those headers selected by the user
-        private void userSelectedHeadersMDC(Exchange exchange) {
-            for (String customHeader : getCustomHeaders().split(",")) {
-                if (exchange.getIn().getHeader(customHeader) != null) {
-                    MDC.put(customHeader, exchange.getIn().getHeader(customHeader, String.class));
-                }
+    // Include those headers selected by the user
+    private void userSelectedHeadersMDC(Exchange exchange) {
+        for (String customHeader : getCustomHeaders().split(",")) {
+            if (exchange.getIn().getHeader(customHeader) != null) {
+                MDC.put(customHeader, exchange.getIn().getHeader(customHeader, String.class));
             }
         }
-        // Include all available headers
-        private void allHeadersMDC(Exchange exchange) {
-            for (String header : exchange.getIn().getHeaders().keySet()) {
-                if (exchange.getIn().getHeader(header) != null) {
-                    MDC.put(header, exchange.getIn().getHeader(header, String.class));
-                }
-            }
-        }
+    }
 
-        // Include those properties selected by the user
-        private void userSelectedPropertiesMDC(Exchange exchange) {
-            for (String customProperty : getCustomProperties().split(",")) {
-                if (exchange.getProperty(customProperty) != null) {
-                    MDC.put(customProperty, exchange.getProperty(customProperty, String.class));
-                }
+    // Include all available headers
+    private void allHeadersMDC(Exchange exchange) {
+        for (String header : exchange.getIn().getHeaders().keySet()) {
+            if (exchange.getIn().getHeader(header) != null) {
+                MDC.put(header, exchange.getIn().getHeader(header, String.class));
             }
         }
+    }
 
-        // Include all available properties
-        private void allPropertiesMDC(Exchange exchange) {
-            for (String property : exchange.getAllProperties().keySet()) {
-                if (exchange.getProperty(property) != null) {
-                    MDC.put(property, exchange.getProperty(property, String.class));
-                }
+    // Include those properties selected by the user
+    private void userSelectedPropertiesMDC(Exchange exchange) {
+        for (String customProperty : getCustomProperties().split(",")) {
+            if (exchange.getProperty(customProperty) != null) {
+                MDC.put(customProperty, exchange.getProperty(customProperty, String.class));
+            }
+        }
+    }
+
+    // Include all available properties
+    private void allPropertiesMDC(Exchange exchange) {
+        for (String property : exchange.getAllProperties().keySet()) {
+            if (exchange.getProperty(property) != null) {
+                MDC.put(property, exchange.getProperty(property, String.class));
             }
         }
     }
