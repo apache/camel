@@ -187,7 +187,7 @@
         <jaxb-core-version>4.0.5</jaxb-core-version>
         <jaxb-impl-version>4.0.6</jaxb-impl-version>
         <jaxb-osgi-version>4.0.5</jaxb-osgi-version>
-        <jaxb-xjc-version>4.0.5</jaxb-xjc-version>
+        <jaxb-xjc-version>4.0.6</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.6</jaxb-jxc-version>
         <gmavenplus-plugin-version>4.2.1</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.39.1</google-auth-library-oauth2-http-version>
