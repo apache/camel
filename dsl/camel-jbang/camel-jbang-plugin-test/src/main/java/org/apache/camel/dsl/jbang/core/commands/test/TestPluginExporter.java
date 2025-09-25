@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.citrusframework.CitrusSettings;
@@ -68,7 +69,7 @@ public class TestPluginExporter implements PluginExporter {
     }
 
     @Override
-    public Set<String> getDependencies() {
+    public Set<String> getDependencies(RuntimeType runtime) {
         Set<String> deps = new HashSet<>();
 
         if (!isEnabled()) {

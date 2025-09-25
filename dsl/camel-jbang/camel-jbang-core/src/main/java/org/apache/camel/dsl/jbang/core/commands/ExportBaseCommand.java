@@ -599,7 +599,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     .collect(Collectors.toSet());
 
             for (PluginExporter exporter : exporters) {
-                answer.addAll(exporter.getDependencies());
+                answer.addAll(exporter.getDependencies(runtime));
             }
         }
 
