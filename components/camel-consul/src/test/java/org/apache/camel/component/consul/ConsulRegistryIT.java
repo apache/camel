@@ -127,10 +127,6 @@ public class ConsulRegistryIT implements Serializable {
         assertEquals(2, consulTestClassMap.size());
     }
 
-    public void checkFailedFindByTypeWithName() {
-
-    }
-
     @Test
     public void storeObject() {
         ConsulTestClass testObject = new ConsulTestClass();

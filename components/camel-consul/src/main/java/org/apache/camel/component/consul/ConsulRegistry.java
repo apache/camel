@@ -198,7 +198,7 @@ public class ConsulRegistry implements Registry {
             throw new NoSuchBeanException(msg);
         }
         kvClient.deleteKey(key);
-        kvClient.deleteKey(object.getClass().getName() + "/" + key);
+        kvClient.deleteKey(asLongKey(object, key));
         kvClient.releaseLock(lockKey, sessionId);
     }
 
@@ -226,8 +226,12 @@ public class ConsulRegistry implements Registry {
         // store the actual class
         kvClient.putValue(key, value);
         // store just as a bookmark
-        kvClient.putValue(object.getClass().getName().replace('$', '/') + "/" + key, "1");
+        kvClient.putValue(asLongKey(object, key), "1");
         kvClient.releaseLock(lockKey, sessionId);
+    }
+
+    private static String asLongKey(Object object, String key) {
+        return object.getClass().getName().replace('$', '/') + "/" + key;
     }
 
     public static class Builder {
