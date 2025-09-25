@@ -201,6 +201,7 @@
         <module>camel-jte</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
+        <module>camel-keycloak</module>
         <module>camel-knative</module>
         <module>camel-kubernetes</module>
         <module>camel-kudu</module>
