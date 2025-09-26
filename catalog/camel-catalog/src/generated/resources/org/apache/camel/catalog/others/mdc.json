@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "mdc",
+    "title": "Mdc",
+    "description": "Logging MDC (Mapped Diagnostic Context) Service",
+    "deprecated": false,
+    "firstVersion": "4.15.0",
+    "label": "logging",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mdc",
+    "version": "4.15.0-SNAPSHOT"
+  }
+}

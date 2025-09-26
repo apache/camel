@@ -61,6 +61,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private LraConfigurationProperties lraConfigurationProperties;
     private OtelConfigurationProperties otelConfigurationProperties;
     private Otel2ConfigurationProperties otel2ConfigurationProperties;
+    private MdcConfigurationProperties mdcConfigurationProperties;
     private TelemetryDevConfigurationProperties telemetryDevConfigurationProperties;
     private MetricsConfigurationProperties metricsConfigurationProperties;
     private ThreadPoolConfigurationProperties threadPoolProperties;
@@ -96,6 +97,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (telemetryDevConfigurationProperties != null) {
             telemetryDevConfigurationProperties.close();
             telemetryDevConfigurationProperties = null;
+        }
+        if (mdcConfigurationProperties != null) {
+            mdcConfigurationProperties.close();
+            mdcConfigurationProperties = null;
         }
         if (metricsConfigurationProperties != null) {
             metricsConfigurationProperties.close();
@@ -235,6 +240,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasTelemetryDevConfiguration() {
         return telemetryDevConfigurationProperties != null;
+    }
+
+    /**
+     * Whether there has been any MDC configuration specified
+     */
+    public boolean hasMdcConfiguration() {
+        return mdcConfigurationProperties != null;
     }
 
     /**

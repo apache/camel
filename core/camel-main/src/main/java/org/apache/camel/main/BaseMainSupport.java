@@ -67,6 +67,7 @@ import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelMDCService;
 import org.apache.camel.spi.CamelMetricsService;
 import org.apache.camel.spi.CamelTracingService;
 import org.apache.camel.spi.CompileStrategy;
@@ -136,7 +137,7 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
             "camel.rest.", "camel.vault.", "camel.threadpool.", "camel.health.",
             "camel.lra.", "camel.opentelemetry2.", "camel.opentelemetry.",
-            "camel.telemetryDev.", "camel.management.", "camel.metrics.", "camel.routeTemplate",
+            "camel.telemetryDev.", "camel.management.", "camel.mdc.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             "camel.server.", "camel.ssl.", "camel.debug.", "camel.trace.", "camel.routeController." };
 
@@ -1283,6 +1284,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties lraProperties = new OrderedLocationProperties();
         OrderedLocationProperties otelProperties = new OrderedLocationProperties();
         OrderedLocationProperties otel2Properties = new OrderedLocationProperties();
+        OrderedLocationProperties mdcProperties = new OrderedLocationProperties();
         OrderedLocationProperties telemetryDevProperties = new OrderedLocationProperties();
         OrderedLocationProperties metricsProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeTemplateProperties = new OrderedLocationProperties();
@@ -1359,6 +1361,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(19);
                 validateOptionAndValue(key, option, value);
                 telemetryDevProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, "camel.mdc.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(10);
+                validateOptionAndValue(key, option, value);
+                mdcProperties.put(loc, optionKey(option), value);
             } else if (startsWithIgnoreCase(key, "camel.metrics.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1525,6 +1533,11 @@ public abstract class BaseMainSupport extends BaseService {
             setMetricsProperties(camelContext, metricsProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
+        if (!mdcProperties.isEmpty() || mainConfigurationProperties.hasMdcConfiguration()) {
+            LOG.debug("Auto-configuring MDC from loaded properties: {}", mdcProperties.size());
+            setMdcProperties(camelContext, mdcProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
         if (!devConsoleProperties.isEmpty()) {
             LOG.debug("Auto-configuring Dev Console from loaded properties: {}", devConsoleProperties.size());
             setDevConsoleProperties(camelContext, devConsoleProperties,
@@ -1654,6 +1667,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!httpManagementServerProperties.isEmpty()) {
             httpManagementServerProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.management.{}={}", k, v);
+            });
+        }
+        if (!mdcProperties.isEmpty()) {
+            mdcProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.mdc.{}={}", k, v);
             });
         }
 
@@ -1847,6 +1865,28 @@ public abstract class BaseMainSupport extends BaseService {
             if (camelContext.hasService(CamelTracingService.class) == null) {
                 // add as service so tracing can be active
                 camelContext.addService(otel, true, true);
+            }
+        }
+    }
+
+    private void setMdcProperties(
+            CamelContext camelContext, OrderedLocationProperties mdcProperties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        String loc = mdcProperties.getLocation("enabled");
+        Object obj = mdcProperties.remove("enabled");
+        if (ObjectHelper.isNotEmpty(obj)) {
+            autoConfiguredProperties.put(loc, "camel.mdc.enabled", obj.toString());
+        }
+        boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
+        if (enabled) {
+            CamelMDCService mdc = resolveMDCService(camelContext);
+            setPropertiesOnTarget(camelContext, mdc, mdcProperties, "camel.mdc.", failIfNotSet, true,
+                    autoConfiguredProperties);
+            if (camelContext.hasService(CamelMDCService.class) == null) {
+                // add as service so tracing can be active
+                camelContext.addService(mdc, true, true);
             }
         }
     }
@@ -2737,6 +2777,20 @@ public abstract class BaseMainSupport extends BaseService {
                     .newInstance("micrometer-prometheus", CamelMetricsService.class)
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Cannot find CamelMetricsService on classpath. Add camel-micrometer-prometheus to classpath."));
+        }
+        return answer;
+    }
+
+    private static CamelMDCService resolveMDCService(CamelContext camelContext) throws Exception {
+        CamelMDCService answer = camelContext.hasService(CamelMDCService.class);
+        if (answer == null) {
+            answer = camelContext.getRegistry().findSingleByType(CamelMDCService.class);
+        }
+        if (answer == null) {
+            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+                    .newInstance("mdc-service", CamelMDCService.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot find OpenTelemetryTracer2 on classpath. Add camel-opentelemetry2 to classpath."));
         }
         return answer;
     }
