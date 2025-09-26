@@ -66,19 +66,14 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         embeddingStoreFactory = getEndpoint().getConfiguration().getEmbeddingStoreFactory();
         if (embeddingStoreFactory != null) {
             embeddingStoreFactory.setCamelContext(getEndpoint().getCamelContext());
+            EmbeddingStore es = embeddingStoreFactory.createEmbeddingStore();
+            getEndpoint().getConfiguration().setEmbeddingStore(es);
         }
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-
-        EmbeddingStore es;
-        if (embeddingStoreFactory != null) {
-            es = embeddingStoreFactory.createEmbeddingStore();
-        } else {
-            es = getEndpoint().getConfiguration().getEmbeddingStore();
-        }
 
         final LangChain4jEmbeddingStoreAction action
                 = in.getHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.class);
