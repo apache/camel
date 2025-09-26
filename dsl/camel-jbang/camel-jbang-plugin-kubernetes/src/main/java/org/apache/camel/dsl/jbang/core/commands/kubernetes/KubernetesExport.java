@@ -118,7 +118,7 @@ public class KubernetesExport extends Export {
     protected String[] imagePlatforms;
 
     @CommandLine.Option(names = { "--base-image" },
-                        description = "The base image that is used to build the container image from (default is eclipse-temurin:<java-version>).")
+                        description = "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>).")
     protected String baseImage;
 
     @CommandLine.Option(names = { "--registry-mirror" },
@@ -348,7 +348,7 @@ public class KubernetesExport extends Export {
 
         if (baseImage == null) {
             // use default base image with java version
-            baseImage = "eclipse-temurin:%s".formatted(javaVersion);
+            baseImage = "mirror.gcr.io/library/eclipse-temurin:%s".formatted(javaVersion);
         }
 
         if (registryMirror != null) {
