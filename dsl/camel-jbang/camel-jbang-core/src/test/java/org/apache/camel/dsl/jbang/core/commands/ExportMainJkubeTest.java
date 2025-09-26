@@ -81,7 +81,8 @@ class ExportMainJkubeTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
         Assertions.assertEquals("21", model.getProperties().getProperty("java.version"));
         Assertions.assertEquals("abc", model.getProperties().getProperty("jib.label"));
-        Assertions.assertEquals("eclipse-temurin:21-jre", model.getProperties().getProperty("jib.from.image"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:21-jre",
+                model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib and jkube plugin
         Assertions.assertEquals(5, model.getBuild().getPlugins().size());

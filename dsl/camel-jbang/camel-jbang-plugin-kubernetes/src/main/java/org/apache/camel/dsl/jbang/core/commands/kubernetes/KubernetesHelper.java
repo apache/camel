@@ -154,7 +154,7 @@ public final class KubernetesHelper {
     private static boolean isConnectedToOpenshift() {
         boolean ocp = false;
         try {
-            APIGroup apiGroup = getKubernetesClient().getApiGroup("config.openshift.io");
+            APIGroup apiGroup = getKubernetesClient().getApiGroup("route.openshift.io");
             ocp = apiGroup != null;
         } catch (RuntimeException e) {
             System.out.println("Failed to detect cluster: " + e.getMessage() + ", default to kubernetes.");

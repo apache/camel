@@ -174,7 +174,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String[] imagePlatforms;
 
     @CommandLine.Option(names = { "--base-image" },
-                        description = "The base image that is used to build the container image from (default is eclipse-temurin:<java-version>).")
+                        description = "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:<java-version>).")
     String baseImage;
 
     @CommandLine.Option(names = { "--registry-mirror" },

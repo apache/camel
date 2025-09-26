@@ -303,7 +303,7 @@ class ExportCamelMain extends Export {
             }
             // from image is mandatory so use a default image if none provided
             if (fromImage == null) {
-                fromImage = "eclipse-temurin:" + javaVersion + "-jre";
+                fromImage = "mirror.gcr.io/library/eclipse-temurin:" + javaVersion + "-jre";
                 sb1.append(String.format("        <%s>%s</%s>%n", "jib.from.image", fromImage, "jib.from.image"));
             }
 
