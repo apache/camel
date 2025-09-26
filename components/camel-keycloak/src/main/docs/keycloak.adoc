@@ -24,6 +24,10 @@ The Keycloak security policy supports:
 
 === Basic Setup
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
@@ -33,8 +37,37 @@ policy.setClientId("my-client");
 policy.setClientSecret("my-client-secret");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - policy:
+            ref: keycloakPolicy
+        - to:
+            uri: mock:result
+
+# Bean definition in beans configuration
+beans:
+  - name: keycloakPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-realm"
+      clientId: "my-client"
+      clientSecret: "my-client-secret"
+----
+====
+
 === Role-based Authorization
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
@@ -49,8 +82,41 @@ from("direct:admin")
     .to("mock:admin-endpoint");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:admin
+      steps:
+        - policy:
+            ref: adminPolicy
+        - to:
+            uri: mock:admin-endpoint
+
+# Bean definition
+beans:
+  - name: adminPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-realm"
+      clientId: "my-client"
+      clientSecret: "client-secret"
+      requiredRoles:
+        - "admin"
+        - "user"
+      allRolesRequired: true
+----
+====
+
 === Permission-based Authorization
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
@@ -65,8 +131,41 @@ from("direct:documents")
     .to("mock:documents-endpoint");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:documents
+      steps:
+        - policy:
+            ref: documentsPolicy
+        - to:
+            uri: mock:documents-endpoint
+
+# Bean definition
+beans:
+  - name: documentsPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-realm"
+      clientId: "my-client"
+      clientSecret: "client-secret"
+      requiredPermissions:
+        - "read:documents"
+        - "write:documents"
+      allPermissionsRequired: false
+----
+====
+
 === Resource Owner Password Credentials
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
@@ -76,6 +175,33 @@ from("direct:user-flow")
     .policy(policy)
     .to("mock:result");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:user-flow
+      steps:
+        - policy:
+            ref: userFlowPolicy
+        - to:
+            uri: mock:result
+
+# Bean definition
+beans:
+  - name: userFlowPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-realm"
+      clientId: "my-client"
+      username: "username"
+      password: "password"
+      useResourceOwnerPasswordCredentials: true
+----
+====
 
 == Usage
 
@@ -100,6 +226,10 @@ template.sendBodyAndHeader("direct:protected", "message",
 
 === Route Examples
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:admin-only")
@@ -116,6 +246,42 @@ from("rest:get:/api/documents")
     .policy(documentsPolicy)
     .to("direct:list-documents");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:admin-only
+      steps:
+        - policy:
+            ref: adminPolicy
+        - transform:
+            constant: "Admin access granted"
+        - to:
+            uri: mock:admin
+
+- route:
+    from:
+      uri: direct:user-or-admin
+      steps:
+        - policy:
+            ref: userPolicy
+        - transform:
+            constant: "User access granted"
+        - to:
+            uri: mock:user
+
+- rest:
+    get:
+      - uri: /api/documents
+        to: direct:list-documents
+        route:
+          policy:
+            ref: documentsPolicy
+----
+====
 
 == Configuration Options
 
@@ -154,6 +320,10 @@ The component throws `CamelAuthorizationException` when:
 * Keycloak server is unreachable
 * Token verification fails
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 onException(CamelAuthorizationException.class)
@@ -162,10 +332,31 @@ onException(CamelAuthorizationException.class)
     .transform().constant("Access denied");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - "org.apache.camel.CamelAuthorizationException"
+    handled: true
+    steps:
+      - setHeader:
+          name: "CamelHttpResponseCode"
+          constant: 403
+      - transform:
+          constant: "Access denied"
+----
+====
+
 == Examples
 
 === Basic Role-based Authorization
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Create Keycloak security policy
@@ -185,8 +376,41 @@ from("direct:admin-endpoint")
     .to("mock:admin-result");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:admin-endpoint
+      steps:
+        - policy:
+            ref: keycloakPolicy
+        - transform:
+            constant: "Admin access granted"
+        - to:
+            uri: mock:admin-result
+
+# Bean definition
+beans:
+  - name: keycloakPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-company"
+      clientId: "my-service"
+      clientSecret: "client-secret-value"
+      requiredRoles:
+        - "admin"
+----
+====
+
 === Multiple Role Authorization
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Require either admin OR user role
@@ -200,8 +424,41 @@ from("direct:user-endpoint")
     .to("bean:userService?method=processUser");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:user-endpoint
+      steps:
+        - policy:
+            ref: userPolicy
+        - to:
+            uri: bean:userService?method=processUser
+
+# Bean definition
+beans:
+  - name: userPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-company"
+      clientId: "my-service"
+      clientSecret: "client-secret"
+      requiredRoles:
+        - "admin"
+        - "user"
+      allRolesRequired: false
+----
+====
+
 === REST API with Keycloak Protection
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Configure different policies for different endpoints
@@ -241,6 +498,70 @@ rest("/api")
         .endRest();
 ----
 
+YAML::
++
+[source,yaml]
+----
+- rest:
+    path: "/api"
+    get:
+      - uri: "/documents"
+        to: bean:documentService?method=listDocuments
+        route:
+          policy:
+            ref: readPolicy
+    post:
+      - uri: "/documents"
+        to: bean:documentService?method=createDocument
+        route:
+          policy:
+            ref: writePolicy
+    delete:
+      - uri: "/documents/{id}"
+        to: bean:documentService?method=deleteDocument
+        route:
+          policy:
+            ref: adminPolicy
+
+# Bean definitions for policies
+beans:
+  - name: readPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles:
+        - "reader"
+        - "writer"
+        - "admin"
+      allRolesRequired: false
+
+  - name: writePolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles:
+        - "writer"
+        - "admin"
+      allRolesRequired: false
+
+  - name: adminPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles:
+        - "admin"
+----
+====
+
 === Sending Requests with Tokens
 
 [source,java]
@@ -270,6 +591,10 @@ template.send("direct:protected-endpoint", exchange);
 
 === Advanced Error Handling
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Global error handler for authorization failures
@@ -291,8 +616,55 @@ from("rest:post:/secure-data")
     .end();
 ----
 
+YAML::
++
+[source,yaml]
+----
+# Global error handler
+- onException:
+    exception:
+      - "org.apache.camel.CamelAuthorizationException"
+    handled: true
+    steps:
+      - setHeader:
+          name: "CamelHttpResponseCode"
+          constant: 403
+      - setHeader:
+          name: "Content-Type"
+          constant: "application/json"
+      - transform:
+          constant: '{"error": "Access denied", "message": "Insufficient privileges"}'
+      - log: "Authorization failed: ${exception.message}"
+
+# Route-specific error handling
+- route:
+    from:
+      uri: rest:post:/secure-data
+      steps:
+        - doTry:
+            steps:
+              - policy:
+                  ref: keycloakPolicy
+              - to:
+                  uri: bean:dataProcessor
+            doCatch:
+              - exception:
+                  - "org.apache.camel.CamelAuthorizationException"
+                steps:
+                  - setHeader:
+                      name: "CamelHttpResponseCode"
+                      constant: 403
+                  - transform:
+                      constant: "Access denied"
+----
+====
+
 === Configuration Properties
 
+[tabs]
+====
+Properties::
++
 [source,properties]
 ----
 # application.properties
@@ -342,6 +714,10 @@ public class SecurityConfiguration {
 
 === Complete Route Configuration
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 public class KeycloakSecurityRoutes extends RouteBuilder {
@@ -379,6 +755,66 @@ public class KeycloakSecurityRoutes extends RouteBuilder {
     }
 }
 ----
+
+YAML::
++
+[source,yaml]
+----
+# Complete route configuration with Keycloak security
+- onException:
+    exception:
+      - "org.apache.camel.CamelAuthorizationException"
+    handled: true
+    steps:
+      - setHeader:
+          name: "CamelHttpResponseCode"
+          constant: 403
+      - transform:
+          constant: "Forbidden"
+
+- route:
+    from:
+      uri: rest:get:/admin/users
+      steps:
+        - policy:
+            ref: adminPolicy
+        - to:
+            uri: bean:userService?method=getAllUsers
+
+- route:
+    from:
+      uri: rest:get:/profile
+      steps:
+        - policy:
+            ref: userPolicy
+        - to:
+            uri: bean:userService?method=getCurrentUser
+
+# Security policy beans
+beans:
+  - name: adminPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles:
+        - "admin"
+
+  - name: userPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles:
+        - "user"
+        - "admin"
+      allRolesRequired: false
+----
+====
 
 == Running Integration Tests
 
