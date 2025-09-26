@@ -17,6 +17,7 @@
 package org.apache.camel.component.solr.integration;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -210,13 +211,20 @@ public abstract class SolrTestSupport implements CamelTestSupportHelper, Configu
     }
 
     public QueryResponse executeSolrQuery(String uri, String queryString) {
-        Exchange exchange = ExchangeBuilder.anExchange(camelContext())
+        return executeSolrQuery(uri, queryString, Collections.emptyMap());
+    }
+
+    public QueryResponse executeSolrQuery(String uri, String queryString, Map<String, Object> additionalExchangeHeaders) {
+        var exchangeBuilder = ExchangeBuilder.anExchange(camelContext())
                 .withHeader(SolrConstants.PARAM_OPERATION, SolrOperation.SEARCH)
                 .withHeader(SolrConstants.PARAM_QUERY_STRING, queryString)
-                .withHeader(SolrConstants.PARAM_REQUEST_HANDLER, null)
-                .build();
-        Exchange exchange1 = processRequest(uri, exchange);
-        return exchange1.getMessage().getBody(QueryResponse.class);
+                .withHeader(SolrConstants.PARAM_REQUEST_HANDLER, null);
+        if(additionalExchangeHeaders != null) {
+            for(var entry : additionalExchangeHeaders.entrySet()) {
+                exchangeBuilder.withHeader(entry.getKey(), entry.getValue());
+            }
+        }
+        return processRequest(uri, exchangeBuilder.build()).getMessage().getBody(QueryResponse.class);
     }
 
     public Exchange pingInstance(String uri) {

@@ -31,8 +31,13 @@ import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
+import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.SolrParams;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.solr.SolrConstants.HEADER_PARAM_PREFIX;
+import static org.apache.camel.component.solr.SolrConstants.PARAM_SOLR_PARAMS;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SolrPingAndSearchTest extends SolrTestSupport {
@@ -107,6 +112,37 @@ class SolrPingAndSearchTest extends SolrTestSupport {
         assertEquals(1, responseFrom3.getResults().size());
     }
 
+    @Test
+    void testQueryWithMultipleFilters() {
+        // this indexes 5 documents with ids 1-5
+        List<Map<String, String>> content = IntStream.range(1, 6).mapToObj(i -> Map.of("id", ""+ i, "content", "content" + i)).toList();
+        template.requestBodyAndHeaders("direct:index", content, SolrUtils.getHeadersForCommit());
+
+        // we can construct a ModifiableSolrParams object to send 2 filter queries to solr
+        ModifiableSolrParams msp = new ModifiableSolrParams(Map.of("fq", new String[] { "-content:content1", "-content:content4" }));
+        SolrDocumentList sdl = executeSolrQuery("direct:search", "*:*", Map.of(PARAM_SOLR_PARAMS, msp)).getResults();
+
+        assertEquals(3, sdl.size());
+        List<String> returnedValues = sdl.stream().map(sd -> sd.getFirstValue("content").toString()).toList();
+        assertTrue(returnedValues.contains("content2"));
+        assertTrue(returnedValues.contains("content3"));
+        assertTrue(returnedValues.contains("content5"));
+        assertFalse(returnedValues.contains("content1"));
+        assertFalse(returnedValues.contains("content4"));
+
+        // we can also send the 2 filters by using the 'SolrParam.fq' header and passing an Iterable.
+        Map<String, Object> solrFilters = Map.of(HEADER_PARAM_PREFIX + "fq", List.of("-content:content2", "-content:content3"));
+        sdl = executeSolrQuery("direct:search", "*:*", solrFilters).getResults();
+
+        assertEquals(3, sdl.size());
+        returnedValues = sdl.stream().map(sd -> sd.getFirstValue("content").toString()).toList();
+        assertTrue(returnedValues.contains("content1"));
+        assertTrue(returnedValues.contains("content4"));
+        assertTrue(returnedValues.contains("content5"));
+        assertFalse(returnedValues.contains("content2"));
+        assertFalse(returnedValues.contains("content3"));
+    }
+
     protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
@@ -126,6 +162,8 @@ class SolrPingAndSearchTest extends SolrTestSupport {
                 // query tests
                 from("direct:index")
                         .to("solr:default?operation=insert");
+                from("direct:search")
+                        .to("solr:default?operation=search");
                 from("direct:searchWithSizeTwo")
                         .to("solr:default?operation=search&size=2");
                 from("direct:searchFrom3")
