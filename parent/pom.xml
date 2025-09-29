@@ -98,7 +98,7 @@
         <cglib-version>3.3.0</cglib-version>
         <chicory-version>1.5.1</chicory-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
-        <citrus-version>4.8.0</citrus-version>
+        <citrus-version>4.8.1</citrus-version>
         <classgraph-version>4.8.181</classgraph-version>
         <cloudant-version>0.10.8</cloudant-version>
         <com-ibm-mq-jakarta-client-version>9.4.3.1</com-ibm-mq-jakarta-client-version>
