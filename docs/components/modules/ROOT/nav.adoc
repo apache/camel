@@ -212,6 +212,7 @@
 ** xref:jte-component.adoc[JTE]
 ** xref:kafka-component.adoc[Kafka]
 ** xref:kamelet-component.adoc[Kamelet]
+** xref:keycloak-component.adoc[Keycloak]
 ** xref:knative-component.adoc[Knative]
 ** xref:knative-http-component.adoc[Knative Http]
 ** xref:kubernetes-summary.adoc[Kubernetes]

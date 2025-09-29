@@ -2635,6 +2635,19 @@ public interface ComponentsBuilderFactory {
         return KameletComponentBuilderFactory.kamelet();
     }
     /**
+     * Keycloak (camel-keycloak)
+     * Manage Keycloak instances via Admin API.
+     * 
+     * Category: security,management
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-keycloak
+     * 
+     * @return the dsl builder
+     */
+    static KeycloakComponentBuilderFactory.KeycloakComponentBuilder keycloak() {
+        return KeycloakComponentBuilderFactory.keycloak();
+    }
+    /**
      * Knative (camel-knative)
      * Send and receive events from Knative.
      * 
