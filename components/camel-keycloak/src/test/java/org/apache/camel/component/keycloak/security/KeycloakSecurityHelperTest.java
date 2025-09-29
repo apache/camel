@@ -160,4 +160,75 @@ public class KeycloakSecurityHelperTest {
         });
     }
 
+    @Test
+    void testExtractPermissions() {
+        AccessToken token = Mockito.mock(AccessToken.class);
+
+        // Mock authorization (simple approach without specific permission structure)
+        AccessToken.Authorization authorization = Mockito.mock(AccessToken.Authorization.class);
+        when(token.getAuthorization()).thenReturn(authorization);
+
+        // Test permissions extraction from custom claims
+        java.util.Map<String, Object> otherClaims = new java.util.HashMap<>();
+        otherClaims.put("permissions", java.util.Arrays.asList("read:documents", "write:documents", "admin:users"));
+
+        when(token.getOtherClaims()).thenReturn(otherClaims);
+
+        java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+
+        assertEquals(3, permissions.size());
+        assertTrue(permissions.contains("read:documents"));
+        assertTrue(permissions.contains("write:documents"));
+        assertTrue(permissions.contains("admin:users"));
+    }
+
+    @Test
+    void testExtractPermissionsFromCustomClaims() {
+        AccessToken token = Mockito.mock(AccessToken.class);
+
+        // Mock other claims with permissions
+        java.util.Map<String, Object> otherClaims = new java.util.HashMap<>();
+        otherClaims.put("permissions", java.util.Arrays.asList("read:files", "write:files", "delete:files"));
+
+        when(token.getOtherClaims()).thenReturn(otherClaims);
+        when(token.getAuthorization()).thenReturn(null);
+
+        java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+
+        assertEquals(3, permissions.size());
+        assertTrue(permissions.contains("read:files"));
+        assertTrue(permissions.contains("write:files"));
+        assertTrue(permissions.contains("delete:files"));
+    }
+
+    @Test
+    void testExtractPermissionsFromScopes() {
+        AccessToken token = Mockito.mock(AccessToken.class);
+
+        // Mock other claims with scope-based permissions
+        java.util.Map<String, Object> otherClaims = new java.util.HashMap<>();
+        otherClaims.put("scope", "read write admin");
+
+        when(token.getOtherClaims()).thenReturn(otherClaims);
+        when(token.getAuthorization()).thenReturn(null);
+
+        java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+
+        assertEquals(3, permissions.size());
+        assertTrue(permissions.contains("read"));
+        assertTrue(permissions.contains("write"));
+        assertTrue(permissions.contains("admin"));
+    }
+
+    @Test
+    void testExtractPermissionsEmpty() {
+        AccessToken token = Mockito.mock(AccessToken.class);
+        when(token.getAuthorization()).thenReturn(null);
+        when(token.getOtherClaims()).thenReturn(java.util.Map.of());
+
+        java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+
+        assertTrue(permissions.isEmpty());
+    }
+
 }
