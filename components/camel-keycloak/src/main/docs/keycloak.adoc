@@ -814,7 +814,6 @@ beans:
         - "admin"
       allRolesRequired: false
 ----
-====
 
 == Running Integration Tests
 
