@@ -219,8 +219,8 @@ public abstract class SolrTestSupport implements CamelTestSupportHelper, Configu
                 .withHeader(SolrConstants.PARAM_OPERATION, SolrOperation.SEARCH)
                 .withHeader(SolrConstants.PARAM_QUERY_STRING, queryString)
                 .withHeader(SolrConstants.PARAM_REQUEST_HANDLER, null);
-        if(additionalExchangeHeaders != null) {
-            for(var entry : additionalExchangeHeaders.entrySet()) {
+        if (additionalExchangeHeaders != null) {
+            for (var entry : additionalExchangeHeaders.entrySet()) {
                 exchangeBuilder.withHeader(entry.getKey(), entry.getValue());
             }
         }

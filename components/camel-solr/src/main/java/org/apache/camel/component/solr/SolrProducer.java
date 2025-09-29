@@ -136,8 +136,8 @@ public class SolrProducer extends DefaultAsyncProducer {
                 .forEach(entry -> {
                     String paramName = entry.getKey().substring(SolrConstants.HEADER_PARAM_PREFIX.length());
                     Object value = entry.getValue();
-                    if(value instanceof Iterable<?> iterable) {
-                        for(Object val : iterable) {
+                    if (value instanceof Iterable<?> iterable) {
+                        for (Object val : iterable) {
                             modifiableSolrParams.add(paramName, val.toString());
                         }
                     } else {

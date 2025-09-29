@@ -33,7 +33,6 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.apache.solr.common.params.SolrParams;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.solr.SolrConstants.HEADER_PARAM_PREFIX;
@@ -115,11 +114,13 @@ class SolrPingAndSearchTest extends SolrTestSupport {
     @Test
     void testQueryWithMultipleFilters() {
         // this indexes 5 documents with ids 1-5
-        List<Map<String, String>> content = IntStream.range(1, 6).mapToObj(i -> Map.of("id", ""+ i, "content", "content" + i)).toList();
+        List<Map<String, String>> content
+                = IntStream.range(1, 6).mapToObj(i -> Map.of("id", "" + i, "content", "content" + i)).toList();
         template.requestBodyAndHeaders("direct:index", content, SolrUtils.getHeadersForCommit());
 
         // we can construct a ModifiableSolrParams object to send 2 filter queries to solr
-        ModifiableSolrParams msp = new ModifiableSolrParams(Map.of("fq", new String[] { "-content:content1", "-content:content4" }));
+        ModifiableSolrParams msp
+                = new ModifiableSolrParams(Map.of("fq", new String[] { "-content:content1", "-content:content4" }));
         SolrDocumentList sdl = executeSolrQuery("direct:search", "*:*", Map.of(PARAM_SOLR_PARAMS, msp)).getResults();
 
         assertEquals(3, sdl.size());
