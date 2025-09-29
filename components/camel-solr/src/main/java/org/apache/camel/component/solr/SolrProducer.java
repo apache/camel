@@ -135,7 +135,14 @@ public class SolrProducer extends DefaultAsyncProducer {
                 .filter(entry -> entry.getKey().startsWith(SolrConstants.HEADER_PARAM_PREFIX))
                 .forEach(entry -> {
                     String paramName = entry.getKey().substring(SolrConstants.HEADER_PARAM_PREFIX.length());
-                    modifiableSolrParams.add(paramName, entry.getValue().toString());
+                    Object value = entry.getValue();
+                    if (value instanceof Iterable<?> iterable) {
+                        for (Object val : iterable) {
+                            modifiableSolrParams.add(paramName, val.toString());
+                        }
+                    } else {
+                        modifiableSolrParams.add(paramName, entry.getValue().toString());
+                    }
                 });
         return modifiableSolrParams;
     }
