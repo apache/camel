@@ -8621,6 +8621,46 @@ public class StaticEndpointBuilders {
         return KameletEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Keycloak (camel-keycloak)
+     * Manage Keycloak instances via Admin API.
+     * 
+     * Category: security,management
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-keycloak
+     * 
+     * Syntax: <code>keycloak:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static KeycloakEndpointBuilderFactory.KeycloakEndpointBuilder keycloak(String path) {
+        return keycloak("keycloak", path);
+    }
+    /**
+     * Keycloak (camel-keycloak)
+     * Manage Keycloak instances via Admin API.
+     * 
+     * Category: security,management
+     * Since: 4.15
+     * Maven coordinates: org.apache.camel:camel-keycloak
+     * 
+     * Syntax: <code>keycloak:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static KeycloakEndpointBuilderFactory.KeycloakEndpointBuilder keycloak(String componentName, String path) {
+        return KeycloakEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Knative (camel-knative)
      * Send and receive events from Knative.
      * 
