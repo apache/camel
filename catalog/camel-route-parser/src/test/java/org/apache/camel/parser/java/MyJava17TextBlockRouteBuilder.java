@@ -24,8 +24,8 @@ public class MyJava17TextBlockRouteBuilder extends RouteBuilder {
     public void configure() {
         from("timer:foo")
                 .toD("""
-                            file:output
-                            ?fileExist=Append
+                            file:output?
+                            fileExist=Append
                             &chmod=777
                             &allowNullBody=true
                         """)
