@@ -55,6 +55,10 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 validateRoles(accessToken, exchange);
             }
 
+            if (!policy.getRequiredPermissions().isEmpty()) {
+                validatePermissions(accessToken, exchange);
+            }
+
         } catch (Exception e) {
             exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID,
                     policy.getClass().getSimpleName());
@@ -113,6 +117,37 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 throw e;
             }
             throw new CamelAuthorizationException("Failed to validate roles", exchange, e);
+        }
+    }
+
+    private void validatePermissions(String accessToken, Exchange exchange) throws Exception {
+        try {
+            AccessToken token;
+            if (ObjectHelper.isEmpty(policy.getPublicKey())) {
+                token = KeycloakSecurityHelper.parseAccessToken(accessToken);
+            } else {
+                token = KeycloakSecurityHelper.parseAccessToken(accessToken, policy.getPublicKey());
+            }
+            Set<String> userPermissions = KeycloakSecurityHelper.extractPermissions(token);
+
+            boolean hasRequiredPermissions = policy.isAllPermissionsRequired()
+                    ? userPermissions.containsAll(policy.getRequiredPermissions())
+                    : policy.getRequiredPermissions().stream().anyMatch(userPermissions::contains);
+
+            if (!hasRequiredPermissions) {
+                String message = String.format("User does not have required permissions. Required: %s, User has: %s",
+                        policy.getRequiredPermissions(), userPermissions);
+                LOG.debug(message);
+                throw new CamelAuthorizationException(message, exchange);
+            }
+
+            LOG.debug("Permission validation successful for user with permissions: {}", userPermissions);
+
+        } catch (Exception e) {
+            if (e instanceof CamelAuthorizationException) {
+                throw e;
+            }
+            throw new CamelAuthorizationException("Failed to validate permissions", exchange, e);
         }
     }
 

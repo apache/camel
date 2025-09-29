@@ -17,6 +17,7 @@
 package org.apache.camel.component.keycloak.security;
 
 import java.security.PublicKey;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -120,5 +121,28 @@ public final class KeycloakSecurityHelper {
         }
 
         return true;
+    }
+
+    public static Set<String> extractPermissions(AccessToken token) {
+        Set<String> permissions = new HashSet<>();
+
+        // Extract permissions from custom claims (primary approach for simple setups)
+        Object permissionsClaim = token.getOtherClaims().get("permissions");
+        if (permissionsClaim instanceof java.util.Collection<?>) {
+            @SuppressWarnings("unchecked")
+            java.util.Collection<String> permissionsCollection = (java.util.Collection<String>) permissionsClaim;
+            permissions.addAll(permissionsCollection);
+        }
+
+        // Also check for scope-based permissions
+        Object scopesClaim = token.getOtherClaims().get("scope");
+        if (scopesClaim instanceof String) {
+            String scopesString = (String) scopesClaim;
+            if (!scopesString.isEmpty()) {
+                permissions.addAll(java.util.Arrays.asList(scopesString.split(" ")));
+            }
+        }
+
+        return permissions;
     }
 }

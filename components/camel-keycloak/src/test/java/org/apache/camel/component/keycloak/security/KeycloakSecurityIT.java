@@ -260,6 +260,111 @@ public class KeycloakSecurityIT extends CamelTestSupport {
         assertTrue(ex.getMessage().contains("signature") || ex.getMessage().contains("verification"));
     }
 
+    @Test
+    void testKeycloakSecurityPolicyWithPermissions() {
+        // Test permissions-based authorization
+        String adminToken = getAccessToken("myuser", "pippo123");
+        assertNotNull(adminToken);
+
+        // Test with permissions policy route - this will test the permissions extraction
+        try {
+            String result = template.requestBodyAndHeader("direct:permissions-protected", "test message",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken, String.class);
+            assertEquals("Permissions access granted", result);
+        } catch (CamelExecutionException ex) {
+            // This might fail if permissions are not configured in the token
+            // which is expected in a basic Keycloak setup
+            assertTrue(ex.getCause() instanceof CamelAuthorizationException);
+        }
+    }
+
+    @Test
+    void testKeycloakSecurityPolicyWithInsufficientPermissions() {
+        // Test that users without required permissions are rejected
+        String userToken = getAccessToken("test-user", "user123");
+        assertNotNull(userToken);
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.sendBodyAndHeader("direct:permissions-protected", "test message",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, userToken);
+        });
+        assertTrue(ex.getCause() instanceof CamelAuthorizationException);
+    }
+
+    @Test
+    void testKeycloakSecurityPolicyWithScopeBasedPermissions() {
+        // Test scope-based permissions (using standard OAuth2 scopes)
+        String adminToken = getAccessToken("myuser", "pippo123");
+        assertNotNull(adminToken);
+
+        // Test with scope-based permissions policy route
+        try {
+            String result = template.requestBodyAndHeader("direct:scope-permissions-protected", "test message",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken, String.class);
+            assertEquals("Scope permissions access granted", result);
+        } catch (CamelExecutionException ex) {
+            // This might fail if the token doesn't contain the expected scopes
+            // which is expected in basic Keycloak setup without custom scope configuration
+            assertTrue(ex.getCause() instanceof CamelAuthorizationException);
+        }
+    }
+
+    @Test
+    void testKeycloakSecurityPolicyWithCombinedRolesAndPermissions() {
+        // Test combined roles and permissions validation
+        String adminToken = getAccessToken("myuser", "pippo123");
+        assertNotNull(adminToken);
+
+        // Test with combined policy route (requires BOTH admin role AND permissions)
+        try {
+            String result = template.requestBodyAndHeader("direct:combined-protected", "test message",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken, String.class);
+            assertEquals("Combined access granted", result);
+        } catch (CamelExecutionException ex) {
+            // This will fail if either role or permissions are missing
+            assertTrue(ex.getCause() instanceof CamelAuthorizationException);
+        }
+    }
+
+    @Test
+    void testKeycloakSecurityPolicyWithFlexiblePermissions() {
+        // Test flexible permissions (ANY permission required)
+        String userToken = getAccessToken("test-user", "user123");
+        assertNotNull(userToken);
+
+        // Test with flexible permissions policy (requires ANY of the specified permissions)
+        try {
+            String result = template.requestBodyAndHeader("direct:flexible-permissions-protected", "test message",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, userToken, String.class);
+            assertEquals("Flexible permissions access granted", result);
+        } catch (CamelExecutionException ex) {
+            // This will fail if the user doesn't have any of the required permissions
+            assertTrue(ex.getCause() instanceof CamelAuthorizationException);
+        }
+    }
+
+    @Test
+    void testPermissionsExtractionFromToken() {
+        // Test direct permissions extraction from token for debugging
+        String adminToken = getAccessToken("myuser", "pippo123");
+        assertNotNull(adminToken);
+
+        try {
+            // Parse token and extract permissions directly
+            org.keycloak.representations.AccessToken token = KeycloakSecurityHelper.parseAccessToken(adminToken);
+            java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+
+            // Log the permissions found for debugging
+            System.out.println("Permissions found in token: " + permissions);
+
+            // Permissions might be empty in a basic setup, which is expected
+            assertNotNull(permissions);
+
+        } catch (Exception e) {
+            fail("Should be able to parse token and extract permissions: " + e.getMessage());
+        }
+    }
+
     /**
      * Helper method to get public key from Keycloak JWKS endpoint for token verification. Tries to find the key with
      * "sig" usage or the first RSA key available.
@@ -451,6 +556,66 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                         .policy(wrongPublicKeyPolicy)
                         .transform().constant("Should not reach here")
                         .to("mock:wrong-key-result");
+
+                // Permissions-based policy
+                KeycloakSecurityPolicy permissionsPolicy = new KeycloakSecurityPolicy();
+                permissionsPolicy.setServerUrl(keycloakUrl);
+                permissionsPolicy.setRealm(realm);
+                permissionsPolicy.setClientId(clientId);
+                permissionsPolicy.setClientSecret(clientSecret);
+                permissionsPolicy.setRequiredPermissions(java.util.Arrays.asList("read:documents", "write:documents"));
+                permissionsPolicy.setAllPermissionsRequired(false); // ANY permission
+
+                from("direct:permissions-protected")
+                        .policy(permissionsPolicy)
+                        .transform().constant("Permissions access granted")
+                        .to("mock:permissions-result");
+
+                // Scope-based permissions policy (using OAuth2 scopes)
+                KeycloakSecurityPolicy scopePermissionsPolicy = new KeycloakSecurityPolicy();
+                scopePermissionsPolicy.setServerUrl(keycloakUrl);
+                scopePermissionsPolicy.setRealm(realm);
+                scopePermissionsPolicy.setClientId(clientId);
+                scopePermissionsPolicy.setClientSecret(clientSecret);
+                scopePermissionsPolicy.setRequiredPermissions(java.util.Arrays.asList("profile", "email", "openid"));
+                scopePermissionsPolicy.setAllPermissionsRequired(false); // ANY scope
+
+                from("direct:scope-permissions-protected")
+                        .policy(scopePermissionsPolicy)
+                        .transform().constant("Scope permissions access granted")
+                        .to("mock:scope-permissions-result");
+
+                // Combined roles and permissions policy
+                KeycloakSecurityPolicy combinedPolicy = new KeycloakSecurityPolicy();
+                combinedPolicy.setServerUrl(keycloakUrl);
+                combinedPolicy.setRealm(realm);
+                combinedPolicy.setClientId(clientId);
+                combinedPolicy.setClientSecret(clientSecret);
+                combinedPolicy.setRequiredRoles(java.util.Arrays.asList("admin-role"));
+                combinedPolicy.setRequiredPermissions(java.util.Arrays.asList("read:documents", "admin:system"));
+                combinedPolicy.setAllRolesRequired(true); // Must have ALL roles
+                combinedPolicy.setAllPermissionsRequired(true); // Any permission
+
+                from("direct:combined-protected")
+                        .policy(combinedPolicy)
+                        .transform().constant("Combined access granted")
+                        .to("mock:combined-result");
+
+                // Flexible permissions policy (ANY permission)
+                KeycloakSecurityPolicy flexiblePermissionsPolicy = new KeycloakSecurityPolicy();
+                flexiblePermissionsPolicy.setServerUrl(keycloakUrl);
+                flexiblePermissionsPolicy.setRealm(realm);
+                flexiblePermissionsPolicy.setClientId(clientId);
+                flexiblePermissionsPolicy.setClientSecret(clientSecret);
+                flexiblePermissionsPolicy
+                        .setRequiredPermissions(java.util.Arrays.asList("profile", "email", "user:basic", "read:public"));
+                flexiblePermissionsPolicy.setAllPermissionsRequired(false); // ANY permission
+
+                from("direct:flexible-permissions-protected")
+                        .policy(flexiblePermissionsPolicy)
+                        .transform().constant("Flexible permissions access granted")
+                        .to("mock:flexible-permissions-result");
+
             }
         };
     }

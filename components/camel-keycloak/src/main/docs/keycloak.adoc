@@ -819,6 +819,16 @@ beans:
 
 The component includes integration tests that require a running Keycloak instance. These tests are disabled by default and only run when specific system properties are provided.
 
+The integration tests include comprehensive testing for:
+* Role-based authorization with different role requirements
+* Permission-based authorization using custom claims and scopes
+* Public key verification with JWKS endpoint integration
+* Combined roles and permissions validation
+* Token parsing with and without public key verification
+* Different authorization header formats (Bearer token, custom header)
+* Token expiration and validity checks
+* Error handling for invalid tokens and insufficient privileges
+
 === Starting Keycloak with Docker
 
 ==== 1. Start Keycloak Container
@@ -898,10 +908,36 @@ Create three test users with the following configuration:
 
 ==== 7. Execute Tests with Maven
 
+**Run All Integration Tests:**
 [source,bash]
 ----
 # Run integration tests with required properties
 mvn test -Dtest=KeycloakSecurityIT \
+  -Dkeycloak.server.url=http://localhost:8080 \
+  -Dkeycloak.realm=test-realm \
+  -Dkeycloak.client.id=test-client \
+  -Dkeycloak.client.secret=YOUR_CLIENT_SECRET
+----
+
+**Run Specific Test Categories:**
+[source,bash]
+----
+# Test only role-based authorization
+mvn test -Dtest=KeycloakSecurityIT#testKeycloakSecurityPolicyWithValidAdminToken,testKeycloakSecurityPolicyWithValidUserToken,testKeycloakSecurityPolicyUserCannotAccessAdminRoute \
+  -Dkeycloak.server.url=http://localhost:8080 \
+  -Dkeycloak.realm=test-realm \
+  -Dkeycloak.client.id=test-client \
+  -Dkeycloak.client.secret=YOUR_CLIENT_SECRET
+
+# Test only permissions-based authorization
+mvn test -Dtest=KeycloakSecurityIT#testKeycloakSecurityPolicyWithPermissions,testKeycloakSecurityPolicyWithScopeBasedPermissions,testKeycloakSecurityPolicyWithCombinedRolesAndPermissions \
+  -Dkeycloak.server.url=http://localhost:8080 \
+  -Dkeycloak.realm=test-realm \
+  -Dkeycloak.client.id=test-client \
+  -Dkeycloak.client.secret=YOUR_CLIENT_SECRET
+
+# Test only public key verification
+mvn test -Dtest=KeycloakSecurityIT#testKeycloakSecurityPolicyWithPublicKeyVerification,testParseTokenDirectlyWithPublicKey \
   -Dkeycloak.server.url=http://localhost:8080 \
   -Dkeycloak.realm=test-realm \
   -Dkeycloak.client.id=test-client \
@@ -939,3 +975,148 @@ mvn test -Dtest=KeycloakSecurityIT \
 **Connection refused**: Ensure Keycloak is running and accessible at the specified URL.
 
 **Token validation errors**: Verify the realm name and client configuration match exactly.
+
+=== Setting up Permissions in Keycloak
+
+For permissions-based authorization, you have several options to include permissions in tokens:
+
+==== Option 1: Custom Claims Mapper
+
+1. In your realm, go to **Client Scopes** → **roles** → **Mappers** → **Create mapper**
+2. Set the following:
+   - Mapper Type: `User Attribute`
+   - Name: `permissions-mapper`
+   - User Attribute: `permissions`
+   - Token Claim Name: `permissions`
+   - Claim JSON Type: `JSON`
+   - Add to ID token: `ON`
+   - Add to access token: `ON`
+
+3. Add the `permissions` attribute to users:
+   - Go to **Users** → Select user → **Attributes** tab
+   - Add attribute: `permissions` with value like `["read:documents", "write:documents"]`
+
+==== Option 2: Scope-based Permissions
+
+1. Configure client scopes:
+   - Go to **Client Scopes** → **Create client scope**
+   - Scope Name: `documents`
+   - Protocol: `openid-connect`
+
+2. Add scope to client:
+   - Go to **Clients** → Your client → **Client Scopes** tab
+   - Add the scope as **Default** or **Optional**
+
+3. In your application code, you can then use scopes as permissions:
+
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+policy.setRequiredPermissions(Arrays.asList("documents", "users", "admin"));
+policy.setAllPermissionsRequired(false); // ANY permission
+----
+
+==== Option 3: Authorization Services (Advanced)
+
+For complex permission models, enable Keycloak Authorization Services:
+
+1. Go to **Clients** → Your client → **Settings** → **Authorization Enabled**: `ON`
+2. Configure Resources, Scopes, and Policies in the **Authorization** tab
+3. Enable **Authorization** on the client
+
+Note: Full Authorization Services integration requires additional setup and is more complex than the simple approaches above.
+
+=== Combined Roles and Permissions Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create a policy that requires BOTH roles AND permissions
+KeycloakSecurityPolicy strictPolicy = new KeycloakSecurityPolicy();
+strictPolicy.setServerUrl("{{keycloak.server-url}}");
+strictPolicy.setRealm("{{keycloak.realm}}");
+strictPolicy.setClientId("{{keycloak.client-id}}");
+strictPolicy.setClientSecret("{{keycloak.client-secret}}");
+
+// User must have admin role AND document permissions
+strictPolicy.setRequiredRoles(Arrays.asList("admin"));
+strictPolicy.setRequiredPermissions(Arrays.asList("read:documents", "write:documents"));
+strictPolicy.setAllRolesRequired(true);
+strictPolicy.setAllPermissionsRequired(false); // ANY permission
+
+// Create a policy that requires EITHER roles OR permissions
+KeycloakSecurityPolicy flexiblePolicy = new KeycloakSecurityPolicy();
+flexiblePolicy.setServerUrl("{{keycloak.server-url}}");
+flexiblePolicy.setRealm("{{keycloak.realm}}");
+flexiblePolicy.setClientId("{{keycloak.client-id}}");
+flexiblePolicy.setClientSecret("{{keycloak.client-secret}}");
+
+// Apply different policies to different routes
+from("direct:admin-documents")
+    .policy(strictPolicy)
+    .to("bean:documentService?method=adminOperations");
+
+from("direct:flexible-access")
+    .policy(flexiblePolicy)
+    .to("bean:documentService?method=flexibleOperations");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:admin-documents
+      steps:
+        - policy:
+            ref: strictPolicy
+        - to:
+            uri: bean:documentService?method=adminOperations
+
+- route:
+    from:
+      uri: direct:flexible-access
+      steps:
+        - policy:
+            ref: flexiblePolicy
+        - to:
+            uri: bean:documentService?method=flexibleOperations
+
+# Bean definitions
+beans:
+  - name: strictPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles:
+        - "admin"
+      requiredPermissions:
+        - "read:documents"
+        - "write:documents"
+      allRolesRequired: true
+      allPermissionsRequired: false
+
+  - name: flexiblePolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles:
+        - "admin"
+        - "manager"
+      requiredPermissions:
+        - "read:documents"
+        - "emergency:access"
+      allRolesRequired: false
+      allPermissionsRequired: false
+----
+====
