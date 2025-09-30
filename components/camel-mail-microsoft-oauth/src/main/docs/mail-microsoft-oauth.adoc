@@ -44,7 +44,21 @@ Follow the instructions listed in https://learn.microsoft.com/en-us/azure/active
 Enable application to access Exchange mailboxes via client credentials flow. Instructions https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth[here] +
 Once everything is set up, declare and register in the registry, an instance of `org.apache.camel.component.mail.microsoft.authenticator.MicrosoftExchangeOnlineOAuth2MailAuthenticator`.
 
-For example, in a Spring Boot application:
+For example,
+
+* in a Quarkus application:
+
+[source,java]
+----
+@jakarta.enterprise.inject.Produces
+@Named("auth")
+public MicrosoftExchangeOnlineOAuth2MailAuthenticator exchangeAuthenticator() {
+    return new MicrosoftExchangeOnlineOAuth2MailAuthenticator(tenantId.get(), clientId.get(), clientSecret.get(),
+            username.get());
+}
+----
+
+* in a Spring Boot application:
 
 [source,java]
 ----
