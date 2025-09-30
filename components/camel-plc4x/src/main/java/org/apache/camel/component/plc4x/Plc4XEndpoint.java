@@ -72,7 +72,6 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
 
     public Plc4XEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-        this.plcDriverManager = new DefaultPlcDriverManager();
         this.uri = endpointUri.replaceFirst("plc4x:/?/?", "");
     }
 
@@ -104,7 +103,6 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
 
     public void setTrigger(String trigger) {
         this.trigger = trigger;
-        this.plcDriverManager = new DefaultPlcDriverManager();
     }
 
     public void setAutoReconnect(boolean autoReconnect) {
@@ -134,7 +132,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
                     LOGGER.warn("Could not connect during setup, retrying on next request");
                 }
             } else {
-                LOGGER.warn("Could not connect during setup and auto reconnect is turned off");
+                LOGGER.warn("Could not connect during setup and auto reconnect is turned off due to: {}", e.getMessage());
                 throw e;
             }
         }
@@ -153,7 +151,9 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
             connection = plcDriverManager.getConnection(uri);
             LOGGER.debug("Successfully reconnected");
         } else if (autoReconnect && !isConnected()) {
-            connection.connect();
+            if (connection != null) {
+                connection.connect();
+            }
             // If reconnection fails without Exception, reset connection
             if (!isConnected()) {
                 LOGGER.debug("No connection established after connect, resetting connection");
@@ -170,7 +170,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      * @return true if connection supports writing, else false
      */
     public boolean canWrite() {
-        return connection.getMetadata().isWriteSupported();
+        return connection != null && connection.getMetadata().isWriteSupported();
     }
 
     /**
@@ -256,9 +256,16 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ClassLoader cl = getCamelContext().getApplicationContextClassLoader();
+        this.plcDriverManager = new DefaultPlcDriverManager(cl);
+    }
+
+    @Override
     public void doStop() throws Exception {
-        //Shutting down the connection when leaving the Context
-        if (isConnected()) {
+        super.doStop();
+        if (isConnected() && connection != null) {
             connection.close();
             connection = null;
         }
