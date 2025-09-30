@@ -148,6 +148,14 @@ public class CamelSendAction extends ActionBaseCommand {
         String mep = (reply || replyFile != null) ? "InOut" : "InOnly";
         root.put("exchangePattern", mep);
         if (body != null) {
+            // favour using absolute path to file as the send command can be called from another
+            // folder than where camel is running
+            if (body.startsWith("file:")) {
+                File f = new File(body.substring(5));
+                if (f.exists() && f.isFile()) {
+                    body = "file:" + f.getAbsolutePath();
+                }
+            }
             root.put("body", body);
         }
         if (headers != null) {
