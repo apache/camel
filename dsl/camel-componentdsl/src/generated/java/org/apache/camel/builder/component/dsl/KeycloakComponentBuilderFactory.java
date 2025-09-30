@@ -185,11 +185,14 @@ public interface KeycloakComponentBuilderFactory {
             return this;
         }
     
+        
         /**
-         * Keycloak realm.
+         * Keycloak realm, the default is master because usually all the
+         * operations are done starting from the master realm.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: master
          * Group: producer
          * 
          * @param realm the value to set

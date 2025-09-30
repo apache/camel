@@ -37,7 +37,8 @@ public class KeycloakConfiguration implements Cloneable {
     @UriParam(description = "Keycloak server URL")
     private String serverUrl;
 
-    @UriParam(description = "Keycloak realm")
+    @UriParam(description = "Keycloak realm, the default is master because usually all the operations are done starting from the master realm",
+              defaultValue = "master")
     private String realm = "master";
 
     @UriParam(description = "Keycloak client ID")
