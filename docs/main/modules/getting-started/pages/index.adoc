@@ -93,7 +93,7 @@ To run the project you can run the following command:
 
 [source,bash]
 ----
-mvn camel:run -Dcamel.main.durationMaxMessages=2
+mvn camel:run -D"camel.main.durationMaxMessages"="2"
 ----
 
 After you run the command above, you should have the following messages:
