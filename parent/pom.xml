@@ -1859,6 +1859,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-langchain4j-embeddingstore-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-langchain4j-tokenizer</artifactId>
                 <version>${project.version}</version>
             </dependency>
