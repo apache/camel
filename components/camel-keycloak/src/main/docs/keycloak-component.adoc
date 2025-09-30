@@ -16,6 +16,13 @@
 
 The Keycloak component supports running operations on Keycloak instance and policy enforcements.
 
+== Component Features
+
+The Keycloak component provides two main functionalities:
+
+1. **Producer Operations** - Manage Keycloak instances via the Admin API (realms, users, roles, clients)
+2. **Security Policies** - Route-level authorization using Keycloak authentication and authorization services
+
 
 == URI Format
 
@@ -40,6 +47,746 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+
+== Producer Operations
+
+The Keycloak producer supports administrative operations on Keycloak instances via the Admin API.
+
+=== Configuration
+
+To use the producer, configure the Keycloak connection details:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setUsername("admin");
+config.setPassword("admin");
+keycloak.setConfiguration(config);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Configuration in application.yaml
+camel:
+  component:
+    keycloak:
+      server-url: "http://localhost:8080"
+      realm: "master"
+      username: "admin"
+      password: "admin"
+----
+====
+
+=== Supported Operations
+
+The component supports the following operations:
+
+* **Realm Management**: `createRealm`, `getRealm`, `deleteRealm`
+* **User Management**: `createUser`, `listUsers`, `deleteUser`, `setUserPassword`
+* **Role Management**: `createRole`, `getRole`, `deleteRole`, `assignRoleToUser`
+* **Client Management**: `createClient`, `getClient`, `getClientSecret`, `deleteClient`
+
+=== Realm Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create a new realm
+template.sendBodyAndHeader("keycloak:admin?operation=createRealm", null,
+    KeycloakConstants.REALM_NAME, "my-new-realm");
+
+// Get realm information
+template.sendBodyAndHeader("keycloak:admin?operation=getRealm", null,
+    KeycloakConstants.REALM_NAME, "my-realm");
+
+// Delete a realm
+template.sendBodyAndHeader("keycloak:admin?operation=deleteRealm", null,
+    KeycloakConstants.REALM_NAME, "my-old-realm");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:create-realm
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-new-realm"
+        - to:
+            uri: keycloak:admin?operation=createRealm
+        - log: "Created realm: ${header.CamelKeycloakRealmName}"
+
+- route:
+    from:
+      uri: direct:get-realm
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - to:
+            uri: keycloak:admin?operation=getRealm
+        - log: "Realm info: ${body}"
+
+- route:
+    from:
+      uri: direct:delete-realm
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-old-realm"
+        - to:
+            uri: keycloak:admin?operation=deleteRealm
+        - log: "Deleted realm: ${header.CamelKeycloakRealmName}"
+----
+====
+
+=== User Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create a new user
+Map<String, Object> headers = new HashMap<>();
+headers.put(KeycloakConstants.REALM_NAME, "my-realm");
+headers.put(KeycloakConstants.USERNAME, "john.doe");
+headers.put(KeycloakConstants.USER_EMAIL, "john.doe@example.com");
+headers.put(KeycloakConstants.USER_FIRST_NAME, "John");
+headers.put(KeycloakConstants.USER_LAST_NAME, "Doe");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createUser", null, headers);
+
+// Set user password
+Map<String, Object> passwordHeaders = new HashMap<>();
+passwordHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+passwordHeaders.put(KeycloakConstants.USERNAME, "john.doe");
+passwordHeaders.put("CamelKeycloakUserPassword", "secure-password");
+passwordHeaders.put("CamelKeycloakUserPasswordTemporary", false);
+
+template.sendBodyAndHeaders("keycloak:admin?operation=setUserPassword", null, passwordHeaders);
+
+// List all users in realm
+template.sendBodyAndHeader("keycloak:admin?operation=listUsers", null,
+    KeycloakConstants.REALM_NAME, "my-realm");
+
+// Delete a user
+Map<String, Object> deleteHeaders = new HashMap<>();
+deleteHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+deleteHeaders.put(KeycloakConstants.USERNAME, "john.doe");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteUser", null, deleteHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create user route
+- route:
+    from:
+      uri: direct:create-user
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUsername
+            simple: "${body[username]}"
+        - setHeader:
+            name: CamelKeycloakUserEmail
+            simple: "${body[email]}"
+        - setHeader:
+            name: CamelKeycloakUserFirstName
+            simple: "${body[firstName]}"
+        - setHeader:
+            name: CamelKeycloakUserLastName
+            simple: "${body[lastName]}"
+        - to:
+            uri: keycloak:admin?operation=createUser
+        - log: "Created user: ${header.CamelKeycloakUsername}"
+
+# Set user password route
+- route:
+    from:
+      uri: direct:set-user-password
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUsername
+            simple: "${body[username]}"
+        - setHeader:
+            name: CamelKeycloakUserPassword
+            simple: "${body[password]}"
+        - setHeader:
+            name: CamelKeycloakUserPasswordTemporary
+            constant: false
+        - to:
+            uri: keycloak:admin?operation=setUserPassword
+        - log: "Set password for user: ${header.CamelKeycloakUsername}"
+
+# List users route
+- route:
+    from:
+      uri: direct:list-users
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - to:
+            uri: keycloak:admin?operation=listUsers
+        - log: "Users in realm: ${body}"
+
+# Delete user route
+- route:
+    from:
+      uri: direct:delete-user
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUsername
+            simple: "${body[username]}"
+        - to:
+            uri: keycloak:admin?operation=deleteUser
+        - log: "Deleted user: ${header.CamelKeycloakUsername}"
+----
+====
+
+=== Role Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create a new role
+Map<String, Object> roleHeaders = new HashMap<>();
+roleHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+roleHeaders.put(KeycloakConstants.ROLE_NAME, "manager");
+roleHeaders.put(KeycloakConstants.ROLE_DESCRIPTION, "Manager role with elevated privileges");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createRole", null, roleHeaders);
+
+// Get role information
+Map<String, Object> getRoleHeaders = new HashMap<>();
+getRoleHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+getRoleHeaders.put(KeycloakConstants.ROLE_NAME, "manager");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=getRole", null, getRoleHeaders);
+
+// Assign role to user
+Map<String, Object> assignHeaders = new HashMap<>();
+assignHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+assignHeaders.put(KeycloakConstants.USERNAME, "john.doe");
+assignHeaders.put(KeycloakConstants.ROLE_NAME, "manager");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=assignRoleToUser", null, assignHeaders);
+
+// Delete a role
+Map<String, Object> deleteRoleHeaders = new HashMap<>();
+deleteRoleHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+deleteRoleHeaders.put(KeycloakConstants.ROLE_NAME, "old-role");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteRole", null, deleteRoleHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create role route
+- route:
+    from:
+      uri: direct:create-role
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakRoleName
+            simple: "${body[roleName]}"
+        - setHeader:
+            name: CamelKeycloakRoleDescription
+            simple: "${body[description]}"
+        - to:
+            uri: keycloak:admin?operation=createRole
+        - log: "Created role: ${header.CamelKeycloakRoleName}"
+
+# Get role route
+- route:
+    from:
+      uri: direct:get-role
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakRoleName
+            simple: "${body[roleName]}"
+        - to:
+            uri: keycloak:admin?operation=getRole
+        - log: "Role info: ${body}"
+
+# Assign role to user route
+- route:
+    from:
+      uri: direct:assign-role
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUsername
+            simple: "${body[username]}"
+        - setHeader:
+            name: CamelKeycloakRoleName
+            simple: "${body[roleName]}"
+        - to:
+            uri: keycloak:admin?operation=assignRoleToUser
+        - log: "Assigned role ${header.CamelKeycloakRoleName} to user ${header.CamelKeycloakUsername}"
+
+# Delete role route
+- route:
+    from:
+      uri: direct:delete-role
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakRoleName
+            simple: "${body[roleName]}"
+        - to:
+            uri: keycloak:admin?operation=deleteRole
+        - log: "Deleted role: ${header.CamelKeycloakRoleName}"
+----
+====
+
+=== Client Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create a new client
+Map<String, Object> clientHeaders = new HashMap<>();
+clientHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+clientHeaders.put("CamelKeycloakClientId", "my-service-client");
+clientHeaders.put("CamelKeycloakClientSecretRequired", true);
+clientHeaders.put("CamelKeycloakClientDirectAccessGrantsEnabled", true);
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createClient", null, clientHeaders);
+
+// Get client information
+Map<String, Object> getClientHeaders = new HashMap<>();
+getClientHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+getClientHeaders.put("CamelKeycloakClientId", "my-service-client");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=getClient", null, getClientHeaders);
+
+// Get client secret
+Map<String, Object> secretHeaders = new HashMap<>();
+secretHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+secretHeaders.put("CamelKeycloakClientId", "my-service-client");
+
+String clientSecret = template.requestBodyAndHeaders("keycloak:admin?operation=getClientSecret",
+    null, secretHeaders, String.class);
+
+// Delete a client
+Map<String, Object> deleteClientHeaders = new HashMap<>();
+deleteClientHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+deleteClientHeaders.put("CamelKeycloakClientId", "old-client");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteClient", null, deleteClientHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create client route
+- route:
+    from:
+      uri: direct:create-client
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientId
+            simple: "${body[clientId]}"
+        - setHeader:
+            name: CamelKeycloakClientSecretRequired
+            constant: true
+        - setHeader:
+            name: CamelKeycloakClientDirectAccessGrantsEnabled
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=createClient
+        - log: "Created client: ${header.CamelKeycloakClientId}"
+
+# Get client route
+- route:
+    from:
+      uri: direct:get-client
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientId
+            simple: "${body[clientId]}"
+        - to:
+            uri: keycloak:admin?operation=getClient
+        - log: "Client info: ${body}"
+
+# Get client secret route
+- route:
+    from:
+      uri: direct:get-client-secret
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientId
+            simple: "${body[clientId]}"
+        - to:
+            uri: keycloak:admin?operation=getClientSecret
+        - log: "Client secret retrieved for: ${header.CamelKeycloakClientId}"
+
+# Delete client route
+- route:
+    from:
+      uri: direct:delete-client
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientId
+            simple: "${body[clientId]}"
+        - to:
+            uri: keycloak:admin?operation=deleteClient
+        - log: "Deleted client: ${header.CamelKeycloakClientId}"
+----
+====
+
+=== Complete Producer Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+public class KeycloakManagementRoutes extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+
+        // Configure Keycloak component
+        KeycloakComponent keycloak = getContext().getComponent("keycloak", KeycloakComponent.class);
+        KeycloakConfiguration config = new KeycloakConfiguration();
+        config.setServerUrl("http://localhost:8080");
+        config.setRealm("master");
+        config.setUsername("admin");
+        config.setPassword("admin");
+        keycloak.setConfiguration(config);
+
+        // Comprehensive user management route
+        from("direct:setup-user-environment")
+            .routeId("setup-user-environment")
+            .log("Setting up user environment...")
+
+            // Step 1: Create realm
+            .setHeader(KeycloakConstants.REALM_NAME, constant("my-company"))
+            .to("keycloak:admin?operation=createRealm")
+            .log("Created realm: my-company")
+
+            // Step 2: Create roles
+            .setHeader(KeycloakConstants.ROLE_NAME, constant("admin"))
+            .setHeader(KeycloakConstants.ROLE_DESCRIPTION, constant("Administrator role"))
+            .to("keycloak:admin?operation=createRole")
+            .log("Created admin role")
+
+            .setHeader(KeycloakConstants.ROLE_NAME, constant("user"))
+            .setHeader(KeycloakConstants.ROLE_DESCRIPTION, constant("Standard user role"))
+            .to("keycloak:admin?operation=createRole")
+            .log("Created user role")
+
+            // Step 3: Create client
+            .setHeader("CamelKeycloakClientId", constant("my-app"))
+            .setHeader("CamelKeycloakClientSecretRequired", constant(true))
+            .setHeader("CamelKeycloakClientDirectAccessGrantsEnabled", constant(true))
+            .to("keycloak:admin?operation=createClient")
+            .log("Created client: my-app")
+
+            // Step 4: Create users
+            .setHeader(KeycloakConstants.USERNAME, constant("admin.user"))
+            .setHeader(KeycloakConstants.USER_EMAIL, constant("admin@company.com"))
+            .setHeader(KeycloakConstants.USER_FIRST_NAME, constant("Admin"))
+            .setHeader(KeycloakConstants.USER_LAST_NAME, constant("User"))
+            .to("keycloak:admin?operation=createUser")
+            .log("Created admin user")
+
+            // Step 5: Set password
+            .setHeader("CamelKeycloakUserPassword", constant("admin123"))
+            .setHeader("CamelKeycloakUserPasswordTemporary", constant(false))
+            .to("keycloak:admin?operation=setUserPassword")
+            .log("Set admin user password")
+
+            // Step 6: Assign role
+            .setHeader(KeycloakConstants.ROLE_NAME, constant("admin"))
+            .to("keycloak:admin?operation=assignRoleToUser")
+            .log("Assigned admin role to user")
+
+            .transform().constant("User environment setup completed successfully");
+
+        // User management API routes
+        from("rest:post:/users")
+            .routeId("create-user-api")
+            .log("Creating user: ${body}")
+            .setHeader(KeycloakConstants.REALM_NAME, constant("my-company"))
+            .setHeader(KeycloakConstants.USERNAME, jsonpath("$.username"))
+            .setHeader(KeycloakConstants.USER_EMAIL, jsonpath("$.email"))
+            .setHeader(KeycloakConstants.USER_FIRST_NAME, jsonpath("$.firstName"))
+            .setHeader(KeycloakConstants.USER_LAST_NAME, jsonpath("$.lastName"))
+            .to("keycloak:admin?operation=createUser")
+            .setHeader("Content-Type", constant("application/json"))
+            .transform().constant("{\"status\": \"success\", \"message\": \"User created\"}");
+
+        from("rest:get:/users")
+            .routeId("list-users-api")
+            .log("Listing users")
+            .setHeader(KeycloakConstants.REALM_NAME, constant("my-company"))
+            .to("keycloak:admin?operation=listUsers")
+            .setHeader("Content-Type", constant("application/json"));
+
+        from("rest:delete:/users/{username}")
+            .routeId("delete-user-api")
+            .log("Deleting user: ${header.username}")
+            .setHeader(KeycloakConstants.REALM_NAME, constant("my-company"))
+            .setHeader(KeycloakConstants.USERNAME, header("username"))
+            .to("keycloak:admin?operation=deleteUser")
+            .setHeader("Content-Type", constant("application/json"))
+            .transform().constant("{\"status\": \"success\", \"message\": \"User deleted\"}");
+    }
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+# Complete Keycloak producer configuration
+- route:
+    id: setup-user-environment
+    from:
+      uri: direct:setup-user-environment
+      steps:
+        - log: "Setting up user environment..."
+
+        # Step 1: Create realm
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-company"
+        - to:
+            uri: keycloak:admin?operation=createRealm
+        - log: "Created realm: my-company"
+
+        # Step 2: Create admin role
+        - setHeader:
+            name: CamelKeycloakRoleName
+            constant: "admin"
+        - setHeader:
+            name: CamelKeycloakRoleDescription
+            constant: "Administrator role"
+        - to:
+            uri: keycloak:admin?operation=createRole
+        - log: "Created admin role"
+
+        # Step 3: Create user role
+        - setHeader:
+            name: CamelKeycloakRoleName
+            constant: "user"
+        - setHeader:
+            name: CamelKeycloakRoleDescription
+            constant: "Standard user role"
+        - to:
+            uri: keycloak:admin?operation=createRole
+        - log: "Created user role"
+
+        # Step 4: Create client
+        - setHeader:
+            name: CamelKeycloakClientId
+            constant: "my-app"
+        - setHeader:
+            name: CamelKeycloakClientSecretRequired
+            constant: true
+        - setHeader:
+            name: CamelKeycloakClientDirectAccessGrantsEnabled
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=createClient
+        - log: "Created client: my-app"
+
+        # Step 5: Create admin user
+        - setHeader:
+            name: CamelKeycloakUsername
+            constant: "admin.user"
+        - setHeader:
+            name: CamelKeycloakUserEmail
+            constant: "admin@company.com"
+        - setHeader:
+            name: CamelKeycloakUserFirstName
+            constant: "Admin"
+        - setHeader:
+            name: CamelKeycloakUserLastName
+            constant: "User"
+        - to:
+            uri: keycloak:admin?operation=createUser
+        - log: "Created admin user"
+
+        # Step 6: Set password
+        - setHeader:
+            name: CamelKeycloakUserPassword
+            constant: "admin123"
+        - setHeader:
+            name: CamelKeycloakUserPasswordTemporary
+            constant: false
+        - to:
+            uri: keycloak:admin?operation=setUserPassword
+        - log: "Set admin user password"
+
+        # Step 7: Assign role
+        - setHeader:
+            name: CamelKeycloakRoleName
+            constant: "admin"
+        - to:
+            uri: keycloak:admin?operation=assignRoleToUser
+        - log: "Assigned admin role to user"
+
+        - transform:
+            constant: "User environment setup completed successfully"
+
+# REST API routes for user management
+- rest:
+    path: /users
+    post:
+      - to: direct:create-user-api
+
+- rest:
+    path: /users
+    get:
+      - to: direct:list-users-api
+
+- rest:
+    path: /users/{username}
+    delete:
+      - to: direct:delete-user-api
+
+# Route implementations
+- route:
+    id: create-user-api
+    from:
+      uri: direct:create-user-api
+      steps:
+        - log: "Creating user: ${body}"
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-company"
+        - setHeader:
+            name: CamelKeycloakUsername
+            jsonpath: "$.username"
+        - setHeader:
+            name: CamelKeycloakUserEmail
+            jsonpath: "$.email"
+        - setHeader:
+            name: CamelKeycloakUserFirstName
+            jsonpath: "$.firstName"
+        - setHeader:
+            name: CamelKeycloakUserLastName
+            jsonpath: "$.lastName"
+        - to:
+            uri: keycloak:admin?operation=createUser
+        - setHeader:
+            name: Content-Type
+            constant: "application/json"
+        - transform:
+            constant: '{"status": "success", "message": "User created"}'
+
+- route:
+    id: list-users-api
+    from:
+      uri: direct:list-users-api
+      steps:
+        - log: "Listing users"
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-company"
+        - to:
+            uri: keycloak:admin?operation=listUsers
+        - setHeader:
+            name: Content-Type
+            constant: "application/json"
+
+- route:
+    id: delete-user-api
+    from:
+      uri: direct:delete-user-api
+      steps:
+        - log: "Deleting user: ${header.username}"
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-company"
+        - setHeader:
+            name: CamelKeycloakUsername
+            header: "username"
+        - to:
+            uri: keycloak:admin?operation=deleteUser
+        - setHeader:
+            name: Content-Type
+            constant: "application/json"
+        - transform:
+            constant: '{"status": "success", "message": "User deleted"}'
+
+# Component configuration
+camel:
+  component:
+    keycloak:
+      server-url: "http://localhost:8080"
+      realm: "master"
+      username: "admin"
+      password: "admin"
+----
+====
+
+== Security Policies
 
 The Keycloak security policy provides route-level authorization using Keycloak authentication and authorization services.
 
