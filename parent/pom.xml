@@ -188,28 +188,28 @@
         <jaxb-xjc-version>4.0.5</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.5</jaxb-jxc-version>
         <gmavenplus-plugin-version>4.2.1</gmavenplus-plugin-version>
-        <google-auth-library-oauth2-http-version>1.37.1</google-auth-library-oauth2-http-version>
+        <google-auth-library-oauth2-http-version>1.39.1</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.8.1</google-api-client-version>
         <google-api-services-drive-version>v3-rev20250723-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20250404-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20250616-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20250630-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.54.1</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.59.0</google-cloud-core-version>
+        <google-cloud-bigquery-version>2.55.1</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.60.2</google-cloud-core-version>
         <google-cloud-functions-version>2.69.0</google-cloud-functions-version>
         <google-cloud-http-client-version>1.47.1</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.141.2</google-cloud-pubsub-version>
-        <google-cloud-pubsublite-version>1.15.13</google-cloud-pubsublite-version>
-        <google-cloud-secretmanager-version>2.72.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.55.0</google-cloud-storage-version>
+        <google-cloud-pubsub-version>1.141.5</google-cloud-pubsub-version>
+        <google-cloud-pubsublite-version>1.15.16</google-cloud-pubsublite-version>
+        <google-cloud-secretmanager-version>2.75.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.58.0</google-cloud-storage-version>
         <graaljs-version>24.2.2</graaljs-version>
         <graphql-java-version>24.2</graphql-java-version>
         <greenmail-version>2.1.5</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.28</groovy-version>
-        <grpc-version>1.74.0</grpc-version>
-        <grpc-google-auth-library-version>1.37.1</grpc-google-auth-library-version>
+        <grpc-version>1.75.0</grpc-version>
+        <grpc-google-auth-library-version>1.39.1</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.5.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.59.Final</grpc-netty-tcnative-boringssl-static-version>
         <gson-version>2.13.1</gson-version>
