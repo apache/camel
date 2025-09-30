@@ -337,8 +337,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
                     if (watch != null) {
                         elapsed = watch.taken();
                     }
-                    Exchange exchange = (Exchange) context.removeAttribute("org.apache.camel.Exchange");
-                    HttpHost host = (HttpHost) context.removeAttribute("org.apache.hc.core5.http.HttpHost");
+                    Exchange exchange = (Exchange) context.getAttribute("org.apache.camel.Exchange");
+                    HttpHost host = (HttpHost) context.getAttribute("org.apache.hc.core5.http.HttpHost");
                     httpActivityListener.onResponseReceived(this, exchange, host, response, (HttpEntity) entity, elapsed);
                 }
             });
