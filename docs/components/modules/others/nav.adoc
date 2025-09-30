@@ -11,7 +11,7 @@
 ** xref:csimple-joor.adoc[CSimple jOOR]
 ** xref:cxf-transport.adoc[CXF Transport]
 ** xref:debug.adoc[Debug]
-** xref:dsl.adoc[DSL]
+** xref:dsl-summary.adoc[DSL]
 *** xref:dsl-modeline.adoc[DSL Modeline]
 *** xref:java-joor-dsl.adoc[Java DSL (runtime compiled)]
 *** xref:java-xml-jaxb-dsl.adoc[Jaxb XML Dsl]
