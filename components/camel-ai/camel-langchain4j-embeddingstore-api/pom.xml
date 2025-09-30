@@ -23,38 +23,42 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
+        <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
         <version>4.15.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-ai-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>Camel :: AI :: Parent</name>
-    <description>Camel AI parent</description>
+    <artifactId>camel-langchain4j-embeddingstore-api</artifactId>
 
-    <modules>
-        <module>camel-chatscript</module>
-        <module>camel-djl</module>
-        <module>camel-docling</module>
-        <module>camel-kserve</module>
-        <module>camel-langchain4j-agent-api</module>
-        <module>camel-langchain4j-agent</module>
-        <module>camel-langchain4j-chat</module>
-        <module>camel-langchain4j-core</module>
-        <module>camel-langchain4j-embeddings</module>
-        <module>camel-langchain4j-embeddingstore-api</module>
-        <module>camel-langchain4j-embeddingstore</module>
-        <module>camel-langchain4j-tokenizer</module>
-        <module>camel-langchain4j-tools</module>
-        <module>camel-langchain4j-web-search</module>
-        <module>camel-milvus</module>
-        <module>camel-neo4j</module>
-        <module>camel-pinecone</module>
-        <module>camel-qdrant</module>
-        <module>camel-tensorflow-serving</module>
-        <module>camel-torchserve</module>
-        <module>camel-weaviate</module>
-    </modules>
+    <packaging>jar</packaging>
+    <name>Camel :: AI :: LangChain4j :: Embedding Store :: API</name>
+    <description>LangChain4j Embedding Store API</description>
+
+    <properties>
+        <supportLevel>Preview</supportLevel>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>${langchain4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

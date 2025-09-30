@@ -1,0 +1,13 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "langchain4j-embeddingstore-api",
+    "title": "Langchain4j Embeddingstore Api",
+    "description": "LangChain4j Embedding Store API",
+    "deprecated": false,
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-langchain4j-embeddingstore-api",
+    "version": "4.15.0-SNAPSHOT"
+  }
+}
