@@ -59,8 +59,8 @@ public class BeanComponent extends DefaultComponent {
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
 
         if (beanInfoCache == null && beanInfoCacheSize > 0) {
             LOG.debug("Creating BeanInfo with maximum cache size: {}", beanInfoCacheSize);
