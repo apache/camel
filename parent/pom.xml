@@ -444,6 +444,7 @@
         <qpid-broker-version>9.2.1</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.9.0</qpid-jms-client-version>
+        <quarkus-version>3.26.4</quarkus-version>
         <quartz-version>2.5.0</quartz-version>
         <quickfixj-version>2.3.2</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
@@ -480,6 +481,7 @@
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
         <spring-batch-version>5.2.3</spring-batch-version>
+        <spring-boot-version>3.5.6</spring-boot-version>
         <spring-data-redis-version>3.5.4</spring-data-redis-version>
         <spring-ldap-version>3.3.3</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
