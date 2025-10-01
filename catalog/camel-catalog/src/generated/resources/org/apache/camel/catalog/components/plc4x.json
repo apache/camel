@@ -19,7 +19,7 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false,
+    "lenientProperties": true,
     "browsable": false,
     "remote": true
   },

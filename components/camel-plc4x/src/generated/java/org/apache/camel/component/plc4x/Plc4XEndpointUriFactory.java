@@ -74,7 +74,7 @@ public class Plc4XEndpointUriFactory extends org.apache.camel.support.component.
 
     @Override
     public boolean isLenientProperties() {
-        return false;
+        return true;
     }
 }
 

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * Read and write to PLC devices
  */
 @UriEndpoint(scheme = "plc4x", firstVersion = "3.20.0", title = "PLC4X",
-             syntax = "plc4x:driver", category = Category.IOT)
+             lenientProperties = true, syntax = "plc4x:driver", category = Category.IOT)
 public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
 
