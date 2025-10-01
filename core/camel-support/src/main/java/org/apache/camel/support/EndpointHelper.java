@@ -63,15 +63,39 @@ public final class EndpointHelper {
      * @return              returns endpoint uri with property placeholders resolved
      */
     public static String resolveEndpointUriPropertyPlaceholders(CamelContext camelContext, String uri) {
-        // the uri may have optional property placeholders which is not possible to resolve
-        // so we keep the unresolved in the uri, which we then afterwards will remove
-        // which is a little complex depending on the placeholder is from context-path or query parameters
-        // in the uri string
+        if (uri == null || uri.isEmpty()) {
+            return uri;
+        }
+
         try {
-            uri = camelContext.getCamelContextExtension().resolvePropertyPlaceholders(uri, true);
+            // special for resolving uris with query parameters,
+            // as there can also be ? signs in context-path that are being resolved
+            // (only trigger this code if there are property placeholders in the context-path otherwise resolve using
+            // the complete uri in the else block)
+            int pos = uri.indexOf(PropertiesComponent.PREFIX_TOKEN);
+            int pos1 = uri.indexOf('?');
+            int pos2 = uri.indexOf(PropertiesComponent.PREFIX_OPTIONAL_TOKEN);
+            // split only if there are query parameters (and that any optional tokens are positioned later)
+            if (pos != -1 && pos1 != uri.length() - 1 && pos1 != -1 && (pos2 == -1 || pos2 + 2 > pos1)) {
+                String u1 = uri.substring(0, pos1);
+                String u2 = uri.substring(pos1 + 1);
+                u1 = camelContext.getCamelContextExtension().resolvePropertyPlaceholders(u1, true);
+                u2 = camelContext.getCamelContextExtension().resolvePropertyPlaceholders(u2, true);
+                if (u1.indexOf('?') != -1) {
+                    uri = u1 + "&" + u2;
+                } else {
+                    uri = u1 + "?" + u2;
+                }
+            } else {
+                uri = camelContext.getCamelContextExtension().resolvePropertyPlaceholders(uri, true);
+            }
             if (uri == null || uri.isEmpty()) {
                 return uri;
             }
+            // the uri may have optional property placeholders which is not possible to resolve
+            // so we keep the unresolved in the uri, which we then afterwards will remove
+            // which is a little complex depending on the placeholder is from context-path or query parameters
+            // in the uri string
             String prefix = PropertiesComponent.PREFIX_OPTIONAL_TOKEN;
             if (uri.contains(prefix)) {
                 String unresolved = uri;
