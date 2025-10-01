@@ -21,6 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.PollDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.PollProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.EndpointHelper;
@@ -44,6 +46,13 @@ public class PollReifier extends ProcessorReifier<PollDefinition> {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
             exp = createExpression(uri);
         }
+
+        // route templates should pre parse uri as they have dynamic values as part of their template parameters
+        RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+        if (rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
+        }
+
         long timeout = parseDuration(definition.getTimeout(), 20000);
         PollProcessor answer = new PollProcessor(exp, uri, timeout);
         answer.setDisabled(isDisabled(camelContext, definition));
