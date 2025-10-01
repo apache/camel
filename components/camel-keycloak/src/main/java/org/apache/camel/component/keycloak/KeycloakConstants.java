@@ -50,6 +50,39 @@ public final class KeycloakConstants {
     @Metadata(description = "The role description", javaType = "String")
     public static final String ROLE_DESCRIPTION = "CamelKeycloakRoleDescription";
 
+    @Metadata(description = "The group ID", javaType = "String")
+    public static final String GROUP_ID = "CamelKeycloakGroupId";
+
+    @Metadata(description = "The group name", javaType = "String")
+    public static final String GROUP_NAME = "CamelKeycloakGroupName";
+
+    @Metadata(description = "The client ID", javaType = "String")
+    public static final String CLIENT_ID = "CamelKeycloakClientId";
+
+    @Metadata(description = "The client UUID", javaType = "String")
+    public static final String CLIENT_UUID = "CamelKeycloakClientUuid";
+
+    @Metadata(description = "The user password", javaType = "String")
+    public static final String USER_PASSWORD = "CamelKeycloakUserPassword";
+
+    @Metadata(description = "Whether the password is temporary", javaType = "Boolean")
+    public static final String PASSWORD_TEMPORARY = "CamelKeycloakPasswordTemporary";
+
+    @Metadata(description = "Search query string", javaType = "String")
+    public static final String SEARCH_QUERY = "CamelKeycloakSearchQuery";
+
+    @Metadata(description = "Maximum number of results", javaType = "Integer")
+    public static final String MAX_RESULTS = "CamelKeycloakMaxResults";
+
+    @Metadata(description = "First result index", javaType = "Integer")
+    public static final String FIRST_RESULT = "CamelKeycloakFirstResult";
+
+    @Metadata(description = "The client scope ID", javaType = "String")
+    public static final String CLIENT_SCOPE_ID = "CamelKeycloakClientScopeId";
+
+    @Metadata(description = "The client scope name", javaType = "String")
+    public static final String CLIENT_SCOPE_NAME = "CamelKeycloakClientScopeName";
+
     private KeycloakConstants() {
         // Utility class
     }

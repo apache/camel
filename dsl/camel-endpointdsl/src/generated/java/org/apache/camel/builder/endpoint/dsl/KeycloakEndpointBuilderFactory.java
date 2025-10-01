@@ -469,6 +469,138 @@ public interface KeycloakEndpointBuilderFactory {
         public String keycloakRoleDescription() {
             return "CamelKeycloakRoleDescription";
         }
+        /**
+         * The group ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakGroupId}.
+         */
+        public String keycloakGroupId() {
+            return "CamelKeycloakGroupId";
+        }
+        /**
+         * The group name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakGroupName}.
+         */
+        public String keycloakGroupName() {
+            return "CamelKeycloakGroupName";
+        }
+        /**
+         * The client ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakClientId}.
+         */
+        public String keycloakClientId() {
+            return "CamelKeycloakClientId";
+        }
+        /**
+         * The client UUID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakClientUuid}.
+         */
+        public String keycloakClientUuid() {
+            return "CamelKeycloakClientUuid";
+        }
+        /**
+         * The user password.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakUserPassword}.
+         */
+        public String keycloakUserPassword() {
+            return "CamelKeycloakUserPassword";
+        }
+        /**
+         * Whether the password is temporary.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakPasswordTemporary}.
+         */
+        public String keycloakPasswordTemporary() {
+            return "CamelKeycloakPasswordTemporary";
+        }
+        /**
+         * Search query string.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakSearchQuery}.
+         */
+        public String keycloakSearchQuery() {
+            return "CamelKeycloakSearchQuery";
+        }
+        /**
+         * Maximum number of results.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakMaxResults}.
+         */
+        public String keycloakMaxResults() {
+            return "CamelKeycloakMaxResults";
+        }
+        /**
+         * First result index.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakFirstResult}.
+         */
+        public String keycloakFirstResult() {
+            return "CamelKeycloakFirstResult";
+        }
+        /**
+         * The client scope ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakClientScopeId}.
+         */
+        public String keycloakClientScopeId() {
+            return "CamelKeycloakClientScopeId";
+        }
+        /**
+         * The client scope name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KeycloakClientScopeName}.
+         */
+        public String keycloakClientScopeName() {
+            return "CamelKeycloakClientScopeName";
+        }
     }
     static KeycloakEndpointBuilder endpointBuilder(String componentName, String path) {
         class KeycloakEndpointBuilderImpl extends AbstractEndpointBuilder implements KeycloakEndpointBuilder, AdvancedKeycloakEndpointBuilder {

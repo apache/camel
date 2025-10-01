@@ -91,10 +91,15 @@ camel:
 
 The component supports the following operations:
 
-* **Realm Management**: `createRealm`, `getRealm`, `deleteRealm`
-* **User Management**: `createUser`, `listUsers`, `deleteUser`, `setUserPassword`
-* **Role Management**: `createRole`, `getRole`, `deleteRole`, `assignRoleToUser`
-* **Client Management**: `createClient`, `getClient`, `getClientSecret`, `deleteClient`
+* **Realm Management**: `createRealm`, `getRealm`, `updateRealm`, `deleteRealm`
+* **User Management**: `createUser`, `getUser`, `updateUser`, `listUsers`, `searchUsers`, `deleteUser`
+* **Role Management**: `createRole`, `getRole`, `updateRole`, `listRoles`, `deleteRole`, `assignRoleToUser`, `removeRoleFromUser`, `getUserRoles`
+* **Group Management**: `createGroup`, `getGroup`, `updateGroup`, `listGroups`, `deleteGroup`, `addUserToGroup`, `removeUserFromGroup`, `listUserGroups`
+* **Client Management**: `createClient`, `getClient`, `updateClient`, `listClients`, `deleteClient`
+* **Client Role Management**: `createClientRole`, `getClientRole`, `updateClientRole`, `listClientRoles`, `deleteClientRole`, `assignClientRoleToUser`, `removeClientRoleFromUser`
+* **Password Management**: `resetUserPassword`
+* **Session Management**: `listUserSessions`, `logoutUser`
+* **Client Scope Management**: `createClientScope`, `getClientScope`, `updateClientScope`, `listClientScopes`, `deleteClientScope`
 
 === Realm Operations
 
@@ -493,6 +498,527 @@ YAML::
         - to:
             uri: keycloak:admin?operation=deleteClient
         - log: "Deleted client: ${header.CamelKeycloakClientId}"
+----
+====
+
+=== Group Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create a new group
+Map<String, Object> groupHeaders = new HashMap<>();
+groupHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+groupHeaders.put(KeycloakConstants.GROUP_NAME, "developers");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createGroup", null, groupHeaders);
+
+// List all groups
+template.sendBodyAndHeader("keycloak:admin?operation=listGroups", null,
+    KeycloakConstants.REALM_NAME, "my-realm");
+
+// Add user to group
+Map<String, Object> addToGroupHeaders = new HashMap<>();
+addToGroupHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+addToGroupHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+addToGroupHeaders.put(KeycloakConstants.GROUP_ID, "group-id-456");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=addUserToGroup", null, addToGroupHeaders);
+
+// List user's groups
+Map<String, Object> userGroupsHeaders = new HashMap<>();
+userGroupsHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+userGroupsHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=listUserGroups", null, userGroupsHeaders);
+
+// Delete a group
+Map<String, Object> deleteGroupHeaders = new HashMap<>();
+deleteGroupHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+deleteGroupHeaders.put(KeycloakConstants.GROUP_ID, "group-id-456");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteGroup", null, deleteGroupHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create group route
+- route:
+    from:
+      uri: direct:create-group
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakGroupName
+            simple: "${body[groupName]}"
+        - to:
+            uri: keycloak:admin?operation=createGroup
+        - log: "Created group: ${header.CamelKeycloakGroupName}"
+
+# List groups route
+- route:
+    from:
+      uri: direct:list-groups
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - to:
+            uri: keycloak:admin?operation=listGroups
+        - log: "Groups: ${body}"
+
+# Add user to group route
+- route:
+    from:
+      uri: direct:add-user-to-group
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakGroupId
+            simple: "${body[groupId]}"
+        - to:
+            uri: keycloak:admin?operation=addUserToGroup
+        - log: "Added user ${header.CamelKeycloakUserId} to group"
+
+# List user groups route
+- route:
+    from:
+      uri: direct:list-user-groups
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=listUserGroups
+        - log: "User groups: ${body}"
+----
+====
+
+=== Password Management Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Reset user password
+Map<String, Object> passwordHeaders = new HashMap<>();
+passwordHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+passwordHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+passwordHeaders.put(KeycloakConstants.USER_PASSWORD, "newSecurePassword123!");
+passwordHeaders.put(KeycloakConstants.PASSWORD_TEMPORARY, false); // User won't need to change password
+
+template.sendBodyAndHeaders("keycloak:admin?operation=resetUserPassword", null, passwordHeaders);
+
+// Reset with temporary password (user must change on first login)
+Map<String, Object> tempPasswordHeaders = new HashMap<>();
+tempPasswordHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+tempPasswordHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+tempPasswordHeaders.put(KeycloakConstants.USER_PASSWORD, "tempPassword123");
+tempPasswordHeaders.put(KeycloakConstants.PASSWORD_TEMPORARY, true);
+
+template.sendBodyAndHeaders("keycloak:admin?operation=resetUserPassword", null, tempPasswordHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Reset user password route
+- route:
+    from:
+      uri: direct:reset-password
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakUserPassword
+            simple: "${body[password]}"
+        - setHeader:
+            name: CamelKeycloakPasswordTemporary
+            simple: "${body[temporary]}"
+        - to:
+            uri: keycloak:admin?operation=resetUserPassword
+        - log: "Password reset for user ${header.CamelKeycloakUserId}"
+
+# Reset with temporary password
+- route:
+    from:
+      uri: direct:reset-temp-password
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakUserPassword
+            simple: "${body[password]}"
+        - setHeader:
+            name: CamelKeycloakPasswordTemporary
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=resetUserPassword
+        - log: "Temporary password set for user ${header.CamelKeycloakUserId}"
+----
+====
+
+=== User Search Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Search users by query
+Map<String, Object> searchHeaders = new HashMap<>();
+searchHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+searchHeaders.put(KeycloakConstants.SEARCH_QUERY, "john");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=searchUsers", null, searchHeaders);
+
+// Search with pagination
+Map<String, Object> paginatedSearchHeaders = new HashMap<>();
+paginatedSearchHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+paginatedSearchHeaders.put(KeycloakConstants.SEARCH_QUERY, "doe");
+paginatedSearchHeaders.put(KeycloakConstants.FIRST_RESULT, 0);
+paginatedSearchHeaders.put(KeycloakConstants.MAX_RESULTS, 10);
+
+template.sendBodyAndHeaders("keycloak:admin?operation=searchUsers", null, paginatedSearchHeaders);
+
+// Get user roles
+Map<String, Object> rolesHeaders = new HashMap<>();
+rolesHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+rolesHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+List<RoleRepresentation> roles = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=getUserRoles", null, rolesHeaders, List.class);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Search users route
+- route:
+    from:
+      uri: direct:search-users
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakSearchQuery
+            simple: "${body[query]}"
+        - to:
+            uri: keycloak:admin?operation=searchUsers
+        - log: "Search results: ${body}"
+
+# Search with pagination
+- route:
+    from:
+      uri: direct:search-users-paginated
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakSearchQuery
+            simple: "${body[query]}"
+        - setHeader:
+            name: CamelKeycloakFirstResult
+            simple: "${body[offset]}"
+        - setHeader:
+            name: CamelKeycloakMaxResults
+            simple: "${body[limit]}"
+        - to:
+            uri: keycloak:admin?operation=searchUsers
+        - log: "Found ${body.size} users"
+
+# Get user roles route
+- route:
+    from:
+      uri: direct:get-user-roles
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=getUserRoles
+        - log: "User roles: ${body}"
+----
+====
+
+=== Client Role Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create client role
+Map<String, Object> clientRoleHeaders = new HashMap<>();
+clientRoleHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+clientRoleHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+clientRoleHeaders.put(KeycloakConstants.ROLE_NAME, "service-admin");
+clientRoleHeaders.put(KeycloakConstants.ROLE_DESCRIPTION, "Service administrator role");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createClientRole", null, clientRoleHeaders);
+
+// List client roles
+Map<String, Object> listClientRolesHeaders = new HashMap<>();
+listClientRolesHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+listClientRolesHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=listClientRoles", null, listClientRolesHeaders);
+
+// Assign client role to user
+Map<String, Object> assignClientRoleHeaders = new HashMap<>();
+assignClientRoleHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+assignClientRoleHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+assignClientRoleHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+assignClientRoleHeaders.put(KeycloakConstants.ROLE_NAME, "service-admin");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=assignClientRoleToUser", null, assignClientRoleHeaders);
+
+// Remove client role from user
+Map<String, Object> removeClientRoleHeaders = new HashMap<>();
+removeClientRoleHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+removeClientRoleHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+removeClientRoleHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+removeClientRoleHeaders.put(KeycloakConstants.ROLE_NAME, "service-admin");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=removeClientRoleFromUser", null, removeClientRoleHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create client role route
+- route:
+    from:
+      uri: direct:create-client-role
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - setHeader:
+            name: CamelKeycloakRoleName
+            simple: "${body[roleName]}"
+        - setHeader:
+            name: CamelKeycloakRoleDescription
+            simple: "${body[description]}"
+        - to:
+            uri: keycloak:admin?operation=createClientRole
+        - log: "Created client role: ${header.CamelKeycloakRoleName}"
+
+# List client roles route
+- route:
+    from:
+      uri: direct:list-client-roles
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - to:
+            uri: keycloak:admin?operation=listClientRoles
+        - log: "Client roles: ${body}"
+
+# Assign client role to user
+- route:
+    from:
+      uri: direct:assign-client-role
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - setHeader:
+            name: CamelKeycloakRoleName
+            simple: "${body[roleName]}"
+        - to:
+            uri: keycloak:admin?operation=assignClientRoleToUser
+        - log: "Assigned client role to user"
+----
+====
+
+=== Session Management Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// List user sessions
+Map<String, Object> sessionsHeaders = new HashMap<>();
+sessionsHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+sessionsHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+List<UserSessionRepresentation> sessions = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=listUserSessions", null, sessionsHeaders, List.class);
+
+// Logout user (invalidate all sessions)
+Map<String, Object> logoutHeaders = new HashMap<>();
+logoutHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+logoutHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=logoutUser", null, logoutHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# List user sessions route
+- route:
+    from:
+      uri: direct:list-user-sessions
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=listUserSessions
+        - log: "User sessions: ${body}"
+
+# Logout user route
+- route:
+    from:
+      uri: direct:logout-user
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=logoutUser
+        - log: "User logged out: ${header.CamelKeycloakUserId}"
+----
+====
+
+=== Client Scope Operations
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create client scope
+Map<String, Object> scopeHeaders = new HashMap<>();
+scopeHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+scopeHeaders.put(KeycloakConstants.CLIENT_SCOPE_NAME, "custom-scope");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createClientScope", null, scopeHeaders);
+
+// List client scopes
+template.sendBodyAndHeader("keycloak:admin?operation=listClientScopes", null,
+    KeycloakConstants.REALM_NAME, "my-realm");
+
+// Get client scope
+Map<String, Object> getScopeHeaders = new HashMap<>();
+getScopeHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+getScopeHeaders.put(KeycloakConstants.CLIENT_SCOPE_ID, "scope-id-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=getClientScope", null, getScopeHeaders);
+
+// Delete client scope
+Map<String, Object> deleteScopeHeaders = new HashMap<>();
+deleteScopeHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+deleteScopeHeaders.put(KeycloakConstants.CLIENT_SCOPE_ID, "scope-id-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteClientScope", null, deleteScopeHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create client scope route
+- route:
+    from:
+      uri: direct:create-client-scope
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientScopeName
+            simple: "${body[scopeName]}"
+        - to:
+            uri: keycloak:admin?operation=createClientScope
+        - log: "Created client scope: ${header.CamelKeycloakClientScopeName}"
+
+# List client scopes route
+- route:
+    from:
+      uri: direct:list-client-scopes
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - to:
+            uri: keycloak:admin?operation=listClientScopes
+        - log: "Client scopes: ${body}"
+
+# Get client scope route
+- route:
+    from:
+      uri: direct:get-client-scope
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientScopeId
+            simple: "${body[scopeId]}"
+        - to:
+            uri: keycloak:admin?operation=getClientScope
+        - log: "Client scope: ${body}"
 ----
 ====
 
