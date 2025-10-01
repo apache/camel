@@ -552,7 +552,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldAddEnvVars(RuntimeType rt) throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
+        KubernetesExport command
+                = createCommand(new String[] { "classpath:route.yaml", "src/test/resources/application.properties", },
+                        "--runtime=" + rt.runtime());
         command.envVars = new String[] { "CAMEL_FOO=bar", "MY_ENV=foo" };
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
@@ -560,15 +562,19 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals(2, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());
-        Assertions.assertEquals("CAMEL_FOO",
+        Assertions.assertEquals(4, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());
+        Assertions.assertEquals("MY_VAR",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().get(0).getName());
-        Assertions.assertEquals("bar",
+        Assertions.assertEquals("\"my value\"",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().get(0).getValue());
         Assertions.assertEquals("MY_ENV",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().get(1).getName());
-        Assertions.assertEquals("foo",
+        Assertions.assertEquals("fuzz",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().get(1).getValue());
+        Assertions.assertEquals("CAMEL_FOO",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().get(2).getName());
+        Assertions.assertEquals("bar",
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().get(2).getValue());
     }
 
     @ParameterizedTest

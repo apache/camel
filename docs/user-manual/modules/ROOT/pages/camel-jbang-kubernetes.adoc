@@ -386,7 +386,8 @@ The environment trait provides the following configuration options:
 | environment.vars
 | []string
 | A list of environment variables to be added to the integration container.
-The syntax is KEY=VALUE, e.g., `MY_VAR="my value"`.
+The syntax is KEY=VALUE separated by a comma, e.g., `'MY_VAR="my value"','MY_OTHER_VAR="my value"'` .
+
 These take precedence over the previously defined environment variables.
 
 |===
