@@ -27,11 +27,47 @@ public enum KeycloakOperations {
     getUser,
     updateUser,
     listUsers,
+    searchUsers,
     createRole,
     deleteRole,
     getRole,
     updateRole,
     listRoles,
     assignRoleToUser,
-    removeRoleFromUser
+    removeRoleFromUser,
+    getUserRoles,
+    // Group operations
+    createGroup,
+    deleteGroup,
+    getGroup,
+    updateGroup,
+    listGroups,
+    addUserToGroup,
+    removeUserFromGroup,
+    listUserGroups,
+    // Client operations
+    createClient,
+    deleteClient,
+    getClient,
+    updateClient,
+    listClients,
+    // User password operations
+    resetUserPassword,
+    // Client role operations
+    createClientRole,
+    deleteClientRole,
+    getClientRole,
+    updateClientRole,
+    listClientRoles,
+    assignClientRoleToUser,
+    removeClientRoleFromUser,
+    // User session operations
+    listUserSessions,
+    logoutUser,
+    // Client scope operations
+    createClientScope,
+    deleteClientScope,
+    getClientScope,
+    updateClientScope,
+    listClientScopes
 }

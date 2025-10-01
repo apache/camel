@@ -27,10 +27,20 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.ClientResource;
+import org.keycloak.admin.client.resource.ClientsResource;
+import org.keycloak.admin.client.resource.GroupResource;
+import org.keycloak.admin.client.resource.GroupsResource;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RealmsResource;
+import org.keycloak.admin.client.resource.RoleMappingResource;
+import org.keycloak.admin.client.resource.RoleScopeResource;
 import org.keycloak.admin.client.resource.RolesResource;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.ClientRepresentation;
+import org.keycloak.representations.idm.GroupRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mockito.Mockito;
 
@@ -47,7 +57,14 @@ public class KeycloakProducerTest extends CamelTestSupport {
     private RealmsResource realmsResource = Mockito.mock(RealmsResource.class);
     private RealmResource realmResource = Mockito.mock(RealmResource.class);
     private UsersResource usersResource = Mockito.mock(UsersResource.class);
+    private UserResource userResource = Mockito.mock(UserResource.class);
     private RolesResource rolesResource = Mockito.mock(RolesResource.class);
+    private GroupsResource groupsResource = Mockito.mock(GroupsResource.class);
+    private GroupResource groupResource = Mockito.mock(GroupResource.class);
+    private ClientsResource clientsResource = Mockito.mock(ClientsResource.class);
+    private ClientResource clientResource = Mockito.mock(ClientResource.class);
+    private RoleMappingResource roleMappingResource = Mockito.mock(RoleMappingResource.class);
+    private RoleScopeResource roleScopeResource = Mockito.mock(RoleScopeResource.class);
     private Response response = Mockito.mock(Response.class);
 
     @Override
@@ -69,6 +86,38 @@ public class KeycloakProducerTest extends CamelTestSupport {
 
                 from("direct:listUsers")
                         .to("keycloak:test?keycloakClient=#keycloakClient&operation=listUsers")
+                        .to("mock:result");
+
+                from("direct:createGroup")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=createGroup")
+                        .to("mock:result");
+
+                from("direct:listGroups")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=listGroups")
+                        .to("mock:result");
+
+                from("direct:addUserToGroup")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=addUserToGroup")
+                        .to("mock:result");
+
+                from("direct:createClient")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=createClient")
+                        .to("mock:result");
+
+                from("direct:listClients")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=listClients")
+                        .to("mock:result");
+
+                from("direct:resetUserPassword")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=resetUserPassword")
+                        .to("mock:result");
+
+                from("direct:getUserRoles")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=getUserRoles")
+                        .to("mock:result");
+
+                from("direct:searchUsers")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=searchUsers")
                         .to("mock:result");
             }
         };
@@ -159,5 +208,147 @@ public class KeycloakProducerTest extends CamelTestSupport {
         } catch (Exception e) {
             assertTrue(e.getCause().getMessage().contains("Username must be specified"));
         }
+    }
+
+    @Test
+    public void testCreateGroup() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.groups()).thenReturn(groupsResource);
+        when(groupsResource.add(any(GroupRepresentation.class))).thenReturn(response);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
+        exchange.getIn().setHeader(KeycloakConstants.GROUP_NAME, "testGroup");
+
+        template.send("direct:createGroup", exchange);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testListGroups() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.groups()).thenReturn(groupsResource);
+        when(groupsResource.groups()).thenReturn(List.of(new GroupRepresentation()));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:listGroups", null, KeycloakConstants.REALM_NAME, "testRealm");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testAddUserToGroup() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(anyString())).thenReturn(userResource);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
+        exchange.getIn().setHeader(KeycloakConstants.USER_ID, "userId123");
+        exchange.getIn().setHeader(KeycloakConstants.GROUP_ID, "groupId123");
+
+        template.send("direct:addUserToGroup", exchange);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testCreateClient() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.clients()).thenReturn(clientsResource);
+        when(clientsResource.create(any(ClientRepresentation.class))).thenReturn(response);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
+        exchange.getIn().setHeader(KeycloakConstants.CLIENT_ID, "testClient");
+
+        template.send("direct:createClient", exchange);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testListClients() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.clients()).thenReturn(clientsResource);
+        when(clientsResource.findAll()).thenReturn(List.of(new ClientRepresentation()));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:listClients", null, KeycloakConstants.REALM_NAME, "testRealm");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testResetUserPassword() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(anyString())).thenReturn(userResource);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
+        exchange.getIn().setHeader(KeycloakConstants.USER_ID, "userId123");
+        exchange.getIn().setHeader(KeycloakConstants.USER_PASSWORD, "newPassword123");
+        exchange.getIn().setHeader(KeycloakConstants.PASSWORD_TEMPORARY, false);
+
+        template.send("direct:resetUserPassword", exchange);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testGetUserRoles() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(anyString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(new RoleRepresentation()));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
+        exchange.getIn().setHeader(KeycloakConstants.USER_ID, "userId123");
+
+        template.send("direct:getUserRoles", exchange);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testSearchUsers() throws Exception {
+        when(keycloakClient.realm(anyString())).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.search(anyString())).thenReturn(List.of(new UserRepresentation()));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
+        exchange.getIn().setHeader(KeycloakConstants.SEARCH_QUERY, "testUser");
+
+        template.send("direct:searchUsers", exchange);
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 }
