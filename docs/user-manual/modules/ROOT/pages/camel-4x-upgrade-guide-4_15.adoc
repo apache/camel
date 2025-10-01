@@ -101,3 +101,7 @@ For more information, the related issue is CAMEL-22334.
 |===
 
 org.apache.camel.component.langchain4j.web.search.LangChain4jWebSearchEngine.Headers was empty and has been removed
+
+=== camel-mdc
+
+We have introduced a new component, `camel-mdc`, whose goal is to simplify the usage of logging MDC (Mapped Diagnostic Context) by allowing the user to configure the Exchange headers and properties to use to trace in MDC logging format.
