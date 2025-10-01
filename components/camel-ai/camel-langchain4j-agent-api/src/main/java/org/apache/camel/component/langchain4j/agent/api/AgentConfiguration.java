@@ -57,6 +57,7 @@ public class AgentConfiguration {
     private RetrievalAugmentor retrievalAugmentor;
     private List<Class<?>> inputGuardrailClasses;
     private List<Class<?>> outputGuardrailClasses;
+    private List<Object> customTools; // Custom LangChain4j tools
 
     /**
      * Gets the configured chat model.
@@ -263,6 +264,26 @@ public class AgentConfiguration {
                 .map(AgentConfiguration::loadGuardrailClass)
                 .filter(clazz -> clazz != null)
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Gets the configured custom tools.
+     *
+     * @return the custom tools list, or {@code null} if not configured
+     */
+    public List<Object> getCustomTools() {
+        return customTools;
+    }
+
+    /**
+     * Sets the custom tools for this agent configuration.
+     *
+     * @param  customTools the list of tool instances with @Tool methods
+     * @return             this configuration instance for method chaining
+     */
+    public AgentConfiguration withCustomTools(List<Object> customTools) {
+        this.customTools = customTools;
+        return this;
     }
 
     /**

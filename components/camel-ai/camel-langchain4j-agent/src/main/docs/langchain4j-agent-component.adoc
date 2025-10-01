@@ -35,7 +35,7 @@ The component has been simplified to use only two main options:
 * **agent**: Reference to an `Agent` implementation registered in the Camel registry
 * **tags**: Tags for discovering and calling Camel route tools (optional)
 
-All other configuration (chat models, memory, RAG, guardrails) is now handled through the `AgentConfiguration` when creating agents.
+All other configuration (chat models, memory, RAG, guardrails, custom tools) is now handled through the `AgentConfiguration` when creating agents.
 
 == URI format
 
@@ -255,6 +255,132 @@ String response = template.requestBodyAndHeader("direct:chat",
 [NOTE]
 ====
 There's no need to add Camel LangChain4j Tools component as a dependency when using the tools with LangChain4j Agent component.
+====
+
+=== Custom LangChain4j Tools
+
+You can also add custom LangChain4j tools using the `@Tool` annotation. These tools are passed directly to the agent via the `customTools` configuration parameter.
+
+==== Creating Custom LangChain4j Tools
+
+Create a class with methods annotated with `@Tool`:
+
+[source,java]
+----
+import dev.langchain4j.agent.tool.P;
+import dev.langchain4j.agent.tool.Tool;
+
+public class CalculatorTool {
+    
+    @Tool("Adds two numbers")
+    public int add(@P("First number") int a, @P("Second number") int b) {
+        return a + b;
+    }
+    
+    @Tool("Multiplies two numbers")
+    public int multiply(@P("First number") int a, @P("Second number") int b) {
+        return a * b;
+    }
+    
+    @Tool("Gets the square root of a number")
+    public double sqrt(@P("Number") double x) {
+        return Math.sqrt(x);
+    }
+}
+----
+
+==== Using Custom LangChain4j Tools with Agent
+
+Pass your custom tool instances to the agent configuration:
+
+[source,java]
+----
+// Create tool instances
+CalculatorTool calculator = new CalculatorTool();
+WeatherTool weather = new WeatherTool();
+
+// Create agent configuration with custom tools
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withCustomTools(Arrays.asList(calculator, weather));
+
+// Create agent
+Agent agent = new AgentWithoutMemory(config);
+
+// Register agent in Camel context
+context.getRegistry().bind("customToolsAgent", agent);
+----
+
+==== Route Configuration
+
+Use the agent with custom tools in your routes:
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#customToolsAgent")
+    .to("mock:agent-response");
+----
+
+==== Usage Example
+
+[source,java]
+----
+String response = template.requestBody("direct:chat", 
+    "Calculate 10 * 5 and tell me the weather in Paris", String.class);
+----
+
+[NOTE]
+====
+Custom LangChain4j tools are executed directly by the LangChain4j framework. No additional configuration or tool Executor is needed for tool execution.
+====
+
+=== Mixed Tools (Camel Routes + Custom LangChain4j Tools)
+
+You can combine both Camel route tools (via `tags`) and custom LangChain4j tools (via `customTools`) in the same agent:
+
+[source,java]
+----
+// Define Camel route tools
+from("langchain4j-tools:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
+    .setBody(constant("{\"weather\": \"sunny\", \"location\": \"Current Location\"}"));
+
+// Create custom tool instances
+CalculatorTool calculator = new CalculatorTool();
+StringTool stringTool = new StringTool();
+
+// Create agent configuration with both types of tools
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withCustomTools(Arrays.asList(calculator, stringTool));
+
+// Create agent
+Agent agent = new AgentWithMemory(config);
+
+// Register agent in Camel context
+context.getRegistry().bind("mixedToolsAgent", agent);
+----
+
+==== Route Configuration with Mixed Tools
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#mixedToolsAgent&tags=weather")
+    .to("mock:agent-response");
+----
+
+==== Usage Example
+
+[source,java]
+----
+String response = template.requestBody("direct:chat", 
+    "Calculate 10 * 5 and tell me the weather in London", String.class);
+----
+
+[NOTE]
+====
+When using mixed tools, Camel route tools are discovered dynamically via the `tags` parameter, while custom LangChain4j tools are provided statically via the `customTools` configuration.
 ====
 
 === RAG Integration

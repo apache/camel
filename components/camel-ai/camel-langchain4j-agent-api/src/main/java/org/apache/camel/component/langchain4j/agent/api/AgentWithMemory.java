@@ -39,7 +39,7 @@ public class AgentWithMemory implements Agent {
     }
 
     @Override
-    public String chat(AiAgentBody aiAgentBody, ToolProvider toolProvider) {
+    public String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider) {
         AiAgentWithMemoryService agentService = createAiAgentService(toolProvider);
 
         return aiAgentBody.getSystemMessage() != null
@@ -48,7 +48,8 @@ public class AgentWithMemory implements Agent {
     }
 
     /**
-     * Create AI service with a single universal tool that handles multiple Camel routes and Memory Provider
+     * Create AI service with a single universal tool that handles multiple Camel routes, Memory Provider, and
+     * additional tools
      */
     private AiAgentWithMemoryService createAiAgentService(ToolProvider toolProvider) {
         var builder = AiServices.builder(AiAgentWithMemoryService.class)
@@ -58,6 +59,11 @@ public class AgentWithMemory implements Agent {
         // Apache Camel Tool Provider
         if (toolProvider != null) {
             builder.toolProvider(toolProvider);
+        }
+
+        // Additional custom LangChain4j Tool Instances (objects with @Tool methods)
+        if (configuration.getCustomTools() != null && !configuration.getCustomTools().isEmpty()) {
+            builder.tools(configuration.getCustomTools());
         }
 
         // RAG
