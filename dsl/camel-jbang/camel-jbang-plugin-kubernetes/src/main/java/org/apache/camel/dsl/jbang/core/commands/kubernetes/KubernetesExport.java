@@ -476,12 +476,6 @@ public class KubernetesExport extends Export {
             return imageGroup;
         }
 
-        if (gav != null) {
-            var groupId = parseMavenGav(gav).getGroupId();
-            var dotToks = groupId.split("\\.");
-            return dotToks[dotToks.length - 1];
-        }
-
         return null;
     }
 
