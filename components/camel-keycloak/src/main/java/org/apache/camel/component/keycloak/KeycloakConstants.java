@@ -83,6 +83,12 @@ public final class KeycloakConstants {
     @Metadata(description = "The client scope name", javaType = "String")
     public static final String CLIENT_SCOPE_NAME = "CamelKeycloakClientScopeName";
 
+    @Metadata(description = "The event type (event or admin-event)", javaType = "String")
+    public static final String EVENT_TYPE = "CamelKeycloakEventType";
+
+    @Metadata(description = "The event ID or timestamp", javaType = "Long")
+    public static final String EVENT_ID = "CamelKeycloakEventId";
+
     private KeycloakConstants() {
         // Utility class
     }

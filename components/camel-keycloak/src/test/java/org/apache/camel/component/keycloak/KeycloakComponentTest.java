@@ -84,19 +84,4 @@ public class KeycloakComponentTest extends CamelTestSupport {
             context.getEndpoint("keycloak:test?serverUrl=http://localhost:8080");
         });
     }
-
-    @Test
-    public void testProducerOnlyEndpoint() throws Exception {
-        Keycloak keycloakClient = Mockito.mock(Keycloak.class);
-
-        context.getRegistry().bind("keycloakClient", keycloakClient);
-
-        KeycloakEndpoint endpoint = (KeycloakEndpoint) context.getEndpoint("keycloak:test?keycloakClient=#keycloakClient");
-
-        assertNotNull(endpoint.createProducer());
-
-        assertThrows(UnsupportedOperationException.class, () -> {
-            endpoint.createConsumer(null);
-        });
-    }
 }

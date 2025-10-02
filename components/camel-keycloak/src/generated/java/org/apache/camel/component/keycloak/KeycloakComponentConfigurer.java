@@ -30,24 +30,54 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KeycloakComponent target = (KeycloakComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authclient":
+        case "authClient": getOrCreateConfiguration(target).setAuthClient(property(camelContext, java.lang.String.class, value)); return true;
+        case "authipaddress":
+        case "authIpAddress": getOrCreateConfiguration(target).setAuthIpAddress(property(camelContext, java.lang.String.class, value)); return true;
+        case "authrealm":
+        case "authRealm": getOrCreateConfiguration(target).setAuthRealm(property(camelContext, java.lang.String.class, value)); return true;
+        case "authrealmfilter":
+        case "authRealmFilter": getOrCreateConfiguration(target).setAuthRealmFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "authuser":
+        case "authUser": getOrCreateConfiguration(target).setAuthUser(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "client": getOrCreateConfiguration(target).setClient(property(camelContext, java.lang.String.class, value)); return true;
         case "clientid":
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.keycloak.KeycloakConfiguration.class, value)); return true;
+        case "datefrom":
+        case "dateFrom": getOrCreateConfiguration(target).setDateFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "dateto":
+        case "dateTo": getOrCreateConfiguration(target).setDateTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventtype":
+        case "eventType": getOrCreateConfiguration(target).setEventType(property(camelContext, java.lang.String.class, value)); return true;
+        case "first": getOrCreateConfiguration(target).setFirst(property(camelContext, int.class, value)); return true;
+        case "ipaddress":
+        case "ipAddress": getOrCreateConfiguration(target).setIpAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "keycloakclient":
         case "keycloakClient": getOrCreateConfiguration(target).setKeycloakClient(property(camelContext, org.keycloak.admin.client.Keycloak.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxresults":
+        case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, int.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.keycloak.KeycloakOperations.class, value)); return true;
+        case "operationtypes":
+        case "operationTypes": getOrCreateConfiguration(target).setOperationTypes(property(camelContext, java.lang.String.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": getOrCreateConfiguration(target).setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "realm": getOrCreateConfiguration(target).setRealm(property(camelContext, java.lang.String.class, value)); return true;
+        case "resourcepath":
+        case "resourcePath": getOrCreateConfiguration(target).setResourcePath(property(camelContext, java.lang.String.class, value)); return true;
         case "serverurl":
         case "serverUrl": getOrCreateConfiguration(target).setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "types": getOrCreateConfiguration(target).setTypes(property(camelContext, java.lang.String.class, value)); return true;
+        case "user": getOrCreateConfiguration(target).setUser(property(camelContext, java.lang.String.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -61,24 +91,54 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authclient":
+        case "authClient": return java.lang.String.class;
+        case "authipaddress":
+        case "authIpAddress": return java.lang.String.class;
+        case "authrealm":
+        case "authRealm": return java.lang.String.class;
+        case "authrealmfilter":
+        case "authRealmFilter": return java.lang.String.class;
+        case "authuser":
+        case "authUser": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "client": return java.lang.String.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.keycloak.KeycloakConfiguration.class;
+        case "datefrom":
+        case "dateFrom": return java.lang.String.class;
+        case "dateto":
+        case "dateTo": return java.lang.String.class;
+        case "eventtype":
+        case "eventType": return java.lang.String.class;
+        case "first": return int.class;
+        case "ipaddress":
+        case "ipAddress": return java.lang.String.class;
         case "keycloakclient":
         case "keycloakClient": return org.keycloak.admin.client.Keycloak.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxresults":
+        case "maxResults": return int.class;
         case "operation": return org.apache.camel.component.keycloak.KeycloakOperations.class;
+        case "operationtypes":
+        case "operationTypes": return java.lang.String.class;
         case "password": return java.lang.String.class;
         case "pojorequest":
         case "pojoRequest": return boolean.class;
         case "realm": return java.lang.String.class;
+        case "resourcepath":
+        case "resourcePath": return java.lang.String.class;
         case "serverurl":
         case "serverUrl": return java.lang.String.class;
+        case "types": return java.lang.String.class;
+        case "user": return java.lang.String.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -88,24 +148,54 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KeycloakComponent target = (KeycloakComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authclient":
+        case "authClient": return getOrCreateConfiguration(target).getAuthClient();
+        case "authipaddress":
+        case "authIpAddress": return getOrCreateConfiguration(target).getAuthIpAddress();
+        case "authrealm":
+        case "authRealm": return getOrCreateConfiguration(target).getAuthRealm();
+        case "authrealmfilter":
+        case "authRealmFilter": return getOrCreateConfiguration(target).getAuthRealmFilter();
+        case "authuser":
+        case "authUser": return getOrCreateConfiguration(target).getAuthUser();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "client": return getOrCreateConfiguration(target).getClient();
         case "clientid":
         case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
         case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
         case "configuration": return target.getConfiguration();
+        case "datefrom":
+        case "dateFrom": return getOrCreateConfiguration(target).getDateFrom();
+        case "dateto":
+        case "dateTo": return getOrCreateConfiguration(target).getDateTo();
+        case "eventtype":
+        case "eventType": return getOrCreateConfiguration(target).getEventType();
+        case "first": return getOrCreateConfiguration(target).getFirst();
+        case "ipaddress":
+        case "ipAddress": return getOrCreateConfiguration(target).getIpAddress();
         case "keycloakclient":
         case "keycloakClient": return getOrCreateConfiguration(target).getKeycloakClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxresults":
+        case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
         case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "operationtypes":
+        case "operationTypes": return getOrCreateConfiguration(target).getOperationTypes();
         case "password": return getOrCreateConfiguration(target).getPassword();
         case "pojorequest":
         case "pojoRequest": return getOrCreateConfiguration(target).isPojoRequest();
         case "realm": return getOrCreateConfiguration(target).getRealm();
+        case "resourcepath":
+        case "resourcePath": return getOrCreateConfiguration(target).getResourcePath();
         case "serverurl":
         case "serverUrl": return getOrCreateConfiguration(target).getServerUrl();
+        case "types": return getOrCreateConfiguration(target).getTypes();
+        case "user": return getOrCreateConfiguration(target).getUser();
         case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }

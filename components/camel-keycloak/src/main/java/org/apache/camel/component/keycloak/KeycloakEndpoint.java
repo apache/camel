@@ -24,7 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -33,9 +33,9 @@ import org.keycloak.admin.client.KeycloakBuilder;
  * Manage Keycloak instances via Admin API.
  */
 @UriEndpoint(firstVersion = "4.15.0", scheme = "keycloak", title = "Keycloak",
-             syntax = "keycloak:label", producerOnly = true, category = { Category.SECURITY, Category.MANAGEMENT },
+             syntax = "keycloak:label", category = { Category.SECURITY, Category.MANAGEMENT },
              headersClass = KeycloakConstants.class)
-public class KeycloakEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+public class KeycloakEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private Keycloak keycloakClient;
 
@@ -49,7 +49,9 @@ public class KeycloakEndpoint extends DefaultEndpoint implements EndpointService
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
+        KeycloakConsumer consumer = new KeycloakConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
@@ -90,9 +92,14 @@ public class KeycloakEndpoint extends DefaultEndpoint implements EndpointService
     }
 
     private Keycloak createKeycloakClient() {
+        // Use authRealm for authentication if specified, otherwise use realm
+        String authenticationRealm = configuration.getAuthRealm() != null
+                ? configuration.getAuthRealm()
+                : configuration.getRealm();
+
         KeycloakBuilder builder = KeycloakBuilder.builder()
                 .serverUrl(configuration.getServerUrl())
-                .realm(configuration.getRealm());
+                .realm(authenticationRealm);
 
         if (configuration.getUsername() != null && configuration.getPassword() != null) {
             builder.username(configuration.getUsername())
