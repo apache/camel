@@ -492,12 +492,24 @@ public abstract class BaseMainSupport extends BaseService {
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                             if (!Files.isDirectory(file)) {
-                                try {
-                                    String val = new String(Files.readAllBytes(file));
-                                    cp.put(loc, file.getFileName().toString(), val);
-                                } catch (IOException e) {
-                                    LOG.warn("Some error happened while reading property from cloud configuration file {}",
-                                            file, e);
+                                if (file.getFileName().toString().endsWith(".properties")) {
+                                    try {
+                                        Properties prop = new Properties();
+                                        prop.load(Files.newInputStream(file));
+                                        cp.putAll(loc, prop);
+                                    } catch (IOException e) {
+                                        LOG.warn(
+                                                "Some error happened while reading properties file from cloud configuration file {}",
+                                                file, e);
+                                    }
+                                } else {
+                                    try {
+                                        String val = new String(Files.readAllBytes(file));
+                                        cp.put(loc, file.getFileName().toString(), val);
+                                    } catch (IOException e) {
+                                        LOG.warn("Some error happened while reading property from cloud configuration file {}",
+                                                file, e);
+                                    }
                                 }
                             }
                             return FileVisitResult.CONTINUE;
