@@ -93,7 +93,7 @@ To run the project you can run the following command:
 
 [source,bash]
 ----
-mvn camel:run -Dcamel.main.durationMaxMessages=2
+mvn camel:run
 ----
 
 After you run the command above, you should have the following messages:
@@ -103,7 +103,6 @@ After you run the command above, you should have the following messages:
 ...
 [che.camel.learn.MainApp.main()] MainSupport                    INFO  Apache Camel (Main) 3.18.4 is starting
 [che.camel.learn.MainApp.main()] BaseMainSupport                INFO  Auto-configuration summary
-[che.camel.learn.MainApp.main()] BaseMainSupport                INFO      [JVM System Property]          camel.main.durationMaxMessages=2
 [che.camel.learn.MainApp.main()] XPathBuilder                   INFO  Created default XPathFactory com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl@33cc7a16
 [che.camel.learn.MainApp.main()] FileEndpoint                   INFO  Endpoint is configured with noop=true so forcing endpoint to be idempotent as well
 [che.camel.learn.MainApp.main()] FileEndpoint                   INFO  Using default memory based idempotent repository with cache max size: 1000
@@ -114,17 +113,16 @@ After you run the command above, you should have the following messages:
 [che.camel.learn.MainApp.main()] MainSupport                    INFO  Waiting until complete: Duration max 2 messages processed
 [1) thread #1 - file://src/data] route1                         INFO  Other message
 [1) thread #1 - file://src/data] route1                         INFO  UK message
-[1) thread #1 - file://src/data] MainLifecycleStrategy          INFO  Duration max messages triggering shutdown of the JVM
-[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) is shutting down (timeout:45s)
-[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO  Routes stopped (stopped:1)
-[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO      Stopped route1 (file://src/data)
-[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) shutdown in 7ms (uptime:1s JVM-uptime:2s)
-[che.camel.learn.MainApp.main()] MainSupport                    INFO  Apache Camel (Main) 3.18.4 shutdown
 ----
 
 If you can see an output like that on your terminal, it means the integration has run well.
 
 The integration you have just run consumed two files and copied them to a directory based on their contents. You can check it out yourself but looking at the `target/messages` directory within the project:
+
+[NOTE]
+====
+To stop the running Camel integration, you can press `ctrl` + `c` to terminate the Java JVM from the terminal.
+====
 
 [source,bash]
 ----
