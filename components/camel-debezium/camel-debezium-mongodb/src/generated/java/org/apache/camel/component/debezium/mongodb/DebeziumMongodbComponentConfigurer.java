@@ -66,6 +66,10 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "fieldExcludeList": getOrCreateConfiguration(target).setFieldExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "fieldrenames":
         case "fieldRenames": getOrCreateConfiguration(target).setFieldRenames(property(camelContext, java.lang.String.class, value)); return true;
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": getOrCreateConfiguration(target).setGuardrailCollectionsLimitAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": getOrCreateConfiguration(target).setGuardrailCollectionsMax(property(camelContext, int.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
@@ -126,6 +130,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration(target).setOpenlineageIntegrationConfigFilePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration(target).setOpenlineageIntegrationDatasetKafkaBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": getOrCreateConfiguration(target).setOpenlineageIntegrationEnabled(property(camelContext, boolean.class, value)); return true;
         case "openlineageintegrationjobdescription":
@@ -237,6 +243,10 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "fieldExcludeList": return java.lang.String.class;
         case "fieldrenames":
         case "fieldRenames": return java.lang.String.class;
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": return java.lang.String.class;
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": return int.class;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return int.class;
         case "heartbeattopicsprefix":
@@ -297,6 +307,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "offsetStorageTopic": return java.lang.String.class;
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": return java.lang.String.class;
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": return java.lang.String.class;
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": return boolean.class;
         case "openlineageintegrationjobdescription":
@@ -409,6 +421,10 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "fieldExcludeList": return getOrCreateConfiguration(target).getFieldExcludeList();
         case "fieldrenames":
         case "fieldRenames": return getOrCreateConfiguration(target).getFieldRenames();
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": return getOrCreateConfiguration(target).getGuardrailCollectionsLimitAction();
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": return getOrCreateConfiguration(target).getGuardrailCollectionsMax();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
@@ -469,6 +485,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "offsetStorageTopic": return getOrCreateConfiguration(target).getOffsetStorageTopic();
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": return getOrCreateConfiguration(target).getOpenlineageIntegrationConfigFilePath();
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": return getOrCreateConfiguration(target).getOpenlineageIntegrationDatasetKafkaBootstrapServers();
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": return getOrCreateConfiguration(target).isOpenlineageIntegrationEnabled();
         case "openlineageintegrationjobdescription":

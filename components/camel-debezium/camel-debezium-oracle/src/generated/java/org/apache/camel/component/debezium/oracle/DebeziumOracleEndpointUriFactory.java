@@ -23,7 +23,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(141);
+        Set<String> props = new HashSet<>(147);
         props.add("additionalProperties");
         props.add("archiveDestinationName");
         props.add("archiveLogHours");
@@ -53,6 +53,8 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("exchangePattern");
         props.add("executorShutdownTimeoutMs");
         props.add("extendedHeadersEnabled");
+        props.add("guardrailCollectionsLimitAction");
+        props.add("guardrailCollectionsMax");
         props.add("heartbeatActionQuery");
         props.add("heartbeatIntervalMs");
         props.add("heartbeatTopicsPrefix");
@@ -62,6 +64,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("internalKeyConverter");
         props.add("internalValueConverter");
         props.add("intervalHandlingMode");
+        props.add("legacyDecimalHandlingStrategy");
         props.add("lobEnabled");
         props.add("logMiningArchiveLogOnlyMode");
         props.add("logMiningArchiveLogOnlyScnPollIntervalMs");
@@ -86,7 +89,9 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("logMiningClientidIncludeList");
         props.add("logMiningFlushTableName");
         props.add("logMiningIncludeRedoSql");
+        props.add("logMiningPathDictionary");
         props.add("logMiningQueryFilterMode");
+        props.add("logMiningReadonlyHostname");
         props.add("logMiningRestartConnection");
         props.add("logMiningScnGapDetectionGapSizeMin");
         props.add("logMiningScnGapDetectionTimeIntervalMaxMs");
@@ -115,6 +120,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
         props.add("openlineageIntegrationConfigFilePath");
+        props.add("openlineageIntegrationDatasetKafkaBootstrapServers");
         props.add("openlineageIntegrationEnabled");
         props.add("openlineageIntegrationJobDescription");
         props.add("openlineageIntegrationJobNamespace");

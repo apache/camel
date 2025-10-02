@@ -38,6 +38,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int guardrailCollectionsMax = 0;
     @UriParam(label = LABEL_NAME)
     private String signalDataCollection;
     @UriParam(label = LABEL_NAME)
@@ -99,6 +101,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private boolean extendedHeadersEnabled = true;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String guardrailCollectionsLimitAction = "warn";
     @UriParam(label = LABEL_NAME, defaultValue = "1024")
     private int incrementalSnapshotChunkSize = 1024;
     @UriParam(label = LABEL_NAME)
@@ -134,6 +138,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private boolean includeSchemaComments = false;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.sqlserver.SqlServerSourceInfoStructMaker")
     private String sourceinfoStructMaker = "io.debezium.connector.sqlserver.SqlServerSourceInfoStructMaker";
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationDatasetKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -337,6 +343,20 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public long getPollIntervalMs() {
         return pollIntervalMs;
+    }
+
+    /**
+     * The maximum number of collections or tables that can be captured by the
+     * connector. When this limit is exceeded, the action specified by
+     * 'guardrail.collections.limit.action' will be taken. Set to 0 to disable
+     * this guardrail.
+     */
+    public void setGuardrailCollectionsMax(int guardrailCollectionsMax) {
+        this.guardrailCollectionsMax = guardrailCollectionsMax;
+    }
+
+    public int getGuardrailCollectionsMax() {
+        return guardrailCollectionsMax;
     }
 
     /**
@@ -753,6 +773,20 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify the action to take when a guardrail collections limit is
+     * exceeded: 'warn' (the default) logs a warning message and continues
+     * processing; 'fail' stops the connector with an error.
+     */
+    public void setGuardrailCollectionsLimitAction(
+            String guardrailCollectionsLimitAction) {
+        this.guardrailCollectionsLimitAction = guardrailCollectionsLimitAction;
+    }
+
+    public String getGuardrailCollectionsLimitAction() {
+        return guardrailCollectionsLimitAction;
+    }
+
+    /**
      * The maximum size of chunk (number of documents/rows) for incremental
      * snapshotting
      */
@@ -981,6 +1015,18 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public String getSourceinfoStructMaker() {
         return sourceinfoStructMaker;
+    }
+
+    /**
+     * The Kafka bootstrap server address used as input/output namespace/
+     */
+    public void setOpenlineageIntegrationDatasetKafkaBootstrapServers(
+            String openlineageIntegrationDatasetKafkaBootstrapServers) {
+        this.openlineageIntegrationDatasetKafkaBootstrapServers = openlineageIntegrationDatasetKafkaBootstrapServers;
+    }
+
+    public String getOpenlineageIntegrationDatasetKafkaBootstrapServers() {
+        return openlineageIntegrationDatasetKafkaBootstrapServers;
     }
 
     /**
@@ -1324,6 +1370,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
@@ -1354,6 +1401,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.chunk.size", incrementalSnapshotChunkSize);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
@@ -1371,6 +1419,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.option.recompile", incrementalSnapshotOptionRecompile);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);

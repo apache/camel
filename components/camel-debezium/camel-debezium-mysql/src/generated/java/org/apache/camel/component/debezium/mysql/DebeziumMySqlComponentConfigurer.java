@@ -114,6 +114,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "gtidSourceFilterDmlEvents": getOrCreateConfiguration(target).setGtidSourceFilterDmlEvents(property(camelContext, boolean.class, value)); return true;
         case "gtidsourceincludes":
         case "gtidSourceIncludes": getOrCreateConfiguration(target).setGtidSourceIncludes(property(camelContext, java.lang.String.class, value)); return true;
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": getOrCreateConfiguration(target).setGuardrailCollectionsLimitAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": getOrCreateConfiguration(target).setGuardrailCollectionsMax(property(camelContext, int.class, value)); return true;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": getOrCreateConfiguration(target).setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
@@ -170,6 +174,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration(target).setOpenlineageIntegrationConfigFilePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration(target).setOpenlineageIntegrationDatasetKafkaBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": getOrCreateConfiguration(target).setOpenlineageIntegrationEnabled(property(camelContext, boolean.class, value)); return true;
         case "openlineageintegrationjobdescription":
@@ -357,6 +363,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "gtidSourceFilterDmlEvents": return boolean.class;
         case "gtidsourceincludes":
         case "gtidSourceIncludes": return java.lang.String.class;
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": return java.lang.String.class;
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": return int.class;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return java.lang.String.class;
         case "heartbeatintervalms":
@@ -413,6 +423,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": return java.lang.String.class;
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": return java.lang.String.class;
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": return java.lang.String.class;
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": return boolean.class;
         case "openlineageintegrationjobdescription":
@@ -601,6 +613,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "gtidSourceFilterDmlEvents": return getOrCreateConfiguration(target).isGtidSourceFilterDmlEvents();
         case "gtidsourceincludes":
         case "gtidSourceIncludes": return getOrCreateConfiguration(target).getGtidSourceIncludes();
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": return getOrCreateConfiguration(target).getGuardrailCollectionsLimitAction();
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": return getOrCreateConfiguration(target).getGuardrailCollectionsMax();
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return getOrCreateConfiguration(target).getHeartbeatActionQuery();
         case "heartbeatintervalms":
@@ -657,6 +673,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": return getOrCreateConfiguration(target).getOffsetStorageTopic();
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": return getOrCreateConfiguration(target).getOpenlineageIntegrationConfigFilePath();
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": return getOrCreateConfiguration(target).getOpenlineageIntegrationDatasetKafkaBootstrapServers();
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": return getOrCreateConfiguration(target).isOpenlineageIntegrationEnabled();
         case "openlineageintegrationjobdescription":

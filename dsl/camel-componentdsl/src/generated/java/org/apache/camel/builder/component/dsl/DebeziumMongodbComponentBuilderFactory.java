@@ -579,6 +579,43 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         
         /**
+         * Specify the action to take when a guardrail collections limit is
+         * exceeded: 'warn' (the default) logs a warning message and continues
+         * processing; 'fail' stops the connector with an error.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: mongodb
+         * 
+         * @param guardrailCollectionsLimitAction the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder guardrailCollectionsLimitAction(java.lang.String guardrailCollectionsLimitAction) {
+            doSetProperty("guardrailCollectionsLimitAction", guardrailCollectionsLimitAction);
+            return this;
+        }
+    
+        /**
+         * The maximum number of collections or tables that can be captured by
+         * the connector. When this limit is exceeded, the action specified by
+         * 'guardrail.collections.limit.action' will be taken. Set to 0 to
+         * disable this guardrail.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param guardrailCollectionsMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder guardrailCollectionsMax(int guardrailCollectionsMax) {
+            doSetProperty("guardrailCollectionsMax", guardrailCollectionsMax);
+            return this;
+        }
+    
+        
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
@@ -920,6 +957,22 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
             doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        /**
+         * The Kafka bootstrap server address used as input/output namespace/.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param openlineageIntegrationDatasetKafkaBootstrapServers the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder openlineageIntegrationDatasetKafkaBootstrapServers(java.lang.String openlineageIntegrationDatasetKafkaBootstrapServers) {
+            doSetProperty("openlineageIntegrationDatasetKafkaBootstrapServers", openlineageIntegrationDatasetKafkaBootstrapServers);
             return this;
         }
     
@@ -1588,6 +1641,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumMongodbComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
             case "fieldExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldExcludeList((java.lang.String) value); return true;
             case "fieldRenames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldRenames((java.lang.String) value); return true;
+            case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumMongodbComponent) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
+            case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumMongodbComponent) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumMongodbComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
@@ -1608,6 +1663,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
             case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
             case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
             case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;

@@ -686,6 +686,43 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Specify the action to take when a guardrail collections limit is
+         * exceeded: 'warn' (the default) logs a warning message and continues
+         * processing; 'fail' stops the connector with an error.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: sqlserver
+         * 
+         * @param guardrailCollectionsLimitAction the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder guardrailCollectionsLimitAction(java.lang.String guardrailCollectionsLimitAction) {
+            doSetProperty("guardrailCollectionsLimitAction", guardrailCollectionsLimitAction);
+            return this;
+        }
+    
+        /**
+         * The maximum number of collections or tables that can be captured by
+         * the connector. When this limit is exceeded, the action specified by
+         * 'guardrail.collections.limit.action' will be taken. Set to 0 to
+         * disable this guardrail.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param guardrailCollectionsMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder guardrailCollectionsMax(int guardrailCollectionsMax) {
+            doSetProperty("guardrailCollectionsMax", guardrailCollectionsMax);
+            return this;
+        }
+    
         /**
          * The query executed with every heartbeat.
          * 
@@ -1006,6 +1043,22 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          */
         default DebeziumSqlserverComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
             doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        /**
+         * The Kafka bootstrap server address used as input/output namespace/.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param openlineageIntegrationDatasetKafkaBootstrapServers the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder openlineageIntegrationDatasetKafkaBootstrapServers(java.lang.String openlineageIntegrationDatasetKafkaBootstrapServers) {
+            doSetProperty("openlineageIntegrationDatasetKafkaBootstrapServers", openlineageIntegrationDatasetKafkaBootstrapServers);
             return this;
         }
     
@@ -1923,6 +1976,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
+            case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
+            case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
@@ -1940,6 +1995,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
             case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
             case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
             case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;

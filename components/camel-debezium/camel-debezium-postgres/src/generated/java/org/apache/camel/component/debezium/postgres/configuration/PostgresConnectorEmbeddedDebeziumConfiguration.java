@@ -96,6 +96,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String binaryHandlingMode = "bytes";
     @UriParam(label = LABEL_NAME)
     private String snapshotQueryModeCustomName;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationDatasetKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME)
@@ -148,6 +150,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String databaseSslcert;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int guardrailCollectionsMax = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "numeric")
     private String intervalHandlingMode = "numeric";
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
@@ -185,6 +189,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private boolean extendedHeadersEnabled = true;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String guardrailCollectionsLimitAction = "warn";
     @UriParam(label = LABEL_NAME, defaultValue = "json")
     private String hstoreHandlingMode = "json";
     @UriParam(label = LABEL_NAME)
@@ -823,6 +829,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The Kafka bootstrap server address used as input/output namespace/
+     */
+    public void setOpenlineageIntegrationDatasetKafkaBootstrapServers(
+            String openlineageIntegrationDatasetKafkaBootstrapServers) {
+        this.openlineageIntegrationDatasetKafkaBootstrapServers = openlineageIntegrationDatasetKafkaBootstrapServers;
+    }
+
+    public String getOpenlineageIntegrationDatasetKafkaBootstrapServers() {
+        return openlineageIntegrationDatasetKafkaBootstrapServers;
+    }
+
+    /**
      * Flag specifying whether built-in tables should be ignored.
      */
     public void setTableIgnoreBuiltin(boolean tableIgnoreBuiltin) {
@@ -1168,6 +1186,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The maximum number of collections or tables that can be captured by the
+     * connector. When this limit is exceeded, the action specified by
+     * 'guardrail.collections.limit.action' will be taken. Set to 0 to disable
+     * this guardrail.
+     */
+    public void setGuardrailCollectionsMax(int guardrailCollectionsMax) {
+        this.guardrailCollectionsMax = guardrailCollectionsMax;
+    }
+
+    public int getGuardrailCollectionsMax() {
+        return guardrailCollectionsMax;
+    }
+
+    /**
      * Specify how INTERVAL columns should be represented in change events,
      * including: 'string' represents values as an exact ISO formatted string;
      * 'numeric' (default) represents values using the inexact conversion into
@@ -1398,6 +1430,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public int getMaxQueueSize() {
         return maxQueueSize;
+    }
+
+    /**
+     * Specify the action to take when a guardrail collections limit is
+     * exceeded: 'warn' (the default) logs a warning message and continues
+     * processing; 'fail' stops the connector with an error.
+     */
+    public void setGuardrailCollectionsLimitAction(
+            String guardrailCollectionsLimitAction) {
+        this.guardrailCollectionsLimitAction = guardrailCollectionsLimitAction;
+    }
+
+    public String getGuardrailCollectionsLimitAction() {
+        return guardrailCollectionsLimitAction;
     }
 
     /**
@@ -1783,6 +1829,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.query.mode.custom.name", snapshotQueryModeCustomName);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "schema.exclude.list", schemaExcludeList);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
@@ -1809,6 +1856,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "replica.identity.autoset.values", replicaIdentityAutosetValues);
         addPropertyIfNotNull(configBuilder, "database.sslcert", databaseSslcert);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
         addPropertyIfNotNull(configBuilder, "interval.handling.mode", intervalHandlingMode);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "status.update.interval.ms", statusUpdateIntervalMs);
@@ -1827,6 +1875,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "message.prefix.include.list", messagePrefixIncludeList);
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
         addPropertyIfNotNull(configBuilder, "hstore.handling.mode", hstoreHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.locking.mode.custom.name", snapshotLockingModeCustomName);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);

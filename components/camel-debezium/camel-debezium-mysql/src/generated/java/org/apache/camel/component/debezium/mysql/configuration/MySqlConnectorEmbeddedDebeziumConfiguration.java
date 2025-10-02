@@ -94,6 +94,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME)
     private String snapshotQueryModeCustomName;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationDatasetKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME)
@@ -142,6 +144,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String heartbeatActionQuery;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int guardrailCollectionsMax = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
     @UriParam(label = LABEL_NAME, defaultValue = "0")
@@ -183,6 +187,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean extendedHeadersEnabled = true;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String guardrailCollectionsLimitAction = "warn";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME, defaultValue = "select_all")
@@ -799,6 +805,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The Kafka bootstrap server address used as input/output namespace/
+     */
+    public void setOpenlineageIntegrationDatasetKafkaBootstrapServers(
+            String openlineageIntegrationDatasetKafkaBootstrapServers) {
+        this.openlineageIntegrationDatasetKafkaBootstrapServers = openlineageIntegrationDatasetKafkaBootstrapServers;
+    }
+
+    public String getOpenlineageIntegrationDatasetKafkaBootstrapServers() {
+        return openlineageIntegrationDatasetKafkaBootstrapServers;
+    }
+
+    /**
      * Flag specifying whether built-in tables should be ignored.
      */
     public void setTableIgnoreBuiltin(boolean tableIgnoreBuiltin) {
@@ -1118,6 +1136,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The maximum number of collections or tables that can be captured by the
+     * connector. When this limit is exceeded, the action specified by
+     * 'guardrail.collections.limit.action' will be taken. Set to 0 to disable
+     * this guardrail.
+     */
+    public void setGuardrailCollectionsMax(int guardrailCollectionsMax) {
+        this.guardrailCollectionsMax = guardrailCollectionsMax;
+    }
+
+    public int getGuardrailCollectionsMax() {
+        return guardrailCollectionsMax;
+    }
+
+    /**
      * The prefix that is used to name heartbeat topics.Defaults to
      * __debezium-heartbeat.
      */
@@ -1382,6 +1414,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public int getMaxQueueSize() {
         return maxQueueSize;
+    }
+
+    /**
+     * Specify the action to take when a guardrail collections limit is
+     * exceeded: 'warn' (the default) logs a warning message and continues
+     * processing; 'fail' stops the connector with an error.
+     */
+    public void setGuardrailCollectionsLimitAction(
+            String guardrailCollectionsLimitAction) {
+        this.guardrailCollectionsLimitAction = guardrailCollectionsLimitAction;
+    }
+
+    public String getGuardrailCollectionsLimitAction() {
+        return guardrailCollectionsLimitAction;
     }
 
     /**
@@ -1705,6 +1751,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.query.mode.custom.name", snapshotQueryModeCustomName);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
@@ -1729,6 +1776,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "gtid.source.includes", gtidSourceIncludes);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "binlog.buffer.size", binlogBufferSize);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
@@ -1749,6 +1797,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "connect.keep.alive", connectKeepAlive);
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "snapshot.query.mode", snapshotQueryMode);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);

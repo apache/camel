@@ -833,6 +833,59 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify the action to take when a guardrail collections limit is
+         * exceeded: 'warn' (the default) logs a warning message and continues
+         * processing; 'fail' stops the connector with an error.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: warn
+         * Group: oracle
+         * 
+         * @param guardrailCollectionsLimitAction the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder guardrailCollectionsLimitAction(String guardrailCollectionsLimitAction) {
+            doSetProperty("guardrailCollectionsLimitAction", guardrailCollectionsLimitAction);
+            return this;
+        }
+        /**
+         * The maximum number of collections or tables that can be captured by
+         * the connector. When this limit is exceeded, the action specified by
+         * 'guardrail.collections.limit.action' will be taken. Set to 0 to
+         * disable this guardrail.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: oracle
+         * 
+         * @param guardrailCollectionsMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder guardrailCollectionsMax(int guardrailCollectionsMax) {
+            doSetProperty("guardrailCollectionsMax", guardrailCollectionsMax);
+            return this;
+        }
+        /**
+         * The maximum number of collections or tables that can be captured by
+         * the connector. When this limit is exceeded, the action specified by
+         * 'guardrail.collections.limit.action' will be taken. Set to 0 to
+         * disable this guardrail.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: oracle
+         * 
+         * @param guardrailCollectionsMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder guardrailCollectionsMax(String guardrailCollectionsMax) {
+            doSetProperty("guardrailCollectionsMax", guardrailCollectionsMax);
+            return this;
+        }
+        /**
          * The query executed with every heartbeat.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1013,6 +1066,36 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder intervalHandlingMode(String intervalHandlingMode) {
             doSetProperty("intervalHandlingMode", intervalHandlingMode);
+            return this;
+        }
+        /**
+         * Uses the legacy decimal handling behavior before DBZ-7882.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param legacyDecimalHandlingStrategy the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder legacyDecimalHandlingStrategy(boolean legacyDecimalHandlingStrategy) {
+            doSetProperty("legacyDecimalHandlingStrategy", legacyDecimalHandlingStrategy);
+            return this;
+        }
+        /**
+         * Uses the legacy decimal handling behavior before DBZ-7882.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param legacyDecimalHandlingStrategy the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder legacyDecimalHandlingStrategy(String legacyDecimalHandlingStrategy) {
+            doSetProperty("legacyDecimalHandlingStrategy", legacyDecimalHandlingStrategy);
             return this;
         }
         /**
@@ -1573,6 +1656,21 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * This is required when using the connector against a read-only
+         * database replica.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningPathDictionary the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningPathDictionary(String logMiningPathDictionary) {
+            doSetProperty("logMiningPathDictionary", logMiningPathDictionary);
+            return this;
+        }
+        /**
          * Specifies how the filter configuration is applied to the LogMiner
          * database query. none - The query does not apply any schema or table
          * filters, all filtering is at runtime by the connector. in - The query
@@ -1590,6 +1688,21 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder logMiningQueryFilterMode(String logMiningQueryFilterMode) {
             doSetProperty("logMiningQueryFilterMode", logMiningQueryFilterMode);
+            return this;
+        }
+        /**
+         * The hostname the connector will use to connect and perform read-only
+         * operations for the the replica.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningReadonlyHostname the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningReadonlyHostname(String logMiningReadonlyHostname) {
+            doSetProperty("logMiningReadonlyHostname", logMiningReadonlyHostname);
             return this;
         }
         /**
@@ -2120,6 +2233,21 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder openlineageIntegrationConfigFilePath(String openlineageIntegrationConfigFilePath) {
             doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+        /**
+         * The Kafka bootstrap server address used as input/output namespace/.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param openlineageIntegrationDatasetKafkaBootstrapServers the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder openlineageIntegrationDatasetKafkaBootstrapServers(String openlineageIntegrationDatasetKafkaBootstrapServers) {
+            doSetProperty("openlineageIntegrationDatasetKafkaBootstrapServers", openlineageIntegrationDatasetKafkaBootstrapServers);
             return this;
         }
         /**

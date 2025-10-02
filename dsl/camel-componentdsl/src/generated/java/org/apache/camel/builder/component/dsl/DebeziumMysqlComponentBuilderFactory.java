@@ -1018,6 +1018,43 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Specify the action to take when a guardrail collections limit is
+         * exceeded: 'warn' (the default) logs a warning message and continues
+         * processing; 'fail' stops the connector with an error.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: mysql
+         * 
+         * @param guardrailCollectionsLimitAction the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder guardrailCollectionsLimitAction(java.lang.String guardrailCollectionsLimitAction) {
+            doSetProperty("guardrailCollectionsLimitAction", guardrailCollectionsLimitAction);
+            return this;
+        }
+    
+        /**
+         * The maximum number of collections or tables that can be captured by
+         * the connector. When this limit is exceeded, the action specified by
+         * 'guardrail.collections.limit.action' will be taken. Set to 0 to
+         * disable this guardrail.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param guardrailCollectionsMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder guardrailCollectionsMax(int guardrailCollectionsMax) {
+            doSetProperty("guardrailCollectionsMax", guardrailCollectionsMax);
+            return this;
+        }
+    
         /**
          * The query executed with every heartbeat.
          * 
@@ -1367,6 +1404,22 @@ public interface DebeziumMysqlComponentBuilderFactory {
          */
         default DebeziumMysqlComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
             doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        /**
+         * The Kafka bootstrap server address used as input/output namespace/.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param openlineageIntegrationDatasetKafkaBootstrapServers the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder openlineageIntegrationDatasetKafkaBootstrapServers(java.lang.String openlineageIntegrationDatasetKafkaBootstrapServers) {
+            doSetProperty("openlineageIntegrationDatasetKafkaBootstrapServers", openlineageIntegrationDatasetKafkaBootstrapServers);
             return this;
         }
     
@@ -2361,6 +2414,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "gtidSourceExcludes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceExcludes((java.lang.String) value); return true;
             case "gtidSourceFilterDmlEvents": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceFilterDmlEvents((boolean) value); return true;
             case "gtidSourceIncludes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGtidSourceIncludes((java.lang.String) value); return true;
+            case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
+            case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumMySqlComponent) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumMySqlComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumMySqlComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
@@ -2379,6 +2434,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumMySqlComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
             case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
             case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
             case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumMySqlComponent) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;

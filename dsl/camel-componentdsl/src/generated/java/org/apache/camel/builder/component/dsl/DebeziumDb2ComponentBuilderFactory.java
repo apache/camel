@@ -669,6 +669,43 @@ public interface DebeziumDb2ComponentBuilderFactory {
     
         
         /**
+         * Specify the action to take when a guardrail collections limit is
+         * exceeded: 'warn' (the default) logs a warning message and continues
+         * processing; 'fail' stops the connector with an error.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: db2
+         * 
+         * @param guardrailCollectionsLimitAction the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder guardrailCollectionsLimitAction(java.lang.String guardrailCollectionsLimitAction) {
+            doSetProperty("guardrailCollectionsLimitAction", guardrailCollectionsLimitAction);
+            return this;
+        }
+    
+        /**
+         * The maximum number of collections or tables that can be captured by
+         * the connector. When this limit is exceeded, the action specified by
+         * 'guardrail.collections.limit.action' will be taken. Set to 0 to
+         * disable this guardrail.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: db2
+         * 
+         * @param guardrailCollectionsMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder guardrailCollectionsMax(int guardrailCollectionsMax) {
+            doSetProperty("guardrailCollectionsMax", guardrailCollectionsMax);
+            return this;
+        }
+    
+        
+        /**
          * Length of an interval in milli-seconds in in which the connector
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
@@ -888,6 +925,22 @@ public interface DebeziumDb2ComponentBuilderFactory {
          */
         default DebeziumDb2ComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
             doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        /**
+         * The Kafka bootstrap server address used as input/output namespace/.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: db2
+         * 
+         * @param openlineageIntegrationDatasetKafkaBootstrapServers the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder openlineageIntegrationDatasetKafkaBootstrapServers(java.lang.String openlineageIntegrationDatasetKafkaBootstrapServers) {
+            doSetProperty("openlineageIntegrationDatasetKafkaBootstrapServers", openlineageIntegrationDatasetKafkaBootstrapServers);
             return this;
         }
     
@@ -1746,6 +1799,8 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumDb2Component) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumDb2Component) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumDb2Component) component).setExtendedHeadersEnabled((boolean) value); return true;
+            case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumDb2Component) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
+            case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumDb2Component) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumDb2Component) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumDb2Component) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "includeSchemaChanges": getOrCreateConfiguration((DebeziumDb2Component) component).setIncludeSchemaChanges((boolean) value); return true;
@@ -1758,6 +1813,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumDb2Component) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumDb2Component) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumDb2Component) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumDb2Component) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
             case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumDb2Component) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
             case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumDb2Component) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
             case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumDb2Component) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;

@@ -80,6 +80,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "executorShutdownTimeoutMs": target.getConfiguration().setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": target.getConfiguration().setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": target.getConfiguration().setGuardrailCollectionsLimitAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": target.getConfiguration().setGuardrailCollectionsMax(property(camelContext, int.class, value)); return true;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": target.getConfiguration().setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
@@ -98,6 +102,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "internalValueConverter": target.getConfiguration().setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "intervalhandlingmode":
         case "intervalHandlingMode": target.getConfiguration().setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "legacydecimalhandlingstrategy":
+        case "legacyDecimalHandlingStrategy": target.getConfiguration().setLegacyDecimalHandlingStrategy(property(camelContext, boolean.class, value)); return true;
         case "lobenabled":
         case "lobEnabled": target.getConfiguration().setLobEnabled(property(camelContext, boolean.class, value)); return true;
         case "logminingarchivelogonlymode":
@@ -146,8 +152,12 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningFlushTableName": target.getConfiguration().setLogMiningFlushTableName(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": target.getConfiguration().setLogMiningIncludeRedoSql(property(camelContext, boolean.class, value)); return true;
+        case "logminingpathdictionary":
+        case "logMiningPathDictionary": target.getConfiguration().setLogMiningPathDictionary(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingqueryfiltermode":
         case "logMiningQueryFilterMode": target.getConfiguration().setLogMiningQueryFilterMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingreadonlyhostname":
+        case "logMiningReadonlyHostname": target.getConfiguration().setLogMiningReadonlyHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingrestartconnection":
         case "logMiningRestartConnection": target.getConfiguration().setLogMiningRestartConnection(property(camelContext, boolean.class, value)); return true;
         case "logminingscngapdetectiongapsizemin":
@@ -202,6 +212,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": target.getConfiguration().setOpenlineageIntegrationConfigFilePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": target.getConfiguration().setOpenlineageIntegrationDatasetKafkaBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": target.getConfiguration().setOpenlineageIntegrationEnabled(property(camelContext, boolean.class, value)); return true;
         case "openlineageintegrationjobdescription":
@@ -366,6 +378,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "executorShutdownTimeoutMs": return long.class;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return boolean.class;
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": return java.lang.String.class;
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": return int.class;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return java.lang.String.class;
         case "heartbeatintervalms":
@@ -384,6 +400,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "internalValueConverter": return java.lang.String.class;
         case "intervalhandlingmode":
         case "intervalHandlingMode": return java.lang.String.class;
+        case "legacydecimalhandlingstrategy":
+        case "legacyDecimalHandlingStrategy": return boolean.class;
         case "lobenabled":
         case "lobEnabled": return boolean.class;
         case "logminingarchivelogonlymode":
@@ -432,8 +450,12 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningFlushTableName": return java.lang.String.class;
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": return boolean.class;
+        case "logminingpathdictionary":
+        case "logMiningPathDictionary": return java.lang.String.class;
         case "logminingqueryfiltermode":
         case "logMiningQueryFilterMode": return java.lang.String.class;
+        case "logminingreadonlyhostname":
+        case "logMiningReadonlyHostname": return java.lang.String.class;
         case "logminingrestartconnection":
         case "logMiningRestartConnection": return boolean.class;
         case "logminingscngapdetectiongapsizemin":
@@ -488,6 +510,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": return java.lang.String.class;
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": return java.lang.String.class;
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": return java.lang.String.class;
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": return boolean.class;
         case "openlineageintegrationjobdescription":
@@ -653,6 +677,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "executorShutdownTimeoutMs": return target.getConfiguration().getExecutorShutdownTimeoutMs();
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return target.getConfiguration().isExtendedHeadersEnabled();
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": return target.getConfiguration().getGuardrailCollectionsLimitAction();
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": return target.getConfiguration().getGuardrailCollectionsMax();
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return target.getConfiguration().getHeartbeatActionQuery();
         case "heartbeatintervalms":
@@ -671,6 +699,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "internalValueConverter": return target.getConfiguration().getInternalValueConverter();
         case "intervalhandlingmode":
         case "intervalHandlingMode": return target.getConfiguration().getIntervalHandlingMode();
+        case "legacydecimalhandlingstrategy":
+        case "legacyDecimalHandlingStrategy": return target.getConfiguration().isLegacyDecimalHandlingStrategy();
         case "lobenabled":
         case "lobEnabled": return target.getConfiguration().isLobEnabled();
         case "logminingarchivelogonlymode":
@@ -719,8 +749,12 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningFlushTableName": return target.getConfiguration().getLogMiningFlushTableName();
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": return target.getConfiguration().isLogMiningIncludeRedoSql();
+        case "logminingpathdictionary":
+        case "logMiningPathDictionary": return target.getConfiguration().getLogMiningPathDictionary();
         case "logminingqueryfiltermode":
         case "logMiningQueryFilterMode": return target.getConfiguration().getLogMiningQueryFilterMode();
+        case "logminingreadonlyhostname":
+        case "logMiningReadonlyHostname": return target.getConfiguration().getLogMiningReadonlyHostname();
         case "logminingrestartconnection":
         case "logMiningRestartConnection": return target.getConfiguration().isLogMiningRestartConnection();
         case "logminingscngapdetectiongapsizemin":
@@ -775,6 +809,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "offsetStorageTopic": return target.getConfiguration().getOffsetStorageTopic();
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": return target.getConfiguration().getOpenlineageIntegrationConfigFilePath();
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": return target.getConfiguration().getOpenlineageIntegrationDatasetKafkaBootstrapServers();
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": return target.getConfiguration().isOpenlineageIntegrationEnabled();
         case "openlineageintegrationjobdescription":

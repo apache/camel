@@ -817,6 +817,43 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Specify the action to take when a guardrail collections limit is
+         * exceeded: 'warn' (the default) logs a warning message and continues
+         * processing; 'fail' stops the connector with an error.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: postgres
+         * 
+         * @param guardrailCollectionsLimitAction the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder guardrailCollectionsLimitAction(java.lang.String guardrailCollectionsLimitAction) {
+            doSetProperty("guardrailCollectionsLimitAction", guardrailCollectionsLimitAction);
+            return this;
+        }
+    
+        /**
+         * The maximum number of collections or tables that can be captured by
+         * the connector. When this limit is exceeded, the action specified by
+         * 'guardrail.collections.limit.action' will be taken. Set to 0 to
+         * disable this guardrail.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param guardrailCollectionsMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder guardrailCollectionsMax(int guardrailCollectionsMax) {
+            doSetProperty("guardrailCollectionsMax", guardrailCollectionsMax);
+            return this;
+        }
+    
         /**
          * The query executed with every heartbeat.
          * 
@@ -1184,6 +1221,22 @@ public interface DebeziumPostgresComponentBuilderFactory {
          */
         default DebeziumPostgresComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
             doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        /**
+         * The Kafka bootstrap server address used as input/output namespace/.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param openlineageIntegrationDatasetKafkaBootstrapServers the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder openlineageIntegrationDatasetKafkaBootstrapServers(java.lang.String openlineageIntegrationDatasetKafkaBootstrapServers) {
+            doSetProperty("openlineageIntegrationDatasetKafkaBootstrapServers", openlineageIntegrationDatasetKafkaBootstrapServers);
             return this;
         }
     
@@ -2446,6 +2499,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumPostgresComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
             case "flushLsnSource": getOrCreateConfiguration((DebeziumPostgresComponent) component).setFlushLsnSource((boolean) value); return true;
+            case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumPostgresComponent) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
+            case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumPostgresComponent) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
@@ -2466,6 +2521,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumPostgresComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
             case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
             case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
             case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;

@@ -23,7 +23,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(125);
+        Set<String> props = new HashSet<>(128);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -56,6 +56,8 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("executorShutdownTimeoutMs");
         props.add("extendedHeadersEnabled");
         props.add("flushLsnSource");
+        props.add("guardrailCollectionsLimitAction");
+        props.add("guardrailCollectionsMax");
         props.add("heartbeatActionQuery");
         props.add("heartbeatIntervalMs");
         props.add("heartbeatTopicsPrefix");
@@ -87,6 +89,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
         props.add("openlineageIntegrationConfigFilePath");
+        props.add("openlineageIntegrationDatasetKafkaBootstrapServers");
         props.add("openlineageIntegrationEnabled");
         props.add("openlineageIntegrationJobDescription");
         props.add("openlineageIntegrationJobNamespace");

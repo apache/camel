@@ -35,6 +35,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     private String signalDataCollection;
     @UriParam(label = LABEL_NAME)
+    private String logMiningReadonlyHostname;
+    @UriParam(label = LABEL_NAME)
     private String converters;
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
@@ -58,6 +60,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private long logMiningArchiveLogOnlyScnPollIntervalMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean logMiningRestartConnection = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean legacyDecimalHandlingStrategy = false;
     @UriParam(label = LABEL_NAME)
     private String tableExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
@@ -96,6 +100,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String binaryHandlingMode = "bytes";
     @UriParam(label = LABEL_NAME)
     private String databaseOutServerName;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationDatasetKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long archiveLogHours = 0;
     @UriParam(label = LABEL_NAME)
@@ -156,6 +162,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String logMiningClientidExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int guardrailCollectionsMax = 0;
     @UriParam(label = LABEL_NAME)
     private String logMiningUsernameIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -166,6 +174,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean logMiningArchiveLogOnlyMode = false;
+    @UriParam(label = LABEL_NAME)
+    private String logMiningPathDictionary;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferInfinispanCacheSchemaChanges;
     @UriParam(label = LABEL_NAME, defaultValue = "3s", javaType = "java.time.Duration")
@@ -211,6 +221,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private boolean extendedHeadersEnabled = true;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String guardrailCollectionsLimitAction = "warn";
     @UriParam(label = LABEL_NAME)
     private String racNodes;
     @UriParam(label = LABEL_NAME)
@@ -410,6 +422,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The hostname the connector will use to connect and perform read-only
+     * operations for the the replica.
+     */
+    public void setLogMiningReadonlyHostname(String logMiningReadonlyHostname) {
+        this.logMiningReadonlyHostname = logMiningReadonlyHostname;
+    }
+
+    public String getLogMiningReadonlyHostname() {
+        return logMiningReadonlyHostname;
+    }
+
+    /**
      * Optional list of custom converters that would be used instead of default
      * ones. The converters are defined using '<converter.prefix>.type' config
      * option and configured using options '<converter.prefix>.<option>'
@@ -576,6 +600,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public boolean isLogMiningRestartConnection() {
         return logMiningRestartConnection;
+    }
+
+    /**
+     * Uses the legacy decimal handling behavior before DBZ-7882
+     */
+    public void setLegacyDecimalHandlingStrategy(
+            boolean legacyDecimalHandlingStrategy) {
+        this.legacyDecimalHandlingStrategy = legacyDecimalHandlingStrategy;
+    }
+
+    public boolean isLegacyDecimalHandlingStrategy() {
+        return legacyDecimalHandlingStrategy;
     }
 
     /**
@@ -839,6 +875,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseOutServerName() {
         return databaseOutServerName;
+    }
+
+    /**
+     * The Kafka bootstrap server address used as input/output namespace/
+     */
+    public void setOpenlineageIntegrationDatasetKafkaBootstrapServers(
+            String openlineageIntegrationDatasetKafkaBootstrapServers) {
+        this.openlineageIntegrationDatasetKafkaBootstrapServers = openlineageIntegrationDatasetKafkaBootstrapServers;
+    }
+
+    public String getOpenlineageIntegrationDatasetKafkaBootstrapServers() {
+        return openlineageIntegrationDatasetKafkaBootstrapServers;
     }
 
     /**
@@ -1239,6 +1287,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The maximum number of collections or tables that can be captured by the
+     * connector. When this limit is exceeded, the action specified by
+     * 'guardrail.collections.limit.action' will be taken. Set to 0 to disable
+     * this guardrail.
+     */
+    public void setGuardrailCollectionsMax(int guardrailCollectionsMax) {
+        this.guardrailCollectionsMax = guardrailCollectionsMax;
+    }
+
+    public int getGuardrailCollectionsMax() {
+        return guardrailCollectionsMax;
+    }
+
+    /**
      * Comma separated list of usernames to include from LogMiner query.
      */
     public void setLogMiningUsernameIncludeList(
@@ -1303,6 +1365,18 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public boolean isLogMiningArchiveLogOnlyMode() {
         return logMiningArchiveLogOnlyMode;
+    }
+
+    /**
+     * This is required when using the connector against a read-only database
+     * replica.
+     */
+    public void setLogMiningPathDictionary(String logMiningPathDictionary) {
+        this.logMiningPathDictionary = logMiningPathDictionary;
+    }
+
+    public String getLogMiningPathDictionary() {
+        return logMiningPathDictionary;
     }
 
     /**
@@ -1592,6 +1666,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public int getMaxQueueSize() {
         return maxQueueSize;
+    }
+
+    /**
+     * Specify the action to take when a guardrail collections limit is
+     * exceeded: 'warn' (the default) logs a warning message and continues
+     * processing; 'fail' stops the connector with an error.
+     */
+    public void setGuardrailCollectionsLimitAction(
+            String guardrailCollectionsLimitAction) {
+        this.guardrailCollectionsLimitAction = guardrailCollectionsLimitAction;
+    }
+
+    public String getGuardrailCollectionsLimitAction() {
+        return guardrailCollectionsLimitAction;
     }
 
     /**
@@ -1972,6 +2060,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
         addPropertyIfNotNull(configBuilder, "log.mining.include.redo.sql", logMiningIncludeRedoSql);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
+        addPropertyIfNotNull(configBuilder, "log.mining.readonly.hostname", logMiningReadonlyHostname);
         addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
@@ -1984,6 +2073,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.increment", logMiningBatchSizeIncrement);
         addPropertyIfNotNull(configBuilder, "log.mining.archive.log.only.scn.poll.interval.ms", logMiningArchiveLogOnlyScnPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "log.mining.restart.connection", logMiningRestartConnection);
+        addPropertyIfNotNull(configBuilder, "legacy.decimal.handling.strategy", legacyDecimalHandlingStrategy);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.transactions", logMiningBufferInfinispanCacheTransactions);
@@ -2003,6 +2093,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.out.server.name", databaseOutServerName);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "archive.log.hours", archiveLogHours);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
@@ -2033,11 +2124,13 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "log.mining.clientid.exclude.list", logMiningClientidExcludeList);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
         addPropertyIfNotNull(configBuilder, "log.mining.username.include.list", logMiningUsernameIncludeList);
         addPropertyIfNotNull(configBuilder, "lob.enabled", lobEnabled);
         addPropertyIfNotNull(configBuilder, "interval.handling.mode", intervalHandlingMode);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "log.mining.archive.log.only.mode", logMiningArchiveLogOnlyMode);
+        addPropertyIfNotNull(configBuilder, "log.mining.path.dictionary", logMiningPathDictionary);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.schema_changes", logMiningBufferInfinispanCacheSchemaChanges);
         addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.max.ms", logMiningSleepTimeMaxMs);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
@@ -2060,6 +2153,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "log.mining.scn.gap.detection.time.interval.max.ms", logMiningScnGapDetectionTimeIntervalMaxMs);
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
         addPropertyIfNotNull(configBuilder, "rac.nodes", racNodes);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.global", logMiningBufferInfinispanCacheGlobal);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.transaction.events.threshold", logMiningBufferTransactionEventsThreshold);

@@ -751,6 +751,43 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Specify the action to take when a guardrail collections limit is
+         * exceeded: 'warn' (the default) logs a warning message and continues
+         * processing; 'fail' stops the connector with an error.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: oracle
+         * 
+         * @param guardrailCollectionsLimitAction the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder guardrailCollectionsLimitAction(java.lang.String guardrailCollectionsLimitAction) {
+            doSetProperty("guardrailCollectionsLimitAction", guardrailCollectionsLimitAction);
+            return this;
+        }
+    
+        /**
+         * The maximum number of collections or tables that can be captured by
+         * the connector. When this limit is exceeded, the action specified by
+         * 'guardrail.collections.limit.action' will be taken. Set to 0 to
+         * disable this guardrail.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param guardrailCollectionsMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder guardrailCollectionsMax(int guardrailCollectionsMax) {
+            doSetProperty("guardrailCollectionsMax", guardrailCollectionsMax);
+            return this;
+        }
+    
         /**
          * The query executed with every heartbeat.
          * 
@@ -886,6 +923,23 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder intervalHandlingMode(java.lang.String intervalHandlingMode) {
             doSetProperty("intervalHandlingMode", intervalHandlingMode);
+            return this;
+        }
+    
+        
+        /**
+         * Uses the legacy decimal handling behavior before DBZ-7882.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param legacyDecimalHandlingStrategy the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder legacyDecimalHandlingStrategy(boolean legacyDecimalHandlingStrategy) {
+            doSetProperty("legacyDecimalHandlingStrategy", legacyDecimalHandlingStrategy);
             return this;
         }
     
@@ -1312,6 +1366,22 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * This is required when using the connector against a read-only
+         * database replica.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningPathDictionary the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningPathDictionary(java.lang.String logMiningPathDictionary) {
+            doSetProperty("logMiningPathDictionary", logMiningPathDictionary);
+            return this;
+        }
+    
         
         /**
          * Specifies how the filter configuration is applied to the LogMiner
@@ -1331,6 +1401,22 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder logMiningQueryFilterMode(java.lang.String logMiningQueryFilterMode) {
             doSetProperty("logMiningQueryFilterMode", logMiningQueryFilterMode);
+            return this;
+        }
+    
+        /**
+         * The hostname the connector will use to connect and perform read-only
+         * operations for the the replica.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningReadonlyHostname the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningReadonlyHostname(java.lang.String logMiningReadonlyHostname) {
+            doSetProperty("logMiningReadonlyHostname", logMiningReadonlyHostname);
             return this;
         }
     
@@ -1683,6 +1769,22 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder openlineageIntegrationConfigFilePath(java.lang.String openlineageIntegrationConfigFilePath) {
             doSetProperty("openlineageIntegrationConfigFilePath", openlineageIntegrationConfigFilePath);
+            return this;
+        }
+    
+        /**
+         * The Kafka bootstrap server address used as input/output namespace/.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param openlineageIntegrationDatasetKafkaBootstrapServers the value
+         * to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder openlineageIntegrationDatasetKafkaBootstrapServers(java.lang.String openlineageIntegrationDatasetKafkaBootstrapServers) {
+            doSetProperty("openlineageIntegrationDatasetKafkaBootstrapServers", openlineageIntegrationDatasetKafkaBootstrapServers);
             return this;
         }
     
@@ -2683,6 +2785,8 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumOracleComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
+            case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumOracleComponent) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
+            case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumOracleComponent) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
@@ -2690,6 +2794,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "includeSchemaComments": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncludeSchemaComments((boolean) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
+            case "legacyDecimalHandlingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setLegacyDecimalHandlingStrategy((boolean) value); return true;
             case "lobEnabled": getOrCreateConfiguration((DebeziumOracleComponent) component).setLobEnabled((boolean) value); return true;
             case "logMiningArchiveLogOnlyMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveLogOnlyMode((boolean) value); return true;
             case "logMiningArchiveLogOnlyScnPollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveLogOnlyScnPollIntervalMs((long) value); return true;
@@ -2714,7 +2819,9 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningClientidIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningClientidIncludeList((java.lang.String) value); return true;
             case "logMiningFlushTableName": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningFlushTableName((java.lang.String) value); return true;
             case "logMiningIncludeRedoSql": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningIncludeRedoSql((boolean) value); return true;
+            case "logMiningPathDictionary": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningPathDictionary((java.lang.String) value); return true;
             case "logMiningQueryFilterMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningQueryFilterMode((java.lang.String) value); return true;
+            case "logMiningReadonlyHostname": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningReadonlyHostname((java.lang.String) value); return true;
             case "logMiningRestartConnection": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningRestartConnection((boolean) value); return true;
             case "logMiningScnGapDetectionGapSizeMin": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningScnGapDetectionGapSizeMin((long) value); return true;
             case "logMiningScnGapDetectionTimeIntervalMaxMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningScnGapDetectionTimeIntervalMaxMs((long) value); return true;
@@ -2734,6 +2841,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
+            case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
             case "openlineageIntegrationEnabled": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationEnabled((boolean) value); return true;
             case "openlineageIntegrationJobDescription": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationJobDescription((java.lang.String) value); return true;
             case "openlineageIntegrationJobNamespace": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationJobNamespace((java.lang.String) value); return true;

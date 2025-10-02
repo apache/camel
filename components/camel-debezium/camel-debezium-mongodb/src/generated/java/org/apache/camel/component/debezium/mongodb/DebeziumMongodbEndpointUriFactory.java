@@ -23,7 +23,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(84);
+        Set<String> props = new HashSet<>(87);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("captureMode");
@@ -43,6 +43,8 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("extendedHeadersEnabled");
         props.add("fieldExcludeList");
         props.add("fieldRenames");
+        props.add("guardrailCollectionsLimitAction");
+        props.add("guardrailCollectionsMax");
         props.add("heartbeatIntervalMs");
         props.add("heartbeatTopicsPrefix");
         props.add("incrementalSnapshotWatermarkingStrategy");
@@ -74,6 +76,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
         props.add("openlineageIntegrationConfigFilePath");
+        props.add("openlineageIntegrationDatasetKafkaBootstrapServers");
         props.add("openlineageIntegrationEnabled");
         props.add("openlineageIntegrationJobDescription");
         props.add("openlineageIntegrationJobNamespace");

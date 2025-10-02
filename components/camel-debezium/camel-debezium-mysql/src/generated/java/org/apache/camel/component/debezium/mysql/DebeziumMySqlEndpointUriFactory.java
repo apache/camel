@@ -23,7 +23,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(120);
+        Set<String> props = new HashSet<>(123);
         props.add("additionalProperties");
         props.add("bigintUnsignedHandlingMode");
         props.add("binlogBufferSize");
@@ -67,6 +67,8 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("gtidSourceExcludes");
         props.add("gtidSourceFilterDmlEvents");
         props.add("gtidSourceIncludes");
+        props.add("guardrailCollectionsLimitAction");
+        props.add("guardrailCollectionsMax");
         props.add("heartbeatActionQuery");
         props.add("heartbeatIntervalMs");
         props.add("heartbeatTopicsPrefix");
@@ -96,6 +98,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("offsetStorageReplicationFactor");
         props.add("offsetStorageTopic");
         props.add("openlineageIntegrationConfigFilePath");
+        props.add("openlineageIntegrationDatasetKafkaBootstrapServers");
         props.add("openlineageIntegrationEnabled");
         props.add("openlineageIntegrationJobDescription");
         props.add("openlineageIntegrationJobNamespace");

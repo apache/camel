@@ -70,6 +70,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "executorShutdownTimeoutMs": target.getConfiguration().setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": target.getConfiguration().setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": target.getConfiguration().setGuardrailCollectionsLimitAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": target.getConfiguration().setGuardrailCollectionsMax(property(camelContext, int.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
@@ -114,6 +118,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": target.getConfiguration().setOpenlineageIntegrationConfigFilePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": target.getConfiguration().setOpenlineageIntegrationDatasetKafkaBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": target.getConfiguration().setOpenlineageIntegrationEnabled(property(camelContext, boolean.class, value)); return true;
         case "openlineageintegrationjobdescription":
@@ -254,6 +260,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "executorShutdownTimeoutMs": return long.class;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return boolean.class;
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": return java.lang.String.class;
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": return int.class;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return int.class;
         case "heartbeattopicsprefix":
@@ -298,6 +308,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "offsetStorageTopic": return java.lang.String.class;
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": return java.lang.String.class;
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": return java.lang.String.class;
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": return boolean.class;
         case "openlineageintegrationjobdescription":
@@ -439,6 +451,10 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "executorShutdownTimeoutMs": return target.getConfiguration().getExecutorShutdownTimeoutMs();
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return target.getConfiguration().isExtendedHeadersEnabled();
+        case "guardrailcollectionslimitaction":
+        case "guardrailCollectionsLimitAction": return target.getConfiguration().getGuardrailCollectionsLimitAction();
+        case "guardrailcollectionsmax":
+        case "guardrailCollectionsMax": return target.getConfiguration().getGuardrailCollectionsMax();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
@@ -483,6 +499,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "offsetStorageTopic": return target.getConfiguration().getOffsetStorageTopic();
         case "openlineageintegrationconfigfilepath":
         case "openlineageIntegrationConfigFilePath": return target.getConfiguration().getOpenlineageIntegrationConfigFilePath();
+        case "openlineageintegrationdatasetkafkabootstrapservers":
+        case "openlineageIntegrationDatasetKafkaBootstrapServers": return target.getConfiguration().getOpenlineageIntegrationDatasetKafkaBootstrapServers();
         case "openlineageintegrationenabled":
         case "openlineageIntegrationEnabled": return target.getConfiguration().isOpenlineageIntegrationEnabled();
         case "openlineageintegrationjobdescription":

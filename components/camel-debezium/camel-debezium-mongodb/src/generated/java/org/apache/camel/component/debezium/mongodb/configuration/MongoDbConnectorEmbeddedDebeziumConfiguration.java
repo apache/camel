@@ -41,6 +41,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int mongodbServerSelectionTimeoutMs = 30000;
     @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
     private long pollIntervalMs = 500;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int guardrailCollectionsMax = 0;
     @UriParam(label = LABEL_NAME)
     private String signalDataCollection;
     @UriParam(label = LABEL_NAME)
@@ -87,6 +89,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private boolean extendedHeadersEnabled = true;
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
     private int maxQueueSize = 8192;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String guardrailCollectionsLimitAction = "warn";
     @UriParam(label = LABEL_NAME)
     private String collectionIncludeList;
     @UriParam(label = LABEL_NAME)
@@ -116,6 +120,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String sourceinfoStructMaker = "io.debezium.connector.mongodb.MongoDbSourceInfoStructMaker";
     @UriParam(label = LABEL_NAME, defaultValue = "admin")
     private String mongodbAuthsource = "admin";
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationDatasetKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME)
     private String collectionExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -313,6 +319,20 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public long getPollIntervalMs() {
         return pollIntervalMs;
+    }
+
+    /**
+     * The maximum number of collections or tables that can be captured by the
+     * connector. When this limit is exceeded, the action specified by
+     * 'guardrail.collections.limit.action' will be taken. Set to 0 to disable
+     * this guardrail.
+     */
+    public void setGuardrailCollectionsMax(int guardrailCollectionsMax) {
+        this.guardrailCollectionsMax = guardrailCollectionsMax;
+    }
+
+    public int getGuardrailCollectionsMax() {
+        return guardrailCollectionsMax;
     }
 
     /**
@@ -615,6 +635,20 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify the action to take when a guardrail collections limit is
+     * exceeded: 'warn' (the default) logs a warning message and continues
+     * processing; 'fail' stops the connector with an error.
+     */
+    public void setGuardrailCollectionsLimitAction(
+            String guardrailCollectionsLimitAction) {
+        this.guardrailCollectionsLimitAction = guardrailCollectionsLimitAction;
+    }
+
+    public String getGuardrailCollectionsLimitAction() {
+        return guardrailCollectionsLimitAction;
+    }
+
+    /**
      * A comma-separated list of regular expressions or literals that match the
      * collection names for which changes are to be captured
      */
@@ -792,6 +826,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getMongodbAuthsource() {
         return mongodbAuthsource;
+    }
+
+    /**
+     * The Kafka bootstrap server address used as input/output namespace/
+     */
+    public void setOpenlineageIntegrationDatasetKafkaBootstrapServers(
+            String openlineageIntegrationDatasetKafkaBootstrapServers) {
+        this.openlineageIntegrationDatasetKafkaBootstrapServers = openlineageIntegrationDatasetKafkaBootstrapServers;
+    }
+
+    public String getOpenlineageIntegrationDatasetKafkaBootstrapServers() {
+        return openlineageIntegrationDatasetKafkaBootstrapServers;
     }
 
     /**
@@ -1057,6 +1103,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "field.renames", fieldRenames);
         addPropertyIfNotNull(configBuilder, "mongodb.server.selection.timeout.ms", mongodbServerSelectionTimeoutMs);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
@@ -1080,6 +1127,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
         addPropertyIfNotNull(configBuilder, "collection.include.list", collectionIncludeList);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
@@ -1094,6 +1142,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
         addPropertyIfNotNull(configBuilder, "mongodb.authsource", mongodbAuthsource);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "collection.exclude.list", collectionExcludeList);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
