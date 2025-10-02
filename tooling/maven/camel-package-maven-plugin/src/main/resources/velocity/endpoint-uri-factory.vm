@@ -41,18 +41,18 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
 #set( $props = $mojo.newTreeSet() )
 #set( $secretProps = $mojo.newTreeSet() )
-#set( $prefixes = $mojo.newTreeSet() )
+#set( $prefixes = $mojo.newTreeMap() )
 #foreach( $opt in $model.endpointOptions )
     #set( $foo = $props.add( $opt.name ) )
     #if ( $opt.secret )
         #set( $foo = $secretProps.add( $opt.name ) )
     #end
     #if ( $opt.multiValue )
-        #set( $foo = $prefixes.add( $opt.prefix ) )
+        #set( $foo = $prefixes.put( $opt.name, $opt.prefix ) )
     #end
 #end
 #foreach ( $a in $model.apiOptions )
@@ -63,7 +63,7 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
                 #set( $foo = $secretProps.add( $opt.name ) )
             #end
             #if ( $opt.multiValue )
-                #set( $foo = $prefixes.add( $opt.prefix ) )
+                #set( $foo = $prefixes.put( $opt.name, $opt.prefix ) )
             #end
         #end
     #end
@@ -87,13 +87,13 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
 #end
 #if ( $prefixes.empty )
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptyMap();
 #else
-        Set<String> prefixes = new HashSet<>(${prefixes.size()});
-    #foreach ( $prop in $prefixes )
-        prefixes.add("${prop}");
+        Map<String, String> prefixes = new HashMap<>(${prefixes.size()});
+    #foreach ( $prop in $prefixes.entrySet() )
+        prefixes.put("${prop.key}", "${prop.value}");
     #end
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
 #end
     }
 
@@ -145,7 +145,7 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

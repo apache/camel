@@ -216,8 +216,11 @@ public class YamlDeserializerSupport {
                 case SCALAR:
                     answer.put(StringHelper.dashToCamelCase(key), asText(val));
                     break;
+                case MAPPING:
+                    answer.put(StringHelper.dashToCamelCase(key), asMap(val));
+                    break;
                 default:
-                    throw new InvalidNodeTypeException(node, NodeType.SCALAR);
+                    throw new UnsupportedNodeTypeException(val);
             }
         }
 

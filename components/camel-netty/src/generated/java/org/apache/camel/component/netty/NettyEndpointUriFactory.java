@@ -21,7 +21,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(76);
         props.add("allowDefaultCodec");
@@ -104,9 +104,9 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("passphrase");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("option.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
+        Map<String, String> prefixes = new HashMap<>(1);
+        prefixes.put("options", "option.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

@@ -21,7 +21,7 @@ public class ReactiveStreamsEndpointUriFactory extends org.apache.camel.support.
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(11);
         props.add("backpressureStrategy");
@@ -37,7 +37,8 @@ public class ReactiveStreamsEndpointUriFactory extends org.apache.camel.support.
         props.add("stream");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Map<String, String> prefixes = new HashMap<>(0);
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ReactiveStreamsEndpointUriFactory extends org.apache.camel.support.
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

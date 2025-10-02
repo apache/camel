@@ -94,7 +94,7 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
         }
 
         @Override
-        public Set<String> multiValuePrefixes() {
+        public Map<String, String> multiValuePrefixes() {
             return null;
         }
 

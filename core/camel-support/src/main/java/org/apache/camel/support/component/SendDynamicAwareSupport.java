@@ -35,7 +35,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
 
     private CamelContext camelContext;
     private Set<String> knownProperties;
-    private Set<String> knownPrefixes;
+    private Map<String, String> knownPrefixes;
     private String scheme;
 
     @Override
@@ -94,7 +94,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
                 // we should put the key from a multi-value (prefix) in the
                 // properties too, or the property may be lost
                 if (!accept && !knownPrefixes.isEmpty()) {
-                    accept = knownPrefixes.stream().anyMatch(k::startsWith);
+                    accept = knownPrefixes.keySet().stream().anyMatch(k::startsWith);
                 }
                 if (accept) {
                     properties.put(k, v);
@@ -124,7 +124,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
                 // or that the key is not from a multi-value (prefix)
                 boolean accept = !knownProperties.contains(k);
                 if (accept && !knownPrefixes.isEmpty()) {
-                    accept = knownPrefixes.stream().noneMatch(k::startsWith);
+                    accept = knownPrefixes.keySet().stream().noneMatch(k::startsWith);
                 }
                 if (accept) {
                     properties.put(k, v.toString());

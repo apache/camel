@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support.component;
 
-import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -63,7 +62,7 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
                 uri = uri.replace(name, str);
             }
         } else {
-            // the option is optional and we have no default or value for it, so we need to
+            // the option is optional, and we have no default or value for it, so we need to
             // remove it from the syntax
             int pos = uri.indexOf(name);
             if (pos != -1) {
@@ -81,10 +80,12 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
         return uri;
     }
 
-    protected String buildQueryParameters(String uri, Map<String, Object> parameters, boolean encode)
-            throws URISyntaxException {
+    protected String buildQueryParameters(String uri, Map<String, Object> parameters, boolean encode) {
+
         // we want sorted parameters
         Map<String, Object> map = new TreeMap<>(parameters);
+
+        // automatic use RAW(value) for secret options
         for (String secretParameter : secretPropertyNames()) {
             Object val = map.get(secretParameter);
             if (val instanceof String answer) {
@@ -94,11 +95,27 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
             }
         }
 
+        // flatten all multiValue=true maps into parameters with prefix
+        for (var multi : multiValuePrefixes().entrySet()) {
+            Object val = map.get(multi.getKey());
+            String prefix = multi.getValue();
+            if (val instanceof Map<?, ?> m) {
+                for (var k : m.keySet()) {
+                    // each entry in map becomes a new option with the prefix key
+                    String key = prefix + k;
+                    val = m.get(k);
+                    if (val != null) {
+                        map.put(key, val);
+                    }
+                }
+                map.remove(multi.getKey());
+            }
+        }
+
         String query = URISupport.createQueryString(map, encode);
         if (ObjectHelper.isNotEmpty(query)) {
             // there may be a ? sign in the context path then use & instead
-            // (this is not correct but lets deal with this as the camel-catalog handled
-            // this)
+            // (this is not correct but lets deal with this as the camel-catalog handled this)
             boolean questionMark = uri.indexOf('?') != -1;
             if (questionMark) {
                 uri = uri + "&" + query;

@@ -32,6 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -279,6 +280,11 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     @SuppressWarnings("unused") // use by velocity templates
     public TreeSet<?> newTreeSet() {
         return new TreeSet<>();
+    }
+
+    @SuppressWarnings("unused") // use by velocity templates
+    public TreeMap<?, ?> newTreeMap() {
+        return new TreeMap<>();
     }
 
     @SuppressWarnings("unused") // use by velocity templates

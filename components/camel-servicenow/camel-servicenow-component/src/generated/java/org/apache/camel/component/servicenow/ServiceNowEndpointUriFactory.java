@@ -21,7 +21,7 @@ public class ServiceNowEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(45);
         props.add("apiUrl");
@@ -77,11 +77,11 @@ public class ServiceNowEndpointUriFactory extends org.apache.camel.support.compo
         secretProps.add("password");
         secretProps.add("userName");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(3);
-        prefixes.add("model.");
-        prefixes.add("request-model.");
-        prefixes.add("response-model.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
+        Map<String, String> prefixes = new HashMap<>(3);
+        prefixes.put("models", "model.");
+        prefixes.put("requestModels", "request-model.");
+        prefixes.put("responseModels", "response-model.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class ServiceNowEndpointUriFactory extends org.apache.camel.support.compo
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

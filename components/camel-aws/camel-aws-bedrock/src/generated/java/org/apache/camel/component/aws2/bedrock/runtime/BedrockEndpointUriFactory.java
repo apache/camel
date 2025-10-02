@@ -21,7 +21,7 @@ public class BedrockEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(20);
         props.add("accessKey");
@@ -50,7 +50,8 @@ public class BedrockEndpointUriFactory extends org.apache.camel.support.componen
         secretProps.add("secretKey");
         secretProps.add("sessionToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Map<String, String> prefixes = new HashMap<>(0);
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -81,7 +82,7 @@ public class BedrockEndpointUriFactory extends org.apache.camel.support.componen
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

@@ -21,7 +21,7 @@ public class DigitalOceanEndpointUriFactory extends org.apache.camel.support.com
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(11);
         props.add("digitalOceanClient");
@@ -41,7 +41,8 @@ public class DigitalOceanEndpointUriFactory extends org.apache.camel.support.com
         secretProps.add("httpProxyUser");
         secretProps.add("oAuthToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Map<String, String> prefixes = new HashMap<>(0);
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class DigitalOceanEndpointUriFactory extends org.apache.camel.support.com
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

@@ -21,7 +21,7 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(124);
         props.add("account");
@@ -154,13 +154,13 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
         secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(5);
-        prefixes.add("ftpClient.");
-        prefixes.add("ftpClient.keyStore.");
-        prefixes.add("ftpClient.trustStore.");
-        prefixes.add("ftpClientConfig.");
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
+        Map<String, String> prefixes = new HashMap<>(5);
+        prefixes.put("ftpClientConfigParameters", "ftpClientConfig.");
+        prefixes.put("ftpClientKeyStoreParameters", "ftpClient.keyStore.");
+        prefixes.put("ftpClientParameters", "ftpClient.");
+        prefixes.put("ftpClientTrustStoreParameters", "ftpClient.trustStore.");
+        prefixes.put("schedulerProperties", "scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -193,7 +193,7 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 
