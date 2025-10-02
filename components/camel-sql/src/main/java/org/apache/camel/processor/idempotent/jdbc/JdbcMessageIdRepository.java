@@ -24,8 +24,6 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -102,34 +100,34 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
     protected void doStart() throws Exception {
         super.doStart();
 
-        transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            @Override
-            public Boolean doInTransaction(TransactionStatus status) {
-                try {
-                    // we will receive an exception if the table doesn't exists or we cannot access it
-                    jdbcTemplate.execute(getTableExistsString());
-                    log.debug("Expected table for JdbcMessageIdRepository exist");
-                } catch (DataAccessException e) {
-                    if (createTableIfNotExists) {
-                        try {
-                            log.debug("creating table for JdbcMessageIdRepository because it doesn't exist...");
-                            jdbcTemplate.execute(getCreateString());
-                            log.info("table created with query '{}'", getCreateString());
-                        } catch (DataAccessException dae) {
-                            // we will fail if we cannot create it
-                            log.error(
-                                    "Can't create table for JdbcMessageIdRepository with query '{}' because of: {}. This may be a permissions problem. Please create this table and try again.",
-                                    getCreateString(), dae.getMessage());
-                            throw dae;
-                        }
-                    } else {
-                        throw e;
-                    }
+        boolean tableExists = transactionTemplate.execute(status -> {
+            try {
+                // we will receive an exception if the table doesn't exists or we cannot access it
+                jdbcTemplate.execute(getTableExistsString());
+                log.debug("Expected table for JdbcMessageIdRepository exist");
 
-                }
-                return Boolean.TRUE;
+                return true;
+            } catch (DataAccessException e) {
+                log.debug("Expected table for JdbcMessageIdRepository does not exist");
+                return false;
             }
         });
+
+        if (!tableExists && createTableIfNotExists) {
+            transactionTemplate.executeWithoutResult(status -> {
+                try {
+                    log.debug("creating table for JdbcMessageIdRepository because it doesn't exist...");
+                    jdbcTemplate.execute(getCreateString());
+                    log.info("table created with query '{}'", getCreateString());
+                } catch (DataAccessException dae) {
+                    // we will fail if we cannot create it
+                    log.error(
+                            "Can't create table for JdbcMessageIdRepository with query '{}' because of: {}. This may be a permissions problem. Please create this table and try again.",
+                            getCreateString(), dae.getMessage());
+                    throw dae;
+                }
+            });
+        }
     }
 
     @Override
