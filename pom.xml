@@ -133,6 +133,7 @@
         <maven-release-plugin-version>3.1.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.3.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.5.4</maven-surefire-plugin-version>
+        <templating-maven-plugin-version>3.0.0</templating-maven-plugin-version>
         <versions-maven-plugin-version>2.19.1</versions-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
@@ -571,6 +572,12 @@
                         <arguments>-Prelease</arguments>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>templating-maven-plugin</artifactId>
+                    <version>${templating-maven-plugin-version}</version>
                 </plugin>
 
                 <plugin>
