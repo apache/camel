@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Integration test for Keycloak producer operations using external Keycloak instance.
  *
- * Must be manually tested. Provide your own Keycloak instance and configuration using:
+ * Must be manually tested. Provide your own Keycloak instance and configuration using: -Dmanual.keycloak.test=true
  * -Dkeycloak.server.url=http://localhost:8080 -Dkeycloak.realm=master -Dkeycloak.username=admin
  * -Dkeycloak.password=admin
  *
@@ -57,6 +57,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * KEYCLOAK_ADMIN_PASSWORD=admin \ quay.io/keycloak/keycloak:latest start-dev
  */
 @EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "manual.keycloak.test", matches = "true",
+                                 disabledReason = "Manual test - set -Dmanual.keycloak.test=true to enable"),
         @EnabledIfSystemProperty(named = "keycloak.server.url", matches = ".*",
                                  disabledReason = "Keycloak server URL not provided"),
         @EnabledIfSystemProperty(named = "keycloak.realm", matches = ".*",
