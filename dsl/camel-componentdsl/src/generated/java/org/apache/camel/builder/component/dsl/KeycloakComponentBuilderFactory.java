@@ -51,11 +51,106 @@ public interface KeycloakComponentBuilderFactory {
     interface KeycloakComponentBuilder extends ComponentBuilder<KeycloakComponent> {
     
         /**
+         * Filter admin events by authentication client ID.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authClient the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder authClient(java.lang.String authClient) {
+            doSetProperty("authClient", authClient);
+            return this;
+        }
+    
+        /**
+         * Filter admin events by authentication IP address.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authIpAddress the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder authIpAddress(java.lang.String authIpAddress) {
+            doSetProperty("authIpAddress", authIpAddress);
+            return this;
+        }
+    
+        
+        /**
+         * Keycloak realm to authenticate against. If not specified, the realm
+         * parameter is used for authentication. This is useful when you want to
+         * authenticate against one realm (e.g., master) but perform operations
+         * on another realm.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: master
+         * Group: common
+         * 
+         * @param authRealm the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder authRealm(java.lang.String authRealm) {
+            doSetProperty("authRealm", authRealm);
+            return this;
+        }
+    
+        /**
+         * Filter admin events by authentication realm.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authRealmFilter the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder authRealmFilter(java.lang.String authRealmFilter) {
+            doSetProperty("authRealmFilter", authRealmFilter);
+            return this;
+        }
+    
+        /**
+         * Filter admin events by authentication user ID.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param authUser the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder authUser(java.lang.String authUser) {
+            doSetProperty("authUser", authUser);
+            return this;
+        }
+    
+        /**
+         * Filter events by client ID.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder client(java.lang.String client) {
+            doSetProperty("client", client);
+            return this;
+        }
+    
+        /**
          * Keycloak client ID.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param clientId the value to set
          * @return the dsl builder
@@ -70,7 +165,7 @@ public interface KeycloakComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param clientSecret the value to set
          * @return the dsl builder
@@ -86,7 +181,7 @@ public interface KeycloakComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.keycloak.KeycloakConfiguration&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param configuration the value to set
          * @return the dsl builder
@@ -97,18 +192,298 @@ public interface KeycloakComponentBuilderFactory {
         }
     
         /**
+         * Filter events by start date/time in milliseconds since epoch.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param dateFrom the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder dateFrom(java.lang.String dateFrom) {
+            doSetProperty("dateFrom", dateFrom);
+            return this;
+        }
+    
+        /**
+         * Filter events by end date/time in milliseconds since epoch.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param dateTo the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder dateTo(java.lang.String dateTo) {
+            doSetProperty("dateTo", dateTo);
+            return this;
+        }
+    
+        
+        /**
+         * Type of events to consume: events or admin-events.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: events
+         * Group: common
+         * 
+         * @param eventType the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder eventType(java.lang.String eventType) {
+            doSetProperty("eventType", eventType);
+            return this;
+        }
+    
+        /**
+         * Offset for pagination (first result index).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param first the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder first(int first) {
+            doSetProperty("first", first);
+            return this;
+        }
+    
+        /**
+         * Filter events by IP address.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param ipAddress the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder ipAddress(java.lang.String ipAddress) {
+            doSetProperty("ipAddress", ipAddress);
+            return this;
+        }
+    
+        /**
          * To use an existing configured Keycloak admin client.
          * 
          * The option is a:
          * &lt;code&gt;org.keycloak.admin.client.Keycloak&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param keycloakClient the value to set
          * @return the dsl builder
          */
         default KeycloakComponentBuilder keycloakClient(org.keycloak.admin.client.Keycloak keycloakClient) {
             doSetProperty("keycloakClient", keycloakClient);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum number of events to retrieve per poll.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder maxResults(int maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+    
+        /**
+         * The operation to perform.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.keycloak.KeycloakOperations&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder operation(org.apache.camel.component.keycloak.KeycloakOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+    
+        /**
+         * Filter admin events by operation types (comma-separated list, e.g.,
+         * CREATE,UPDATE,DELETE).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param operationTypes the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder operationTypes(java.lang.String operationTypes) {
+            doSetProperty("operationTypes", operationTypes);
+            return this;
+        }
+    
+        /**
+         * Keycloak password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+    
+        
+        /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+    
+        
+        /**
+         * Keycloak realm, the default is master because usually all the
+         * operations are done starting from the master realm.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: master
+         * Group: common
+         * 
+         * @param realm the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder realm(java.lang.String realm) {
+            doSetProperty("realm", realm);
+            return this;
+        }
+    
+        /**
+         * Filter admin events by resource path.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param resourcePath the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder resourcePath(java.lang.String resourcePath) {
+            doSetProperty("resourcePath", resourcePath);
+            return this;
+        }
+    
+        /**
+         * Keycloak server URL.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serverUrl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder serverUrl(java.lang.String serverUrl) {
+            doSetProperty("serverUrl", serverUrl);
+            return this;
+        }
+    
+        /**
+         * Filter events by event types (comma-separated list, e.g.,
+         * LOGIN,LOGOUT).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param types the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder types(java.lang.String types) {
+            doSetProperty("types", types);
+            return this;
+        }
+    
+        /**
+         * Filter events by user ID.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder user(java.lang.String user) {
+            doSetProperty("user", user);
+            return this;
+        }
+    
+        /**
+         * Keycloak username.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+    
+        
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     
@@ -134,102 +509,6 @@ public interface KeycloakComponentBuilderFactory {
          */
         default KeycloakComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    
-        /**
-         * The operation to perform.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.keycloak.KeycloakOperations&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param operation the value to set
-         * @return the dsl builder
-         */
-        default KeycloakComponentBuilder operation(org.apache.camel.component.keycloak.KeycloakOperations operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-    
-        /**
-         * Keycloak password.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default KeycloakComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-    
-        
-        /**
-         * If we want to use a POJO request as body or not.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param pojoRequest the value to set
-         * @return the dsl builder
-         */
-        default KeycloakComponentBuilder pojoRequest(boolean pojoRequest) {
-            doSetProperty("pojoRequest", pojoRequest);
-            return this;
-        }
-    
-        
-        /**
-         * Keycloak realm, the default is master because usually all the
-         * operations are done starting from the master realm.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: master
-         * Group: producer
-         * 
-         * @param realm the value to set
-         * @return the dsl builder
-         */
-        default KeycloakComponentBuilder realm(java.lang.String realm) {
-            doSetProperty("realm", realm);
-            return this;
-        }
-    
-        /**
-         * Keycloak server URL.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param serverUrl the value to set
-         * @return the dsl builder
-         */
-        default KeycloakComponentBuilder serverUrl(java.lang.String serverUrl) {
-            doSetProperty("serverUrl", serverUrl);
-            return this;
-        }
-    
-        /**
-         * Keycloak username.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param username the value to set
-         * @return the dsl builder
-         */
-        default KeycloakComponentBuilder username(java.lang.String username) {
-            doSetProperty("username", username);
             return this;
         }
     
@@ -275,17 +554,34 @@ public interface KeycloakComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "authClient": getOrCreateConfiguration((KeycloakComponent) component).setAuthClient((java.lang.String) value); return true;
+            case "authIpAddress": getOrCreateConfiguration((KeycloakComponent) component).setAuthIpAddress((java.lang.String) value); return true;
+            case "authRealm": getOrCreateConfiguration((KeycloakComponent) component).setAuthRealm((java.lang.String) value); return true;
+            case "authRealmFilter": getOrCreateConfiguration((KeycloakComponent) component).setAuthRealmFilter((java.lang.String) value); return true;
+            case "authUser": getOrCreateConfiguration((KeycloakComponent) component).setAuthUser((java.lang.String) value); return true;
+            case "client": getOrCreateConfiguration((KeycloakComponent) component).setClient((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((KeycloakComponent) component).setClientId((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((KeycloakComponent) component).setClientSecret((java.lang.String) value); return true;
             case "configuration": ((KeycloakComponent) component).setConfiguration((org.apache.camel.component.keycloak.KeycloakConfiguration) value); return true;
+            case "dateFrom": getOrCreateConfiguration((KeycloakComponent) component).setDateFrom((java.lang.String) value); return true;
+            case "dateTo": getOrCreateConfiguration((KeycloakComponent) component).setDateTo((java.lang.String) value); return true;
+            case "eventType": getOrCreateConfiguration((KeycloakComponent) component).setEventType((java.lang.String) value); return true;
+            case "first": getOrCreateConfiguration((KeycloakComponent) component).setFirst((int) value); return true;
+            case "ipAddress": getOrCreateConfiguration((KeycloakComponent) component).setIpAddress((java.lang.String) value); return true;
             case "keycloakClient": getOrCreateConfiguration((KeycloakComponent) component).setKeycloakClient((org.keycloak.admin.client.Keycloak) value); return true;
-            case "lazyStartProducer": ((KeycloakComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxResults": getOrCreateConfiguration((KeycloakComponent) component).setMaxResults((int) value); return true;
             case "operation": getOrCreateConfiguration((KeycloakComponent) component).setOperation((org.apache.camel.component.keycloak.KeycloakOperations) value); return true;
+            case "operationTypes": getOrCreateConfiguration((KeycloakComponent) component).setOperationTypes((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((KeycloakComponent) component).setPassword((java.lang.String) value); return true;
             case "pojoRequest": getOrCreateConfiguration((KeycloakComponent) component).setPojoRequest((boolean) value); return true;
             case "realm": getOrCreateConfiguration((KeycloakComponent) component).setRealm((java.lang.String) value); return true;
+            case "resourcePath": getOrCreateConfiguration((KeycloakComponent) component).setResourcePath((java.lang.String) value); return true;
             case "serverUrl": getOrCreateConfiguration((KeycloakComponent) component).setServerUrl((java.lang.String) value); return true;
+            case "types": getOrCreateConfiguration((KeycloakComponent) component).setTypes((java.lang.String) value); return true;
+            case "user": getOrCreateConfiguration((KeycloakComponent) component).setUser((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((KeycloakComponent) component).setUsername((java.lang.String) value); return true;
+            case "bridgeErrorHandler": ((KeycloakComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((KeycloakComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KeycloakComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }

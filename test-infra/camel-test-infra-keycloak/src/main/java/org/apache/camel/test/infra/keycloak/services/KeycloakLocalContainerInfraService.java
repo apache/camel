@@ -23,6 +23,7 @@ import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.keycloak.common.KeycloakProperties;
+import org.keycloak.admin.client.Keycloak;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -131,5 +132,15 @@ public class KeycloakLocalContainerInfraService implements KeycloakInfraService,
     @Override
     public String getKeycloakPassword() {
         return DEFAULT_ADMIN_PASSWORD;
+    }
+
+    @Override
+    public Keycloak getKeycloakAdminClient() {
+        return Keycloak.getInstance(
+                getKeycloakServerUrl(),
+                getKeycloakRealm(),
+                getKeycloakUsername(),
+                getKeycloakPassword(),
+                "admin-cli");
     }
 }

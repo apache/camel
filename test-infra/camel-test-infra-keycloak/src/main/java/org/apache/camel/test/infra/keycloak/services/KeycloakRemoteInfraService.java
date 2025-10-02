@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.keycloak.services;
 
 import org.apache.camel.test.infra.keycloak.common.KeycloakProperties;
+import org.keycloak.admin.client.Keycloak;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,5 +85,15 @@ public class KeycloakRemoteInfraService implements KeycloakInfraService {
     @Override
     public String getKeycloakPassword() {
         return keycloakPassword;
+    }
+
+    @Override
+    public Keycloak getKeycloakAdminClient() {
+        return Keycloak.getInstance(
+                getKeycloakServerUrl(),
+                getKeycloakRealm(),
+                getKeycloakUsername(),
+                getKeycloakPassword(),
+                "admin-cli");
     }
 }

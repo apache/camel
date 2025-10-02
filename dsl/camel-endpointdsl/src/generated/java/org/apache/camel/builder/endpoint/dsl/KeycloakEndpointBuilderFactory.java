@@ -35,21 +35,1724 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface KeycloakEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint for the Keycloak component.
+     * Builder for endpoint consumers for the Keycloak component.
      */
-    public interface KeycloakEndpointBuilder
+    public interface KeycloakEndpointConsumerBuilder
             extends
-                EndpointProducerBuilder {
-        default AdvancedKeycloakEndpointBuilder advanced() {
-            return (AdvancedKeycloakEndpointBuilder) this;
+                EndpointConsumerBuilder {
+        default AdvancedKeycloakEndpointConsumerBuilder advanced() {
+            return (AdvancedKeycloakEndpointConsumerBuilder) this;
         }
-
+        /**
+         * Filter admin events by authentication client ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authClient the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder authClient(String authClient) {
+            doSetProperty("authClient", authClient);
+            return this;
+        }
+        /**
+         * Filter admin events by authentication IP address.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authIpAddress the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder authIpAddress(String authIpAddress) {
+            doSetProperty("authIpAddress", authIpAddress);
+            return this;
+        }
+        /**
+         * Keycloak realm to authenticate against. If not specified, the realm
+         * parameter is used for authentication. This is useful when you want to
+         * authenticate against one realm (e.g., master) but perform operations
+         * on another realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: master
+         * Group: common
+         * 
+         * @param authRealm the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder authRealm(String authRealm) {
+            doSetProperty("authRealm", authRealm);
+            return this;
+        }
+        /**
+         * Filter admin events by authentication realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authRealmFilter the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder authRealmFilter(String authRealmFilter) {
+            doSetProperty("authRealmFilter", authRealmFilter);
+            return this;
+        }
+        /**
+         * Filter admin events by authentication user ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authUser the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder authUser(String authUser) {
+            doSetProperty("authUser", authUser);
+            return this;
+        }
+        /**
+         * Filter events by client ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
         /**
          * Keycloak client ID.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder clientId(String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
+         * Keycloak client secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * Filter events by start date/time in milliseconds since epoch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param dateFrom the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder dateFrom(String dateFrom) {
+            doSetProperty("dateFrom", dateFrom);
+            return this;
+        }
+        /**
+         * Filter events by end date/time in milliseconds since epoch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param dateTo the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder dateTo(String dateTo) {
+            doSetProperty("dateTo", dateTo);
+            return this;
+        }
+        /**
+         * Type of events to consume: events or admin-events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: events
+         * Group: common
+         * 
+         * @param eventType the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder eventType(String eventType) {
+            doSetProperty("eventType", eventType);
+            return this;
+        }
+        /**
+         * Offset for pagination (first result index).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param first the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder first(int first) {
+            doSetProperty("first", first);
+            return this;
+        }
+        /**
+         * Offset for pagination (first result index).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param first the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder first(String first) {
+            doSetProperty("first", first);
+            return this;
+        }
+        /**
+         * Filter events by IP address.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param ipAddress the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder ipAddress(String ipAddress) {
+            doSetProperty("ipAddress", ipAddress);
+            return this;
+        }
+        /**
+         * To use an existing configured Keycloak admin client.
+         * 
+         * The option is a: <code>org.keycloak.admin.client.Keycloak</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param keycloakClient the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder keycloakClient(org.keycloak.admin.client.Keycloak keycloakClient) {
+            doSetProperty("keycloakClient", keycloakClient);
+            return this;
+        }
+        /**
+         * To use an existing configured Keycloak admin client.
+         * 
+         * The option will be converted to a
+         * <code>org.keycloak.admin.client.Keycloak</code> type.
+         * 
+         * Group: common
+         * 
+         * @param keycloakClient the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder keycloakClient(String keycloakClient) {
+            doSetProperty("keycloakClient", keycloakClient);
+            return this;
+        }
+        /**
+         * Maximum number of events to retrieve per poll.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder maxResults(int maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * Maximum number of events to retrieve per poll.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder maxResults(String maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.keycloak.KeycloakOperations</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder operation(org.apache.camel.component.keycloak.KeycloakOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.keycloak.KeycloakOperations</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Filter admin events by operation types (comma-separated list, e.g.,
+         * CREATE,UPDATE,DELETE).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param operationTypes the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder operationTypes(String operationTypes) {
+            doSetProperty("operationTypes", operationTypes);
+            return this;
+        }
+        /**
+         * Keycloak password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder pojoRequest(String pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
+         * Keycloak realm, the default is master because usually all the
+         * operations are done starting from the master realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: master
+         * Group: common
+         * 
+         * @param realm the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder realm(String realm) {
+            doSetProperty("realm", realm);
+            return this;
+        }
+        /**
+         * Filter admin events by resource path.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param resourcePath the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder resourcePath(String resourcePath) {
+            doSetProperty("resourcePath", resourcePath);
+            return this;
+        }
+        /**
+         * Keycloak server URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param serverUrl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder serverUrl(String serverUrl) {
+            doSetProperty("serverUrl", serverUrl);
+            return this;
+        }
+        /**
+         * Filter events by event types (comma-separated list, e.g.,
+         * LOGIN,LOGOUT).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param types the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder types(String types) {
+            doSetProperty("types", types);
+            return this;
+        }
+        /**
+         * Filter events by user ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder user(String user) {
+            doSetProperty("user", user);
+            return this;
+        }
+        /**
+         * Keycloak username.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder sendEmptyMessageWhenIdle(boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder sendEmptyMessageWhenIdle(String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder backoffErrorThreshold(int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder backoffErrorThreshold(String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder backoffIdleThreshold(int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder backoffIdleThreshold(String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder backoffMultiplier(int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder backoffMultiplier(String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder initialDelay(String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder runLoggingLevel(org.apache.camel.LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder runLoggingLevel(String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder scheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder scheduledExecutorService(String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder schedulerProperties(String key, Object value) {
+            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler. This is a multi-value
+         * option with prefix: scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder schedulerProperties(Map values) {
+            doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder startScheduler(boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder startScheduler(String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Keycloak component.
+     */
+    public interface AdvancedKeycloakEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default KeycloakEndpointConsumerBuilder basic() {
+            return (KeycloakEndpointConsumerBuilder) this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointConsumerBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointConsumerBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointConsumerBuilder exceptionHandler(String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointConsumerBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointConsumerBuilder exchangePattern(String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointConsumerBuilder pollStrategy(org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointConsumerBuilder pollStrategy(String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint producers for the Keycloak component.
+     */
+    public interface KeycloakEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default AdvancedKeycloakEndpointProducerBuilder advanced() {
+            return (AdvancedKeycloakEndpointProducerBuilder) this;
+        }
+
+        /**
+         * Filter admin events by authentication client ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authClient the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder authClient(String authClient) {
+            doSetProperty("authClient", authClient);
+            return this;
+        }
+        /**
+         * Filter admin events by authentication IP address.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authIpAddress the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder authIpAddress(String authIpAddress) {
+            doSetProperty("authIpAddress", authIpAddress);
+            return this;
+        }
+        /**
+         * Keycloak realm to authenticate against. If not specified, the realm
+         * parameter is used for authentication. This is useful when you want to
+         * authenticate against one realm (e.g., master) but perform operations
+         * on another realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: master
+         * Group: common
+         * 
+         * @param authRealm the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder authRealm(String authRealm) {
+            doSetProperty("authRealm", authRealm);
+            return this;
+        }
+        /**
+         * Filter admin events by authentication realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authRealmFilter the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder authRealmFilter(String authRealmFilter) {
+            doSetProperty("authRealmFilter", authRealmFilter);
+            return this;
+        }
+        /**
+         * Filter admin events by authentication user ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authUser the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder authUser(String authUser) {
+            doSetProperty("authUser", authUser);
+            return this;
+        }
+        /**
+         * Filter events by client ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * Keycloak client ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder clientId(String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
+         * Keycloak client secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * Filter events by start date/time in milliseconds since epoch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param dateFrom the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder dateFrom(String dateFrom) {
+            doSetProperty("dateFrom", dateFrom);
+            return this;
+        }
+        /**
+         * Filter events by end date/time in milliseconds since epoch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param dateTo the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder dateTo(String dateTo) {
+            doSetProperty("dateTo", dateTo);
+            return this;
+        }
+        /**
+         * Type of events to consume: events or admin-events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: events
+         * Group: common
+         * 
+         * @param eventType the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder eventType(String eventType) {
+            doSetProperty("eventType", eventType);
+            return this;
+        }
+        /**
+         * Offset for pagination (first result index).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param first the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder first(int first) {
+            doSetProperty("first", first);
+            return this;
+        }
+        /**
+         * Offset for pagination (first result index).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param first the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder first(String first) {
+            doSetProperty("first", first);
+            return this;
+        }
+        /**
+         * Filter events by IP address.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param ipAddress the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder ipAddress(String ipAddress) {
+            doSetProperty("ipAddress", ipAddress);
+            return this;
+        }
+        /**
+         * To use an existing configured Keycloak admin client.
+         * 
+         * The option is a: <code>org.keycloak.admin.client.Keycloak</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param keycloakClient the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder keycloakClient(org.keycloak.admin.client.Keycloak keycloakClient) {
+            doSetProperty("keycloakClient", keycloakClient);
+            return this;
+        }
+        /**
+         * To use an existing configured Keycloak admin client.
+         * 
+         * The option will be converted to a
+         * <code>org.keycloak.admin.client.Keycloak</code> type.
+         * 
+         * Group: common
+         * 
+         * @param keycloakClient the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder keycloakClient(String keycloakClient) {
+            doSetProperty("keycloakClient", keycloakClient);
+            return this;
+        }
+        /**
+         * Maximum number of events to retrieve per poll.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder maxResults(int maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * Maximum number of events to retrieve per poll.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder maxResults(String maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.keycloak.KeycloakOperations</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder operation(org.apache.camel.component.keycloak.KeycloakOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.keycloak.KeycloakOperations</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Filter admin events by operation types (comma-separated list, e.g.,
+         * CREATE,UPDATE,DELETE).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param operationTypes the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder operationTypes(String operationTypes) {
+            doSetProperty("operationTypes", operationTypes);
+            return this;
+        }
+        /**
+         * Keycloak password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder pojoRequest(boolean pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
+         * If we want to use a POJO request as body or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder pojoRequest(String pojoRequest) {
+            doSetProperty("pojoRequest", pojoRequest);
+            return this;
+        }
+        /**
+         * Keycloak realm, the default is master because usually all the
+         * operations are done starting from the master realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: master
+         * Group: common
+         * 
+         * @param realm the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder realm(String realm) {
+            doSetProperty("realm", realm);
+            return this;
+        }
+        /**
+         * Filter admin events by resource path.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param resourcePath the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder resourcePath(String resourcePath) {
+            doSetProperty("resourcePath", resourcePath);
+            return this;
+        }
+        /**
+         * Keycloak server URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param serverUrl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder serverUrl(String serverUrl) {
+            doSetProperty("serverUrl", serverUrl);
+            return this;
+        }
+        /**
+         * Filter events by event types (comma-separated list, e.g.,
+         * LOGIN,LOGOUT).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param types the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder types(String types) {
+            doSetProperty("types", types);
+            return this;
+        }
+        /**
+         * Filter events by user ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder user(String user) {
+            doSetProperty("user", user);
+            return this;
+        }
+        /**
+         * Keycloak username.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the Keycloak component.
+     */
+    public interface AdvancedKeycloakEndpointProducerBuilder extends EndpointProducerBuilder {
+        default KeycloakEndpointProducerBuilder basic() {
+            return (KeycloakEndpointProducerBuilder) this;
+        }
+
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointProducerBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKeycloakEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint for the Keycloak component.
+     */
+    public interface KeycloakEndpointBuilder
+            extends
+                KeycloakEndpointConsumerBuilder,
+                KeycloakEndpointProducerBuilder {
+        default AdvancedKeycloakEndpointBuilder advanced() {
+            return (AdvancedKeycloakEndpointBuilder) this;
+        }
+
+        /**
+         * Filter admin events by authentication client ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authClient the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder authClient(String authClient) {
+            doSetProperty("authClient", authClient);
+            return this;
+        }
+        /**
+         * Filter admin events by authentication IP address.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authIpAddress the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder authIpAddress(String authIpAddress) {
+            doSetProperty("authIpAddress", authIpAddress);
+            return this;
+        }
+        /**
+         * Keycloak realm to authenticate against. If not specified, the realm
+         * parameter is used for authentication. This is useful when you want to
+         * authenticate against one realm (e.g., master) but perform operations
+         * on another realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: master
+         * Group: common
+         * 
+         * @param authRealm the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder authRealm(String authRealm) {
+            doSetProperty("authRealm", authRealm);
+            return this;
+        }
+        /**
+         * Filter admin events by authentication realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authRealmFilter the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder authRealmFilter(String authRealmFilter) {
+            doSetProperty("authRealmFilter", authRealmFilter);
+            return this;
+        }
+        /**
+         * Filter admin events by authentication user ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param authUser the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder authUser(String authUser) {
+            doSetProperty("authUser", authUser);
+            return this;
+        }
+        /**
+         * Filter events by client ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * Keycloak client ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          * 
          * @param clientId the value to set
          * @return the dsl builder
@@ -63,7 +1766,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param clientSecret the value to set
          * @return the dsl builder
@@ -73,12 +1776,99 @@ public interface KeycloakEndpointBuilderFactory {
             return this;
         }
         /**
+         * Filter events by start date/time in milliseconds since epoch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param dateFrom the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder dateFrom(String dateFrom) {
+            doSetProperty("dateFrom", dateFrom);
+            return this;
+        }
+        /**
+         * Filter events by end date/time in milliseconds since epoch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param dateTo the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder dateTo(String dateTo) {
+            doSetProperty("dateTo", dateTo);
+            return this;
+        }
+        /**
+         * Type of events to consume: events or admin-events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: events
+         * Group: common
+         * 
+         * @param eventType the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder eventType(String eventType) {
+            doSetProperty("eventType", eventType);
+            return this;
+        }
+        /**
+         * Offset for pagination (first result index).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param first the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder first(int first) {
+            doSetProperty("first", first);
+            return this;
+        }
+        /**
+         * Offset for pagination (first result index).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param first the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder first(String first) {
+            doSetProperty("first", first);
+            return this;
+        }
+        /**
+         * Filter events by IP address.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param ipAddress the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder ipAddress(String ipAddress) {
+            doSetProperty("ipAddress", ipAddress);
+            return this;
+        }
+        /**
          * To use an existing configured Keycloak admin client.
          * 
          * The option is a: <code>org.keycloak.admin.client.Keycloak</code>
          * type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param keycloakClient the value to set
          * @return the dsl builder
@@ -93,7 +1883,7 @@ public interface KeycloakEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.keycloak.admin.client.Keycloak</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param keycloakClient the value to set
          * @return the dsl builder
@@ -103,13 +1893,43 @@ public interface KeycloakEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of events to retrieve per poll.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder maxResults(int maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * Maximum number of events to retrieve per poll.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: common
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder maxResults(String maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
          * The operation to perform.
          * 
          * The option is a:
          * <code>org.apache.camel.component.keycloak.KeycloakOperations</code>
          * type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param operation the value to set
          * @return the dsl builder
@@ -125,7 +1945,7 @@ public interface KeycloakEndpointBuilderFactory {
          * <code>org.apache.camel.component.keycloak.KeycloakOperations</code>
          * type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param operation the value to set
          * @return the dsl builder
@@ -135,11 +1955,26 @@ public interface KeycloakEndpointBuilderFactory {
             return this;
         }
         /**
+         * Filter admin events by operation types (comma-separated list, e.g.,
+         * CREATE,UPDATE,DELETE).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param operationTypes the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder operationTypes(String operationTypes) {
+            doSetProperty("operationTypes", operationTypes);
+            return this;
+        }
+        /**
          * Keycloak password.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param password the value to set
          * @return the dsl builder
@@ -154,7 +1989,7 @@ public interface KeycloakEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param pojoRequest the value to set
          * @return the dsl builder
@@ -169,7 +2004,7 @@ public interface KeycloakEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param pojoRequest the value to set
          * @return the dsl builder
@@ -185,7 +2020,7 @@ public interface KeycloakEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: master
-         * Group: producer
+         * Group: common
          * 
          * @param realm the value to set
          * @return the dsl builder
@@ -195,11 +2030,25 @@ public interface KeycloakEndpointBuilderFactory {
             return this;
         }
         /**
+         * Filter admin events by resource path.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param resourcePath the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder resourcePath(String resourcePath) {
+            doSetProperty("resourcePath", resourcePath);
+            return this;
+        }
+        /**
          * Keycloak server URL.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param serverUrl the value to set
          * @return the dsl builder
@@ -209,11 +2058,40 @@ public interface KeycloakEndpointBuilderFactory {
             return this;
         }
         /**
+         * Filter events by event types (comma-separated list, e.g.,
+         * LOGIN,LOGOUT).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param types the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder types(String types) {
+            doSetProperty("types", types);
+            return this;
+        }
+        /**
+         * Filter events by user ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder user(String user) {
+            doSetProperty("user", user);
+            return this;
+        }
+        /**
          * Keycloak username.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param username the value to set
          * @return the dsl builder
@@ -229,57 +2107,12 @@ public interface KeycloakEndpointBuilderFactory {
      */
     public interface AdvancedKeycloakEndpointBuilder
             extends
-                EndpointProducerBuilder {
+                AdvancedKeycloakEndpointConsumerBuilder,
+                AdvancedKeycloakEndpointProducerBuilder {
         default KeycloakEndpointBuilder basic() {
             return (KeycloakEndpointBuilder) this;
         }
 
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKeycloakEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedKeycloakEndpointBuilder lazyStartProducer(String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
     }
 
     public interface KeycloakBuilders {
@@ -354,7 +2187,7 @@ public interface KeycloakEndpointBuilderFactory {
          * The option is a: {@code
          * org.apache.camel.component.keycloak.KeycloakOperations} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakOperation}.
          */
@@ -366,7 +2199,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakRealmName}.
          */
@@ -378,7 +2211,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakUserId}.
          */
@@ -390,7 +2223,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakUsername}.
          */
@@ -402,7 +2235,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakUserEmail}.
          */
@@ -414,7 +2247,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakUserFirstName}.
          */
@@ -426,7 +2259,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakUserLastName}.
          */
@@ -438,7 +2271,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakRoleId}.
          */
@@ -450,7 +2283,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakRoleName}.
          */
@@ -462,7 +2295,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakRoleDescription}.
          */
@@ -474,7 +2307,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakGroupId}.
          */
@@ -486,7 +2319,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakGroupName}.
          */
@@ -498,7 +2331,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakClientId}.
          */
@@ -510,7 +2343,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakClientUuid}.
          */
@@ -522,7 +2355,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakUserPassword}.
          */
@@ -534,7 +2367,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakPasswordTemporary}.
          */
@@ -546,7 +2379,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakSearchQuery}.
          */
@@ -558,7 +2391,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakMaxResults}.
          */
@@ -570,7 +2403,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakFirstResult}.
          */
@@ -582,7 +2415,7 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakClientScopeId}.
          */
@@ -594,12 +2427,36 @@ public interface KeycloakEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code KeycloakClientScopeName}.
          */
         public String keycloakClientScopeName() {
             return "CamelKeycloakClientScopeName";
+        }
+        /**
+         * The event type (event or admin-event).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakEventType}.
+         */
+        public String keycloakEventType() {
+            return "CamelKeycloakEventType";
+        }
+        /**
+         * The event ID or timestamp.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakEventId}.
+         */
+        public String keycloakEventId() {
+            return "CamelKeycloakEventId";
         }
     }
     static KeycloakEndpointBuilder endpointBuilder(String componentName, String path) {

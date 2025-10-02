@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.keycloak.services;
 
 import org.apache.camel.test.infra.common.services.InfrastructureService;
+import org.keycloak.admin.client.Keycloak;
 
 /**
  * Test infra service for Keycloak
@@ -30,4 +31,11 @@ public interface KeycloakInfraService extends InfrastructureService {
     String getKeycloakUsername();
 
     String getKeycloakPassword();
+
+    /**
+     * Get Keycloak admin client for direct API access
+     *
+     * @return Keycloak admin client instance
+     */
+    Keycloak getKeycloakAdminClient();
 }

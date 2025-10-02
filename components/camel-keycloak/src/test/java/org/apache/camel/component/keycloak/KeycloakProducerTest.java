@@ -17,11 +17,11 @@
 package org.apache.camel.component.keycloak;
 
 import java.util.List;
+import java.util.Map;
 
 import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -144,12 +144,10 @@ public class KeycloakProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
-        exchange.getIn().setHeader(KeycloakConstants.USERNAME, "testUser");
-        exchange.getIn().setHeader(KeycloakConstants.USER_EMAIL, "test@example.com");
-
-        template.send("direct:createUser", exchange);
+        template.sendBodyAndHeaders("direct:createUser", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.USERNAME, "testUser",
+                KeycloakConstants.USER_EMAIL, "test@example.com"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -162,12 +160,10 @@ public class KeycloakProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
-        exchange.getIn().setHeader(KeycloakConstants.ROLE_NAME, "testRole");
-        exchange.getIn().setHeader(KeycloakConstants.ROLE_DESCRIPTION, "Test Role Description");
-
-        template.send("direct:createRole", exchange);
+        template.sendBodyAndHeaders("direct:createRole", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.ROLE_NAME, "testRole",
+                KeycloakConstants.ROLE_DESCRIPTION, "Test Role Description"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -219,11 +215,9 @@ public class KeycloakProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
-        exchange.getIn().setHeader(KeycloakConstants.GROUP_NAME, "testGroup");
-
-        template.send("direct:createGroup", exchange);
+        template.sendBodyAndHeaders("direct:createGroup", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.GROUP_NAME, "testGroup"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -251,12 +245,10 @@ public class KeycloakProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
-        exchange.getIn().setHeader(KeycloakConstants.USER_ID, "userId123");
-        exchange.getIn().setHeader(KeycloakConstants.GROUP_ID, "groupId123");
-
-        template.send("direct:addUserToGroup", exchange);
+        template.sendBodyAndHeaders("direct:addUserToGroup", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.USER_ID, "userId123",
+                KeycloakConstants.GROUP_ID, "groupId123"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -270,11 +262,9 @@ public class KeycloakProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
-        exchange.getIn().setHeader(KeycloakConstants.CLIENT_ID, "testClient");
-
-        template.send("direct:createClient", exchange);
+        template.sendBodyAndHeaders("direct:createClient", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.CLIENT_ID, "testClient"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -302,13 +292,11 @@ public class KeycloakProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
-        exchange.getIn().setHeader(KeycloakConstants.USER_ID, "userId123");
-        exchange.getIn().setHeader(KeycloakConstants.USER_PASSWORD, "newPassword123");
-        exchange.getIn().setHeader(KeycloakConstants.PASSWORD_TEMPORARY, false);
-
-        template.send("direct:resetUserPassword", exchange);
+        template.sendBodyAndHeaders("direct:resetUserPassword", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.USER_ID, "userId123",
+                KeycloakConstants.USER_PASSWORD, "newPassword123",
+                KeycloakConstants.PASSWORD_TEMPORARY, false));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -325,11 +313,9 @@ public class KeycloakProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
-        exchange.getIn().setHeader(KeycloakConstants.USER_ID, "userId123");
-
-        template.send("direct:getUserRoles", exchange);
+        template.sendBodyAndHeaders("direct:getUserRoles", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.USER_ID, "userId123"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -343,11 +329,9 @@ public class KeycloakProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Exchange exchange = createExchangeWithBody(null);
-        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "testRealm");
-        exchange.getIn().setHeader(KeycloakConstants.SEARCH_QUERY, "testUser");
-
-        template.send("direct:searchUsers", exchange);
+        template.sendBodyAndHeaders("direct:searchUsers", null, Map.of(
+                KeycloakConstants.REALM_NAME, "testRealm",
+                KeycloakConstants.SEARCH_QUERY, "testUser"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
