@@ -62,7 +62,7 @@ pipeline {
                 axes {
                     axis {
                         name 'JDK_NAME'
-                        values 'jdk_17_latest', 'jdk_21_latest'
+                        values 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'
                     }
                     axis {
                         name 'PLATFORM'
@@ -84,6 +84,26 @@ pipeline {
                         axis {
                             name 'JDK_NAME'
                             values 'jdk_21_latest'
+                        }
+                        axis {
+                            name 'PLATFORM'
+                            values 's390x'
+                        }
+                    }
+                    exclude {
+                        axis {
+                            name 'JDK_NAME'
+                            values 'jdk_25_latest'
+                        }
+                        axis {
+                            name 'PLATFORM'
+                            values 'ppc64le'
+                        }
+                    }
+                    exclude {
+                        axis {
+                            name 'JDK_NAME'
+                            values 'jdk_25_latest'
                         }
                         axis {
                             name 'PLATFORM'
