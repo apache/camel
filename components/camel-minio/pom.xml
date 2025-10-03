@@ -48,6 +48,17 @@
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
             <version>${minio-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp-jvm</artifactId>
+            <version>${squareup-okhttp5-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
