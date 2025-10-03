@@ -40,8 +40,7 @@ public class PineconeVectorDbEndpointUriFactory extends org.apache.camel.support
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("token");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Map<String, String> prefixes = new HashMap<>(0);
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
+        MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
     @Override

@@ -29,8 +29,7 @@ public class LangChain4jEmbeddingsEndpointUriFactory extends org.apache.camel.su
         props.add("lazyStartProducer");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Map<String, String> prefixes = new HashMap<>(0);
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
+        MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
     @Override

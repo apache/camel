@@ -41,8 +41,7 @@ public class DigitalOceanEndpointUriFactory extends org.apache.camel.support.com
         secretProps.add("httpProxyUser");
         secretProps.add("oAuthToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Map<String, String> prefixes = new HashMap<>(0);
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
+        MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
     @Override

@@ -47,8 +47,7 @@ public class CoAPEndpointUriFactory extends org.apache.camel.support.component.E
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("privateKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Map<String, String> prefixes = new HashMap<>(0);
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
+        MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
     @Override

@@ -42,8 +42,7 @@ public class PQCEndpointUriFactory extends org.apache.camel.support.component.En
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("keyStorePassword");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Map<String, String> prefixes = new HashMap<>(0);
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
+        MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
     @Override

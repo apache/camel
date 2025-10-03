@@ -86,7 +86,7 @@ public class ${className} extends ${psn} implements EndpointUriFactory {
     #end
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
 #end
-#if ( $prefixes.empty )
+#if ( $prefixes.isEmpty() )
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
 #else
         Map<String, String> prefixes = new HashMap<>(${prefixes.size()});
