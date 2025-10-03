@@ -44,7 +44,7 @@ pipeline {
     parameters {
         booleanParam(name: 'VIRTUAL_THREAD', defaultValue: false, description: 'Perform the build using virtual threads')
         choice(name: 'PLATFORM_FILTER', choices: ['all', 'ppc64le', 's390x', 'ubuntu-avx'], description: 'Run on specific platform')
-        choice(name: 'JDK_FILTER', choices: ['all', 'jdk_17_latest', 'jdk_21_latest'], description: 'Run on specific jdk')
+        choice(name: 'JDK_FILTER', choices: ['all', 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'], description: 'Run on specific jdk')
     }
     agent none
     stages {
