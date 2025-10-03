@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
@@ -166,10 +167,7 @@ public class VertXThreadPoolFactory extends DefaultThreadPoolFactory implements 
         public void execute(Runnable command) {
             LOG.trace("execute: {}", command);
             // used by vertx
-            vertx.executeBlocking(future -> {
-                command.run();
-                future.complete();
-            }, null);
+            vertx.executeBlocking(Executors.callable(command));
         }
     }
 
