@@ -81,7 +81,8 @@ class ExportMainJibTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
         Assertions.assertEquals("17", model.getProperties().getProperty("java.version"));
         Assertions.assertEquals("abc", model.getProperties().getProperty("jib.label"));
-        Assertions.assertEquals("eclipse-temurin:17-jre", model.getProperties().getProperty("jib.from.image"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:17-jre",
+                model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib plugin
         Assertions.assertEquals(4, model.getBuild().getPlugins().size());
@@ -111,7 +112,8 @@ class ExportMainJibTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
         Assertions.assertEquals("21", model.getProperties().getProperty("java.version"));
         Assertions.assertEquals("abc", model.getProperties().getProperty("jib.label"));
-        Assertions.assertEquals("eclipse-temurin:21-jre", model.getProperties().getProperty("jib.from.image"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:21-jre",
+                model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib plugin
         Assertions.assertEquals(4, model.getBuild().getPlugins().size());

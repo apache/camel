@@ -65,9 +65,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         Properties props = model.getProperties();
-        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
-        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
-        Assertions.assertEquals("eclipse-temurin:21", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("route:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("route:1.0.0", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:21", props.get("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
         Assertions.assertNull(props.get("jkube.docker.push.registry"));
         Assertions.assertNull(props.get("jkube.container-image.registry"));
@@ -103,9 +103,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         Properties props = model.getProperties();
-        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
-        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
-        Assertions.assertEquals("eclipse-temurin:17", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("route:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("route:1.0.0", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:17", props.get("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
         Assertions.assertNull(props.get("jkube.docker.push.registry"));
         Assertions.assertNull(props.get("jkube.container-image.registry"));
@@ -144,9 +144,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         Properties props = model.getProperties();
-        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
-        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
-        Assertions.assertEquals("eclipse-temurin:21", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("route:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("route:1.0.0", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:21", props.get("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
         Assertions.assertNull(props.get("jkube.docker.push.registry"));
         Assertions.assertNull(props.get("jkube.container-image.registry"));
@@ -508,8 +508,8 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
 
         Properties props = model.getProperties();
-        Assertions.assertEquals("camel-test/route-service:1.0.0", props.get("jkube.image.name"));
-        Assertions.assertEquals("camel-test/route-service:1.0.0", props.get("jkube.container-image.name"));
+        Assertions.assertEquals("route-service:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("route-service:1.0.0", props.get("jkube.container-image.name"));
 
         Service service = getService(rt);
         Assertions.assertEquals("route-service", service.getMetadata().getName());
