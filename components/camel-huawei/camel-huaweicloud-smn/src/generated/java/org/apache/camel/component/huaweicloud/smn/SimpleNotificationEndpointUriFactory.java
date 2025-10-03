@@ -21,7 +21,7 @@ public class SimpleNotificationEndpointUriFactory extends org.apache.camel.suppo
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(15);
         props.add("accessKey");
@@ -47,7 +47,8 @@ public class SimpleNotificationEndpointUriFactory extends org.apache.camel.suppo
         secretProps.add("secretKey");
         secretProps.add("serviceKeys");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Map<String, String> prefixes = new HashMap<>(0);
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -78,7 +79,7 @@ public class SimpleNotificationEndpointUriFactory extends org.apache.camel.suppo
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

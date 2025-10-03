@@ -21,7 +21,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(47);
         props.add("accessToken");
@@ -77,7 +77,8 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
         secretProps.add("privateKey");
         secretProps.add("publicKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Map<String, String> prefixes = new HashMap<>(0);
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -109,7 +110,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

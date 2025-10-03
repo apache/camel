@@ -22,7 +22,7 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(71);
         props.add("additionalJavaMailProperties");
@@ -101,11 +101,11 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
         secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(3);
-        prefixes.add("mail.");
-        prefixes.add("scheduler.");
-        prefixes.add("searchTerm.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
+        Map<String, String> prefixes = new HashMap<>(3);
+        prefixes.put("additionalJavaMailProperties", "mail.");
+        prefixes.put("schedulerProperties", "scheduler.");
+        prefixes.put("searchTerm", "searchTerm.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

@@ -134,6 +134,33 @@ To define an endpoint with the YAML dsl you have two options:
             authorizationToken: "XXX"
 ----
 
+=== Map values for parameters
+
+*Available as of Camel 4.15*
+
+It is now possible to inline Maps in the `parameters` section. However Camel components rarely have options
+that are Map based, but when they do this makes it easier to use. For example the plc4j component allow to
+configure _tags_ as a Map:
+
+[source,yaml]
+----
+- from:
+    uri: "timer://tick"
+    parameters:
+      period: "1s"
+    steps:
+      - to:
+          uri: "plc4j"
+          parameters:
+            driver: "some driver url here"
+            tags:
+              "tags_2": "XXX"
+              "tags_6": "YYY"
+----
+
+In this example the _tags_ options is of Map type and can be configured using YAML map syntax.
+Because the keys use underscore, then they are quoted.
+
 == Defining beans
 
 In addition to the general support for creating beans provided by xref:others:main.adoc#_specifying_custom_beans[Camel Main], the YAML DSL provides a convenient syntax to define and configure them:
