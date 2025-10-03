@@ -16,7 +16,6 @@
  */
 package org.apache.camel.catalog;
 
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -268,6 +267,20 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         Assertions.assertEquals("jmsx:foo?deliveryPersistent=true&password=RAW(pwd)&username=RAW(usr)", uri);
     }
 
+    @Test
+    public void testJmsMultiValued() throws Exception {
+        EndpointUriFactory assembler = new MyJmsxAssembler();
+        assembler.setCamelContext(context);
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("destinationName", "foo");
+        params.put("deliveryPersistent", true);
+        params.put("tags", Map.of("foo", 123, "bar", 456, "baz", "cheese"));
+
+        String uri = assembler.buildUri("jmsx", params);
+        Assertions.assertEquals("jmsx:foo?deliveryPersistent=true&tag.bar=456&tag.baz=cheese&tag.foo=123", uri);
+    }
+
     private static class MyAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
 
         private static final String SYNTAX = "acme:name:port";
@@ -278,8 +291,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties, boolean encode)
-                throws URISyntaxException {
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) {
             // begin from syntax
             String uri = SYNTAX;
 
@@ -303,8 +315,8 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public Set<String> multiValuePrefixes() {
-            return Collections.emptySet();
+        public Map<String, String> multiValuePrefixes() {
+            return Collections.emptyMap();
         }
 
         @Override
@@ -324,8 +336,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties, boolean encode)
-                throws URISyntaxException {
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) {
             // begin from syntax
             String uri = SYNTAX;
 
@@ -350,8 +361,8 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public Set<String> multiValuePrefixes() {
-            return Collections.emptySet();
+        public Map<String, String> multiValuePrefixes() {
+            return Collections.emptyMap();
         }
 
         @Override
@@ -371,9 +382,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties, boolean encode)
-                throws URISyntaxException {
-
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) {
             String uri = SYNTAX;
             uri = buildPathParameter(SYNTAX, uri, "destinationType", "queue", false, properties);
             uri = buildPathParameter(SYNTAX, uri, "destinationName", null, true, properties);
@@ -393,8 +402,8 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public Set<String> multiValuePrefixes() {
-            return Collections.emptySet();
+        public Map<String, String> multiValuePrefixes() {
+            return Collections.emptyMap();
         }
 
         @Override
@@ -413,7 +422,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) throws URISyntaxException {
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) {
             String uri = SYNTAX;
             uri = buildPathParameter(SYNTAX, uri, "destinationType", "queue", false, properties);
             uri = buildPathParameter(SYNTAX, uri, "destinationName", null, true, properties);
@@ -433,8 +442,8 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public Set<String> multiValuePrefixes() {
-            return Collections.emptySet();
+        public Map<String, String> multiValuePrefixes() {
+            return Map.of("tags", "tag.");
         }
 
         @Override
@@ -453,9 +462,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> properties, boolean encode)
-                throws URISyntaxException {
-
+        public String buildUri(String scheme, Map<String, Object> properties, boolean encode) {
             String uri = SYNTAX;
             uri = buildPathParameter(SYNTAX, uri, "host", null, true, properties);
             uri = buildPathParameter(SYNTAX, uri, "keyspace", null, true, properties);
@@ -475,8 +482,8 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public Set<String> multiValuePrefixes() {
-            return Collections.emptySet();
+        public Map<String, String> multiValuePrefixes() {
+            return Collections.emptyMap();
         }
 
         @Override

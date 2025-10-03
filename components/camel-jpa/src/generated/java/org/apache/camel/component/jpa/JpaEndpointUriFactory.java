@@ -21,7 +21,7 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(49);
         props.add("backoffErrorThreshold");
@@ -75,11 +75,11 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("usePersist");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(3);
-        prefixes.add("emf.");
-        prefixes.add("parameters.");
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
+        Map<String, String> prefixes = new HashMap<>(3);
+        prefixes.put("entityManagerProperties", "emf.");
+        prefixes.put("parameters", "parameters.");
+        prefixes.put("schedulerProperties", "scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

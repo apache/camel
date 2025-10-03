@@ -21,7 +21,7 @@ public class RocketMQEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(22);
         props.add("accessChannel");
@@ -51,7 +51,7 @@ public class RocketMQEndpointUriFactory extends org.apache.camel.support.compone
         secretProps.add("accessKey");
         secretProps.add("secretKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class RocketMQEndpointUriFactory extends org.apache.camel.support.compone
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 

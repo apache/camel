@@ -21,7 +21,7 @@ public class JiraEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(32);
         props.add("accessToken");
@@ -65,9 +65,9 @@ public class JiraEndpointUriFactory extends org.apache.camel.support.component.E
         secretProps.add("username");
         secretProps.add("verificationCode");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
+        Map<String, String> prefixes = new HashMap<>(1);
+        prefixes.put("schedulerProperties", "scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class JiraEndpointUriFactory extends org.apache.camel.support.component.E
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 
