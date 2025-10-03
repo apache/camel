@@ -23,6 +23,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.ContextServiceLoaderPluginResolver;
 import org.apache.camel.spi.ContextServicePlugin;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation that automatically discovers and loads {@link ContextServicePlugin} implementations using the
@@ -42,7 +44,10 @@ import org.apache.camel.support.service.ServiceSupport;
  * @see ServiceLoader
  */
 public class DefaultContextServiceLoaderPlugin extends ServiceSupport implements ContextServiceLoaderPluginResolver {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultContextServiceLoaderPlugin.class);
+
     private CamelContext camelContext;
+    private ServiceLoader<ContextServicePlugin> contextServicePlugins;
 
     /**
      * Discovers and loads all {@link ContextServicePlugin} implementations found on the classpath.
@@ -58,10 +63,31 @@ public class DefaultContextServiceLoaderPlugin extends ServiceSupport implements
      */
     @Override
     protected void doStart() throws Exception {
-        ServiceLoader<ContextServicePlugin> contextServicePlugins = ServiceLoader.load(ContextServicePlugin.class,
+        contextServicePlugins = ServiceLoader.load(ContextServicePlugin.class,
                 camelContext.getApplicationContextClassLoader());
         for (ContextServicePlugin plugin : contextServicePlugins) {
-            plugin.load(camelContext);
+            try {
+                plugin.load(camelContext);
+            } catch (Exception e) {
+                LOG.warn(
+                        "Loading of plugin {} failed, however the exception will be ignored so others plugins can be initialized. Reason: {}",
+                        plugin.getClass().getName(), e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (contextServicePlugins != null) {
+            for (ContextServicePlugin plugin : contextServicePlugins) {
+                try {
+                    plugin.unload(camelContext);
+                } catch (Exception e) {
+                    LOG.warn(
+                            "Unloading of plugin {} failed, however the exception will be ignored so shutdown can continue. Reason: {}",
+                            plugin.getClass().getName(), e.getMessage(), e);
+                }
+            }
         }
     }
 

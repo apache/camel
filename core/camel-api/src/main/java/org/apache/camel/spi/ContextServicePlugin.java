@@ -66,4 +66,13 @@ public interface ContextServicePlugin {
      * @param camelContext the CamelContext being initialized, never {@code null}
      */
     void load(CamelContext camelContext);
+
+    /**
+     * Called during CamelContext stop. Use it to free allocated resources.
+     *
+     * @param camelContext the CamelContext being uninitialized, never {@code null}
+     */
+    default void unload(CamelContext camelContext) {
+        // NO-OP
+    }
 }
