@@ -345,8 +345,7 @@ git push -f origin your-branch
 
 After the code was integrated into the Camel repository, you can watch the https://ci-builds.apache.org/job/Camel/[Apache Continuous Integration] instance to double-check that it worked and no side effects were introduced. You can watch the following jobs:
 
-* https://ci-builds.apache.org/blue/organizations/jenkins/Camel%2FCamel%20Core%20(Build%20and%20test)/activity/[Camel Core (Build and test)]
-* https://ci-builds.apache.org/job/Camel/job/Apache%20Camel/job/camel-3.x/[Camel 3 (JDK 11)]
+* https://ci-builds.apache.org/job/Camel/job/Camel%20Core%20(Build%20and%20test)/[Camel Core (Build and test)]
 
 Our CI has many other jobs, covering different JDKs, platforms (x86, PowerPC, s390x, etc,) and projects. If in doubt, ask.
 
