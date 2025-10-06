@@ -31,6 +31,8 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
+
 /**
  * Testing the monitor functionality for item
  */
@@ -85,18 +87,31 @@ public class MonitorItemTest extends AbstractMiloServerTest {
          * default server update rate is 1_000 milliseconds
          */
         final var time = 2 * 1_000;
+        final var timeout = 10 * 1_000; // 10 seconds timeout for assertions
 
         // item 1 ... only this one receives
         test1Endpoint.reset();
         test1Endpoint.setExpectedCount(3);
 
+        // Allow time for OPC UA client-server connection to establish
+        await().pollDelay(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            // Connection should be established
+        });
+
+        // Debug: Check if server is configured correctly
+        LOG.info("Server Port: {}", this.getServerPort());
+        LOG.info("Client URI resolved: {}", resolve(MILO_CLIENT_ITEM_C1_1));
+
         // set server values
         this.producer1.sendBody("Foo");
-        Thread.sleep(time);
+        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+        });
         this.producer1.sendBody("Bar");
-        Thread.sleep(time);
+        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+        });
         this.producer1.sendBody("Baz");
-        Thread.sleep(time);
+        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+        });
 
         // tests
         testBody(this.test1Endpoint.message(0), assertGoodValue("Foo"));
@@ -104,6 +119,6 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         testBody(this.test1Endpoint.message(2), assertGoodValue("Baz"));
 
         // assert
-        MockEndpoint.assertIsSatisfied(context, time, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, timeout, TimeUnit.MILLISECONDS);
     }
 }

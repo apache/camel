@@ -5,6 +5,7 @@
 :description: Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
 :since: 2.19
 :supportlevel: Stable
+:tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: milo
