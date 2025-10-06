@@ -256,6 +256,11 @@
             <artifactId>camel-test-infra-triton</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-keycloak</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -525,6 +530,12 @@
                                         <artifactId>camel-test-infra-ibmmq</artifactId>
                                     </dependency>
                                 </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-keycloak</artifactId>
+                                    </dependency>
+                                </fileSet>                                
                             </fileSets>
                         </configuration>
                     </execution>
