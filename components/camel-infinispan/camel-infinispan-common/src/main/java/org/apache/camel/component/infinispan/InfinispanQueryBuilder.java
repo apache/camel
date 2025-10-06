@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.infinispan;
 
-import org.infinispan.query.dsl.Query;
-import org.infinispan.query.dsl.QueryFactory;
+import org.infinispan.commons.api.BasicCache;
+import org.infinispan.commons.api.query.Query;
 
 @FunctionalInterface
 public interface InfinispanQueryBuilder {
-    Query build(QueryFactory queryFactory);
+
+    Query<?> build(BasicCache<?, ?> cache);
 
     static InfinispanQueryBuilder create(String query) {
-        return qf -> qf.create(query);
+        return cache -> cache.query(query);
     }
 }

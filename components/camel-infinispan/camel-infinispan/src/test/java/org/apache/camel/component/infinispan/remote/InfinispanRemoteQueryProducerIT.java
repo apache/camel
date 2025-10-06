@@ -50,11 +50,11 @@ public class InfinispanRemoteQueryProducerIT extends InfinispanRemoteQueryTestSu
 
     @BindToRegistry("noResultQueryBuilder")
     private InfinispanQueryBuilder noResultQueryBuilder
-            = qf -> qf.from(User.class).having("name").like("%abc%").build();
+            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%abc%'");
 
     @BindToRegistry("withResultQueryBuilder")
     private InfinispanQueryBuilder withResultQueryBuilder
-            = qf -> qf.from(User.class).having("name").like("%A").build();
+            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%A'");
 
     // *****************************
     //

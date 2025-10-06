@@ -45,15 +45,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class InfinispanRemoteQueryConsumerIT extends InfinispanRemoteQueryTestSupport {
     @BindToRegistry("continuousQueryBuilder")
     private InfinispanQueryBuilder continuousQueryBuilder
-            = qf -> qf.from(User.class).having("name").like("CQ%").build();
+            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE 'CQ%'");
 
     @BindToRegistry("continuousQueryBuilderNoMatch")
     private InfinispanQueryBuilder continuousQueryBuilderNoMatch
-            = qf -> qf.from(User.class).having("name").like("%TEST%").build();
+            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%TEST%'");
 
     @BindToRegistry("continuousQueryBuilderAll")
     private InfinispanQueryBuilder continuousQueryBuilderAll
-            = qf -> qf.from(User.class).having("name").like("%Q0%").build();
+            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%Q0%'");
 
     // *****************************
     //
