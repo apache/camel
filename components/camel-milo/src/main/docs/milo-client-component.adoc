@@ -19,6 +19,9 @@ http://eclipse.org/milo[Eclipse Milo™] implementation.
 
 *Java 11+*: This component requires Java 11+ at runtime.
 
+NOTE: This component uses Eclipse Milo 1.0.5. When migrating from earlier versions,
+be aware that the Milo API has undergone significant changes in the 1.0.x series.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -156,9 +159,17 @@ from("direct:start")
 When setting the allowing security policies is it possible to use the well known OPC UA URIs (e.g. `\http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15`)
 or to use the Milo enum literals (e.g. `None`). Specifying an unknown security policy URI or enum is an error.
 
-The known security policy URIs and enum literals are can be seen here: https://github.com/eclipse/milo/blob/master/opc-ua-stack/stack-core/src/main/java/org/eclipse/milo/opcua/stack/core/security/SecurityPolicy.java[SecurityPolicy.java] 
+The known security policy URIs and enum literals are can be seen here: https://github.com/eclipse/milo/blob/master/opc-ua-stack/stack-core/src/main/java/org/eclipse/milo/opcua/stack/core/security/SecurityPolicy.java[SecurityPolicy.java]
 
 NOTE: In any case security policies are considered case sensitive.
+
+==== Milo 1.0.5 Migration Notes
+
+With Milo 1.0.5, several security-related API changes were introduced:
+
+* The `ServerCertificateValidator` class has been replaced with `CertificateValidator` in the core security package
+* Certificate validation now uses `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`
+* When configuring custom certificate validators, ensure you're using the updated API
 
 
 include::spring-boot:partial$starter.adoc[]

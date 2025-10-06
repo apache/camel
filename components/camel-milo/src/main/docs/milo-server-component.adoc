@@ -17,7 +17,10 @@
 The Milo Server component provides an OPC UA server using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
 
-*Java 9+*: This component requires Java 9+ at runtime.
+*Java 11+*: This component requires Java 11+ at runtime.
+
+NOTE: This component uses Eclipse Milo 1.0.5. When migrating from earlier versions,
+be aware that the Milo API has undergone significant changes in the 1.0.x series.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -56,7 +59,21 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+=== Security Configuration
 
+When configuring security for the OPC UA server, the following considerations apply:
+
+* Certificate validation uses `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`
+* The component supports both certificate-based and username/password authentication
+* Security policies can be configured using the `securityPolicies` or `securityPoliciesById` options
+
+==== Milo 1.0.5 Migration Notes
+
+With Milo 1.0.5, several security-related API changes were introduced:
+
+* The `ServerCertificateValidator` class has been replaced with `CertificateValidator`
+* Certificate validation now uses `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`
+* When configuring custom certificate validators programmatically, ensure you're using the updated API
 
 
 include::spring-boot:partial$starter.adoc[]
