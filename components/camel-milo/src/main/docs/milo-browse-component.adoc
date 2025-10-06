@@ -19,6 +19,9 @@ http://eclipse.org/milo[Eclipse Milo™] implementation.
 
 *Java 11+*: This component requires Java 11+ at runtime.
 
+NOTE: This component uses Eclipse Milo 1.0.5. When migrating from earlier versions,
+be aware that the Milo API has undergone significant changes in the 1.0.x series.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -93,5 +96,11 @@ from("direct:start")
 
 Dependent to the OPC-UA server there it might be required to browse a hierarchy of nodes.
 Be aware that this is potentially a very expensive operation.
+
+=== Milo 1.0.5 Migration Notes
+
+With Milo 1.0.5, the browse API remains largely compatible, but shares the same security-related
+changes as the client and server components. Please refer to the xref:milo-client-component.adoc[Milo Client]
+documentation for details on security configuration changes.
 
 include::spring-boot:partial$starter.adoc[]
