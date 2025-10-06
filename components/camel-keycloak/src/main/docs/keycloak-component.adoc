@@ -2189,8 +2189,8 @@ Java::
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
     "http://localhost:8080", "my-realm", "my-client", "client-secret");
 
-// Require specific roles
-policy.setRequiredRoles(Arrays.asList("admin", "user"));
+// Require specific roles (comma-separated)
+policy.setRequiredRoles("admin,user");
 policy.setAllRolesRequired(true); // User must have ALL roles
 
 from("direct:admin")
@@ -2220,9 +2220,7 @@ beans:
       realm: "my-realm"
       clientId: "my-client"
       clientSecret: "client-secret"
-      requiredRoles:
-        - "admin"
-        - "user"
+      requiredRoles: "admin,user"
       allRolesRequired: true
 ----
 ====
@@ -2238,8 +2236,8 @@ Java::
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
     "http://localhost:8080", "my-realm", "my-client", "client-secret");
 
-// Require specific permissions
-policy.setRequiredPermissions(Arrays.asList("read:documents", "write:documents"));
+// Require specific permissions (comma-separated)
+policy.setRequiredPermissions("read:documents,write:documents");
 policy.setAllPermissionsRequired(false); // User needs ANY permission
 
 from("direct:documents")
@@ -2269,9 +2267,7 @@ beans:
       realm: "my-realm"
       clientId: "my-client"
       clientSecret: "client-secret"
-      requiredPermissions:
-        - "read:documents"
-        - "write:documents"
+      requiredPermissions: "read:documents,write:documents"
       allPermissionsRequired: false
 ----
 ====
@@ -2411,8 +2407,8 @@ YAML::
 | clientSecret | | Keycloak client secret (for client credentials flow)
 | username | | Username (for resource owner password flow)
 | password | | Password (for resource owner password flow)
-| requiredRoles | [] | List of required roles
-| requiredPermissions | [] | List of required permissions
+| requiredRoles | "" | Comma-separated list of required roles (e.g., "admin,user,manager")
+| requiredPermissions | "" | Comma-separated list of required permissions (e.g., "read:documents,write:documents")
 | allRolesRequired | true | Whether ALL roles are required (true) or ANY role (false)
 | allPermissionsRequired | true | Whether ALL permissions are required (true) or ANY permission (false)
 | useResourceOwnerPasswordCredentials | false | Whether to use resource owner password flow
@@ -2482,8 +2478,8 @@ keycloakPolicy.setRealm("my-company");
 keycloakPolicy.setClientId("my-service");
 keycloakPolicy.setClientSecret("client-secret-value");
 
-// Require admin role
-keycloakPolicy.setRequiredRoles(Arrays.asList("admin"));
+// Require admin role (comma-separated string)
+keycloakPolicy.setRequiredRoles("admin");
 
 // Apply to route
 from("direct:admin-endpoint")
@@ -2516,8 +2512,7 @@ beans:
       realm: "my-company"
       clientId: "my-service"
       clientSecret: "client-secret-value"
-      requiredRoles:
-        - "admin"
+      requiredRoles: "admin"
 ----
 ====
 
@@ -2529,10 +2524,10 @@ Java::
 +
 [source,java]
 ----
-// Require either admin OR user role
+// Require either admin OR user role (comma-separated string)
 KeycloakSecurityPolicy userPolicy = new KeycloakSecurityPolicy(
     "http://localhost:8080", "my-company", "my-service", "client-secret");
-userPolicy.setRequiredRoles(Arrays.asList("admin", "user"));
+userPolicy.setRequiredRoles("admin,user");
 userPolicy.setAllRolesRequired(false); // ANY role (OR logic)
 
 from("direct:user-endpoint")
@@ -2562,9 +2557,7 @@ beans:
       realm: "my-company"
       clientId: "my-service"
       clientSecret: "client-secret"
-      requiredRoles:
-        - "admin"
-        - "user"
+      requiredRoles: "admin,user"
       allRolesRequired: false
 ----
 ====
@@ -2581,19 +2574,19 @@ Java::
 KeycloakSecurityPolicy readPolicy = new KeycloakSecurityPolicy(
     "{{keycloak.server-url}}", "{{keycloak.realm}}",
     "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-readPolicy.setRequiredRoles(Arrays.asList("reader", "writer", "admin"));
+readPolicy.setRequiredRoles("reader,writer,admin");
 readPolicy.setAllRolesRequired(false);
 
 KeycloakSecurityPolicy writePolicy = new KeycloakSecurityPolicy(
     "{{keycloak.server-url}}", "{{keycloak.realm}}",
     "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-writePolicy.setRequiredRoles(Arrays.asList("writer", "admin"));
+writePolicy.setRequiredRoles("writer,admin");
 writePolicy.setAllRolesRequired(false);
 
 KeycloakSecurityPolicy adminPolicy = new KeycloakSecurityPolicy(
     "{{keycloak.server-url}}", "{{keycloak.realm}}",
     "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-adminPolicy.setRequiredRoles(Arrays.asList("admin"));
+adminPolicy.setRequiredRoles("admin");
 
 // Configure REST endpoints
 rest("/api")
@@ -2648,10 +2641,7 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "reader"
-        - "writer"
-        - "admin"
+      requiredRoles: "reader,writer,admin"
       allRolesRequired: false
 
   - name: writePolicy
@@ -2661,9 +2651,7 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "writer"
-        - "admin"
+      requiredRoles: "writer,admin"
       allRolesRequired: false
 
   - name: adminPolicy
@@ -2673,8 +2661,7 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "admin"
+      requiredRoles: "admin"
 ----
 ====
 
@@ -2813,7 +2800,7 @@ public class SecurityConfiguration {
     public KeycloakSecurityPolicy adminPolicy() {
         KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
             serverUrl, realm, clientId, clientSecret);
-        policy.setRequiredRoles(Arrays.asList("admin"));
+        policy.setRequiredRoles("admin");
         return policy;
     }
 
@@ -2821,7 +2808,7 @@ public class SecurityConfiguration {
     public KeycloakSecurityPolicy userPolicy() {
         KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
             serverUrl, realm, clientId, clientSecret);
-        policy.setRequiredRoles(Arrays.asList("user", "admin"));
+        policy.setRequiredRoles("user,admin");
         policy.setAllRolesRequired(false);
         return policy;
     }
@@ -2845,13 +2832,13 @@ public class KeycloakSecurityRoutes extends RouteBuilder {
         KeycloakSecurityPolicy adminPolicy = new KeycloakSecurityPolicy(
             "{{keycloak.server-url}}", "{{keycloak.realm}}",
             "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-        adminPolicy.setRequiredRoles(Arrays.asList("admin"));
+        adminPolicy.setRequiredRoles("admin");
 
         // User policy - requires user or admin role
         KeycloakSecurityPolicy userPolicy = new KeycloakSecurityPolicy(
             "{{keycloak.server-url}}", "{{keycloak.realm}}",
             "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-        userPolicy.setRequiredRoles(Arrays.asList("user", "admin"));
+        userPolicy.setRequiredRoles("user,admin");
         userPolicy.setAllRolesRequired(false); // ANY role
 
         // Error handling
@@ -2915,8 +2902,7 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "admin"
+      requiredRoles: "admin"
 
   - name: userPolicy
     type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
@@ -2925,9 +2911,7 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "user"
-        - "admin"
+      requiredRoles: "user,admin"
       allRolesRequired: false
 ----
 
@@ -3162,7 +3146,7 @@ For permissions-based authorization, you have several options to include permiss
 [source,java]
 ----
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
-policy.setRequiredPermissions(Arrays.asList("documents", "users", "admin"));
+policy.setRequiredPermissions("documents,users,admin");
 policy.setAllPermissionsRequired(false); // ANY permission
 ----
 
@@ -3191,9 +3175,9 @@ strictPolicy.setRealm("{{keycloak.realm}}");
 strictPolicy.setClientId("{{keycloak.client-id}}");
 strictPolicy.setClientSecret("{{keycloak.client-secret}}");
 
-// User must have admin role AND document permissions
-strictPolicy.setRequiredRoles(Arrays.asList("admin"));
-strictPolicy.setRequiredPermissions(Arrays.asList("read:documents", "write:documents"));
+// User must have admin role AND document permissions (comma-separated)
+strictPolicy.setRequiredRoles("admin");
+strictPolicy.setRequiredPermissions("read:documents,write:documents");
 strictPolicy.setAllRolesRequired(true);
 strictPolicy.setAllPermissionsRequired(false); // ANY permission
 
@@ -3245,11 +3229,8 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "admin"
-      requiredPermissions:
-        - "read:documents"
-        - "write:documents"
+      requiredRoles: "admin"
+      requiredPermissions: "read:documents,write:documents"
       allRolesRequired: true
       allPermissionsRequired: false
 
@@ -3260,12 +3241,8 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "admin"
-        - "manager"
-      requiredPermissions:
-        - "read:documents"
-        - "emergency:access"
+      requiredRoles: "admin,manager"
+      requiredPermissions: "read:documents,emergency:access"
       allRolesRequired: false
       allPermissionsRequired: false
 ----

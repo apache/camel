@@ -51,11 +51,11 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 throw new CamelAuthorizationException("Access token not found in exchange", exchange);
             }
 
-            if (!policy.getRequiredRoles().isEmpty()) {
+            if (!policy.getRequiredRolesAsList().isEmpty()) {
                 validateRoles(accessToken, exchange);
             }
 
-            if (!policy.getRequiredPermissions().isEmpty()) {
+            if (!policy.getRequiredPermissionsAsList().isEmpty()) {
                 validatePermissions(accessToken, exchange);
             }
 
@@ -100,8 +100,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             Set<String> userRoles = KeycloakSecurityHelper.extractRoles(token, policy.getRealm(), policy.getClientId());
 
             boolean hasRequiredRoles = policy.isAllRolesRequired()
-                    ? userRoles.containsAll(policy.getRequiredRoles())
-                    : policy.getRequiredRoles().stream().anyMatch(userRoles::contains);
+                    ? userRoles.containsAll(policy.getRequiredRolesAsList())
+                    : policy.getRequiredRolesAsList().stream().anyMatch(userRoles::contains);
 
             if (!hasRequiredRoles) {
                 String message = String.format("User does not have required roles. Required: %s, User has: %s",
@@ -131,8 +131,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             Set<String> userPermissions = KeycloakSecurityHelper.extractPermissions(token);
 
             boolean hasRequiredPermissions = policy.isAllPermissionsRequired()
-                    ? userPermissions.containsAll(policy.getRequiredPermissions())
-                    : policy.getRequiredPermissions().stream().anyMatch(userPermissions::contains);
+                    ? userPermissions.containsAll(policy.getRequiredPermissionsAsList())
+                    : policy.getRequiredPermissionsAsList().stream().anyMatch(userPermissions::contains);
 
             if (!hasRequiredPermissions) {
                 String message = String.format("User does not have required permissions. Required: %s, User has: %s",

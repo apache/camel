@@ -51,7 +51,19 @@ public class KeycloakSecurityPolicyTest extends CamelTestSupport {
         policy.setRequiredRoles(requiredRoles);
         policy.setAllRolesRequired(true);
 
-        assertEquals(requiredRoles, policy.getRequiredRoles());
+        assertEquals("admin,user", policy.getRequiredRoles());
+        assertEquals(requiredRoles, policy.getRequiredRolesAsList());
+        assertTrue(policy.isAllRolesRequired());
+    }
+
+    @Test
+    void testKeycloakSecurityPolicyWithRolesAsCommaSeparatedString() {
+        KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+        policy.setRequiredRoles("admin,user,manager");
+        policy.setAllRolesRequired(true);
+
+        assertEquals("admin,user,manager", policy.getRequiredRoles());
+        assertEquals(Arrays.asList("admin", "user", "manager"), policy.getRequiredRolesAsList());
         assertTrue(policy.isAllRolesRequired());
     }
 
@@ -62,7 +74,20 @@ public class KeycloakSecurityPolicyTest extends CamelTestSupport {
         policy.setRequiredPermissions(requiredPermissions);
         policy.setAllPermissionsRequired(false);
 
-        assertEquals(requiredPermissions, policy.getRequiredPermissions());
+        assertEquals("read,write", policy.getRequiredPermissions());
+        assertEquals(requiredPermissions, policy.getRequiredPermissionsAsList());
+        assertFalse(policy.isAllPermissionsRequired());
+    }
+
+    @Test
+    void testKeycloakSecurityPolicyWithPermissionsAsCommaSeparatedString() {
+        KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+        policy.setRequiredPermissions("read:documents,write:documents,delete:documents");
+        policy.setAllPermissionsRequired(false);
+
+        assertEquals("read:documents,write:documents,delete:documents", policy.getRequiredPermissions());
+        assertEquals(Arrays.asList("read:documents", "write:documents", "delete:documents"),
+                policy.getRequiredPermissionsAsList());
         assertFalse(policy.isAllPermissionsRequired());
     }
 
