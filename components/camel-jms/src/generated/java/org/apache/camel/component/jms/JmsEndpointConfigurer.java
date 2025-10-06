@@ -151,6 +151,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "receiveTimeout": target.getConfiguration().setReceiveTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "recoveryinterval":
         case "recoveryInterval": target.getConfiguration().setRecoveryInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "replycorrelationproperty":
+        case "replyCorrelationProperty": target.getConfiguration().setReplyCorrelationProperty(property(camelContext, java.lang.String.class, value)); return true;
         case "replyto":
         case "replyTo": target.getConfiguration().setReplyTo(property(camelContext, java.lang.String.class, value)); return true;
         case "replytocachelevelname":
@@ -354,6 +356,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "receiveTimeout": return long.class;
         case "recoveryinterval":
         case "recoveryInterval": return long.class;
+        case "replycorrelationproperty":
+        case "replyCorrelationProperty": return java.lang.String.class;
         case "replyto":
         case "replyTo": return java.lang.String.class;
         case "replytocachelevelname":
@@ -558,6 +562,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "receiveTimeout": return target.getConfiguration().getReceiveTimeout();
         case "recoveryinterval":
         case "recoveryInterval": return target.getConfiguration().getRecoveryInterval();
+        case "replycorrelationproperty":
+        case "replyCorrelationProperty": return target.getConfiguration().getReplyCorrelationProperty();
         case "replyto":
         case "replyTo": return target.getConfiguration().getReplyTo();
         case "replytocachelevelname":
