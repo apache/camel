@@ -6,6 +6,8 @@
 :since: 4.15
 :supportlevel: Preview
 :tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: mdc
 
 *Since Camel {since}*
 
