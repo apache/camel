@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.milo.call;
 
-import java.security.KeyPair;
-import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -101,16 +99,16 @@ public class CallClientTest extends AbstractMiloServerTest {
     public void start() throws Exception {
         final OpcUaServerConfigBuilder cfg = OpcUaServerConfig.builder();
 
-//        cfg.setCertificateManager(new DefaultCertificateManager()); // TODO setCertificateManager is called afterwards
+        //        cfg.setCertificateManager(new DefaultCertificateManager()); // TODO setCertificateManager is called afterwards
         cfg.setEndpoints(createEndpointConfigs(Arrays.asList(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS),
                 EnumSet.of(SecurityPolicy.None)));
         cfg.setApplicationName(LocalizedText.english("Apache Camel Milo Server"));
         cfg.setApplicationUri("urn:mock:namespace");
         cfg.setProductUri("urn:org:apache:camel:milo");
         // FIXME migrate to new certifcate
-//        cfg.setCertificateManager(new DefaultCertificateManager());
-////        cfg.setCertificateValidator(new InsecureCertificateValidator());
-//        cfg.setCertificateValidator(new CertificateValidator.InsecureCertificateValidator());
+        //        cfg.setCertificateManager(new DefaultCertificateManager());
+        ////        cfg.setCertificateValidator(new InsecureCertificateValidator());
+        //        cfg.setCertificateValidator(new CertificateValidator.InsecureCertificateValidator());
 
         var certificateQuarantine = new MemoryCertificateQuarantine();
         var trustListManager = new MemoryTrustListManager();
@@ -120,21 +118,19 @@ public class CallClientTest extends AbstractMiloServerTest {
                 trustListManager,
                 certificateStore,
                 certificateFactory,
-                new CertificateValidator.InsecureCertificateValidator()
-        );
+                new CertificateValidator.InsecureCertificateValidator());
         cfg.setCertificateManager(
                 new DefaultCertificateManager(certificateQuarantine, certificateGroup));
 
         // https://github.com/eclipse-milo/milo/blob/1.0/milo-examples/server-examples/src/main/java/org/eclipse/milo/examples/server/ExampleServer.java
-//        this.server = new OpcUaServer(cfg.build());
+        //        this.server = new OpcUaServer(cfg.build());
         OpcUaServerConfig serverConfig = cfg.build();
         this.server = new OpcUaServer(
                 serverConfig,
                 transportProfile -> {
                     assert transportProfile == TransportProfile.TCP_UASC_UABINARY;
 
-                    OpcTcpServerTransportConfig transportConfig =
-                            OpcTcpServerTransportConfig.newBuilder().build();
+                    OpcTcpServerTransportConfig transportConfig = OpcTcpServerTransportConfig.newBuilder().build();
 
                     return new OpcTcpServerTransport(transportConfig);
                 });

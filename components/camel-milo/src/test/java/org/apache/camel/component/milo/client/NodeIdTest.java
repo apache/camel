@@ -53,7 +53,8 @@ public class NodeIdTest extends AbstractMiloServerTest {
     @Test
     public void testFull1() {
         final String s = String.format("nsu=%s;s=%s", MiloServerComponent.DEFAULT_NAMESPACE_URI, "item-1");
-        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")", MiloServerComponent.DEFAULT_NAMESPACE_URI,
+        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")",
+                MiloServerComponent.DEFAULT_NAMESPACE_URI,
                 "item-1");
     }
 
@@ -86,7 +87,8 @@ public class NodeIdTest extends AbstractMiloServerTest {
     public void testMixed() {
         // This must fail since "node" is incomplete
         assertThrows(ResolveEndpointFailedException.class,
-                () -> testUri("milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri=" + MiloServerComponent.DEFAULT_NAMESPACE_URI,
+                () -> testUri("milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri="
+                              + MiloServerComponent.DEFAULT_NAMESPACE_URI,
                         null, null));
     }
 

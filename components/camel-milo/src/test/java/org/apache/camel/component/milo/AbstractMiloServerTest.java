@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
@@ -48,7 +47,6 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
-        assumeTrue(isJavaVersionSatisfied(9), "Requires java 9+");
         super.doPreSetup();
         this.serverPort = AvailablePortFinder.getNextAvailable();
     }
@@ -63,7 +61,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     /**
      * Replace the port placeholder with the dynamic server port
-     * 
+     *
      * @param  uri the URI to process
      * @return     the result, may be {@code null} if the input is {@code null}
      */
@@ -118,6 +116,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
         server.setUserAuthenticationCredentials("foo:bar,foo2:bar2");
         server.setUsernameSecurityPolicyUri(SecurityPolicy.None);
         server.setSecurityPoliciesById("None");
+        server.setEnableAnonymousAuthentication(true);
     }
 
     /**

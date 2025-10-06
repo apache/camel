@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.milo.opcua.sdk.core.Reference;
-import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.ManagedNamespaceWithLifecycle;
+import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.dtd.BinaryDataTypeDictionaryManager;
 import org.eclipse.milo.opcua.sdk.server.items.DataItem;
 import org.eclipse.milo.opcua.sdk.server.items.MonitoredItem;

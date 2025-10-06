@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import jakarta.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.KeyStoreLoader.Result;
@@ -431,9 +432,9 @@ public class MiloClientConfiguration implements Cloneable {
             builder.setRequestTimeout(Unsigned.uint(configuration.getRequestTimeout()));
         }
         // FIXME - validate moving of ChannelLifetime to SubscriptionManager
-//        if (configuration.getChannelLifetime() != null) {
-//            builder.setChannelLifetime(Unsigned.uint(configuration.getChannelLifetime()));
-//        }
+        //        if (configuration.getChannelLifetime() != null) {
+        //            builder.setChannelLifetime(Unsigned.uint(configuration.getChannelLifetime()));
+        //        }
 
         whenHasText(configuration::getSessionName, value -> builder.setSessionName(() -> value));
         if (configuration.getSessionTimeout() != null) {
