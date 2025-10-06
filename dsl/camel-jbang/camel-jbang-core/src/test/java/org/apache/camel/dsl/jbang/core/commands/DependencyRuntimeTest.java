@@ -119,18 +119,18 @@ class DependencyRuntimeTest extends CamelCommandBaseTest {
         static final String SPRING_BOOT_POM = "pom-xml-files/springboot-pom.xml";
         static final String SPRING_BOOT_POM_OUTPUT = """
                 Runtime: spring-boot
-                Camel Version: 4.14.0
-                Camel Spring Boot Version: 4.14.0
+                Camel Version: 4.14.1
+                Camel Spring Boot Version: 4.14.1
                 Spring Boot Version: 3.5.3""";
         static final String SPRING_BOOT_POM_JSON_OUTPUT
-                = "{\"runtime\":\"spring-boot\",\"camelVersion\":\"4.14.0\",\"camelSpringBootVersion\":\"4.14.0\",\"springBootVersion\":\"3.5.3\",\"camelSpringBootBomGroupId\":\"org.apache.camel.springboot\",\"camelSpringBootBomArtifactId\":\"camel-spring-boot-bom\"}";
+                = "{\"runtime\":\"spring-boot\",\"camelVersion\":\"4.14.1\",\"camelSpringBootVersion\":\"4.14.1\",\"springBootVersion\":\"3.5.3\",\"camelSpringBootBomGroupId\":\"org.apache.camel.springboot\",\"camelSpringBootBomArtifactId\":\"camel-spring-boot-bom\"}";
 
         static final String MAIN_POM = "pom-xml-files/main-pom.xml";
         static final String MAIN_POM_OUTPUT = """
                 Runtime: main
-                Camel Version: 4.14.0""";
+                Camel Version: 4.14.1""";
         static final String MAIN_POM_JSON_OUTPUT
-                = "{\"runtime\":\"main\",\"camelVersion\":\"4.14.0\"}";
+                = "{\"runtime\":\"main\",\"camelVersion\":\"4.14.1\"}";
 
     }
 }
