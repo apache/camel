@@ -305,6 +305,15 @@
   "artifactId" : "camel-test-infra-couchdb",
   "version" : "4.15.0-SNAPSHOT"
 }, {
+  "service" : "org.apache.camel.test.infra.keycloak.services.KeycloakInfraService",
+  "description" : "Identity and access management solution",
+  "implementation" : "org.apache.camel.test.infra.keycloak.services.KeycloakLocalContainerInfraService",
+  "alias" : [ "keycloak" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-keycloak",
+  "version" : "4.15.0-SNAPSHOT"
+}, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
   "description" : "MQTT Platform HiveMQ",
   "implementation" : "org.apache.camel.test.infra.hivemq.services.LocalHiveMQInfraService",
