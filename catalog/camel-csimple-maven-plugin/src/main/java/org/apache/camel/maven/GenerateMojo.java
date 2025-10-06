@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.catalog.common.CatalogHelper;
 import org.apache.camel.language.csimple.CSimpleCodeGenerator;
@@ -47,6 +49,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.mojo.exec.AbstractExecMojo;
+import org.eclipse.aether.RepositorySystem;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -118,6 +121,11 @@ public class GenerateMojo extends AbstractExecMojo {
 
     private final Set<String> imports = new TreeSet<>();
     private final Map<String, String> aliases = new HashMap<>();
+
+    @Inject
+    public GenerateMojo(RepositorySystem repositorySystem) {
+        super(repositorySystem);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
