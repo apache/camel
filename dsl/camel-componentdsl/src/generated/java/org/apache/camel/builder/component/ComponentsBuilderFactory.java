@@ -3145,19 +3145,6 @@ public interface ComponentsBuilderFactory {
         return MicrometerComponentBuilderFactory.micrometer();
     }
     /**
-     * Milvus (camel-milvus)
-     * Perform operations on the Milvus Vector Database.
-     * 
-     * Category: database,ai
-     * Since: 4.5
-     * Maven coordinates: org.apache.camel:camel-milvus
-     * 
-     * @return the dsl builder
-     */
-    static MilvusComponentBuilderFactory.MilvusComponentBuilder milvus() {
-        return MilvusComponentBuilderFactory.milvus();
-    }
-    /**
      * OPC UA Browser (camel-milo)
      * Connect to OPC UA servers using the binary protocol for browsing the node
      * tree.
@@ -3168,8 +3155,8 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
-    static org.apache.camel.builder.component.dsl.MiloBrowseComponentBuilderFactory.MiloBrowseComponentBuilder miloBrowse() {
-        return org.apache.camel.builder.component.dsl.MiloBrowseComponentBuilderFactory.miloBrowse();
+    static MiloBrowseComponentBuilderFactory.MiloBrowseComponentBuilder miloBrowse() {
+        return MiloBrowseComponentBuilderFactory.miloBrowse();
     }
     /**
      * OPC UA Client (camel-milo)
@@ -3182,8 +3169,8 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
-    static org.apache.camel.builder.component.dsl.MiloClientComponentBuilderFactory.MiloClientComponentBuilder miloClient() {
-        return org.apache.camel.builder.component.dsl.MiloClientComponentBuilderFactory.miloClient();
+    static MiloClientComponentBuilderFactory.MiloClientComponentBuilder miloClient() {
+        return MiloClientComponentBuilderFactory.miloClient();
     }
     /**
      * OPC UA Server (camel-milo)
@@ -3195,8 +3182,21 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
-    static org.apache.camel.builder.component.dsl.MiloServerComponentBuilderFactory.MiloServerComponentBuilder miloServer() {
-        return org.apache.camel.builder.component.dsl.MiloServerComponentBuilderFactory.miloServer();
+    static MiloServerComponentBuilderFactory.MiloServerComponentBuilder miloServer() {
+        return MiloServerComponentBuilderFactory.miloServer();
+    }
+    /**
+     * Milvus (camel-milvus)
+     * Perform operations on the Milvus Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.5
+     * Maven coordinates: org.apache.camel:camel-milvus
+     * 
+     * @return the dsl builder
+     */
+    static MilvusComponentBuilderFactory.MilvusComponentBuilder milvus() {
+        return MilvusComponentBuilderFactory.milvus();
     }
     /**
      * Mina (camel-mina)

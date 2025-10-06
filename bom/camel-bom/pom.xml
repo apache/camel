@@ -1524,13 +1524,13 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-milvus</artifactId>
+        <artifactId>camel-milo</artifactId>
         <version>4.15.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-milo</artifactId>
-        <version>${project.version}</version>
+        <artifactId>camel-milvus</artifactId>
+        <version>4.15.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
