@@ -54,6 +54,7 @@ public final class SensitiveUtils {
                     "emailaddress",
                     "httpproxypassword",
                     "kerberosauthticket",
+                    "keypassword",
                     "keystorePassword",
                     "keystorepassword",
                     "login",
@@ -99,6 +100,7 @@ public final class SensitiveUtils {
                     "tokencredential",
                     "truststorepassword",
                     "user",
+                    "userauthenticationcredentials",
                     "username",
                     "userpassword",
                     "verificationcode",
@@ -136,6 +138,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qemailaddress\\E"
                                                     + "|\\Qhttpproxypassword\\E"
                                                     + "|\\Qkerberosauthticket\\E"
+                                                    + "|\\Qkeypassword\\E"
                                                     + "|\\QkeystorePassword\\E"
                                                     + "|\\Qkeystorepassword\\E"
                                                     + "|\\Qlogin\\E"
@@ -181,12 +184,13 @@ public final class SensitiveUtils {
                                                     + "|\\Qtokencredential\\E"
                                                     + "|\\Qtruststorepassword\\E"
                                                     + "|\\Quser\\E"
+                                                    + "|\\Quserauthenticationcredentials\\E"
                                                     + "|\\Qusername\\E"
                                                     + "|\\Quserpassword\\E"
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-    // SENSITIVE-PATTERN: END
+                                                    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {
