@@ -47,10 +47,13 @@ runs:
       with:
         dry-run: ${{ inputs.skip-mvnd-install }}
     - name: maven build
-      shell: bash
-      run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd ${{ inputs.mode }} ${{ inputs.pr-id }} ${{ inputs.github-repo }}
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        MODE: ${{ inputs.mode }}
+        PR_ID: ${{ inputs.pr-id }}
+        GITHUB_REPO: ${{ inputs.github-repo }}
+      shell: bash
+      run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd $MODE $PR_ID $GITHUB_REPO
     - name: archive logs
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       if: always()
