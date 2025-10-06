@@ -17,9 +17,13 @@
 
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.util.Optional;
+
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModelName;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
@@ -30,6 +34,10 @@ public class ModelHelper {
 
     public static final String API_KEY = "API_KEY";
     public static final String MODEL_PROVIDER = "MODEL_PROVIDER";
+    public static final String MODEL_BASE_URL = "MODEL_BASE_URL";
+    public static final String MODEL_NAME = "MODEL_NAME";
+    public static final String DEFAULT_OLLAMA_MODEL_NAME = "granite4:tiny-h";
+    public static final String DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434/";
 
     protected static ChatModel createGeminiModel(String apiKey) {
         return GoogleAiGeminiChatModel.builder()
@@ -56,8 +64,25 @@ public class ModelHelper {
         return switch (name) {
             case "gemini" -> createGeminiModel(apiKey);
             case "openai" -> createOpenAiModel(apiKey);
+            case "ollama" -> createOllamaModel(apiKey);
             default -> throw new IllegalArgumentException("Unknown chat model: " + name);
         };
+    }
+
+    private static ChatModel createOllamaModel(String apiKey) {
+        String baseUrl = Optional.ofNullable(System.getenv(MODEL_BASE_URL))
+                .orElse(DEFAULT_OLLAMA_BASE_URL);
+        String modelName = Optional.ofNullable(System.getenv(MODEL_NAME))
+                .orElse(DEFAULT_OLLAMA_MODEL_NAME);
+
+        return OllamaChatModel.builder()
+                .baseUrl(baseUrl)
+                .modelName(modelName)
+                .temperature(1.0)
+                .timeout(ofSeconds(60))
+                .logRequests(true)
+                .logResponses(true)
+                .build();
     }
 
     public static ChatModel loadFromEnv() {
@@ -78,11 +103,23 @@ public class ModelHelper {
         var apiKey = System.getenv(API_KEY);
 
         // Create embeddings
-        return OpenAiEmbeddingModel.builder()
-                .apiKey(apiKey)
-                .modelName("text-embedding-ada-002")
-                .timeout(ofSeconds(30))
-                .build();
+        if ("ollama".equals(System.getenv(MODEL_PROVIDER))) {
+            String baseUrl = Optional.ofNullable(System.getenv(MODEL_BASE_URL))
+                    .orElse(DEFAULT_OLLAMA_BASE_URL);
+            String modelName = Optional.ofNullable(System.getenv(MODEL_NAME))
+                    .orElse(DEFAULT_OLLAMA_MODEL_NAME);
+
+            return OllamaEmbeddingModel.builder()
+                    .baseUrl(baseUrl)
+                    .modelName(modelName)
+                    .build();
+        } else {
+            return OpenAiEmbeddingModel.builder()
+                    .apiKey(apiKey)
+                    .modelName("text-embedding-ada-002")
+                    .timeout(ofSeconds(30))
+                    .build();
+        }
     }
 
     public static boolean environmentWithoutEmbeddings() {
@@ -102,7 +139,7 @@ public class ModelHelper {
     public static boolean isEmbeddingCapable() {
         var modelProvider = System.getenv(MODEL_PROVIDER);
 
-        return "openai".equals(modelProvider);
+        return "openai".equals(modelProvider) || "ollama".equals(modelProvider);
     }
 
     public static String getApiKey() {
