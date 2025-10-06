@@ -495,9 +495,9 @@ public class JmsConfiguration implements Cloneable {
               description = "When using InOut exchange pattern use this JMS property instead of JMSCorrelationID" +
                             " JMS property to correlate reply message. Difference between this and 'correlationProperty'" +
                             " is that 'correlationProperty' tells which request property holds the correlation id value and" +
-                            " it does not affect the selector for the reply ('JMSCorrelationID=<correlation id>), while" +
+                            " it does not affect the selector for the reply (JMSCorrelationID=&lt;correlation id&gt;), while" +
                             " 'replyCorrelationProperty' tells which reply property will hold the correlation id value and" +
-                            " it does affect the selector for the reply ('<replyCorrelationProperty>=<correlation id>)")
+                            " it does affect the selector for the reply (&lt;replyCorrelationProperty&gt;=&lt;correlation id&gt;)")
     private String replyCorrelationProperty;
     @UriParam(label = "producer,advanced",
               description = "This option is used to allow additional headers which may have values that are invalid according to JMS specification."
