@@ -21,11 +21,11 @@ import org.apache.camel.component.infinispan.InfinispanEndpoint;
 import org.apache.camel.component.infinispan.InfinispanProducer;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.infinispan.client.hotrod.RemoteCache;
-import org.infinispan.query.dsl.Query;
+import org.infinispan.commons.api.query.Query;
 
 public class InfinispanRemoteProducer extends InfinispanProducer<InfinispanRemoteManager, InfinispanRemoteConfiguration> {
-    public InfinispanRemoteProducer(
-                                    InfinispanEndpoint endpoint,
+
+    public InfinispanRemoteProducer(InfinispanEndpoint endpoint,
                                     String cacheName,
                                     InfinispanRemoteManager manager,
                                     InfinispanRemoteConfiguration configuration) {

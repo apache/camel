@@ -20,11 +20,11 @@ import org.apache.camel.Message;
 import org.apache.camel.component.infinispan.InfinispanProducer;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.infinispan.Cache;
-import org.infinispan.query.dsl.Query;
+import org.infinispan.commons.api.query.Query;
 
 public class InfinispanEmbeddedProducer extends InfinispanProducer<InfinispanEmbeddedManager, InfinispanEmbeddedConfiguration> {
-    public InfinispanEmbeddedProducer(
-                                      InfinispanEmbeddedEndpoint endpoint,
+
+    public InfinispanEmbeddedProducer(InfinispanEmbeddedEndpoint endpoint,
                                       String cacheName,
                                       InfinispanEmbeddedManager manager,
                                       InfinispanEmbeddedConfiguration configuration) {

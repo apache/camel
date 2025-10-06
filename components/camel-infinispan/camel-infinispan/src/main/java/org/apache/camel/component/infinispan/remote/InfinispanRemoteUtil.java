@@ -25,10 +25,10 @@ import org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStor
 import org.apache.camel.component.infinispan.remote.embeddingstore.InfinispanVectorQueryBuilder;
 import org.infinispan.client.hotrod.Flag;
 import org.infinispan.client.hotrod.RemoteCache;
-import org.infinispan.client.hotrod.Search;
-import org.infinispan.query.dsl.Query;
+import org.infinispan.commons.api.query.Query;
 
 public final class InfinispanRemoteUtil extends InfinispanUtil {
+
     protected InfinispanRemoteUtil() {
     }
 
@@ -60,6 +60,6 @@ public final class InfinispanRemoteUtil extends InfinispanUtil {
     }
 
     public static Query<?> buildQuery(InfinispanQueryBuilder queryBuilder, RemoteCache<Object, Object> cache) {
-        return queryBuilder != null ? queryBuilder.build(Search.getQueryFactory(cache)) : null;
+        return queryBuilder != null ? queryBuilder.build(cache) : null;
     }
 }

@@ -22,11 +22,11 @@ import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.infinispan.Cache;
+import org.infinispan.commons.api.query.Query;
 import org.infinispan.context.Flag;
-import org.infinispan.query.Search;
-import org.infinispan.query.dsl.Query;
 
 public final class InfinispanEmbeddedUtil extends InfinispanUtil {
+
     protected InfinispanEmbeddedUtil() {
     }
 
@@ -53,6 +53,6 @@ public final class InfinispanEmbeddedUtil extends InfinispanUtil {
     }
 
     public static Query<?> buildQuery(InfinispanQueryBuilder queryBuilder, Cache<Object, Object> cache) {
-        return queryBuilder != null ? queryBuilder.build(Search.getQueryFactory(cache)) : null;
+        return queryBuilder != null ? queryBuilder.build(cache) : null;
     }
 }

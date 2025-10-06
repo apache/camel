@@ -17,8 +17,8 @@
 package org.apache.camel.component.infinispan.remote.embeddingstore;
 
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
-import org.infinispan.query.dsl.Query;
-import org.infinispan.query.dsl.QueryFactory;
+import org.infinispan.commons.api.BasicCache;
+import org.infinispan.commons.api.query.Query;
 
 public class InfinispanVectorQueryBuilder implements InfinispanQueryBuilder {
     private static final String QUERY_TEMPLATE = "select i, score(i) from %s i where i.embedding <-> [:vector]~:distance";
@@ -31,8 +31,9 @@ public class InfinispanVectorQueryBuilder implements InfinispanQueryBuilder {
     }
 
     @Override
-    public Query<?> build(QueryFactory queryFactory) {
-        Query<?> query = InfinispanQueryBuilder.create(QUERY_TEMPLATE.formatted(typeName)).build(queryFactory);
+    public Query<?> build(BasicCache<?, ?> cache) {
+        cache.query(QUERY_TEMPLATE.formatted(typeName));
+        Query<?> query = cache.query(QUERY_TEMPLATE.formatted(typeName));
         query.setParameter("vector", vector);
         query.setParameter("distance", distance);
         return query;
