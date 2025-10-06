@@ -201,8 +201,10 @@ public class CamelContinuationServlet extends CamelServlet {
                 exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
             }
 
-            String normalizedCharset = IOHelper.getCharsetNameFromContentType(contentType);
-            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, normalizedCharset);
+            if (contentType != null) {
+                String normalizedCharset = IOHelper.getCharsetNameFromContentType(contentType);
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, normalizedCharset);
+            }
 
             // reuse existing http message if pooled
             Message msg = exchange.getIn();
