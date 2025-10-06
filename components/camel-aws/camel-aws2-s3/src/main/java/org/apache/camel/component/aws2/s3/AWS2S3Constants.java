@@ -160,5 +160,44 @@ public interface AWS2S3Constants {
     @Metadata(description = "The bucket Name to override (can be dynamic using the simple language in the producer) which this object will be stored or which will be used for the current operation or in which this object is contained.",
               javaType = "String")
     String OVERRIDE_BUCKET_NAME = "CamelAwsS3OverrideBucketName";
+    @Metadata(label = "producer", description = "A list of keys to delete when using deleteObjects operation",
+              javaType = "List<String>")
+    String KEYS_TO_DELETE = "CamelAwsS3KeysToDelete";
+    @Metadata(label = "producer",
+              description = "The number of days for which the restore request will remain active when using restoreObject operation",
+              javaType = "Integer")
+    String RESTORE_DAYS = "CamelAwsS3RestoreDays";
+    @Metadata(label = "producer",
+              description = "The tier at which the restore will be processed when using restoreObject operation (e.g., Standard, Bulk, Expedited)",
+              javaType = "String")
+    String RESTORE_TIER = "CamelAwsS3RestoreTier";
+    @Metadata(label = "producer", description = "The object tags to set when using putObjectTagging operation",
+              javaType = "Map<String, String>")
+    String OBJECT_TAGS = "CamelAwsS3ObjectTags";
+    @Metadata(label = "producer", description = "The bucket tags to set when using putBucketTagging operation",
+              javaType = "Map<String, String>")
+    String BUCKET_TAGS = "CamelAwsS3BucketTags";
+    @Metadata(label = "producer", description = "The bucket policy as JSON string when using putBucketPolicy operation",
+              javaType = "String")
+    String BUCKET_POLICY = "CamelAwsS3BucketPolicy";
+    @Metadata(label = "producer",
+              description = "The versioning status (Enabled or Suspended) when using putBucketVersioning operation",
+              javaType = "String")
+    String VERSIONING_STATUS = "CamelAwsS3VersioningStatus";
+    @Metadata(label = "producer", description = "Whether to enable MFA delete when using putBucketVersioning operation",
+              javaType = "String")
+    String MFA_DELETE = "CamelAwsS3MfaDelete";
+    @Metadata(label = "producer", description = "The expiration time of the upload link in milliseconds", javaType = "Long")
+    String UPLOAD_LINK_EXPIRATION_TIME = "CamelAwsS3UploadLinkExpirationTime";
+    @Metadata(label = "producer", description = "Whether the upload link is browser compatible", javaType = "boolean")
+    String UPLOAD_LINK_BROWSER_COMPATIBLE = "CamelAwsS3UploadLinkBrowserCompatible";
+    @Metadata(label = "producer",
+              description = "The headers that are needed by the service for upload (not needed when BrowserCompatible is true)",
+              javaType = "Map<String, List<String>>")
+    String UPLOAD_LINK_HTTP_REQUEST_HEADERS = "CamelAwsS3UploadLinkHttpRequestHeaders";
+    @Metadata(label = "producer",
+              description = "The request payload that is needed by the service for upload (not needed when BrowserCompatible is true)",
+              javaType = "String")
+    String UPLOAD_LINK_SIGNED_PAYLOAD = "CamelAwsS3UploadLinkSignedPayload";
 
 }
