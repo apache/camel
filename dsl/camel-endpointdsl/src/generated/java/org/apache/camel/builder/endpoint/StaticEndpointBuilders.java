@@ -9799,6 +9799,46 @@ public class StaticEndpointBuilders {
         return LangChain4jEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
+     * Perform operations on the Langchain4jEmbeddingStores.
+     * 
+     * Category: database,ai
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-langchain4j-embeddingstore
+     * 
+     * Syntax: <code>langchain4j-embeddingstore:embeddingStoreId</code>
+     * 
+     * Path parameter: embeddingStoreId (required)
+     * The id of the embedding store
+     * 
+     * @param path embeddingStoreId
+     * @return the dsl builder
+     */
+    public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreEndpointBuilder langchain4jEmbeddingstore(String path) {
+        return langchain4jEmbeddingstore("langchain4j-embeddingstore", path);
+    }
+    /**
+     * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
+     * Perform operations on the Langchain4jEmbeddingStores.
+     * 
+     * Category: database,ai
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-langchain4j-embeddingstore
+     * 
+     * Syntax: <code>langchain4j-embeddingstore:embeddingStoreId</code>
+     * 
+     * Path parameter: embeddingStoreId (required)
+     * The id of the embedding store
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path embeddingStoreId
+     * @return the dsl builder
+     */
+    public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreEndpointBuilder langchain4jEmbeddingstore(String componentName, String path) {
+        return LangChain4jEmbeddingStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * LangChain4j Tools (camel-langchain4j-tools)
      * LangChain4j Tools and Function Calling Features
      * 

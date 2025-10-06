@@ -2959,6 +2959,19 @@ public interface ComponentsBuilderFactory {
         return Langchain4jEmbeddingsComponentBuilderFactory.langchain4jEmbeddings();
     }
     /**
+     * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
+     * Perform operations on the Langchain4jEmbeddingStores.
+     * 
+     * Category: database,ai
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-langchain4j-embeddingstore
+     * 
+     * @return the dsl builder
+     */
+    static Langchain4jEmbeddingstoreComponentBuilderFactory.Langchain4jEmbeddingstoreComponentBuilder langchain4jEmbeddingstore() {
+        return Langchain4jEmbeddingstoreComponentBuilderFactory.langchain4jEmbeddingstore();
+    }
+    /**
      * LangChain4j Tools (camel-langchain4j-tools)
      * LangChain4j Tools and Function Calling Features
      * 
