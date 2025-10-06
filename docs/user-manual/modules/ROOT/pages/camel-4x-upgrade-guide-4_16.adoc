@@ -33,3 +33,48 @@ Should use the https://infinispan.org/docs/stable/titles/query/query.html#ickle-
     private InfinispanQueryBuilder continuousQueryBuilder
             = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE 'CQ%'");
 ----
+
+=== camel-milo
+
+The camel-milo component has been upgraded to use Eclipse Milo 1.0.5, which includes several breaking API changes:
+
+==== Certificate Validation API Changes
+
+The certificate validation API has been refactored in Milo 1.0.5:
+
+* The `ServerCertificateValidator` class has been removed
+* Use `org.eclipse.milo.opcua.stack.core.security.CertificateValidator` instead
+* The new `CertificateValidator` is located in the core security package rather than the server-specific package
+
+If you were programmatically configuring certificate validators, you need to update your code:
+
+[source,java]
+----
+// Old API (no longer works)
+import org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator;
+server.setCertificateValidator(serverCertificateValidator);
+
+// New API (Milo 1.0.5)
+import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
+server.setCertificateValidator(certificateValidator);
+----
+
+==== Subscription Monitoring API Changes
+
+The monitored item data value listener API has changed:
+
+* The `DataValueListener` now requires two parameters: `OpcUaMonitoredItem` and `DataValue`
+* Previously it only accepted a `DataValue` parameter
+
+If you were using custom data value listeners, update your lambda expressions or anonymous classes:
+
+[source,java]
+----
+// Old API
+item.setDataValueListener(dataValue -> processValue(dataValue));
+
+// New API (Milo 1.0.5)
+item.setDataValueListener((monitoredItem, dataValue) -> processValue(dataValue));
+----
+
+NOTE: Most users will not be affected by these changes as they primarily affect advanced use cases where you directly interact with the Milo API. Standard camel-milo endpoint configurations remain unchanged.
