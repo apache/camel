@@ -111,7 +111,7 @@ public final class FlatpackConverter {
      * Puts the values of the record into the map
      */
     private static void putValues(Map<String, Object> map, Record recordObj) {
-        String[] columns = recordObj.getColumns();
+        String[] columns = getColumns(recordObj);
 
         for (String column : columns) {
             String value = recordObj.getString(column);
@@ -144,7 +144,7 @@ public final class FlatpackConverter {
         return element;
     }
 
-    private static String[] getColumns(DataSet dataSet) {
+    private static String[] getColumns(Record dataSet) {
         // the columns can vary depending on header, body or trailer
         if (dataSet.isRecordID(FlatpackComponent.HEADER_ID)) {
             return dataSet.getColumns(FlatpackComponent.HEADER_ID);
