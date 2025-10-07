@@ -17,6 +17,7 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicrometerObservabilityTracerTest extends MicrometerObservabilityTracerTestSupport {
 
@@ -63,16 +65,16 @@ public class MicrometerObservabilityTracerTest extends MicrometerObservabilityTr
         SimpleSpan log = spans.get(2);
 
         // Validate span completion
-        assertNotEquals("", testProducer.getEndTimestamp());
-        assertNotEquals("", direct.getEndTimestamp());
-        assertNotEquals("", log.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, log.getEndTimestamp());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
         assertEquals(direct.getTraceId(), log.getTraceId());
 
         // Validate hierarchy
-        assertEquals("", testProducer.getParentId());
+        assertTrue(testProducer.getParentId().isEmpty());
         assertEquals(testProducer.getSpanId(), direct.getParentId());
         assertEquals(direct.getSpanId(), log.getParentId());
 
