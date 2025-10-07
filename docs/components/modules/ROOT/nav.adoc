@@ -11,6 +11,7 @@
 *** xref:kserve-component.adoc[KServe]
 *** xref:langchain4j-agent-component.adoc[LangChain4j Agent]
 *** xref:langchain4j-chat-component.adoc[LangChain4j Chat]
+*** xref:langchain4j-embeddingstore-component.adoc[LangChain4j Embedding Store]
 *** xref:langchain4j-embeddings-component.adoc[LangChain4j Embeddings]
 *** xref:langchain4j-tools-component.adoc[LangChain4j Tools]
 *** xref:langchain4j-web-search-component.adoc[LangChain4j Web Search]
