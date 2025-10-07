@@ -32,11 +32,31 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 
 == Prerequisites
 
-Before using this component, you need to have Docling installed on your system. You can install it using pip:
+This component supports two modes of operation:
 
+1. **CLI Mode (default)**: Requires Docling to be installed on your system via pip:
++
 [source,bash]
 ----
 pip install docling
+----
+
+2. **API Mode**: Requires a running docling-serve instance. You can run it using:
++
+[source,bash]
+----
+# Install docling-serve
+pip install docling-serve
+
+# Run docling-serve
+docling-serve --host 0.0.0.0 --port 5001
+----
++
+Or using Docker:
++
+[source,bash]
+----
+docker run -p 5001:5001 ghcr.io/docling-project/docling-serve:latest
 ----
 
 == URI format
@@ -439,6 +459,119 @@ public class CustomArgsBean {
 }
 ----
 
+== Using Docling-Serve API
+
+=== Basic usage with docling-serve
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:CONVERT_TO_MARKDOWN?useDoclingServe=true&doclingServeUrl=http://localhost:5001&contentInBody=true")
+    .process(exchange -> {
+        String markdown = exchange.getIn().getBody(String.class);
+        log.info("Converted content: {}", markdown);
+    });
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            doclingServeUrl: "http://localhost:5001"
+            contentInBody: true
+      - process:
+          ref: "markdownProcessor"
+----
+====
+
+=== Converting documents from URLs using docling-serve
+
+When using docling-serve API mode, you can also process documents from URLs:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:convert?repeatCount=1")
+    .setBody(constant("https://arxiv.org/pdf/2501.17887"))
+    .to("docling:CONVERT_TO_MARKDOWN?useDoclingServe=true&contentInBody=true")
+    .to("file:///data/output");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "timer:convert"
+      parameters:
+        repeatCount: 1
+    steps:
+      - setBody:
+          constant: "https://arxiv.org/pdf/2501.17887"
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            contentInBody: true
+      - to:
+          uri: "file:///data/output"
+----
+====
+
+=== Batch processing with docling-serve
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.(pdf|docx)")
+    .to("docling:CONVERT_TO_HTML?useDoclingServe=true&doclingServeUrl=http://localhost:5001&contentInBody=true")
+    .to("file:///data/converted?fileName=${file:name.noext}.html");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.(pdf|docx)"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_HTML"
+          parameters:
+            useDoclingServe: true
+            doclingServeUrl: "http://localhost:5001"
+            contentInBody: true
+      - to:
+          uri: "file:///data/converted"
+          parameters:
+            fileName: "${file:name.noext}.html"
+----
+====
+
 == Error Handling
 
 The component handles various error scenarios:
@@ -446,13 +579,15 @@ The component handles various error scenarios:
 - **File size limit exceeded**: Files larger than `maxFileSize` are rejected
 - **Process timeout**: Long-running conversions are terminated after `processTimeout` milliseconds
 - **Invalid file formats**: Unsupported file formats result in processing errors
-- **Docling not found**: Missing Docling installation causes startup failures
+- **Docling not found**: Missing Docling installation causes startup failures (CLI mode)
+- **Connection errors**: When using docling-serve API mode, connection failures to the API endpoint will result in errors
 
 == Performance Considerations
 
-- Large documents may require increased `processTimeout` values
+- Large documents may require increased `processTimeout` values (CLI mode)
 - OCR processing significantly increases processing time for scanned documents
-- Consider using `contentInBody=false` for large outputs to avoid memory issues
+- Consider using `contentInBody=true` when using docling-serve API mode to get results directly in the body
 - The `maxFileSize` setting helps prevent resource exhaustion
+- **API Mode vs CLI Mode**: The docling-serve API mode typically offers better performance and resource utilization for high-volume document processing, as it maintains a persistent server instance
 
 include::spring-boot:partial$starter.adoc[]

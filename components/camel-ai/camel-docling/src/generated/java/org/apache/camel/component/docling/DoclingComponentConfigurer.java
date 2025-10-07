@@ -37,6 +37,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "contentInBody": getOrCreateConfiguration(target).setContentInBody(property(camelContext, boolean.class, value)); return true;
         case "doclingcommand":
         case "doclingCommand": getOrCreateConfiguration(target).setDoclingCommand(property(camelContext, java.lang.String.class, value)); return true;
+        case "doclingserveurl":
+        case "doclingServeUrl": getOrCreateConfiguration(target).setDoclingServeUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "enableocr":
         case "enableOCR": getOrCreateConfiguration(target).setEnableOCR(property(camelContext, boolean.class, value)); return true;
         case "includelayoutinfo":
@@ -52,6 +54,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "outputFormat": getOrCreateConfiguration(target).setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "processtimeout":
         case "processTimeout": getOrCreateConfiguration(target).setProcessTimeout(property(camelContext, long.class, value)); return true;
+        case "usedoclingserve":
+        case "useDoclingServe": getOrCreateConfiguration(target).setUseDoclingServe(property(camelContext, boolean.class, value)); return true;
         case "workingdirectory":
         case "workingDirectory": getOrCreateConfiguration(target).setWorkingDirectory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -68,6 +72,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "contentInBody": return boolean.class;
         case "doclingcommand":
         case "doclingCommand": return java.lang.String.class;
+        case "doclingserveurl":
+        case "doclingServeUrl": return java.lang.String.class;
         case "enableocr":
         case "enableOCR": return boolean.class;
         case "includelayoutinfo":
@@ -83,6 +89,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "outputFormat": return java.lang.String.class;
         case "processtimeout":
         case "processTimeout": return long.class;
+        case "usedoclingserve":
+        case "useDoclingServe": return boolean.class;
         case "workingdirectory":
         case "workingDirectory": return java.lang.String.class;
         default: return null;
@@ -100,6 +108,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "contentInBody": return getOrCreateConfiguration(target).isContentInBody();
         case "doclingcommand":
         case "doclingCommand": return getOrCreateConfiguration(target).getDoclingCommand();
+        case "doclingserveurl":
+        case "doclingServeUrl": return getOrCreateConfiguration(target).getDoclingServeUrl();
         case "enableocr":
         case "enableOCR": return getOrCreateConfiguration(target).isEnableOCR();
         case "includelayoutinfo":
@@ -115,6 +125,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "outputFormat": return getOrCreateConfiguration(target).getOutputFormat();
         case "processtimeout":
         case "processTimeout": return getOrCreateConfiguration(target).getProcessTimeout();
+        case "usedoclingserve":
+        case "useDoclingServe": return getOrCreateConfiguration(target).isUseDoclingServe();
         case "workingdirectory":
         case "workingDirectory": return getOrCreateConfiguration(target).getWorkingDirectory();
         default: return null;

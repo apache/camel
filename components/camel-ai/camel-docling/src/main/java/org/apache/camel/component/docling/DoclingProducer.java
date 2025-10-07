@@ -42,11 +42,32 @@ public class DoclingProducer extends DefaultProducer {
 
     private DoclingEndpoint endpoint;
     private DoclingConfiguration configuration;
+    private DoclingServeClient doclingServeClient;
 
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (configuration.isUseDoclingServe()) {
+            doclingServeClient = new DoclingServeClient(configuration.getDoclingServeUrl());
+            LOG.info("DoclingProducer configured to use docling-serve API at: {}", configuration.getDoclingServeUrl());
+        } else {
+            LOG.info("DoclingProducer configured to use docling CLI command");
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (doclingServeClient != null) {
+            doclingServeClient.close();
+            doclingServeClient = null;
+        }
     }
 
     @Override
@@ -86,29 +107,59 @@ public class DoclingProducer extends DefaultProducer {
 
     private void processConvertToMarkdown(Exchange exchange) throws Exception {
         LOG.debug("DoclingProducer converting to markdown");
-        String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "markdown", exchange));
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = doclingServeClient.convertDocument(inputPath, "markdown");
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "markdown", exchange));
+        }
     }
 
     private void processConvertToHTML(Exchange exchange) throws Exception {
         LOG.debug("DoclingProducer converting to HTML");
-        String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "html", exchange));
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = doclingServeClient.convertDocument(inputPath, "html");
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "html", exchange));
+        }
     }
 
     private void processConvertToJSON(Exchange exchange) throws Exception {
-        String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = doclingServeClient.convertDocument(inputPath, "json");
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+        }
     }
 
     private void processExtractText(Exchange exchange) throws Exception {
-        String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "text", exchange));
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = doclingServeClient.convertDocument(inputPath, "text");
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "text", exchange));
+        }
     }
 
     private void processExtractStructuredData(Exchange exchange) throws Exception {
-        String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = doclingServeClient.convertDocument(inputPath, "json");
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+        }
     }
 
     private String getInputPath(Exchange exchange) throws InvalidPayloadException, IOException {
@@ -122,10 +173,16 @@ public class DoclingProducer extends DefaultProducer {
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
             String content = (String) body;
-            if (content.startsWith("/") || content.contains("\\")) {
+            // Check if it's a URL (http:// or https://) or a file path
+            if (content.startsWith("http://") || content.startsWith("https://")) {
+                // Return URL as-is, no validation needed
+                return content;
+            } else if (content.startsWith("/") || content.contains("\\")) {
+                // It's a file path
                 validateFileSize(content);
                 return content;
             } else {
+                // Treat as content to be written to a temp file
                 Path tempFile = Files.createTempFile("docling-", ".tmp");
                 Files.write(tempFile, content.getBytes());
                 validateFileSize(tempFile.toString());

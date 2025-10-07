@@ -86,6 +86,23 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Docling-serve API URL (e.g., http://localhost:5001).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: http://localhost:5001
+         * Group: producer
+         * 
+         * @param doclingServeUrl the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder doclingServeUrl(java.lang.String doclingServeUrl) {
+            doSetProperty("doclingServeUrl", doclingServeUrl);
+            return this;
+        }
+    
+        
+        /**
          * Enable OCR processing for scanned documents.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -197,6 +214,23 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Use docling-serve API instead of CLI command.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDoclingServe the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder useDoclingServe(boolean useDoclingServe) {
+            doSetProperty("useDoclingServe", useDoclingServe);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -303,12 +337,14 @@ public interface DoclingComponentBuilderFactory {
             switch (name) {
             case "configuration": ((DoclingComponent) component).setConfiguration((org.apache.camel.component.docling.DoclingConfiguration) value); return true;
             case "contentInBody": getOrCreateConfiguration((DoclingComponent) component).setContentInBody((boolean) value); return true;
+            case "doclingServeUrl": getOrCreateConfiguration((DoclingComponent) component).setDoclingServeUrl((java.lang.String) value); return true;
             case "enableOCR": getOrCreateConfiguration((DoclingComponent) component).setEnableOCR((boolean) value); return true;
             case "includeLayoutInfo": getOrCreateConfiguration((DoclingComponent) component).setIncludeLayoutInfo((boolean) value); return true;
             case "lazyStartProducer": ((DoclingComponent) component).setLazyStartProducer((boolean) value); return true;
             case "ocrLanguage": getOrCreateConfiguration((DoclingComponent) component).setOcrLanguage((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((DoclingComponent) component).setOperation((org.apache.camel.component.docling.DoclingOperations) value); return true;
             case "outputFormat": getOrCreateConfiguration((DoclingComponent) component).setOutputFormat((java.lang.String) value); return true;
+            case "useDoclingServe": getOrCreateConfiguration((DoclingComponent) component).setUseDoclingServe((boolean) value); return true;
             case "autowiredEnabled": ((DoclingComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "doclingCommand": getOrCreateConfiguration((DoclingComponent) component).setDoclingCommand((java.lang.String) value); return true;
             case "processTimeout": getOrCreateConfiguration((DoclingComponent) component).setProcessTimeout((long) value); return true;

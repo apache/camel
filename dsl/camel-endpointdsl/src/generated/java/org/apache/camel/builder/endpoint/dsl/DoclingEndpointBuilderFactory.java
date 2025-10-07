@@ -77,6 +77,21 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Docling-serve API URL (e.g., http://localhost:5001).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: http://localhost:5001
+         * Group: producer
+         * 
+         * @param doclingServeUrl the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder doclingServeUrl(String doclingServeUrl) {
+            doSetProperty("doclingServeUrl", doclingServeUrl);
+            return this;
+        }
+        /**
          * Enable OCR processing for scanned documents.
          * 
          * The option is a: <code>boolean</code> type.
@@ -200,6 +215,36 @@ public interface DoclingEndpointBuilderFactory {
          */
         default DoclingEndpointBuilder outputFormat(String outputFormat) {
             doSetProperty("outputFormat", outputFormat);
+            return this;
+        }
+        /**
+         * Use docling-serve API instead of CLI command.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDoclingServe the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder useDoclingServe(boolean useDoclingServe) {
+            doSetProperty("useDoclingServe", useDoclingServe);
+            return this;
+        }
+        /**
+         * Use docling-serve API instead of CLI command.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDoclingServe the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder useDoclingServe(String useDoclingServe) {
+            doSetProperty("useDoclingServe", useDoclingServe);
             return this;
         }
         /**
