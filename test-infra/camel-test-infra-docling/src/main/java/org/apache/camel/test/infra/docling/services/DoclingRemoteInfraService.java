@@ -39,12 +39,12 @@ public class DoclingRemoteInfraService implements DoclingInfraService {
 
     @Override
     public void registerProperties() {
-        System.setProperty(DoclingProperties.DOCLING_SERVER_URL, getDoclingServerUrl());
+        System.setProperty(DoclingProperties.DOCLING_SERVER_URL, doclingServerUrl());
     }
 
     @Override
     public void initialize() {
-        LOG.info("Using remote Docling instance at {}", getDoclingServerUrl());
+        LOG.info("Using remote Docling instance at {}", doclingServerUrl());
         registerProperties();
     }
 
@@ -54,7 +54,7 @@ public class DoclingRemoteInfraService implements DoclingInfraService {
     }
 
     @Override
-    public String getDoclingServerUrl() {
+    public String doclingServerUrl() {
         return doclingServerUrl;
     }
 }

@@ -80,7 +80,7 @@ public class DoclingLocalContainerInfraService implements DoclingInfraService, C
 
     @Override
     public void registerProperties() {
-        System.setProperty(DoclingProperties.DOCLING_SERVER_URL, getDoclingServerUrl());
+        System.setProperty(DoclingProperties.DOCLING_SERVER_URL, doclingServerUrl());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class DoclingLocalContainerInfraService implements DoclingInfraService, C
         container.start();
 
         registerProperties();
-        LOG.info("Docling instance running at {}", getDoclingServerUrl());
+        LOG.info("Docling instance running at {}", doclingServerUrl());
     }
 
     @Override
@@ -104,7 +104,7 @@ public class DoclingLocalContainerInfraService implements DoclingInfraService, C
     }
 
     @Override
-    public String getDoclingServerUrl() {
+    public String doclingServerUrl() {
         return String.format("http://%s:%d", container.getHost(), container.getMappedPort(DOCLING_PORT));
     }
 }

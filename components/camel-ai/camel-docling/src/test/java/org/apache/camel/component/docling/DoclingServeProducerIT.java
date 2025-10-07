@@ -56,10 +56,10 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         DoclingComponent docling = context.getComponent("docling", DoclingComponent.class);
         DoclingConfiguration conf = new DoclingConfiguration();
         conf.setUseDoclingServe(true);
-        conf.setDoclingServeUrl(doclingService.getDoclingServerUrl());
+        conf.setDoclingServeUrl(doclingService.doclingServerUrl());
         docling.setConfiguration(conf);
 
-        LOG.info("Testing Docling-Serve at: {}", doclingService.getDoclingServerUrl());
+        LOG.info("Testing Docling-Serve at: {}", doclingService.doclingServerUrl());
 
         return context;
     }

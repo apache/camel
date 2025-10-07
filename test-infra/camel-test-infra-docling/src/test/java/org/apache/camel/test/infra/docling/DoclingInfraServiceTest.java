@@ -28,7 +28,7 @@ public class DoclingInfraServiceTest {
     public void testRemoteServiceConfiguration() {
         DoclingInfraService service = new DoclingRemoteInfraService("http://localhost:5001");
 
-        assertEquals("http://localhost:5001", service.getDoclingServerUrl());
+        assertEquals("http://localhost:5001", service.doclingServerUrl());
     }
 
     @Test
@@ -38,7 +38,7 @@ public class DoclingInfraServiceTest {
         try {
             DoclingInfraService service = new DoclingRemoteInfraService();
 
-            assertEquals("http://test:5001", service.getDoclingServerUrl());
+            assertEquals("http://test:5001", service.doclingServerUrl());
         } finally {
             System.clearProperty("docling.server.url");
         }
