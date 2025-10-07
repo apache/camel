@@ -32,7 +32,7 @@
     <description>Camel OPC UA support</description>
 
     <properties>
-        <version.milo>1.0.5</version.milo>
+        <version.milo>1.0.6</version.milo>
         <version.guava>33.4.8-jre</version.guava>
     </properties>
 
