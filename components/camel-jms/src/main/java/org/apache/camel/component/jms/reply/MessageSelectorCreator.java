@@ -21,6 +21,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.TimeoutMap;
+import org.apache.camel.component.jms.JmsConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ import static org.apache.camel.TimeoutMap.Listener.Type.*;
  */
 public class MessageSelectorCreator {
     protected static final Logger LOG = LoggerFactory.getLogger(MessageSelectorCreator.class);
+    protected String correlationProperty = JmsConstants.JMS_HEADER_CORRELATION_ID;
     protected final TimeoutMap<String, ?> timeoutMap;
     protected final ConcurrentSkipListSet<String> correlationIds;
     protected volatile boolean dirty = true;
@@ -56,7 +58,7 @@ public class MessageSelectorCreator {
 
             expression = new StringBuilder(256);
 
-            expression.append("JMSCorrelationID='");
+            expression.append(correlationProperty).append("='");
             if (correlationIds.isEmpty()) {
                 // no id's so use a dummy to select nothing
                 expression.append("CamelDummyJmsMessageSelector'");
@@ -64,7 +66,7 @@ public class MessageSelectorCreator {
                 boolean first = true;
                 for (String value : correlationIds) {
                     if (!first) {
-                        expression.append(" OR JMSCorrelationID='");
+                        expression.append(" OR ").append(correlationProperty).append("='");
                     }
                     expression.append(value).append("'");
                     if (first) {
@@ -95,6 +97,14 @@ public class MessageSelectorCreator {
         } finally {
             lock.unlock();
         }
+    }
+
+    public void setCorrelationProperty(String correlationProperty) {
+        this.correlationProperty = correlationProperty;
+    }
+
+    public String getCorrelationProperty() {
+        return this.correlationProperty;
     }
 
 }

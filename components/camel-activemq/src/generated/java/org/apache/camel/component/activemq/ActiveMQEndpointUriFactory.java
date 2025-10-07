@@ -23,7 +23,7 @@ public class ActiveMQEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(104);
+        Set<String> props = new HashSet<>(105);
         props.add("acceptMessagesWhileStopping");
         props.add("acknowledgementModeName");
         props.add("allowAdditionalHeaders");
@@ -92,6 +92,7 @@ public class ActiveMQEndpointUriFactory extends org.apache.camel.support.compone
         props.add("pubSubNoLocal");
         props.add("receiveTimeout");
         props.add("recoveryInterval");
+        props.add("replyCorrelationProperty");
         props.add("replyTo");
         props.add("replyToCacheLevelName");
         props.add("replyToConcurrentConsumers");
