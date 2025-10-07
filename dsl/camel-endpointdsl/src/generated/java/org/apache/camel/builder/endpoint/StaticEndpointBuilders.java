@@ -10459,6 +10459,130 @@ public class StaticEndpointBuilders {
         return MicrometerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OPC UA Browser (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for browsing the node
+     * tree.
+     * 
+     * Category: iot
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-browse:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static MiloBrowseEndpointBuilderFactory.MiloBrowseEndpointBuilder miloBrowse(String path) {
+        return miloBrowse("milo-browse", path);
+    }
+    /**
+     * OPC UA Browser (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for browsing the node
+     * tree.
+     * 
+     * Category: iot
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-browse:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static MiloBrowseEndpointBuilderFactory.MiloBrowseEndpointBuilder miloBrowse(String componentName, String path) {
+        return MiloBrowseEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * OPC UA Client (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for acquiring
+     * telemetry data.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-client:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(String path) {
+        return miloClient("milo-client", path);
+    }
+    /**
+     * OPC UA Client (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for acquiring
+     * telemetry data.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-client:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(String componentName, String path) {
+        return MiloClientEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * OPC UA Server (camel-milo)
+     * Make telemetry data available as an OPC UA server.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-server:itemId</code>
+     * 
+     * Path parameter: itemId (required)
+     * ID of the item
+     * 
+     * @param path itemId
+     * @return the dsl builder
+     */
+    public static MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(String path) {
+        return miloServer("milo-server", path);
+    }
+    /**
+     * OPC UA Server (camel-milo)
+     * Make telemetry data available as an OPC UA server.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-server:itemId</code>
+     * 
+     * Path parameter: itemId (required)
+     * ID of the item
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path itemId
+     * @return the dsl builder
+     */
+    public static MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(String componentName, String path) {
+        return MiloServerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Milvus (camel-milvus)
      * Perform operations on the Milvus Vector Database.
      * 

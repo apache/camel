@@ -3145,6 +3145,47 @@ public interface ComponentsBuilderFactory {
         return MicrometerComponentBuilderFactory.micrometer();
     }
     /**
+     * OPC UA Browser (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for browsing the node
+     * tree.
+     * 
+     * Category: iot
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
+     */
+    static MiloBrowseComponentBuilderFactory.MiloBrowseComponentBuilder miloBrowse() {
+        return MiloBrowseComponentBuilderFactory.miloBrowse();
+    }
+    /**
+     * OPC UA Client (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for acquiring
+     * telemetry data.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
+     */
+    static MiloClientComponentBuilderFactory.MiloClientComponentBuilder miloClient() {
+        return MiloClientComponentBuilderFactory.miloClient();
+    }
+    /**
+     * OPC UA Server (camel-milo)
+     * Make telemetry data available as an OPC UA server.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
+     */
+    static MiloServerComponentBuilderFactory.MiloServerComponentBuilder miloServer() {
+        return MiloServerComponentBuilderFactory.miloServer();
+    }
+    /**
      * Milvus (camel-milvus)
      * Perform operations on the Milvus Vector Database.
      * 

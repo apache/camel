@@ -1,0 +1,79 @@
+= OPC UA Server Component
+:doctitle: OPC UA Server
+:shortname: milo-server
+:artifactid: camel-milo
+:description: Make telemetry data available as an OPC UA server.
+:since: 2.19
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: milo
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Milo Server component provides an OPC UA server using the
+http://eclipse.org/milo[Eclipse Milo™] implementation.
+
+*Java 11+*: This component requires Java 11+ at runtime.
+
+NOTE: This component uses Eclipse Milo 1.0.5. When migrating from earlier versions,
+be aware that the Milo API has undergone significant changes in the 1.0.x series.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-milo</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+Messages sent to the endpoint from Camel will be available from the OPC UA server to OPC UA Clients.
+Value write requests from OPC UA Client will trigger messages which are sent into Apache Camel.
+
+
+== URI format
+
+------------------------
+milo-server:itemId[?options]
+------------------------
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+=== Security Configuration
+
+When configuring security for the OPC UA server, the following considerations apply:
+
+* Certificate validation uses `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`
+* The component supports both certificate-based and username/password authentication
+* Security policies can be configured using the `securityPolicies` or `securityPoliciesById` options
+
+==== Milo 1.0.5 Migration Notes
+
+With Milo 1.0.5, several security-related API changes were introduced:
+
+* The `ServerCertificateValidator` class has been replaced with `CertificateValidator`
+* Certificate validation now uses `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`
+* When configuring custom certificate validators programmatically, ensure you're using the updated API
+
+
+include::spring-boot:partial$starter.adoc[]

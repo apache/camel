@@ -1,0 +1,106 @@
+= OPC UA Browser Component
+:doctitle: OPC UA Browser
+:shortname: milo-browse
+:artifactid: camel-milo
+:description: Connect to OPC UA servers using the binary protocol for browsing the node tree.
+:since: 3.15
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: milo
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Milo Client component provides access to OPC UA servers using the
+http://eclipse.org/milo[Eclipse Milo™] implementation.
+
+*Java 11+*: This component requires Java 11+ at runtime.
+
+NOTE: This component uses Eclipse Milo 1.0.5. When migrating from earlier versions,
+be aware that the Milo API has undergone significant changes in the 1.0.x series.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-milo</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+
+== URI format
+
+The URI syntax of the endpoint is:
+
+------------------------
+milo-browse:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
+------------------------
+
+Please refer to the xref:milo-client-component.adoc[Milo Client] component for further details about the construction of the URI.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+=== Client
+
+The browse component shares the same base options like the Camel Milo Client component, e.g. concerning topics like discovery,
+security policies, the construction of node ids, etc.
+
+Please refer to the documentation of the Camel Milo Client component for further details.
+
+=== Browsing
+
+The main use of this component is to be able to determine the nodes values to be retrieved or to be written by first browsing
+the node tree of the OPC-UA server, e.g. to avoid hard-coding a significant number of node ids within the configuration of
+Camel routes. The component is designed to work in conjunction with the Camel Milo Client component as illustrated in the
+following example:
+
+[source,java]
+----
+from("direct:start")
+
+    // Browse sub tree
+    .setHeader("CamelMiloNodeIds", constant(Arrays.asList("ns=1;s=folder-id")))
+    .enrich("milo-browse:opc.tcp://localhost:4334", (oldExchange, newExchange) -> newExchange)
+
+    // Filter specific ids
+    .filter(...)
+
+        // Retrieve the values for the nodes of interest
+        .enrich("milo-client:opc.tcp://localhost:4334", (oldExchange, newExchange) -> newExchange)
+
+----
+
+=== Recursion
+
+Dependent to the OPC-UA server there it might be required to browse a hierarchy of nodes.
+Be aware that this is potentially a very expensive operation.
+
+=== Milo 1.0.5 Migration Notes
+
+With Milo 1.0.5, the browse API remains largely compatible, but shares the same security-related
+changes as the client and server components. Please refer to the xref:milo-client-component.adoc[Milo Client]
+documentation for details on security configuration changes.
+
+include::spring-boot:partial$starter.adoc[]
