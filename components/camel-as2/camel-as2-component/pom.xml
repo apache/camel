@@ -136,13 +136,9 @@
                                     <consumerOnly>true</consumerOnly>
                                     <proxyClass>org.apache.camel.component.as2.api.AS2ServerManager</proxyClass>
                                     <fromJavasource>
-                                        <excludeMethods>stopListening|handleMDNResponse</excludeMethods>
+                                        <excludeMethods>stopListening|handleMDNResponse|unlisten</excludeMethods>
                                     </fromJavasource>
                                     <excludeConfigNames>handler</excludeConfigNames>
-                                    <!--                     <nullableOptions>
-                                                            <nullableOption>decryptingPrivateKey</nullableOption>
-                                                        </nullableOptions>
-                                     -->
                                 </api>
                                 <api>
                                     <apiName>receipt</apiName>
@@ -152,15 +148,6 @@
                                     <excludeConfigNames>handler</excludeConfigNames>
                                 </api>
                             </apis>
-                            <!-- Specify global values for all APIs here, these are overridden at API level
-                            <substitutions />
-                            <excludeConfigNames />
-                            <excludeConfigTypes />
-                            <extraOptions />
-                            <fromJavasource />
-                            <aliases />
-                            <nullableOptions />
-                            -->
                         </configuration>
                     </execution>
                 </executions>

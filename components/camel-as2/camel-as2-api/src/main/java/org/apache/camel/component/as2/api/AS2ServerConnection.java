@@ -130,6 +130,11 @@ public class AS2ServerConnection {
         void registerHandler(String requestUriPattern, HttpRequestHandler httpRequestHandler) {
             registry.register(null, requestUriPattern, httpRequestHandler);
         }
+
+        void unregisterHandler(String requestUriPattern) {
+            // we cannot remove from http registry, but we can replace with a not found to simulate 404
+            registry.register(null, requestUriPattern, new NotFoundHttpRequestHandler());
+        }
     }
 
     class RequestHandlerThread extends Thread {
@@ -301,6 +306,17 @@ public class AS2ServerConnection {
             lock.lock();
             try {
                 listenerThread.registerHandler(requestUri, handler);
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+
+    public void unlisten(String requestUri) {
+        if (listenerThread != null) {
+            lock.lock();
+            try {
+                listenerThread.unregisterHandler(requestUri);
             } finally {
                 lock.unlock();
             }

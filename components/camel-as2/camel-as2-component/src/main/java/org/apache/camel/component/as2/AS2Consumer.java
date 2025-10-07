@@ -105,6 +105,11 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+
+        if (apiProxy != null) {
+            String uri = properties.get("requestUriPattern").toString();
+            apiProxy.unlisten(uri);
+        }
     }
 
     @Override
