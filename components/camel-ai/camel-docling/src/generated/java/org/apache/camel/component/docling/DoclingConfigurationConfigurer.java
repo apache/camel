@@ -27,6 +27,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "contentInBody": target.setContentInBody(property(camelContext, boolean.class, value)); return true;
         case "doclingcommand":
         case "doclingCommand": target.setDoclingCommand(property(camelContext, java.lang.String.class, value)); return true;
+        case "doclingserveurl":
+        case "doclingServeUrl": target.setDoclingServeUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "enableocr":
         case "enableOCR": target.setEnableOCR(property(camelContext, boolean.class, value)); return true;
         case "includelayoutinfo":
@@ -40,6 +42,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "outputFormat": target.setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "processtimeout":
         case "processTimeout": target.setProcessTimeout(property(camelContext, long.class, value)); return true;
+        case "usedoclingserve":
+        case "useDoclingServe": target.setUseDoclingServe(property(camelContext, boolean.class, value)); return true;
         case "workingdirectory":
         case "workingDirectory": target.setWorkingDirectory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -53,6 +57,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "contentInBody": return boolean.class;
         case "doclingcommand":
         case "doclingCommand": return java.lang.String.class;
+        case "doclingserveurl":
+        case "doclingServeUrl": return java.lang.String.class;
         case "enableocr":
         case "enableOCR": return boolean.class;
         case "includelayoutinfo":
@@ -66,6 +72,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "outputFormat": return java.lang.String.class;
         case "processtimeout":
         case "processTimeout": return long.class;
+        case "usedoclingserve":
+        case "useDoclingServe": return boolean.class;
         case "workingdirectory":
         case "workingDirectory": return java.lang.String.class;
         default: return null;
@@ -80,6 +88,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "contentInBody": return target.isContentInBody();
         case "doclingcommand":
         case "doclingCommand": return target.getDoclingCommand();
+        case "doclingserveurl":
+        case "doclingServeUrl": return target.getDoclingServeUrl();
         case "enableocr":
         case "enableOCR": return target.isEnableOCR();
         case "includelayoutinfo":
@@ -93,6 +103,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "outputFormat": return target.getOutputFormat();
         case "processtimeout":
         case "processTimeout": return target.getProcessTimeout();
+        case "usedoclingserve":
+        case "useDoclingServe": return target.isUseDoclingServe();
         case "workingdirectory":
         case "workingDirectory": return target.getWorkingDirectory();
         default: return null;

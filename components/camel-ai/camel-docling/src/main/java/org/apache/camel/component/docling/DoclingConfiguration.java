@@ -73,6 +73,14 @@ public class DoclingConfiguration implements Cloneable {
               defaultValue = "false")
     private boolean contentInBody = false;
 
+    @UriParam
+    @Metadata(description = "Use docling-serve API instead of CLI command", defaultValue = "false")
+    private boolean useDoclingServe = false;
+
+    @UriParam
+    @Metadata(description = "Docling-serve API URL (e.g., http://localhost:5001)", defaultValue = "http://localhost:5001")
+    private String doclingServeUrl = "http://localhost:5001";
+
     public DoclingOperations getOperation() {
         return operation;
     }
@@ -151,6 +159,22 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setContentInBody(boolean contentInBody) {
         this.contentInBody = contentInBody;
+    }
+
+    public boolean isUseDoclingServe() {
+        return useDoclingServe;
+    }
+
+    public void setUseDoclingServe(boolean useDoclingServe) {
+        this.useDoclingServe = useDoclingServe;
+    }
+
+    public String getDoclingServeUrl() {
+        return doclingServeUrl;
+    }
+
+    public void setDoclingServeUrl(String doclingServeUrl) {
+        this.doclingServeUrl = doclingServeUrl;
     }
 
     public DoclingConfiguration copy() {

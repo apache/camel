@@ -27,6 +27,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "contentInBody": target.getConfiguration().setContentInBody(property(camelContext, boolean.class, value)); return true;
         case "doclingcommand":
         case "doclingCommand": target.getConfiguration().setDoclingCommand(property(camelContext, java.lang.String.class, value)); return true;
+        case "doclingserveurl":
+        case "doclingServeUrl": target.getConfiguration().setDoclingServeUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "enableocr":
         case "enableOCR": target.getConfiguration().setEnableOCR(property(camelContext, boolean.class, value)); return true;
         case "includelayoutinfo":
@@ -42,6 +44,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputFormat": target.getConfiguration().setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "processtimeout":
         case "processTimeout": target.getConfiguration().setProcessTimeout(property(camelContext, long.class, value)); return true;
+        case "usedoclingserve":
+        case "useDoclingServe": target.getConfiguration().setUseDoclingServe(property(camelContext, boolean.class, value)); return true;
         case "workingdirectory":
         case "workingDirectory": target.getConfiguration().setWorkingDirectory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -55,6 +59,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "contentInBody": return boolean.class;
         case "doclingcommand":
         case "doclingCommand": return java.lang.String.class;
+        case "doclingserveurl":
+        case "doclingServeUrl": return java.lang.String.class;
         case "enableocr":
         case "enableOCR": return boolean.class;
         case "includelayoutinfo":
@@ -70,6 +76,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputFormat": return java.lang.String.class;
         case "processtimeout":
         case "processTimeout": return long.class;
+        case "usedoclingserve":
+        case "useDoclingServe": return boolean.class;
         case "workingdirectory":
         case "workingDirectory": return java.lang.String.class;
         default: return null;
@@ -84,6 +92,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "contentInBody": return target.getConfiguration().isContentInBody();
         case "doclingcommand":
         case "doclingCommand": return target.getConfiguration().getDoclingCommand();
+        case "doclingserveurl":
+        case "doclingServeUrl": return target.getConfiguration().getDoclingServeUrl();
         case "enableocr":
         case "enableOCR": return target.getConfiguration().isEnableOCR();
         case "includelayoutinfo":
@@ -99,6 +109,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputFormat": return target.getConfiguration().getOutputFormat();
         case "processtimeout":
         case "processTimeout": return target.getConfiguration().getProcessTimeout();
+        case "usedoclingserve":
+        case "useDoclingServe": return target.getConfiguration().isUseDoclingServe();
         case "workingdirectory":
         case "workingDirectory": return target.getConfiguration().getWorkingDirectory();
         default: return null;
