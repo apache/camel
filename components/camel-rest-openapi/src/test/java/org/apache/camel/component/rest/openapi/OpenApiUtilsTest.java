@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class OpenApiUtilsTest {
 
@@ -74,6 +75,28 @@ public class OpenApiUtilsTest {
                     - id
                     - name
                     """;
+
+    private static final String NO_RESPONSE_BODY = """
+            openapi: <openapi_version>
+            info:
+              title: test
+              version: 1.0.0
+            paths:
+              /test:
+                post:
+                  operationId: test
+                  requestBody:
+                    required: true
+                    content:
+                      "application/json":
+                        schema:
+                          oneOf:
+                            - type: string
+                            - type: number
+                  responses:
+                    "200":
+                      description: Successful response
+                """;
 
     @Test
     public void shouldReturnAllProduces() {
@@ -183,6 +206,17 @@ public class OpenApiUtilsTest {
         Operation operation = openApi.getPaths().get("/tag").getGet();
         OpenApiUtils utils = new OpenApiUtils(new DefaultCamelContext(), bindingPackagePath, openApi.getComponents());
         assertEquals(TagResponseDto.class.getName() + "[]", utils.manageResponseBody(operation));
+    }
+
+    @Test
+    public void noResponseBody() throws Exception {
+        String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
+        OpenAPIV3Parser parser = new OpenAPIV3Parser();
+        OpenAPI openApi = parser.readContents(NO_RESPONSE_BODY.replace("<openapi_version>", "3.1.0")).getOpenAPI();
+        Operation operation = openApi.getPaths().get("/test").getPost();
+        OpenApiUtils utils = new OpenApiUtils(new DefaultCamelContext(), bindingPackagePath, openApi.getComponents());
+        assertNull(utils.manageRequestBody(operation));
+        assertNull(utils.manageResponseBody(operation));
     }
 
     private ApiResponse createResponse(String... contentTypes) {

@@ -206,6 +206,9 @@ public class OpenApiUtils {
 
         schemaName = Optional.ofNullable(schemaName)
                 .orElse(Optional.ofNullable(schema.get$ref()).orElse(getSchemaType(schema)));
+        if (schemaName == null) {
+            return null;
+        }
         Matcher classNameMatcher = CLASS_NAME_PATTERN.matcher(schemaName);
         String classToFind = classNameMatcher.find()
                 ? classNameMatcher.group(1)
@@ -221,6 +224,9 @@ public class OpenApiUtils {
     public boolean isArrayType(Schema<?> schema) {
         if (schema.getSpecVersion() == SpecVersion.V30) {
             return schema instanceof ArraySchema;
+        }
+        if (schema.getTypes() == null) {
+            return false;
         }
         return "array".equals(schema.getTypes().stream().findFirst().orElse(null));
     }
