@@ -33,7 +33,7 @@
 
     <properties>
         <version.milo>1.0.5</version.milo>
-        <version.guava>33.4.8-jre</version.guava>
+        <version.guava>33.5.0-jre</version.guava>
     </properties>
 
     <dependencies>
