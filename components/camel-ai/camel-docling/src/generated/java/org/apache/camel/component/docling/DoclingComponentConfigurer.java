@@ -30,11 +30,19 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DoclingComponent target = (DoclingComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikeyheader":
+        case "apiKeyHeader": getOrCreateConfiguration(target).setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticationscheme":
+        case "authenticationScheme": getOrCreateConfiguration(target).setAuthenticationScheme(property(camelContext, org.apache.camel.component.docling.AuthenticationScheme.class, value)); return true;
+        case "authenticationtoken":
+        case "authenticationToken": getOrCreateConfiguration(target).setAuthenticationToken(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.docling.DoclingConfiguration.class, value)); return true;
         case "contentinbody":
         case "contentInBody": getOrCreateConfiguration(target).setContentInBody(property(camelContext, boolean.class, value)); return true;
+        case "convertendpoint":
+        case "convertEndpoint": getOrCreateConfiguration(target).setConvertEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "doclingcommand":
         case "doclingCommand": getOrCreateConfiguration(target).setDoclingCommand(property(camelContext, java.lang.String.class, value)); return true;
         case "doclingserveurl":
@@ -65,11 +73,19 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikeyheader":
+        case "apiKeyHeader": return java.lang.String.class;
+        case "authenticationscheme":
+        case "authenticationScheme": return org.apache.camel.component.docling.AuthenticationScheme.class;
+        case "authenticationtoken":
+        case "authenticationToken": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.docling.DoclingConfiguration.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
+        case "convertendpoint":
+        case "convertEndpoint": return java.lang.String.class;
         case "doclingcommand":
         case "doclingCommand": return java.lang.String.class;
         case "doclingserveurl":
@@ -101,11 +117,19 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DoclingComponent target = (DoclingComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikeyheader":
+        case "apiKeyHeader": return getOrCreateConfiguration(target).getApiKeyHeader();
+        case "authenticationscheme":
+        case "authenticationScheme": return getOrCreateConfiguration(target).getAuthenticationScheme();
+        case "authenticationtoken":
+        case "authenticationToken": return getOrCreateConfiguration(target).getAuthenticationToken();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "contentinbody":
         case "contentInBody": return getOrCreateConfiguration(target).isContentInBody();
+        case "convertendpoint":
+        case "convertEndpoint": return getOrCreateConfiguration(target).getConvertEndpoint();
         case "doclingcommand":
         case "doclingCommand": return getOrCreateConfiguration(target).getDoclingCommand();
         case "doclingserveurl":

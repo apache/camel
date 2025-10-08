@@ -23,8 +23,16 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DoclingEndpoint target = (DoclingEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikeyheader":
+        case "apiKeyHeader": target.getConfiguration().setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticationscheme":
+        case "authenticationScheme": target.getConfiguration().setAuthenticationScheme(property(camelContext, org.apache.camel.component.docling.AuthenticationScheme.class, value)); return true;
+        case "authenticationtoken":
+        case "authenticationToken": target.getConfiguration().setAuthenticationToken(property(camelContext, java.lang.String.class, value)); return true;
         case "contentinbody":
         case "contentInBody": target.getConfiguration().setContentInBody(property(camelContext, boolean.class, value)); return true;
+        case "convertendpoint":
+        case "convertEndpoint": target.getConfiguration().setConvertEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "doclingcommand":
         case "doclingCommand": target.getConfiguration().setDoclingCommand(property(camelContext, java.lang.String.class, value)); return true;
         case "doclingserveurl":
@@ -55,8 +63,16 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikeyheader":
+        case "apiKeyHeader": return java.lang.String.class;
+        case "authenticationscheme":
+        case "authenticationScheme": return org.apache.camel.component.docling.AuthenticationScheme.class;
+        case "authenticationtoken":
+        case "authenticationToken": return java.lang.String.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
+        case "convertendpoint":
+        case "convertEndpoint": return java.lang.String.class;
         case "doclingcommand":
         case "doclingCommand": return java.lang.String.class;
         case "doclingserveurl":
@@ -88,8 +104,16 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DoclingEndpoint target = (DoclingEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikeyheader":
+        case "apiKeyHeader": return target.getConfiguration().getApiKeyHeader();
+        case "authenticationscheme":
+        case "authenticationScheme": return target.getConfiguration().getAuthenticationScheme();
+        case "authenticationtoken":
+        case "authenticationToken": return target.getConfiguration().getAuthenticationToken();
         case "contentinbody":
         case "contentInBody": return target.getConfiguration().isContentInBody();
+        case "convertendpoint":
+        case "convertEndpoint": return target.getConfiguration().getConvertEndpoint();
         case "doclingcommand":
         case "doclingCommand": return target.getConfiguration().getDoclingCommand();
         case "doclingserveurl":

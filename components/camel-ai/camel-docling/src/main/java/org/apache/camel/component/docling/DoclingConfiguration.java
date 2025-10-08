@@ -81,6 +81,23 @@ public class DoclingConfiguration implements Cloneable {
     @Metadata(description = "Docling-serve API URL (e.g., http://localhost:5001)", defaultValue = "http://localhost:5001")
     private String doclingServeUrl = "http://localhost:5001";
 
+    @UriParam(label = "security")
+    @Metadata(description = "Authentication token for docling-serve API (Bearer token or API key)", secret = true)
+    private String authenticationToken;
+
+    @UriParam(label = "security")
+    @Metadata(description = "Authentication scheme (BEARER, API_KEY, NONE)", defaultValue = "NONE",
+              enums = "BEARER,API_KEY,NONE")
+    private AuthenticationScheme authenticationScheme = AuthenticationScheme.NONE;
+
+    @UriParam(label = "security")
+    @Metadata(description = "Header name for API key authentication", defaultValue = "X-API-Key")
+    private String apiKeyHeader = "X-API-Key";
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Docling-serve API convert endpoint path", defaultValue = "/v1/convert/source")
+    private String convertEndpoint = "/v1/convert/source";
+
     public DoclingOperations getOperation() {
         return operation;
     }
@@ -175,6 +192,38 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setDoclingServeUrl(String doclingServeUrl) {
         this.doclingServeUrl = doclingServeUrl;
+    }
+
+    public String getAuthenticationToken() {
+        return authenticationToken;
+    }
+
+    public void setAuthenticationToken(String authenticationToken) {
+        this.authenticationToken = authenticationToken;
+    }
+
+    public AuthenticationScheme getAuthenticationScheme() {
+        return authenticationScheme;
+    }
+
+    public void setAuthenticationScheme(AuthenticationScheme authenticationScheme) {
+        this.authenticationScheme = authenticationScheme;
+    }
+
+    public String getApiKeyHeader() {
+        return apiKeyHeader;
+    }
+
+    public void setApiKeyHeader(String apiKeyHeader) {
+        this.apiKeyHeader = apiKeyHeader;
+    }
+
+    public String getConvertEndpoint() {
+        return convertEndpoint;
+    }
+
+    public void setConvertEndpoint(String convertEndpoint) {
+        this.convertEndpoint = convertEndpoint;
     }
 
     public DoclingConfiguration copy() {

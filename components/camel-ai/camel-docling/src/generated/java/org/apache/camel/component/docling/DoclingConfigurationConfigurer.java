@@ -23,8 +23,16 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.docling.DoclingConfiguration target = (org.apache.camel.component.docling.DoclingConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikeyheader":
+        case "apiKeyHeader": target.setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticationscheme":
+        case "authenticationScheme": target.setAuthenticationScheme(property(camelContext, org.apache.camel.component.docling.AuthenticationScheme.class, value)); return true;
+        case "authenticationtoken":
+        case "authenticationToken": target.setAuthenticationToken(property(camelContext, java.lang.String.class, value)); return true;
         case "contentinbody":
         case "contentInBody": target.setContentInBody(property(camelContext, boolean.class, value)); return true;
+        case "convertendpoint":
+        case "convertEndpoint": target.setConvertEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "doclingcommand":
         case "doclingCommand": target.setDoclingCommand(property(camelContext, java.lang.String.class, value)); return true;
         case "doclingserveurl":
@@ -53,8 +61,16 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikeyheader":
+        case "apiKeyHeader": return java.lang.String.class;
+        case "authenticationscheme":
+        case "authenticationScheme": return org.apache.camel.component.docling.AuthenticationScheme.class;
+        case "authenticationtoken":
+        case "authenticationToken": return java.lang.String.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
+        case "convertendpoint":
+        case "convertEndpoint": return java.lang.String.class;
         case "doclingcommand":
         case "doclingCommand": return java.lang.String.class;
         case "doclingserveurl":
@@ -84,8 +100,16 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.docling.DoclingConfiguration target = (org.apache.camel.component.docling.DoclingConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikeyheader":
+        case "apiKeyHeader": return target.getApiKeyHeader();
+        case "authenticationscheme":
+        case "authenticationScheme": return target.getAuthenticationScheme();
+        case "authenticationtoken":
+        case "authenticationToken": return target.getAuthenticationToken();
         case "contentinbody":
         case "contentInBody": return target.isContentInBody();
+        case "convertendpoint":
+        case "convertEndpoint": return target.getConvertEndpoint();
         case "doclingcommand":
         case "doclingCommand": return target.getDoclingCommand();
         case "doclingserveurl":

@@ -42,16 +42,36 @@ import org.slf4j.LoggerFactory;
 public class DoclingServeClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoclingServeClient.class);
-    private static final String CONVERT_ENDPOINT = "/v1/convert/source";
+    private static final String DEFAULT_CONVERT_ENDPOINT = "/v1/convert/source";
 
     private final String baseUrl;
     private final ObjectMapper objectMapper;
     private final CloseableHttpClient httpClient;
+    private final AuthenticationScheme authenticationScheme;
+    private final String authenticationToken;
+    private final String apiKeyHeader;
+    private final String convertEndpoint;
 
     public DoclingServeClient(String baseUrl) {
+        this(baseUrl, AuthenticationScheme.NONE, null, "X-API-Key", DEFAULT_CONVERT_ENDPOINT);
+    }
+
+    public DoclingServeClient(
+                              String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
+                              String apiKeyHeader) {
+        this(baseUrl, authenticationScheme, authenticationToken, apiKeyHeader, DEFAULT_CONVERT_ENDPOINT);
+    }
+
+    public DoclingServeClient(
+                              String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
+                              String apiKeyHeader, String convertEndpoint) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
         this.objectMapper = new ObjectMapper();
         this.httpClient = HttpClients.createDefault();
+        this.authenticationScheme = authenticationScheme != null ? authenticationScheme : AuthenticationScheme.NONE;
+        this.authenticationToken = authenticationToken;
+        this.apiKeyHeader = apiKeyHeader != null ? apiKeyHeader : "X-API-Key";
+        this.convertEndpoint = convertEndpoint != null ? convertEndpoint : DEFAULT_CONVERT_ENDPOINT;
     }
 
     /**
@@ -90,9 +110,10 @@ public class DoclingServeClient {
         String jsonRequest = objectMapper.writeValueAsString(requestBody);
         LOG.debug("Request body: {}", jsonRequest);
 
-        HttpPost httpPost = new HttpPost(baseUrl + CONVERT_ENDPOINT);
+        HttpPost httpPost = new HttpPost(baseUrl + convertEndpoint);
         httpPost.setEntity(new StringEntity(jsonRequest, ContentType.APPLICATION_JSON));
         httpPost.setHeader("Accept", "application/json");
+        applyAuthentication(httpPost);
 
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             int statusCode = response.getCode();
@@ -140,9 +161,10 @@ public class DoclingServeClient {
         String jsonRequest = objectMapper.writeValueAsString(requestBody);
         LOG.debug("Request body: {}", jsonRequest);
 
-        HttpPost httpPost = new HttpPost(baseUrl + CONVERT_ENDPOINT);
+        HttpPost httpPost = new HttpPost(baseUrl + convertEndpoint);
         httpPost.setEntity(new StringEntity(jsonRequest, ContentType.APPLICATION_JSON));
         httpPost.setHeader("Accept", "application/json");
+        applyAuthentication(httpPost);
 
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             int statusCode = response.getCode();
@@ -213,6 +235,35 @@ public class DoclingServeClient {
                 return "text";
             default:
                 return "md";
+        }
+    }
+
+    /**
+     * Apply authentication headers to the HTTP request based on the configured authentication scheme.
+     *
+     * @param httpPost The HTTP POST request to add authentication to
+     */
+    private void applyAuthentication(HttpPost httpPost) {
+        if (authenticationScheme == null || authenticationScheme == AuthenticationScheme.NONE) {
+            return;
+        }
+
+        if (authenticationToken == null || authenticationToken.isEmpty()) {
+            LOG.warn("Authentication scheme is set to {} but no authentication token provided", authenticationScheme);
+            return;
+        }
+
+        switch (authenticationScheme) {
+            case BEARER:
+                httpPost.setHeader("Authorization", "Bearer " + authenticationToken);
+                LOG.debug("Applied Bearer token authentication");
+                break;
+            case API_KEY:
+                httpPost.setHeader(apiKeyHeader, authenticationToken);
+                LOG.debug("Applied API Key authentication with header: {}", apiKeyHeader);
+                break;
+            default:
+                LOG.warn("Unknown authentication scheme: {}", authenticationScheme);
         }
     }
 

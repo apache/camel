@@ -11,6 +11,7 @@
   "apipassword",
   "apiuser",
   "apiusername",
+  "authenticationtoken",
   "authkey",
   "authorizationtoken",
   "blobaccesskey",
