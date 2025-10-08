@@ -61,7 +61,7 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
         return context;
     }
 
-    protected SpanData getSpan(List<SpanData> trace, String uri, Op op) {
+    protected static SpanData getSpan(List<SpanData> trace, String uri, Op op) {
         for (SpanData span : trace) {
             String camelURI = span.getAttributes().get(AttributeKey.stringKey("camel.uri"));
             if (camelURI != null && camelURI.equals(uri)) {

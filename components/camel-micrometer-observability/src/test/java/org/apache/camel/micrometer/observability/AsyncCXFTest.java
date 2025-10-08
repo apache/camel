@@ -70,20 +70,24 @@ public class AsyncCXFTest extends MicrometerObservabilityTracerPropagationTestSu
     private void checkTrace(OtelTrace trace) {
         List<SpanData> spans = trace.getSpans();
         assertEquals(8, spans.size());
-        SpanData testProducer = getSpan(spans, "direct://start", Op.EVENT_SENT);
-        SpanData direct = getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
-        SpanData directSendTo = getSpan(spans, "direct://send", Op.EVENT_SENT);
-        SpanData directSendFrom = getSpan(spans, "direct://send", Op.EVENT_RECEIVED);
-        SpanData cxfRs = getSpan(
+        SpanData testProducer
+                = MicrometerObservabilityTracerPropagationTestSupport.getSpan(spans, "direct://start", Op.EVENT_SENT);
+        SpanData direct
+                = MicrometerObservabilityTracerPropagationTestSupport.getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
+        SpanData directSendTo
+                = MicrometerObservabilityTracerPropagationTestSupport.getSpan(spans, "direct://send", Op.EVENT_SENT);
+        SpanData directSendFrom
+                = MicrometerObservabilityTracerPropagationTestSupport.getSpan(spans, "direct://send", Op.EVENT_RECEIVED);
+        SpanData cxfRs = MicrometerObservabilityTracerPropagationTestSupport.getSpan(
                 spans,
                 "cxfrs://http://localhost:" + cxfPort + "/rest/helloservice/sayHello?synchronous=false",
                 Op.EVENT_SENT);
-        SpanData rest = getSpan(
+        SpanData rest = MicrometerObservabilityTracerPropagationTestSupport.getSpan(
                 spans,
                 "rest://post:/rest/helloservice:/sayHello?routeId=direct-hi",
                 Op.EVENT_RECEIVED);
-        SpanData log = getSpan(spans, "log://hi", Op.EVENT_SENT);
-        SpanData mock = getSpan(spans, "mock://end", Op.EVENT_SENT);
+        SpanData log = MicrometerObservabilityTracerPropagationTestSupport.getSpan(spans, "log://hi", Op.EVENT_SENT);
+        SpanData mock = MicrometerObservabilityTracerPropagationTestSupport.getSpan(spans, "mock://end", Op.EVENT_SENT);
 
         // Validate span completion
         assertTrue(testProducer.hasEnded());

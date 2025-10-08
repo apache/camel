@@ -17,6 +17,7 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EnableProcessorsTest extends MicrometerObservabilityTracerTestSupport {
 
@@ -60,12 +62,12 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerTestSuppo
         SimpleSpan innerToLog = spans.get(5);
 
         // Validate span completion
-        assertNotEquals("", testProducer.getEndTimestamp());
-        assertNotEquals("", direct.getEndTimestamp());
-        assertNotEquals("", innerLog.getEndTimestamp());
-        assertNotEquals("", innerProcessor.getEndTimestamp());
-        assertNotEquals("", log.getEndTimestamp());
-        assertNotEquals("", innerToLog.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, innerLog.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, innerProcessor.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, log.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, innerToLog.getEndTimestamp());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
@@ -79,7 +81,7 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerTestSuppo
         assertEquals(Op.EVENT_PROCESS.toString(), innerProcessor.getTags().get("op"));
 
         // Validate hierarchy
-        assertEquals("", testProducer.getParentId());
+        assertTrue(testProducer.getParentId().isEmpty());
         assertEquals(testProducer.getSpanId(), direct.getParentId());
         assertEquals(direct.getSpanId(), innerLog.getParentId());
         assertEquals(direct.getSpanId(), innerProcessor.getParentId());
