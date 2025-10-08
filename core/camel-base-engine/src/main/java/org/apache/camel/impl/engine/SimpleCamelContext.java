@@ -72,6 +72,7 @@ import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
@@ -176,7 +177,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected TypeConverter createTypeConverter() {
         return new DefaultTypeConverter(
-                getCamelContextReference(), PluginHelper.getPackageScanClassResolver(this), getInjector(),
+                getCamelContextReference(), PluginHelper.getPackageScanClassResolver(getCamelContextReference()), getInjector(),
                 isLoadTypeConverters(), isTypeConverterStatisticsEnabled());
     }
 
@@ -588,7 +589,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 ResourceLoader.FACTORY,
                 ResourceLoader.class);
 
-        return result.orElseGet(() -> new DefaultResourceLoader(this));
+        return result.orElseGet(() -> new DefaultResourceLoader(getCamelContextReference()));
     }
 
     @Override
@@ -763,12 +764,17 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected BackOffTimerFactory createBackOffTimerFactory() {
-        return new DefaultBackOffTimerFactory(this);
+        return new DefaultBackOffTimerFactory(getCamelContextReference());
     }
 
     @Override
     protected TaskManagerRegistry createTaskManagerRegistry() {
-        return new DefaultTaskManagerRegistry(this);
+        return new DefaultTaskManagerRegistry(getCamelContextReference());
+    }
+
+    @Override
+    protected OptimisedComponentResolver createOptimisedComponentResolver() {
+        return new DefaultOptimisedComponentResolver(getCamelContextReference());
     }
 
     @Override
