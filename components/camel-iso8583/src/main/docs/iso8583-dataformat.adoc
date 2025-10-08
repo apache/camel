@@ -4,7 +4,7 @@
 :artifactid: camel-iso8583
 :description: Create, edit and read ISO-8583 messages.
 :since: 4.14
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: iso8583

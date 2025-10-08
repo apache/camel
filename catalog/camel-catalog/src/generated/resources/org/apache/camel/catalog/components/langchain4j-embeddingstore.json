@@ -8,7 +8,7 @@
     "firstVersion": "4.14.0",
     "label": "database,ai",
     "javaType": "org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-langchain4j-embeddingstore",
     "version": "4.16.0-SNAPSHOT",

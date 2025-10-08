@@ -4,7 +4,7 @@
 :artifactid: camel-langchain4j-embeddingstore
 :description: Perform operations on the Langchain4jEmbeddingStores.
 :since: 4.14
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
