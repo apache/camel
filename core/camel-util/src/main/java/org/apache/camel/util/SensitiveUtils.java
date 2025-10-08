@@ -192,7 +192,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-                                                    // SENSITIVE-PATTERN: END
+    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {
