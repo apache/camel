@@ -22,7 +22,9 @@ public enum PQCSignatureAlgorithms {
     MLDSA("ML-DSA", "BC"),
     SLHDSA("SLH-DSA", "BC"),
     LMS("LMS", "BC"),
+    HSS("LMS", "BC"),
     XMSS("XMSS", "BCPQC"),
+    XMSSMT("XMSSMT", "BCPQC"),
     DILITHIUM("DILITHIUM", "BCPQC"),
 
     // Experimental and non-standardized
