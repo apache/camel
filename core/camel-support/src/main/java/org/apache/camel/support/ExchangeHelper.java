@@ -919,6 +919,22 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Resolve the context-path from the given endpoint uri
+     *
+     * @param  uri the endpoint uri
+     * @return     the context path, or <tt>null</tt> if not possible to resolve
+     */
+    public static String resolveContextPath(String uri) {
+        uri = StringHelper.before(uri, "?", uri);
+        if (uri.contains("://")) {
+            uri = StringHelper.after(uri, "://");
+        } else {
+            uri = StringHelper.after(uri, ":");
+        }
+        return uri;
+    }
+
+    /**
      * @see #getCharsetName(Exchange, boolean)
      */
     public static String getCharsetName(Exchange exchange) {

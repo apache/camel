@@ -66,6 +66,7 @@ import org.apache.camel.main.download.JavaKnownImportsDownloader;
 import org.apache.camel.main.download.KameletAutowiredLifecycleStrategy;
 import org.apache.camel.main.download.KameletFallbackResourceResolver;
 import org.apache.camel.main.download.KameletMainInjector;
+import org.apache.camel.main.download.KameletOptimisedComponentResolver;
 import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -97,6 +98,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.Registry;
@@ -669,6 +671,8 @@ public class KameletMain extends MainCommandLineSupport {
                     new DependencyDownloaderUriFactoryResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
                     new DependencyDownloaderResourceLoader(answer, sourceDir));
+            answer.getCamelContextExtension().addContextPlugin(OptimisedComponentResolver.class,
+                    new KameletOptimisedComponentResolver(answer));
 
             if (stubPattern != null) {
                 // need to replace autowire strategy with stub capable

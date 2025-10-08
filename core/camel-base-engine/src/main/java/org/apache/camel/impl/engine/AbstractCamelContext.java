@@ -140,6 +140,7 @@ import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
@@ -361,6 +362,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(FactoryFinderResolver.class, createFactoryFinderResolver());
         camelContextExtension.addContextPlugin(PackageScanClassResolver.class, createPackageScanClassResolver());
         camelContextExtension.addContextPlugin(PackageScanResourceResolver.class, createPackageScanResourceResolver());
+        camelContextExtension.addContextPlugin(OptimisedComponentResolver.class, createOptimisedComponentResolver());
         camelContextExtension.addContextPlugin(VariableRepositoryFactory.class, createVariableRepositoryFactory());
         camelContextExtension.lazyAddContextPlugin(ModelineFactory.class, this::createModelineFactory);
         camelContextExtension.lazyAddContextPlugin(ModelJAXBContextFactory.class, this::createModelJAXBContextFactory);
@@ -4447,6 +4449,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract BackOffTimerFactory createBackOffTimerFactory();
 
     protected abstract TaskManagerRegistry createTaskManagerRegistry();
+
+    protected abstract OptimisedComponentResolver createOptimisedComponentResolver();
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.

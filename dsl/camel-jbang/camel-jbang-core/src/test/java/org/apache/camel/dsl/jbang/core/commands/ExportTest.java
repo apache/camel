@@ -690,4 +690,51 @@ class ExportTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportToDWithCustomKamelet(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportToDWithCustomKamelet {}", rt);
+        Export command = createCommand(rt,
+                new String[] { "src/test/resources/toDroute.yaml", "src/test/resources/cheese-sink.kamelet.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-log", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
+            Assertions
+                    .assertFalse(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-log-starter", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
+            Assertions
+                    .assertFalse(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-log", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
+            Assertions
+                    .assertFalse(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        }
+
+        File f = workingDir.toPath().resolve("src/main/resources/kamelets/cheese-sink.kamelet.yaml").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+        f = workingDir.toPath().resolve("src/main/resources/camel/toDroute.yaml").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+    }
+
 }
