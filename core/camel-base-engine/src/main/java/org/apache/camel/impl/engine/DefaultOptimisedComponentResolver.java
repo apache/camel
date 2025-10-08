@@ -14,23 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.spi.OptimisedComponentResolver;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
- * Represents a resolver of components from a URI to be able to autoload them using some discovery mechanism.
+ * Default {@link OptimisedComponentResolver}.
  */
-public interface ComponentResolver {
+public class DefaultOptimisedComponentResolver implements OptimisedComponentResolver {
 
-    /**
-     * Attempts to resolve the component for the given URI
-     *
-     * @param  name      the component name to resolve
-     * @param  context   the context to load the component if it can be resolved
-     * @return           the component which is added to the context or null if it cannot be resolved
-     * @throws Exception is thrown if the component could not be loaded
-     */
-    Component resolveComponent(String name, CamelContext context) throws Exception;
+    private final CamelContext camelContext;
+
+    public DefaultOptimisedComponentResolver(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public Component resolveComponent(String uri) {
+        String scheme = ExchangeHelper.resolveScheme(uri);
+        if (scheme != null) {
+            return camelContext.getComponent(scheme);
+        } else {
+            return null;
+        }
+    }
 }

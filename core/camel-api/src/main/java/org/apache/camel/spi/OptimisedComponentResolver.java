@@ -16,21 +16,19 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 
 /**
- * Represents a resolver of components from a URI to be able to autoload them using some discovery mechanism.
+ * A {@link Component} resolver that are used in EIPs with dynamic behavior such as toD, enrich and others.
  */
-public interface ComponentResolver {
+public interface OptimisedComponentResolver {
 
     /**
-     * Attempts to resolve the component for the given URI
+     * Resolves the given component
      *
-     * @param  name      the component name to resolve
-     * @param  context   the context to load the component if it can be resolved
-     * @return           the component which is added to the context or null if it cannot be resolved
-     * @throws Exception is thrown if the component could not be loaded
+     * @param  uri the endpoint uri
+     * @return     the component
      */
-    Component resolveComponent(String name, CamelContext context) throws Exception;
+    Component resolveComponent(String uri);
+
 }
