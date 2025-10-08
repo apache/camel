@@ -21,5 +21,16 @@ public enum PQCOperations {
     verify,
     generateSecretKeyEncapsulation,
     extractSecretKeyEncapsulation,
-    extractSecretKeyFromEncapsulation
+    extractSecretKeyFromEncapsulation,
+    getRemainingSignatures,
+    getKeyState,
+    deleteKeyState,
+    generateKeyPair,
+    exportKey,
+    importKey,
+    rotateKey,
+    getKeyMetadata,
+    listKeys,
+    expireKey,
+    revokeKey
 }

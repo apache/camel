@@ -15,7 +15,15 @@
 
 *{component-header}*
 
-The PQC component supports signing and verifying payload using Post Quantum Cryptography algorithms. 
+The PQC component supports signing and verifying payload using Post Quantum Cryptography algorithms, as well as key lifecycle management for Post-Quantum cryptographic keys.
+
+== Features
+
+* **Digital Signatures** - Sign and verify data using NIST-standardized and experimental PQC signature algorithms
+* **Key Encapsulation** - Generate and extract shared secrets using Key Encapsulation Mechanisms (KEM)
+* **Key Lifecycle Management** - Generate, rotate, expire, revoke, and manage PQC keys
+* **Multiple Implementations** - File-based and in-memory key storage options
+* **Key Export/Import** - Convert keys between PEM, DER, PKCS8, and X.509 formats
 
 Prerequisites
 
@@ -52,23 +60,44 @@ Standardized and implemented
 - ML-DSA
 - SLH-DSA
 - LMS
+- HSS (Hierarchical Signature System)
 - XMSS
+- XMSSMT (XMSS Multi-Tree)
 
 Experimental and non-standardized
 
+- Dilithium
 - Falcon
 - Picnic
-- Rainbow
+- SNOVA
+- MAYO
+- SPHINCS+
 
-== Supported operations
+== Supported Operations
 
-The component supports five operations
+The component supports the following operations:
 
-- sign
-- verify
-- generateSecretKeyEncapsulation
-- extractSecretKeyEncapsulation
-- extractSecretKeyFromEncapsulation
+**Signature Operations:**
+
+- sign - Sign data using a PQC signature algorithm
+- verify - Verify a signature
+
+**Key Encapsulation Operations:**
+
+- generateSecretKeyEncapsulation - Generate a secret key and encapsulate it
+- extractSecretKeyEncapsulation - Extract the encapsulation
+- extractSecretKeyFromEncapsulation - Extract the secret key from encapsulation
+
+**Key Lifecycle Operations:**
+
+- generateKeyPair - Generate a new PQC key pair
+- exportKey - Export a key to PEM, DER, PKCS8, or X.509 format
+- importKey - Import a key from bytes
+- rotateKey - Rotate a key and deprecate the old one
+- getKeyMetadata - Get metadata for a key
+- listKeys - List all keys with metadata
+- expireKey - Mark a key as expired
+- revokeKey - Revoke a compromised key
 
 == Signature and Verification
 
@@ -258,7 +287,7 @@ The KEM Algorithm supported are the following:
 
 Standardized and implemented
 
-- ML-KEM 
+- ML-KEM
 
 Experimental and non-standardized
 
@@ -269,6 +298,8 @@ Experimental and non-standardized
 - SABER
 - NTRU
 - NTRULPRime
+- SNTRUPrime
+- Kyber
 
 The component expects to find a KeyGenerator and a KeyPair in to the Camel Registry.
 
@@ -355,5 +386,531 @@ As example you could use the secret key to dynamically instruct the CryptoDataFo
 --------------------------------------------------------------------------------
 
 This could be used to generate a secret key, protect it through Encapsulation and KEM approach and re-use it once extracted.
+
+== Key Lifecycle Management
+
+The PQC component provides comprehensive key lifecycle management capabilities for Post-Quantum Cryptography keys. This includes key generation, storage, rotation, expiration, revocation, and format conversion.
+
+Key lifecycle management is critical for maintaining security in production environments, especially with stateful hash-based signature algorithms (XMSS, XMSSMT, LMS, HSS) that have limited signature capacity.
+
+=== Key Lifecycle Manager Interface
+
+The `KeyLifecycleManager` interface provides the following operations:
+
+* **Key Generation** - Generate new key pairs with algorithm-specific parameters
+* **Key Storage** - Store and retrieve keys with metadata
+* **Key Rotation** - Rotate keys and deprecate old ones
+* **Key Expiration** - Mark keys as expired based on age or policy
+* **Key Revocation** - Revoke compromised keys with reason tracking
+* **Key Export/Import** - Convert keys between formats (PEM, DER, PKCS8, X.509)
+* **Key Listing** - List all keys with their metadata
+* **Rotation Detection** - Check if keys need rotation based on age or usage
+
+=== Available Implementations
+
+The component provides two implementations of `KeyLifecycleManager`:
+
+==== FileBasedKeyLifecycleManager
+
+A production-ready implementation that persists keys and metadata to disk.
+
+**Features:**
+
+* Persistent storage - keys survive application restarts
+* File-based storage with `.key` and `.metadata` files
+* In-memory caching for performance
+* Automatic loading of existing keys on startup
+* Secure file permissions
+
+**Use Cases:**
+
+* Production environments
+* Single-instance deployments
+* When persistence is required
+* Audit and compliance requirements
+
+**Example:**
+
+[source,java]
+--------------------------------------------------------------------------------
+KeyLifecycleManager keyManager = new FileBasedKeyLifecycleManager("/secure/keys");
+
+// Generate a new Dilithium key
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
+    DilithiumParameterSpec.dilithium2);
+
+// Use the key
+KeyMetadata metadata = keyManager.getKeyMetadata("app-signing-key");
+logger.info("Key created: {}", metadata);
+--------------------------------------------------------------------------------
+
+==== InMemoryKeyLifecycleManager
+
+A lightweight implementation that stores keys in memory only.
+
+**Features:**
+
+* Non-persistent storage - keys lost on restart
+* ConcurrentHashMap-based storage
+* No I/O overhead
+* Thread-safe operations
+* Additional utility methods: `clear()` and `size()`
+
+**Use Cases:**
+
+* Testing and development
+* Ephemeral workloads
+* Short-lived applications
+* Unit and integration tests
+
+**Example:**
+
+[source,java]
+--------------------------------------------------------------------------------
+InMemoryKeyLifecycleManager keyManager = new InMemoryKeyLifecycleManager();
+
+// Generate a test key
+KeyPair keyPair = keyManager.generateKeyPair("FALCON", "test-key");
+
+// Clean up after testing
+keyManager.clear();
+--------------------------------------------------------------------------------
+
+=== Key Generation
+
+The key lifecycle manager supports all PQC algorithms with sensible default parameter specifications.
+
+==== Signature Algorithms
+
+[source,java]
+--------------------------------------------------------------------------------
+// ML-DSA (uses default ML-DSA-65)
+KeyPair mldsaKey = keyManager.generateKeyPair("MLDSA", "mldsa-key");
+
+// Dilithium with specific parameter
+KeyPair dilithiumKey = keyManager.generateKeyPair("DILITHIUM", "dilithium-key",
+    DilithiumParameterSpec.dilithium3);
+
+// Falcon (uses default Falcon-512)
+KeyPair falconKey = keyManager.generateKeyPair("FALCON", "falcon-key");
+
+// XMSS (uses default 10-tree height with SHA-256)
+KeyPair xmssKey = keyManager.generateKeyPair("XMSS", "xmss-key");
+
+// XMSSMT (uses default XMSSMT-SHA2-20d2-256)
+KeyPair xmssmtKey = keyManager.generateKeyPair("XMSSMT", "xmssmt-key");
+
+// LMS/HSS (uses default LMS-SHA256-N32-H10)
+KeyPair lmsKey = keyManager.generateKeyPair("LMS", "lms-key");
+--------------------------------------------------------------------------------
+
+==== Key Encapsulation Algorithms
+
+[source,java]
+--------------------------------------------------------------------------------
+// ML-KEM (uses default)
+KeyPair mlkemKey = keyManager.generateKeyPair("MLKEM", "mlkem-key");
+
+// NTRU (uses default ntruhps2048509)
+KeyPair ntruKey = keyManager.generateKeyPair("NTRU", "ntru-key");
+
+// SNTRUPrime (uses default sntrup761)
+KeyPair sntrupKey = keyManager.generateKeyPair("SNTRUPrime", "sntrup-key");
+
+// BIKE (uses default bike128)
+KeyPair bikeKey = keyManager.generateKeyPair("BIKE", "bike-key");
+--------------------------------------------------------------------------------
+
+=== Key Metadata
+
+Each key is associated with metadata that tracks its lifecycle:
+
+[source,java]
+--------------------------------------------------------------------------------
+KeyMetadata metadata = keyManager.getKeyMetadata("my-key");
+
+System.out.println("Key ID: " + metadata.getKeyId());
+System.out.println("Algorithm: " + metadata.getAlgorithm());
+System.out.println("Status: " + metadata.getStatus());
+System.out.println("Created: " + metadata.getCreatedAt());
+System.out.println("Age (days): " + metadata.getAgeInDays());
+System.out.println("Usage count: " + metadata.getUsageCount());
+System.out.println("Expires at: " + metadata.getExpiresAt());
+System.out.println("Next rotation: " + metadata.getNextRotationAt());
+--------------------------------------------------------------------------------
+
+**Key Status Values:**
+
+* `ACTIVE` - Key is active and can be used
+* `EXPIRED` - Key has expired and should not be used
+* `REVOKED` - Key has been revoked due to compromise
+* `PENDING_ROTATION` - Key should be rotated soon
+* `DEPRECATED` - Key has been rotated and replaced
+
+=== Key Rotation
+
+Key rotation is essential for maintaining security. The lifecycle manager supports automated rotation:
+
+[source,java]
+--------------------------------------------------------------------------------
+// Check if key needs rotation
+boolean needsRotation = keyManager.needsRotation("old-key",
+    Duration.ofDays(90),  // Max age: 90 days
+    10000);                // Max usage: 10,000 operations
+
+if (needsRotation) {
+    // Rotate the key
+    KeyPair newKey = keyManager.rotateKey("old-key", "new-key", "DILITHIUM");
+
+    // Old key is now DEPRECATED
+    // New key is ACTIVE
+    logger.info("Key rotated successfully");
+}
+--------------------------------------------------------------------------------
+
+=== Key Export and Import
+
+Keys can be exported and imported in multiple formats:
+
+**Supported Formats:**
+
+* `PEM` - Privacy-Enhanced Mail format (Base64 encoded)
+* `DER` - Distinguished Encoding Rules (binary)
+* `PKCS8` - PKCS#8 format for private keys
+* `X509` - X.509 format for public keys
+
+**Export Example:**
+
+[source,java]
+--------------------------------------------------------------------------------
+KeyPair keyPair = keyManager.getKey("my-key");
+
+// Export public key as PEM
+byte[] publicPem = keyManager.exportPublicKey(keyPair, KeyFormat.PEM);
+String pemString = new String(publicPem);
+System.out.println(pemString);
+// Output:
+// -----BEGIN PUBLIC KEY-----
+// MIIBIjAN...
+// -----END PUBLIC KEY-----
+
+// Export entire key pair (public only for safety)
+byte[] keyPairPem = keyManager.exportKey(keyPair, KeyFormat.PEM, false);
+
+// Export with private key (USE WITH CAUTION)
+byte[] fullExport = keyManager.exportKey(keyPair, KeyFormat.DER, true);
+--------------------------------------------------------------------------------
+
+**Import Example:**
+
+[source,java]
+--------------------------------------------------------------------------------
+// Import from PEM format
+byte[] pemData = Files.readAllBytes(Paths.get("public-key.pem"));
+KeyPair imported = keyManager.importKey(pemData, KeyFormat.PEM, "DILITHIUM");
+
+// Store the imported key
+KeyMetadata metadata = new KeyMetadata("imported-key", "DILITHIUM");
+keyManager.storeKey("imported-key", imported, metadata);
+--------------------------------------------------------------------------------
+
+=== Key Expiration and Revocation
+
+**Expire a Key:**
+
+[source,java]
+--------------------------------------------------------------------------------
+// Set expiration time
+KeyMetadata metadata = keyManager.getKeyMetadata("my-key");
+metadata.setExpiresAt(Instant.now().plus(Duration.ofDays(365)));
+keyManager.updateKeyMetadata("my-key", metadata);
+
+// Manually expire immediately
+keyManager.expireKey("my-key");
+
+// Check if expired
+if (metadata.isExpired()) {
+    logger.warn("Key {} has expired", metadata.getKeyId());
+}
+--------------------------------------------------------------------------------
+
+**Revoke a Key:**
+
+[source,java]
+--------------------------------------------------------------------------------
+// Revoke a compromised key
+keyManager.revokeKey("compromised-key", "Private key exposed in log file");
+
+KeyMetadata metadata = keyManager.getKeyMetadata("compromised-key");
+assert metadata.getStatus() == KeyMetadata.KeyStatus.REVOKED;
+assert metadata.getDescription().contains("Revoked: Private key exposed");
+--------------------------------------------------------------------------------
+
+=== Listing and Managing Keys
+
+[source,java]
+--------------------------------------------------------------------------------
+// List all keys
+List<KeyMetadata> allKeys = keyManager.listKeys();
+
+// Filter active keys
+List<KeyMetadata> activeKeys = allKeys.stream()
+    .filter(m -> m.getStatus() == KeyMetadata.KeyStatus.ACTIVE)
+    .collect(Collectors.toList());
+
+// Find keys needing rotation
+for (KeyMetadata metadata : allKeys) {
+    if (keyManager.needsRotation(metadata.getKeyId(), Duration.ofDays(90), 5000)) {
+        logger.warn("Key {} needs rotation", metadata.getKeyId());
+    }
+}
+
+// Delete old keys
+for (KeyMetadata metadata : allKeys) {
+    if (metadata.getStatus() == KeyMetadata.KeyStatus.DEPRECATED
+        && metadata.getAgeInDays() > 365) {
+        keyManager.deleteKey(metadata.getKeyId());
+        logger.info("Deleted old deprecated key: {}", metadata.getKeyId());
+    }
+}
+--------------------------------------------------------------------------------
+
+=== Integration with Camel Routes
+
+The key lifecycle manager can be registered in the Camel registry and used in routes:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+@BindToRegistry("keyLifecycleManager")
+public KeyLifecycleManager createKeyManager() throws IOException {
+    return new FileBasedKeyLifecycleManager("/secure/keys");
+}
+
+@BindToRegistry("signingKey")
+public KeyPair createSigningKey() throws Exception {
+    KeyLifecycleManager manager = createKeyManager();
+    return manager.generateKeyPair("DILITHIUM", "route-signing-key",
+        DilithiumParameterSpec.dilithium2);
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+# Configure key lifecycle manager in application.yaml
+camel:
+  beans:
+    keyLifecycleManager:
+      type: org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager
+      properties:
+        keyDirectoryPath: "/secure/keys"
+
+    signingKey:
+      type: org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager
+      scriptLanguage: groovy
+      script: |
+        def manager = new org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager('/secure/keys')
+        def spec = org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec.dilithium2
+        manager.generateKeyPair('DILITHIUM', 'route-signing-key', spec)
+----
+====
+
+**Using in Routes:**
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:check-rotation?period=86400000") // Check daily
+    .bean("keyLifecycleManager", "needsRotation('route-signing-key', 90, 10000)")
+    .choice()
+        .when(body().isEqualTo(true))
+            .log("Rotating signing key")
+            .bean("keyLifecycleManager", "rotateKey('route-signing-key', 'route-signing-key-new', 'DILITHIUM')")
+            .to("log:rotation-complete")
+        .otherwise()
+            .log("Key rotation not needed")
+    .end();
+----
+
+YAML::
++
+[source,yaml]
+----
+# Automated key rotation route
+- route:
+    id: check-key-rotation
+    from:
+      uri: timer:check-rotation
+      parameters:
+        period: 86400000  # Check daily
+    steps:
+      - bean:
+          ref: keyLifecycleManager
+          method: needsRotation('route-signing-key', 90, 10000)
+      - choice:
+          when:
+            - simple: "${body} == true"
+              steps:
+                - log: "Rotating signing key"
+                - bean:
+                    ref: keyLifecycleManager
+                    method: rotateKey('route-signing-key', 'route-signing-key-new', 'DILITHIUM')
+                - to: log:rotation-complete
+          otherwise:
+            steps:
+              - log: "Key rotation not needed"
+----
+====
+
+=== Default Parameter Specifications
+
+The lifecycle manager provides sensible defaults for all algorithms:
+
+|===
+|Algorithm |Default Parameter Spec
+
+|DILITHIUM |dilithium2
+|FALCON |falcon_512
+|SPHINCSPLUS |sha2_128s
+|XMSS |10-tree height with SHA-256
+|XMSSMT |XMSSMT-SHA2-20d2-256
+|LMS/HSS |LMS-SHA256-N32-H10 with SHA256-N32-W4
+|NTRU |ntruhps2048509
+|NTRULPRime |ntrulpr653
+|SNTRUPrime |sntrup761
+|SABER |lightsaberkem128r3
+|FRODO |frodokem640aes
+|BIKE |bike128
+|HQC |hqc128
+|CMCE |mceliece348864
+|===
+
+=== Best Practices
+
+**1. Regular Key Rotation**
+
+Implement automated key rotation policies:
+
+[source,java]
+--------------------------------------------------------------------------------
+// Rotate keys every 90 days or after 10,000 uses
+Duration maxAge = Duration.ofDays(90);
+long maxUsage = 10000;
+
+if (keyManager.needsRotation(keyId, maxAge, maxUsage)) {
+    keyManager.rotateKey(keyId, keyId + "-new", algorithm);
+}
+--------------------------------------------------------------------------------
+
+**2. Secure Storage**
+
+For FileBasedKeyLifecycleManager:
+
+* Store keys in a secure directory with restricted permissions
+* Use encrypted file systems where possible
+* Implement backup strategies for key files
+* Monitor access to key directories
+
+**3. Key Metadata Tracking**
+
+Always update metadata when using keys:
+
+[source,java]
+--------------------------------------------------------------------------------
+KeyMetadata metadata = keyManager.getKeyMetadata(keyId);
+metadata.updateLastUsed(); // Increments usage count
+keyManager.updateKeyMetadata(keyId, metadata);
+--------------------------------------------------------------------------------
+
+**4. Handle Stateful Signatures Carefully**
+
+For XMSS, XMSSMT, LMS, and HSS algorithms:
+
+* Track signature usage to prevent exhaustion
+* Never reuse a stateful signature state (critical security requirement)
+* Monitor usage percentage and rotate before exhaustion
+* Set appropriate `maxSignatures` based on tree height
+
+**5. Secure Key Export**
+
+When exporting keys:
+
+* Export public keys only when possible
+* Encrypt private key exports
+* Use secure channels for key transfer
+* Audit all key export operations
+
+**6. Testing Strategy**
+
+Use InMemoryKeyLifecycleManager for tests:
+
+[source,java]
+--------------------------------------------------------------------------------
+@BeforeEach
+public void setup() {
+    keyManager = new InMemoryKeyLifecycleManager();
+}
+
+@AfterEach
+public void cleanup() {
+    keyManager.clear();
+}
+--------------------------------------------------------------------------------
+
+=== Thread Safety
+
+Both implementations are thread-safe:
+
+* **FileBasedKeyLifecycleManager**: Uses ConcurrentHashMap for caching and atomic file operations
+* **InMemoryKeyLifecycleManager**: Uses ConcurrentHashMap for all storage
+
+Concurrent key operations are safe:
+
+[source,java]
+--------------------------------------------------------------------------------
+ExecutorService executor = Executors.newFixedThreadPool(10);
+
+for (int i = 0; i < 100; i++) {
+    final int index = i;
+    executor.submit(() -> {
+        try {
+            keyManager.generateKeyPair("DILITHIUM", "key-" + index,
+                DilithiumParameterSpec.dilithium2);
+        } catch (Exception e) {
+            logger.error("Key generation failed", e);
+        }
+    });
+}
+
+executor.shutdown();
+executor.awaitTermination(1, TimeUnit.MINUTES);
+--------------------------------------------------------------------------------
+
+=== Migration Between Implementations
+
+To migrate from InMemoryKeyLifecycleManager to FileBasedKeyLifecycleManager:
+
+[source,java]
+--------------------------------------------------------------------------------
+InMemoryKeyLifecycleManager memoryManager = new InMemoryKeyLifecycleManager();
+FileBasedKeyLifecycleManager fileManager = new FileBasedKeyLifecycleManager("/secure/keys");
+
+// Export all keys
+List<KeyMetadata> keys = memoryManager.listKeys();
+for (KeyMetadata metadata : keys) {
+    KeyPair keyPair = memoryManager.getKey(metadata.getKeyId());
+    fileManager.storeKey(metadata.getKeyId(), keyPair, metadata);
+}
+
+logger.info("Migrated {} keys to file-based storage", keys.size());
+--------------------------------------------------------------------------------
 
 include::spring-boot:partial$starter.adoc[]

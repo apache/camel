@@ -502,6 +502,140 @@ public interface PQCEndpointBuilderFactory {
         public String pQCSecretKey() {
             return "CamelPQCSecretKey";
         }
+        /**
+         * The remaining signatures for a stateful key.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCRemainingSignatures}.
+         */
+        public String pQCRemainingSignatures() {
+            return "CamelPQCRemainingSignatures";
+        }
+        /**
+         * The key state for a stateful key.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.pqc.stateful.StatefulKeyState} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCKeyState}.
+         */
+        public String pQCKeyState() {
+            return "CamelPQCKeyState";
+        }
+        /**
+         * The key ID for stateful key operations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCKeyId}.
+         */
+        public String pQCKeyId() {
+            return "CamelPQCKeyId";
+        }
+        /**
+         * The generated key pair.
+         * 
+         * The option is a: {@code java.security.KeyPair} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCKeyPair}.
+         */
+        public String pQCKeyPair() {
+            return "CamelPQCKeyPair";
+        }
+        /**
+         * The key format for import/export operations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCKeyFormat}.
+         */
+        public String pQCKeyFormat() {
+            return "CamelPQCKeyFormat";
+        }
+        /**
+         * The exported key data.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCExportedKey}.
+         */
+        public String pQCExportedKey() {
+            return "CamelPQCExportedKey";
+        }
+        /**
+         * The key metadata.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.pqc.lifecycle.KeyMetadata} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCKeyMetadata}.
+         */
+        public String pQCKeyMetadata() {
+            return "CamelPQCKeyMetadata";
+        }
+        /**
+         * List of key metadata.
+         * 
+         * The option is a: {@code java.util.List} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCKeyList}.
+         */
+        public String pQCKeyList() {
+            return "CamelPQCKeyList";
+        }
+        /**
+         * The algorithm for key generation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCAlgorithm}.
+         */
+        public String pQCAlgorithm() {
+            return "CamelPQCAlgorithm";
+        }
+        /**
+         * Include private key in export.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCIncludePrivate}.
+         */
+        public String pQCIncludePrivate() {
+            return "CamelPQCIncludePrivate";
+        }
+        /**
+         * Revocation reason.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCRevocationReason}.
+         */
+        public String pQCRevocationReason() {
+            return "CamelPQCRevocationReason";
+        }
     }
     static PQCEndpointBuilder endpointBuilder(String componentName, String path) {
         class PQCEndpointBuilderImpl extends AbstractEndpointBuilder implements PQCEndpointBuilder, AdvancedPQCEndpointBuilder {

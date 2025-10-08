@@ -34,4 +34,38 @@ public interface PQCConstants {
     @Metadata(description = "The extracted key in case of extractSecretKeyFromEncapsulation operation and storeExtractedSecretKeyAsHeader option enabled",
               javaType = "Boolean")
     String SECRET_KEY = "CamelPQCSecretKey";
+
+    @Metadata(description = "The remaining signatures for a stateful key", javaType = "Long")
+    String REMAINING_SIGNATURES = "CamelPQCRemainingSignatures";
+
+    @Metadata(description = "The key state for a stateful key",
+              javaType = "org.apache.camel.component.pqc.stateful.StatefulKeyState")
+    String KEY_STATE = "CamelPQCKeyState";
+
+    @Metadata(description = "The key ID for stateful key operations", javaType = "String")
+    String KEY_ID = "CamelPQCKeyId";
+
+    @Metadata(description = "The generated key pair", javaType = "java.security.KeyPair")
+    String KEY_PAIR = "CamelPQCKeyPair";
+
+    @Metadata(description = "The key format for import/export operations", javaType = "String")
+    String KEY_FORMAT = "CamelPQCKeyFormat";
+
+    @Metadata(description = "The exported key data", javaType = "byte[]")
+    String EXPORTED_KEY = "CamelPQCExportedKey";
+
+    @Metadata(description = "The key metadata", javaType = "org.apache.camel.component.pqc.lifecycle.KeyMetadata")
+    String KEY_METADATA = "CamelPQCKeyMetadata";
+
+    @Metadata(description = "List of key metadata", javaType = "java.util.List")
+    String KEY_LIST = "CamelPQCKeyList";
+
+    @Metadata(description = "The algorithm for key generation", javaType = "String")
+    String ALGORITHM = "CamelPQCAlgorithm";
+
+    @Metadata(description = "Include private key in export", javaType = "Boolean")
+    String INCLUDE_PRIVATE = "CamelPQCIncludePrivate";
+
+    @Metadata(description = "Revocation reason", javaType = "String")
+    String REVOCATION_REASON = "CamelPQCRevocationReason";
 }
