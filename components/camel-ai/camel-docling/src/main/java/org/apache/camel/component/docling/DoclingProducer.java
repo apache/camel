@@ -54,8 +54,16 @@ public class DoclingProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         if (configuration.isUseDoclingServe()) {
-            doclingServeClient = new DoclingServeClient(configuration.getDoclingServeUrl());
-            LOG.info("DoclingProducer configured to use docling-serve API at: {}", configuration.getDoclingServeUrl());
+            doclingServeClient = new DoclingServeClient(
+                    configuration.getDoclingServeUrl(),
+                    configuration.getAuthenticationScheme(),
+                    configuration.getAuthenticationToken(),
+                    configuration.getApiKeyHeader(),
+                    configuration.getConvertEndpoint());
+            LOG.info("DoclingProducer configured to use docling-serve API at: {}{} with authentication: {}",
+                    configuration.getDoclingServeUrl(),
+                    configuration.getConvertEndpoint(),
+                    configuration.getAuthenticationScheme());
         } else {
             LOG.info("DoclingProducer configured to use docling CLI command");
         }

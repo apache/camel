@@ -251,6 +251,23 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Docling-serve API convert endpoint path.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: /v1/convert/source
+         * Group: advanced
+         * 
+         * @param convertEndpoint the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder convertEndpoint(java.lang.String convertEndpoint) {
+            doSetProperty("convertEndpoint", convertEndpoint);
+            return this;
+        }
+    
         /**
          * Path to Docling Python executable or command.
          * 
@@ -295,6 +312,56 @@ public interface DoclingComponentBuilderFactory {
          */
         default DoclingComponentBuilder workingDirectory(java.lang.String workingDirectory) {
             doSetProperty("workingDirectory", workingDirectory);
+            return this;
+        }
+    
+        
+        /**
+         * Header name for API key authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: X-API-Key
+         * Group: security
+         * 
+         * @param apiKeyHeader the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder apiKeyHeader(java.lang.String apiKeyHeader) {
+            doSetProperty("apiKeyHeader", apiKeyHeader);
+            return this;
+        }
+    
+        
+        /**
+         * Authentication scheme (BEARER, API_KEY, NONE).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.docling.AuthenticationScheme&lt;/code&gt; type.
+         * 
+         * Default: NONE
+         * Group: security
+         * 
+         * @param authenticationScheme the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder authenticationScheme(org.apache.camel.component.docling.AuthenticationScheme authenticationScheme) {
+            doSetProperty("authenticationScheme", authenticationScheme);
+            return this;
+        }
+    
+        /**
+         * Authentication token for docling-serve API (Bearer token or API key).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param authenticationToken the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder authenticationToken(java.lang.String authenticationToken) {
+            doSetProperty("authenticationToken", authenticationToken);
             return this;
         }
     
@@ -346,9 +413,13 @@ public interface DoclingComponentBuilderFactory {
             case "outputFormat": getOrCreateConfiguration((DoclingComponent) component).setOutputFormat((java.lang.String) value); return true;
             case "useDoclingServe": getOrCreateConfiguration((DoclingComponent) component).setUseDoclingServe((boolean) value); return true;
             case "autowiredEnabled": ((DoclingComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "convertEndpoint": getOrCreateConfiguration((DoclingComponent) component).setConvertEndpoint((java.lang.String) value); return true;
             case "doclingCommand": getOrCreateConfiguration((DoclingComponent) component).setDoclingCommand((java.lang.String) value); return true;
             case "processTimeout": getOrCreateConfiguration((DoclingComponent) component).setProcessTimeout((long) value); return true;
             case "workingDirectory": getOrCreateConfiguration((DoclingComponent) component).setWorkingDirectory((java.lang.String) value); return true;
+            case "apiKeyHeader": getOrCreateConfiguration((DoclingComponent) component).setApiKeyHeader((java.lang.String) value); return true;
+            case "authenticationScheme": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationScheme((org.apache.camel.component.docling.AuthenticationScheme) value); return true;
+            case "authenticationToken": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationToken((java.lang.String) value); return true;
             case "maxFileSize": getOrCreateConfiguration((DoclingComponent) component).setMaxFileSize((long) value); return true;
             default: return false;
             }

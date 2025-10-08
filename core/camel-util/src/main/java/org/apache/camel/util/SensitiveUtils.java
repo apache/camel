@@ -40,6 +40,7 @@ public final class SensitiveUtils {
                     "apipassword",
                     "apiuser",
                     "apiusername",
+                    "authenticationtoken",
                     "authkey",
                     "authorizationtoken",
                     "blobaccesskey",
@@ -124,6 +125,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qapipassword\\E"
                                                     + "|\\Qapiuser\\E"
                                                     + "|\\Qapiusername\\E"
+                                                    + "|\\Qauthenticationtoken\\E"
                                                     + "|\\Qauthkey\\E"
                                                     + "|\\Qauthorizationtoken\\E"
                                                     + "|\\Qblobaccesskey\\E"

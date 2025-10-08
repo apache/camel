@@ -248,6 +248,69 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Header name for API key authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: X-API-Key
+         * Group: security
+         * 
+         * @param apiKeyHeader the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder apiKeyHeader(String apiKeyHeader) {
+            doSetProperty("apiKeyHeader", apiKeyHeader);
+            return this;
+        }
+        /**
+         * Authentication scheme (BEARER, API_KEY, NONE).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.docling.AuthenticationScheme</code>
+         * type.
+         * 
+         * Default: NONE
+         * Group: security
+         * 
+         * @param authenticationScheme the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder authenticationScheme(org.apache.camel.component.docling.AuthenticationScheme authenticationScheme) {
+            doSetProperty("authenticationScheme", authenticationScheme);
+            return this;
+        }
+        /**
+         * Authentication scheme (BEARER, API_KEY, NONE).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.docling.AuthenticationScheme</code>
+         * type.
+         * 
+         * Default: NONE
+         * Group: security
+         * 
+         * @param authenticationScheme the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder authenticationScheme(String authenticationScheme) {
+            doSetProperty("authenticationScheme", authenticationScheme);
+            return this;
+        }
+        /**
+         * Authentication token for docling-serve API (Bearer token or API key).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param authenticationToken the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder authenticationToken(String authenticationToken) {
+            doSetProperty("authenticationToken", authenticationToken);
+            return this;
+        }
+        /**
          * Maximum file size in bytes for processing.
          * 
          * The option is a: <code>long</code> type.
@@ -333,6 +396,21 @@ public interface DoclingEndpointBuilderFactory {
          */
         default AdvancedDoclingEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Docling-serve API convert endpoint path.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: /v1/convert/source
+         * Group: advanced
+         * 
+         * @param convertEndpoint the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder convertEndpoint(String convertEndpoint) {
+            doSetProperty("convertEndpoint", convertEndpoint);
             return this;
         }
         /**

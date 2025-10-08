@@ -572,6 +572,189 @@ YAML::
 ----
 ====
 
+=== Authentication with docling-serve
+
+The component supports multiple authentication mechanisms for secured docling-serve instances.
+
+==== Bearer Token Authentication
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:CONVERT_TO_MARKDOWN?" +
+        "useDoclingServe=true&" +
+        "doclingServeUrl=http://localhost:5001&" +
+        "authenticationScheme=BEARER&" +
+        "authenticationToken=your-bearer-token-here&" +
+        "contentInBody=true")
+    .to("file:///data/output");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            doclingServeUrl: "http://localhost:5001"
+            authenticationScheme: "BEARER"
+            authenticationToken: "your-bearer-token-here"
+            contentInBody: true
+      - to:
+          uri: "file:///data/output"
+----
+====
+
+==== API Key Authentication
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:CONVERT_TO_MARKDOWN?" +
+        "useDoclingServe=true&" +
+        "doclingServeUrl=http://localhost:5001&" +
+        "authenticationScheme=API_KEY&" +
+        "authenticationToken=your-api-key-here&" +
+        "apiKeyHeader=X-API-Key&" +
+        "contentInBody=true")
+    .to("file:///data/output");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            doclingServeUrl: "http://localhost:5001"
+            authenticationScheme: "API_KEY"
+            authenticationToken: "your-api-key-here"
+            apiKeyHeader: "X-API-Key"
+            contentInBody: true
+      - to:
+          uri: "file:///data/output"
+----
+====
+
+==== Using Custom API Key Header
+
+If your docling-serve instance uses a custom header name for API keys:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:CONVERT_TO_MARKDOWN?" +
+        "useDoclingServe=true&" +
+        "doclingServeUrl=http://localhost:5001&" +
+        "authenticationScheme=API_KEY&" +
+        "authenticationToken=your-api-key-here&" +
+        "apiKeyHeader=X-Custom-API-Key&" +
+        "contentInBody=true")
+    .to("file:///data/output");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            doclingServeUrl: "http://localhost:5001"
+            authenticationScheme: "API_KEY"
+            authenticationToken: "your-api-key-here"
+            apiKeyHeader: "X-Custom-API-Key"
+            contentInBody: true
+      - to:
+          uri: "file:///data/output"
+----
+====
+
+==== Using Authentication Token from Properties
+
+For better security, store authentication tokens in properties or environment variables:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:CONVERT_TO_MARKDOWN?" +
+        "useDoclingServe=true&" +
+        "doclingServeUrl={{docling.serve.url}}&" +
+        "authenticationScheme=BEARER&" +
+        "authenticationToken={{docling.serve.token}}&" +
+        "contentInBody=true")
+    .to("file:///data/output");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            doclingServeUrl: "{{docling.serve.url}}"
+            authenticationScheme: "BEARER"
+            authenticationToken: "{{docling.serve.token}}"
+            contentInBody: true
+      - to:
+          uri: "file:///data/output"
+----
+====
+
+Then define in `application.properties`:
+[source,properties]
+----
+docling.serve.url=http://localhost:5001
+docling.serve.token=your-bearer-token-here
+----
+
 == Error Handling
 
 The component handles various error scenarios:
@@ -581,6 +764,7 @@ The component handles various error scenarios:
 - **Invalid file formats**: Unsupported file formats result in processing errors
 - **Docling not found**: Missing Docling installation causes startup failures (CLI mode)
 - **Connection errors**: When using docling-serve API mode, connection failures to the API endpoint will result in errors
+- **Authentication errors**: Invalid or missing authentication credentials will result in 401 Unauthorized errors from the docling-serve API
 
 == Performance Considerations
 
