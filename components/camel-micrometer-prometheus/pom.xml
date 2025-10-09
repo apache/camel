@@ -95,14 +95,14 @@
                 </executions>
             </plugin>
 
-            <!-- generate a list of known binders -->
+            <!-- DEVELOPER TOOL ONLY: generate a list of known binders -->
             <!-- mvn exec:java -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>${exec-maven-plugin-version}</version>
                 <configuration>
-                    <mainClass>org.apache.camel.component.micrometer.prometheus.BindersHelper</mainClass>
+                    <mainClass>org.apache.camel.component.micrometer.prometheus.internal.BindersDiscoveryMain</mainClass>
                 </configuration>
             </plugin>
         </plugins>

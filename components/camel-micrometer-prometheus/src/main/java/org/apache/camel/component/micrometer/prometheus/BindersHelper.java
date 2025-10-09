@@ -18,17 +18,12 @@ package org.apache.camel.component.micrometer.prometheus;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.TreeSet;
 
 import io.micrometer.core.instrument.binder.MeterBinder;
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -45,45 +40,6 @@ public final class BindersHelper {
     private static final String JANDEX_INDEX = "META-INF/micrometer-binder-index.dat";
 
     private BindersHelper() {
-    }
-
-    public static void main(String[] args) throws Exception {
-        Set<String> answer = new TreeSet<>();
-
-        Index index = readJandexIndex(new DefaultClassResolver());
-        if (index == null) {
-            System.out.println("Cannot read " + JANDEX_INDEX + " with list of known MeterBinder classes");
-        } else {
-            DotName dn = DotName.createSimple(MeterBinder.class);
-            Set<ClassInfo> classes = index.getAllKnownImplementors(dn);
-            for (ClassInfo info : classes) {
-                boolean deprecated = info.hasAnnotation(Deprecated.class);
-                if (deprecated) {
-                    // skip deprecated
-                    continue;
-                }
-                boolean abs = Modifier.isAbstract(info.flags());
-                if (abs) {
-                    // skip abstract
-                    continue;
-                }
-                boolean noArg = info.hasNoArgsConstructor();
-                if (!noArg) {
-                    // skip binders that need extra configuration
-                    continue;
-                }
-                String name = info.name().local();
-                if (name.endsWith("Metrics")) {
-                    name = name.substring(0, name.length() - 7);
-                }
-                name = StringHelper.camelCaseToDash(name);
-                answer.add(name);
-            }
-        }
-
-        StringJoiner sj = new StringJoiner(", ");
-        answer.forEach(sj::add);
-        System.out.println(sj);
     }
 
     public static List<String> discoverBinders(ClassResolver classResolver, String names) throws IOException {
