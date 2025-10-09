@@ -408,7 +408,7 @@ The `KeyLifecycleManager` interface provides the following operations:
 
 === Available Implementations
 
-The component provides two implementations of `KeyLifecycleManager`:
+The component provides three implementations of `KeyLifecycleManager`:
 
 ==== FileBasedKeyLifecycleManager
 
@@ -475,6 +475,335 @@ KeyPair keyPair = keyManager.generateKeyPair("FALCON", "test-key");
 // Clean up after testing
 keyManager.clear();
 --------------------------------------------------------------------------------
+
+==== HashicorpVaultKeyLifecycleManager
+
+An enterprise-grade implementation that integrates with HashiCorp Vault for centralized secret management.
+
+**Features:**
+
+* Centralized secret management via HashiCorp Vault
+* Automatic audit logging of all key operations
+* Fine-grained access control with Vault policies
+* Encryption at rest
+* High availability support (Vault HA clusters)
+* In-memory caching for performance
+* Uses Spring Vault (spring-vault-core) consistent with camel-hashicorp-vault
+
+**Use Cases:**
+
+* Production environments with existing Vault infrastructure
+* Multi-node/distributed deployments
+* Enterprise security and compliance requirements
+* Centralized key management across multiple applications
+* Audit and compliance mandates
+
+**Dependencies:**
+
+To use HashicorpVaultKeyLifecycleManager, add the following optional dependency:
+
+[source,xml]
+--------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.springframework.vault</groupId>
+    <artifactId>spring-vault-core</artifactId>
+    <version>${spring-vault-core-version}</version>
+</dependency>
+--------------------------------------------------------------------------------
+
+**Example with VaultTemplate:**
+
+[source,java]
+--------------------------------------------------------------------------------
+// Option 1: Using existing VaultTemplate (recommended when using camel-hashicorp-vault)
+@BindToRegistry("vaultTemplate")
+public VaultTemplate createVaultTemplate() {
+    VaultEndpoint vaultEndpoint = new VaultEndpoint();
+    vaultEndpoint.setHost("localhost");
+    vaultEndpoint.setPort(8200);
+    vaultEndpoint.setScheme("https");
+
+    return new VaultTemplate(vaultEndpoint, new TokenAuthentication("s.token"));
+}
+
+@BindToRegistry("keyLifecycleManager")
+public HashicorpVaultKeyLifecycleManager createKeyManager() {
+    return new HashicorpVaultKeyLifecycleManager(
+        vaultTemplate,      // Reuse existing VaultTemplate
+        "secret",           // Secrets engine name
+        "pqc/keys"         // Key prefix in Vault
+    );
+}
+
+// Generate a Dilithium key stored in Vault
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
+    DilithiumParameterSpec.dilithium2);
+
+// Key is stored in Vault at: secret/data/pqc/keys/app-signing-key
+--------------------------------------------------------------------------------
+
+**Example with Direct Configuration:**
+
+[source,java]
+--------------------------------------------------------------------------------
+// Option 2: Direct configuration with connection parameters
+HashicorpVaultKeyLifecycleManager keyManager =
+    new HashicorpVaultKeyLifecycleManager(
+        "vault.example.com",  // host
+        8200,                 // port
+        "https",              // scheme
+        "s.your-token",       // Vault token
+        "secret",             // secrets engine (optional, defaults to "secret")
+        "pqc/keys"           // key prefix (optional, defaults to "pqc/keys")
+    );
+
+// Generate and store key in Vault
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "vault-key",
+    DilithiumParameterSpec.dilithium2);
+--------------------------------------------------------------------------------
+
+**Example with HashiCorp Cloud Platform (HCP) Vault:**
+
+[source,java]
+--------------------------------------------------------------------------------
+// Option 3: Configuration for HCP Vault with namespace
+HashicorpVaultKeyLifecycleManager keyManager =
+    new HashicorpVaultKeyLifecycleManager(
+        "your-cluster.vault.hashicorp.cloud",  // HCP Vault host
+        8200,                                    // port
+        "https",                                 // scheme
+        "s.your-hcp-token",                     // HCP Vault token
+        "secret",                                // secrets engine
+        "pqc/keys",                             // key prefix
+        true,                                    // cloud=true for HCP Vault
+        "admin"                                  // namespace (required for HCP)
+    );
+
+// Generate and store key in HCP Vault
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "hcp-key",
+    DilithiumParameterSpec.dilithium2);
+
+// Key is stored in HCP Vault at: admin/secret/data/pqc/keys/hcp-key
+--------------------------------------------------------------------------------
+
+**YAML Configuration:**
+
+[source,yaml]
+--------------------------------------------------------------------------------
+camel:
+  beans:
+    # Create VaultTemplate
+    vaultEndpoint:
+      type: org.springframework.vault.client.VaultEndpoint
+      properties:
+        host: "vault.example.com"
+        port: 8200
+        scheme: "https"
+
+    tokenAuthentication:
+      type: org.springframework.vault.authentication.TokenAuthentication
+      constructorArgs:
+        - "${VAULT_TOKEN}"
+
+    vaultTemplate:
+      type: org.springframework.vault.core.VaultTemplate
+      constructorArgs:
+        - "#bean:vaultEndpoint"
+        - "#bean:tokenAuthentication"
+
+    # Create HashicorpVaultKeyLifecycleManager
+    keyLifecycleManager:
+      type: org.apache.camel.component.pqc.lifecycle.HashicorpVaultKeyLifecycleManager
+      constructorArgs:
+        - "#bean:vaultTemplate"
+        - "secret"
+        - "pqc/keys"
+        - false              # cloud
+        - null               # namespace
+--------------------------------------------------------------------------------
+
+**YAML Configuration for HCP Vault:**
+
+[source,yaml]
+--------------------------------------------------------------------------------
+camel:
+  beans:
+    # Create VaultTemplate for HCP
+    vaultEndpoint:
+      type: org.springframework.vault.client.VaultEndpoint
+      properties:
+        host: "your-cluster.vault.hashicorp.cloud"
+        port: 8200
+        scheme: "https"
+
+    tokenAuthentication:
+      type: org.springframework.vault.authentication.TokenAuthentication
+      constructorArgs:
+        - "${HCP_VAULT_TOKEN}"
+
+    vaultTemplate:
+      type: org.springframework.vault.core.VaultTemplate
+      constructorArgs:
+        - "#bean:vaultEndpoint"
+        - "#bean:tokenAuthentication"
+
+    # Create HashicorpVaultKeyLifecycleManager for HCP Vault
+    keyLifecycleManager:
+      type: org.apache.camel.component.pqc.lifecycle.HashicorpVaultKeyLifecycleManager
+      constructorArgs:
+        - "#bean:vaultTemplate"
+        - "secret"
+        - "pqc/keys"
+        - true               # cloud=true for HCP Vault
+        - "admin"            # namespace (required for HCP)
+--------------------------------------------------------------------------------
+
+**Vault Storage Structure:**
+
+Keys are stored in Vault's KV v2 secrets engine with the following structure:
+
+*On-Premise Vault:*
+
+[source,text]
+--------------------------------------------------------------------------------
+secret/                           # Secrets engine
+├── data/
+│   └── pqc/
+│       └── keys/
+│           ├── app-signing-key
+│           │   ├── keyPair           # Serialized KeyPair (Base64)
+│           │   ├── metadata          # Serialized KeyMetadata (Base64)
+│           │   ├── keyId             # Key identifier
+│           │   └── algorithm         # Algorithm name
+│           └── app-signing-key-v2
+└── metadata/
+    └── pqc/
+        └── keys/
+            ├── app-signing-key/      # Metadata entry
+            └── app-signing-key-v2/
+--------------------------------------------------------------------------------
+
+*HCP Vault (with namespace):*
+
+[source,text]
+--------------------------------------------------------------------------------
+admin/                            # Namespace
+└── secret/                       # Secrets engine
+    ├── data/
+    │   └── pqc/
+    │       └── keys/
+    │           ├── app-signing-key
+    │           └── app-signing-key-v2
+    └── metadata/
+        └── pqc/
+            └── keys/
+                ├── app-signing-key/
+                └── app-signing-key-v2/
+--------------------------------------------------------------------------------
+
+**Integration with camel-hashicorp-vault:**
+
+HashicorpVaultKeyLifecycleManager can share the same VaultTemplate with the camel-hashicorp-vault component:
+
+[source,java]
+--------------------------------------------------------------------------------
+// Reuse VaultTemplate from camel-hashicorp-vault
+@BindToRegistry("keyLifecycleManager")
+public HashicorpVaultKeyLifecycleManager createKeyManager() {
+    VaultTemplate vaultTemplate = context.getRegistry()
+        .lookupByNameAndType("vaultTemplate", VaultTemplate.class);
+
+    return new HashicorpVaultKeyLifecycleManager(
+        vaultTemplate,
+        "secret",
+        "pqc/keys"
+    );
+}
+--------------------------------------------------------------------------------
+
+**Vault Setup:**
+
+To use HashicorpVaultKeyLifecycleManager, configure Vault with appropriate policies:
+
+[source,bash]
+--------------------------------------------------------------------------------
+# Enable KV v2 secrets engine (usually enabled by default)
+vault secrets enable -path=secret kv-v2
+
+# Create policy for PQC key management
+cat > pqc-policy.hcl <<EOF
+path "secret/data/pqc/keys/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "secret/metadata/pqc/keys/*" {
+  capabilities = ["list", "read", "delete"]
+}
+EOF
+
+# Apply policy
+vault policy write pqc-keys pqc-policy.hcl
+
+# Create token with policy
+vault token create -policy=pqc-keys
+--------------------------------------------------------------------------------
+
+**Comparison of Implementations:**
+
+[options="header"]
+|===
+|Feature |FileBasedKeyLifecycleManager |InMemoryKeyLifecycleManager |HashicorpVaultKeyLifecycleManager
+
+|Persistence
+|✅ File system
+|❌ Memory only
+|✅ Vault backend
+
+|Distributed
+|❌ Single node
+|❌ Single node
+|✅ Multi-node
+
+|Audit Logging
+|❌ Manual
+|❌ None
+|✅ Automatic
+
+|Access Control
+|❌ File permissions
+|❌ None
+|✅ Vault policies
+
+|Encryption at Rest
+|❌ OS-dependent
+|❌ N/A
+|✅ Always
+
+|High Availability
+|❌ No
+|❌ No
+|✅ Yes (Vault HA)
+
+|External Dependencies
+|❌ None
+|❌ None
+|✅ Vault + spring-vault
+
+|Caching
+|✅ Yes
+|✅ Yes
+|✅ Yes
+
+|Spring Integration
+|❌ No
+|❌ No
+|✅ Yes
+
+|Use Case
+|Single server
+|Testing/Dev
+|Production/Enterprise
+|===
 
 === Key Generation
 

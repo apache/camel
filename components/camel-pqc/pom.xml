@@ -46,6 +46,14 @@
             <version>${bouncycastle-version}</version>
         </dependency>
 
+        <!-- Spring Vault for HashicorpVaultKeyLifecycleManager (optional) -->
+        <dependency>
+            <groupId>org.springframework.vault</groupId>
+            <artifactId>spring-vault-core</artifactId>
+            <version>${spring-vault-core-version}</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -61,6 +69,13 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bouncycastle-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-hashicorp-vault</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>
