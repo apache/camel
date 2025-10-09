@@ -27,17 +27,37 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.BUILD_TOOL;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_VERSION;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.EXCLUDES;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.EXPORT_DIR;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.GAV;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.GRADLE_WRAPPER;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.JAVA_VERSION;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.KAMELETS_VERSION;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.LOCAL_KAMELET_DIR;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_APACHE_SNAPSHOTS;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_CENTRAL_ENABLED;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_SETTINGS;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_SETTINGS_SECURITY;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.MAVEN_WRAPPER;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.OPEN_API;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_ARTIFACT_ID;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_GROUP_ID;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.QUARKUS_VERSION;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.REPOS;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.SPRING_BOOT_VERSION;
 
 @Command(name = "export",
          description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
@@ -81,6 +101,9 @@ public class Export extends ExportBaseCommand {
             // override from profile specific configuration
             doLoadAndInitProfileProperties(baseDir.resolve("application-" + profile + ".properties"));
         }
+
+        // property overrides from system properties for supported properties
+        overrideFromSystemProperties();
 
         if (runtime == null) {
             printer().printErr("The runtime option must be specified");
@@ -157,8 +180,7 @@ public class Export extends ExportBaseCommand {
             this.quarkusGroupId = props.getProperty(QUARKUS_GROUP_ID, this.quarkusGroupId);
             this.quarkusArtifactId = props.getProperty(QUARKUS_ARTIFACT_ID, this.quarkusArtifactId);
             this.quarkusVersion = props.getProperty(QUARKUS_VERSION, this.quarkusVersion);
-            this.camelSpringBootVersion = VersionHelper.getSpringBootVersion(
-                    () -> props.getProperty(CAMEL_SPRING_BOOT_VERSION, this.camelSpringBootVersion));
+            this.camelSpringBootVersion = props.getProperty(CAMEL_SPRING_BOOT_VERSION, this.camelSpringBootVersion);
             this.springBootVersion = props.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
             this.mavenWrapper
                     = "true".equals(props.getProperty(MAVEN_WRAPPER, this.mavenWrapper ? "true" : "false"));
@@ -176,6 +198,17 @@ public class Export extends ExportBaseCommand {
                     mavenApacheSnapshotEnabled ? "true" : "false"));
             this.excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(props, EXCLUDES, this.excludes);
         }
+    }
+
+    /**
+     * For supported fields prefer the values from system properties if they are defined.
+     */
+    private void overrideFromSystemProperties() {
+        this.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
+        this.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
+        this.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
+        this.camelSpringBootVersion
+                = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> this.camelSpringBootVersion);
     }
 
     protected Integer export(Path exportBaseDir, ExportBaseCommand cmd) throws Exception {

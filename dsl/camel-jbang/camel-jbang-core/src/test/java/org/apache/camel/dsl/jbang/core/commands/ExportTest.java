@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -117,7 +119,6 @@ class ExportTest {
                         assertThat(dep.getArtifactId()).isEqualTo("camel-bom");
                         assertThat(dep.getVersion()).isEqualTo("4.8.3");
                     });
-
         } else if (rt == RuntimeType.springBoot) {
             assertThat(model.getDependencyManagement().getDependencies())
                     .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.8.3")
@@ -737,4 +738,38 @@ class ExportTest {
         Assertions.assertTrue(f.exists());
     }
 
+    @Test
+    @SetSystemProperty(key = CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, value = "4.10.0")
+    public void shouldOverrideSpringBootVersionFromSystemProperty() throws Exception {
+        LOG.info("shouldOverrideSpringBootVersionFromSystemProperty");
+        Export command = createCommand(RuntimeType.springBoot, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        assertThat(model.getDependencyManagement().getDependencies())
+                .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.10.0")
+                .anySatisfy(dep -> {
+                    assertThat(dep.getGroupId()).isEqualTo("org.apache.camel.springboot");
+                    assertThat(dep.getArtifactId()).isEqualTo("camel-spring-boot-bom");
+                    assertThat(dep.getVersion()).isEqualTo("4.10.0");
+                });
+    }
+
+    @Test
+    @SetSystemProperty(key = CamelJBangConstants.QUARKUS_VERSION, value = "3.26.0")
+    public void shouldOverrideQuarkusVersionFromSystemProperty() throws Exception {
+        LOG.info("shouldOverrideQuarkusVersionFromSystemProperty");
+
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        assertThat(model.getProperties()).containsEntry("quarkus.platform.version",
+                System.getProperty(CamelJBangConstants.QUARKUS_VERSION));
+    }
 }
