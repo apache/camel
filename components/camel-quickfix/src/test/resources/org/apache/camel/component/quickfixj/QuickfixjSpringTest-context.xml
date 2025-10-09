@@ -26,8 +26,6 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <!-- START SNIPPET: e1 -->
-    <!-- tag::e1[] -->
     <!-- camel route -->
     <camelContext id="quickfixjContext" xmlns="http://camel.apache.org/schema/spring">
         <route>
@@ -95,8 +93,6 @@
             </util:map>
         </property>
     </bean>
-    <!-- end::e1[] -->
-    <!-- END SNIPPET: e1 -->
 
     <!-- lazy quickfix settings -->
     <bean id="lazyQuickfixjConfiguration" class="org.apache.camel.component.quickfixj.QuickfixjConfiguration">
