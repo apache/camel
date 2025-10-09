@@ -33,6 +33,11 @@
     <name>Camel :: AI :: Docling</name>
     <description>Docling document processing component</description>
 
+    <properties>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+    </properties>
+
     <dependencies>
 
         <dependency>
