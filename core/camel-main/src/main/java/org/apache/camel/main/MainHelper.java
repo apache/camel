@@ -618,12 +618,21 @@ public final class MainHelper {
         toRemove.forEach(autoConfiguredProperties::remove);
     }
 
+    public static boolean containsSensitive(CamelContext camelContext, String key, Object value) {
+        boolean answer = CamelContextHelper.containsSensitive(camelContext, key);
+        if (!answer && value != null) {
+            String v = value.toString();
+            answer = v.startsWith("RAW(");
+        }
+        return answer;
+    }
+
     public static void sensitiveAwareLogging(
             CamelContext camelContext, Logger log, String k, Object v, String loc, boolean debug) {
         if (log == null) {
             log = LOG;
         }
-        if (CamelContextHelper.containsSensitive(camelContext, k)) {
+        if (containsSensitive(camelContext, k, v)) {
             if (debug) {
                 log.debug("    {} {} = xxxxxx", loc, k);
             } else {

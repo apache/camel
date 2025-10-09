@@ -2869,7 +2869,7 @@ public abstract class BaseMainSupport extends BaseService {
                             header = false;
                         }
                         String loc = locationSummary(propertyPlaceholders, k);
-                        if (CamelContextHelper.containsSensitive(camelContext, k)) {
+                        if (MainHelper.containsSensitive(camelContext, k, v)) {
                             LOG.info("    {} {} = xxxxxx", loc, k);
                         } else {
                             LOG.info("    {} {} = {}", loc, k, v);
@@ -2879,4 +2879,5 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
     }
+
 }
