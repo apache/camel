@@ -233,6 +233,12 @@ public class Main {
         }
     }
 
+    /**
+     * The main entrypoint is required as the Jasypt dependency can be also used as CLI.
+     *
+     * @param  args      the main arguments
+     * @throws Exception throws any processing exception
+     */
     public static void main(String[] args) throws Exception {
         Main main = new Main();
         if (args.length == 0) {
