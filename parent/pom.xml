@@ -86,7 +86,7 @@
         <box-java-sdk-version>4.16.3</box-java-sdk-version>
         <braintree-gateway-version>3.45.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.6.1</build-helper-maven-plugin-version>
-        <bytebuddy-version>1.17.7</bytebuddy-version>
+        <bytebuddy-version>1.17.8</bytebuddy-version>
         <c3p0-version>0.11.2</c3p0-version>
         <caffeine-version>3.2.2</caffeine-version>
         <californium-version>3.14.0</californium-version>
