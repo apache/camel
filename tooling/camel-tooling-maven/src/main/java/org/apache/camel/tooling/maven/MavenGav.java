@@ -97,7 +97,18 @@ public final class MavenGav {
                 answer.setArtifactId(parts[1]);
             }
             if (parts.length > 2) {
-                answer.setVersion(parts[2]);
+                String thirdpart = parts[2];
+                // here it handles a single specific case, would be better to handle all packaging types
+                if ("pom".equals(thirdpart)) {
+                    answer.setPackaging("pom");
+                    if (parts.length > 3) {
+                        answer.setVersion(parts[3]);
+                    } else if (defaultVersion != null) {
+                        answer.setVersion(defaultVersion);
+                    }
+                } else {
+                    answer.setVersion(parts[2]);
+                }
             } else if (defaultVersion != null) {
                 answer.setVersion(defaultVersion);
             }
