@@ -23,8 +23,12 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LRASagaRoutesTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LRASagaRoutesTest.class);
 
     private Method getParseQueryMethod() throws NoSuchMethodException {
         Method method = LRASagaRoutes.class.getDeclaredMethod("parseQuery", String.class);
@@ -40,7 +44,7 @@ public class LRASagaRoutesTest {
                 .invoke(new LRASagaRoutes(null),
                         "Camel-Saga-Compensate=direct://saga1_participant1_compensate&Camel-Saga-Complete=direct://saga1_participant1_complete");
 
-        System.out.println(testResult.toString());
+        LOG.debug("Parsed query: {}", testResult);
 
         Assertions.assertNotNull(testResult, "pared query must not be null");
         Assertions.assertEquals(2, testResult.size(), "query parameter count must be two");
@@ -61,7 +65,7 @@ public class LRASagaRoutesTest {
         Map<String, String> testResult = (Map<String, String>) getParseQueryMethod()
                 .invoke(new LRASagaRoutes(null), "key1=value1&key2");
 
-        System.out.println(testResult.toString());
+        LOG.debug("Parsed query: {}", testResult);
 
         Assertions.assertNotNull(testResult, "pared query must not be null");
         Assertions.assertEquals(2, testResult.size(), "query parameter count must be two");
@@ -83,7 +87,7 @@ public class LRASagaRoutesTest {
                 .invoke(new LRASagaRoutes(null),
                         "Camel-Saga-Compensate=direct%3A%2F%2Fsaga1_participant1_compensate&Camel-Saga-Complete=direct%3A%2F%2Fsaga1_participant1_complete");
 
-        System.out.println(testResult.toString());
+        LOG.debug("Parsed query: {}", testResult);
 
         Assertions.assertNotNull(testResult, "pared query must not be null");
         Assertions.assertEquals(2, testResult.size(), "query parameter count must be two");

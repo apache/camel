@@ -26,6 +26,8 @@ import org.apache.camel.component.aws.xray.bean.ProcessingCamelBean;
 import org.apache.camel.component.aws.xray.component.CommonEndpoints;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.aws.xray.TestDataBuilder.createSegment;
 import static org.apache.camel.component.aws.xray.TestDataBuilder.createSubsegment;
@@ -52,6 +54,8 @@ import static org.hamcrest.Matchers.greaterThan;
  * executed route and its bean invocation.
  */
 public class CustomComponentTest extends CamelAwsXRayTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CustomComponentTest.class);
 
     private static final String START = "seda:start";
     private static final String DELIVERY = "seda:delivery";
@@ -144,8 +148,8 @@ public class CustomComponentTest extends CamelAwsXRayTestSupport {
                 from("seda:backingTask").routeId("backingTask")
                         .onException(Exception.class)
                             .redeliveryDelay(100L)
-                            .onRedelivery((Exchange exchange) -> System.err.println(">> Retrying due to "
-                                    + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getLocalizedMessage()))
+                            .onRedelivery((Exchange exchange) -> LOG.warn(">> Retrying due to: {}",
+                                    exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getLocalizedMessage()))
                             .logExhausted(true)
                             .handled(true)
                             .logStackTrace(true)

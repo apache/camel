@@ -18,14 +18,11 @@ package org.apache.camel.component.mllp;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
@@ -36,9 +33,13 @@ import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Disabled("This test hangs")
 public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MllpTcpServerConsumerTransactionTest.class);
 
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createVMService();
@@ -65,16 +66,7 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
         return context;
     }
 
-    @BindToRegistry("target")
-    public SjmsComponent addTargetComponent() {
-
-        SjmsComponent target = new SjmsComponent();
-        target.setConnectionFactory(new ActiveMQConnectionFactory(service.serviceAddress()));
-
-        return target;
-    }
-
-    @Override
+	@Override
     protected RouteBuilder createRouteBuilder() {
 
         mllpClient.setMllpHost("localhost");
@@ -106,7 +98,7 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
 
                 from("target://test-queue")
                         .routeId("jms-consumer")
-                        .process(exchange -> System.out.println(exchange.getIn().getBody()))
+                        .process(exchange -> LOG.info("Body: {}", exchange.getIn().getBody()))
                         .log(LoggingLevel.INFO, routeId, "Test JMS Consumer received message")
                         .to(result);
 
