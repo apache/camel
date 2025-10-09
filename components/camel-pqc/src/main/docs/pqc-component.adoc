@@ -408,7 +408,7 @@ The `KeyLifecycleManager` interface provides the following operations:
 
 === Available Implementations
 
-The component provides two implementations of `KeyLifecycleManager`:
+The component provides three implementations of `KeyLifecycleManager`:
 
 ==== FileBasedKeyLifecycleManager
 
@@ -475,6 +475,508 @@ KeyPair keyPair = keyManager.generateKeyPair("FALCON", "test-key");
 // Clean up after testing
 keyManager.clear();
 --------------------------------------------------------------------------------
+
+==== HashicorpVaultKeyLifecycleManager
+
+An enterprise-grade implementation that integrates with HashiCorp Vault for centralized secret management.
+
+**Security Implementation:**
+
+This implementation uses industry-standard cryptographic key formats and separation of concerns:
+
+* **Private keys**: Stored in PKCS#8 format (RFC 5208) - the standard for private key encoding
+* **Public keys**: Stored in X.509/SubjectPublicKeyInfo format (RFC 5280) - the standard for public key encoding
+* **Separate storage**: Private keys, public keys, and metadata are stored in distinct Vault paths
+* **Fine-grained ACLs**: Enables different access policies for private keys (restricted) vs public keys (read-only)
+
+**Security Note:** This implementation stores PQC keys in Vault's KV secrets engine. While this approach uses industry-standard formats and enables fine-grained access control, organizations with stringent security requirements should consider:
+
+* Using **Hardware Security Modules (HSMs)** via PKCS#11 for keys that must never be exportable
+* Implementing additional encryption layers using **Vault's Transit engine** to encrypt key material before storage
+* Applying **strict Vault policies** limiting private key access to specific services or key IDs only
+* Regular **key rotation** and **audit log monitoring**
+* For production use, review and customize the Vault ACL policies shown in the setup section
+
+**Features:**
+
+* Centralized secret management via HashiCorp Vault
+* Industry-standard key formats (PKCS#8 for private keys, X.509 for public keys)
+* Separate storage for private and public keys (enables different ACLs)
+* Automatic audit logging of all key operations
+* Fine-grained access control with Vault policies
+* Encryption at rest
+* High availability support (Vault HA clusters)
+* In-memory caching for performance
+* Uses Spring Vault (spring-vault-core) consistent with camel-hashicorp-vault
+* HashiCorp Cloud Platform (HCP) Vault support
+
+**Use Cases:**
+
+* Production environments with existing Vault infrastructure
+* Multi-node/distributed deployments
+* Enterprise security and compliance requirements
+* Centralized key management across multiple applications
+* Audit and compliance mandates
+
+**Dependencies:**
+
+To use HashicorpVaultKeyLifecycleManager, add the following optional dependency:
+
+[source,xml]
+--------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.springframework.vault</groupId>
+    <artifactId>spring-vault-core</artifactId>
+    <version>${spring-vault-core-version}</version>
+</dependency>
+--------------------------------------------------------------------------------
+
+**Example with VaultTemplate:**
+
+[source,java]
+--------------------------------------------------------------------------------
+// Option 1: Using existing VaultTemplate (recommended when using camel-hashicorp-vault)
+@BindToRegistry("vaultTemplate")
+public VaultTemplate createVaultTemplate() {
+    VaultEndpoint vaultEndpoint = new VaultEndpoint();
+    vaultEndpoint.setHost("localhost");
+    vaultEndpoint.setPort(8200);
+    vaultEndpoint.setScheme("https");
+
+    return new VaultTemplate(vaultEndpoint, new TokenAuthentication("s.token"));
+}
+
+@BindToRegistry("keyLifecycleManager")
+public HashicorpVaultKeyLifecycleManager createKeyManager() {
+    return new HashicorpVaultKeyLifecycleManager(
+        vaultTemplate,      // Reuse existing VaultTemplate
+        "secret",           // Secrets engine name
+        "pqc/keys"         // Key prefix in Vault
+    );
+}
+
+// Generate a Dilithium key stored in Vault
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
+    DilithiumParameterSpec.dilithium2);
+
+// Key is stored in Vault at: secret/data/pqc/keys/app-signing-key
+--------------------------------------------------------------------------------
+
+**Example with Direct Configuration:**
+
+[source,java]
+--------------------------------------------------------------------------------
+// Option 2: Direct configuration with connection parameters
+HashicorpVaultKeyLifecycleManager keyManager =
+    new HashicorpVaultKeyLifecycleManager(
+        "vault.example.com",  // host
+        8200,                 // port
+        "https",              // scheme
+        "s.your-token",       // Vault token
+        "secret",             // secrets engine (optional, defaults to "secret")
+        "pqc/keys"           // key prefix (optional, defaults to "pqc/keys")
+    );
+
+// Generate and store key in Vault
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "vault-key",
+    DilithiumParameterSpec.dilithium2);
+--------------------------------------------------------------------------------
+
+**Example with HashiCorp Cloud Platform (HCP) Vault:**
+
+[source,java]
+--------------------------------------------------------------------------------
+// Option 3: Configuration for HCP Vault with namespace
+HashicorpVaultKeyLifecycleManager keyManager =
+    new HashicorpVaultKeyLifecycleManager(
+        "your-cluster.vault.hashicorp.cloud",  // HCP Vault host
+        8200,                                    // port
+        "https",                                 // scheme
+        "s.your-hcp-token",                     // HCP Vault token
+        "secret",                                // secrets engine
+        "pqc/keys",                             // key prefix
+        true,                                    // cloud=true for HCP Vault
+        "admin"                                  // namespace (required for HCP)
+    );
+
+// Generate and store key in HCP Vault
+KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "hcp-key",
+    DilithiumParameterSpec.dilithium2);
+
+// Key is stored in HCP Vault at: admin/secret/data/pqc/keys/hcp-key
+--------------------------------------------------------------------------------
+
+**YAML Configuration:**
+
+[source,yaml]
+--------------------------------------------------------------------------------
+camel:
+  beans:
+    # Create VaultTemplate
+    vaultEndpoint:
+      type: org.springframework.vault.client.VaultEndpoint
+      properties:
+        host: "vault.example.com"
+        port: 8200
+        scheme: "https"
+
+    tokenAuthentication:
+      type: org.springframework.vault.authentication.TokenAuthentication
+      constructorArgs:
+        - "${VAULT_TOKEN}"
+
+    vaultTemplate:
+      type: org.springframework.vault.core.VaultTemplate
+      constructorArgs:
+        - "#bean:vaultEndpoint"
+        - "#bean:tokenAuthentication"
+
+    # Create HashicorpVaultKeyLifecycleManager
+    keyLifecycleManager:
+      type: org.apache.camel.component.pqc.lifecycle.HashicorpVaultKeyLifecycleManager
+      constructorArgs:
+        - "#bean:vaultTemplate"
+        - "secret"
+        - "pqc/keys"
+        - false              # cloud
+        - null               # namespace
+--------------------------------------------------------------------------------
+
+**YAML Configuration for HCP Vault:**
+
+[source,yaml]
+--------------------------------------------------------------------------------
+camel:
+  beans:
+    # Create VaultTemplate for HCP
+    vaultEndpoint:
+      type: org.springframework.vault.client.VaultEndpoint
+      properties:
+        host: "your-cluster.vault.hashicorp.cloud"
+        port: 8200
+        scheme: "https"
+
+    tokenAuthentication:
+      type: org.springframework.vault.authentication.TokenAuthentication
+      constructorArgs:
+        - "${HCP_VAULT_TOKEN}"
+
+    vaultTemplate:
+      type: org.springframework.vault.core.VaultTemplate
+      constructorArgs:
+        - "#bean:vaultEndpoint"
+        - "#bean:tokenAuthentication"
+
+    # Create HashicorpVaultKeyLifecycleManager for HCP Vault
+    keyLifecycleManager:
+      type: org.apache.camel.component.pqc.lifecycle.HashicorpVaultKeyLifecycleManager
+      constructorArgs:
+        - "#bean:vaultTemplate"
+        - "secret"
+        - "pqc/keys"
+        - true               # cloud=true for HCP Vault
+        - "admin"            # namespace (required for HCP)
+--------------------------------------------------------------------------------
+
+**Vault Storage Structure:**
+
+Keys are stored in Vault's KV v2 secrets engine with separate paths for private keys, public keys, and metadata. This separation enables fine-grained access control where applications can access public keys without having access to private keys.
+
+*On-Premise Vault:*
+
+[source,text]
+--------------------------------------------------------------------------------
+secret/                                    # Secrets engine
+├── data/
+│   └── pqc/
+│       └── keys/
+│           ├── app-signing-key/
+│           │   ├── private                # Private key path (STRICT ACL)
+│           │   │   ├── key                # Base64-encoded PKCS#8 private key
+│           │   │   ├── format             # "PKCS8"
+│           │   │   └── algorithm          # "DILITHIUM"
+│           │   ├── public                 # Public key path (READ-ONLY ACL)
+│           │   │   ├── key                # Base64-encoded X.509 public key
+│           │   │   ├── format             # "X509"
+│           │   │   └── algorithm          # "DILITHIUM"
+│           │   └── metadata               # Metadata path
+│           │       ├── metadata           # Serialized KeyMetadata
+│           │       ├── keyId              # "app-signing-key"
+│           │       └── algorithm          # "DILITHIUM"
+│           └── app-signing-key-v2/
+│               ├── private/
+│               ├── public/
+│               └── metadata/
+└── metadata/
+    └── pqc/
+        └── keys/
+            ├── app-signing-key/           # Vault metadata entry
+            └── app-signing-key-v2/
+--------------------------------------------------------------------------------
+
+*HCP Vault (with namespace):*
+
+[source,text]
+--------------------------------------------------------------------------------
+admin/                                     # Namespace
+└── secret/                                # Secrets engine
+    ├── data/
+    │   └── pqc/
+    │       └── keys/
+    │           ├── app-signing-key/
+    │           │   ├── private/           # PKCS#8 private key (STRICT ACL)
+    │           │   ├── public/            # X.509 public key (READ-ONLY ACL)
+    │           │   └── metadata/          # Key metadata
+    │           └── app-signing-key-v2/
+    │               ├── private/
+    │               ├── public/
+    │               └── metadata/
+    └── metadata/
+        └── pqc/
+            └── keys/
+                ├── app-signing-key/
+                └── app-signing-key-v2/
+--------------------------------------------------------------------------------
+
+**Integration with camel-hashicorp-vault:**
+
+HashicorpVaultKeyLifecycleManager can share the same VaultTemplate with the camel-hashicorp-vault component:
+
+[source,java]
+--------------------------------------------------------------------------------
+// Reuse VaultTemplate from camel-hashicorp-vault
+@BindToRegistry("keyLifecycleManager")
+public HashicorpVaultKeyLifecycleManager createKeyManager() {
+    VaultTemplate vaultTemplate = context.getRegistry()
+        .lookupByNameAndType("vaultTemplate", VaultTemplate.class);
+
+    return new HashicorpVaultKeyLifecycleManager(
+        vaultTemplate,
+        "secret",
+        "pqc/keys"
+    );
+}
+--------------------------------------------------------------------------------
+
+**Vault Setup and Security Policies:**
+
+To use HashicorpVaultKeyLifecycleManager, configure Vault with appropriate policies. The implementation stores private keys, public keys, and metadata separately to enable fine-grained access control.
+
+**Basic Policy (Full Access - Development/Testing):**
+
+[source,bash]
+--------------------------------------------------------------------------------
+# Enable KV v2 secrets engine (usually enabled by default)
+vault secrets enable -path=secret kv-v2
+
+# Create basic policy with full access to all key paths
+cat > pqc-policy-full.hcl <<EOF
+# Full access to private keys
+path "secret/data/pqc/keys/*/private" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+# Full access to public keys
+path "secret/data/pqc/keys/*/public" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+# Full access to metadata
+path "secret/data/pqc/keys/*/metadata" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+# List access to key paths
+path "secret/metadata/pqc/keys/*" {
+  capabilities = ["list", "read", "delete"]
+}
+EOF
+
+# Apply policy
+vault policy write pqc-keys-full pqc-policy-full.hcl
+
+# Create token with policy
+vault token create -policy=pqc-keys-full
+--------------------------------------------------------------------------------
+
+**Production Policies (Fine-Grained Access Control):**
+
+[source,bash]
+--------------------------------------------------------------------------------
+# POLICY 1: Admin Policy (Key Management Service)
+# Full access to generate, rotate, and manage keys
+cat > pqc-policy-admin.hcl <<EOF
+path "secret/data/pqc/keys/*/private" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+path "secret/data/pqc/keys/*/public" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+path "secret/data/pqc/keys/*/metadata" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+path "secret/metadata/pqc/keys/*" {
+  capabilities = ["list", "read", "delete"]
+}
+EOF
+
+vault policy write pqc-admin pqc-policy-admin.hcl
+
+# POLICY 2: Signing Service Policy (Read Private Keys for Signing)
+# Read-only access to specific private keys for signing operations
+cat > pqc-policy-signing.hcl <<EOF
+# Read-only access to private keys (for signing operations)
+path "secret/data/pqc/keys/*/private" {
+  capabilities = ["read"]
+}
+
+# Read access to public keys
+path "secret/data/pqc/keys/*/public" {
+  capabilities = ["read"]
+}
+
+# Read access to metadata
+path "secret/data/pqc/keys/*/metadata" {
+  capabilities = ["read"]
+}
+
+# List keys
+path "secret/metadata/pqc/keys/*" {
+  capabilities = ["list", "read"]
+}
+EOF
+
+vault policy write pqc-signing pqc-policy-signing.hcl
+
+# POLICY 3: Application Policy (Public Keys Only)
+# Read-only access to public keys for signature verification
+cat > pqc-policy-app.hcl <<EOF
+# NO access to private keys
+# Read-only access to public keys
+path "secret/data/pqc/keys/*/public" {
+  capabilities = ["read"]
+}
+
+# Read access to metadata
+path "secret/data/pqc/keys/*/metadata" {
+  capabilities = ["read"]
+}
+
+# List keys
+path "secret/metadata/pqc/keys/*" {
+  capabilities = ["list", "read"]
+}
+EOF
+
+vault policy write pqc-app pqc-policy-app.hcl
+
+# POLICY 4: Specific Key Access (Production Best Practice)
+# Limit access to specific key IDs only
+cat > pqc-policy-specific.hcl <<EOF
+# Access only to app-signing-key private key
+path "secret/data/pqc/keys/app-signing-key/private" {
+  capabilities = ["read"]
+}
+
+path "secret/data/pqc/keys/app-signing-key/public" {
+  capabilities = ["read"]
+}
+
+path "secret/data/pqc/keys/app-signing-key/metadata" {
+  capabilities = ["read"]
+}
+EOF
+
+vault policy write pqc-app-signing-key pqc-policy-specific.hcl
+
+# Create tokens with different policies
+vault token create -policy=pqc-admin        # For key management service
+vault token create -policy=pqc-signing      # For signing service
+vault token create -policy=pqc-app          # For applications (verification only)
+vault token create -policy=pqc-app-signing-key  # For specific key access
+--------------------------------------------------------------------------------
+
+**Production Security Recommendations:**
+
+1. **Principle of Least Privilege**: Use the most restrictive policy possible
+   - Applications that only verify signatures: Use `pqc-app` policy (public keys only)
+   - Signing services: Use `pqc-signing` policy or specific key policies
+   - Key management: Use `pqc-admin` policy
+
+2. **Limit Private Key Access**:
+   - Create specific policies per key ID in production
+   - Use Vault namespaces to isolate different environments
+   - Enable audit logging: `vault audit enable file file_path=/var/log/vault-audit.log`
+
+3. **Monitor and Rotate**:
+   - Monitor Vault audit logs for private key access
+   - Implement automated key rotation policies
+   - Set up alerts for unusual access patterns
+
+4. **Additional Security Layers**:
+   - Consider using Vault Transit engine to encrypt private keys before storage
+   - Use AppRole or Kubernetes authentication instead of tokens in production
+   - Enable MFA for administrative operations
+
+**Comparison of Implementations:**
+
+[options="header"]
+|===
+|Feature |FileBasedKeyLifecycleManager |InMemoryKeyLifecycleManager |HashicorpVaultKeyLifecycleManager
+
+|Persistence
+|✅ File system
+|❌ Memory only
+|✅ Vault backend
+
+|Distributed
+|❌ Single node
+|❌ Single node
+|✅ Multi-node
+
+|Audit Logging
+|❌ Manual
+|❌ None
+|✅ Automatic
+
+|Access Control
+|❌ File permissions
+|❌ None
+|✅ Vault policies
+
+|Encryption at Rest
+|❌ OS-dependent
+|❌ N/A
+|✅ Always
+
+|High Availability
+|❌ No
+|❌ No
+|✅ Yes (Vault HA)
+
+|External Dependencies
+|❌ None
+|❌ None
+|✅ Vault + spring-vault
+
+|Caching
+|✅ Yes
+|✅ Yes
+|✅ Yes
+
+|Spring Integration
+|❌ No
+|❌ No
+|✅ Yes
+
+|Use Case
+|Single server
+|Testing/Dev
+|Production/Enterprise
+|===
 
 === Key Generation
 
