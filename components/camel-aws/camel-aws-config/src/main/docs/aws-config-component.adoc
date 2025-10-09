@@ -9,7 +9,7 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS
-:camel-spring-boot-name: aws2-ecs
+:camel-spring-boot-name: aws-config
 
 *Since Camel {since}*
 
