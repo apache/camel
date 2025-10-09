@@ -24,8 +24,12 @@ import java.util.List;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.salt.RandomSaltGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     private final StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
     private final List<Option> options = new ArrayList<>();
@@ -85,7 +89,7 @@ public class Main {
         @Override
         protected void doProcess(String arg, LinkedList<String> remainingArgs) {
             if (remainingArgs.isEmpty()) {
-                System.err.println("Expected fileName for ");
+                LOG.error("Expected parameter for option: {}", arg);
                 showOptions();
             } else {
                 String parameter = remainingArgs.removeFirst();
@@ -157,13 +161,10 @@ public class Main {
     }
 
     private void showOptions() {
-        System.out.println("Apache Camel Jasypt takes the following options:");
-        System.out.println();
+        LOG.info("Apache Camel Jasypt takes the following options:");
         for (Option option : options) {
-            System.out.println(option.getInformation());
+            LOG.info(option.getInformation());
         }
-        System.out.println();
-        System.out.println();
     }
 
     private boolean parseArguments(String[] arguments) {
@@ -181,8 +182,7 @@ public class Main {
                 }
             }
             if (!handled) {
-                System.out.println("Error: Unknown option: " + arg);
-                System.out.println();
+                LOG.error("Error: Unknown option: {}", arg);
                 valid = false;
                 break;
             }
@@ -198,20 +198,17 @@ public class Main {
         }
 
         if (command == null) {
-            System.out.println("Error: Command is empty");
-            System.out.println();
+            LOG.error("Error: Command is empty");
             showOptions();
             return;
         }
         if (password == null) {
-            System.out.println("Error: Password is empty");
-            System.out.println();
+            LOG.error("Error: Password is empty");
             showOptions();
             return;
         }
         if (input == null) {
-            System.out.println("Error: Input is empty");
-            System.out.println();
+            LOG.error("Error: Input is empty");
             showOptions();
             return;
         }

@@ -21,9 +21,13 @@ import java.util.Date;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // START SNIPPET: e1
 public class MainExample {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MainExample.class);
 
     public static void main(String[] args) throws Exception {
         MainExample example = new MainExample();
@@ -44,17 +48,19 @@ public class MainExample {
         // to configure some options
         main.configure().withName("MyMainCamel").withJmxEnabled(false).withMessageHistory(false);
         // run until you terminate the JVM
-        System.out.println("Starting Camel. Use ctrl + c to terminate the JVM.\n");
+        LOG.info("Starting Camel. Use ctrl + c to terminate the JVM.\n");
         main.run();
     }
 
     private static class MyRouteBuilder extends RouteBuilder {
+        private static final Logger LOG = LoggerFactory.getLogger(MyRouteBuilder.class);
+
         @Override
         public void configure() {
             from("timer:foo?delay={{millisecs}}")
                     .process(new Processor() {
                         public void process(Exchange exchange) {
-                            System.out.println("Invoked timer at " + new Date());
+                            LOG.info("Invoked timer at {}", new Date());
                         }
                     })
                     .bean("foo");
@@ -63,6 +69,7 @@ public class MainExample {
 
     public static class MyBean {
 
+        private static final Logger LOG = LoggerFactory.getLogger(MyBean.class);
         private String username;
         private String password;
 
@@ -83,20 +90,22 @@ public class MainExample {
         }
 
         public void callMe() {
-            System.out.println("MyBean.callMe method has been called");
+            LOG.info("MyBean.callMe method has been called");
         }
     }
 
     public static class Events extends MainListenerSupport {
 
+        private static final Logger LOG = LoggerFactory.getLogger(Events.class);
+
         @Override
         public void afterStart(BaseMainSupport main) {
-            System.out.println("MainExample with Camel is now started!");
+            LOG.info("MainExample with Camel is now started!");
         }
 
         @Override
         public void beforeStop(BaseMainSupport main) {
-            System.out.println("MainExample with Camel is now being stopped!");
+            LOG.info("MainExample with Camel is now being stopped!");
         }
     }
 }

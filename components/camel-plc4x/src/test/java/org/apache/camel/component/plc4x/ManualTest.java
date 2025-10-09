@@ -22,10 +22,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
 import org.junit.jupiter.api.Disabled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Disabled("Run this test manually")
 public class ManualTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ManualTest.class);
     private Main main;
 
     public static void main(String[] args) throws Exception {
@@ -45,23 +48,27 @@ public class ManualTest {
         // set the properties from a file
         main.setPropertyPlaceholderLocations("example.properties");
         // run until you terminate the JVM
-        System.out.println("Starting Camel. Use ctrl + c to terminate the JVM.\n");
+        LOG.info("Starting Camel. Use ctrl + c to terminate the JVM.\n");
         main.run();
     }
 
     private static class MyRouteBuilder extends RouteBuilder {
+        private static final Logger LOG = LoggerFactory.getLogger(MyRouteBuilder.class);
+
         @Override
         public void configure() {
             from("plc4x:ads:tcp://10.10.64.40/10.10.64.40.1.1:851/192.168.113.3.1.1:30000?dataType=java.lang.Integer&address=Allgemein_S2.Station")
-                    .process(exchange -> System.out.println("Invoked timer at " + new Date()))
+                    .process(exchange -> LOG.info("Invoked timer at {}", new Date()))
                     .bean("foo")
                     .log("Received ${body}");
         }
     }
 
     public static class MyBean {
+        private static final Logger LOG = LoggerFactory.getLogger(MyBean.class);
+
         public void callMe() {
-            System.out.println("MyBean.callMe method has been called");
+            LOG.info("MyBean.callMe method has been called");
         }
     }
 

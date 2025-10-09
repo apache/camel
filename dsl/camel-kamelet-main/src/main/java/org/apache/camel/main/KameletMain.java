@@ -112,12 +112,15 @@ import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Main class for booting up Camel with Kamelet in standalone mode.
  */
 public class KameletMain extends MainCommandLineSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KameletMain.class);
     public static final String DEFAULT_KAMELETS_LOCATION = "classpath:kamelets,github:apache:camel-kamelets/kamelets";
 
     private final String instanceType;
@@ -354,8 +357,7 @@ public class KameletMain extends MainCommandLineSupport {
 
     @Override
     public void showOptionsHeader() {
-        System.out.println("Apache Camel (KameletMain) takes the following options");
-        System.out.println();
+        LOG.info("Apache Camel (KameletMain) takes the following options");
     }
 
     @Override

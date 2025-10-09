@@ -23,11 +23,14 @@ import java.util.ResourceBundle;
 
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 public final class LoginConfigHelper {
 
+    private static final Logger LOG = LoggerFactory.getLogger(LoginConfigHelper.class);
     private static final LoginConfigHelper INSTANCE = new LoginConfigHelper();
 
     private final Map<String, String> configuration;
@@ -85,59 +88,59 @@ public final class LoginConfigHelper {
         try {
             loginConfig.validate();
         } catch (final IllegalArgumentException e) {
-            System.out.println("To run integration tests Salesforce Authentication information is");
-            System.out.println("needed.");
-            System.out.println("You need to specify the configuration for running tests by either");
-            System.out.println("specifying environment variables, Maven properties or create a Java");
-            System.out.println("properties file at:");
-            System.out.println();
-            System.out.println("camel/components/camel-salesforce/test-salesforce-login.properties");
-            System.out.println();
-            System.out.println("With authentication information to access a Salesforce instance.");
-            System.out.println("You can use:");
-            System.out.println();
-            System.out.println("camel/components/camel-salesforce/test-salesforce-login.sample.properties");
-            System.out.println();
-            System.out.println("as reference. A free Salesforce developer account can be obtained at:");
-            System.out.println();
-            System.out.println("https://developer.salesforce.com");
-            System.out.println();
-            System.out.println("Properties that you need to set:");
-            System.out.println();
-            System.out.println("| Maven or properties file     | Environment variable         | Use    |");
-            System.out.println("|------------------------------+------------------------------+--------|");
-            System.out.println("| salesforce.client.id         | SALESFORCE_CLIENT_ID         | ALL    |");
-            System.out.println("| salesforce.client.secret     | SALESFORCE_CLIENT_SECRET     | UP, RT |");
-            System.out.println("| salesforce.username          | SALESFORCE_USERNAME          | UP, JWT|");
-            System.out.println("| salesforce.password          | SALESFORCE_PASSWORD          | UP     |");
-            System.out.println("| salesforce.refreshToken      | SALESFORCE_REFRESH_TOKEN     | RT     |");
-            System.out.println("| salesforce.keystore.path     | SALESFORCE_KEYSTORE_PATH     | JWT    |");
-            System.out.println("| salesforce.keystore.type     | SALESFORCE_KEYSTORE_TYPE     | JWT    |");
-            System.out.println("| salesforce.keystore.password | SALESFORCE_KEYSTORE_PASSWORD | JWT    |");
-            System.out.println("| salesforce.login.url         | SALESFORCE_LOGIN_URL         | ALL    |");
-            System.out.println();
-            System.out.println("* ALL - required always");
-            System.out.println("* UP  - when using username and password authentication");
-            System.out.println("* RT  - when using refresh token flow");
-            System.out.println("* JWT - when using JWT flow");
-            System.out.println();
-            System.out.println("You can force authentication type to be one of USERNAME_PASSWORD,");
-            System.out.println("REFRESH_TOKEN or JWT by setting `salesforce.auth.type` (or ");
-            System.out.println("`SALESFORCE_AUTH_TYPE` for environment variables).");
-            System.out.println();
-            System.out.println("Examples:");
-            System.out.println();
-            System.out.println("Using environment:");
-            System.out.println();
-            System.out.println("$ export SALESFORCE_CLIENT_ID=...");
-            System.out.println("$ export SALESFORCE_CLIENT_SECRET=...");
-            System.out.println("$ export ...others...");
-            System.out.println();
-            System.out.println("or using Maven properties:");
-            System.out.println();
-            System.out.println("$ mvn -Pintegration -Dsalesforce.client.id=... \\");
-            System.out.println("  -Dsalesforce.client.secret=... ...");
-            System.out.println();
+            LOG.info("To run integration tests Salesforce Authentication information is");
+            LOG.info("needed.");
+            LOG.info("You need to specify the configuration for running tests by either");
+            LOG.info("specifying environment variables, Maven properties or create a Java");
+            LOG.info("properties file at:");
+            LOG.info("");
+            LOG.info("camel/components/camel-salesforce/test-salesforce-login.properties");
+            LOG.info("");
+            LOG.info("With authentication information to access a Salesforce instance.");
+            LOG.info("You can use:");
+            LOG.info("");
+            LOG.info("camel/components/camel-salesforce/test-salesforce-login.sample.properties");
+            LOG.info("");
+            LOG.info("as reference. A free Salesforce developer account can be obtained at:");
+            LOG.info("");
+            LOG.info("https://developer.salesforce.com");
+            LOG.info("");
+            LOG.info("Properties that you need to set:");
+            LOG.info("");
+            LOG.info("| Maven or properties file     | Environment variable         | Use    |");
+            LOG.info("|------------------------------+------------------------------+--------|");
+            LOG.info("| salesforce.client.id         | SALESFORCE_CLIENT_ID         | ALL    |");
+            LOG.info("| salesforce.client.secret     | SALESFORCE_CLIENT_SECRET     | UP, RT |");
+            LOG.info("| salesforce.username          | SALESFORCE_USERNAME          | UP, JWT|");
+            LOG.info("| salesforce.password          | SALESFORCE_PASSWORD          | UP     |");
+            LOG.info("| salesforce.refreshToken      | SALESFORCE_REFRESH_TOKEN     | RT     |");
+            LOG.info("| salesforce.keystore.path     | SALESFORCE_KEYSTORE_PATH     | JWT    |");
+            LOG.info("| salesforce.keystore.type     | SALESFORCE_KEYSTORE_TYPE     | JWT    |");
+            LOG.info("| salesforce.keystore.password | SALESFORCE_KEYSTORE_PASSWORD | JWT    |");
+            LOG.info("| salesforce.login.url         | SALESFORCE_LOGIN_URL         | ALL    |");
+            LOG.info("");
+            LOG.info("* ALL - required always");
+            LOG.info("* UP  - when using username and password authentication");
+            LOG.info("* RT  - when using refresh token flow");
+            LOG.info("* JWT - when using JWT flow");
+            LOG.info("");
+            LOG.info("You can force authentication type to be one of USERNAME_PASSWORD,");
+            LOG.info("REFRESH_TOKEN or JWT by setting `salesforce.auth.type` (or ");
+            LOG.info("`SALESFORCE_AUTH_TYPE` for environment variables).");
+            LOG.info("");
+            LOG.info("Examples:");
+            LOG.info("");
+            LOG.info("Using environment:");
+            LOG.info("");
+            LOG.info("$ export SALESFORCE_CLIENT_ID=...");
+            LOG.info("$ export SALESFORCE_CLIENT_SECRET=...");
+            LOG.info("$ export ...others...");
+            LOG.info("");
+            LOG.info("or using Maven properties:");
+            LOG.info("");
+            LOG.info("$ mvn -Pintegration -Dsalesforce.client.id=... \\");
+            LOG.info("  -Dsalesforce.client.secret=... ...");
+            LOG.info("");
         }
     }
 

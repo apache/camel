@@ -74,7 +74,7 @@ public class CommitConsumerLastTest extends GitHubComponentTestBase {
             String author = exchange.getMessage().getHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, String.class);
             String sha = exchange.getMessage().getHeader(GitHubConstants.GITHUB_COMMIT_SHA, String.class);
             if (log.isDebugEnabled()) {
-                System.out.println(sha);
+                log.debug("Commit SHA: {}", sha);
                 log.debug("Got commit with author: {}: SHA {}", author, sha);
             }
         }
