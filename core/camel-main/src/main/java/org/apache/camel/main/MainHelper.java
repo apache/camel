@@ -38,6 +38,7 @@ import org.apache.camel.Component;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -45,7 +46,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
-import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -617,11 +617,20 @@ public final class MainHelper {
         toRemove.forEach(autoConfiguredProperties::remove);
     }
 
+    public static boolean containsSensitive(String key, Object value) {
+        boolean answer = CamelContextHelper.containsSensitive(key);
+        if (!answer && value != null) {
+            String v = value.toString();
+            answer = v.startsWith("RAW(");
+        }
+        return answer;
+    }
+
     public static void sensitiveAwareLogging(Logger log, String k, Object v, String loc, boolean debug) {
         if (log == null) {
             log = LOG;
         }
-        if (SensitiveUtils.containsSensitive(k)) {
+        if (containsSensitive(k, v)) {
             if (debug) {
                 log.debug("    {} {} = xxxxxx", loc, k);
             } else {

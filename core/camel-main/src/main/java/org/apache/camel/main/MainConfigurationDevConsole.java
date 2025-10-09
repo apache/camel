@@ -56,7 +56,7 @@ public class MainConfigurationDevConsole extends AbstractDevConsole {
                 String k = entry.getKey().toString();
                 Object v = entry.getValue();
                 String loc = locationSummary(startupConfiguration, k);
-                if (SensitiveUtils.containsSensitive(k)) {
+                if (MainHelper.containsSensitive(k, v)) {
                     sb.append(String.format("    %s %s = xxxxxx%n", loc, k));
                 } else {
                     sb.append(String.format("    %s %s = %s%n", loc, k, v));
