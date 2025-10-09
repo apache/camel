@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.splunk;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import com.splunk.Args;
@@ -61,6 +62,8 @@ public class RawProducerTest extends SplunkMockTestSupport {
     @Mock
     private InputCollection inputCollection;
 
+    private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
     @BeforeEach
     public void setup() throws IOException {
         when(service.getIndexes()).thenReturn(indexColl);
@@ -70,7 +73,7 @@ public class RawProducerTest extends SplunkMockTestSupport {
         when(inputCollection.get(anyString())).thenReturn(input);
         when(indexColl.get(anyString())).thenReturn(index);
         when(index.attach(isA(Args.class))).thenReturn(socket);
-        when(socket.getOutputStream()).thenReturn(System.out);
+        when(socket.getOutputStream()).thenReturn(baos);
     }
 
     @Test

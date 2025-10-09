@@ -29,12 +29,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.util.OrderedProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Support for command line arguments to Camel main.
  */
 public abstract class MainCommandLineSupport extends MainSupport {
 
+    protected static final Logger LOG = LoggerFactory.getLogger(MainCommandLineSupport.class);
     protected final List<Option> options = new ArrayList<>();
     protected Properties argumentProperties;
     private volatile boolean initOptionsDone;
@@ -188,7 +191,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
         showOptionsHeader();
 
         for (Option option : options) {
-            System.out.println(option.getInformation());
+            LOG.info(option.getInformation());
         }
     }
 
@@ -211,8 +214,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 }
             }
             if (!handled) {
-                System.out.println("Unknown option: " + arg);
-                System.out.println();
+                LOG.error("Unknown option: {}", arg);
                 valid = false;
                 break;
             }
@@ -295,8 +297,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
      * Displays the header message for the command line options.
      */
     public void showOptionsHeader() {
-        System.out.println("Apache Camel Runner takes the following options");
-        System.out.println();
+        LOG.info("Apache Camel Runner takes the following options");
     }
 
     public abstract static class Option {
@@ -348,7 +349,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
         @Override
         protected void doProcess(String arg, LinkedList<String> remainingArgs) {
             if (remainingArgs.isEmpty()) {
-                System.err.println("Expected fileName for ");
+                LOG.error("Expected parameter for option: {}", arg);
                 showOptions();
                 completed();
             } else {

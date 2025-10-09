@@ -45,6 +45,8 @@ import io.fabric8.kubernetes.client.dsl.base.ResourceDefinitionContext;
 import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -52,6 +54,7 @@ import org.yaml.snakeyaml.Yaml;
  */
 public final class KubernetesHelper {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesHelper.class);
     private static KubernetesClient kubernetesClient;
 
     /** Clients with custom config */
@@ -157,7 +160,7 @@ public final class KubernetesHelper {
             APIGroup apiGroup = getKubernetesClient().getApiGroup("route.openshift.io");
             ocp = apiGroup != null;
         } catch (RuntimeException e) {
-            System.out.println("Failed to detect cluster: " + e.getMessage() + ", default to kubernetes.");
+            LOG.warn("Failed to detect cluster, defaulting to kubernetes: {}", e.getMessage());
         }
         return ocp;
     }
@@ -180,8 +183,8 @@ public final class KubernetesHelper {
             minikubeEnv = System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
                     && System.getenv("DOCKER_TLS_VERIFY") != null;
             if (minikube && !minikubeEnv) {
-                System.out.println(
-                        "It seems you have minikube running but forgot to run \"eval $(minikube docker-env)\", default cluster to kubernetes.");
+                LOG.warn(
+                        "It seems you have minikube running but forgot to run \"eval $(minikube docker-env)\", defaulting cluster to kubernetes.");
             }
         } catch (Exception e) {
             // ignore it, since we try to discover the cluster and don't want the caller to handle any error

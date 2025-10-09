@@ -23,11 +23,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ValidatorIncludeEncodingRouteTest.class);
 
     protected MockEndpoint validEndpoint;
     protected MockEndpoint finallyEndpoint;
@@ -66,7 +70,7 @@ public class ValidatorIncludeEncodingRouteTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                System.err.println("helo " + exchange.getException());
+                                LOG.error("helo", exchange.getException());
                             }
                         }).to("mock:invalid").doFinally().to("mock:finally").end();
             }
