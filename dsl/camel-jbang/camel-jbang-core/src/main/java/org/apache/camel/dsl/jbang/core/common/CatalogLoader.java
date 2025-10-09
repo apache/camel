@@ -121,7 +121,7 @@ public final class CatalogLoader {
 
             final String camelVersion = version;
             ma = downloader.downloadArtifact("org.apache.camel.springboot", "camel-catalog-provider-springboot",
-                    VersionHelper.getSpringBootVersion(() -> camelVersion));
+                    PropertyResolver.fromSystemProperty(CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, () -> camelVersion));
             if (ma != null) {
                 cl.addFile(ma.getFile());
             } else {
