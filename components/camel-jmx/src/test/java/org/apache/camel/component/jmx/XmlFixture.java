@@ -17,6 +17,7 @@
 package org.apache.camel.component.jmx;
 
 import java.io.File;
+import java.io.StringWriter;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -26,10 +27,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.builder.Input;
 
 public final class XmlFixture {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XmlFixture.class);
 
     private XmlFixture() {
     }
@@ -54,7 +59,9 @@ public final class XmlFixture {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.transform(aActual, new StreamResult(System.out));
+        StringWriter sw = new StringWriter();
+        transformer.transform(aActual, new StreamResult(sw));
+        LOG.debug(sw.toString());
     }
 
     public static Source stripTimestamp(Source aSource) throws Exception {

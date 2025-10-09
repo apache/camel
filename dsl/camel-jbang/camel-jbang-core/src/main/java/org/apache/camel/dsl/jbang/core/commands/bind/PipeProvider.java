@@ -30,6 +30,8 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
 import org.snakeyaml.engine.v2.composer.Composer;
@@ -48,6 +50,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
  */
 public class PipeProvider extends ObjectReferenceBindingProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PipeProvider.class);
     private static final String prefix = "kamelet:";
 
     public PipeProvider() {
@@ -144,10 +147,10 @@ public class PipeProvider extends ObjectReferenceBindingProvider {
                 }
                 IOHelper.close(is);
             } catch (Exception e) {
-                System.err.println("Error parsing Kamelet: " + loc + " due to: " + e.getMessage());
+                LOG.error("Error parsing Kamelet: {} due to: {}", loc, e.getMessage(), e);
             }
         } else {
-            System.err.println("Kamelet not found on github: " + kamelet);
+            LOG.error("Kamelet not found on github: {}", kamelet);
         }
 
         endpointProperties.putAll(userProperties);
