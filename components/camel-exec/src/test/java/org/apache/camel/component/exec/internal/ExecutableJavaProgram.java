@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.exec;
+package org.apache.camel.component.exec.internal;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -52,6 +52,13 @@ public class ExecutableJavaProgram {
 
     }
 
+    /**
+     * NOTE: This main is used exclusively by the exec tests to test "exec:java?arg=ExecutableJavaProgram". Don't use it
+     * directly.
+     *
+     * @param  args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         if (args == null || args.length == 0) {
             throw new IllegalArgumentException("Empty args are not allowed.");
