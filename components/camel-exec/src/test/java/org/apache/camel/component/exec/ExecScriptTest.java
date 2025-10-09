@@ -37,7 +37,7 @@ import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_STDERR;
 import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
 import static org.apache.camel.component.exec.ExecTestUtils.getClasspathResourceFileOrNull;
-import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDOUT;
+import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.PRINT_IN_STDOUT;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
