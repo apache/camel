@@ -17155,6 +17155,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:crypto"/>
         <xs:element ref="tns:csv"/>
         <xs:element ref="tns:custom"/>
+        <xs:element ref="tns:dfdl"/>
         <xs:element ref="tns:fhirJson"/>
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
@@ -18006,6 +18007,7 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
             <xs:element ref="tns:custom"/>
+            <xs:element ref="tns:dfdl"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>

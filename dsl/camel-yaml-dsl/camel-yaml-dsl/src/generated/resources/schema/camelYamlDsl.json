@@ -10872,6 +10872,9 @@
           "custom" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.CustomDataFormat"
           },
+          "dfdl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.DfdlDataFormat"
+          },
           "fhirJson" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirJsonDataFormat"
           },
@@ -16911,6 +16914,8 @@
               }, {
                 "required" : [ "custom" ]
               }, {
+                "required" : [ "dfdl" ]
+              }, {
                 "required" : [ "fhirJson" ]
               }, {
                 "required" : [ "fhirXml" ]
@@ -17050,6 +17055,14 @@
             "properties" : {
               "custom" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.CustomDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "dfdl" ],
+            "properties" : {
+              "dfdl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.DfdlDataFormat"
               }
             }
           }, {
@@ -17357,6 +17370,7 @@
           "crypto" : { },
           "csv" : { },
           "custom" : { },
+          "dfdl" : { },
           "fhirJson" : { },
           "fhirXml" : { },
           "flatpack" : { },

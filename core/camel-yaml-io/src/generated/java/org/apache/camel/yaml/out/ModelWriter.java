@@ -2539,6 +2539,7 @@ public class ModelWriter extends BaseWriter {
                 case "CryptoDataFormat" -> doWriteCryptoDataFormat("crypto", (CryptoDataFormat) v);
                 case "CsvDataFormat" -> doWriteCsvDataFormat("csv", (CsvDataFormat) v);
                 case "CustomDataFormat" -> doWriteCustomDataFormat("custom", (CustomDataFormat) v);
+                case "DfdlDataFormat" -> doWriteDfdlDataFormat("dfdl", (DfdlDataFormat) v);
                 case "FhirJsonDataFormat" -> doWriteFhirJsonDataFormat("fhirJson", (FhirJsonDataFormat) v);
                 case "FhirXmlDataFormat" -> doWriteFhirXmlDataFormat("fhirXml", (FhirXmlDataFormat) v);
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
@@ -3683,6 +3684,7 @@ public class ModelWriter extends BaseWriter {
                 case "CryptoDataFormat" -> doWriteCryptoDataFormat("crypto", (CryptoDataFormat) v);
                 case "CsvDataFormat" -> doWriteCsvDataFormat("csv", (CsvDataFormat) v);
                 case "CustomDataFormat" -> doWriteCustomDataFormat("custom", (CustomDataFormat) v);
+                case "DfdlDataFormat" -> doWriteDfdlDataFormat("dfdl", (DfdlDataFormat) v);
                 case "FhirJsonDataFormat" -> doWriteFhirJsonDataFormat("fhirJson", (FhirJsonDataFormat) v);
                 case "FhirXmlDataFormat" -> doWriteFhirXmlDataFormat("fhirXml", (FhirXmlDataFormat) v);
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
