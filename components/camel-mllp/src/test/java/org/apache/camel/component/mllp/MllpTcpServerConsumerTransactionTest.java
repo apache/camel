@@ -18,11 +18,14 @@ package org.apache.camel.component.mllp;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
@@ -33,104 +36,109 @@ import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Disabled("This test hangs")
 public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MllpTcpServerConsumerTransactionTest.class);
+	@RegisterExtension
+	public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
-    @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+	@RegisterExtension
+	public MllpClientResource mllpClient = new MllpClientResource();
 
-    @RegisterExtension
-    public MllpClientResource mllpClient = new MllpClientResource();
+	@EndpointInject("mock://result")
+	MockEndpoint result;
 
-    @EndpointInject("mock://result")
-    MockEndpoint result;
+	@EndpointInject("mock://on-complete-only")
+	MockEndpoint complete;
 
-    @EndpointInject("mock://on-complete-only")
-    MockEndpoint complete;
-
-    @EndpointInject("mock://on-failure-only")
-    MockEndpoint failure;
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
-
-        context.setUseMDCLogging(true);
-        context.getCamelContextExtension().setName(this.getClass().getSimpleName());
-
-        return context;
-    }
+	@EndpointInject("mock://on-failure-only")
+	MockEndpoint failure;
 
 	@Override
-    protected RouteBuilder createRouteBuilder() {
+	protected CamelContext createCamelContext() throws Exception {
+		DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
-        mllpClient.setMllpHost("localhost");
-        mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
+		context.setUseMDCLogging(true);
+		context.getCamelContextExtension().setName(this.getClass().getSimpleName());
 
-        return new RouteBuilder() {
-            int connectTimeout = 500;
-            int responseTimeout = 5000;
+		return context;
+	}
 
-            @Override
-            public void configure() {
-                String routeId = "mllp-test-receiver-route";
+	@BindToRegistry("target")
+	public SjmsComponent addTargetComponent() {
 
-                onCompletion()
-                        .onCompleteOnly()
-                        .log(LoggingLevel.INFO, routeId, "Test route complete")
-                        .to(complete);
+		SjmsComponent target = new SjmsComponent();
+		target.setConnectionFactory(new ActiveMQConnectionFactory(service.serviceAddress()));
 
-                onCompletion()
-                        .onFailureOnly()
-                        .log(LoggingLevel.INFO, routeId, "Test route failed")
-                        .to(failure);
+		return target;
+	}
 
-                fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
-                        .routeId(routeId)
-                        .log(LoggingLevel.INFO, routeId, "Test route received message")
-                        .to("target://test-queue?transacted=true");
+	@Override
+	protected RouteBuilder createRouteBuilder() {
 
-                from("target://test-queue")
-                        .routeId("jms-consumer")
-                        .process(exchange -> LOG.info("Body: {}", exchange.getIn().getBody()))
-                        .log(LoggingLevel.INFO, routeId, "Test JMS Consumer received message")
-                        .to(result);
+		mllpClient.setMllpHost("localhost");
+		mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
 
-            }
-        };
-    }
+		return new RouteBuilder() {
+			int connectTimeout = 500;
+			int responseTimeout = 5000;
 
-    @Test
-    public void testReceiveSingleMessage() throws Exception {
-        result.expectedMessageCount(1);
-        complete.expectedMessageCount(2);
-        failure.expectedMessageCount(0);
+			@Override
+			public void configure() {
+				String routeId = "mllp-test-receiver-route";
 
-        mllpClient.connect();
+				onCompletion()
+						.onCompleteOnly()
+						.log(LoggingLevel.INFO, routeId, "Test route complete")
+						.to(complete);
 
-        mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(), 10000);
+				onCompletion()
+						.onFailureOnly()
+						.log(LoggingLevel.INFO, routeId, "Test route failed")
+						.to(failure);
 
-        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
-    }
+				fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
+						mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
+						.routeId(routeId)
+						.log(LoggingLevel.INFO, routeId, "Test route received message")
+						.to("target://test-queue?transacted=true");
 
-    @Test
-    public void testAcknowledgementWriteFailure() throws Exception {
-        result.expectedMessageCount(1);
-        result.setAssertPeriod(1000);
-        complete.expectedMessageCount(1);
-        failure.expectedMessageCount(1);
+				from("target://test-queue")
+						.routeId("jms-consumer")
+						.process(exchange -> System.out.println(exchange.getIn().getBody()))
+						.log(LoggingLevel.INFO, routeId, "Test JMS Consumer received message")
+						.to(result);
 
-        mllpClient.connect();
-        mllpClient.setDisconnectMethod(MllpClientResource.DisconnectMethod.RESET);
+			}
+		};
+	}
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage(), true);
+	@Test
+	public void testReceiveSingleMessage() throws Exception {
+		result.expectedMessageCount(1);
+		complete.expectedMessageCount(2);
+		failure.expectedMessageCount(0);
 
-        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
-    }
+		mllpClient.connect();
+
+		mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(), 10000);
+
+		MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+	}
+
+	@Test
+	public void testAcknowledgementWriteFailure() throws Exception {
+		result.expectedMessageCount(1);
+		result.setAssertPeriod(1000);
+		complete.expectedMessageCount(1);
+		failure.expectedMessageCount(1);
+
+		mllpClient.connect();
+		mllpClient.setDisconnectMethod(MllpClientResource.DisconnectMethod.RESET);
+
+		mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage(), true);
+
+		MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+	}
 }

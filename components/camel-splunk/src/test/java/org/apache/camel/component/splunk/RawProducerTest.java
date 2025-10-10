@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.splunk;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import com.splunk.Args;
@@ -39,87 +38,85 @@ import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RawProducerTest extends SplunkMockTestSupport {
-    private static final String PAYLOAD = "{foo:1, bar:2}";
+	private static final String PAYLOAD = "{foo:1, bar:2}";
 
-    @EndpointInject("splunk://stream")
-    protected SplunkEndpoint streamEndpoint;
+	@EndpointInject("splunk://stream")
+	protected SplunkEndpoint streamEndpoint;
 
-    @EndpointInject("splunk://submit")
-    protected SplunkEndpoint submitEndpoint;
+	@EndpointInject("splunk://submit")
+	protected SplunkEndpoint submitEndpoint;
 
-    @EndpointInject("splunk://tcp")
-    protected SplunkEndpoint tcpEndpoint;
+	@EndpointInject("splunk://tcp")
+	protected SplunkEndpoint tcpEndpoint;
 
-    @Mock
-    private TcpInput input;
+	@Mock
+	private TcpInput input;
 
-    @Mock
-    private Index index;
+	@Mock
+	private Index index;
 
-    @Mock
-    private IndexCollection indexColl;
+	@Mock
+	private IndexCollection indexColl;
 
-    @Mock
-    private InputCollection inputCollection;
+	@Mock
+	private InputCollection inputCollection;
 
-    private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	@BeforeEach
+	public void setup() throws IOException {
+		when(service.getIndexes()).thenReturn(indexColl);
+		when(service.getInputs()).thenReturn(inputCollection);
+		when(input.attach()).thenReturn(socket);
+		when(input.getHost()).thenReturn("localhost");
+		when(inputCollection.get(anyString())).thenReturn(input);
+		when(indexColl.get(anyString())).thenReturn(index);
+		when(index.attach(isA(Args.class))).thenReturn(socket);
+		when(socket.getOutputStream()).thenReturn(System.out);
+	}
 
-    @BeforeEach
-    public void setup() throws IOException {
-        when(service.getIndexes()).thenReturn(indexColl);
-        when(service.getInputs()).thenReturn(inputCollection);
-        when(input.attach()).thenReturn(socket);
-        when(input.getHost()).thenReturn("localhost");
-        when(inputCollection.get(anyString())).thenReturn(input);
-        when(indexColl.get(anyString())).thenReturn(index);
-        when(index.attach(isA(Args.class))).thenReturn(socket);
-        when(socket.getOutputStream()).thenReturn(baos);
-    }
+	@Test
+	public void testStreamWriter() throws Exception {
+		MockEndpoint mock = getMockEndpoint("mock:stream-result");
+		mock.setExpectedMessageCount(1);
+		mock.expectedBodiesReceived(PAYLOAD);
+		template.sendBody("direct:stream", PAYLOAD);
+		MockEndpoint.assertIsSatisfied(context);
+	}
 
-    @Test
-    public void testStreamWriter() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:stream-result");
-        mock.setExpectedMessageCount(1);
-        mock.expectedBodiesReceived(PAYLOAD);
-        template.sendBody("direct:stream", PAYLOAD);
-        MockEndpoint.assertIsSatisfied(context);
-    }
+	@Test
+	public void testSubmitWriter() throws Exception {
+		MockEndpoint mock = getMockEndpoint("mock:submitresult");
+		mock.setExpectedMessageCount(1);
+		mock.expectedBodiesReceived(PAYLOAD);
+		template.sendBody("direct:submit", PAYLOAD);
+		MockEndpoint.assertIsSatisfied(context);
+	}
 
-    @Test
-    public void testSubmitWriter() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:submitresult");
-        mock.setExpectedMessageCount(1);
-        mock.expectedBodiesReceived(PAYLOAD);
-        template.sendBody("direct:submit", PAYLOAD);
-        MockEndpoint.assertIsSatisfied(context);
-    }
+	@Test
+	public void testTcpWriter() throws Exception {
+		MockEndpoint mock = getMockEndpoint("mock:tcpresult");
+		mock.setExpectedMessageCount(1);
+		mock.expectedBodiesReceived(PAYLOAD);
+		template.sendBody("direct:tcp", PAYLOAD);
+		MockEndpoint.assertIsSatisfied(context);
+	}
 
-    @Test
-    public void testTcpWriter() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:tcpresult");
-        mock.setExpectedMessageCount(1);
-        mock.expectedBodiesReceived(PAYLOAD);
-        template.sendBody("direct:tcp", PAYLOAD);
-        MockEndpoint.assertIsSatisfied(context);
-    }
+	@Override
+	protected RouteBuilder createRouteBuilder() {
+		return new RouteBuilder() {
+			public void configure() {
+				from("direct:stream").to(
+								"splunk://stream?username=foo&password=bar&index=myindex&sourceType=SourceType&source=Source&raw=true")
+						.to("mock:stream-result");
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:stream").to(
-                        "splunk://stream?username=foo&password=bar&index=myindex&sourceType=SourceType&source=Source&raw=true")
-                        .to("mock:stream-result");
+				from("direct:submit").to(
+								"splunk://submit?username=foo&password=bar&index=myindex&sourceType=testSource&source=test&raw=true")
+						.to("mock:submitresult");
 
-                from("direct:submit").to(
-                        "splunk://submit?username=foo&password=bar&index=myindex&sourceType=testSource&source=test&raw=true")
-                        .to("mock:submitresult");
-
-                from("direct:tcp").to(
-                        "splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test&raw=true")
-                        .to("mock:tcpresult");
-            }
-        };
-    }
+				from("direct:tcp").to(
+								"splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test&raw=true")
+						.to("mock:tcpresult");
+			}
+		};
+	}
 
 }

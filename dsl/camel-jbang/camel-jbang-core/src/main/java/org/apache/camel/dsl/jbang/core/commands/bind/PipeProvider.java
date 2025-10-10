@@ -30,8 +30,6 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.api.YamlUnicodeReader;
 import org.snakeyaml.engine.v2.composer.Composer;
@@ -50,116 +48,115 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
  */
 public class PipeProvider extends ObjectReferenceBindingProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PipeProvider.class);
-    private static final String prefix = "kamelet:";
+	private static final String prefix = "kamelet:";
 
-    public PipeProvider() {
-        super("camel.apache.org/v1", "Kamelet");
-    }
+	public PipeProvider() {
+		super("camel.apache.org/v1", "Kamelet");
+	}
 
-    @Override
-    public String getEndpoint(
-            EndpointType type, String uriExpression, Map<String, Object> endpointProperties, TemplateProvider templateProvider)
-            throws Exception {
-        if (uriExpression.startsWith(prefix)) {
-            return super.getEndpoint(type, StringHelper.after(uriExpression, prefix), endpointProperties, templateProvider);
-        }
+	@Override
+	public String getEndpoint(
+			EndpointType type, String uriExpression, Map<String, Object> endpointProperties, TemplateProvider templateProvider)
+			throws Exception {
+		if (uriExpression.startsWith(prefix)) {
+			return super.getEndpoint(type, StringHelper.after(uriExpression, prefix), endpointProperties, templateProvider);
+		}
 
-        return super.getEndpoint(type, uriExpression, endpointProperties, templateProvider);
-    }
+		return super.getEndpoint(type, uriExpression, endpointProperties, templateProvider);
+	}
 
-    @Override
-    protected Map<String, Object> getEndpointUriProperties(
-            EndpointType type, String objectName, String uriExpression, Map<String, Object> endpointProperties)
-            throws Exception {
-        return kameletProperties(objectName,
-                super.getEndpointUriProperties(type, objectName, uriExpression, endpointProperties));
-    }
+	@Override
+	protected Map<String, Object> getEndpointUriProperties(
+			EndpointType type, String objectName, String uriExpression, Map<String, Object> endpointProperties)
+			throws Exception {
+		return kameletProperties(objectName,
+				super.getEndpointUriProperties(type, objectName, uriExpression, endpointProperties));
+	}
 
-    /**
-     * Get required properties from Kamelet specification and add those to the given user properties if not already set.
-     * In case a required property is not present in the provided user properties the value is either set to the example
-     * coming from the Kamelet specification or to a placeholder value for users to fill in manually. Property values do
-     * already have quotes when the type is String.
-     *
-     * @param  kamelet
-     * @return
-     * @throws Exception
-     */
-    protected Map<String, Object> kameletProperties(String kamelet, Map<String, Object> userProperties) throws Exception {
-        Map<String, Object> endpointProperties = new HashMap<>();
-        InputStream is;
-        String loc;
-        Resource res;
+	/**
+	 * Get required properties from Kamelet specification and add those to the given user properties if not already set.
+	 * In case a required property is not present in the provided user properties the value is either set to the example
+	 * coming from the Kamelet specification or to a placeholder value for users to fill in manually. Property values do
+	 * already have quotes when the type is String.
+	 *
+	 * @param  kamelet
+	 * @return
+	 * @throws Exception
+	 */
+	protected Map<String, Object> kameletProperties(String kamelet, Map<String, Object> userProperties) throws Exception {
+		Map<String, Object> endpointProperties = new HashMap<>();
+		InputStream is;
+		String loc;
+		Resource res;
 
-        // try local disk first before GitHub
-        ResourceResolver resolver = new DefaultResourceResolvers.FileResolver();
-        try {
-            res = resolver.resolve("file:" + kamelet + ".kamelet.yaml");
-        } finally {
-            resolver.close();
-        }
-        if (res.exists()) {
-            is = res.getInputStream();
-            loc = res.getLocation();
-        } else {
-            resolver = new GitHubResourceResolver();
-            try {
-                res = resolver.resolve(
-                        "github:apache:camel-kamelets:main:kamelets/" + kamelet + ".kamelet.yaml");
-            } finally {
-                resolver.close();
-            }
-            loc = res.getLocation();
-            URL u = URI.create(loc).toURL();
-            is = u.openStream();
-        }
-        if (is != null) {
-            try {
-                LoadSettings local = LoadSettings.builder().setLabel(loc).build();
-                final StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
-                final Parser parser = new ParserImpl(local, reader);
-                final Composer composer = new Composer(local, parser);
-                Node root = composer.getSingleNode().orElse(null);
-                if (root != null) {
-                    Set<String> required = asStringSet(nodeAt(root, "/spec/definition/required"));
-                    if (required != null && !required.isEmpty()) {
-                        for (String req : required) {
-                            if (!userProperties.containsKey(req)) {
-                                String type = asText(nodeAt(root, "/spec/definition/properties/" + req + "/type"));
-                                String example = asText(nodeAt(root, "/spec/definition/properties/" + req + "/example"));
-                                StringBuilder vb = new StringBuilder();
-                                if (example != null) {
-                                    if ("string".equals(type)) {
-                                        vb.append("\"");
-                                    }
-                                    vb.append(example);
-                                    if ("string".equals(type)) {
-                                        vb.append("\"");
-                                    }
-                                } else {
-                                    vb.append("\"value\"");
-                                }
-                                endpointProperties.put(req, vb.toString());
-                            }
-                        }
-                    }
-                }
-                IOHelper.close(is);
-            } catch (Exception e) {
-                LOG.error("Error parsing Kamelet: {} due to: {}", loc, e.getMessage(), e);
-            }
-        } else {
-            LOG.error("Kamelet not found on github: {}", kamelet);
-        }
+		// try local disk first before GitHub
+		ResourceResolver resolver = new DefaultResourceResolvers.FileResolver();
+		try {
+			res = resolver.resolve("file:" + kamelet + ".kamelet.yaml");
+		} finally {
+			resolver.close();
+		}
+		if (res.exists()) {
+			is = res.getInputStream();
+			loc = res.getLocation();
+		} else {
+			resolver = new GitHubResourceResolver();
+			try {
+				res = resolver.resolve(
+						"github:apache:camel-kamelets:main:kamelets/" + kamelet + ".kamelet.yaml");
+			} finally {
+				resolver.close();
+			}
+			loc = res.getLocation();
+			URL u = URI.create(loc).toURL();
+			is = u.openStream();
+		}
+		if (is != null) {
+			try {
+				LoadSettings local = LoadSettings.builder().setLabel(loc).build();
+				final StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
+				final Parser parser = new ParserImpl(local, reader);
+				final Composer composer = new Composer(local, parser);
+				Node root = composer.getSingleNode().orElse(null);
+				if (root != null) {
+					Set<String> required = asStringSet(nodeAt(root, "/spec/definition/required"));
+					if (required != null && !required.isEmpty()) {
+						for (String req : required) {
+							if (!userProperties.containsKey(req)) {
+								String type = asText(nodeAt(root, "/spec/definition/properties/" + req + "/type"));
+								String example = asText(nodeAt(root, "/spec/definition/properties/" + req + "/example"));
+								StringBuilder vb = new StringBuilder();
+								if (example != null) {
+									if ("string".equals(type)) {
+										vb.append("\"");
+									}
+									vb.append(example);
+									if ("string".equals(type)) {
+										vb.append("\"");
+									}
+								} else {
+									vb.append("\"value\"");
+								}
+								endpointProperties.put(req, vb.toString());
+							}
+						}
+					}
+				}
+				IOHelper.close(is);
+			} catch (Exception e) {
+				System.err.println("Error parsing Kamelet: " + loc + " due to: " + e.getMessage());
+			}
+		} else {
+			System.err.println("Kamelet not found on github: " + kamelet);
+		}
 
-        endpointProperties.putAll(userProperties);
+		endpointProperties.putAll(userProperties);
 
-        return endpointProperties;
-    }
+		return endpointProperties;
+	}
 
-    @Override
-    public boolean canHandle(String uriExpression) {
-        return uriExpression.startsWith(prefix) || !uriExpression.contains(":");
-    }
+	@Override
+	public boolean canHandle(String uriExpression) {
+		return uriExpression.startsWith(prefix) || !uriExpression.contains(":");
+	}
 }
