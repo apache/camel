@@ -33,6 +33,7 @@
     <description>Execute different Signature and verification using Post Quantum Cryptography algorithms</description>
 
     <properties>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
