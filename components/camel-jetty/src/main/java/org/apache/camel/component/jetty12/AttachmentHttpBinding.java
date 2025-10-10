@@ -123,14 +123,15 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
                 // there may be multiple values for the same name
                 String[] values = request.getParameterValues(name);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("HTTP parameter {} = {}", name, HttpHelper.sanitizeLog(values));
-                }
-
                 if (values != null) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("HTTP parameter {} = {}", name, HttpHelper.sanitizeLog(values));
+                    }
                     for (String value : values) {
+                        // use http helper to extract parameter value as it may contain multiple values
+                        Object extracted = HttpHelper.extractHttpParameterValue(value);
                         if (getHeaderFilterStrategy() != null
-                                && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value,
+                                && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, extracted,
                                         message.getExchange())) {
                             HttpHelper.appendHeader(headers, name, value);
                         }

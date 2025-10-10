@@ -288,7 +288,7 @@ public final class HttpHelper {
      * This implementation supports HTTP multi value parameters which is based on the syntax of
      * <tt>[value1, value2, value3]</tt> by returning a {@link List} containing the values.
      * <p/>
-     * If the value is not a HTTP mulit value the value is returned as is.
+     * If the value is not a HTTP multi value the value is returned as is.
      *
      * @param  value the parameter value
      * @return       the extracted parameter value, see more details in javadoc.
