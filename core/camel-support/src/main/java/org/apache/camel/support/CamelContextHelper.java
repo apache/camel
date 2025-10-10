@@ -61,8 +61,8 @@ public final class CamelContextHelper {
     /**
      * Whether the given configuration property contains a sensitive key (such as password, accesstoken, etc.)
      *
-     * @param  text         the configuration property
-     * @return              true if sensitive, false otherwise
+     * @param  text the configuration property
+     * @return      true if sensitive, false otherwise
      */
     public static boolean containsSensitive(String text) {
         return SensitiveUtils.containsSensitive(text);
