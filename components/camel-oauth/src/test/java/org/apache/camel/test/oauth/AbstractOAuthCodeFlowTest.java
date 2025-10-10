@@ -46,8 +46,8 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
             Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).clients().findByClientId(TEST_CLIENT_ID).size());
             Assertions.assertEquals(1, keycloak.realm(KEYCLOAK_REALM).users().search("alice").size());
 
-            LOG.info("✅ Keycloak realm, client, and user available!");
-            LOG.info("✅ Open: {}", APP_BASE_URL);
+            LOG.info("Keycloak realm, client, and user available!");
+            LOG.info("Open: {}", APP_BASE_URL);
 
             // Open WebApp in Browser (works on macOS)
             // Runtime.getRuntime().exec("open " + APP_BASE_URL);
@@ -58,7 +58,7 @@ abstract class AbstractOAuthCodeFlowTest extends AbstractKeycloakTest {
             for (int i = maxLoopCount; i > 0; i--) {
                 var options = context.getGlobalOptions();
                 if ("ok".equals(options.get("OAuthLogout"))) {
-                    LOG.info("✅ OAuthLogout - ok");
+                    LOG.info("OAuthLogout - ok");
                     i = 0;
                 }
                 if (i % 4 == 0) {

@@ -39,12 +39,8 @@ import org.apache.camel.maven.htmlxlsx.model.RouteStatistic;
 import org.apache.camel.maven.htmlxlsx.model.RouteTotalsStatistic;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CoverageResultsProcessor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CoverageResultsProcessor.class);
 
     private static final String DETAILS_FILE = "/details.html";
 
@@ -228,9 +224,10 @@ public class CoverageResultsProcessor {
                     }
                 } catch (Exception t) {
                     // this is an edge case that needs to be identified. Log some useful debugging information.
-                    LOG.error("Error processing route coverage for routeId: {}", routeId, t);
-                    LOG.error("Route: {}", route);
-                    LOG.error("MappedRoute: {}", mappedRoute != null ? mappedRoute.toString() : "null");
+                    System.out.println(t.getClass().toString());
+                    System.out.printf("routeID: %s%n", routeId);
+                    System.out.printf("route: %s%n", route);
+                    System.out.printf("mappedRoute: %s%n", mappedRoute != null ? mappedRoute.toString() : "null");
                 }
             });
         });

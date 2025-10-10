@@ -29,15 +29,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.util.OrderedProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Support for command line arguments to Camel main.
  */
 public abstract class MainCommandLineSupport extends MainSupport {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(MainCommandLineSupport.class);
     protected final List<Option> options = new ArrayList<>();
     protected Properties argumentProperties;
     private volatile boolean initOptionsDone;
@@ -191,7 +188,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
         showOptionsHeader();
 
         for (Option option : options) {
-            LOG.info(option.getInformation());
+            System.out.println(option.getInformation());
         }
     }
 
@@ -214,7 +211,8 @@ public abstract class MainCommandLineSupport extends MainSupport {
                 }
             }
             if (!handled) {
-                LOG.error("Unknown option: {}", arg);
+                System.out.println("Unknown option: " + arg);
+                System.out.println();
                 valid = false;
                 break;
             }
@@ -297,7 +295,8 @@ public abstract class MainCommandLineSupport extends MainSupport {
      * Displays the header message for the command line options.
      */
     public void showOptionsHeader() {
-        LOG.info("Apache Camel Runner takes the following options");
+        System.out.println("Apache Camel Runner takes the following options");
+        System.out.println();
     }
 
     public abstract static class Option {
@@ -349,7 +348,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
         @Override
         protected void doProcess(String arg, LinkedList<String> remainingArgs) {
             if (remainingArgs.isEmpty()) {
-                LOG.error("Expected parameter for option: {}", arg);
+                System.err.println("Expected fileName for ");
                 showOptions();
                 completed();
             } else {
