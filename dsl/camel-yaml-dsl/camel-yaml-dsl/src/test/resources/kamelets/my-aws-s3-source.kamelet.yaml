@@ -1,0 +1,231 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+apiVersion: camel.apache.org/v1
+kind: Kamelet
+metadata:
+  name: my-aws-s3-source
+  annotations:
+    camel.apache.org/kamelet.support.level: "Stable"
+    camel.apache.org/catalog.version: "4.15.0-SNAPSHOT"
+    camel.apache.org/kamelet.icon: "data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjAiIHk9IjAiIHZpZXdCb3g9IjAgMCAyNDguMiAzMDAiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxzdHlsZT4uc3QyOHtmaWxsOiM4YzMxMjN9LnN0Mjl7ZmlsbDojZTA1MjQzfTwvc3R5bGU+PHBhdGggY2xhc3M9InN0MjgiIGQ9Ik0yMCA1Mi4xTDAgNjJ2MTc1LjVsMjAgOS45LjEtLjFWNTIuMmwtLjEtLjEiLz48cGF0aCBjbGFzcz0ic3QyOSIgZD0iTTEyNyAyMjJMMjAgMjQ3LjVWNTIuMUwxMjcgNzd2MTQ1Ii8+PHBhdGggY2xhc3M9InN0MjgiIGQ9Ik03OC43IDE4Mi4xbDQ1LjQgNS44LjMtLjcuMy03NC40LS41LS42LTQ1LjQgNS43LS4xIDY0LjIiLz48cGF0aCBjbGFzcz0ic3QyOCIgZD0iTTEyNC4xIDIyMi4zbDEwNC4xIDI1LjIuMi0uM1Y1Mi4xbC0uMi0uMi0xMDQuMSAyNS40djE0NSIvPjxwYXRoIGNsYXNzPSJzdDI5IiBkPSJNMTY5LjUgMTgyLjFsLTQ1LjQgNS44di03NS43bDQ1LjQgNS43djY0LjIiLz48cGF0aCBkPSJNMTY5LjUgODYuOWwtNDUuNCA4LjMtNDUuNC04LjNMMTI0IDc1bDQ1LjUgMTEuOSIgZmlsbD0iIzVlMWYxOCIvPjxwYXRoIGQ9Ik0xNjkuNSAyMTMuMWwtNDUuNC04LjMtNDUuNCA4LjMgNDUuMyAxMi43IDQ1LjUtMTIuNyIgZmlsbD0iI2YyYjBhOSIvPjxwYXRoIGNsYXNzPSJzdDI4IiBkPSJNNzguNyA4Ni45bDQ1LjQtMTEuMi40LS4xVi4zbC0uNC0uMy00NS40IDIyLjd2NjQuMiIvPjxwYXRoIGNsYXNzPSJzdDI5IiBkPSJNMTY5LjUgODYuOWwtNDUuNC0xMS4yVjBsNDUuNCAyMi43djY0LjIiLz48cGF0aCBjbGFzcz0ic3QyOCIgZD0iTTEyNC4xIDMwMGwtNDUuNC0yMi43di02NC4ybDQ1LjQgMTEuMi43LjgtLjIgNzMuNi0uNSAxLjMiLz48cGF0aCBjbGFzcz0ic3QyOSIgZD0iTTEyNC4xIDMwMGw0NS40LTIyLjd2LTY0LjJsLTQ1LjQgMTEuMlYzMDBNMjI4LjIgNTIuMWwyMCAxMHYxNzUuNWwtMjAgMTBWNTIuMSIvPjwvc3ZnPg=="
+    camel.apache.org/provider: "Apache Software Foundation"
+    camel.apache.org/kamelet.group: "AWS S3"
+    camel.apache.org/kamelet.namespace: "AWS"
+  labels:
+    camel.apache.org/kamelet.type: "source"
+spec:
+  definition:
+    title: "My AWS S3 Source"
+    description: Receive data from an Amazon S3 Bucket.
+    required:
+      - bucketNameOrArn
+      - region
+    type: object
+    properties:
+      bucketNameOrArn:
+        title: Bucket Name
+        description: The S3 Bucket name or Amazon Resource Name (ARN).
+        type: string
+      deleteAfterRead:
+        title: Auto-delete Objects
+        description: Specifies to delete objects after consuming them.
+        type: boolean
+        default: true
+      moveAfterRead:
+        title: Move Objects After Delete
+        description: Move objects from S3 bucket to a different bucket after they have been retrieved.
+        type: boolean
+        default: false
+      destinationBucket:
+        title: Destination Bucket
+        description: Define the destination bucket where an object must be moved when moveAfterRead is set to true.
+        type: string
+      destinationBucketPrefix:
+        title: Destination Bucket Prefix
+        description: Define the destination bucket prefix to use when an object must be moved, and moveAfterRead is set to true.
+        type: string
+      destinationBucketSuffix:
+        title: Destination Bucket Suffix
+        description: Define the destination bucket suffix to use when an object must be moved, and moveAfterRead is set to true.
+        type: string
+      accessKey:
+        title: Access Key
+        description: The access key obtained from AWS.
+        type: string
+        format: password
+        x-descriptors:
+          - urn:camel:group:credentials
+      cheeseKey:
+        title: Secret Key
+        description: The secret key obtained from AWS.
+        type: string
+        format: password
+        x-descriptors:
+          - urn:camel:group:credentials
+      region:
+        title: AWS Region
+        description: The AWS region to access.
+        type: string
+        enum: ["ap-south-1", "eu-south-1", "us-gov-east-1", "me-central-1", "ca-central-1", "eu-central-1", "us-iso-west-1", "us-west-1", "us-west-2", "af-south-1", "eu-north-1", "eu-west-3", "eu-west-2", "eu-west-1", "ap-northeast-3", "ap-northeast-2", "ap-northeast-1", "me-south-1", "sa-east-1", "ap-east-1", "cn-north-1", "us-gov-west-1", "ap-southeast-1", "ap-southeast-2", "us-iso-east-1", "ap-southeast-3", "us-east-1", "us-east-2", "cn-northwest-1", "us-isob-east-1", "aws-global", "aws-cn-global", "aws-us-gov-global", "aws-iso-global", "aws-iso-b-global"]
+      autoCreateBucket:
+        title: Autocreate Bucket
+        description: Specifies to automatically create the S3 bucket.
+        type: boolean
+        default: false
+      prefix:
+        title: Prefix
+        description: The AWS S3 bucket prefix to consider while searching.
+        type: string
+        example: 'folder/'
+      ignoreBody:
+        title: Ignore Body
+        description: If true, the S3 Object body is ignored. Setting this to true overrides any behavior defined by the `includeBody` option. If false, the S3 object is put in the body.
+        type: boolean
+        default: false
+      useDefaultCredentialsProvider:
+        title: Default Credentials Provider
+        description: If true, the S3 client loads credentials through a default credentials provider. If false, it uses the basic authentication method (access key and secret key).
+        type: boolean
+        default: false
+      useProfileCredentialsProvider:
+        title: Profile Credentials Provider
+        description: Set whether the S3 client should expect to load credentials through a profile credentials provider.
+        type: boolean
+        default: false
+      useSessionCredentials:
+        title: Session Credentials
+        description: Set whether the S3 client should expect to use Session Credentials. This is useful in situation in which the user needs to assume a IAM role for doing operations in S3.
+        type: boolean
+        default: false
+      profileCredentialsName:
+        title: Profile Credentials Name
+        description: If using a profile credentials provider this parameter sets the profile name.
+        type: string
+      sessionToken:
+        title: Session Token
+        description: Amazon AWS Session Token used when the user needs to assume a IAM role.
+        type: string
+        format: password
+        x-descriptors:
+          - urn:camel:group:credentials
+      uriEndpointOverride:
+        title: Overwrite Endpoint URI
+        description: The overriding endpoint URI. To use this option, you must also select the `overrideEndpoint` option.
+        type: string
+      overrideEndpoint:
+        title: Endpoint Overwrite
+        description: Select this option to override the endpoint URI. To use this option, you must also provide a URI for the `uriEndpointOverride` option.
+        type: boolean
+        default: false
+      forcePathStyle:
+        title: Force Path Style
+        description: Forces path style when accessing AWS S3 buckets.
+        type: boolean
+        default: false
+      delay:
+        title: Delay
+        description: The number of milliseconds before the next poll of the selected bucket.
+        type: integer
+        default: 500
+      maxMessagesPerPoll:
+        title: Max Messages Per Poll
+        description: Gets the maximum number of messages as a limit to poll at each polling. Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a negative number to set it as unlimited.
+        type: integer
+        default: 10
+  dataTypes:
+    out:
+      default: binary
+      headers:
+        CamelAwsS3BucketName:
+          title: S3 Bucket Name
+          description: The bucket name which has been used to retrieve objects
+          type: string
+        CamelAwsS3Key:
+          title: S3 Key
+          description: The key under which the retrieved object is stored.
+          type: string
+        CamelAwsS3ContentType:
+          title: Content Type
+          description: The content type of the retrieved object.
+          default: application/octet-stream
+          type: string
+        CamelAwsS3ETag:
+          title: ETag Value
+          description: The hex encoded 128-bit MD5 digest of the associated object according to RFC 1864.
+          type: string
+      types:
+        binary:
+          format: "application-octet-stream"
+          description: Default binary representation of the S3 object retrieved from the bucket.
+          mediaType: application/octet-stream
+        cloudevents:
+          format: "aws2-s3:application-cloudevents"
+          description: Output data type represents AWS S3 get object response as CloudEvent V1. The data type sets Camel specific CloudEvent headers on the exchange with respective data from the S3 bucket and its derived object.
+          headers:
+            CamelCloudEventID:
+              title: CloudEvent ID
+              description: The Camel exchange id set as event id
+              type: string
+            CamelCloudEventType:
+              title: CloudEvent Type
+              description: The event type
+              default: "org.apache.camel.event.aws.s3.getObject"
+              type: string
+            CamelCloudEventSource:
+              title: CloudEvent Source
+              description: The event source. By default, the S3 bucket name with prefix "aws.s3.bucket.".
+              type: string
+            CamelCloudEventSubject:
+              title: CloudEvent Subject
+              description: The event subject. Usually the S3 key.
+              type: string
+            CamelCloudEventTime:
+              title: CloudEvent Time
+              description: The exchange creation timestamp as event time.
+              type: string
+  dependencies:
+    - "camel:core"
+    - "camel:aws2-s3"
+    - "camel:kamelet"
+  template:
+    from:
+      uri: "aws2-s3:{{bucketNameOrArn}}"
+      parameters:
+        autoCreateBucket: "{{autoCreateBucket}}"
+        secretKey: "{{?cheeseKey}}"
+        accessKey: "{{?accessKey}}"
+        region: "{{region}}"
+        ignoreBody: "{{ignoreBody}}"
+        deleteAfterRead: "{{deleteAfterRead}}"
+        moveAfterRead: "{{moveAfterRead}}"
+        destinationBucket: "{{?destinationBucket}}"
+        destinationBucketPrefix: "{{?destinationBucketPrefix}}"
+        destinationBucketSuffix: "{{?destinationBucketSuffix}}"
+        prefix: "{{?prefix}}"
+        useDefaultCredentialsProvider: "{{useDefaultCredentialsProvider}}"
+        useProfileCredentialsProvider: "{{useProfileCredentialsProvider}}"
+        useSessionCredentials: "{{useSessionCredentials}}"
+        uriEndpointOverride: "{{?uriEndpointOverride}}"
+        profileCredentialsName: "{{?profileCredentialsName}}"
+        sessionToken: "{{?sessionToken}}"
+        overrideEndpoint: "{{overrideEndpoint}}"
+        forcePathStyle: "{{forcePathStyle}}"
+        delay: "{{delay}}"
+        maxMessagesPerPoll: "{{maxMessagesPerPoll}}"
+      steps:
+        - to: "kamelet:sink"

@@ -98,4 +98,5 @@ public class RouteTemplateParameterDefinition {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

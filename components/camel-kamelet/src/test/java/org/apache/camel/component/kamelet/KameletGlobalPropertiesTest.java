@@ -119,14 +119,14 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
 
     @Test
     public void urlEncodingIsRespected() {
-        assertThat(context.getEndpoint("kamelet:timer-source?message=Hello+Kamelets&period=1000", KameletEndpoint.class)
+        assertThat(context.getEndpoint("kamelet:timer-source?message=Hello Kamelets&period=1000", KameletEndpoint.class)
                 .getKameletProperties())
                 .containsEntry("message", "Hello Kamelets");
-        assertThat(context.getEndpoint("kamelet:timer-source?message=Hi%20Kamelets&period=1000", KameletEndpoint.class)
+        assertThat(context.getEndpoint("kamelet:timer-source?message=Hi Kamelets&period=1000", KameletEndpoint.class)
                 .getKameletProperties())
                 .containsEntry("message", "Hi Kamelets");
         assertThat(context
-                .getEndpoint("kamelet:timer-source?message=messaging.knative.dev%2Fv1beta1&period=1000", KameletEndpoint.class)
+                .getEndpoint("kamelet:timer-source?message=messaging.knative.dev/v1beta1&period=1000", KameletEndpoint.class)
                 .getKameletProperties())
                 .containsEntry("message", "messaging.knative.dev/v1beta1");
     }
