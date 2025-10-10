@@ -19,8 +19,6 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.util.StringJoiner;
 
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Printer interface used by commands to write output to given print stream. By default, uses System out print stream,
@@ -54,29 +52,25 @@ public interface Printer {
     }
 
     /**
-     * Default printer uses a logger.
+     * Default printer uses System out print stream.
      */
     class SystemOutPrinter implements Printer {
-
-        private static final Logger LOG = LoggerFactory.getLogger(SystemOutPrinter.class);
-
         public void println() {
-            // print empty line is not really logging
             System.out.println();
             System.out.flush();
         }
 
         public void println(String line) {
-            LOG.info(line);
+            System.out.println(line);
+            System.out.flush();
         }
 
         public void print(String output) {
-            // printing without a newline is not really logging
             System.out.print(output);
         }
 
         public void printf(String format, Object... args) {
-            LOG.info(String.format(format, args));
+            System.out.printf(format, args);
         }
     }
 

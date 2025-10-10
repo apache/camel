@@ -173,11 +173,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
             }
         }
 
-        YAMLFactory yamlFactory = new YAMLFactory()
-                .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR);
-        ObjectMapper mapper = new ObjectMapper(yamlFactory);
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
         return mapper.writeValueAsString(node);
     }
 
