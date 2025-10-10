@@ -108,7 +108,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
                                               + "UNZ+1+00000000000778'\n";
 
     private static final String EDI_MESSAGE_CONTENT_TRANSFER_ENCODING = "7bit";
-    private static final int PARTNER_TARGET_PORT = 8888;
+    private static final int PARTNER_TARGET_PORT = 8889;
 
     private static final int RECEIPT_SERVER_PORT = AvailablePortFinder.getNextAvailable();
     private static final int RECEIPT_SERVER_PORT2 = AvailablePortFinder.getNextAvailable();

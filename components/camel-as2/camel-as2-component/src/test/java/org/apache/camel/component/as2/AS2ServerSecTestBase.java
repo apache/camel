@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
 
     protected static final String TARGET_HOST = "localhost";
-    protected static final int TARGET_PORT = 8888;
+    protected static final int TARGET_PORT = 8889;
     protected static final Duration HTTP_SOCKET_TIMEOUT = Duration.ofSeconds(5);
     protected static final Duration HTTP_CONNECTION_TIMEOUT = Duration.ofSeconds(5);
     protected static final Integer HTTP_CONNECTION_POOL_SIZE = 5;
