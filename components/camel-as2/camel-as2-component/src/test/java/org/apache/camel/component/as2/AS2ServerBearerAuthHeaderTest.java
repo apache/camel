@@ -112,7 +112,7 @@ public class AS2ServerBearerAuthHeaderTest extends AbstractAS2ITSupport {
 
     private AS2ClientConnection getAs2ClientConnection() throws IOException {
         return new AS2ClientConnection(
-                "1.1", "Camel AS2 Endpoint", "example.org", "localhost", 8888, Duration.ofSeconds(5),
+                "1.1", "Camel AS2 Endpoint", "example.org", "localhost", 8889, Duration.ofSeconds(5),
                 Duration.ofSeconds(5), 5, Duration.ofMinutes(15), null, null);
     }
 }
