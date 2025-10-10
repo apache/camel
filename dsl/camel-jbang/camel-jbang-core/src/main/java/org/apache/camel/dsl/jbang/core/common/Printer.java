@@ -19,8 +19,6 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.util.StringJoiner;
 
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Printer interface used by commands to write output to given print stream. By default, uses System out print stream,
@@ -28,87 +26,83 @@ import org.slf4j.LoggerFactory;
  */
 public interface Printer {
 
-    void println();
+	void println();
 
-    void println(String line);
+	void println(String line);
 
-    void print(String output);
+	void print(String output);
 
-    void printf(String format, Object... args);
+	void printf(String format, Object... args);
 
-    default void printErr(String message) {
-        printf("ERROR: %s%n", message);
-    }
+	default void printErr(String message) {
+		printf("ERROR: %s%n", message);
+	}
 
-    default void printErr(String message, Exception e) {
-        printErr("%s - %s".formatted(message, e.getMessage()));
-    }
+	default void printErr(String message, Exception e) {
+		printErr("%s - %s".formatted(message, e.getMessage()));
+	}
 
-    default void printErr(Exception e) {
-        var it = ObjectHelper.createExceptionIterable(e);
-        StringJoiner sj = new StringJoiner("\n\t --> ");
-        for (Throwable t : it) {
-            sj.add(t.getMessage());
-        }
-        printErr(sj.toString());
-    }
+	default void printErr(Exception e) {
+		var it = ObjectHelper.createExceptionIterable(e);
+		StringJoiner sj = new StringJoiner("\n\t --> ");
+		for (Throwable t : it) {
+			sj.add(t.getMessage());
+		}
+		printErr(sj.toString());
+	}
 
-    /**
-     * Default printer uses a logger.
-     */
-    class SystemOutPrinter implements Printer {
+	/**
+	 * Default printer uses System out print stream.
+	 */
+	class SystemOutPrinter implements Printer {
+		public void println() {
+			System.out.println();
+			System.out.flush();
+		}
 
-        private static final Logger LOG = LoggerFactory.getLogger(SystemOutPrinter.class);
+		public void println(String line) {
+			System.out.println(line);
+			System.out.flush();
+		}
 
-        public void println() {
-            // print empty line is not really logging
-            System.out.println();
-            System.out.flush();
-        }
+		public void print(String output) {
+			System.out.print(output);
+		}
 
-        public void println(String line) {
-            LOG.info(line);
-        }
+		public void printf(String format, Object... args) {
+			System.out.printf(format, args);
+		}
+	}
 
-        public void print(String output) {
-            // printing without a newline is not really logging
-            System.out.print(output);
-        }
+	/**
+	 * Printer can be used in quiet mode - nothing is printed except error messages.
+	 */
+	class QuietPrinter implements Printer {
 
-        public void printf(String format, Object... args) {
-            LOG.info(String.format(format, args));
-        }
-    }
+		private final Printer delegate;
 
-    /**
-     * Printer can be used in quiet mode - nothing is printed except error messages.
-     */
-    class QuietPrinter implements Printer {
+		public QuietPrinter(Printer delegate) {
+			this.delegate = delegate;
+		}
 
-        private final Printer delegate;
+		@Override
+		public void println() {
+		}
 
-        public QuietPrinter(Printer delegate) {
-            this.delegate = delegate;
-        }
+		@Override
+		public void println(String line) {
+		}
 
-        @Override
-        public void println() {
-        }
+		@Override
+		public void print(String output) {
+		}
 
-        @Override
-        public void println(String line) {
-        }
+		@Override
+		public void printf(String format, Object... args) {
+		}
 
-        @Override
-        public void print(String output) {
-        }
-
-        @Override
-        public void printf(String format, Object... args) {
-        }
-
-        public void printErr(String message) {
-            delegate.printErr(message);
-        }
-    }
+		public void printErr(String message) {
+			delegate.printErr(message);
+		}
+	}
 }
