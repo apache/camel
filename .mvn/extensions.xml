@@ -3,7 +3,7 @@
     <extension>
         <groupId>org.l2x6.cq</groupId>
         <artifactId>cq-alias-fastinstall-quickly-extension</artifactId>
-        <version>4.20.1</version>
+        <version>4.20.3</version>
     </extension>
     <extension>
         <groupId>eu.maveniverse.maven.nisse</groupId>
