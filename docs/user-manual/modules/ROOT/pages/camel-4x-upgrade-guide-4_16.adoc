@@ -13,6 +13,11 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.15 to 4.16
 
+=== camel-kamelet
+
+The kamelet component is now parsing endpoint parameters using _raw mode_ to ensure when using sensitive parameters
+such as access keys, passwords etc. they are not URI encoded.
+
 === camel-infinispan
 
 The `queryBuilder` option on `camel-infinispan` endpoint has been migrated to no longer use the deprecated query factory

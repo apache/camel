@@ -11,6 +11,17 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+== Upgrading from 4.14.1 to 4.14.2
+
+=== camel-kamelet
+
+The kamelet component is now parsing endpoint parameters using _raw mode_ to ensure when using sensitive parameters
+such as access keys, passwords etc. they are not URI encoded.
+
+== Upgrading from 4.10.0 to 4.10.1
+
+No changes
+
 == Upgrading Camel 4.13 to 4.14
 
 === camel-core
