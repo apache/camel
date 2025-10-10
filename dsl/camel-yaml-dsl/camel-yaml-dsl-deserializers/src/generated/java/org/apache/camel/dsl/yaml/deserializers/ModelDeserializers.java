@@ -3493,6 +3493,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "crypto", type = "object:org.apache.camel.model.dataformat.CryptoDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "csv", type = "object:org.apache.camel.model.dataformat.CsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "custom", type = "object:org.apache.camel.model.dataformat.CustomDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "dfdl", type = "object:org.apache.camel.model.dataformat.DfdlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fhirJson", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat", oneOf = "dataFormatType"),
@@ -3600,6 +3601,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "custom": {
                     org.apache.camel.model.dataformat.CustomDataFormat val = asType(node, org.apache.camel.model.dataformat.CustomDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "dfdl": {
+                    org.apache.camel.model.dataformat.DfdlDataFormat val = asType(node, org.apache.camel.model.dataformat.DfdlDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3819,6 +3825,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "crypto", type = "object:org.apache.camel.model.dataformat.CryptoDataFormat"),
                     @YamlProperty(name = "csv", type = "object:org.apache.camel.model.dataformat.CsvDataFormat"),
                     @YamlProperty(name = "custom", type = "object:org.apache.camel.model.dataformat.CustomDataFormat"),
+                    @YamlProperty(name = "dfdl", type = "object:org.apache.camel.model.dataformat.DfdlDataFormat"),
                     @YamlProperty(name = "fhirJson", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat"),
                     @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
@@ -3967,6 +3974,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "custom": {
                     org.apache.camel.model.dataformat.CustomDataFormat val = asType(node, org.apache.camel.model.dataformat.CustomDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "dfdl": {
+                    org.apache.camel.model.dataformat.DfdlDataFormat val = asType(node, org.apache.camel.model.dataformat.DfdlDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();

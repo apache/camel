@@ -54,6 +54,7 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "crypto", type = CryptoDataFormat.class),
             @XmlElement(name = "csv", type = CsvDataFormat.class),
             @XmlElement(name = "custom", type = CustomDataFormat.class),
+            @XmlElement(name = "dfdl", type = DfdlDataFormat.class),
             @XmlElement(name = "fhirJson", type = FhirJsonDataFormat.class),
             @XmlElement(name = "fhirXml", type = FhirXmlDataFormat.class),
             @XmlElement(name = "flatpack", type = FlatpackDataFormat.class),
