@@ -291,7 +291,6 @@
 ** xref:pubnub-component.adoc[PubNub]
 ** xref:pulsar-component.adoc[Pulsar]
 ** xref:quartz-component.adoc[Quartz]
-** xref:quickfix-component.adoc[QuickFix]
 ** xref:reactive-streams-component.adoc[Reactive Streams]
 ** xref:ref-component.adoc[Ref]
 ** xref:rest-component.adoc[REST]

@@ -1,1 +1,0 @@
-../../../../../components/camel-quickfix/src/main/docs/quickfix-component.adoc
