@@ -17,14 +17,8 @@
 package org.apache.camel.component.jmx;
 
 import java.io.File;
-import java.io.StringWriter;
 
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
@@ -54,17 +48,7 @@ public final class XmlFixture {
                 .areSimilar();
     }
 
-    public static void dump(Source aActual)
-            throws TransformerException {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        StringWriter sw = new StringWriter();
-        transformer.transform(aActual, new StreamResult(sw));
-        LOG.debug(sw.toString());
-    }
-
-    public static Source stripTimestamp(Source aSource) throws Exception {
+	public static Source stripTimestamp(Source aSource) throws Exception {
         String resourcePath = "/stripTimestamp.xsl";
         return transform(aSource, resourcePath);
     }
