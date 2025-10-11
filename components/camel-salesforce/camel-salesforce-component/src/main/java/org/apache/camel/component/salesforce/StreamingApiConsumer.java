@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
@@ -74,6 +75,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
     private final SalesforceEndpoint endpoint;
     private final MessageKind messageKind;
     private final ObjectMapper objectMapper;
+    private ExecutorService executorService;
 
     private final boolean rawPayload;
     private Class<?> sObjectClass;
@@ -102,6 +104,14 @@ public class StreamingApiConsumer extends DefaultConsumer {
         messageKind = MessageKind.fromTopicName(topicName);
 
         rawPayload = endpoint.getConfiguration().isRawPayload();
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
     public String getTopicName() {
@@ -141,7 +151,11 @@ public class StreamingApiConsumer extends DefaultConsumer {
 
         // use default consumer callback
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
+        if (executorService != null) {
+            executorService.submit(() -> getAsyncProcessor().process(exchange, cb));
+        } else {
+            getAsyncProcessor().process(exchange, cb);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -330,6 +344,15 @@ public class StreamingApiConsumer extends DefaultConsumer {
             subscribed = false;
             // unsubscribe from topic
             subscriptionHelper.unsubscribe(this);
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        if (executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+            executorService = null;
         }
     }
 

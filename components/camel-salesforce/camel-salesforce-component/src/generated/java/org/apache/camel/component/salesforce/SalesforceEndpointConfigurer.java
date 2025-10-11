@@ -154,6 +154,12 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "streamQueryResult": target.getConfiguration().setStreamQueryResult(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "updatetopic":
         case "updateTopic": target.getConfiguration().setUpdateTopic(property(camelContext, boolean.class, value)); return true;
+        case "workerpoolenabled":
+        case "workerPoolEnabled": target.setWorkerPoolEnabled(property(camelContext, boolean.class, value)); return true;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": target.setWorkerPoolMaxSize(property(camelContext, int.class, value)); return true;
+        case "workerpoolsize":
+        case "workerPoolSize": target.setWorkerPoolSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -292,6 +298,12 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "streamQueryResult": return java.lang.Boolean.class;
         case "updatetopic":
         case "updateTopic": return boolean.class;
+        case "workerpoolenabled":
+        case "workerPoolEnabled": return boolean.class;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": return int.class;
+        case "workerpoolsize":
+        case "workerPoolSize": return int.class;
         default: return null;
         }
     }
@@ -431,6 +443,12 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "streamQueryResult": return target.getConfiguration().getStreamQueryResult();
         case "updatetopic":
         case "updateTopic": return target.getConfiguration().isUpdateTopic();
+        case "workerpoolenabled":
+        case "workerPoolEnabled": return target.isWorkerPoolEnabled();
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": return target.getWorkerPoolMaxSize();
+        case "workerpoolsize":
+        case "workerPoolSize": return target.getWorkerPoolSize();
         default: return null;
         }
     }
