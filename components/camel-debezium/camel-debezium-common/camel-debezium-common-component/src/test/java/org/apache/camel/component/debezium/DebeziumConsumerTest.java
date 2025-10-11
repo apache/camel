@@ -37,9 +37,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DebeziumConsumerTest extends CamelTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DebeziumConsumerTest.class);
     private static final int NUMBER_OF_LINES = 5;
     private static final String DEFAULT_DATA_TESTING_FOLDER = "target/data";
     private static final Path TEST_FILE_PATH = createTestingPath("camel-debezium-test-file-input.txt").toAbsolutePath();
@@ -167,7 +170,7 @@ public class DebeziumConsumerTest extends CamelTestSupport {
         try {
             IoUtil.delete(path);
         } catch (IOException e) {
-            System.err.printf("Unable to delete %s%n", path.toAbsolutePath());
+            LOG.error("Unable to delete {}", path.toAbsolutePath(), e);
         }
     }
 

@@ -33,6 +33,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -42,6 +44,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * condition, so this test does not always fail
  */
 public class ExecJava8IssueTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ExecJava8IssueTest.class);
 
     private File tempDir;
     private final String tempDirName = name();
@@ -64,7 +68,7 @@ public class ExecJava8IssueTest {
     public void test() throws Exception {
 
         if (!OS.isFamilyUnix()) {
-            System.err.println("The test 'CamelExecTest' does not support the following OS : " + System.getProperty("os.name"));
+            LOG.warn("The test 'CamelExecTest' does not support the following OS : {}", System.getProperty("os.name"));
             return;
         }
 

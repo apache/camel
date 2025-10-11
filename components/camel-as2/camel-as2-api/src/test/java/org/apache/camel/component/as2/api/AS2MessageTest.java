@@ -111,7 +111,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
                     ediEntity = HttpMessageUtils.extractEdiPayload(request, new HttpMessageUtils.DecrpytingAndSigningInfo(
                             testServer.getValidateSigningCertificateChain(), testServer.getDecryptingPrivateKey()));
                 } catch (Exception e) {
-                    throw new HttpException("Failed to parse AS2 Message Entity", e);
+                    throw new HttpException("Failed to parse AS2Message Entity", e);
                 }
             }
         });
@@ -515,7 +515,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         // Send MDN
         HttpCoreContext httpContext = mdnManager.send(mdn, mdn.getMainMessageContentType(), RECIPIENT_DELIVERY_ADDRESS);
         HttpRequest mndRequest = httpContext.getRequest();
-        Arrays.stream(request.getHeaders(AS2Header.CONTENT_DISPOSITION)).forEach(System.out::println);
+        Arrays.stream(request.getHeaders(AS2Header.CONTENT_DISPOSITION)).forEach(h -> LOG.debug("{}", h));
         DispositionNotificationMultipartReportEntity reportEntity
                 = HttpMessageUtils.getEntity(mndRequest, DispositionNotificationMultipartReportEntity.class);
         assertNotNull(reportEntity, "Request does not contain report");

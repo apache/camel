@@ -410,7 +410,7 @@ public final class DSAnnotationProcessor {
                 .getAnnotation(LoadSchema.class);
 
         if (loadSchema != null) {
-            System.out.println(loadSchema);
+            LOG.debug("Found LoadSchema annotation: {}", loadSchema);
         }
     }
 

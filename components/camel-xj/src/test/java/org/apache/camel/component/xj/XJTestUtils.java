@@ -43,11 +43,14 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import org.apache.commons.io.IOUtils;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.builder.Input;
 
 final class XJTestUtils {
 
+    private static final Logger LOG = LoggerFactory.getLogger(XJTestUtils.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
     private static final Map<String, Templates> XSL_TEMPLATES = Collections.synchronizedMap(new HashMap<>());
     private static final JsonFactory JSON_FACTORY = new JsonFactory();
@@ -118,7 +121,7 @@ final class XJTestUtils {
             transformer.transform(new StreamSource(inputFile), stAXResult);
         } catch (Exception e) {
             String result = byteArrayOutputStream.toString(StandardCharsets.UTF_8.name());
-            System.out.println(result);
+            LOG.error("Transformation failed, partial result: {}", result, e);
             throw e;
         }
 

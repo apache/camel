@@ -40,6 +40,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,6 +65,8 @@ import static org.junit.jupiter.api.Assertions.*;
                                  disabledReason = "Keycloak client secret not provided")
 })
 public class KeycloakSecurityIT extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KeycloakSecurityIT.class);
 
     private static String keycloakUrl;
     private static String realm;
@@ -355,7 +359,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
             java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
 
             // Log the permissions found for debugging
-            System.out.println("Permissions found in token: " + permissions);
+            LOG.info("Permissions found in token: {}", permissions);
 
             // Permissions might be empty in a basic setup, which is expected
             assertNotNull(permissions);

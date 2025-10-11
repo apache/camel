@@ -31,8 +31,12 @@ import javax.net.ssl.TrustManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class SSLCertTrustTest extends AbstractKeycloakTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SSLCertTrustTest.class);
 
     @Test
     void testCheckClusterCertificateTrust() throws Exception {
@@ -57,11 +61,11 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
                 xtm.checkServerTrusted(new X509Certificate[] { cert }, "RSA");
             }
         } catch (CertificateException ex) {
-            System.err.println("Untrusted, because of: " + ex);
+            LOG.error("Untrusted, because of: ", ex);
             return;
         }
 
-        System.out.println("Trusted");
+        LOG.info("Trusted");
     }
 
     @Test

@@ -35,6 +35,8 @@ import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,6 +47,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnabledIf(value = "org.apache.camel.component.digitalocean.integration.DigitalOceanTestSupport#hasCredentials",
            disabledReason = "Must be manually tested. Provide your own oAuthToken on test-options.properties")
 public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DigitalOceanComponentIT.class);
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
@@ -324,7 +328,7 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         List<Size> sizes = (List<Size>) exchange.getMessage().getBody();
-        System.out.println(sizes);
+        LOG.debug("Sizes: {}", sizes);
         assertNotEquals(1, sizes.size());
     }
 
@@ -336,7 +340,7 @@ public class DigitalOceanComponentIT extends DigitalOceanTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         List<Region> regions = (List<Region>) exchange.getMessage().getBody();
-        System.out.println(regions);
+        LOG.debug("Regions: {}", regions);
         assertNotEquals(1, regions.size());
     }
 

@@ -63,7 +63,7 @@ public class ConcurrentConsumerLoadManualTest extends CamelTestSupport {
             list.add(payloadToSend);
             if (i % 100 == 0) {
                 noOfBlocks++;
-                System.out.println("sending blok " + noOfBlocks);
+                LOGGER.info("sending block {}", noOfBlocks);
                 template.sendBody(sedaEndpoint, list.toArray(new String[0]));
                 list.clear();
             }

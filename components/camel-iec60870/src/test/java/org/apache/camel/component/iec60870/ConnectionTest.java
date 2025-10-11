@@ -31,6 +31,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.Value;
 import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Request;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConnectionTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConnectionTest.class);
 
     private static final String DIRECT_SEND_S_1 = "direct:sendServer1";
 
@@ -133,7 +137,7 @@ public class ConnectionTest extends CamelTestSupport {
         // assert
 
         MockEndpoint.assertIsSatisfied(context, 2_000, TimeUnit.MILLISECONDS);
-        System.out.println(testServer1Endpoint.getExchanges().get(0).getIn().getBody());
+        LOG.debug("Received body: {}", testServer1Endpoint.getExchanges().get(0).getIn().getBody());
 
     }
 

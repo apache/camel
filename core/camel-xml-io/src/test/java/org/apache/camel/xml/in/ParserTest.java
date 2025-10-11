@@ -23,11 +23,15 @@ import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParserException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("Run manually to check how the MX parser works")
 public class ParserTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ParserTest.class);
 
     @Test
     public void justParse() throws XmlPullParserException, IOException {
@@ -49,26 +53,25 @@ public class ParserTest {
             xpp.getTextCharacters(new int[2]); // check handling for non START/END_TAG
             switch (eventType) {
                 case MXParser.START_DOCUMENT -> {
-                    System.out.println("START_DOCUMENT");
+                    LOG.debug("START_DOCUMENT");
                 }
                 case MXParser.START_TAG -> {
                     xpp.getText(); // never uses org.apache.camel.xml.io.MXParser#pc
                     xpp.getTextCharacters(new int[2]);
                     xpp.isEmptyElementTag();
-                    System.out.println("START_TAG" + (xpp.isEmptyElementTag() ? " (empty tag)" : ""));
-                    System.out.println(" - name: " + xpp.getName());
-                    System.out.println(" - ns: " + xpp.getNamespace());
-                    System.out.println(" - prefix: " + xpp.getPrefix());
+                    LOG.debug("START_TAG" + (xpp.isEmptyElementTag() ? " (empty tag)" : ""));
+                    LOG.debug(" - name: " + xpp.getName());
+                    LOG.debug(" - ns: " + xpp.getNamespace());
+                    LOG.debug(" - prefix: " + xpp.getPrefix());
                     int ac = xpp.getAttributeCount();
                     if (ac > 0) {
-                        System.out.println(" - attributes:");
+                        LOG.debug(" - attributes:");
                         for (int i = 0; i < ac; i++) {
-                            System.out.print("    - " + xpp.getAttributeName(i)
-                                             + (xpp.getAttributePrefix(i) == null
-                                                     ? "" : " (prefix: " + xpp.getAttributePrefix(i) + ")"));
-                            System.out.print(": " + xpp.getAttributeValue(i));
-                            System.out.print(", ns: " + xpp.getAttributeNamespace(i));
-                            System.out.println();
+                            LOG.debug("    - " + xpp.getAttributeName(i)
+                                      + (xpp.getAttributePrefix(i) == null
+                                              ? "" : " (prefix: " + xpp.getAttributePrefix(i) + ")")
+                                      + ": " + xpp.getAttributeValue(i)
+                                      + ", ns: " + xpp.getAttributeNamespace(i));
                         }
                     }
                     if ("e1".equals(xpp.getName())) {
@@ -82,15 +85,15 @@ public class ParserTest {
                 case MXParser.END_TAG -> {
                     xpp.getText(); // never uses org.apache.camel.xml.io.MXParser#pc
                     xpp.getTextCharacters(new int[2]);
-                    System.out.println("END_TAG");
-                    System.out.println(" - name: " + xpp.getName());
-                    System.out.println(" - ns: " + xpp.getNamespace());
-                    System.out.println(" - prefix: " + xpp.getPrefix());
+                    LOG.debug("END_TAG");
+                    LOG.debug(" - name: " + xpp.getName());
+                    LOG.debug(" - ns: " + xpp.getNamespace());
+                    LOG.debug(" - prefix: " + xpp.getPrefix());
                 }
                 case MXParser.TEXT -> {
-                    System.out.println("TEXT");
-                    System.out.println(" - name: " + xpp.getName());
-                    System.out.println(" - text: '" + xpp.getText() + (xpp.isWhitespace() ? "' (whitespace)" : "'"));
+                    LOG.debug("TEXT");
+                    LOG.debug(" - name: " + xpp.getName());
+                    LOG.debug(" - text: '" + xpp.getText() + (xpp.isWhitespace() ? "' (whitespace)" : "'"));
                 }
                 case MXParser.CDSECT -> {
                     xpp.isWhitespace();
@@ -98,9 +101,9 @@ public class ParserTest {
                 case MXParser.ENTITY_REF -> {
                     xpp.getName();
                     xpp.getText(); // always returns text - even if null
-                    System.out.println("ENTITY_REF");
-                    System.out.println(" - name: " + xpp.getName());
-                    System.out.println(" - text: " + xpp.getText());
+                    LOG.debug("ENTITY_REF");
+                    LOG.debug(" - name: " + xpp.getName());
+                    LOG.debug(" - text: " + xpp.getText());
                 }
                 case MXParser.IGNORABLE_WHITESPACE -> {
                     xpp.isWhitespace(); // always true
@@ -148,7 +151,7 @@ public class ParserTest {
         while (eventType != MXParser.END_DOCUMENT) {
             eventType = xpp.next();
             if (eventType == MXParser.START_TAG) {
-                System.out.println(xpp.getName());
+                LOG.debug(xpp.getName());
             }
         }
     }
