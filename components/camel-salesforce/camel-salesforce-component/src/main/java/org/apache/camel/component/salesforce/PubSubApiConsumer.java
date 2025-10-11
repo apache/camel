@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import com.salesforce.eventbus.protobuf.ReplayPreset;
 import org.apache.camel.AsyncCallback;
@@ -39,13 +40,13 @@ public class PubSubApiConsumer extends DefaultConsumer {
     private String initialReplayId;
     private boolean fallbackToLatestReplayId;
     private final SalesforceEndpoint endpoint;
+    private ExecutorService executorService;
 
     private final int batchSize;
     private final PubSubDeserializeType deserializeType;
     private Class<?> pojoClass;
     private PubSubApiClient pubSubClient;
     private Map<String, Class<?>> eventClassMap;
-
     private boolean usePlainTextConnection = false;
 
     public PubSubApiConsumer(SalesforceEndpoint endpoint, Processor processor) throws ClassNotFoundException {
@@ -73,8 +74,22 @@ public class PubSubApiConsumer extends DefaultConsumer {
         in.setHeader(HEADER_SALESFORCE_PUBSUB_EVENT_ID, eventId);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_RPC_ID, rpcId);
+
+        // use default consumer callback
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
+        if (executorService != null) {
+            executorService.submit(() -> getAsyncProcessor().process(exchange, cb));
+        } else {
+            getAsyncProcessor().process(exchange, cb);
+        }
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
     @Override
@@ -101,6 +116,15 @@ public class PubSubApiConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         ServiceHelper.stopService(pubSubClient);
         super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        if (executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+            executorService = null;
+        }
     }
 
     public String getTopic() {

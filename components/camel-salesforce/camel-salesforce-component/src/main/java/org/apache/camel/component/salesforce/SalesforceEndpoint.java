@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.util.concurrent.ExecutorService;
+
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -72,6 +74,16 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", description = "The replayId value to use when subscribing to the Pub/Sub API.")
     private String pubSubReplayId;
 
+    @UriParam(label = "consumer,advanced",
+              description = "Use thread-pool for processing received Salesforce events, for example to process events in parallel.")
+    private boolean workerPoolEnabled;
+    @UriParam(label = "consumer,advanced", description = "Minimum thread pool-size size for consumer worker pool.",
+              defaultValue = "1")
+    private int workerPoolSize = 1;
+    @UriParam(label = "consumer,advanced", description = "Maximum thread pool-size size for consumer worker pool.",
+              defaultValue = "10")
+    private int workerPoolMaxSize = 10;
+
     public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent, SalesforceEndpointConfig configuration,
                               OperationName operationName, String topicName) {
         super(uri, salesforceComponent);
@@ -94,14 +106,23 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        ExecutorService executorService = null;
+        if (workerPoolEnabled) {
+            executorService = getCamelContext().getExecutorServiceManager().newThreadPool(this, "SalesforceWorkerPool",
+                    workerPoolSize, workerPoolMaxSize);
+        }
         Consumer consumer = null;
         switch (operationName) {
             case SUBSCRIBE -> {
                 final SubscriptionHelper subscriptionHelper = getComponent().getSubscriptionHelper();
-                consumer = new StreamingApiConsumer(this, processor, subscriptionHelper);
+                StreamingApiConsumer answer = new StreamingApiConsumer(this, processor, subscriptionHelper);
+                answer.setExecutorService(executorService);
+                consumer = answer;
             }
             case PUBSUB_SUBSCRIBE -> {
-                consumer = new PubSubApiConsumer(this, processor);
+                PubSubApiConsumer answer = new PubSubApiConsumer(this, processor);
+                answer.setExecutorService(executorService);
+                consumer = answer;
             }
             default -> {
                 // NO OP
@@ -142,6 +163,30 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     public void setPubSubReplayId(String pubSubReplayId) {
         this.pubSubReplayId = pubSubReplayId;
+    }
+
+    public boolean isWorkerPoolEnabled() {
+        return workerPoolEnabled;
+    }
+
+    public void setWorkerPoolEnabled(boolean workerPoolEnabled) {
+        this.workerPoolEnabled = workerPoolEnabled;
+    }
+
+    public int getWorkerPoolSize() {
+        return workerPoolSize;
+    }
+
+    public void setWorkerPoolSize(int workerPoolSize) {
+        this.workerPoolSize = workerPoolSize;
+    }
+
+    public int getWorkerPoolMaxSize() {
+        return workerPoolMaxSize;
+    }
+
+    public void setWorkerPoolMaxSize(int workerPoolMaxSize) {
+        this.workerPoolMaxSize = workerPoolMaxSize;
     }
 
     @Override
