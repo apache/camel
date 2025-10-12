@@ -38,9 +38,10 @@ public class PubSubApiConsumer extends DefaultConsumer {
     private final String topic;
     private final ReplayPreset initialReplayPreset;
     private String initialReplayId;
-    private boolean fallbackToLatestReplayId;
+    private final boolean fallbackToLatestReplayId;
     private final SalesforceEndpoint endpoint;
     private ExecutorService executorService;
+    private boolean customExecutorService;
 
     private final int batchSize;
     private final PubSubDeserializeType deserializeType;
@@ -90,6 +91,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+        this.customExecutorService = executorService != null;
     }
 
     @Override
@@ -98,6 +100,10 @@ public class PubSubApiConsumer extends DefaultConsumer {
 
         if (endpoint.getComponent().getLoginConfig().isLazyLogin()) {
             throw new SalesforceException("Lazy login is not supported by salesforce consumers.", null);
+        }
+
+        if (!customExecutorService && endpoint.isConsumerWorkerPoolEnabled()) {
+            executorService = endpoint.createExecutorService(this);
         }
 
         this.eventClassMap = endpoint.getComponent().getEventClassMap();
@@ -115,16 +121,11 @@ public class PubSubApiConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(pubSubClient);
-        super.doStop();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        if (executorService != null) {
+        if (!customExecutorService && executorService != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
         }
+        super.doStop();
     }
 
     public String getTopic() {
@@ -155,8 +156,6 @@ public class PubSubApiConsumer extends DefaultConsumer {
     /**
      * This updates the initial replay id. This will only take effect after the route is restarted, and should generally
      * only be done while the route is stopped.
-     *
-     * @param initialReplayId
      */
     public void updateInitialReplayId(String initialReplayId) {
         this.initialReplayId = initialReplayId;

@@ -76,6 +76,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
     private final MessageKind messageKind;
     private final ObjectMapper objectMapper;
     private ExecutorService executorService;
+    private boolean customExecutorService;
 
     private final boolean rawPayload;
     private Class<?> sObjectClass;
@@ -100,9 +101,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
 
         topicName = endpoint.getTopicName();
         subscriptionHelper = helper;
-
         messageKind = MessageKind.fromTopicName(topicName);
-
         rawPayload = endpoint.getConfiguration().isRawPayload();
     }
 
@@ -112,6 +111,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+        this.customExecutorService = executorService != null;
     }
 
     public String getTopicName() {
@@ -285,6 +285,10 @@ public class StreamingApiConsumer extends DefaultConsumer {
         determineSObjectClass();
         final SalesforceEndpointConfig config = endpoint.getConfiguration();
 
+        if (!customExecutorService && getEndpoint().isConsumerWorkerPoolEnabled()) {
+            executorService = getEndpoint().createExecutorService(this);
+        }
+
         // is a query configured in the endpoint?
         if (messageKind == MessageKind.PUSH_TOPIC && ObjectHelper.isNotEmpty(config.getSObjectQuery())) {
             // Note that we don't lookup topic if the query is not specified
@@ -345,12 +349,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
             // unsubscribe from topic
             subscriptionHelper.unsubscribe(this);
         }
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        if (executorService != null) {
+        if (!customExecutorService && executorService != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
         }

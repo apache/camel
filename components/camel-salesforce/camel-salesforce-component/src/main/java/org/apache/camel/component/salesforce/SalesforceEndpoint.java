@@ -75,14 +75,17 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     private String pubSubReplayId;
 
     @UriParam(label = "consumer,advanced",
-              description = "Use thread-pool for processing received Salesforce events, for example to process events in parallel.")
-    private boolean workerPoolEnabled;
-    @UriParam(label = "consumer,advanced", description = "Minimum thread pool-size size for consumer worker pool.",
-              defaultValue = "1")
-    private int workerPoolSize = 1;
-    @UriParam(label = "consumer,advanced", description = "Maximum thread pool-size size for consumer worker pool.",
+              description = "Use thread pool for processing received Salesforce events, for example to process events in parallel.")
+    private boolean consumerWorkerPoolEnabled;
+    @UriParam(label = "consumer,advanced",
+              description = "To use a custom thread pool for processing received Salesforce events, for example to process events in parallel.")
+    private ExecutorService consumerWorkerPoolExecutorService;
+    @UriParam(label = "consumer,advanced", description = "Core thread pool size size for consumer worker pool.",
               defaultValue = "10")
-    private int workerPoolMaxSize = 10;
+    private int consumerWorkerPoolSize = 10;
+    @UriParam(label = "consumer,advanced", description = "Maximum thread pool size size for consumer worker pool.",
+              defaultValue = "20")
+    private int consumerWorkerPoolMaxSize = 20;
 
     public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent, SalesforceEndpointConfig configuration,
                               OperationName operationName, String topicName) {
@@ -104,24 +107,24 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         return new SalesforceProducer(this);
     }
 
+    protected ExecutorService createExecutorService(Object source) {
+        return getCamelContext().getExecutorServiceManager().newThreadPool(source, "SalesforceConsumerWorker",
+                consumerWorkerPoolSize, consumerWorkerPoolMaxSize);
+    }
+
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        ExecutorService executorService = null;
-        if (workerPoolEnabled) {
-            executorService = getCamelContext().getExecutorServiceManager().newThreadPool(this, "SalesforceWorkerPool",
-                    workerPoolSize, workerPoolMaxSize);
-        }
         Consumer consumer = null;
         switch (operationName) {
             case SUBSCRIBE -> {
                 final SubscriptionHelper subscriptionHelper = getComponent().getSubscriptionHelper();
                 StreamingApiConsumer answer = new StreamingApiConsumer(this, processor, subscriptionHelper);
-                answer.setExecutorService(executorService);
+                answer.setExecutorService(consumerWorkerPoolExecutorService);
                 consumer = answer;
             }
             case PUBSUB_SUBSCRIBE -> {
                 PubSubApiConsumer answer = new PubSubApiConsumer(this, processor);
-                answer.setExecutorService(executorService);
+                answer.setExecutorService(consumerWorkerPoolExecutorService);
                 consumer = answer;
             }
             default -> {
@@ -165,28 +168,36 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         this.pubSubReplayId = pubSubReplayId;
     }
 
-    public boolean isWorkerPoolEnabled() {
-        return workerPoolEnabled;
+    public boolean isConsumerWorkerPoolEnabled() {
+        return consumerWorkerPoolEnabled;
     }
 
-    public void setWorkerPoolEnabled(boolean workerPoolEnabled) {
-        this.workerPoolEnabled = workerPoolEnabled;
+    public void setConsumerWorkerPoolEnabled(boolean consumerWorkerPoolEnabled) {
+        this.consumerWorkerPoolEnabled = consumerWorkerPoolEnabled;
     }
 
-    public int getWorkerPoolSize() {
-        return workerPoolSize;
+    public ExecutorService getConsumerWorkerPoolExecutorService() {
+        return consumerWorkerPoolExecutorService;
     }
 
-    public void setWorkerPoolSize(int workerPoolSize) {
-        this.workerPoolSize = workerPoolSize;
+    public void setConsumerWorkerPoolExecutorService(ExecutorService consumerWorkerPoolExecutorService) {
+        this.consumerWorkerPoolExecutorService = consumerWorkerPoolExecutorService;
     }
 
-    public int getWorkerPoolMaxSize() {
-        return workerPoolMaxSize;
+    public int getConsumerWorkerPoolSize() {
+        return consumerWorkerPoolSize;
     }
 
-    public void setWorkerPoolMaxSize(int workerPoolMaxSize) {
-        this.workerPoolMaxSize = workerPoolMaxSize;
+    public void setConsumerWorkerPoolSize(int consumerWorkerPoolSize) {
+        this.consumerWorkerPoolSize = consumerWorkerPoolSize;
+    }
+
+    public int getConsumerWorkerPoolMaxSize() {
+        return consumerWorkerPoolMaxSize;
+    }
+
+    public void setConsumerWorkerPoolMaxSize(int consumerWorkerPoolMaxSize) {
+        this.consumerWorkerPoolMaxSize = consumerWorkerPoolMaxSize;
     }
 
     @Override

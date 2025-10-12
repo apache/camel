@@ -1433,6 +1433,130 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Use thread pool for processing received Salesforce events, for
+         * example to process events in parallel.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSalesforceEndpointConsumerBuilder consumerWorkerPoolEnabled(boolean consumerWorkerPoolEnabled) {
+            doSetProperty("consumerWorkerPoolEnabled", consumerWorkerPoolEnabled);
+            return this;
+        }
+        /**
+         * Use thread pool for processing received Salesforce events, for
+         * example to process events in parallel.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSalesforceEndpointConsumerBuilder consumerWorkerPoolEnabled(String consumerWorkerPoolEnabled) {
+            doSetProperty("consumerWorkerPoolEnabled", consumerWorkerPoolEnabled);
+            return this;
+        }
+        /**
+         * To use a custom thread pool for processing received Salesforce
+         * events, for example to process events in parallel.
+         * 
+         * The option is a: <code>java.util.concurrent.ExecutorService</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolExecutorService the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSalesforceEndpointConsumerBuilder consumerWorkerPoolExecutorService(ExecutorService consumerWorkerPoolExecutorService) {
+            doSetProperty("consumerWorkerPoolExecutorService", consumerWorkerPoolExecutorService);
+            return this;
+        }
+        /**
+         * To use a custom thread pool for processing received Salesforce
+         * events, for example to process events in parallel.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ExecutorService</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolExecutorService the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSalesforceEndpointConsumerBuilder consumerWorkerPoolExecutorService(String consumerWorkerPoolExecutorService) {
+            doSetProperty("consumerWorkerPoolExecutorService", consumerWorkerPoolExecutorService);
+            return this;
+        }
+        /**
+         * Maximum thread pool size size for consumer worker pool.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolMaxSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSalesforceEndpointConsumerBuilder consumerWorkerPoolMaxSize(int consumerWorkerPoolMaxSize) {
+            doSetProperty("consumerWorkerPoolMaxSize", consumerWorkerPoolMaxSize);
+            return this;
+        }
+        /**
+         * Maximum thread pool size size for consumer worker pool.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolMaxSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSalesforceEndpointConsumerBuilder consumerWorkerPoolMaxSize(String consumerWorkerPoolMaxSize) {
+            doSetProperty("consumerWorkerPoolMaxSize", consumerWorkerPoolMaxSize);
+            return this;
+        }
+        /**
+         * Core thread pool size size for consumer worker pool.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSalesforceEndpointConsumerBuilder consumerWorkerPoolSize(int consumerWorkerPoolSize) {
+            doSetProperty("consumerWorkerPoolSize", consumerWorkerPoolSize);
+            return this;
+        }
+        /**
+         * Core thread pool size size for consumer worker pool.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSalesforceEndpointConsumerBuilder consumerWorkerPoolSize(String consumerWorkerPoolSize) {
+            doSetProperty("consumerWorkerPoolSize", consumerWorkerPoolSize);
+            return this;
+        }
+        /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
@@ -1495,98 +1619,6 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointConsumerBuilder exchangePattern(String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Use thread-pool for processing received Salesforce events, for
-         * example to process events in parallel.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param workerPoolEnabled the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSalesforceEndpointConsumerBuilder workerPoolEnabled(boolean workerPoolEnabled) {
-            doSetProperty("workerPoolEnabled", workerPoolEnabled);
-            return this;
-        }
-        /**
-         * Use thread-pool for processing received Salesforce events, for
-         * example to process events in parallel.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param workerPoolEnabled the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSalesforceEndpointConsumerBuilder workerPoolEnabled(String workerPoolEnabled) {
-            doSetProperty("workerPoolEnabled", workerPoolEnabled);
-            return this;
-        }
-        /**
-         * Maximum thread pool-size size for consumer worker pool.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 10
-         * Group: consumer (advanced)
-         * 
-         * @param workerPoolMaxSize the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSalesforceEndpointConsumerBuilder workerPoolMaxSize(int workerPoolMaxSize) {
-            doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
-            return this;
-        }
-        /**
-         * Maximum thread pool-size size for consumer worker pool.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 10
-         * Group: consumer (advanced)
-         * 
-         * @param workerPoolMaxSize the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSalesforceEndpointConsumerBuilder workerPoolMaxSize(String workerPoolMaxSize) {
-            doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
-            return this;
-        }
-        /**
-         * Minimum thread pool-size size for consumer worker pool.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: consumer (advanced)
-         * 
-         * @param workerPoolSize the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSalesforceEndpointConsumerBuilder workerPoolSize(int workerPoolSize) {
-            doSetProperty("workerPoolSize", workerPoolSize);
-            return this;
-        }
-        /**
-         * Minimum thread pool-size size for consumer worker pool.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: consumer (advanced)
-         * 
-         * @param workerPoolSize the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSalesforceEndpointConsumerBuilder workerPoolSize(String workerPoolSize) {
-            doSetProperty("workerPoolSize", workerPoolSize);
             return this;
         }
     }

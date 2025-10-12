@@ -1131,6 +1131,75 @@ public interface SalesforceComponentBuilderFactory {
     
         
         /**
+         * Use thread pool for processing received Salesforce events, for
+         * example to process events in parallel.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolEnabled the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder consumerWorkerPoolEnabled(boolean consumerWorkerPoolEnabled) {
+            doSetProperty("consumerWorkerPoolEnabled", consumerWorkerPoolEnabled);
+            return this;
+        }
+    
+        /**
+         * To use a custom thread pool for processing received Salesforce
+         * events, for example to process events in parallel.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolExecutorService the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder consumerWorkerPoolExecutorService(java.util.concurrent.ExecutorService consumerWorkerPoolExecutorService) {
+            doSetProperty("consumerWorkerPoolExecutorService", consumerWorkerPoolExecutorService);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum thread pool size size for consumer worker pool.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 20
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolMaxSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder consumerWorkerPoolMaxSize(int consumerWorkerPoolMaxSize) {
+            doSetProperty("consumerWorkerPoolMaxSize", consumerWorkerPoolMaxSize);
+            return this;
+        }
+    
+        
+        /**
+         * Core thread pool size size for consumer worker pool.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: consumer (advanced)
+         * 
+         * @param consumerWorkerPoolSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder consumerWorkerPoolSize(int consumerWorkerPoolSize) {
+            doSetProperty("consumerWorkerPoolSize", consumerWorkerPoolSize);
+            return this;
+        }
+    
+        
+        /**
          * Timeout in seconds to validate when a custom pubSubReplayId has been
          * configured, when starting the Camel Salesforce consumer.
          * 
@@ -1921,6 +1990,10 @@ public interface SalesforceComponentBuilderFactory {
             case "pubSubDeserializeType": getOrCreateConfiguration((SalesforceComponent) component).setPubSubDeserializeType((org.apache.camel.component.salesforce.PubSubDeserializeType) value); return true;
             case "pubSubPojoClass": getOrCreateConfiguration((SalesforceComponent) component).setPubSubPojoClass((java.lang.String) value); return true;
             case "replayPreset": getOrCreateConfiguration((SalesforceComponent) component).setReplayPreset((com.salesforce.eventbus.protobuf.ReplayPreset) value); return true;
+            case "consumerWorkerPoolEnabled": ((SalesforceComponent) component).setConsumerWorkerPoolEnabled((boolean) value); return true;
+            case "consumerWorkerPoolExecutorService": ((SalesforceComponent) component).setConsumerWorkerPoolExecutorService((java.util.concurrent.ExecutorService) value); return true;
+            case "consumerWorkerPoolMaxSize": ((SalesforceComponent) component).setConsumerWorkerPoolMaxSize((int) value); return true;
+            case "consumerWorkerPoolSize": ((SalesforceComponent) component).setConsumerWorkerPoolSize((int) value); return true;
             case "initialReplyIdTimeout": ((SalesforceComponent) component).setInitialReplyIdTimeout((int) value); return true;
             case "allOrNone": getOrCreateConfiguration((SalesforceComponent) component).setAllOrNone((boolean) value); return true;
             case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;

@@ -41,6 +41,14 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "compositemethod":
         case "compositeMethod": target.getConfiguration().setCompositeMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumerworkerpoolenabled":
+        case "consumerWorkerPoolEnabled": target.setConsumerWorkerPoolEnabled(property(camelContext, boolean.class, value)); return true;
+        case "consumerworkerpoolexecutorservice":
+        case "consumerWorkerPoolExecutorService": target.setConsumerWorkerPoolExecutorService(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
+        case "consumerworkerpoolmaxsize":
+        case "consumerWorkerPoolMaxSize": target.setConsumerWorkerPoolMaxSize(property(camelContext, int.class, value)); return true;
+        case "consumerworkerpoolsize":
+        case "consumerWorkerPoolSize": target.setConsumerWorkerPoolSize(property(camelContext, int.class, value)); return true;
         case "contenttype":
         case "contentType": target.getConfiguration().setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
@@ -154,12 +162,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "streamQueryResult": target.getConfiguration().setStreamQueryResult(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "updatetopic":
         case "updateTopic": target.getConfiguration().setUpdateTopic(property(camelContext, boolean.class, value)); return true;
-        case "workerpoolenabled":
-        case "workerPoolEnabled": target.setWorkerPoolEnabled(property(camelContext, boolean.class, value)); return true;
-        case "workerpoolmaxsize":
-        case "workerPoolMaxSize": target.setWorkerPoolMaxSize(property(camelContext, int.class, value)); return true;
-        case "workerpoolsize":
-        case "workerPoolSize": target.setWorkerPoolSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -185,6 +187,14 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "bridgeErrorHandler": return boolean.class;
         case "compositemethod":
         case "compositeMethod": return java.lang.String.class;
+        case "consumerworkerpoolenabled":
+        case "consumerWorkerPoolEnabled": return boolean.class;
+        case "consumerworkerpoolexecutorservice":
+        case "consumerWorkerPoolExecutorService": return java.util.concurrent.ExecutorService.class;
+        case "consumerworkerpoolmaxsize":
+        case "consumerWorkerPoolMaxSize": return int.class;
+        case "consumerworkerpoolsize":
+        case "consumerWorkerPoolSize": return int.class;
         case "contenttype":
         case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
         case "defaultreplayid":
@@ -298,12 +308,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "streamQueryResult": return java.lang.Boolean.class;
         case "updatetopic":
         case "updateTopic": return boolean.class;
-        case "workerpoolenabled":
-        case "workerPoolEnabled": return boolean.class;
-        case "workerpoolmaxsize":
-        case "workerPoolMaxSize": return int.class;
-        case "workerpoolsize":
-        case "workerPoolSize": return int.class;
         default: return null;
         }
     }
@@ -330,6 +334,14 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "compositemethod":
         case "compositeMethod": return target.getConfiguration().getCompositeMethod();
+        case "consumerworkerpoolenabled":
+        case "consumerWorkerPoolEnabled": return target.isConsumerWorkerPoolEnabled();
+        case "consumerworkerpoolexecutorservice":
+        case "consumerWorkerPoolExecutorService": return target.getConsumerWorkerPoolExecutorService();
+        case "consumerworkerpoolmaxsize":
+        case "consumerWorkerPoolMaxSize": return target.getConsumerWorkerPoolMaxSize();
+        case "consumerworkerpoolsize":
+        case "consumerWorkerPoolSize": return target.getConsumerWorkerPoolSize();
         case "contenttype":
         case "contentType": return target.getConfiguration().getContentType();
         case "defaultreplayid":
@@ -443,12 +455,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "streamQueryResult": return target.getConfiguration().getStreamQueryResult();
         case "updatetopic":
         case "updateTopic": return target.getConfiguration().isUpdateTopic();
-        case "workerpoolenabled":
-        case "workerPoolEnabled": return target.isWorkerPoolEnabled();
-        case "workerpoolmaxsize":
-        case "workerPoolMaxSize": return target.getWorkerPoolMaxSize();
-        case "workerpoolsize":
-        case "workerPoolSize": return target.getWorkerPoolSize();
         default: return null;
         }
     }

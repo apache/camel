@@ -1886,7 +1886,7 @@ from("salesforce:subscribe:CamelTestTopic&sObjectName=Merchandise__c")...
 
 ===== Parallel processing received events
 
-You can turn on `workerPoolEnabled=true` on the salesforce endpoint to let Camel use a thread-pool to process
+You can turn on `consumerWorkerPoolEnabled=true` on the salesforce endpoint to let Camel use a thread-pool to process
 the received events, which allows to process these events in parallel.
 
 NOTE: It has been reported that when receiving from PUSH_TOPIC events and then later sending a message
