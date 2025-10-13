@@ -515,7 +515,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         // Send MDN
         HttpCoreContext httpContext = mdnManager.send(mdn, mdn.getMainMessageContentType(), RECIPIENT_DELIVERY_ADDRESS);
         HttpRequest mndRequest = httpContext.getRequest();
-        Arrays.stream(request.getHeaders(AS2Header.CONTENT_DISPOSITION)).forEach(h -> LOG.debug("{}", h));
+        Arrays.stream(request.getHeaders(AS2Header.CONTENT_DISPOSITION)).forEach(h -> LOG.debug(h));
         DispositionNotificationMultipartReportEntity reportEntity
                 = HttpMessageUtils.getEntity(mndRequest, DispositionNotificationMultipartReportEntity.class);
         assertNotNull(reportEntity, "Request does not contain report");
