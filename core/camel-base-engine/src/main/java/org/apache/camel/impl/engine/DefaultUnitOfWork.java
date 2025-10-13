@@ -16,13 +16,13 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
@@ -58,7 +58,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
     final boolean useBreadcrumb;
 
     private final CamelContext context;
-    private final Deque<Route> routes = new ArrayDeque<>(8);
+    private final Deque<Route> routes = new ConcurrentLinkedDeque<>();
     private final Lock lock = new ReentrantLock();
     private final Logger log;
     private Exchange exchange;
