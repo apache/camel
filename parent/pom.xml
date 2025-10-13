@@ -238,7 +238,7 @@
         <huaweicloud-obs-version>3.25.7</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.1.169</huaweicloud-sdk-version>
         <ibm-secrets-manager-version>2.0.22</ibm-secrets-manager-version>
-        <ical4j-version>4.1.1</ical4j-version>
+        <ical4j-version>4.2.0</ical4j-version>
         <icu4j-version>77.1</icu4j-version>
         <ignite-version>2.17.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
