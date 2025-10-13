@@ -122,11 +122,6 @@ public class StreamingApiConsumer extends DefaultConsumer {
         return subscriptionHelper;
     }
 
-    @Override
-    public void handleException(String message, Throwable t) {
-        super.handleException(message, t);
-    }
-
     public void processMessage(final ClientSessionChannel channel, final Message message) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received event {} on channel {}", channel.getId(), channel.getChannelId());
@@ -149,12 +144,16 @@ public class StreamingApiConsumer extends DefaultConsumer {
                 throw new IllegalStateException("Unknown message kind: " + messageKind);
         }
 
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        if (executorService != null) {
-            executorService.submit(() -> getAsyncProcessor().process(exchange, cb));
-        } else {
-            getAsyncProcessor().process(exchange, cb);
+        try {
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            if (executorService != null) {
+                executorService.submit(() -> getAsyncProcessor().process(exchange, cb));
+            } else {
+                getAsyncProcessor().process(exchange, cb);
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error processing received Salesforce event", exchange, e);
         }
     }
 

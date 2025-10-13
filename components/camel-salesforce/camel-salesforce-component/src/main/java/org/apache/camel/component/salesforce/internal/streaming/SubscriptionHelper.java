@@ -239,7 +239,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
         if (abort && client != null) {
             for (var consumer : consumers) {
-                consumer.handleException(msg, new SalesforceException(msg, failure));
+                consumer.getExceptionHandler().handleException(msg, new SalesforceException(msg, failure));
             }
         }
     }

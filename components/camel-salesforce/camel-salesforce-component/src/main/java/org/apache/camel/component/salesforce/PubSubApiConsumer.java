@@ -76,12 +76,16 @@ public class PubSubApiConsumer extends DefaultConsumer {
         in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_RPC_ID, rpcId);
 
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        if (executorService != null) {
-            executorService.submit(() -> getAsyncProcessor().process(exchange, cb));
-        } else {
-            getAsyncProcessor().process(exchange, cb);
+        try {
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            if (executorService != null) {
+                executorService.submit(() -> getAsyncProcessor().process(exchange, cb));
+            } else {
+                getAsyncProcessor().process(exchange, cb);
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error processing received Salesforce event", exchange, e);
         }
     }
 
