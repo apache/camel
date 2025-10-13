@@ -23,6 +23,8 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KeycloakEndpoint target = (KeycloakEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "authclient":
         case "authClient": target.getConfiguration().setAuthClient(property(camelContext, java.lang.String.class, value)); return true;
         case "authipaddress":
@@ -114,6 +116,8 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
         case "authclient":
         case "authClient": return java.lang.String.class;
         case "authipaddress":
@@ -201,6 +205,8 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KeycloakEndpoint target = (KeycloakEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return target.getConfiguration().getAccessToken();
         case "authclient":
         case "authClient": return target.getConfiguration().getAuthClient();
         case "authipaddress":

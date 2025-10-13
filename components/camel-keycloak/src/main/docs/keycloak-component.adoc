@@ -54,7 +54,90 @@ The Keycloak producer supports administrative operations on Keycloak instances v
 
 === Configuration
 
-To use the producer, configure the Keycloak connection details:
+The Keycloak component supports four authentication methods:
+
+1. **Access Token (Bearer Token)** - Use a pre-obtained access token
+2. **Refresh Token** - Maintain long-running sessions with automatic token refresh
+3. **Username/Password** - Resource Owner Password Credentials flow
+4. **Client Credentials** - Service-to-service authentication
+
+==== Access Token Authentication
+
+Use this when you have a pre-obtained access token from an external authentication system:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component with access token
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setAccessToken("eyJhbGciOiJSUzI1NiIsInR5cC...");
+keycloak.setConfiguration(config);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Configuration in application.yaml
+camel:
+  component:
+    keycloak:
+      server-url: "http://localhost:8080"
+      realm: "master"
+      access-token: "eyJhbGciOiJSUzI1NiIsInR5cC..."
+----
+====
+
+==== Refresh Token Authentication
+
+Use this for long-running sessions that need to maintain authentication without storing credentials. The refresh token will be used to automatically obtain new access tokens when needed:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component with refresh token
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setClientId("my-client");
+config.setRefreshToken("eyJhbGciOiJIUzI1NiIsInR5cCIgOi...");
+// Optional: set client secret for confidential clients
+config.setClientSecret("my-client-secret");
+keycloak.setConfiguration(config);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Configuration in application.yaml
+camel:
+  component:
+    keycloak:
+      server-url: "http://localhost:8080"
+      realm: "master"
+      client-id: "my-client"
+      refresh-token: "eyJhbGciOiJIUzI1NiIsInR5cCIgOi..."
+      # Optional: client-secret for confidential clients
+      client-secret: "my-client-secret"
+----
+====
+
+NOTE: Refresh token authentication requires a `clientId`. The `clientSecret` is optional and should be provided only if your client is configured as confidential in Keycloak.
+
+==== Username/Password Authentication
+
+Use this for admin user authentication:
 
 [tabs]
 ====
@@ -84,6 +167,41 @@ camel:
       realm: "master"
       username: "admin"
       password: "admin"
+----
+====
+
+==== Client Credentials Authentication
+
+Use this for service-to-service authentication:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component with client credentials
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setClientId("my-service-client");
+config.setClientSecret("my-client-secret");
+keycloak.setConfiguration(config);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Configuration in application.yaml
+camel:
+  component:
+    keycloak:
+      server-url: "http://localhost:8080"
+      realm: "master"
+      client-id: "my-service-client"
+      client-secret: "my-client-secret"
 ----
 ====
 
@@ -1327,13 +1445,28 @@ The consumer uses a polling mechanism with fingerprint-based deduplication to en
 
 === Configuration
 
+The consumer supports the same authentication methods as the producer (access token, refresh token, username/password, or client credentials):
+
 [tabs]
 ====
-Java::
+Java (Access Token)::
 +
 [source,java]
 ----
-// Configure Keycloak component for consuming
+// Configure Keycloak component for consuming with access token
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master"); // Auth realm
+config.setAccessToken("eyJhbGciOiJSUzI1NiIsInR5cC...");
+keycloak.setConfiguration(config);
+----
+
+Java (Username/Password)::
++
+[source,java]
+----
+// Configure Keycloak component for consuming with username/password
 KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
 KeycloakConfiguration config = new KeycloakConfiguration();
 config.setServerUrl("http://localhost:8080");
@@ -1347,7 +1480,15 @@ YAML::
 +
 [source,yaml]
 ----
-# Configuration in application.yaml
+# Configuration in application.yaml (using access token)
+camel:
+  component:
+    keycloak:
+      server-url: "http://localhost:8080"
+      realm: "master"
+      access-token: "eyJhbGciOiJSUzI1NiIsInR5cC..."
+
+# Or using username/password
 camel:
   component:
     keycloak:

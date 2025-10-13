@@ -51,6 +51,23 @@ public interface KeycloakComponentBuilderFactory {
     interface KeycloakComponentBuilder extends ComponentBuilder<KeycloakComponent> {
     
         /**
+         * Pre-obtained access token for authentication. When provided, this
+         * token will be used directly instead of obtaining one through
+         * username/password or client credentials flow.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder accessToken(java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+    
+        /**
          * Filter admin events by authentication client ID.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -554,6 +571,7 @@ public interface KeycloakComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "accessToken": getOrCreateConfiguration((KeycloakComponent) component).setAccessToken((java.lang.String) value); return true;
             case "authClient": getOrCreateConfiguration((KeycloakComponent) component).setAuthClient((java.lang.String) value); return true;
             case "authIpAddress": getOrCreateConfiguration((KeycloakComponent) component).setAuthIpAddress((java.lang.String) value); return true;
             case "authRealm": getOrCreateConfiguration((KeycloakComponent) component).setAuthRealm((java.lang.String) value); return true;

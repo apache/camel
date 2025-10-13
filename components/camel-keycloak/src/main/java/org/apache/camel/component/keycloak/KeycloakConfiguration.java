@@ -58,6 +58,10 @@ public class KeycloakConfiguration implements Cloneable {
     @UriParam(description = "Keycloak password", secret = true)
     private String password;
 
+    @UriParam(description = "Pre-obtained access token for authentication. When provided, this token will be used directly instead of obtaining one through username/password or client credentials flow.",
+              secret = true)
+    private String accessToken;
+
     @UriParam(description = "The operation to perform")
     private KeycloakOperations operation;
 
@@ -206,6 +210,18 @@ public class KeycloakConfiguration implements Cloneable {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    /**
+     * Pre-obtained access token for authentication. When provided, this token will be used directly instead of
+     * obtaining one through username/password or client credentials flow.
+     */
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public KeycloakOperations getOperation() {
