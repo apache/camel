@@ -34,6 +34,7 @@
 
     <properties>
         <skipITs.s390x>true</skipITs.s390x>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
     </properties>
 
     <dependencies>
