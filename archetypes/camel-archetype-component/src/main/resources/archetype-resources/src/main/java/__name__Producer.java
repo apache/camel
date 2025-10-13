@@ -31,7 +31,7 @@ public class ${name}Producer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        LOG.info(exchange.getIn().getBody());
+        System.out.println(exchange.getIn().getBody());
     }
 
 }
