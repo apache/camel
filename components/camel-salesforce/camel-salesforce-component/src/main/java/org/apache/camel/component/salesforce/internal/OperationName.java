@@ -127,7 +127,7 @@ public enum OperationName {
 
     public static OperationName fromValue(String value) {
         for (OperationName operationName : OperationName.values()) {
-            if (operationName.value.equals(value)) {
+            if (operationName.value.equalsIgnoreCase(value)) {
                 return operationName;
             }
         }

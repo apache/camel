@@ -57,6 +57,14 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "compositemethod":
         case "compositeMethod": getOrCreateConfig(target).setCompositeMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "config": target.setConfig(property(camelContext, org.apache.camel.component.salesforce.SalesforceEndpointConfig.class, value)); return true;
+        case "consumerworkerpoolenabled":
+        case "consumerWorkerPoolEnabled": target.setConsumerWorkerPoolEnabled(property(camelContext, boolean.class, value)); return true;
+        case "consumerworkerpoolexecutorservice":
+        case "consumerWorkerPoolExecutorService": target.setConsumerWorkerPoolExecutorService(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
+        case "consumerworkerpoolmaxsize":
+        case "consumerWorkerPoolMaxSize": target.setConsumerWorkerPoolMaxSize(property(camelContext, int.class, value)); return true;
+        case "consumerworkerpoolsize":
+        case "consumerWorkerPoolSize": target.setConsumerWorkerPoolSize(property(camelContext, int.class, value)); return true;
         case "contenttype":
         case "contentType": getOrCreateConfig(target).setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
@@ -265,6 +273,14 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "compositemethod":
         case "compositeMethod": return java.lang.String.class;
         case "config": return org.apache.camel.component.salesforce.SalesforceEndpointConfig.class;
+        case "consumerworkerpoolenabled":
+        case "consumerWorkerPoolEnabled": return boolean.class;
+        case "consumerworkerpoolexecutorservice":
+        case "consumerWorkerPoolExecutorService": return java.util.concurrent.ExecutorService.class;
+        case "consumerworkerpoolmaxsize":
+        case "consumerWorkerPoolMaxSize": return int.class;
+        case "consumerworkerpoolsize":
+        case "consumerWorkerPoolSize": return int.class;
         case "contenttype":
         case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
         case "defaultreplayid":
@@ -474,6 +490,14 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "compositemethod":
         case "compositeMethod": return getOrCreateConfig(target).getCompositeMethod();
         case "config": return target.getConfig();
+        case "consumerworkerpoolenabled":
+        case "consumerWorkerPoolEnabled": return target.isConsumerWorkerPoolEnabled();
+        case "consumerworkerpoolexecutorservice":
+        case "consumerWorkerPoolExecutorService": return target.getConsumerWorkerPoolExecutorService();
+        case "consumerworkerpoolmaxsize":
+        case "consumerWorkerPoolMaxSize": return target.getConsumerWorkerPoolMaxSize();
+        case "consumerworkerpoolsize":
+        case "consumerWorkerPoolSize": return target.getConsumerWorkerPoolSize();
         case "contenttype":
         case "contentType": return getOrCreateConfig(target).getContentType();
         case "defaultreplayid":

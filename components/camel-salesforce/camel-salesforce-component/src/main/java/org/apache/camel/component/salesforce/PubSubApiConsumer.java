@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import com.salesforce.eventbus.protobuf.ReplayPreset;
 import org.apache.camel.AsyncCallback;
@@ -37,15 +38,16 @@ public class PubSubApiConsumer extends DefaultConsumer {
     private final String topic;
     private final ReplayPreset initialReplayPreset;
     private String initialReplayId;
-    private boolean fallbackToLatestReplayId;
+    private final boolean fallbackToLatestReplayId;
     private final SalesforceEndpoint endpoint;
+    private ExecutorService executorService;
+    private boolean customExecutorService;
 
     private final int batchSize;
     private final PubSubDeserializeType deserializeType;
     private Class<?> pojoClass;
     private PubSubApiClient pubSubClient;
     private Map<String, Class<?>> eventClassMap;
-
     private boolean usePlainTextConnection = false;
 
     public PubSubApiConsumer(SalesforceEndpoint endpoint, Processor processor) throws ClassNotFoundException {
@@ -73,8 +75,27 @@ public class PubSubApiConsumer extends DefaultConsumer {
         in.setHeader(HEADER_SALESFORCE_PUBSUB_EVENT_ID, eventId);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_RPC_ID, rpcId);
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
+
+        try {
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            if (executorService != null) {
+                executorService.submit(() -> getAsyncProcessor().process(exchange, cb));
+            } else {
+                getAsyncProcessor().process(exchange, cb);
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error processing received Salesforce event", exchange, e);
+        }
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+        this.customExecutorService = executorService != null;
     }
 
     @Override
@@ -83,6 +104,10 @@ public class PubSubApiConsumer extends DefaultConsumer {
 
         if (endpoint.getComponent().getLoginConfig().isLazyLogin()) {
             throw new SalesforceException("Lazy login is not supported by salesforce consumers.", null);
+        }
+
+        if (!customExecutorService && endpoint.isConsumerWorkerPoolEnabled()) {
+            executorService = endpoint.createExecutorService(this);
         }
 
         this.eventClassMap = endpoint.getComponent().getEventClassMap();
@@ -100,6 +125,10 @@ public class PubSubApiConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(pubSubClient);
+        if (!customExecutorService && executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+            executorService = null;
+        }
         super.doStop();
     }
 
@@ -131,8 +160,6 @@ public class PubSubApiConsumer extends DefaultConsumer {
     /**
      * This updates the initial replay id. This will only take effect after the route is restarted, and should generally
      * only be done while the route is stopped.
-     *
-     * @param initialReplayId
      */
     public void updateInitialReplayId(String initialReplayId) {
         this.initialReplayId = initialReplayId;
