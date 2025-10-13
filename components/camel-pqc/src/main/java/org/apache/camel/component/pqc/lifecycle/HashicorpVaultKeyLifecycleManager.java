@@ -333,9 +333,18 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
             throw new IllegalArgumentException("Public key not found in Vault: " + keyId);
         }
 
-        // Reconstruct KeyPair from PKCS#8 private key and X.509 public key
-        Map<String, Object> privateData = privateResponse.getData();
-        Map<String, Object> publicData = publicResponse.getData();
+        // For KV v2 (versioned), the response has a nested structure where actual data is under "data" key
+        Map<String, Object> privateResponseData = privateResponse.getData();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> privateData = (Map<String, Object>) privateResponseData.get("data");
+
+        Map<String, Object> publicResponseData = publicResponse.getData();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> publicData = (Map<String, Object>) publicResponseData.get("data");
+
+        if (privateData == null || publicData == null) {
+            throw new IllegalArgumentException("Key data not found in Vault: " + keyId);
+        }
 
         String privateKeyBase64 = (String) privateData.get("key");
         String publicKeyBase64 = (String) publicData.get("key");
@@ -372,8 +381,16 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
             return null;
         }
 
-        Map<String, Object> data = response.getData();
-        String metadataBase64 = (String) data.get("metadata");
+        // For KV v2 (versioned), the response has a nested structure where actual data is under "data" key
+        Map<String, Object> responseData = response.getData();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> secretData = (Map<String, Object>) responseData.get("data");
+
+        if (secretData == null) {
+            return null;
+        }
+
+        String metadataBase64 = (String) secretData.get("metadata");
         KeyMetadata metadata = deserializeMetadata(metadataBase64);
 
         // Cache it
