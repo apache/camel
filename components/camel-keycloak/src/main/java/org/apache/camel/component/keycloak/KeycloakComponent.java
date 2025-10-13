@@ -51,9 +51,10 @@ public class KeycloakComponent extends DefaultComponent {
 
         if (configuration.getKeycloakClient() == null
                 && (configuration.getServerUrl() == null
-                        || (configuration.getUsername() == null && configuration.getClientId() == null))) {
+                        || (configuration.getAccessToken() == null && configuration.getUsername() == null
+                                && configuration.getClientId() == null))) {
             throw new IllegalArgumentException(
-                    "Keycloak client or serverUrl with authentication credentials (username/password or clientId/clientSecret) must be specified");
+                    "Keycloak client or serverUrl with authentication credentials (accessToken, username/password, or clientId/clientSecret) must be specified");
         }
 
         return endpoint;

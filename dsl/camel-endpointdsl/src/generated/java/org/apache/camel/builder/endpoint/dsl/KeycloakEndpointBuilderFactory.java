@@ -44,6 +44,22 @@ public interface KeycloakEndpointBuilderFactory {
             return (AdvancedKeycloakEndpointConsumerBuilder) this;
         }
         /**
+         * Pre-obtained access token for authentication. When provided, this
+         * token will be used directly instead of obtaining one through
+         * username/password or client credentials flow.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
          * Filter admin events by authentication client ID.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1150,6 +1166,22 @@ public interface KeycloakEndpointBuilderFactory {
         }
 
         /**
+         * Pre-obtained access token for authentication. When provided, this
+         * token will be used directly instead of obtaining one through
+         * username/password or client credentials flow.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
          * Filter admin events by authentication client ID.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1659,6 +1691,22 @@ public interface KeycloakEndpointBuilderFactory {
             return (AdvancedKeycloakEndpointBuilder) this;
         }
 
+        /**
+         * Pre-obtained access token for authentication. When provided, this
+         * token will be used directly instead of obtaining one through
+         * username/password or client credentials flow.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
         /**
          * Filter admin events by authentication client ID.
          * 
