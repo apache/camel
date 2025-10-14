@@ -203,7 +203,7 @@
         <google-cloud-http-client-version>2.0.1</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.142.0</google-cloud-pubsub-version>
         <google-cloud-pubsublite-version>1.15.17</google-cloud-pubsublite-version>
-        <google-cloud-secretmanager-version>2.76.0</google-cloud-secretmanager-version>
+        <google-cloud-secretmanager-version>2.77.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.58.1</google-cloud-storage-version>
         <graaljs-version>25.0.0</graaljs-version>
         <graphql-java-version>24.3</graphql-java-version>
