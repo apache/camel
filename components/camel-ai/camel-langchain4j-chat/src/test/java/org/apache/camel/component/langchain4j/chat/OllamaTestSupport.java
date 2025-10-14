@@ -30,7 +30,7 @@ public class OllamaTestSupport extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createService();
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonServiceWithConfiguration(() -> getModel());
 
     @Override
     protected void setupResources() throws Exception {
@@ -42,9 +42,13 @@ public class OllamaTestSupport extends CamelTestSupport {
     protected ChatModel createModel() {
         return OllamaChatModel.builder()
                 .baseUrl(OLLAMA.getEndpoint())
-                .modelName(OLLAMA.getModel())
+                .modelName(getModel())
                 .temperature(0.3)
                 .timeout(ofSeconds(60))
                 .build();
+    }
+
+    static String getModel() {
+        return "granite4:tiny-h";
     }
 }

@@ -89,7 +89,7 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
 
     @Override
     public void registerProperties() {
-        System.setProperty(OllamaProperties.ENDPOINT, container.getEndpoint());
+        System.setProperty(OllamaProperties.ENDPOINT, getEndpoint());
     }
 
     @Override

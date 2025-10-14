@@ -30,7 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class LangChain4jToolTest extends CamelTestSupport {
@@ -86,7 +86,7 @@ public class LangChain4jToolTest extends CamelTestSupport {
         };
     }
 
-    @RepeatedTest(1)
+    @Test
     public void testSimpleInvocation() {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new SystemMessage(
