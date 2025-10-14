@@ -30,7 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 class LangChain4jToolParameterValueTypeConversionTest extends CamelTestSupport {
@@ -82,7 +82,7 @@ class LangChain4jToolParameterValueTypeConversionTest extends CamelTestSupport {
         };
     }
 
-    @RepeatedTest(1)
+    @Test
     void parameterValueTypeConversion() {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new SystemMessage(

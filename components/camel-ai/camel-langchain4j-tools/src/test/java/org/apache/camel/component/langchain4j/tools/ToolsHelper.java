@@ -34,7 +34,7 @@ public final class ToolsHelper {
         return OpenAiChatModel.builder()
                 .apiKey(apiKey)
                 .modelName(modelName)
-                .baseUrl(baseUrl)
+                .baseUrl(baseUrl + "/v1")
                 .temperature(0.0)
                 .timeout(ofSeconds(60))
                 .logRequests(true)
@@ -43,6 +43,6 @@ public final class ToolsHelper {
     }
 
     public static String modelName() {
-        return System.getProperty("langchain4j.tools.model.name", "llama3.1:latest");
+        return System.getProperty("langchain4j.tools.model.name", "granite4:tiny-h");
     }
 }

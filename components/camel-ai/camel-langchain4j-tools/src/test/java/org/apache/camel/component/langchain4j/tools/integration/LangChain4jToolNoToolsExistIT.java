@@ -27,7 +27,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class LangChain4jToolNoToolsExistIT extends LangChain4jToolNoToolsExistTest {
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createServiceWithConfiguration(() -> ToolsHelper.modelName());
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonServiceWithConfiguration(() -> ToolsHelper.modelName());
 
     @Override
     protected void setupResources() throws Exception {
