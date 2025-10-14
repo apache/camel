@@ -342,13 +342,14 @@ The binding modes are:
 |`auto` |Binding is enabled, and Camel is relaxed and supports JSON, XML or both if
 the necessary data formats are included in the classpath. Notice that if
 for example `camel-jaxb` is not on the classpath, then XML binding is
-not enabled.
+not enabled. Notice that for XML then `jaxb` is default, and you must be explicit to set `xmlDataFormat=jacksonXml`
+if you want to use jackson XML instead.
 
 |`json` |Binding to/from JSON is enabled, and requires a JSON capable data
 format on the classpath. By default, Camel will use `jackson` as the
 data format.
 
-|`xm` |Binding to/from XML is enabled, and requires `camel-jaxb` on the
+|`xm` |Binding to/from XML is enabled, and requires `camel-jaxb` or `camel-jacksonxml` on the
 classpath.
 
 |`json_xml` |Binding to/from JSON and XML is enabled and requires both data formats to
@@ -378,9 +379,14 @@ restConfiguration().dataFormatProperty("contentTypeHeader", "false");
 ----
 
 To use binding you must include the necessary data formats on the
-classpath, such as `camel-jaxb` and/or `camel-jackson`. And then enable
+classpath, such as `camel-jaxb` / `camel-jacksonxml` and/or `camel-jackson`. And then enable
 the binding mode. You can configure the binding mode globally on the
 rest configuration, and then override per rest service as well.
+
+[NOTE]
+====
+To use Jackson XML for XML binding, then you must configure `xmlDataformat=jacksonXml` and include `camel-jacksonxml` on the classpath.
+====
 
 To enable binding, you configure this in Java DSL as shown below:
 

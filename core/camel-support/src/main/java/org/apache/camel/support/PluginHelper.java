@@ -50,6 +50,7 @@ import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.spi.RestBindingJacksonXmlDataFormatFactory;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
@@ -449,6 +450,21 @@ public final class PluginHelper {
     public static RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory(
             ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(RestBindingJaxbDataFormatFactory.class);
+    }
+
+    /**
+     * Gets the {@link RestBindingJacksonXmlDataFormatFactory} to be used.
+     */
+    public static RestBindingJacksonXmlDataFormatFactory getRestBindingJacksonXmlDataFormatFactory(CamelContext camelContext) {
+        return getRestBindingJacksonXmlDataFormatFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link RestBindingJacksonXmlDataFormatFactory} to be used.
+     */
+    public static RestBindingJacksonXmlDataFormatFactory getRestBindingJacksonXmlDataFormatFactory(
+            ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RestBindingJacksonXmlDataFormatFactory.class);
     }
 
     /**
