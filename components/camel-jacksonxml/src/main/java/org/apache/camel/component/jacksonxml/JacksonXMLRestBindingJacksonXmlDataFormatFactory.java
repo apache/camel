@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.jaxb;
+package org.apache.camel.component.jacksonxml;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,29 +22,29 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
+import org.apache.camel.spi.RestBindingJacksonXmlDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 
 /**
- * JAXB based {@link RestBindingJaxbDataFormatFactory}.
+ * Jackson based {@link RestBindingJacksonXmlDataFormatFactory}.
  */
-@JdkService(RestBindingJaxbDataFormatFactory.FACTORY)
-public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbDataFormatFactory {
+@JdkService(RestBindingJacksonXmlDataFormatFactory.FACTORY)
+public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBindingJacksonXmlDataFormatFactory {
 
     @Override
-    public void setupJaxb(
+    public void setupJacksonXml(
             CamelContext camelContext, RestConfiguration config,
             String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
-            DataFormat jaxb, DataFormat outJaxb)
+            DataFormat xml, DataFormat outXml)
             throws Exception {
         // lookup configurer
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
-                .resolvePropertyConfigurer("jaxb-dataformat-configurer", camelContext);
+                .resolvePropertyConfigurer("jacksonXml-dataformat-configurer", camelContext);
         if (configurer == null) {
-            throw new IllegalStateException("Cannot find configurer for dataformat: jaxb");
+            throw new IllegalStateException("Cannot find configurer for dataformat: jacksonXml");
         }
 
         //
@@ -54,12 +54,11 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
         PropertyBindingSupport.Builder builder = PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
                 .withConfigurer(configurer)
-                .withTarget(jaxb);
+                .withTarget(xml);
 
         final String typeName = getTypeName(type, typeClass);
         if (typeName != null) {
-            builder.withProperty("contextPath", typeName);
-            builder.withProperty("contextPathIsClassName", "true");
+            builder.withProperty("unmarshalTypeName", typeName);
         }
 
         setAdditionalConfiguration(config, "xml.in.", builder);
@@ -72,13 +71,12 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
         PropertyBindingSupport.Builder outBuilder = PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
                 .withConfigurer(configurer)
-                .withTarget(outJaxb);
+                .withTarget(outXml);
 
         final String outTypeName = getOutTypeName(outType, outTypeClass, typeName);
 
         if (outTypeName != null) {
-            outBuilder.withProperty("contextPath", outTypeName);
-            outBuilder.withProperty("contextPathIsClassName", "true");
+            outBuilder.withProperty("unmarshalTypeName", outTypeName);
         }
 
         setAdditionalConfiguration(config, "xml.out.", outBuilder);

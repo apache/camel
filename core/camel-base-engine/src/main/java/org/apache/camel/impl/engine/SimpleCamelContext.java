@@ -83,6 +83,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.spi.RestBindingJacksonXmlDataFormatFactory;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
@@ -635,6 +636,22 @@ public class SimpleCamelContext extends AbstractCamelContext {
         } else {
             throw new IllegalArgumentException(
                     "Cannot find RestBindingJaxbDataFormatFactory on classpath. Add camel-jaxb to classpath.");
+        }
+    }
+
+    @Override
+    protected RestBindingJacksonXmlDataFormatFactory createRestBindingJacksonXmlDataFormatFactory() {
+        Optional<RestBindingJacksonXmlDataFormatFactory> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getCamelContextExtension().getBootstrapFactoryFinder(),
+                RestBindingJacksonXmlDataFormatFactory.FACTORY,
+                RestBindingJacksonXmlDataFormatFactory.class);
+
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot find RestBindingJacksonXmlDataFormatFactory on classpath. Add camel-jacksonxml to classpath.");
         }
     }
 

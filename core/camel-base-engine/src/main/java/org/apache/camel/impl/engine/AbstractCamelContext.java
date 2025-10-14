@@ -152,6 +152,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.spi.RestBindingJacksonXmlDataFormatFactory;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -382,6 +383,8 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
         camelContextExtension.lazyAddContextPlugin(RestBindingJaxbDataFormatFactory.class,
                 this::createRestBindingJaxbDataFormatFactory);
+        camelContextExtension.lazyAddContextPlugin(RestBindingJacksonXmlDataFormatFactory.class,
+                this::createRestBindingJacksonXmlDataFormatFactory);
         camelContextExtension.lazyAddContextPlugin(BeanProxyFactory.class, this::createBeanProxyFactory);
         camelContextExtension.lazyAddContextPlugin(UnitOfWorkFactory.class, this::createUnitOfWorkFactory);
         camelContextExtension.lazyAddContextPlugin(BeanIntrospection.class, this::createBeanIntrospection);
@@ -4456,6 +4459,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract ModelToYAMLDumper createModelToYAMLDumper();
 
     protected abstract RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory();
+
+    protected abstract RestBindingJacksonXmlDataFormatFactory createRestBindingJacksonXmlDataFormatFactory();
 
     protected abstract RuntimeCamelCatalog createRuntimeCamelCatalog();
 
