@@ -56,7 +56,7 @@
         <sourcecheckExcludesComma />
 
         <!-- dependency versions -->
-        <activemq-version>5.19.0</activemq-version>
+        <activemq-version>5.19.1</activemq-version>
         <activemq6-version>6.1.7</activemq6-version>
         <activemq-artemis-version>2.42.0</activemq-artemis-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
