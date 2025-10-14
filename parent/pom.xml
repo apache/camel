@@ -320,7 +320,7 @@
         <json-patch-version>1.13</json-patch-version>
         <json-smart-version>2.6.0</json-smart-version>
         <jsonata-version>0.9.8</jsonata-version>
-        <json-unit-version>4.1.1</json-unit-version>
+        <json-unit-version>5.0.0</json-unit-version>
         <jsoup-version>1.21.2</jsoup-version>
         <jt400-version>21.0.6</jt400-version>
         <jte-version>3.2.1</jte-version>
