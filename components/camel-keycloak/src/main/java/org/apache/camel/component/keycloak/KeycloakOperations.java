@@ -69,5 +69,44 @@ public enum KeycloakOperations {
     deleteClientScope,
     getClientScope,
     updateClientScope,
-    listClientScopes
+    listClientScopes,
+    // Identity Provider operations
+    createIdentityProvider,
+    deleteIdentityProvider,
+    getIdentityProvider,
+    updateIdentityProvider,
+    listIdentityProviders,
+    // Authorization Services operations
+    createResource,
+    deleteResource,
+    getResource,
+    updateResource,
+    listResources,
+    createResourcePolicy,
+    deleteResourcePolicy,
+    getResourcePolicy,
+    updateResourcePolicy,
+    listResourcePolicies,
+    createResourcePermission,
+    deleteResourcePermission,
+    getResourcePermission,
+    updateResourcePermission,
+    listResourcePermissions,
+    evaluatePermission,
+    // User Attribute operations
+    getUserAttributes,
+    setUserAttribute,
+    deleteUserAttribute,
+    // User Credential operations
+    getUserCredentials,
+    deleteUserCredential,
+    // User Action operations
+    sendVerifyEmail,
+    sendPasswordResetEmail,
+    addRequiredAction,
+    removeRequiredAction,
+    executeActionsEmail,
+    // Client Secret Management
+    getClientSecret,
+    regenerateClientSecret
 }

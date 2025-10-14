@@ -2506,6 +2506,246 @@ public interface KeycloakEndpointBuilderFactory {
         public String keycloakEventId() {
             return "CamelKeycloakEventId";
         }
+        /**
+         * The identity provider alias.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakIdpAlias}.
+         */
+        public String keycloakIdpAlias() {
+            return "CamelKeycloakIdpAlias";
+        }
+        /**
+         * The identity provider ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakIdpId}.
+         */
+        public String keycloakIdpId() {
+            return "CamelKeycloakIdpId";
+        }
+        /**
+         * The resource ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakResourceId}.
+         */
+        public String keycloakResourceId() {
+            return "CamelKeycloakResourceId";
+        }
+        /**
+         * The resource name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakResourceName}.
+         */
+        public String keycloakResourceName() {
+            return "CamelKeycloakResourceName";
+        }
+        /**
+         * The resource type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakResourceType}.
+         */
+        public String keycloakResourceType() {
+            return "CamelKeycloakResourceType";
+        }
+        /**
+         * The resource URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakResourceUri}.
+         */
+        public String keycloakResourceUri() {
+            return "CamelKeycloakResourceUri";
+        }
+        /**
+         * The policy ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPolicyId}.
+         */
+        public String keycloakPolicyId() {
+            return "CamelKeycloakPolicyId";
+        }
+        /**
+         * The policy name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPolicyName}.
+         */
+        public String keycloakPolicyName() {
+            return "CamelKeycloakPolicyName";
+        }
+        /**
+         * The policy type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPolicyType}.
+         */
+        public String keycloakPolicyType() {
+            return "CamelKeycloakPolicyType";
+        }
+        /**
+         * The permission ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPermissionId}.
+         */
+        public String keycloakPermissionId() {
+            return "CamelKeycloakPermissionId";
+        }
+        /**
+         * The permission name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPermissionName}.
+         */
+        public String keycloakPermissionName() {
+            return "CamelKeycloakPermissionName";
+        }
+        /**
+         * The scope name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakScopeName}.
+         */
+        public String keycloakScopeName() {
+            return "CamelKeycloakScopeName";
+        }
+        /**
+         * The user attribute name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakAttributeName}.
+         */
+        public String keycloakAttributeName() {
+            return "CamelKeycloakAttributeName";
+        }
+        /**
+         * The user attribute value.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakAttributeValue}.
+         */
+        public String keycloakAttributeValue() {
+            return "CamelKeycloakAttributeValue";
+        }
+        /**
+         * The credential ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakCredentialId}.
+         */
+        public String keycloakCredentialId() {
+            return "CamelKeycloakCredentialId";
+        }
+        /**
+         * The credential type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakCredentialType}.
+         */
+        public String keycloakCredentialType() {
+            return "CamelKeycloakCredentialType";
+        }
+        /**
+         * The required action type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakRequiredAction}.
+         */
+        public String keycloakRequiredAction() {
+            return "CamelKeycloakRequiredAction";
+        }
+        /**
+         * The list of actions to execute.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakActions}.
+         */
+        public String keycloakActions() {
+            return "CamelKeycloakActions";
+        }
+        /**
+         * The redirect URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakRedirectUri}.
+         */
+        public String keycloakRedirectUri() {
+            return "CamelKeycloakRedirectUri";
+        }
+        /**
+         * The lifespan in seconds.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakLifespan}.
+         */
+        public String keycloakLifespan() {
+            return "CamelKeycloakLifespan";
+        }
     }
     static KeycloakEndpointBuilder endpointBuilder(String componentName, String path) {
         class KeycloakEndpointBuilderImpl extends AbstractEndpointBuilder implements KeycloakEndpointBuilder, AdvancedKeycloakEndpointBuilder {
