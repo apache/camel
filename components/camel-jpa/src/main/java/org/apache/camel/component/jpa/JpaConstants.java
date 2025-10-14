@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jpa;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -24,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 public final class JpaConstants {
 
     @Metadata(description = "The JPA `EntityManager` object.", javaType = "jakarta.persistence.EntityManager")
-    public static final String ENTITY_MANAGER = "CamelEntityManager";
+    public static final String ENTITY_MANAGER = Exchange.JPA_ENTITY_MANAGER;
     @Metadata(label = "producer", description = "Alternative way for passing query parameters as an Exchange header.",
               javaType = "Map<String, Object>")
     public static final String JPA_PARAMETERS_HEADER = "CamelJpaParameters";
