@@ -320,6 +320,12 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             // we do not want to copy the message history for split sub-messages
             answer.removeProperty(ExchangePropertyKey.MESSAGE_HISTORY);
         }
+
+        if (isParallelProcessing()) {
+            //we do not want to copy JPA entityManager (which is not meant for concurrent use) in parallel mode
+            //jpa component takes care of the entityManager if property is removed
+            answer.removeProperty(Exchange.JPA_ENTITY_MANAGER);
+        }
         return answer;
     }
 }
