@@ -89,6 +89,71 @@ public final class KeycloakConstants {
     @Metadata(description = "The event ID or timestamp", javaType = "Long")
     public static final String EVENT_ID = "CamelKeycloakEventId";
 
+    // Identity Provider constants
+    @Metadata(description = "The identity provider alias", javaType = "String")
+    public static final String IDP_ALIAS = "CamelKeycloakIdpAlias";
+
+    @Metadata(description = "The identity provider ID", javaType = "String")
+    public static final String IDP_ID = "CamelKeycloakIdpId";
+
+    // Authorization Services constants
+    @Metadata(description = "The resource ID", javaType = "String")
+    public static final String RESOURCE_ID = "CamelKeycloakResourceId";
+
+    @Metadata(description = "The resource name", javaType = "String")
+    public static final String RESOURCE_NAME = "CamelKeycloakResourceName";
+
+    @Metadata(description = "The resource type", javaType = "String")
+    public static final String RESOURCE_TYPE = "CamelKeycloakResourceType";
+
+    @Metadata(description = "The resource URI", javaType = "String")
+    public static final String RESOURCE_URI = "CamelKeycloakResourceUri";
+
+    @Metadata(description = "The policy ID", javaType = "String")
+    public static final String POLICY_ID = "CamelKeycloakPolicyId";
+
+    @Metadata(description = "The policy name", javaType = "String")
+    public static final String POLICY_NAME = "CamelKeycloakPolicyName";
+
+    @Metadata(description = "The policy type", javaType = "String")
+    public static final String POLICY_TYPE = "CamelKeycloakPolicyType";
+
+    @Metadata(description = "The permission ID", javaType = "String")
+    public static final String PERMISSION_ID = "CamelKeycloakPermissionId";
+
+    @Metadata(description = "The permission name", javaType = "String")
+    public static final String PERMISSION_NAME = "CamelKeycloakPermissionName";
+
+    @Metadata(description = "The scope name", javaType = "String")
+    public static final String SCOPE_NAME = "CamelKeycloakScopeName";
+
+    // User Attribute constants
+    @Metadata(description = "The user attribute name", javaType = "String")
+    public static final String ATTRIBUTE_NAME = "CamelKeycloakAttributeName";
+
+    @Metadata(description = "The user attribute value", javaType = "String")
+    public static final String ATTRIBUTE_VALUE = "CamelKeycloakAttributeValue";
+
+    // User Credential constants
+    @Metadata(description = "The credential ID", javaType = "String")
+    public static final String CREDENTIAL_ID = "CamelKeycloakCredentialId";
+
+    @Metadata(description = "The credential type", javaType = "String")
+    public static final String CREDENTIAL_TYPE = "CamelKeycloakCredentialType";
+
+    // User Action constants
+    @Metadata(description = "The required action type", javaType = "String")
+    public static final String REQUIRED_ACTION = "CamelKeycloakRequiredAction";
+
+    @Metadata(description = "The list of actions to execute", javaType = "java.util.List<String>")
+    public static final String ACTIONS = "CamelKeycloakActions";
+
+    @Metadata(description = "The redirect URI", javaType = "String")
+    public static final String REDIRECT_URI = "CamelKeycloakRedirectUri";
+
+    @Metadata(description = "The lifespan in seconds", javaType = "Integer")
+    public static final String LIFESPAN = "CamelKeycloakLifespan";
+
     private KeycloakConstants() {
         // Utility class
     }
