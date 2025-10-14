@@ -7069,6 +7069,56 @@ public class StaticEndpointBuilders {
         return http("https", path);
     }
     /**
+     * Hugging Face (camel-huggingface)
+     * Integration with Hugging Face's Model Hub by using the Deep Java Library
+     * (DJL) Python bridge
+     * 
+     * Category: ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-huggingface
+     * 
+     * Syntax: <code>huggingface:task</code>
+     * 
+     * Path parameter: task (required)
+     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)
+     * There are 10 enums and the value can be one of: TEXT_CLASSIFICATION,
+     * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
+     * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
+     * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT
+     * 
+     * @param path task
+     * @return the dsl builder
+     */
+    public static HuggingFaceEndpointBuilderFactory.HuggingFaceEndpointBuilder huggingface(String path) {
+        return huggingface("huggingface", path);
+    }
+    /**
+     * Hugging Face (camel-huggingface)
+     * Integration with Hugging Face's Model Hub by using the Deep Java Library
+     * (DJL) Python bridge
+     * 
+     * Category: ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-huggingface
+     * 
+     * Syntax: <code>huggingface:task</code>
+     * 
+     * Path parameter: task (required)
+     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)
+     * There are 10 enums and the value can be one of: TEXT_CLASSIFICATION,
+     * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
+     * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
+     * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path task
+     * @return the dsl builder
+     */
+    public static HuggingFaceEndpointBuilderFactory.HuggingFaceEndpointBuilder huggingface(String componentName, String path) {
+        return HuggingFaceEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
      * To integrate with a fully managed, high-performance message queuing
      * service on Huawei Cloud

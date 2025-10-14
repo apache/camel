@@ -2168,6 +2168,20 @@ public interface ComponentsBuilderFactory {
         return HttpsComponentBuilderFactory.https();
     }
     /**
+     * Hugging Face (camel-huggingface)
+     * Integration with Hugging Face's Model Hub by using the Deep Java Library
+     * (DJL) Python bridge
+     * 
+     * Category: ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-huggingface
+     * 
+     * @return the dsl builder
+     */
+    static HuggingfaceComponentBuilderFactory.HuggingfaceComponentBuilder huggingface() {
+        return HuggingfaceComponentBuilderFactory.huggingface();
+    }
+    /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
      * To integrate with a fully managed, high-performance message queuing
      * service on Huawei Cloud

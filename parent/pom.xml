@@ -153,6 +153,7 @@
         <disruptor-version>3.4.4</disruptor-version>
         <dnsjava-version>3.6.4</dnsjava-version>
         <djl-version>0.36.0</djl-version>
+        <djl-python-version>0.28.0</djl-python-version>
         <docling-java-version>0.4.4</docling-java-version>
         <docker-java-version>3.7.0</docker-java-version>
         <dropbox-version>7.0.0</dropbox-version>
@@ -1641,6 +1642,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-huaweicloud-smn</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-huggingface</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

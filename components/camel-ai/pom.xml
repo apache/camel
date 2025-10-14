@@ -37,6 +37,7 @@
         <module>camel-chatscript</module>
         <module>camel-djl</module>
         <module>camel-docling</module>
+        <module>camel-huggingface</module>
         <module>camel-kserve</module>
         <module>camel-langchain4j-agent-api</module>
         <module>camel-langchain4j-agent</module>

@@ -373,6 +373,7 @@
                                     <exclude>**/javax.annotations.processing.Processor</exclude>
                                     <exclude>**/helm/etc/**</exclude>
                                     <exclude>**/examples/*</exclude>
+                                    <exclude>**/*.wav</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>

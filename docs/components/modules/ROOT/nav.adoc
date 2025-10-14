@@ -8,6 +8,7 @@
 *** xref:chatscript-component.adoc[ChatScript]
 *** xref:djl-component.adoc[Deep Java Library]
 *** xref:docling-component.adoc[Docling]
+*** xref:huggingface-component.adoc[Hugging Face]
 *** xref:kserve-component.adoc[KServe]
 *** xref:langchain4j-agent-component.adoc[LangChain4j Agent]
 *** xref:langchain4j-chat-component.adoc[LangChain4j Chat]

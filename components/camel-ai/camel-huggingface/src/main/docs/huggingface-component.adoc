@@ -1,0 +1,152 @@
+= Hugging Face Component
+:doctitle: Hugging Face
+:shortname: huggingface
+:artifactid: camel-huggingface
+:description: Integration with Hugging Face's Model Hub by using the Deep Java Library (DJL) Python bridge
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: huggingface
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The *Hugging Face* (HF) component provides an opinionated integration with Hugging Face models for various
+AI tasks, such as text classification, generation, and audio processing. It uses https://djl.ai/[Deep Java Library]'s
+Python engine to run Hugging Face's Transformers library in a Python subprocess,
+allowing easy access to HF pipelines. The Python environment needs to be setup before using the component.
+
+This component is made to allow users to hit the ground running with HF models. If high-throughput/low-latency or
+the Python subprocess is an issue, users are encouraged to use the *camel-djl* for a more Java native approach.
+
+To use the HF component, Maven users will need to add the following dependency to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-huggingface</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+huggingface:task?modelId=model
+----
+
+Where _model_ is the model name hosted on Hugging Face and _task_ is one of the supported HF task listed below.
+For example, to use the https://huggingface.co/Qwen/Qwen2.5-3B-Instruct[Qwen2.5-3B-Instruct] model with the _chat_ task:
+
+.Object detection
+[source,java]
+----
+from("direct:start-chat")
+    .to("huggingface:chat?modelId=Qwen/Qwen2.5-3B-Instruct");
+----
+
+=== Supported Tasks
+
+The component supports the following tasks:
+
+[width="100%",cols="20%,20%,20%,20%,20%",options="header"]
+|===
+| Task | Input Type | Output Type | Options | Models
+
+| text-classification | String (text to classify) | _ai.djl.modality.Classifications_ | revision, device | Classification-tuned models (e.g., distilbert-base-uncased-finetuned-sst-2-english for sentiment, roberta-large for multi-label)
+
+| text-generation | String (prompt) | String (generated text) | revision, device, maxTokens, temperature | Generative models (e.g., gpt2 for completion, mistralai/Mistral-7B-Instruct-v0.2 for instruct-tuned generation)
+
+| question-answering | QAInput | String (extracted answer) | revision, device | QA-tuned models (e.g., distilbert-base-cased-distilled-squad for extractive QA, deepset/roberta-base-squad2 for robust Q&A)
+
+| summarization | String (text to summarize) | String (summary text) | revision, device, minLength, maxTokens, temperature | Summarization-tuned models (e.g., facebook/bart-large-cnn for abstractive summarization, t5-small for translation-like summarization)
+
+| zero-shot-classification | String[] or List<String> [text, label1, label2, ...] | String (best label)| revision, device, multiLabel, autoSelect | NLI-based zero-shot models (e.g., facebook/bart-large-mnli for general zero-shot, joeddav/deberta-v3-large-zeroshot-v1 for multi-label)
+
+| sentence-embeddings | String[], List<String> or String (sentences to embed) | float[][] (2D embedding tensor: batch × dimension) | revision, device | Embedding-tuned models (e.g., sentence-transformers/all-MiniLM-L6-v2)
+
+| text-to-image | String (prompt) | byte[] (PNG image bytes) | revision, device | Diffusion-based generation models (e.g., CompVis/stable-diffusion-v1-4 for general images, runwayml/stable-diffusion-v1-5 for improved quality)
+
+| automatic-speech-recognition | Audio or byte[] (audio bytes) | String (transcribed text) | revision, device | ASR-tuned models (e.g., facebook/wav2vec2-base-960h)
+
+| text-to-speech | String (text prompt) | _ai.djl.modality.audio_ | revision, device | TTS-tuned models (e.g., facebook/mms-tts-eng for English TTS, microsoft/speecht5_tts for multi-speaker)
+
+| chat | String (user message) | String (LLM response) | revision, device, maxTokens, temperature, systemPrompt, userRole, memoryIdHeader | Instruct-tuned/chat models (e.g., mistralai/Mistral-7B-Instruct-v0.2 for conversational, microsoft/Phi-3-mini-4k-instruct for efficient chat)
+
+| custom | TBD | TBD | predictorBean (required), revision, device | Any HF model compatible with the custom predictor bean (e.g., Helsinki-NLP/opus-mt-en-fr for translation, distilgpt2 for custom generation)
+|===
+
+// component-configure options: START
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+== Examples
+
+.Classify sentiment of text:
+[source,java]
+----
+from("direct:start")
+    .to("huggingface:text-classification?modelId=modelId=cardiffnlp/twitter-roberta-base-sentiment-latest&topK=2")
+    .to("log:result");
+----
+[source,cmd]
+----
+Input : "I love this movie!"
+Output : DJL Classifications [{"className" : "positive","probability" : 0.9847}, {"className" : "neutral", "probability" : 0.01182}]
+----
+
+.Chat Example
+Simple chat route with automatic history:
+[source,java]
+----
+from("direct:start-chat")
+    .to("huggingface:chat?modelId=mistralai/Mistral-7B-Instruct-v0.2&systemPrompt=You are a helpful assistant&maxTokens=100&temperature=0.7")
+    .to("log:response");
+----
+Send multiple messages to "direct:start-chat" — history is maintained automatically.
+
+.Custom Task
+For a custom task (e.g., _translation_):
+Define a custom predictor bean in your application or test:
+[source,java]
+----
+public class TranslationPredictor extends AbstractTaskPredictor {
+    // Implement
+}
+
+@Bean
+public TranslationPredictor myCustomPredictor() {
+    return new TranslationPredictor();
+}
+----
+Route:
+[source,java]
+----
+from("direct:start-custom")
+    .to("huggingface:custom?modelId=Helsinki-NLP/opus-mt-en-fr&predictorBean=myCustomPredictor")
+    .to("log:translated");
+----
+This allows extending the component for most HF tasks.
+
+When using a large model for the first time, downloading can take some time so make sure to set the
+_modelLoadingTimeout_ option (in seconds, default is 240).
+
+When performing a computationally expensive task, make sure to set the _predictTimeout_ option
+(in seconds, default is 120).
+
+For more examples, see the tests in the source code. For questions or contributions, checkout the Apache Camel community.
