@@ -211,13 +211,19 @@ The component supports the following operations:
 
 * **Realm Management**: `createRealm`, `getRealm`, `updateRealm`, `deleteRealm`
 * **User Management**: `createUser`, `getUser`, `updateUser`, `listUsers`, `searchUsers`, `deleteUser`
+* **User Attributes**: `getUserAttributes`, `setUserAttribute`, `deleteUserAttribute`
+* **User Credentials**: `getUserCredentials`, `deleteUserCredential`
+* **User Actions**: `sendVerifyEmail`, `sendPasswordResetEmail`, `addRequiredAction`, `removeRequiredAction`, `executeActionsEmail`
 * **Role Management**: `createRole`, `getRole`, `updateRole`, `listRoles`, `deleteRole`, `assignRoleToUser`, `removeRoleFromUser`, `getUserRoles`
 * **Group Management**: `createGroup`, `getGroup`, `updateGroup`, `listGroups`, `deleteGroup`, `addUserToGroup`, `removeUserFromGroup`, `listUserGroups`
 * **Client Management**: `createClient`, `getClient`, `updateClient`, `listClients`, `deleteClient`
+* **Client Secret Management**: `getClientSecret`, `regenerateClientSecret`
 * **Client Role Management**: `createClientRole`, `getClientRole`, `updateClientRole`, `listClientRoles`, `deleteClientRole`, `assignClientRoleToUser`, `removeClientRoleFromUser`
 * **Password Management**: `resetUserPassword`
 * **Session Management**: `listUserSessions`, `logoutUser`
 * **Client Scope Management**: `createClientScope`, `getClientScope`, `updateClientScope`, `listClientScopes`, `deleteClientScope`
+* **Identity Provider Management**: `createIdentityProvider`, `getIdentityProvider`, `updateIdentityProvider`, `listIdentityProviders`, `deleteIdentityProvider`
+* **Authorization Services**: `createResource`, `getResource`, `updateResource`, `listResources`, `deleteResource`, `createResourcePolicy`, `getResourcePolicy`, `updateResourcePolicy`, `listResourcePolicies`, `deleteResourcePolicy`, `createResourcePermission`, `getResourcePermission`, `updateResourcePermission`, `listResourcePermissions`, `deleteResourcePermission`, `evaluatePermission`
 
 === Realm Operations
 
@@ -1137,6 +1143,610 @@ YAML::
         - to:
             uri: keycloak:admin?operation=getClientScope
         - log: "Client scope: ${body}"
+----
+====
+
+=== Identity Provider Operations
+
+Identity providers allow you to configure external authentication systems like LDAP, Active Directory, Google, GitHub, and other SAML/OIDC providers.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create OIDC identity provider
+Map<String, Object> idpHeaders = new HashMap<>();
+idpHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+
+IdentityProviderRepresentation idp = new IdentityProviderRepresentation();
+idp.setAlias("google-idp");
+idp.setProviderId("google");
+idp.setEnabled(true);
+idp.setDisplayName("Google Login");
+
+// Configure provider-specific settings
+Map<String, String> config = new HashMap<>();
+config.put("clientId", "google-client-id");
+config.put("clientSecret", "google-client-secret");
+idp.setConfig(config);
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createIdentityProvider&pojoRequest=true",
+    idp, idpHeaders);
+
+// List all identity providers
+template.sendBodyAndHeader("keycloak:admin?operation=listIdentityProviders", null,
+    KeycloakConstants.REALM_NAME, "my-realm");
+
+// Get specific identity provider
+Map<String, Object> getIdpHeaders = new HashMap<>();
+getIdpHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+getIdpHeaders.put(KeycloakConstants.IDP_ALIAS, "google-idp");
+
+IdentityProviderRepresentation provider = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=getIdentityProvider", null, getIdpHeaders,
+    IdentityProviderRepresentation.class);
+
+// Delete identity provider
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteIdentityProvider", null, getIdpHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create identity provider route
+- route:
+    from:
+      uri: direct:create-idp
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setBody:
+            constant:
+              alias: "google-idp"
+              providerId: "google"
+              enabled: true
+              displayName: "Google Login"
+              config:
+                clientId: "google-client-id"
+                clientSecret: "google-client-secret"
+        - to:
+            uri: keycloak:admin?operation=createIdentityProvider&pojoRequest=true
+        - log: "Created identity provider: google-idp"
+
+# List identity providers
+- route:
+    from:
+      uri: direct:list-idps
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - to:
+            uri: keycloak:admin?operation=listIdentityProviders
+        - log: "Identity providers: ${body}"
+
+# Get identity provider
+- route:
+    from:
+      uri: direct:get-idp
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakIdpAlias
+            simple: "${body[idpAlias]}"
+        - to:
+            uri: keycloak:admin?operation=getIdentityProvider
+        - log: "Identity provider: ${body}"
+
+# Delete identity provider
+- route:
+    from:
+      uri: direct:delete-idp
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakIdpAlias
+            simple: "${body[idpAlias]}"
+        - to:
+            uri: keycloak:admin?operation=deleteIdentityProvider
+        - log: "Deleted identity provider"
+----
+====
+
+=== User Attribute Operations
+
+User attributes allow you to store custom key-value pairs on user accounts for additional metadata or application-specific data.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Set user attribute
+Map<String, Object> attrHeaders = new HashMap<>();
+attrHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+attrHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+attrHeaders.put(KeycloakConstants.ATTRIBUTE_NAME, "department");
+attrHeaders.put(KeycloakConstants.ATTRIBUTE_VALUE, "Engineering");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=setUserAttribute", null, attrHeaders);
+
+// Get all user attributes
+Map<String, Object> getUserAttrHeaders = new HashMap<>();
+getUserAttrHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+getUserAttrHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+Map<String, List<String>> attributes = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=getUserAttributes", null, getUserAttrHeaders, Map.class);
+
+// Delete user attribute
+Map<String, Object> delAttrHeaders = new HashMap<>();
+delAttrHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+delAttrHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+delAttrHeaders.put(KeycloakConstants.ATTRIBUTE_NAME, "department");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteUserAttribute", null, delAttrHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Set user attribute
+- route:
+    from:
+      uri: direct:set-user-attribute
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakAttributeName
+            simple: "${body[attributeName]}"
+        - setHeader:
+            name: CamelKeycloakAttributeValue
+            simple: "${body[attributeValue]}"
+        - to:
+            uri: keycloak:admin?operation=setUserAttribute
+        - log: "Set attribute ${header.CamelKeycloakAttributeName}"
+
+# Get user attributes
+- route:
+    from:
+      uri: direct:get-user-attributes
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=getUserAttributes
+        - log: "User attributes: ${body}"
+
+# Delete user attribute
+- route:
+    from:
+      uri: direct:delete-user-attribute
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakAttributeName
+            simple: "${body[attributeName]}"
+        - to:
+            uri: keycloak:admin?operation=deleteUserAttribute
+        - log: "Deleted attribute ${header.CamelKeycloakAttributeName}"
+----
+====
+
+=== User Credential and Action Operations
+
+Manage user credentials and trigger user actions such as email verification and password resets.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Get user credentials
+Map<String, Object> credHeaders = new HashMap<>();
+credHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+credHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+List<CredentialRepresentation> credentials = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=getUserCredentials", null, credHeaders, List.class);
+
+// Delete specific credential
+Map<String, Object> delCredHeaders = new HashMap<>();
+delCredHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+delCredHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+delCredHeaders.put(KeycloakConstants.CREDENTIAL_ID, "credential-id-456");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteUserCredential", null, delCredHeaders);
+
+// Send verification email
+Map<String, Object> verifyHeaders = new HashMap<>();
+verifyHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+verifyHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=sendVerifyEmail", null, verifyHeaders);
+
+// Send password reset email
+Map<String, Object> resetHeaders = new HashMap<>();
+resetHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+resetHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=sendPasswordResetEmail", null, resetHeaders);
+
+// Add required action
+Map<String, Object> actionHeaders = new HashMap<>();
+actionHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+actionHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+actionHeaders.put(KeycloakConstants.REQUIRED_ACTION, "VERIFY_EMAIL");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=addRequiredAction", null, actionHeaders);
+
+// Execute multiple actions via email
+Map<String, Object> execHeaders = new HashMap<>();
+execHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+execHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+execHeaders.put(KeycloakConstants.ACTIONS, Arrays.asList("UPDATE_PASSWORD", "VERIFY_EMAIL"));
+execHeaders.put(KeycloakConstants.REDIRECT_URI, "https://myapp.com/auth/callback");
+execHeaders.put(KeycloakConstants.LIFESPAN, 3600); // 1 hour
+
+template.sendBodyAndHeaders("keycloak:admin?operation=executeActionsEmail", null, execHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Get user credentials
+- route:
+    from:
+      uri: direct:get-user-credentials
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=getUserCredentials
+        - log: "User credentials: ${body}"
+
+# Send verification email
+- route:
+    from:
+      uri: direct:send-verify-email
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=sendVerifyEmail
+        - log: "Verification email sent to user ${header.CamelKeycloakUserId}"
+
+# Send password reset email
+- route:
+    from:
+      uri: direct:send-password-reset
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=sendPasswordResetEmail
+        - log: "Password reset email sent"
+
+# Add required action
+- route:
+    from:
+      uri: direct:add-required-action
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakRequiredAction
+            constant: "VERIFY_EMAIL"
+        - to:
+            uri: keycloak:admin?operation=addRequiredAction
+        - log: "Added required action VERIFY_EMAIL"
+
+# Execute actions email
+- route:
+    from:
+      uri: direct:execute-actions-email
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakActions
+            constant:
+              - "UPDATE_PASSWORD"
+              - "VERIFY_EMAIL"
+        - setHeader:
+            name: CamelKeycloakRedirectUri
+            constant: "https://myapp.com/auth/callback"
+        - setHeader:
+            name: CamelKeycloakLifespan
+            constant: 3600
+        - to:
+            uri: keycloak:admin?operation=executeActionsEmail
+        - log: "Sent actions email to user"
+----
+====
+
+=== Client Secret Management
+
+Retrieve and rotate client secrets for confidential clients.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Get client secret
+Map<String, Object> getSecretHeaders = new HashMap<>();
+getSecretHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+getSecretHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+CredentialRepresentation secret = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=getClientSecret", null, getSecretHeaders,
+    CredentialRepresentation.class);
+
+System.out.println("Client secret: " + secret.getValue());
+
+// Regenerate client secret (rotates the secret)
+Map<String, Object> regenHeaders = new HashMap<>();
+regenHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+regenHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+CredentialRepresentation newSecret = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=regenerateClientSecret", null, regenHeaders,
+    CredentialRepresentation.class);
+
+System.out.println("New client secret: " + newSecret.getValue());
+----
+
+YAML::
++
+[source,yaml]
+----
+# Get client secret
+- route:
+    from:
+      uri: direct:get-client-secret
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - to:
+            uri: keycloak:admin?operation=getClientSecret
+        - log: "Retrieved client secret"
+
+# Regenerate client secret
+- route:
+    from:
+      uri: direct:regenerate-secret
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - to:
+            uri: keycloak:admin?operation=regenerateClientSecret
+        - log: "Regenerated client secret: ${body.value}"
+        - to: "direct:notify-secret-rotation"
+----
+====
+
+=== Authorization Services Operations
+
+Keycloak Authorization Services provide fine-grained authorization with resources, policies, and permissions.
+
+NOTE: These operations require a client with authorization services enabled in Keycloak.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create authorization resource
+ResourceRepresentation resource = new ResourceRepresentation();
+resource.setName("documents");
+resource.setType("urn:myapp:resources:document");
+resource.setUris(Collections.singleton("/documents/*"));
+resource.addScope("read", "write", "delete");
+
+Map<String, Object> resourceHeaders = new HashMap<>();
+resourceHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+resourceHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+Response response = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=createResource&pojoRequest=true",
+    resource, resourceHeaders, Response.class);
+
+// List all resources
+template.sendBodyAndHeaders("keycloak:admin?operation=listResources", null, resourceHeaders);
+
+// Create role-based policy
+PolicyRepresentation policy = new PolicyRepresentation();
+policy.setName("admin-policy");
+policy.setType("role");
+policy.setDescription("Only admins can access");
+
+Map<String, Object> policyConfig = new HashMap<>();
+policyConfig.put("roles", "[{\"id\":\"admin-role-id\",\"required\":true}]");
+policy.setConfig(policyConfig);
+
+Map<String, Object> policyHeaders = new HashMap<>();
+policyHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+policyHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createResourcePolicy&pojoRequest=true",
+    policy, policyHeaders);
+
+// Create resource permission
+ResourcePermissionRepresentation permission = new ResourcePermissionRepresentation();
+permission.setName("document-permission");
+permission.addResource("documents");
+permission.addPolicy("admin-policy");
+
+Map<String, Object> permHeaders = new HashMap<>();
+permHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+permHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createResourcePermission&pojoRequest=true",
+    permission, permHeaders);
+
+// List all permissions
+template.sendBodyAndHeaders("keycloak:admin?operation=listResourcePermissions", null, permHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create authorization resource
+- route:
+    from:
+      uri: direct:create-authz-resource
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - setBody:
+            constant:
+              name: "documents"
+              type: "urn:myapp:resources:document"
+              uris:
+                - "/documents/*"
+              scopes:
+                - name: "read"
+                - name: "write"
+                - name: "delete"
+        - to:
+            uri: keycloak:admin?operation=createResource&pojoRequest=true
+        - log: "Created authorization resource"
+
+# List resources
+- route:
+    from:
+      uri: direct:list-authz-resources
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - to:
+            uri: keycloak:admin?operation=listResources
+        - log: "Resources: ${body}"
+
+# Create role-based policy
+- route:
+    from:
+      uri: direct:create-authz-policy
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - setBody:
+            constant:
+              name: "admin-policy"
+              type: "role"
+              description: "Only admins can access"
+              config:
+                roles: '[{"id":"admin-role-id","required":true}]'
+        - to:
+            uri: keycloak:admin?operation=createResourcePolicy&pojoRequest=true
+        - log: "Created authorization policy"
+
+# Create resource permission
+- route:
+    from:
+      uri: direct:create-authz-permission
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - setBody:
+            constant:
+              name: "document-permission"
+              resources:
+                - "documents"
+              policies:
+                - "admin-policy"
+        - to:
+            uri: keycloak:admin?operation=createResourcePermission&pojoRequest=true
+        - log: "Created resource permission"
+
+# List permissions
+- route:
+    from:
+      uri: direct:list-authz-permissions
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - to:
+            uri: keycloak:admin?operation=listResourcePermissions
+        - log: "Permissions: ${body}"
 ----
 ====
 
