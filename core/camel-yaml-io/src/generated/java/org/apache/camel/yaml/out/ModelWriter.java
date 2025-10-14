@@ -3512,10 +3512,10 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("bindingMode", toString(def.getBindingMode()), "off");
         doWriteAttribute("port", def.getPort(), null);
         doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
-        doWriteAttribute("xmlDataFormat", def.getXmlDataFormat(), null);
+        doWriteAttribute("xmlDataFormat", def.getXmlDataFormat(), "jaxb");
         doWriteAttribute("apiVendorExtension", def.getApiVendorExtension(), "false");
         doWriteAttribute("apiComponent", def.getApiComponent(), null);
-        doWriteAttribute("jsonDataFormat", def.getJsonDataFormat(), null);
+        doWriteAttribute("jsonDataFormat", def.getJsonDataFormat(), "jackson");
         doWriteList(null, "consumerProperty", def.getConsumerProperties(), this::doWriteRestPropertyDefinition);
         doWriteList(null, "corsHeaders", def.getCorsHeaders(), this::doWriteRestPropertyDefinition);
         doWriteList(null, "componentProperty", def.getComponentProperties(), this::doWriteRestPropertyDefinition);

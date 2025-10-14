@@ -15416,8 +15416,8 @@ become an individual route. This option is default true. Default value: true
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Name of specific json data format to use. By default jackson will be used. Important: This option is only for setting a
-custom name of the data format, not to refer to an existing data format instance.
+Name of specific json data format to use. By default, jackson will be used. Important: This option is only for setting a
+custom name of the data format, not to refer to an existing data format instance. Default value: jackson
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15426,8 +15426,9 @@ custom name of the data format, not to refer to an existing data format instance
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting a
-custom name of the data format, not to refer to an existing data format instance.
+Name of specific XML data format to use. By default jaxb will be used, but jacksonXml is also supported. Important: This
+option is only for setting a custom name of the data format, not to refer to an existing data format instance. Default
+value: jaxb
 ]]>
         </xs:documentation>
       </xs:annotation>
