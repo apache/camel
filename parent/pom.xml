@@ -200,7 +200,7 @@
         <google-cloud-bigquery-version>2.55.2</google-cloud-bigquery-version>
         <google-cloud-core-version>2.60.3</google-cloud-core-version>
         <google-cloud-functions-version>2.69.0</google-cloud-functions-version>
-        <google-cloud-http-client-version>2.0.1</google-cloud-http-client-version>
+        <google-cloud-http-client-version>2.0.2</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.142.0</google-cloud-pubsub-version>
         <google-cloud-pubsublite-version>1.15.17</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.76.0</google-cloud-secretmanager-version>
