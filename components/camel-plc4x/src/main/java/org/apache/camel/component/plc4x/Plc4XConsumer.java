@@ -89,9 +89,14 @@ public class Plc4XConsumer extends DefaultConsumer {
     }
 
     private void startUnTriggered() {
+        PlcReadRequest request;
         try {
             plc4XEndpoint.reconnectIfNeeded();
-        } catch (PlcConnectionException e) {
+            if (plc4XEndpoint.connection == null) {
+                throw new PlcConnectionException("Cannot establish connection");
+            }
+            request = plc4XEndpoint.buildPlcReadRequest();
+        } catch (Exception e) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.warn("Unable to reconnect, skipping request", e);
             } else {
@@ -99,8 +104,6 @@ public class Plc4XConsumer extends DefaultConsumer {
             }
             return;
         }
-
-        PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest();
 
         future = executorService.schedule(() -> request.execute().thenAccept(response -> {
             try {
