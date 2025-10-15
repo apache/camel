@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.cluster;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,26 +42,38 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class FileLockClusteredRoutePolicyFactoryTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileLockClusteredRoutePolicyFactoryTest.class);
-    private static final List<String> CLIENTS = List.of("0", "1", "2");
-    private static final List<String> RESULTS = new ArrayList<>();
-    private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size());
-    private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
+
+    private List<String> CLIENTS;
+    private List<String> RESULTS;
+    private ScheduledExecutorService SCHEDULER;
+    private CountDownLatch LATCH;
+
+    @BeforeEach
+    public void init() {
+        CLIENTS = List.of("0", "1", "2");
+        RESULTS = new ArrayList<>();
+        SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size());
+        LATCH = new CountDownLatch(CLIENTS.size());
+    }
 
     @TempDir
-    private static Path tempDir;
+    private Path tempDir;
 
     // ************************************
     // Test
     // ************************************
 
-    @Test
+    // Repeating the test more than once is required to understand if the file locking
+    // is managed properly and the locks are released upon context shutdown.
+    @RepeatedTest(5)
     public void test() throws Exception {
         for (String id : CLIENTS) {
             SCHEDULER.submit(() -> run(id));
         }
 
         LATCH.await(20, TimeUnit.SECONDS);
-        SCHEDULER.shutdownNow();
+        List<Runnable> waitingTasks = SCHEDULER.shutdownNow();
+        assertEquals(0, waitingTasks.size(), "All scheduled tasks should have been completed!");
 
         assertEquals(CLIENTS.size(), RESULTS.size());
         assertTrue(RESULTS.containsAll(CLIENTS));
@@ -70,6 +84,8 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
     // ************************************
 
     private void run(String id) {
+        LOGGER.info("Starting task using file lock cluster service {}/node-{}", tempDir.toString(), id);
+        DefaultCamelContext context = new DefaultCamelContext();
         try {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
             CountDownLatch contextLatch = new CountDownLatch(events);
@@ -80,7 +96,6 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             service.setAcquireLockDelay(100, TimeUnit.MILLISECONDS);
             service.setAcquireLockInterval(100, TimeUnit.MILLISECONDS);
 
-            DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
             context.getCamelContextExtension().setName("context-" + id);
             context.addService(service);
@@ -110,6 +125,12 @@ public final class FileLockClusteredRoutePolicyFactoryTest {
             LATCH.countDown();
         } catch (Exception e) {
             LOGGER.warn("{}", e.getMessage(), e);
+        } finally {
+            try {
+                context.close();
+            } catch (IOException e) {
+                LOGGER.warn("{}", e.getMessage(), e);
+            }
         }
     }
 }
