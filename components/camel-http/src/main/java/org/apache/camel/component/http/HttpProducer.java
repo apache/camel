@@ -790,18 +790,19 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                         // so we only do an instanceof check and accept String if the body is really a String
                         // do not fallback to use the default charset as it can influence the request
                         // (for example application/x-www-form-urlencoded forms being sent)
-                        String charset = ExchangeHelper.getCharsetName(exchange, false);
-                        if (charset == null && contentType != null) {
-                            // okay try to get the charset from the content-type
-                            Charset cs = contentType.getCharset();
-                            if (cs != null) {
-                                charset = cs.name();
+                        if (getEndpoint().isContentTypeCharsetEnabled()) {
+                            String charset = ExchangeHelper.getCharsetName(exchange, false);
+                            if (charset == null && contentType != null) {
+                                // okay try to get the charset from the content-type
+                                Charset cs = contentType.getCharset();
+                                if (cs != null) {
+                                    charset = cs.name();
+                                }
                             }
-                        }
-
-                        // sync contentType.charset and charset
-                        if (contentType != null && contentType.getCharset() == null && charset != null) {
-                            contentType = ContentType.parse(contentType + ";charset=" + charset);
+                            // sync contentType.charset and charset
+                            if (contentType != null && contentType.getCharset() == null && charset != null) {
+                                contentType = ContentType.parse(contentType + ";charset=" + charset);
+                            }
                         }
 
                         if (multipart) {

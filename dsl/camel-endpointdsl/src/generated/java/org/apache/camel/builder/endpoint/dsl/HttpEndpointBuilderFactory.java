@@ -1047,6 +1047,38 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the Content-Type header should automatic include charset for
+         * string based content.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param contentTypeCharsetEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder contentTypeCharsetEnabled(boolean contentTypeCharsetEnabled) {
+            doSetProperty("contentTypeCharsetEnabled", contentTypeCharsetEnabled);
+            return this;
+        }
+        /**
+         * Whether the Content-Type header should automatic include charset for
+         * string based content.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param contentTypeCharsetEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder contentTypeCharsetEnabled(String contentTypeCharsetEnabled) {
+            doSetProperty("contentTypeCharsetEnabled", contentTypeCharsetEnabled);
+            return this;
+        }
+        /**
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:

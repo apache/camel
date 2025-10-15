@@ -151,6 +151,24 @@ public interface HttpsComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether the Content-Type header should automatic include charset for
+         * string based content.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param contentTypeCharsetEnabled the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder contentTypeCharsetEnabled(boolean contentTypeCharsetEnabled) {
+            doSetProperty("contentTypeCharsetEnabled", contentTypeCharsetEnabled);
+            return this;
+        }
+    
         /**
          * To use a custom org.apache.hc.client5.http.cookie.CookieStore. By
          * default the org.apache.hc.client5.http.cookie.BasicCookieStore is
@@ -895,6 +913,7 @@ public interface HttpsComponentBuilderFactory {
             case "skipControlHeaders": ((HttpComponent) component).setSkipControlHeaders((boolean) value); return true;
             case "skipRequestHeaders": ((HttpComponent) component).setSkipRequestHeaders((boolean) value); return true;
             case "skipResponseHeaders": ((HttpComponent) component).setSkipResponseHeaders((boolean) value); return true;
+            case "contentTypeCharsetEnabled": ((HttpComponent) component).setContentTypeCharsetEnabled((boolean) value); return true;
             case "cookieStore": ((HttpComponent) component).setCookieStore((org.apache.hc.client5.http.cookie.CookieStore) value); return true;
             case "copyHeaders": ((HttpComponent) component).setCopyHeaders((boolean) value); return true;
             case "followRedirects": ((HttpComponent) component).setFollowRedirects((boolean) value); return true;
