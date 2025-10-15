@@ -3734,6 +3734,17 @@
                             <!-- SB2 actuator endpoint requires MethodParameter metadata -->
                             <arg>-parameters</arg>
                         </compilerArgs>
+
+                        <!-- Specify those annotation processors which are used during the build -->
+                        <!-- This optimization speeds up the build -->
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.infinispan.protostream</groupId>
+                                <artifactId>protostream-processor</artifactId>
+                                <version>${infinispan-protostream-version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+
                     </configuration>
                 </plugin>
                 <plugin>
