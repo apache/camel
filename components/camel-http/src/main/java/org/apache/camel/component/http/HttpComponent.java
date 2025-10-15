@@ -215,6 +215,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "producer",
               description = "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
     protected boolean logHttpActivity;
+    @Metadata(label = "producer,advanced", defaultValue = "true",
+              description = "Whether the Content-Type header should automatic include charset for string based content.")
+    protected boolean contentTypeCharsetEnabled = true;
 
     public HttpComponent() {
     }
@@ -464,6 +467,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         endpoint.setMuteException(muteException);
         endpoint.setHttpActivityListener(httpActivityListener);
         endpoint.setLogHttpActivity(logHttpActivity);
+        endpoint.setContentTypeCharsetEnabled(contentTypeCharsetEnabled);
 
         // configure the endpoint with the common configuration from the component
         if (getHttpConfiguration() != null) {
@@ -1106,6 +1110,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     public void setLogHttpActivity(boolean logHttpActivity) {
         this.logHttpActivity = logHttpActivity;
+    }
+
+    public boolean isContentTypeCharsetEnabled() {
+        return contentTypeCharsetEnabled;
+    }
+
+    public void setContentTypeCharsetEnabled(boolean contentTypeCharsetEnabled) {
+        this.contentTypeCharsetEnabled = contentTypeCharsetEnabled;
     }
 
     @Override

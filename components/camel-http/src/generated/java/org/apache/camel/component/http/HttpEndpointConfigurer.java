@@ -49,6 +49,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "connectionClose": target.setConnectionClose(property(camelContext, boolean.class, value)); return true;
         case "connectionsperroute":
         case "connectionsPerRoute": target.setConnectionsPerRoute(property(camelContext, int.class, value)); return true;
+        case "contenttypecharsetenabled":
+        case "contentTypeCharsetEnabled": target.setContentTypeCharsetEnabled(property(camelContext, boolean.class, value)); return true;
         case "cookiehandler":
         case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
         case "cookiestore":
@@ -182,6 +184,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "connectionClose": return boolean.class;
         case "connectionsperroute":
         case "connectionsPerRoute": return int.class;
+        case "contenttypecharsetenabled":
+        case "contentTypeCharsetEnabled": return boolean.class;
         case "cookiehandler":
         case "cookieHandler": return org.apache.camel.http.base.cookie.CookieHandler.class;
         case "cookiestore":
@@ -316,6 +320,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "connectionClose": return target.isConnectionClose();
         case "connectionsperroute":
         case "connectionsPerRoute": return target.getConnectionsPerRoute();
+        case "contenttypecharsetenabled":
+        case "contentTypeCharsetEnabled": return target.isContentTypeCharsetEnabled();
         case "cookiehandler":
         case "cookieHandler": return target.getCookieHandler();
         case "cookiestore":
