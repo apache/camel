@@ -20,8 +20,13 @@ public class OllamaProperties {
 
     public static final String CONTAINER = "ollama.container";
     public static final String MODEL = "ollama.model";
+    public static final String API_KEY = "ollama.api.key";
 
     public static final String ENDPOINT = "ollama.endpoint";
+
+    public static final String CPU_COUNT = "ollama.container.cpu.count";
+    public static final String MEMORY_LIMIT = "ollama.container.memory.limit";
+    public static final String ENABLE_GPU = "ollama.container.enable.gpu";
 
     private OllamaProperties() {
 

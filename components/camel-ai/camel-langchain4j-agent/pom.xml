@@ -36,6 +36,7 @@
 
     <properties>
         <supportLevel>Preview</supportLevel>
+        <failsafe.rerunFailingTestsCount>3</failsafe.rerunFailingTestsCount>
     </properties>
 
   <dependencies>
@@ -100,6 +101,13 @@
       <dependency>
           <groupId>org.assertj</groupId>
           <artifactId>assertj-core</artifactId>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-test-infra-ollama</artifactId>
+          <version>${project.version}</version>
+          <type>test-jar</type>
           <scope>test</scope>
       </dependency>
   </dependencies>

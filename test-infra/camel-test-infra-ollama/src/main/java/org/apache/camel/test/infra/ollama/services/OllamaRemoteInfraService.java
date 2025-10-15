@@ -25,6 +25,11 @@ public class OllamaRemoteInfraService implements OllamaInfraService {
         public String modelName() {
             return System.getProperty(OllamaProperties.MODEL);
         }
+
+        @Override
+        public String apiKey() {
+            return System.getProperty(OllamaProperties.API_KEY);
+        }
     }
 
     private final OllamaServiceConfiguration configuration;
@@ -54,12 +59,32 @@ public class OllamaRemoteInfraService implements OllamaInfraService {
 
     @Override
     public String getEndpoint() {
-        return System.getProperty(OllamaProperties.ENDPOINT);
+        return baseUrl();
     }
 
     @Override
     public String getModel() {
+        return modelName();
+    }
+
+    @Override
+    public String modelName() {
         return configuration.modelName();
+    }
+
+    @Override
+    public String baseUrl() {
+        return System.getProperty(OllamaProperties.ENDPOINT);
+    }
+
+    @Override
+    public String baseUrlV1() {
+        return System.getProperty(OllamaProperties.ENDPOINT) + "v1";
+    }
+
+    @Override
+    public String apiKey() {
+        return System.getProperty(OllamaProperties.API_KEY);
     }
 
 }

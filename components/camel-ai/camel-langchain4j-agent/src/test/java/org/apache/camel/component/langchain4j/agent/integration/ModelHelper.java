@@ -27,6 +27,7 @@ import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModelName;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
+import org.apache.camel.test.infra.ollama.services.OllamaService;
 
 import static java.time.Duration.ofSeconds;
 
@@ -139,10 +140,71 @@ public class ModelHelper {
     public static boolean isEmbeddingCapable() {
         var modelProvider = System.getenv(MODEL_PROVIDER);
 
+        if ("openai".equals(modelProvider)) {
+            return true;
+        } else {
+            modelProvider = System.getenv(MODEL_PROVIDER);
+        }
+
         return "openai".equals(modelProvider) || "ollama".equals(modelProvider);
     }
 
     public static String getApiKey() {
         return System.getenv(API_KEY);
+    }
+
+    /**
+     * Load chat model from environment variables if configured, otherwise use OllamaService. This allows tests to run
+     * without requiring external API keys.
+     */
+    public static ChatModel loadChatModel(OllamaService ollamaService) {
+        var apiKey = System.getenv(API_KEY);
+        var modelProvider = System.getenv(MODEL_PROVIDER);
+
+        if (apiKey != null && !apiKey.trim().isEmpty()
+                && modelProvider != null && !modelProvider.trim().isEmpty()) {
+            // Use environment-configured model
+            return loadFromEnv();
+        }
+
+        // Fallback to Ollama service
+        return OllamaChatModel.builder()
+                .baseUrl(ollamaService.baseUrl())
+                .modelName(ollamaService.modelName())
+                .temperature(0.3)
+                .timeout(ofSeconds(60))
+                .build();
+    }
+
+    /**
+     * Load embedding model from environment variables if configured, otherwise use OllamaService. This allows tests to
+     * run without requiring external API keys.
+     */
+    public static EmbeddingModel loadEmbeddingModel(OllamaService ollamaService) {
+        var apiKey = System.getenv(API_KEY);
+        var modelProvider = System.getenv(MODEL_PROVIDER);
+
+        if (apiKey != null && !apiKey.trim().isEmpty()
+                && modelProvider != null && !modelProvider.trim().isEmpty()) {
+            // Use environment-configured embedding model
+            return createEmbeddingModel();
+        }
+
+        // Fallback to Ollama service
+        return OllamaEmbeddingModel.builder()
+                .baseUrl(ollamaService.baseUrl())
+                .modelName(ollamaService.modelName())
+                .timeout(ofSeconds(60))
+                .build();
+    }
+
+    /**
+     * Check if environment variables are configured for testing. If false, tests should use OllamaService instead.
+     */
+    public static boolean hasEnvironmentConfiguration() {
+        var apiKey = System.getenv(API_KEY);
+        var modelProvider = System.getenv(MODEL_PROVIDER);
+        return apiKey != null && !apiKey.trim().isEmpty()
+                && modelProvider != null && !modelProvider.trim().isEmpty();
     }
 }

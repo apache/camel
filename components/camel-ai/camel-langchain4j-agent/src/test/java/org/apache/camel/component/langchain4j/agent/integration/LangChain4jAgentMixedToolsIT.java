@@ -27,9 +27,12 @@ import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.langchain4j.agent.pojos.CalculatorTool;
 import org.apache.camel.component.langchain4j.agent.pojos.StringTool;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.ollama.services.OllamaService;
+import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Integration test for LangChain4j Agent component mixing Camel route tools (tags) and custom LangChain4j tools.
  */
-@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#environmentWithoutEmbeddings")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
 
     private static final String USER_DATABASE = """
@@ -50,10 +53,15 @@ public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
 
     protected ChatModel chatModel;
 
+    @RegisterExtension
+    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
+            ? null
+            : OllamaServiceFactory.createSingletonService();
+
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
-        chatModel = ModelHelper.loadFromEnv();
+        chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
     }
 
     @Test
