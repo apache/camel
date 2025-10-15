@@ -38,6 +38,26 @@ public final class OllamaServiceFactory {
         }
 
         @Override
+        public String modelName() {
+            return getService().modelName();
+        }
+
+        @Override
+        public String baseUrl() {
+            return getService().baseUrl();
+        }
+
+        @Override
+        public String baseUrlV1() {
+            return getService().baseUrlV1();
+        }
+
+        @Override
+        public String apiKey() {
+            return getService().apiKey();
+        }
+
+        @Override
         public final void beforeAll(ExtensionContext extensionContext) {
             super.beforeAll(extensionContext);
         }

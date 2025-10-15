@@ -27,13 +27,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class LangChain4jToolNoToolsExistIT extends LangChain4jToolNoToolsExistTest {
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonServiceWithConfiguration(() -> ToolsHelper.modelName());
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatModel = ToolsHelper.createModel(OLLAMA.getEndpoint());
+        chatModel = ToolsHelper.createModel(OLLAMA);
     }
 
 }

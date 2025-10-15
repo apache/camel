@@ -31,7 +31,7 @@ import org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardr
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Class to test a mix match between all those different concepts : memory / tool / RAG / guardrails
  */
-@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#isEmbeddingCapable")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
 
     private static final int MEMORY_ID_SESSION = 42;
@@ -98,7 +98,7 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
 
         assertNotNull(firstResponse, "First response should not be null");
         assertTrue(firstResponse.contains("John Smith") || firstResponse.contains("Gold"),
-                "Response should contain user information from tools");
+                "Response should contain user information from tools but was: " + firstResponse);
         assertTrue(firstResponse.contains("21") || firstResponse.contains("age") || firstResponse.contains("rental"),
                 "Response should contain rental policy information from RAG");
 

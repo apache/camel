@@ -28,17 +28,20 @@ import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentWithMemory;
 import org.apache.camel.component.langchain4j.agent.pojos.PersistentChatMemoryStore;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.ollama.services.OllamaService;
+import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
 import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#environmentWithoutEmbeddings")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
 
     private static final int MEMORY_ID_SESSION_1 = 1;
@@ -50,11 +53,16 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
     protected ChatMemoryProvider chatMemoryProvider;
     private PersistentChatMemoryStore store;
 
+    @RegisterExtension
+    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
+            ? null
+            : OllamaServiceFactory.createSingletonService();
+
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatModel = ModelHelper.loadFromEnv();
+        chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
         store = new PersistentChatMemoryStore();
         chatMemoryProvider = createMemoryProvider();
     }

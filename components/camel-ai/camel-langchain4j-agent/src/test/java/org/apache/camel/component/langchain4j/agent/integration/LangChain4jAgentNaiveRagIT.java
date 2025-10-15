@@ -24,13 +24,13 @@ import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#isEmbeddingCapable")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
 
     private static final String SYSTEM_MESSAGE_CUSTOMER_SERVICE

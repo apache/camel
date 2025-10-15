@@ -26,12 +26,12 @@ import org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardr
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#isEmbeddingCapable")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentServiceIT extends AbstractRAGIT {
 
     private static final String USER_DATABASE = """

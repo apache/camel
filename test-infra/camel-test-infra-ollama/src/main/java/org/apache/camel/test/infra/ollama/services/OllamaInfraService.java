@@ -20,7 +20,17 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 public interface OllamaInfraService extends InfrastructureService {
 
+    @Deprecated
     String getEndpoint();
 
+    @Deprecated
     String getModel();
+
+    String modelName();
+
+    String baseUrl();
+
+    String baseUrlV1();
+
+    String apiKey();
 }
