@@ -144,6 +144,97 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         LOG.info("Output file size: {} bytes", outputFile.length());
     }
 
+    @Test
+    public void testAsyncMarkdownConversion() throws Exception {
+        Path testFile = createTestFile();
+
+        String result = template.requestBodyAndHeader("direct:convert-async-markdown",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(result, "Async conversion result should not be null");
+        assertTrue(result.length() > 0, "Async conversion result should not be empty");
+
+        LOG.info("Successfully converted document to Markdown using async mode");
+    }
+
+    @Test
+    public void testAsyncHtmlConversion() throws Exception {
+        Path testFile = createTestFile();
+
+        String result = template.requestBodyAndHeader("direct:convert-async-html",
+                testFile.toString(),
+                DoclingHeaders.OPERATION, DoclingOperations.CONVERT_TO_HTML, String.class);
+
+        assertNotNull(result, "Async HTML conversion result should not be null");
+        assertTrue(result.length() > 0, "Async HTML conversion result should not be empty");
+
+        LOG.info("Successfully converted document to HTML using async mode");
+    }
+
+    @Test
+    public void testAsyncJsonConversion() throws Exception {
+        Path testFile = createTestFile();
+
+        String result = template.requestBodyAndHeader("direct:convert-async-json",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(result, "Async JSON conversion result should not be null");
+        assertTrue(result.length() > 0, "Async JSON conversion result should not be empty");
+        assertTrue(result.contains("{") || result.contains("["), "JSON result should contain JSON structure");
+
+        LOG.info("Successfully converted document to JSON using async mode");
+    }
+
+    @Test
+    public void testAsyncUrlConversion() throws Exception {
+        String url = "https://arxiv.org/pdf/2501.17887";
+
+        String result = template.requestBody("direct:convert-async-url", url, String.class);
+
+        assertNotNull(result, "Async URL conversion result should not be null");
+        assertTrue(result.length() > 0, "Async URL conversion result should not be empty");
+
+        LOG.info("Successfully converted document from URL using async mode");
+    }
+
+    @Test
+    public void testAsyncConversionWithCustomTimeout() throws Exception {
+        Path testFile = createTestFile();
+
+        String result = template.requestBodyAndHeader("direct:convert-async-custom-timeout",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(result, "Async conversion with custom timeout should not be null");
+        assertTrue(result.length() > 0, "Async conversion with custom timeout should not be empty");
+
+        LOG.info("Successfully converted document using async mode with custom timeout");
+    }
+
+    @Test
+    public void testAsyncConversionWithHeaderOverride() throws Exception {
+        Path testFile = createTestFile();
+
+        // Use sync endpoint but override with async header
+        String result = template.requestBodyAndHeaders("direct:convert-markdown-serve",
+                testFile.toString(),
+                new java.util.HashMap<String, Object>() {
+                    {
+                        put(DoclingHeaders.INPUT_FILE_PATH, testFile.toString());
+                        put(DoclingHeaders.USE_ASYNC_MODE, true);
+                        put(DoclingHeaders.ASYNC_POLL_INTERVAL, 1000L);
+                        put(DoclingHeaders.ASYNC_TIMEOUT, 120000L);
+                    }
+                }, String.class);
+
+        assertNotNull(result, "Async conversion via header override should not be null");
+        assertTrue(result.length() > 0, "Async conversion via header override should not be empty");
+
+        LOG.info("Successfully converted document using async mode via header override");
+    }
+
     private Path createTestFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-serve-test", ".md");
         Files.write(tempFile,
@@ -157,6 +248,7 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // Synchronous conversion routes
                 from("direct:convert-markdown-serve")
                         .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true");
 
@@ -172,6 +264,22 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                 from("direct:convert-and-write")
                         .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true")
                         .to("file:" + outputDir.toString() + "?fileName=converted-output.md");
+
+                // Asynchronous conversion routes
+                from("direct:convert-async-markdown")
+                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+
+                from("direct:convert-async-html")
+                        .to("docling:convert?operation=CONVERT_TO_HTML&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+
+                from("direct:convert-async-json")
+                        .to("docling:convert?operation=CONVERT_TO_JSON&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+
+                from("direct:convert-async-url")
+                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+
+                from("direct:convert-async-custom-timeout")
+                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=500&asyncTimeout=300000");
             }
         };
     }

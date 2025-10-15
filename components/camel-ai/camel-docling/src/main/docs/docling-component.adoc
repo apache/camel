@@ -459,6 +459,142 @@ public class CustomArgsBean {
 }
 ----
 
+== Asynchronous Processing
+
+The component supports asynchronous document conversion when using docling-serve API mode. This is particularly useful for:
+- Large documents that take a long time to process
+- High-volume batch processing scenarios
+- Better resource utilization on the server side
+
+=== Enabling Async Mode
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:CONVERT_TO_MARKDOWN?" +
+        "useDoclingServe=true&" +
+        "useAsyncMode=true&" +
+        "asyncPollInterval=2000&" +
+        "asyncTimeout=300000&" +
+        "contentInBody=true")
+    .to("file:///data/output");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            useAsyncMode: true
+            asyncPollInterval: 2000
+            asyncTimeout: 300000
+            contentInBody: true
+      - to:
+          uri: "file:///data/output"
+----
+====
+
+=== Async Processing with Custom Timeout
+
+For very large documents, you may need to increase the timeout:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/large-documents?include=.*\\.pdf")
+    .to("docling:CONVERT_TO_MARKDOWN?" +
+        "useDoclingServe=true&" +
+        "useAsyncMode=true&" +
+        "asyncPollInterval=5000&" +
+        "asyncTimeout=600000&" +  // 10 minutes
+        "contentInBody=true")
+    .to("file:///data/output");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/large-documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            useAsyncMode: true
+            asyncPollInterval: 5000
+            asyncTimeout: 600000
+            contentInBody: true
+      - to:
+          uri: "file:///data/output"
+----
+====
+
+=== Using Headers to Control Async Behavior
+
+You can override async settings per-message using headers:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .process(exchange -> {
+        File file = exchange.getIn().getBody(File.class);
+        // Use async mode only for large files
+        if (file.length() > 10 * 1024 * 1024) { // > 10MB
+            exchange.getIn().setHeader("CamelDoclingUseAsyncMode", true);
+            exchange.getIn().setHeader("CamelDoclingAsyncTimeout", 600000L);
+        }
+    })
+    .to("docling:CONVERT_TO_MARKDOWN?useDoclingServe=true&contentInBody=true")
+    .to("file:///data/output");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - process:
+          ref: "asyncDecisionProcessor"
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            contentInBody: true
+      - to:
+          uri: "file:///data/output"
+----
+====
+
 == Using Docling-Serve API
 
 === Basic usage with docling-serve
@@ -773,5 +909,8 @@ The component handles various error scenarios:
 - Consider using `contentInBody=true` when using docling-serve API mode to get results directly in the body
 - The `maxFileSize` setting helps prevent resource exhaustion
 - **API Mode vs CLI Mode**: The docling-serve API mode typically offers better performance and resource utilization for high-volume document processing, as it maintains a persistent server instance
+- **Async Mode**: For large documents or high-volume processing, enable `useAsyncMode=true` to prevent blocking the Camel thread pool. The component will poll the docling-serve API for completion status while freeing up processing threads
+- **Async Configuration**: Adjust `asyncPollInterval` (default 2000ms) and `asyncTimeout` (default 300000ms/5 minutes) based on your document size and processing requirements
+- **Batch Processing**: When processing multiple documents, async mode allows better parallelization as the docling-serve instance can process multiple documents concurrently while Camel polls for results
 
 include::spring-boot:partial$starter.adoc[]

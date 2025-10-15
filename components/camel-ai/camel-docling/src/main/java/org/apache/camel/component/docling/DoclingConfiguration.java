@@ -98,6 +98,22 @@ public class DoclingConfiguration implements Cloneable {
     @Metadata(description = "Docling-serve API convert endpoint path", defaultValue = "/v1/convert/source")
     private String convertEndpoint = "/v1/convert/source";
 
+    @UriParam(label = "advanced")
+    @Metadata(description = "Use asynchronous conversion mode (docling-serve API only)", defaultValue = "false")
+    private boolean useAsyncMode = false;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Polling interval for async conversion status in milliseconds", defaultValue = "2000")
+    private long asyncPollInterval = 2000;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Maximum time to wait for async conversion completion in milliseconds", defaultValue = "300000")
+    private long asyncTimeout = 300000; // 5 minutes
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "API request timeout in milliseconds", defaultValue = "60000")
+    private long apiTimeout = 60000;
+
     public DoclingOperations getOperation() {
         return operation;
     }
@@ -224,6 +240,38 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setConvertEndpoint(String convertEndpoint) {
         this.convertEndpoint = convertEndpoint;
+    }
+
+    public boolean isUseAsyncMode() {
+        return useAsyncMode;
+    }
+
+    public void setUseAsyncMode(boolean useAsyncMode) {
+        this.useAsyncMode = useAsyncMode;
+    }
+
+    public long getAsyncPollInterval() {
+        return asyncPollInterval;
+    }
+
+    public void setAsyncPollInterval(long asyncPollInterval) {
+        this.asyncPollInterval = asyncPollInterval;
+    }
+
+    public long getAsyncTimeout() {
+        return asyncTimeout;
+    }
+
+    public void setAsyncTimeout(long asyncTimeout) {
+        this.asyncTimeout = asyncTimeout;
+    }
+
+    public long getApiTimeout() {
+        return apiTimeout;
+    }
+
+    public void setApiTimeout(long apiTimeout) {
+        this.apiTimeout = apiTimeout;
     }
 
     public DoclingConfiguration copy() {

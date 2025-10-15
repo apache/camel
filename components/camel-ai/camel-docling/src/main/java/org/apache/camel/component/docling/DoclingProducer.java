@@ -59,11 +59,14 @@ public class DoclingProducer extends DefaultProducer {
                     configuration.getAuthenticationScheme(),
                     configuration.getAuthenticationToken(),
                     configuration.getApiKeyHeader(),
-                    configuration.getConvertEndpoint());
-            LOG.info("DoclingProducer configured to use docling-serve API at: {}{} with authentication: {}",
+                    configuration.getConvertEndpoint(),
+                    configuration.getAsyncPollInterval(),
+                    configuration.getAsyncTimeout());
+            LOG.info("DoclingProducer configured to use docling-serve API at: {}{} with authentication: {} (async mode: {})",
                     configuration.getDoclingServeUrl(),
                     configuration.getConvertEndpoint(),
-                    configuration.getAuthenticationScheme());
+                    configuration.getAuthenticationScheme(),
+                    configuration.isUseAsyncMode());
         } else {
             LOG.info("DoclingProducer configured to use docling CLI command");
         }
@@ -117,7 +120,7 @@ public class DoclingProducer extends DefaultProducer {
         LOG.debug("DoclingProducer converting to markdown");
         if (configuration.isUseDoclingServe()) {
             String inputPath = getInputPath(exchange);
-            String result = doclingServeClient.convertDocument(inputPath, "markdown");
+            String result = convertUsingDoclingServe(inputPath, "markdown", exchange);
             exchange.getIn().setBody(result);
         } else {
             String inputPath = getInputPath(exchange);
@@ -129,7 +132,7 @@ public class DoclingProducer extends DefaultProducer {
         LOG.debug("DoclingProducer converting to HTML");
         if (configuration.isUseDoclingServe()) {
             String inputPath = getInputPath(exchange);
-            String result = doclingServeClient.convertDocument(inputPath, "html");
+            String result = convertUsingDoclingServe(inputPath, "html", exchange);
             exchange.getIn().setBody(result);
         } else {
             String inputPath = getInputPath(exchange);
@@ -140,7 +143,7 @@ public class DoclingProducer extends DefaultProducer {
     private void processConvertToJSON(Exchange exchange) throws Exception {
         if (configuration.isUseDoclingServe()) {
             String inputPath = getInputPath(exchange);
-            String result = doclingServeClient.convertDocument(inputPath, "json");
+            String result = convertUsingDoclingServe(inputPath, "json", exchange);
             exchange.getIn().setBody(result);
         } else {
             String inputPath = getInputPath(exchange);
@@ -151,7 +154,7 @@ public class DoclingProducer extends DefaultProducer {
     private void processExtractText(Exchange exchange) throws Exception {
         if (configuration.isUseDoclingServe()) {
             String inputPath = getInputPath(exchange);
-            String result = doclingServeClient.convertDocument(inputPath, "text");
+            String result = convertUsingDoclingServe(inputPath, "text", exchange);
             exchange.getIn().setBody(result);
         } else {
             String inputPath = getInputPath(exchange);
@@ -162,11 +165,34 @@ public class DoclingProducer extends DefaultProducer {
     private void processExtractStructuredData(Exchange exchange) throws Exception {
         if (configuration.isUseDoclingServe()) {
             String inputPath = getInputPath(exchange);
-            String result = doclingServeClient.convertDocument(inputPath, "json");
+            String result = convertUsingDoclingServe(inputPath, "json", exchange);
             exchange.getIn().setBody(result);
         } else {
             String inputPath = getInputPath(exchange);
             exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+        }
+    }
+
+    private String convertUsingDoclingServe(String inputPath, String outputFormat) throws Exception {
+        return convertUsingDoclingServe(inputPath, outputFormat, null);
+    }
+
+    private String convertUsingDoclingServe(String inputPath, String outputFormat, Exchange exchange) throws Exception {
+        // Check for header override
+        boolean useAsync = configuration.isUseAsyncMode();
+        if (exchange != null) {
+            Boolean asyncModeHeader = exchange.getIn().getHeader(DoclingHeaders.USE_ASYNC_MODE, Boolean.class);
+            if (asyncModeHeader != null) {
+                useAsync = asyncModeHeader;
+            }
+        }
+
+        if (useAsync) {
+            LOG.debug("Using async mode for conversion");
+            return doclingServeClient.convertDocumentAsyncAndWait(inputPath, outputFormat);
+        } else {
+            LOG.debug("Using sync mode for conversion");
+            return doclingServeClient.convertDocument(inputPath, outputFormat);
         }
     }
 
