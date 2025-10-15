@@ -103,6 +103,12 @@ public class DoclingProducer extends DefaultProducer {
             case EXTRACT_STRUCTURED_DATA:
                 processExtractStructuredData(exchange);
                 break;
+            case SUBMIT_ASYNC_CONVERSION:
+                processSubmitAsyncConversion(exchange);
+                break;
+            case CHECK_CONVERSION_STATUS:
+                processCheckConversionStatus(exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
         }
@@ -170,6 +176,76 @@ public class DoclingProducer extends DefaultProducer {
         } else {
             String inputPath = getInputPath(exchange);
             exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+        }
+    }
+
+    private void processSubmitAsyncConversion(Exchange exchange) throws Exception {
+        LOG.debug("DoclingProducer submitting async conversion");
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "SUBMIT_ASYNC_CONVERSION operation requires docling-serve mode (useDoclingServe=true)");
+        }
+
+        String inputPath = getInputPath(exchange);
+
+        // Determine output format from header or configuration
+        String outputFormat = exchange.getIn().getHeader(DoclingHeaders.OUTPUT_FORMAT, String.class);
+        if (outputFormat == null) {
+            outputFormat = configuration.getOutputFormat();
+        }
+
+        // Submit async conversion and get task ID
+        String taskId = doclingServeClient.convertDocumentAsync(inputPath, outputFormat);
+
+        LOG.debug("Async conversion submitted with task ID: {}", taskId);
+
+        // Set task ID in body and header
+        exchange.getIn().setBody(taskId);
+        exchange.getIn().setHeader(DoclingHeaders.TASK_ID, taskId);
+    }
+
+    private void processCheckConversionStatus(Exchange exchange) throws Exception {
+        LOG.debug("DoclingProducer checking conversion status");
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "CHECK_CONVERSION_STATUS operation requires docling-serve mode (useDoclingServe=true)");
+        }
+
+        // Get task ID from header or body
+        String taskId = exchange.getIn().getHeader(DoclingHeaders.TASK_ID, String.class);
+        if (taskId == null) {
+            Object body = exchange.getIn().getBody();
+            if (body instanceof String) {
+                taskId = (String) body;
+            } else {
+                throw new IllegalArgumentException("Task ID must be provided in header CamelDoclingTaskId or in message body");
+            }
+        }
+
+        LOG.debug("Checking status for task ID: {}", taskId);
+
+        // Check conversion status
+        ConversionStatus status = doclingServeClient.checkConversionStatus(taskId);
+
+        // Set status object in body
+        exchange.getIn().setBody(status);
+
+        // Set individual status fields as headers for easy access
+        exchange.getIn().setHeader(DoclingHeaders.TASK_ID, status.getTaskId());
+        exchange.getIn().setHeader("CamelDoclingTaskStatus", status.getStatus().toString());
+
+        if (status.getProgress() != null) {
+            exchange.getIn().setHeader("CamelDoclingTaskProgress", status.getProgress());
+        }
+
+        if (status.isCompleted() && status.getResult() != null) {
+            exchange.getIn().setHeader("CamelDoclingResult", status.getResult());
+        }
+
+        if (status.isFailed() && status.getErrorMessage() != null) {
+            exchange.getIn().setHeader("CamelDoclingErrorMessage", status.getErrorMessage());
         }
     }
 

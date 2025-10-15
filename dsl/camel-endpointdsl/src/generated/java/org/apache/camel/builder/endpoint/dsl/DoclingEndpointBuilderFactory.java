@@ -399,6 +399,96 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * API request timeout in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param apiTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder apiTimeout(long apiTimeout) {
+            doSetProperty("apiTimeout", apiTimeout);
+            return this;
+        }
+        /**
+         * API request timeout in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param apiTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder apiTimeout(String apiTimeout) {
+            doSetProperty("apiTimeout", apiTimeout);
+            return this;
+        }
+        /**
+         * Polling interval for async conversion status in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param asyncPollInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder asyncPollInterval(long asyncPollInterval) {
+            doSetProperty("asyncPollInterval", asyncPollInterval);
+            return this;
+        }
+        /**
+         * Polling interval for async conversion status in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param asyncPollInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder asyncPollInterval(String asyncPollInterval) {
+            doSetProperty("asyncPollInterval", asyncPollInterval);
+            return this;
+        }
+        /**
+         * Maximum time to wait for async conversion completion in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
+         * Maximum time to wait for async conversion completion in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder asyncTimeout(String asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+        /**
          * Docling-serve API convert endpoint path.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -455,6 +545,36 @@ public interface DoclingEndpointBuilderFactory {
          */
         default AdvancedDoclingEndpointBuilder processTimeout(String processTimeout) {
             doSetProperty("processTimeout", processTimeout);
+            return this;
+        }
+        /**
+         * Use asynchronous conversion mode (docling-serve API only).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useAsyncMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder useAsyncMode(boolean useAsyncMode) {
+            doSetProperty("useAsyncMode", useAsyncMode);
+            return this;
+        }
+        /**
+         * Use asynchronous conversion mode (docling-serve API only).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useAsyncMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder useAsyncMode(String useAsyncMode) {
+            doSetProperty("useAsyncMode", useAsyncMode);
             return this;
         }
         /**
@@ -634,6 +754,54 @@ public interface DoclingEndpointBuilderFactory {
          */
         public String doclingCustomArguments() {
             return "CamelDoclingCustomArguments";
+        }
+        /**
+         * Use asynchronous conversion mode (overrides endpoint configuration).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingUseAsyncMode}.
+         */
+        public String doclingUseAsyncMode() {
+            return "CamelDoclingUseAsyncMode";
+        }
+        /**
+         * Polling interval for async conversion status in milliseconds.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingAsyncPollInterval}.
+         */
+        public String doclingAsyncPollInterval() {
+            return "CamelDoclingAsyncPollInterval";
+        }
+        /**
+         * Maximum time to wait for async conversion completion in milliseconds.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingAsyncTimeout}.
+         */
+        public String doclingAsyncTimeout() {
+            return "CamelDoclingAsyncTimeout";
+        }
+        /**
+         * Task ID for checking async conversion status.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingTaskId}.
+         */
+        public String doclingTaskId() {
+            return "CamelDoclingTaskId";
         }
     }
     static DoclingEndpointBuilder endpointBuilder(String componentName, String path) {
