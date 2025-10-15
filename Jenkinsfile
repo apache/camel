@@ -127,7 +127,7 @@ pipeline {
                         steps {
                             echo "Do Build for ${PLATFORM}-${JDK_NAME}"
                             sh 'java -version'
-                            sh "./mvnw -U $MAVEN_PARAMS -Dskip.camel.maven.plugin.tests -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install"
+                            sh "./mvnw -U $MAVEN_PARAMS -Dskip.camel.maven.plugin.tests -Darchetype.test.skip -DskipTests clean install"
                         }
                     }
 
